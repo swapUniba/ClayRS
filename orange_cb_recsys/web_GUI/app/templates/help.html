@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orange CB Recsys</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+        crossorigin="anonymous"></script>
+</head>
+<style>
+    .container{
+        width: 85%;
+        min-height: 100vh;
+        height: auto;
+        background-position: center;
+        background-size: cover;
+        position: absolute;
+        margin-top: 50px;
+        margin-left: 155px;
+        box-sizing: border-box;
+    }
+
+    <!---->
+    /*Sidebar div*/
+    .sidebar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 155px;
+        min-height: 100vh;
+        height: auto;
+        margin-top: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        align-items: center;
+    }
+
+    <!---->
+    /*Navbar div*/
+
+    .navbar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 100%;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .navbar nav{
+        flex: 1;
+    }
+
+    .navbar ul{
+        margin-left: 120px;
+    }
+
+    .navbar nav ul li{
+        list-style: none;
+        display: inline-block;
+    }
+
+    .navbar nav ul li a{
+        text-decoration: none;
+        font-size: 14px;
+        font-family: cursive;
+        color: #fff;
+        margin-right: 50px;
+    }
+
+    .a_nav{}
+    .a_nav:hover{
+        color: darkorange;
+    }
+
+     .div_option{
+         margin-top: 50px;
+         text-align: center;
+         width: 155px;
+         height: 35px;
+         font-family: cursive;
+         font-size: 15px;
+         font-weight: bold;
+         background-color: #1f1d1d;
+         color: #fff;
+         border: none;
+    }
+
+     .div_option:hover{
+         cursor: pointer;
+         background-color: lightgray;
+         color: #333333;
+         border: #1f1d1d;
+     }
+
+    <!---->
+
+    <!---->
+    /*Container div*/
+    .description{
+        font-family: sans-serif;
+        font-size: 18px;
+        color: black;
+        margin-top: 15px;
+        margin-left: 10px;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+</style>
+<body>
+
+<form method="post">
+    <div class="sidebar">
+        <div style="color: #333333; background-color: darkorange; margin-top: auto" class="div_option">
+            <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('help_')}}">Help</a></p>
+        </div>
+
+        <div style="background-color: #333333; height: 65px; width: 155px; display: block;">
+            <div style="margin-left: 15px;"><span style="font-size: 13px; font-weight: bold">- Download file:</span></div>
+            <div style="margin-left: 42px;">
+                <a href="{{url_for('download_help')}}">
+                    <img src="../static/icon_file.png" alt="help file" style="width: 20px; height: 29px; margin-left: 25px; margin-top: 5px; cursor: pointer">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <nav>
+            <ul>
+                <li><a class="a_nav" href="/" onclick="save()">Home</a></li>
+                <li><a href="/" style="font-weight: bold; margin-left: 300px;" onclick="save()">ORANGE CB RECSYS</a></li>
+
+                <li>
+                    <a style="width: 250px; display: inline-block" href="https://www.uniba.it/ricerca/dipartimenti/informatica" onclick="save()">
+                        <img alt="Uniba logo" src="../static/uniba_logo.png" style="width: 250px; height: 40px;
+                        position: relative; margin-left: 330px; margin-top: -10px;">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <p class="description">On the sidebar you can download a 'help' explanatory file on usage!</p>
+    </div>
+
+</form>
+
+</body>
+</html>

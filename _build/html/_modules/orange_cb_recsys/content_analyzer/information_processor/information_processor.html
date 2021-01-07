@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.information_processor.information_processor &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.information_processor.information_processor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.information_processor.information_processor</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+
+<div class="viewcode-block" id="InformationProcessor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor">[docs]</a><span class="k">class</span> <span class="nc">InformationProcessor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class that generalizes data processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span> <span class="o">=</span> <span class="s2">&quot;EN&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lang</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span>
+
+    <span class="nd">@lang</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span> <span class="o">=</span> <span class="n">lang</span>
+
+<div class="viewcode-block" id="InformationProcessor.process"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor.process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ImageProcessor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.ImageProcessor">[docs]</a><span class="k">class</span> <span class="nc">ImageProcessor</span><span class="p">(</span><span class="n">InformationProcessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for image processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ImageProcessor.process"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.ImageProcessor.process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="AudioProcessor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.AudioProcessor">[docs]</a><span class="k">class</span> <span class="nc">AudioProcessor</span><span class="p">(</span><span class="n">InformationProcessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for audio processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AudioProcessor.process"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.AudioProcessor.process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="TextProcessor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">[docs]</a><span class="k">class</span> <span class="nc">TextProcessor</span><span class="p">(</span><span class="n">InformationProcessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for raw text processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TextProcessor.process"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor.process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="NLP"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.NLP">[docs]</a><span class="k">class</span> <span class="nc">NLP</span><span class="p">(</span><span class="n">TextProcessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for processing a text via Natural Language Processing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stopwords_removal (bool): Whether you want to remove stop words</span>
+<span class="sd">        stemming (bool): Whether you want to perform stemming</span>
+<span class="sd">        lemmatization (bool): Whether you want to perform lemmatization</span>
+<span class="sd">        strip_multiple_whitespaces (bool): Whether you want to remove multiple whitespaces</span>
+<span class="sd">        url_tagging (bool): Whether you want to tag the urls in the text and to replace with &quot;&lt;URL&gt;&quot;</span>
+<span class="sd">        named_entity_recognition (bool): Whether you want to perform named entity recognition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stopwords_removal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">stemming</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">lemmatization</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">strip_multiple_whitespaces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">url_tagging</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">named_entity_recognition</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stopwords_removal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">stopwords_removal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stemming</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">stemming</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lemmatization</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">lemmatization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__strip_multiple_whitespaces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">strip_multiple_whitespaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__url_tagging</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">url_tagging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__named_entity_recognition</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">named_entity_recognition</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stopwords_removal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stopwords_removal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stemming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stemming</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lemmatization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lemmatization</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">strip_multiple_whitespaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__strip_multiple_whitespaces</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">url_tagging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__url_tagging</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">named_entity_recognition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__named_entity_recognition</span>
+
+    <span class="nd">@stopwords_removal</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">stopwords_removal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stopwords_removal</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stopwords_removal</span> <span class="o">=</span> <span class="n">stopwords_removal</span>
+
+    <span class="nd">@stemming</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">stemming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stemming</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stemming</span> <span class="o">=</span> <span class="n">stemming</span>
+
+    <span class="nd">@lemmatization</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lemmatization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lemmatization</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lemmatization</span> <span class="o">=</span> <span class="n">lemmatization</span>
+
+    <span class="nd">@strip_multiple_whitespaces</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">strip_multiple_whitespaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strip_multiple_whitespaces</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__strip_multiple_whitespaces</span> <span class="o">=</span> <span class="n">strip_multiple_whitespaces</span>
+
+    <span class="nd">@url_tagging</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">url_tagging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_tagging</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__url_tagging</span> <span class="o">=</span> <span class="n">url_tagging</span>
+
+    <span class="nd">@named_entity_recognition</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">named_entity_recognition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_entity_recognition</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__named_entity_recognition</span> <span class="o">=</span> <span class="n">named_entity_recognition</span>
+
+<div class="viewcode-block" id="NLP.process"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.NLP.process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply on the original text the required preprocessing steps</span>
+<span class="sd">        Args:</span>
+<span class="sd">            field_data: text on which NLP with specified phases will be applied</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list&lt;str&gt;: The text, after being processed with the specified NLP pipeline,</span>
+<span class="sd">                is splitted in single words that are put into a list. The splitting is executed</span>
+<span class="sd">                even if none of the preprocessing steps is computed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

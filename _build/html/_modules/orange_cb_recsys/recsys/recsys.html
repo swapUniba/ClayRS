@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.recsys.recsys &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.recsys.recsys</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.recsys.recsys</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.recsys.config</span> <span class="kn">import</span> <span class="n">RecSysConfig</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.const</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.load_content</span> <span class="kn">import</span> <span class="n">load_content_instance</span><span class="p">,</span> <span class="n">get_unrated_items</span>
+
+
+<div class="viewcode-block" id="RecSys"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys">[docs]</a><span class="k">class</span> <span class="nc">RecSys</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class that represent a recommender system</span>
+<span class="sd">    Args:</span>
+<span class="sd">        config (RecSysConfig): Configuration of the recommender system</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">RecSysConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">:</span> <span class="n">RecSysConfig</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="k">def</span> <span class="nf">__get_item_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_to_predict_id_list</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item_to_predict_id_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># all items without rating if the list is not set</span>
+            <span class="n">item_to_predict_list</span> <span class="o">=</span> <span class="n">get_unrated_items</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item_to_predict_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">load_content_instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\w\s]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">item_id</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">item_to_predict_id_list</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">item_to_predict_list</span>
+
+<div class="viewcode-block" id="RecSys.fit_predict"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys.fit_predict">[docs]</a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item_to_predict_id_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the predicted rating for specified user and items,</span>
+<span class="sd">        should be used when a score prediction algorithm (instead of a ranking algorithm)</span>
+<span class="sd">        was chosen in the config</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id: user for which calculate the predictions</span>
+<span class="sd">            item_to_predict_id_list: items for which the prediction will be computed,</span>
+<span class="sd">                if None all unrated items will be used</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            score_frame (DataFrame): result frame whose columns are: to_id, rating</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             ValueError: if the algorithm is a ranking algorithm</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">score_prediction_algorithm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must set score prediction algorithm to use this method&quot;</span><span class="p">)</span>
+
+        <span class="c1"># load user ratings</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user ratings&quot;</span><span class="p">)</span>
+        <span class="n">user_ratings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">]</span>
+        <span class="n">user_ratings</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;to_id&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># define for which items calculate the prediction</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Defining for which items the prediction will be computed&quot;</span><span class="p">)</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_item_list</span><span class="p">(</span><span class="n">item_to_predict_id_list</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">)</span>
+
+        <span class="c1"># calculate predictions</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing predicitons&quot;</span><span class="p">)</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">score_prediction_algorithm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">,</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score_frame</span></div>
+
+<div class="viewcode-block" id="RecSys.fit_ranking"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys.fit_ranking">[docs]</a>    <span class="k">def</span> <span class="nf">fit_ranking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">candidate_item_id_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the predicted rating for specified user and items,</span>
+<span class="sd">        should be used when a  ranking algorithm (instead of a score prediction algorithm)</span>
+<span class="sd">        was chosen in the config</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            candidate_item_id_list: list of items, in which search the recommendations,</span>
+<span class="sd">                if None all unrated items will be used as candidates</span>
+<span class="sd">            user_id: user for which compute the ranking recommendation</span>
+<span class="sd">            recs_number: how many items should the returned ranking contain,</span>
+<span class="sd">                the ranking length can be lower</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            score_frame (DataFrame): result frame whose columns are: to_id, rating</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             ValueError: if the algorithm is a score prediction algorithm</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">ranking_algorithm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must set ranking algorithm to use this method&quot;</span><span class="p">)</span>
+
+        <span class="c1"># load user ratings</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user ratings&quot;</span><span class="p">)</span>
+        <span class="n">user_ratings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">]</span>
+        <span class="n">user_ratings</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;to_id&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># calculate predictions</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing ranking&quot;</span><span class="p">)</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">ranking_algorithm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span>
+                                                              <span class="n">candidate_item_id_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score_frame</span></div>
+
+<div class="viewcode-block" id="RecSys.fit_eval_predict"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys.fit_eval_predict">[docs]</a>    <span class="k">def</span> <span class="nf">fit_eval_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes predicted ratings, or ranking (according to algorithm chosen in the config)</span>
+<span class="sd">        user ratings will be used as train set to fit the algorithm.</span>
+<span class="sd">        If the algorithm is score_prediction the rating for the item in the test set will</span>
+<span class="sd">        be predicted</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id: user for which predictions will be computed</span>
+<span class="sd">            user_ratings: train set</span>
+<span class="sd">            test_set:</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            score_frame (DataFrame): result frame whose columns are: to_id, rating</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading items&quot;</span><span class="p">)</span>
+        <span class="n">item_to_predict_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">test_set</span><span class="o">.</span><span class="n">to_id</span><span class="p">]</span>  <span class="c1"># unrated items list</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">load_content_instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\w\s]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">item_id</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">item_to_predict_id_list</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loaded </span><span class="si">%d</span><span class="s2"> items&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+
+        <span class="c1"># calculate predictions</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing predictions&quot;</span><span class="p">)</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">score_prediction_algorithm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">,</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">score_frame</span></div>
+
+<div class="viewcode-block" id="RecSys.fit_eval_ranking"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys.fit_eval_ranking">[docs]</a>    <span class="k">def</span> <span class="nf">fit_eval_ranking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">test_set_items</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes a ranking of specified length,</span>
+<span class="sd">        using as training set the ratings provided by the user</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id:</span>
+<span class="sd">            user_ratings (pd.DataFrame): Training set</span>
+<span class="sd">            test_set_items (pd.DataFrame)</span>
+<span class="sd">            recs_number (int): Number of recommendations to provide</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_ratings</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;to_id&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">ranking_algorithm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span>
+                                                              <span class="n">test_set_items</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">score_frame</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

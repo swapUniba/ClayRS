@@ -1,0 +1,10 @@
+orange\_cb\_recsys.recsys.score\_prediction\_algorithms package
+===============================================================
+
+Module contents
+---------------
+
+.. automodule:: orange_cb_recsys.recsys.score_prediction_algorithms
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.content_analyzer_main &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.content_analyzer_main</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.content_analyzer_main</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.config</span> <span class="kn">import</span> <span class="n">ContentAnalyzerConfig</span><span class="p">,</span> \
+    <span class="n">FieldRepresentationPipeline</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.content_representation.content</span> <span class="kn">import</span> <span class="n">Content</span><span class="p">,</span> \
+    <span class="n">RepresentedContentsRecap</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.content_representation.content_field</span> <span class="kn">import</span> <span class="n">ContentField</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.field_content_production_techniques.</span> \
+    <span class="n">field_content_production_technique</span> <span class="kn">import</span> \
+    <span class="nn">CollectionBasedTechnique</span><span class="o">,</span> \
+    <span class="n">SingleContentTechnique</span><span class="p">,</span> <span class="n">SearchIndexing</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.memory_interfaces</span> <span class="kn">import</span> <span class="n">IndexInterface</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.const</span> <span class="kn">import</span> <span class="n">home_path</span><span class="p">,</span> <span class="n">DEVELOPING</span><span class="p">,</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.id_merger</span> <span class="kn">import</span> <span class="n">id_merger</span>
+
+
+<div class="viewcode-block" id="ContentAnalyzer"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">ContentAnalyzer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to whom the control of the content analysis phase is delegated</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (ContentAnalyzerConfig):</span>
+<span class="sd">            configuration for processing the item fields. This parameter provides the possibility</span>
+<span class="sd">            of customizing the way in which the input data is processed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ContentAnalyzerConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">:</span> <span class="n">ContentAnalyzerConfig</span> <span class="o">=</span> <span class="n">config</span>
+
+<div class="viewcode-block" id="ContentAnalyzer.set_config"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.set_config">[docs]</a>    <span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ContentAnalyzerConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span> <span class="o">=</span> <span class="n">config</span></div>
+
+    <span class="k">def</span> <span class="nf">__dataset_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_field_name_list</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_pipeline_list</span><span class="p">(</span><span class="n">field_name</span><span class="p">):</span>
+
+                <span class="n">technique</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">technique</span><span class="p">,</span> <span class="n">CollectionBasedTechnique</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating collection for technique: </span><span class="si">%s</span><span class="s2"> on field </span><span class="si">%s</span><span class="s2">, &quot;</span>
+                                <span class="s2">&quot;representation: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">technique</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">)</span>
+                    <span class="n">technique</span><span class="o">.</span><span class="n">field_need_refactor</span> <span class="o">=</span> <span class="n">field_name</span>
+                    <span class="n">technique</span><span class="o">.</span><span class="n">pipeline_need_refactor</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+                    <span class="n">technique</span><span class="o">.</span><span class="n">processor_list</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">preprocessor_list</span>
+                    <span class="n">technique</span><span class="o">.</span><span class="n">dataset_refactor</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">id_field_name_list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__config_recap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">recap_list</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;Field: </span><span class="si">%s</span><span class="s2">; representation id: </span><span class="si">%s</span><span class="s2">: technique: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pipeline</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="p">))</span>
+                      <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_field_name_list</span><span class="p">()</span>
+                      <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_pipeline_list</span><span class="p">(</span><span class="n">field_name</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">RepresentedContentsRecap</span><span class="p">(</span><span class="n">recap_list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContentAnalyzer.fit"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the creation of the contents and serializes the contents</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">output_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">output_directory</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">DEVELOPING</span><span class="p">:</span>
+            <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s1">&#39;contents&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+        <span class="n">indexer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">search_index</span><span class="p">:</span>
+            <span class="n">index_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;search_index&#39;</span><span class="p">)</span>
+            <span class="n">indexer</span> <span class="o">=</span> <span class="n">IndexInterface</span><span class="p">(</span><span class="n">index_path</span><span class="p">)</span>
+            <span class="n">indexer</span><span class="o">.</span><span class="n">init_writing</span><span class="p">()</span>
+
+        <span class="n">contents_producer</span> <span class="o">=</span> <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+        <span class="n">contents_producer</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">)</span>
+
+        <span class="n">interfaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_interfaces</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+            <span class="n">interface</span><span class="o">.</span><span class="n">init_writing</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_refactor</span><span class="p">()</span>
+        <span class="n">contents_producer</span><span class="o">.</span><span class="n">set_indexer</span><span class="p">(</span><span class="n">indexer</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">raw_content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing item </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">contents_producer</span><span class="o">.</span><span class="n">create_content</span><span class="p">(</span><span class="n">raw_content</span><span class="p">)</span>
+            <span class="n">content</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">search_index</span><span class="p">:</span>
+            <span class="n">indexer</span><span class="o">.</span><span class="n">stop_writing</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+            <span class="n">interface</span><span class="o">.</span><span class="n">stop_writing</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_field_name_list</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_pipeline_list</span><span class="p">(</span><span class="n">field_name</span><span class="p">):</span>
+                <span class="n">technique</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">technique</span><span class="p">,</span> <span class="n">CollectionBasedTechnique</span><span class="p">):</span>
+                    <span class="n">technique</span><span class="o">.</span><span class="n">delete_refactored</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ContentAnalyzer&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&lt; &quot;</span> <span class="o">+</span> <span class="s2">&quot;ContentAnalyzer: &quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span> \
+                                           <span class="s2">&quot;config = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;; &gt;&quot;</span>
+        <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="ContentsProducer"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer">[docs]</a><span class="k">class</span> <span class="nc">ContentsProducer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Singleton class which encapsulates the creation process of the items,</span>
+<span class="sd">    The creation process is specified in the config parameter of ContentAnalyzer and</span>
+<span class="sd">    is supposed to be the same for each item.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ContentsProducer.get_instance"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.get_instance">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns the singleton instance</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ContentsProducer: instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Static access method</span>
+        <span class="k">if</span> <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">__instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">__instance</span> <span class="o">=</span> <span class="n">ContentsProducer</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">__instance</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">:</span> <span class="n">ContentAnalyzerConfig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Virtually private constructor.</span>
+        <span class="k">if</span> <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">__instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This class is a singleton!&quot;</span><span class="p">)</span>
+        <span class="n">ContentsProducer</span><span class="o">.</span><span class="n">__instance</span> <span class="o">=</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="ContentsProducer.set_indexer"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.set_indexer">[docs]</a>    <span class="k">def</span> <span class="nf">set_indexer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexer</span><span class="p">:</span> <span class="n">IndexInterface</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span> <span class="o">=</span> <span class="n">indexer</span></div>
+
+<div class="viewcode-block" id="ContentsProducer.set_config"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.set_config">[docs]</a>    <span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ContentAnalyzerConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span> <span class="o">=</span> <span class="n">config</span></div>
+
+    <span class="k">def</span> <span class="nf">__get_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search for timestamp as dataset field. If there isn&#39;t a field called &#39;timestamp&#39;, than</span>
+<span class="sd">        the timestamp will be the one returned by the system.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">content_type</span> <span class="o">!=</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;timestamp&quot;</span> <span class="ow">in</span> <span class="n">raw_content</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">raw_content</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">timestamp</span>
+
+    <span class="k">def</span> <span class="nf">__create_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new field for the specified content</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raw_content (Dict): Raw content for the new field</span>
+<span class="sd">            field_name (str): Name of the new field</span>
+<span class="sd">            content_id (str): Id of the content to which add the field</span>
+<span class="sd">            timestamp (str)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            field (ContentField)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_content</span><span class="p">[</span><span class="n">field_name</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">raw_content</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">field_data</span> <span class="o">=</span> <span class="n">raw_content</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">field_data</span> <span class="o">=</span> <span class="n">raw_content</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+
+        <span class="c1"># serialize for explanation</span>
+        <span class="n">memory_interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_memory_interface</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">memory_interface</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">memory_interface</span><span class="o">.</span><span class="n">new_field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span>
+
+        <span class="c1"># produce representations</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">ContentField</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_pipeline_list</span><span class="p">(</span><span class="n">field_name</span><span class="p">)):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;processing representation </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="p">,</span>
+                          <span class="n">CollectionBasedTechnique</span><span class="p">):</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">__create_representation_CBT</span>
+                             <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">content_id</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="p">,</span> <span class="n">SingleContentTechnique</span><span class="p">):</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_representation</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">field_data</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="p">,</span> <span class="n">SearchIndexing</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__invoke_indexing_technique</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_data</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">field_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">field</span>
+
+    <span class="k">def</span> <span class="nf">__invoke_indexing_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">pipeline</span><span class="p">:</span> <span class="n">FieldRepresentationPipeline</span><span class="p">):</span>
+        <span class="n">preprocessor_list</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">preprocessor_list</span>
+        <span class="n">processed_field_data</span> <span class="o">=</span> <span class="n">field_data</span>
+        <span class="k">for</span> <span class="n">preprocessor</span> <span class="ow">in</span> <span class="n">preprocessor_list</span><span class="p">:</span>
+            <span class="n">processed_field_data</span> <span class="o">=</span> <span class="n">preprocessor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">processed_field_data</span><span class="p">)</span>
+
+        <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="o">.</span><span class="n">produce_content</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span>
+                                                   <span class="nb">str</span><span class="p">(</span><span class="n">pipeline</span><span class="p">),</span> <span class="n">processed_field_data</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__create_representation_CBT</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">pipeline</span><span class="p">:</span> <span class="n">FieldRepresentationPipeline</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="o">.</span> \
+            <span class="n">produce_content</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">,</span> <span class="n">content_id</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__create_representation</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">,</span>
+                                <span class="n">pipeline</span><span class="p">:</span> <span class="n">FieldRepresentationPipeline</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the specified representation for the specified field.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_representation_name: Name of the representation</span>
+<span class="sd">            field_data: Raw data contained in the field</span>
+<span class="sd">            pipeline: Preprocessing pipeline for the data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (Content)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">preprocessor_list</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">preprocessor_list</span>
+        <span class="n">processed_field_data</span> <span class="o">=</span> <span class="n">field_data</span>
+        <span class="k">for</span> <span class="n">preprocessor</span> <span class="ow">in</span> <span class="n">preprocessor_list</span><span class="p">:</span>
+            <span class="n">processed_field_data</span> <span class="o">=</span> <span class="n">preprocessor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">processed_field_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">content_technique</span><span class="o">.</span> \
+            <span class="n">produce_content</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">,</span> <span class="n">processed_field_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContentsProducer.create_content"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.create_content">[docs]</a>    <span class="k">def</span> <span class="nf">create_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a content processing every field in the specified way.</span>
+<span class="sd">        This method is iteratively invoked by the fit method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raw_content (dict): Raw data from which the content will be created</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            content (Content): an instance of content with his fields</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            general Exception</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;You must set a config with set_config()&quot;</span><span class="p">)</span>
+
+        <span class="n">CONTENT_ID</span> <span class="o">=</span> <span class="s2">&quot;content_id&quot;</span>
+
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_timestamp</span><span class="p">(</span><span class="n">raw_content</span><span class="p">)</span>
+
+        <span class="c1"># construct id from the list of the fields that compound id</span>
+        <span class="n">content_id</span> <span class="o">=</span> <span class="n">id_merger</span><span class="p">(</span><span class="n">raw_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">id_field_name_list</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">Content</span><span class="p">(</span><span class="n">content_id</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ex_retrieval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">exogenous_properties_retrieval</span><span class="p">):</span>
+            <span class="n">lod_properties</span> <span class="o">=</span> <span class="n">ex_retrieval</span><span class="o">.</span><span class="n">get_properties</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">raw_content</span><span class="p">)</span>
+            <span class="n">content</span><span class="o">.</span><span class="n">append_exogenous_rep</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">lod_properties</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span><span class="o">.</span><span class="n">new_content</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span><span class="o">.</span><span class="n">new_field</span><span class="p">(</span><span class="n">CONTENT_ID</span><span class="p">,</span> <span class="n">content_id</span><span class="p">)</span>
+
+        <span class="n">interfaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_interfaces</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+            <span class="n">interface</span><span class="o">.</span><span class="n">new_content</span><span class="p">()</span>
+            <span class="n">interface</span><span class="o">.</span><span class="n">new_field</span><span class="p">(</span><span class="n">CONTENT_ID</span><span class="p">,</span> <span class="n">content_id</span><span class="p">)</span>
+
+        <span class="c1"># produce</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="o">.</span><span class="n">get_field_name_list</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing field: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+            <span class="c1"># search for timestamp override on specific field</span>
+            <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">__create_field</span>
+                           <span class="p">(</span><span class="n">raw_content</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">content_id</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content</span><span class="o">.</span><span class="n">index_document_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__indexer</span><span class="o">.</span><span class="n">serialize_content</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+            <span class="n">interface</span><span class="o">.</span><span class="n">serialize_content</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">content</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ContentsProducer&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&lt; &quot;</span> <span class="o">+</span> <span class="s2">&quot;ContentsProducer:&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span> \
+                                           <span class="s2">&quot;config = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &gt;&quot;</span>
+        <span class="k">return</span> <span class="n">msg</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

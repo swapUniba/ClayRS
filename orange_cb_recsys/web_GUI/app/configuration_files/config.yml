@@ -1,0 +1,21 @@
+- content_type: ITEM
+  fields:
+  - field_name: Director
+    lang: EN
+    memory_interface: None
+    memory_interface_path: None
+    pipeline_list:
+    - field_content_production:
+        class: babelpy
+      preprocessing_list:
+      - class: nltk
+        stemming: 'True'
+        stopwords_removal: 'True'
+  get_lod_properties: []
+  id_field_name:
+  - Title
+  - imdbID
+  output_directory: Item_Test
+  raw_source_path: web_GUI/app/upload/movies_info_reduced.json
+  search_index: 'False'
+  source_type: json

@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orange CB Recsys</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+        crossorigin="anonymous"></script>
+
+</head>
+<style>
+    .container{
+        width: 953px;
+        min-height: 100vh;
+        height: auto;
+        background-position: center;
+        background-size: cover;
+        position: absolute;
+        margin-top: 50px;
+        margin-left: 155px;
+        box-sizing: border-box;
+    }
+
+    <!---->
+    /*Sidebar div*/
+    .sidebar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 155px;
+        min-height: 100vh;
+        height: auto;
+        margin-top: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        align-items: center;
+    }
+
+     .div_option{
+         margin-top: 50px;
+         text-align: center;
+         width: 155px;
+         height: 35px;
+         font-family: cursive;
+         font-size: 15px;
+         font-weight: bold;
+         background-color: #1f1d1d;
+         color: #fff;
+         border: none;
+    }
+
+     .div_option:hover{
+         cursor: pointer;
+         background-color: lightgray;
+         color: #333333;
+         border: #1f1d1d;
+     }
+
+    <!---->
+    /*Navbar div*/
+
+    .navbar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 100%;
+        height: 50px;
+        position: absolute;
+        top: 0;
+    }
+
+    .navbar nav{
+        flex: 1;
+    }
+
+    .navbar ul{
+        margin-left: 120px;
+    }
+
+    .navbar nav ul li{
+        list-style: none;
+        display: inline-block;
+    }
+
+    .navbar nav ul li a{
+        text-decoration: none;
+        font-size: 14px;
+        font-family: cursive;
+        color: #fff;
+        margin-right: 50px;
+    }
+
+    .a_nav{}
+    .a_nav:hover{
+        color: darkorange;
+    }
+
+    /*modal box for dataset*/
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+      background-color: #fefefe;
+      color: black;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 150%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+      color: darkorange;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: -60px;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .field_options{
+        background-color: #fff;
+    }
+
+    select:hover{
+        cursor: pointer;
+    }
+
+    .tab_form{
+        display: none;
+        width: auto;
+        height: 590px;
+    }
+
+    .div_tech{
+        overflow: auto;
+        height: 510px;
+    }
+
+    .tab_nltk{
+        display: none;
+        width: auto;
+        height: 280px;
+    }
+
+    .div_nltk{
+        overflow: auto;
+        width: 450px;
+        height: 220px;
+    }
+
+    .tab_parameters{
+        display: none;
+        width: auto;
+        height: 290px;
+    }
+
+    .div_parameters{
+        overflow: auto;
+        height: 230px;
+    }
+
+    .div_source{
+        display: none;
+        height: auto;
+        margin-left: 110px;
+        margin-bottom: 5px;
+        color: black;
+    }
+
+    .checkbox{}
+    .checkbox:hover{
+        cursor: pointer;
+    }
+
+
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip:hover{
+        cursor: pointer;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      height: 170px;
+      overflow-y: scroll;
+      background-color: #333333;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border: 2px solid gray;
+      top: 2px;
+      left: 95%;
+      font-size: 13px;
+
+      /* Position the tooltip text - see examples below! */
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    .tooltip .tooltiptext::after {}
+
+    .tooltip .tooltiptext::-webkit-scrollbar {
+      width: 10px;
+
+    }
+
+    .tooltip .tooltiptext::-webkit-scrollbar-track {
+      background: #333333;
+    }
+
+    .tooltip .tooltiptext::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .nltk_img{}
+    .nltk_img:hover{
+        cursor: pointer;
+    }
+
+    /* The Close Button nltk section */
+    .close_nltk {
+      color: darkorange;
+      position: relative;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: -55px;
+      margin-right: 10px;
+    }
+
+    .close_nltk:hover,
+    .close_nltk:focus {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+
+    /* The Close Button parameters section */
+    .close_parameters {
+      color: darkorange;
+      position: relative;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: -32px;
+      margin-right: 10px;
+    }
+
+    .close_parameters:hover,
+    .close_parameters:focus {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    <!---->
+
+    /* Alert message */
+
+    /* Popup container */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    /* The actual popup (appears on top) */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 170px;
+      height: 40px;
+      background-color: firebrick;
+      color: #fff;
+      text-align: center;
+      border: 1px black solid;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -105px;
+      margin-bottom: 20px;
+    }
+
+    /* Popup arrow */
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+    }
+
+    /* Toggle this class when clicking on the popup container (hide and show the popup) */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+    <!---->
+    .autocomplete {
+      /*the container must be positioned relative:*/
+      position: relative;
+      display: block;
+    }
+
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid black;
+      width: 210px;
+      height: auto;
+      max-height: 150px;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 25px;
+      right: 0;
+      overflow: auto;
+    }
+
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff;
+      width: 250px;
+      border-bottom: 1px solid black;
+    }
+
+    .autocomplete-items div:hover {
+      /*when hovering an item:*/
+      background-color: darkorange;
+        color: #ffffff;
+    }
+
+    .autocomplete-active {
+      /*when navigating through the items using the arrow keys:*/
+      background-color: #333333 !important;
+      color: #ffffff;
+    }
+
+    <!---->
+    /*Button next*/
+    .wrapper{
+      position: absolute;
+      top: 40%;
+      left: 60%;
+      transform: translate(-50%, -50%);
+    }
+
+    .link_wrapper{
+      position: relative;
+    }
+
+    button.next{
+      display: block;
+      width: 150px;
+      height: 50px;
+      line-height: 50px;
+      font-weight: bold;
+      text-decoration: none;
+      background: #333;
+      text-align: center;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 3px solid #333;
+      transition: all .35s;
+    }
+
+    .icon{
+      width: 50px;
+      height: 50px;
+      border: 3px solid transparent;
+      position: absolute;
+      transform: rotate(45deg);
+      right: 0;
+      top: 0;
+      z-index: -1;
+      transition: all .35s;
+    }
+
+    .icon svg{
+      width: 30px;
+      position: absolute;
+      top: calc(50% - 15px);
+      left: calc(50% - 15px);
+      transform: rotate(-45deg);
+      fill: darkorange;
+      transition: all .35s;
+    }
+
+    button.next:hover{
+      width: 150px;
+      border: 3px solid darkorange;
+      background: transparent;
+      color: darkorange;
+      cursor: pointer;
+    }
+
+    button.next:hover + .icon{
+      border: 3px solid darkorange;
+      right: -25%;
+    }
+
+</style>
+<body>
+    <div class="sidebar">
+        <div style="margin-top: -25px;">
+            <div id="content_type" class="div_option">
+                <a style="text-decoration: none;" href="{{url_for('homepage')}}" onclick="save()"><p style="margin-bottom: 5px; text-align: center" >Content type</p></a>
+            </div>
+
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto;" class="div_option">
+                <a style="text-decoration: none;" href="{{url_for('upload')}}" onclick="save()"><p style="margin-bottom: 5px; text-align: center" >Upload File</p></a>
+            </div>
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto" class="div_option">
+                <a style="text-decoration: none;" href="{{url_for('select_fields')}}" onclick="save()"><p style="margin-bottom: 5px; text-align: center" >Select Fields</p></a>
+            </div>
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto; color: #333333; background-color: darkorange" class="div_option"><a style="text-decoration: none;" href="{{url_for('technique_')}}" onclick="save()">Select Technique</a></div>
+            <div style="background-color: #333333; height: auto; width: 155px; display: block;">
+                <div style="margin-left: 15px;"><span style="font-size: 13px; font-weight: bold">- View Dataset:</span></div>
+                <div style="margin-left: 42px;"><img id="modalBtn" src="../static/icon_file.png" alt="visualize dataset" style="width: 20px; height: 29px; margin-left: 25px; margin-top: 5px; cursor: pointer"></div>
+
+                <hr style="max-width: 110px; margin-left: 20px; border-color: dimgray">
+
+                <div style="margin-left: 15px; margin-top: 5px; "><label for="selectBox" style="font-size: 13px; font-weight: bold">- Choose a field:</label></div>
+                <select style="margin-bottom: 5px; max-width: 120px; margin-left: 20px; margin-top: 5px; border: 2px black solid" id="selectBox" onchange="changeField()">
+                    {% for field in selected_fields_ %}
+                    <option value="{{field}}" id="{{field}}ID" class="field_options">{{field}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="navbar">
+        <nav>
+            <ul>
+                <li><a class="a_nav" href="/" onclick="save()">Home</a></li>
+                <li><a class="a_nav" href="{{url_for('help_')}}" onclick="save()">Help</a></li>
+                <li><a href="/" style="font-weight: bold; margin-left: 250px;" onclick="save()">ORANGE CB RECSYS</a></li>
+
+                <li>
+                    <a style="width: 250px; display: inline-block" href="https://www.uniba.it/ricerca/dipartimenti/informatica" onclick="save()">
+                        <img alt="Uniba logo" src="../static/uniba_logo.png" style="width: 250px; height: 40px;
+                        position: relative; margin-left: 250px; margin-top: -10px;">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+            <!--modal box-->
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                  <h3 style="color: darkorange">View Dataset selected</h3>
+                <span class="close">&times;</span>
+                  {% for line in data %}
+                  <div style="width: auto">
+                    {{line}}
+                    <hr>
+                  </div>
+                  {% endfor %}
+              </div>
+
+            </div>
+
+            <form method="post" enctype="multipart/form-data" autocomplete="off" style="margin: 20px;" onsubmit="validateForm();">
+
+                {% for field in selected_fields_ %}
+                    <div style="position: absolute; margin-top: 10%; margin-left: 5%;" class="popup">
+                        <span style="height: auto;" class="popuptext" id="{{field}}tech_alert">Select one or more techniques for: <strong>{{field}}</strong></span>
+                    </div>
+                {% endfor %}
+
+                <div id="technique" class="form-group bloc30 w3-container w3-card-4 w3-light-grey" style="width: 450px; position: absolute; top: 6px; left: 21px;">
+                    {% for field in selected_fields_ %}
+                    <div id="{{field}}_form" class="tab_form" style="margin-right: 2px;">
+                        <div style="background-color: #333333; width: 450px; margin-left: -16px; height: auto; min-height: 45px; margin-top: -10px;">
+                            <h2 style="color: #fff; font-size: 25px; margin-right: 20px;" class="w3-center">Select the techniques for: <strong style="color: darkorange">{{field}}</strong></h2>
+                            <!-- <hr style="border-color: darkorange; margin-top: -10px; margin-bottom: 5px;"> -->
+                        </div>
+
+                        <div class="div_tech">
+                        {% if content_type_ != "RATING" %}
+                            {% for technique in content_tech_list_ %}
+                                <div class="tooltip">
+                                    <img style="width: 20px; height: 20px;" alt="info" src="../static/info__.png">
+                                    <div class="tooltiptext">
+                                        {% if technique == "embedding" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color:darkorange;">Word Embedding</strong> is an endogenous semantic technique that allows you to
+                                            store both semantic and syntactic information of words starting from an
+                                            un-annotated corpus and building a vector space in which the word vectors
+                                            are closer if the words occur in the same linguistic contexts, that is, if
+                                            they are recognized as semantically more similar.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "babelpy" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color: darkorange">Babelpy</strong> is a technique that has a unified, multilingual and chart-based approach to Entity Linking
+                                            and Word Sense Disambiguation.
+                                            Babelpy is based on the multilingual semantic network and carries out jointly
+                                            disambiguation.
+                                            Given an input text, it extracts all linkable fragments from this text and, for each
+                                            of them, it lists the possible meanings according to the semantic network and extracts a dense
+                                            subgraph of this representation and select the meaning of the best candidate for
+                                            each fragment.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "lucene_tf-idf" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color: darkorange">Tf-Idf</strong> is a technique used to measure the importance of a term with respect
+                                            to a document or collection of documents. This function increases proportionally
+                                            to the number of times the term is contained in the document, but increases
+                                            inversely with the frequency of the term in the collection. The idea behind this
+                                            behavior is to give more importance to the terms that appear in the document,
+                                            but which in general are infrequent.
+                                            This technique was implemented through the Lucene library.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "search_index" %}
+                                        <p>
+                                            <strong style="color: darkorange">Search Index</strong> is a technique that save the field
+                                            data as a document field using an indexer.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "sk_learn_tf-idf" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color: darkorange">Tf-Idf</strong> is a technique used to measure the importance of a term with respect
+                                            to a document or collection of documents. This function increases proportionally
+                                            to the number of times the term is contained in the document, but increases
+                                            inversely with the frequency of the term in the collection. The idea behind this
+                                            behavior is to give more importance to the terms that appear in the document,
+                                            but which in general are infrequent.
+                                            This technique was implemented through the Scikit-learn library.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "synset_frequency" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color: darkorange">Synset Document Frequency</strong> is a technique that counts
+                                            occurrences of the given field names within the
+                                            entire dataset.
+                                        </p>
+                                        {% endif %}
+
+                                        {% if technique == "dbpedia_mapping" %}
+                                        <p style="margin-right: 5px;">
+                                            <strong style="color: darkorange">DBPedia Mapping Technique</strong> is a
+                                            technique that finds some properties in DBPedia. For more
+                                            details visits: <a href="https://wiki.dbpedia.org/">https://wiki.dbpedia.org/</a>
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                    <label for="{{field}}_{{technique}}">
+                                        <input onchange="enabled('{{field}}','{{technique}}')" class="checkbox" type="checkbox" id="{{field}}_{{technique}}" value="{{technique}}" name="{{field}}tech">
+                                    </label>
+                                    {% if technique == "embedding" %}
+                                    <strong>Word Embedding</strong>
+                                    {% endif %}
+
+                                    {% if technique == "babelpy" %}
+                                    <strong>Babelpy technique</strong>
+                                    {% endif %}
+
+                                    {% if technique == "lucene_tf-idf" %}
+                                    <strong>Tf-Idf (lucene)</strong>
+                                    {% endif %}
+
+                                    {% if technique == "search_index" %}
+                                    <strong>Search Index</strong>
+                                    {% endif %}
+
+                                    {% if technique == "sk_learn_tf-idf" %}
+                                    <strong>Tf-Idf (scikit-learn)</strong>
+                                    {% endif %}
+
+                                    {% if technique == "synset_frequency" %}
+                                    <strong>Synset Document Frequency</strong>
+                                    {% endif %}
+
+                                    {% if technique == "dbpedia_mapping" %}
+                                    <strong>DBpedia Mapping technique</strong>
+                                    {% endif %}
+
+                                </div>
+
+                                {% if technique != "dbpedia_mapping" %}
+                                <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                    <label for="{{field}}{{technique}}_nltk"> Select Natural Language Processing techniques:
+                                        <img onclick="display_nltk('{{field}}','{{technique}}'); unchecked_alert('{{field}}','{{technique}}')" class="nltk_img" src="../static/properties-icon.png" alt="nltk properties" id="{{field}}{{technique}}_nltk" style="width: 20px; height: 20px;">
+                                        <div class="popup">
+                                            <span class="popuptext" id="{{field}}{{technique}}_alert">Select the technique!</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                {% endif %}
+
+                                {% if technique == "dbpedia_mapping" or technique == "embedding" %}
+                                <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                    <label for="{{field}}{{technique}}_parameters"> Select Parameters:
+                                        <img onclick="display_parameters('{{field}}','{{technique}}'); unchecked_alert_parameters('{{field}}','{{technique}}')" class="nltk_img" src="../static/properties-icon.png" alt="parameters" id="{{field}}{{technique}}_parameters" style="width: 20px; height: 20px;">
+                                        <div class="popup">
+                                            <span class="popuptext" id="{{field}}{{technique}}_alert_parameters">Select the technique!</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                {% endif %}
+
+                                <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+                            {% endfor %}
+
+                        {% else %}
+                            {% for technique in rating_tech_list_ %}
+                            <div class="tooltip">
+                                <img style="width: 20px; height: 20px;" alt="info" src="../static/info__.png">
+                                    <div class="tooltiptext">
+                                        {% if technique == "text_blob_sentiment" %}
+                                            <p style="margin-right: 5px;">
+                                                <strong style="color:darkorange;">Sentiment Analysis</strong>, implemented via the textblob library, is a technique for understanding ratings
+                                                textual and transform the latter into a numerical vote;
+                                            </p>
+                                        {% endif %}
+
+                                        {% if technique == "number_normalizer" %}
+                                            <p>
+                                                <strong style="color: darkorange">Number Normalizer</strong> is a technique that normalizes numerical ratings always getting
+                                                a certain scale of judgment, ie [-1, 1].
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                            </div>
+
+                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                <label for="{{field}}_{{technique}}_rating">
+                                    <input onchange="enabled('{{field}}','{{technique}}')" class="checkbox" type="radio" id="{{field}}_{{technique}}_rating" value="{{technique}}" name="{{field}}tech">
+                                </label>
+                                 {% if technique == "text_blob_sentiment" %}
+                                  <strong>Sentiment Analysis</strong>
+                                 {% endif %}
+
+                                 {% if technique == "number_normalizer" %}
+                                    <strong>Number Normalizer</strong>
+                                  {% endif %}
+
+                            </div>
+
+                            {% if technique == "number_normalizer" %}
+                                <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                    <label for="{{field}}{{technique}}_parameters_rating"> Parameters:
+                                        <img onclick="display_parameters('{{field}}','{{technique}}'); unchecked_alert_parameters('{{field}}','{{technique}}');" class="nltk_img" src="../static/properties-icon.png" alt="parameters" id="{{field}}{{technique}}_parameters_rating" style="width: 20px; height: 20px;">
+                                        <div class="popup">
+                                            <span class="popuptext" id="{{field}}{{technique}}_alert_parameters_rating">Select the technique!</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            {% endif %}
+
+                            <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                            {% endfor %}
+
+                        {% endif %}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <div id="nltk" class="form-group bloc30 w3-card-4 w3-light-grey " style="width: 450px; position: absolute; top: 6px; right: 20%; left: 731px;">
+                    {% for field in selected_fields_ %}
+                        {% for technique in content_tech_list_ %}
+                        <div id="{{field}}{{technique}}_nltk_section" class="tab_nltk">
+                            <div style="background-color: dimgrey; width: 450px; margin-left: -1px; height: 45px; margin-top: 0;">
+                                <h2 style="color: #fff; font-size: 15px; margin-top: 0; margin-left: 25px; height: 45px; position: relative; top: 10px;">NATURAL LANGUAGE PROCESSING for: <strong style="color: darkorange">{{technique}}</strong></h2>
+                                <span onclick="hide_nltk('{{field}}','{{technique}}')" class="close_nltk">&times;</span>
+                                <!-- <hr style="border-color: darkorange; margin-top: -7px; margin-bottom: 5px; width: 400px; margin-left: 25px;"> -->
+                            </div>
+
+                            <div class="div_nltk">
+                            {% for nltk_tech in preprocessing_tech_list_ %}
+                            <div class="tooltip">
+                                <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                <div class="tooltiptext">
+                                    {% if nltk_tech == "stopwords_removal" %}
+                                    <p style="margin-right: 5px;">
+                                        <strong style="color: darkorange">Stop word removal</strong> is a technique that allows
+                                        to eliminate stop words (words that have a low level
+                                        of information content).
+                                    </p>
+                                    {% endif %}
+
+                                    {% if nltk_tech == "stemming" %}
+                                    <p style="margin-right: 5px;">
+                                        <strong style="color: darkorange">Stemming</strong> is the process of reducing inflected (or sometimes
+                                        derived) words to their word stem, base or root form — generally
+                                        a written word form.
+                                    </p>
+                                    {% endif %}
+
+                                    {% if nltk_tech == "lemmatization" %}
+                                    <p style="margin-right: 5px;">
+                                        <strong style="color: darkorange">Lemmatization</strong> is a technique which determines the lemma of a
+                                        word based on its intended meaning. Unlike stemming, lemmatization depends on
+                                        correctly identifying the intended part of speech and the meaning of a word in
+                                        a sentence, as well as within the larger context surrounding that sentence,
+                                        such as neighboring sentences or even an entire document.
+                                    </p>
+
+                                    {% endif %}
+
+                                    {% if nltk_tech == "strip_multiple_whitespaces" %}
+                                    <p style="margin-right: 5px;">
+                                        <strong style="color:darkorange;">Strip multiple whitespaces</strong> is a technique that allows to remove
+                                        multiple whitespaces.
+                                    </p>
+                                    {% endif %}
+
+                                    {% if nltk_tech == "url_tagging" %}
+                                    <p style="margin-right: 5px;">
+                                        <strong style="color: darkorange;">Url tagging</strong> is a technique that replaces URLs with the string "URL" in the input text.
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                <label for="{{field}}{{technique}}{{nltk_tech}}">
+                                    <input id="{{field}}{{technique}}{{nltk_tech}}" class="checkbox" type="checkbox" value="{{nltk_tech}}" name="{{field}}{{technique}}nltk_tech">
+                                </label>
+                                {% if nltk_tech == "stopwords_removal" %}
+                                <strong>Stopword removal</strong>
+                                {% endif %}
+
+                                {% if nltk_tech == "stemming" %}
+                                <strong>Stemming</strong>
+                                {% endif %}
+
+                                {% if nltk_tech == "lemmatization" %}
+                                <strong>Lemmatization</strong>
+                                {% endif %}
+
+                                {% if nltk_tech == "strip_multiple_whitespaces" %}
+                                <strong>Whitespaces removal</strong>
+                                {% endif %}
+
+                                {% if nltk_tech == "url_tagging" %}
+                                <strong>Url Tagging</strong>
+                                {% endif %}
+                            </div>
+
+                            <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                            {% endfor %}
+                            </div>
+
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                </div >
+
+                <div id="parameters" class="form-group bloc30 w3-card-4 w3-light-grey " style="width: 450px; position: absolute; top: 310px; right: 20%; left: 731px;">
+                    {% for field in selected_fields_ %}
+                    {% if content_type_ != "RATING" %}
+                        {% for technique in content_tech_list_ %}
+                            <div id="{{field}}{{technique}}_parameters_section" class="tab_parameters">
+                                <div style="background-color: dimgrey; width: 450px; margin-left: -1px; height: 45px; position: relative; top: -20px;">
+                                    <h2 style="color: #fff; font-size: 15px; margin-left: 25px; position: relative; top: 10px;">PARAMETERS for: <strong style="color: darkorange">{{technique}}</strong></h2>
+                                    <span onclick="hide_parameters('{{field}}','{{technique}}')" class="close_parameters">&times;</span>
+                                    <!-- <hr style="border-color: darkorange; margin-top: -7px; margin-bottom: 5px; width: 400px; margin-left: 25px;"> -->
+                                </div>
+
+                                <div class="div_parameters">
+                                    {% if technique == "embedding" %}
+                                        <div class="tooltip">
+                                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                            <span class="tooltiptext">
+                                                A combining technique is a technique that generalizes
+                                                how blended embeds will be loaded to produce a semantic representation.
+                                                The centroid technique allows you to calculate the center of gravity of the embedding matrix.
+                                            </span>
+                                        </div>
+
+                                        <div style="position: absolute;" class="popup">
+                                            <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_combining">Select a combining technique!</span>
+                                        </div>
+                                        <p style="margin-left: 70px;">Select a combining technique:</p>
+                                        {% for combining_tech in embedding_combining_tech_list_ %}
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                                <label>
+                                                    <input type="radio" class="checkbox" id="{{field}}{{technique}}{{combining_tech}}" value="{{combining_tech}}" name="{{field}}{{technique}}combining">
+                                                </label>
+                                                {% if combining_tech == "centroid" %}
+                                                <strong>Centroid</strong>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                        <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                                        <div class="tooltip">
+                                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                            <span class="tooltiptext">
+                                                By granularity we mean the "minimum unit" of a linguistic context.
+                                                The granularity allows to define the embedding vectors; for example if you
+                                                choose "sentence", each vector will represent each sentence present.
+                                            </span>
+                                        </div>
+
+                                        <div style="position: absolute;" class="popup">
+                                            <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_granularity">Select a granularity!</span>
+                                        </div>
+                                        <p style="margin-left: 70px;">Select a granularity:</p>
+                                        {% for granularity in embidding_granularity_ %}
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                                <label>
+                                                    <input type="radio" class="checkbox" id="{{field}}{{technique}}{{granularity}}" value="{{granularity}}" name="{{field}}{{technique}}granularity">
+                                                </label> <strong>{{granularity}}</strong>
+                                            </div>
+                                        {% endfor %}
+
+                                        <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                                        <div class="tooltip">
+                                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                            <span class="tooltiptext">
+                                                The source embedding allows you to define where the embeddings will be loaded from.
+                                                If you choose ' <strong>Binary file</strong>', you will have to upload the binary file containing the embeddings and you will have to specify the technique that the uploaded embeddings will have to learn.
+                                                If, on the other hand, '<strong>Gensim downloader</strong>' is chosen as the source, the embeddings will be loaded via the gensim API; in this case you will have to select the name of the model to upload (found in <a href="https://github.com/RaRe-Technologies/gensim-data">https://github.com/RaRe-Technologies/gensim-data</a>)
+                                            </span>
+                                        </div>
+
+                                        <div style="position: absolute; margin-top: -20%;" class="popup">
+                                            <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_source">Select a source!</span>
+                                        </div>
+                                        <p style="margin-left: 70px;">Select a source:</p>
+                                        {% for source in embedding_source_list_ %}
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black;">
+                                                <label>
+                                                    <input onclick="show_source_section('{{field}}', '{{technique}}', '{{source}}')" type="radio" class="checkbox" id="{{field}}{{technique}}{{source}}" value="{{source}}" name="{{field}}{{technique}}source">
+                                                </label>
+                                                {% if source == "binary_file" %}
+                                                <strong>Binary file</strong>
+                                                {% endif %}
+
+                                                {% if source == "gensim_downloader" %}
+                                                <strong>Gensim Downloader</strong>
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div id="{{field}}{{technique}}{{source}}_source" class="div_source">
+
+                                                {% if source == "binary_file"  %}
+                                                    <div>
+                                                    <div style="position: absolute; margin-top: -45%;" class="popup">
+                                                        <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_binary_file">Select a binary file! (Binary file)</span>
+                                                    </div>
+                                                    <label for="{{field}}{{technique}}{{source}}_binary_file">Binary file:
+                                                        <input id="{{field}}{{technique}}{{source}}_binary_file" type="file" name="{{field}}{{technique}}binary_file" onchange="control_ext(event)">
+                                                    </label>
+
+                                                    <div style="position: absolute; margin-top: -55%; margin-left: -30%;" class="popup">
+                                                        <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_binary_type">Select a type! (Binary file)</span>
+                                                    </div>
+                                                    <div style="margin-top: 10px;">
+                                                        <span >Select the type:</span>
+                                                        {% for type in binary_type_ %}
+                                                            <div>
+                                                                <label for="{{field}}{{technique}}{{source}}{{type}}">
+                                                                    <input id="{{field}}{{technique}}{{source}}{{type}}" type="radio" name="{{field}}{{technique}}{{source}}_type" class="checkbox"  value="{{type}}">
+                                                                </label>{{type}}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    </div>
+
+                                                {% endif %}
+
+                                                {% if source == "gensim_downloader"  %}
+                                                    <div style="margin-top: 10px;">
+                                                    <div style="position: absolute; margin-top: -55%;" class="popup">
+                                                        <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}embedding_gensim_models">Select a model! (gensim)</span>
+                                                    </div>
+                                                        <p style="margin-left: -10px; margin-top: 10px;">Models:</p>
+                                                    {% for model in gensim_models_ %}
+
+                                                        <div>
+                                                            <label for="{{field}}{{technique}}{{source}}{{model}}">
+                                                                <input id="{{field}}{{technique}}{{source}}{{model}}" type="radio" name="{{field}}{{technique}}_models" class="checkbox" value="{{model}}">
+                                                            </label>{{model}}
+                                                        </div>
+
+                                                    {% endfor %}
+                                                    </div>
+
+                                                {% endif %}
+
+                                                <hr style="border-color: lightgray; width: 200px; margin-left: 10px;">
+
+                                            </div>
+
+                                        {% endfor %}
+                                        <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+
+                                    {% endif %}
+
+                                    {% if technique == "dbpedia_mapping" %}
+
+                                        <div class="tooltip">
+                                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                            <span style="margin-right: 5px; overflow-x: hidden" class="tooltiptext">
+                                                Entity type is the type of information that we want to find,
+                                                at the example movies or film.
+                                                Entity types are contained in the DBPedia ontology
+                                                (<a href="http://mappings.dbpedia.org/server/ontology/classes/">
+                                                http://mappings.
+                                                dbpedia.org/server/ontology
+                                                /classes/</a>).
+                                            </span>
+                                        </div>
+
+                                        <div style="position: absolute; margin-top: 10%; margin-left: 20%;" class="popup">
+                                            <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}dbpedia_mapping_entity_alert">select a type among those given!</span>
+                                        </div>
+
+                                        <div class="autocomplete" style="margin-left: 70px; margin-bottom: 5px; color: black;">
+                                            <label for="{{field}}{{technique}}myInput">Select the <strong>Entity Type</strong>:
+                                                <input style="margin-left: 25px;" id="{{field}}{{technique}}myInput" type="text" name="{{field}}{{technique}}entity" placeholder="Entity Type ..." onclick="types_('{{field}}', '{{technique}}')" onchange="returnTypeValue('{{field}}')">
+                                            </label>
+                                        </div>
+
+                                        <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                                        <div style="position: absolute; margin-top: 10%; margin-left: 20%;" class="popup">
+                                            <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}dbpedia_mapping_mode_alert">select a mode!</span>
+                                        </div>
+
+                                        <div class="tooltip">
+                                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                            <div style="overflow-x: hidden; width: 370px;" class="tooltiptext">
+                                                You can specify the mode used to retrieve the properties:
+                                                - <strong>only_retrieved_evaluated</strong>: only the retrieved properties that have a value are added to the item.
+                                                - <strong>all</strong>: all properties, contains retrieved evaluated and non-evaluated. Also contains the properties in the original dict.
+                                                - <strong>all_retrieved</strong>: only properties retrieved, evaluated and non-evaluated.
+                                                - <strong>original_retrieved</strong>: filter the retrieved properties with the keys already in the dataset.
+                                            </div>
+                                        </div>
+
+                                        <p style="margin-left: 70px;">Select a mode:</p>
+                                        {% for mode in dbpedia_mode_ %}
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black;">
+                                                <label>
+                                                    <input id="{{field}}{{technique}}{{mode}}" type="radio" class="checkbox" name="{{field}}{{technique}}mode" value="{{mode}}">
+                                                </label><strong>{{mode}}</strong>
+                                            </div>
+                                        {% endfor %}
+
+                                        <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+                        {% for technique in rating_tech_list_ %}
+                            <div id="{{field}}{{technique}}_parameters_section_rating" class="tab_parameters">
+
+                                <div style="background-color: dimgrey; width: 450px; margin-left: -1px; height: 45px; position: relative; top: -20px;">
+                                    <h2 style="color: #fff; font-size: 15px; margin-left: 25px; position: relative; top: 10px;">PARAMETERS for: <strong style="color: darkorange">{{technique}}</strong></h2>
+                                    <span onclick="hide_parameters('{{field}}','{{technique}}')" class="close_parameters">&times;</span>
+                                    <!-- <hr style="border-color: darkorange; margin-top: -7px; margin-bottom: 5px; width: 400px; margin-left: 25px;"> -->
+                                </div>
+
+                                    <div class="div_parameters">
+
+                                        {% if technique == "number_normalizer" %}
+
+                                            <div class="tooltip">
+                                                <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                                                <div style="height: auto" class="tooltiptext">
+                                                    Here you have to insert the minimum and maximum value of the
+                                                    scoring scale.
+                                                </div>
+                                            </div>
+
+                                            <div style="position: absolute; margin-top: 10%; margin-left: 20%;" class="popup">
+                                                <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}NN_min_alert">select a numeric value!</span>
+                                            </div>
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                                <label for="{{field}}{{technique}}_parameters_nn_min">Select a minimum numeric value:
+                                                    <input id="{{field}}{{technique}}_parameters_nn_min" type="text" name="{{field}}{{technique}}min" onchange="getNNvalue('{{field}}', '{{technique}}_parameters_nn_min')">
+                                                </label>
+                                            </div>
+
+                                            <hr style="border-color: gray; width: 300px; margin-left: 70px;">
+
+                                            <div style="position: absolute; margin-top: 10%; margin-left: 20%;" class="popup">
+                                                <span style="width: 170px; height: auto;" class="popuptext" id="{{field}}NN_max_alert">select a numeric value!</span>
+                                            </div>
+                                            <div style="margin-left: 70px; margin-bottom: 5px; color: black">
+                                                <label for="{{field}}{{technique}}_parameters_nn_max">Select a maximum numeric value:
+                                                    <input id="{{field}}{{technique}}_parameters_nn_max" type="text" name="{{field}}{{technique}}max" onchange="getNNvalue('{{field}}', '{{technique}}_parameters_nn_max')">
+                                                </label>
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+                            </div>
+                        {% endfor %}
+
+                    {% endif %}
+
+                    {% endfor %}
+                </div>
+
+                <!---->
+
+                <div class="wrapper">
+                  <div class="link_wrapper">
+                    <button type="submit" class="next" onclick="save();">Next</button>
+                    <div class="icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268.832 268.832">
+                        <path d="M265.17 125.577l-80-80c-4.88-4.88-12.796-4.88-17.677 0-4.882 4.882-4.882
+                        12.796 0 17.678l58.66 58.66H12.5c-6.903 0-12.5 5.598-12.5 12.5 0 6.903 5.597 12.5
+                        12.5 12.5h213.654l-58.66 58.662c-4.88 4.882-4.88 12.796 0 17.678 2.44 2.44 5.64 3.66
+                        8.84 3.66s6.398-1.22 8.84-3.66l79.997-80c4.883-4.882 4.883-12.796 0-17.678z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!---->
+
+            </form>
+
+    </div>
+
+</body>
+<script type="text/javascript">
+    /*--------*/
+
+    //Modal section
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("modalBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    /*--------*/
+    var content_techniques = JSON.parse('{{ content_tech_list_|tojson }}');
+    var rating_techniques = JSON.parse('{{ rating_tech_list_|tojson }}');
+    var fields_selected = JSON.parse('{{ selected_fields_|tojson }}');
+    var content_type_selected = JSON.parse('{{ content_type_|tojson }}');
+
+    /*chenge content exogenus name input*/
+    function exogenusTech_name(field){
+        document.getElementById(field + '_dbpedia_mapping').name = field + 'tech_exogenus';
+    }
+
+    var j;
+    for(j = 0; j < fields_selected.length; j++){
+        if(content_type_selected !== 'RATING') {
+            exogenusTech_name(fields_selected[j]);
+        }
+    }
+
+    function changeField(){
+        var selectBox = document.getElementById('selectBox');
+        var i;
+        for(i = 0; i < selectBox.options.length; i++){
+            var value = selectBox.options[i].value;
+            var div_fields = document.getElementById(value.concat("_form"));
+            div_fields.style.display = "none";
+        }
+
+        var field;
+        for(field = 0; field < fields_selected.length; field++){
+            var tech;
+            if(content_type_selected !== 'RATING') {
+                for (tech = 0; tech < content_techniques.length; tech++) {
+                    var nltk_section = document.getElementById(fields_selected[field].concat(content_techniques[tech],
+                        "_nltk_section"));
+                    nltk_section.style.display = "none";
+
+                    var parameters_section = document.getElementById(fields_selected[field].concat(content_techniques[tech],
+                        "_parameters_section"));
+                    parameters_section.style.display = "none";
+                }
+            } else {
+                for(tech = 0; tech < rating_techniques.length; tech++){
+                    var parameters_section_rating = document.getElementById(fields_selected[field].concat(rating_techniques[tech],
+                        "_parameters_section_rating"));
+                    parameters_section_rating.style.display = "none";
+                }
+            }
+        }
+
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        var div_field_selected = document.getElementById(selectedValue.concat("_form"));
+
+        div_field_selected.style.display = "block";
+    }
+
+    var selectBox = document.getElementById('selectBox');
+    var default_value = selectBox.options[0].value;
+
+    var first_div = document.getElementById(default_value.concat("_form"))
+    first_div.style.display = "block";
+
+    /*--------*/
+
+    var selected_value = selectBox.options[selectBox.selectedIndex].value;
+
+    function enabled(field, technique){
+        if(content_type_selected !== 'RATING') {
+            var checked_ = document.getElementById(field.concat("_", technique)).checked;
+            if (checked_ === false) {
+                var section_nltk = document.getElementById(field.concat(technique, "_nltk_section"));
+                section_nltk.style.display = "none";
+
+                var section_parameters = document.getElementById(field.concat(technique, "_parameters_section"));
+                section_parameters.style.display = "none";
+            }
+        } else {
+            var checked_rating = document.getElementById(field + '_' + technique + '_rating').checked;
+            if(checked(field, "number_normalizer") === false){
+                var section_parameters_rating = document.getElementById(field.concat("number_normalizer", "_parameters_section_rating"));
+                section_parameters_rating.style.display = "none";
+            }
+        }
+    }
+
+
+    function checked(field, technique){
+        if(content_type_selected !== 'RATING') {
+            return document.getElementById(field.concat("_", technique)).checked;
+        } else {
+            return document.getElementById(field + '_' + technique + '_rating').checked;
+        }
+    }
+
+    function display_nltk(field, technique){
+        if(checked(field, technique) === true) {
+            var tech;
+            for (tech = 0; tech < content_techniques.length; tech++) {
+                if (content_techniques[tech] !== technique) {
+                    var other_section_nltk = document.getElementById(field.concat(content_techniques[tech], "_nltk_section"));
+                    other_section_nltk.style.display = "none";
+                } else {
+                    var section_nltk = document.getElementById(field.concat(technique, "_nltk_section"));
+                    section_nltk.style.display = "block";
+                    section_nltk.style.border = "1px solid #fff";
+                }
+            }
+        }
+    }
+
+    function hide_nltk(field, technique){
+        var section_nltk = document.getElementById(field.concat(technique, "_nltk_section"));
+        section_nltk.style.display = "none";
+    }
+
+    /*----*/
+
+    function shift_rating_parameters(){
+        if(content_type_selected === 'RATING'){
+            var parameters_section = document.getElementById("parameters")
+                parameters_section.style.top = "20px";
+        }
+    }
+
+    document.addEventListener('click', shift_rating_parameters);
+
+    function display_parameters(field, technique){
+        if(checked(field, technique) === true) {
+            var tech;
+            if(content_type_selected !== 'RATING') {
+                for (tech = 0; tech < content_techniques.length; tech++) {
+                    if (content_techniques[tech] !== technique) {
+                        var other_section_parameters = document.getElementById(field.concat(content_techniques[tech], "_parameters_section"));
+                        other_section_parameters.style.display = "none";
+                    } else {
+                        var section_parameters = document.getElementById(field.concat(technique, "_parameters_section"));
+                        section_parameters.style.display = "block";
+                        section_parameters.style.border = "1px solid #fff";
+                    }
+                }
+            } else {
+                for (tech = 0; tech < rating_techniques.length; tech++){
+                    if (rating_techniques[tech] !== technique) {
+                        var other_section_parameters_rating = document.getElementById(field.concat(rating_techniques[tech], "_parameters_section_rating"));
+                        other_section_parameters_rating.style.display = "none";
+                    } else {
+                        var section_parameters_rating = document.getElementById(field.concat(technique, "_parameters_section_rating"));
+                        section_parameters_rating.style.display = "block";
+                        section_parameters_rating.style.border = "1px solid #fff";
+                    }
+                }
+            }
+        }
+    }
+
+    function hide_parameters(field, technique){
+        if(content_type_selected !== 'RATING') {
+            var section_parameters = document.getElementById(field.concat(technique, "_parameters_section"));
+            section_parameters.style.display = "none";
+        } else {
+            var section_parameters_rating = document.getElementById(field.concat(technique, "_parameters_section_rating"));
+            section_parameters_rating.style.display = "none";
+        }
+    }
+
+    /* for nltk section*/
+    function unchecked_alert(field, technique){
+        if(checked(field, technique) === false){
+            var alert = document.getElementById(field.concat(technique, "_alert"));
+            alert.classList.toggle("show")
+            setTimeout(function (){
+                alert.className = alert.className.replace("show", "");
+            }, 2000);
+        }
+    }
+
+    /* for parameters section*/
+    function unchecked_alert_parameters(field, technique){
+        if(checked(field, technique) === false){
+            var alert;
+
+            if(content_type_selected !== 'RATING') {
+                alert = document.getElementById(field.concat(technique, "_alert_parameters"));
+                alert.classList.toggle("show")
+            } else {
+                alert = document.getElementById(field.concat(technique, "_alert_parameters_rating"));
+                alert.classList.toggle("show")
+            }
+
+            setTimeout(function (){
+                alert.className = alert.className.replace("show", "");
+            }, 2000);
+        }
+    }
+
+    /*Embedding parameters section*/
+    var sources = JSON.parse('{{ embedding_source_list_|tojson }}');
+
+    function sourceBlock() {
+        if (content_type_selected !== 'RATING') {
+            /*embedding*/
+            for (var f = 0; f < fields_selected.length; f++) {
+                for (var k = 0; k < sources.length; k++) {
+                    if (document.getElementById(fields_selected[f] + 'embedding' + sources[k]).checked === true) {
+                        var source_section = document.getElementById(fields_selected[f] + 'embedding' + sources[k] + '_source');
+                        source_section.style.display = "block";
+                    }
+                }
+            }
+        }
+    }
+    document.addEventListener('click', sourceBlock);
+
+    function show_source_section(field, technique, source){
+        var id_string = field + technique + source + "_source";
+        var source_section = document.getElementById(id_string);
+
+        source_section.style.display = "block";
+
+        var i;
+        for(i = 0; i < sources.length; i++){
+            if(source !== sources[i]){
+                var id_other_string = field + technique + sources[i] + "_source";
+                var other_source_section = document.getElementById(id_other_string);
+                other_source_section.style.display = "none";
+            }
+        }
+
+    }
+
+    /* Drag section */
+
+    /*dragElement(document.getElementById("technique"))*/
+    /*dragElement(document.getElementById("nltk"))*/
+    /*dragElement(document.getElementById("parameters"))*/
+
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id)) {
+            // if present, the header is where you move the DIV from:
+            document.getElementById(elmnt.id).onmousedown = dragMouseDown;
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
+
+    /*Ontology DBpedia autocomplete*/
+    var types = JSON.parse('{{ types|tojson }}');
+
+    function autocomplete(inp, arr) {
+      /*the autocomplete function takes two arguments,
+      the text field element and an array of possible autocompleted values:*/
+      var currentFocus;
+      /*execute a function when someone writes in the text field:*/
+      inp.addEventListener("input", function(e) {
+          var a, b, i, val = this.value;
+          /*close any already open lists of autocompleted values*/
+          closeAllLists();
+          if (!val) { return false;}
+          currentFocus = -1;
+          /*create a DIV element that will contain the items (values):*/
+          a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+
+          /*append the DIV element as a child of the autocomplete container:*/
+          this.parentNode.appendChild(a);
+          /*for each item in the array...*/
+          for (i = 0; i < arr.length; i++) {
+            /*check if the item starts with the same letters as the text field value:*/
+            if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+              /*create a DIV element for each matching element:*/
+              b = document.createElement("DIV");
+              /*make the matching letters bold:*/
+              b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+              b.innerHTML += arr[i].substr(val.length);
+              /*insert a input field that will hold the current array item's value:*/
+              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+              /*execute a function when someone clicks on the item value (DIV element):*/
+                  b.addEventListener("click", function(e) {
+                  /*insert the value for the autocomplete text field:*/
+                  inp.value = this.getElementsByTagName("input")[0].value;
+                  /*close the list of autocompleted values,
+                  (or any other open lists of autocompleted values:*/
+                  closeAllLists();
+              });
+              a.appendChild(b);
+            }
+          }
+      });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function(e) {
+          var x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode === 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode === 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode === 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+              /*and simulate a click on the "active" item:*/
+              if (x) x[currentFocus].click();
+            }
+          }
+      });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt !== x[i] && elmnt !== inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+    }
+
+    function types_(field, technique){
+        autocomplete(document.getElementById(field.concat(technique, "myInput")), types);
+    }
+
+    /*CHECK SECTION*/
+
+    /*rating*/
+    // Restricts input for the given textbox to the given inputFilter function.
+    function setInputFilter(textbox, inputFilter) {
+      ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+        textbox.addEventListener(event, function() {
+          if (inputFilter(this.value)) {
+            this.oldValue = this.value;
+            this.oldSelectionStart = this.selectionStart;
+            this.oldSelectionEnd = this.selectionEnd;
+          } else if (this.hasOwnProperty("oldValue")) {
+            this.value = this.oldValue;
+            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+          } else {
+            this.value = "";
+          }
+        });
+      });
+    }
+
+    if(content_type_selected === 'RATING') {
+        var i;
+        for (i = 0; i < fields_selected.length; i++) {
+            setInputFilter(document.getElementById(fields_selected[i] + 'number_normalizer_parameters_nn_min'), function (value) {
+                return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
+            });
+        }
+
+        for (i = 0; i < fields_selected.length; i++) {
+            setInputFilter(document.getElementById(fields_selected[i] + 'number_normalizer_parameters_nn_max'), function (value) {
+                return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
+            });
+        }
+    }
+
+    function getNNvalue(field, m_id){
+        return document.getElementById(field + m_id).value;
+    }
+
+    function checkNN_Min(field){
+        var error = false;
+        var value_selected = getNNvalue(field, 'number_normalizer_parameters_nn_min');
+
+        if(value_selected.length === 0){
+            error = true;
+        }
+
+        if(error === true){
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'number_normalizer');
+
+            var alert_ = document.getElementById(field + 'NN_min_alert');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return error;
+
+    }
+
+    function checkNN_Max(field){
+        var error = false;
+        var value_selected = getNNvalue(field, 'number_normalizer_parameters_nn_max');
+
+        if(value_selected.length === 0){
+            error = true;
+        }
+
+        if(error === true){
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'number_normalizer');
+
+            var alert_ = document.getElementById(field + 'NN_max_alert');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return error;
+
+    }
+
+    function checkNN(field){
+        /*{{field}}_{{technique}}_rating*/
+        if(document.getElementById(field + '_number_normalizer_rating').checked === true) {
+            if((checkNN_Min(field) === true) || (checkNN_Max(field)) === true) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function checkCompleteParameters_Rating(){
+        var i = 0;
+        var next = true;
+        do{
+            if(checkNN(fields_selected[i]) === false){
+                next = false;
+            }
+            i++;
+        }while((i < fields_selected.length) && (next === true))
+
+        return next;
+    }
+
+    /*content*/
+    <!--Check Embedding-->
+    var combining_techniques = JSON.parse('{{ embedding_combining_tech_list_|tojson }}');
+    var granularities = JSON.parse('{{ embidding_granularity_|tojson }}');
+    var sources_ = JSON.parse('{{ embedding_source_list_|tojson }}');
+    var gensim_models = JSON.parse('{{ gensim_models_|tojson }}');
+    var binary_types = JSON.parse('{{ binary_type_|tojson }}');
+
+
+    function isEmptyCombining(field){
+        var i = 0;
+        var empty = true;
+        do{
+            var checked = document.getElementById(field + 'embedding' + combining_techniques[i]).checked;
+            if(checked === true){
+                empty = false;
+            }
+            i++;
+        }while((i < combining_techniques.length) && (empty === true));
+
+        if(empty === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'embedding');
+
+            if(display === true) {
+                nltk_display.style.display = 'block';
+            }
+
+            var alert_ = document.getElementById(field + 'embedding_combining');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+    }
+
+    function isEmptyGranularity(field){
+        var i;
+        var empty = true;
+        i = 0;
+        do{
+            var checked = document.getElementById(field + 'embedding' + granularities[i]).checked;
+            if(checked === true){
+                empty = false
+            }
+            i++;
+        }while((i < granularities.length) && (empty === true));
+
+        if(empty === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'embedding');
+
+            var alert_ = document.getElementById(field + 'embedding_granularity');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+    }
+
+    function isEmptySources(field){
+        var i;
+        var empty = true;
+        i = 0;
+        do{
+            var checked = document.getElementById(field + 'embedding' + sources_[i]).checked;
+            if(checked === true){
+                empty = false
+            }
+            i++;
+        }while((i < sources_.length) && (empty === true));
+
+        if(empty === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'embedding');
+
+            var alert_ = document.getElementById(field + 'embedding_source');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+    }
+
+    /*Gensim*/
+    function isEmptyGensimModels(field, source){
+        var i;
+        var empty = true;
+        i = 0;
+        do{
+            var checked = document.getElementById(field + 'embedding' + source + gensim_models[i]).checked;
+            if(checked === true){
+                empty = false
+            }
+            i++;
+        }while((i < gensim_models.length) && (empty === true));
+
+        if(empty === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'embedding');
+
+            var alert_ = document.getElementById(field + 'embedding_gensim_models');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+    }
+
+    /*Binary*/
+    function requireBinaryFile(field, source){
+        var required = false;
+
+        if(document.getElementById(field + 'embedding' + source).checked === true){
+            /*document.getElementById(field + 'embedding' + source + '_binary_file').required = true;*/
+            if(document.getElementById(field + 'embedding' + source + '_binary_file').files.length === 0){
+                required = true;
+            } else {
+                required = false;
+            }
+        }
+
+        if(required === true){
+            selectBox.value = field
+            changeField();
+            display_parameters(field, 'embedding');
+            var alert_ = document.getElementById(field + 'embedding_binary_file');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return required;
+    }
+
+    function isEmptyBinaryTypes(field, source){
+        var i;
+        var empty = true;
+        i = 0;
+        do{
+            var checked = document.getElementById(field + 'embedding' + source + binary_types[i]).checked;
+            if(checked === true){
+                empty = false
+            }
+            i++;
+        }while((i < binary_types.length) && (empty === true));
+
+        if(empty === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'embedding');
+
+            var alert_ = document.getElementById(field + 'embedding_binary_type');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+
+    }
+
+    function checkSourcesEmbedding(field){
+        var i;
+        var empty = false;
+        for(i = 0; i < sources_.length; i++){
+            var checked = document.getElementById(field + 'embedding' + sources_[i]).checked;
+            if(checked === true) {
+                if (sources_[i] === 'gensim_downloader'){
+                    empty = isEmptyGensimModels(field, sources_[i]);
+                }
+
+                if(sources_[i] === 'binary_file'){
+                    if((isEmptyBinaryTypes(field, sources_[i]) === true) || (requireBinaryFile(field, sources_[i]) === true)){
+                        empty = true
+                    } else {
+                        empty = false;
+                    }
+                }
+            }
+        }
+
+        return empty;
+    }
+
+    function checkEmbedding(field){
+        if(document.getElementById(field + '_' + 'embedding').checked === true){
+            if((isEmptyCombining(field) === true) || (isEmptyGranularity(field) === true)
+                || (isEmptySources(field) === true) || (checkSourcesEmbedding(field) === true)){
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function returnTypeValue(field){
+        return document.getElementById(field + 'dbpedia_mapping' + 'myInput').value;
+    }
+
+    <!--Check DBPedia-->
+    function checkEntityType(field){
+        var error = true;
+        var value_selected = returnTypeValue(field);
+        var i;
+        i = 0;
+        do{
+            if(value_selected === types[i]){
+                error = false;
+            }
+            i++;
+        }while((i < types.length) && (error === true));
+
+        if(error === true){
+
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'dbpedia_mapping');
+
+            var alert_ = document.getElementById(field + 'dbpedia_mapping_entity_alert');
+            alert_.classList.toggle("show");
+            display(alert_);
+
+        }
+
+        return error;
+    }
+
+    var modes = JSON.parse('{{ dbpedia_mode_|tojson }}');
+    function isEmptyMode(field){
+        var i;
+        var empty = true;
+        i = 0;
+        do{
+            var checked = document.getElementById(field + 'dbpedia_mapping' + modes[i]).checked;
+            if(checked === true){
+                empty = false
+            }
+            i++;
+        }while((i < modes.length) && (empty === true));
+
+        /*dbpedia_mapping_mode_alert*/
+        if(empty === true){
+            selectBox.value = field;
+            changeField();
+            display_parameters(field, 'dbpedia_mapping');
+
+            var alert_ = document.getElementById(field + 'dbpedia_mapping_mode_alert');
+            alert_.classList.toggle("show");
+            display(alert_);
+        }
+
+        return empty;
+    }
+
+    function checkDBPedia(field){
+        if(document.getElementById(field + '_' + 'dbpedia_mapping').checked === true){
+            if( (checkEntityType(field) === true) || (isEmptyMode(field) === true) ){
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    function checkCompleteParameters(){
+        var i = 0;
+        var next = true;
+        do{
+            if((checkEmbedding(fields_selected[i]) === false) || (checkDBPedia(fields_selected[i]) === false)){
+                next = false;
+            }
+            i++;
+        }while((i < fields_selected.length) && (next === true))
+
+        return next;
+    }
+
+    /*{{field}}tech_alert  _content && _rating*/
+    function isEmptySelectTech(field, techniques){
+        var i = 0;
+        var empty = true;
+
+        if(content_type_selected !== 'RATING') {
+            do{
+               if(document.getElementById(field + '_' + techniques[i]).checked === true) {
+                   empty = false;
+               }
+               i++
+            } while ((i < techniques.length) && (empty === true));
+
+        } else {
+            do{
+               if(document.getElementById(field + '_' + techniques[i] + '_rating').checked === true){
+                   empty = false;
+               }
+                i++
+            } while ((i < techniques.length) && (empty === true));
+        }
+
+        return empty;
+    }
+
+    function display(alert){
+        setTimeout(function () {
+            alert.className = alert.className.replace("show", "");
+        }, 3200);
+    }
+
+    function Tech_fieldsSelected(techniques){
+        var i = 0;
+        var next = true;
+        do{
+            var alert_ = document.getElementById(fields_selected[i] + 'tech_alert');
+
+            if(isEmptySelectTech(fields_selected[i], techniques) === true){
+                next = false;
+
+                selectBox.value = fields_selected[i];
+                changeField();
+                alert_.classList.toggle("show");
+                display(alert_);
+            }
+
+            i++;
+        }while ((i < fields_selected.length) && (next === true));
+
+        return next;
+    }
+
+    function validateForm(){
+        if(content_type_selected !== 'RATING') {
+            if ((checkCompleteParameters() === false) || (Tech_fieldsSelected(content_techniques) === false)) {
+                event.preventDefault();
+                /*alert('complete!');*/
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if ((checkCompleteParameters_Rating() === false) || (Tech_fieldsSelected(rating_techniques) === false)) {
+                event.preventDefault();
+                /*alert('complete!');*/
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    // control if binary file selected is .bin
+    function control_ext(event){
+        var name = event.target.files[0].name;
+
+        window.localStorage.setItem('file', name);
+
+        const lastDot = name.lastIndexOf('.');
+        const ext = name.substring(lastDot + 1);
+
+        var show = false;
+
+        if(ext !== 'bin'){
+            show = true;
+            alert('If you want go next, Select a binary file (.bin)')
+        }
+    }
+
+
+    // save all choice (local storage)
+    window.onload= function() {
+        var list = document.querySelectorAll(`[type*="checkbox"]`);
+        list.forEach(el => {
+            var checked = JSON.parse(sessionStorage.getItem(el.id));
+            document.getElementById(el.id).checked = checked;
+        });
+
+        var list_ = document.querySelectorAll(`[type*="radio"]`);
+        list_.forEach(el => {
+            var checked_ = JSON.parse(sessionStorage.getItem(el.id));
+            document.getElementById(el.id).checked = checked_;
+        });
+
+        if(content_type_selected !== 'RATING'){
+            get_entity();
+        }
+    }
+
+    save = function(){
+        var list = document.querySelectorAll(`[type*="checkbox"]`);
+        list.forEach( el => {
+            sessionStorage.setItem(el.id, el.checked);
+        })
+
+        var list_ = document.querySelectorAll(`[type*="radio"]`);
+        list_.forEach( el => {
+            sessionStorage.setItem(el.id, el.checked);
+        })
+
+        if(content_type_selected !== 'RATING'){
+            save_entity()
+        }
+    }
+
+    /*dbpedia_mapping*/
+    function save_entity() {
+        var k;
+        for (k = 0; k < fields_selected.length; k++) {
+            var type = document.getElementById(fields_selected[k] + 'dbpedia_mapping' + 'myInput');
+            sessionStorage.setItem(type.id, type.value);
+        }
+    }
+
+    function get_entity() {
+        var k;
+        for (k = 0; k < fields_selected.length; k++) {
+            var type = document.getElementById(fields_selected[k] + 'dbpedia_mapping' + 'myInput');
+            var value = sessionStorage.getItem(type.id);
+            document.getElementById(type.id).value = value;
+        }
+    }
+
+       /*nn parameters selected*/
+    if(content_type_selected === 'RATING') {
+        jQuery(function ($) {
+            if (typeof (window.sessionStorage) != "undefined") {
+                //set the value to the text fields
+                $("input[type=text]").val(function () {
+                    return sessionStorage.getItem(this.id);
+                });
+                $("input[type=text]").on("change", function () {
+                    sessionStorage.setItem(this.id, $(this).val());
+                });
+            }
+        });
+    }
+
+
+</script>
+</html>

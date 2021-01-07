@@ -1,0 +1,1380 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.evaluation package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.evaluation package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.classification_metrics">orange_cb_recsys.evaluation.classification_metrics module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.delta_gap">orange_cb_recsys.evaluation.delta_gap module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.eval_model">orange_cb_recsys.evaluation.eval_model module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.fairness_metrics">orange_cb_recsys.evaluation.fairness_metrics module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.metrics">orange_cb_recsys.evaluation.metrics module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.novelty">orange_cb_recsys.evaluation.novelty module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.partitioning">orange_cb_recsys.evaluation.partitioning module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.prediction_metrics">orange_cb_recsys.evaluation.prediction_metrics module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.ranking_metrics">orange_cb_recsys.evaluation.ranking_metrics module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.serendipity">orange_cb_recsys.evaluation.serendipity module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation.utils">orange_cb_recsys.evaluation.utils module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.evaluation">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.evaluation package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.evaluation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-evaluation-package">
+<h1>orange_cb_recsys.evaluation package<a class="headerlink" href="#orange-cb-recsys-evaluation-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.classification_metrics">
+<span id="orange-cb-recsys-evaluation-classification-metrics-module"></span><h2>orange_cb_recsys.evaluation.classification_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.classification_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.classification_metrics.</code><code class="sig-name descname">ClassificationMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevant_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#ClassificationMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize classification metrics.
+A classification metric measure if
+known relevant items are predicted as relevant</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>relevant_threshold</strong> – specify the minimum value to consider
+a truth frame row as relevant</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#ClassificationMetric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that execute the classification metric computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set,
+first n will be considered relevant,
+with n equal to the number of relevant items in the test set</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.FNMeasure">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.classification_metrics.</code><code class="sig-name descname">FNMeasure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">relevant_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#FNMeasure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.FNMeasure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric</span></code></a></p>
+<p>FnMeasure</p>
+<img alt="../_images/fn.png" src="../_images/fn.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – multiplier</p></li>
+<li><p><strong>relevant_threshold</strong> – specify the minimum value to consider
+a truth frame row as relevant</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.FNMeasure.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#FNMeasure.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.FNMeasure.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Fn measure of the given ranking (predictions)
+based on the truth ranking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set,
+first n will be considered relevant,
+with n equal to the number of relevant items in the test set</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fn value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.MRR">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.classification_metrics.</code><code class="sig-name descname">MRR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevant_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#MRR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.MRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric</span></code></a></p>
+<img alt="../_images/mrr.png" src="../_images/mrr.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>relevant_threshold</strong> – specify the minimum value to consider
+a truth frame row as relevant</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.MRR.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#MRR.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.MRR.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Mean Reciprocal Rank metric</p>
+<dl class="simple">
+<dt>Where:</dt><dd><ul class="simple">
+<li><p>Q is the set of recommendation lists</p></li>
+<li><p>rank(i) is the position of the first relevant item in the i-th recommendation list</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set,
+first n will be considered relevant,
+with n equal to the number of relevant items in the test set</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the mrr value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.Precision">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.classification_metrics.</code><code class="sig-name descname">Precision</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevant_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#Precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.Precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric</span></code></a></p>
+<img alt="../_images/precision.png" src="../_images/precision.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>relevant_threshold</strong> – specify the minimum value to consider
+a truth frame row as relevant</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.Precision.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#Precision.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.Precision.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the precision of the given ranking (predictions)
+based on the truth ranking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set,
+first n will be considered relevant,
+with n equal to the number of relevant items in the test set</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>precision</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.Recall">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.classification_metrics.</code><code class="sig-name descname">Recall</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevant_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#Recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.Recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.classification_metrics.ClassificationMetric</span></code></a></p>
+<img alt="../_images/recall.png" src="../_images/recall.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>relevant_threshold</strong> – specify the minimum value to consider
+a truth frame row as relevant</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.classification_metrics.Recall.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/classification_metrics.html#Recall.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.classification_metrics.Recall.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the recall of the given ranking (predictions)
+based on the truth ranking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set,
+first n will be considered relevant,
+with n equal to the number of relevant items in the test set</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>recall</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.delta_gap">
+<span id="orange-cb-recsys-evaluation-delta-gap-module"></span><h2>orange_cb_recsys.evaluation.delta_gap module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.delta_gap" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.delta_gap.calculate_delta_gap">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.delta_gap.</code><code class="sig-name descname">calculate_delta_gap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recs_gap</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">profile_gap</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/delta_gap.html#calculate_delta_gap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.delta_gap.calculate_delta_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the ratio between the recommendation gap and the user profiles gap</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recs_gap</strong> (<em>float</em>) – recommendation gap</p></li>
+<li><p><strong>profile_gap</strong> – user profiles gap</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>delta gap measure</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.delta_gap.calculate_gap">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.delta_gap.</code><code class="sig-name descname">calculate_gap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">group</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">avg_pop_by_users</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>object<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/delta_gap.html#calculate_gap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.delta_gap.calculate_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the GAP (Group Average Popularity) formula</p>
+<img alt="../_images/gap.png" src="../_images/gap.png" />
+<dl class="simple">
+<dt>Where:</dt><dd><ul class="simple">
+<li><p>G is the set of users</p></li>
+<li><p>iu is the set of items rated by user u</p></li>
+<li><p>pop_i is the popularity of item i</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<em>Set&lt;str&gt;</em>) – the set of users (from_id)</p></li>
+<li><p><strong>avg_pop_by_users</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – average popularity by user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>gap score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.delta_gap.get_avg_pop">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.delta_gap.</code><code class="sig-name descname">get_avg_pop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span><span class="p">:</span> <span class="n">pandas.core.series.Series</span></em>, <em class="sig-param"><span class="n">pop_by_items</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>object<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/delta_gap.html#get_avg_pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.delta_gap.get_avg_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average popularity of the given items Series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> (<em>pd.Series</em>) – a pandas Series that contains string labels (‘label’)</p></li>
+<li><p><strong>pop_by_items</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – popularity for each label (‘label’, ‘popularity’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>average popularity</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.delta_gap.get_avg_pop_by_users">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.delta_gap.</code><code class="sig-name descname">get_avg_pop_by_users</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">pop_by_items</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>object<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">group</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/delta_gap.html#get_avg_pop_by_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.delta_gap.get_avg_pop_by_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average popularity for each user in the DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – a pandas dataframe with columns = [‘from_id’, ‘to_id’, ‘rating’]</p></li>
+<li><p><strong>pop_by_items</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – popularity for each label (‘label’, ‘popularity’)</p></li>
+<li><p><strong>group</strong> (<em>Set&lt;str&gt;</em>) – (optional) the set of users (from_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>average popularity by user</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>avg_pop_by_users (Dict&lt;str, float&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.eval_model">
+<span id="orange-cb-recsys-evaluation-eval-model-module"></span><h2>orange_cb_recsys.evaluation.eval_model module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.eval_model" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.eval_model.</code><code class="sig-name descname">EvalModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.config.RecSysConfig" title="orange_cb_recsys.recsys.config.RecSysConfig">orange_cb_recsys.recsys.config.RecSysConfig</a></span></em>, <em class="sig-param"><span class="n">partitioning</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.evaluation.partitioning.Partitioning" title="orange_cb_recsys.evaluation.partitioning.Partitioning">orange_cb_recsys.evaluation.partitioning.Partitioning</a></span></em>, <em class="sig-param"><span class="n">metric_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric">orange_cb_recsys.evaluation.metrics.Metric</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#EvalModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for automating the process of recommending and
+evaluate produced recommendations
+:param config: Configuration of the
+:type config: RecSysConfig
+:param recommender system that will be internally created:
+:param partitioning: Partitioning technique
+:type partitioning: Partitioning
+:param metric_list: List of metrics that eval model will compute
+:type metric_list: list&lt;Metric&gt;</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel.append_metric">
+<code class="sig-name descname">append_metric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric">orange_cb_recsys.evaluation.metrics.Metric</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#EvalModel.append_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.append_metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel.config">
+<em class="property">property </em><code class="sig-name descname">config</code><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#EvalModel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel.metrics">
+<em class="property">property </em><code class="sig-name descname">metrics</code><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.metrics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.EvalModel.partitioning">
+<em class="property">property </em><code class="sig-name descname">partitioning</code><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.partitioning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.eval_model.</code><code class="sig-name descname">PredictionAlgEvalModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">partitioning</span></em>, <em class="sig-param"><span class="n">metric_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric">orange_cb_recsys.evaluation.metrics.Metric</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#PredictionAlgEvalModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.eval_model.EvalModel" title="orange_cb_recsys.evaluation.eval_model.EvalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.eval_model.EvalModel</span></code></a></p>
+<p>Class for automating the process of recommending and evaluate produced recommendations.
+This subclass automate the computation of metrics
+whose input are the result of a RecSys
+configured with a rating prediction algorithm.
+The metrics are iteratively computed for each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.config.RecSysConfig" title="orange_cb_recsys.recsys.config.RecSysConfig"><em>RecSysConfig</em></a>) – Configuration of the</p></li>
+<li><p><strong>system that will be internally created</strong> (<em>recommender</em>) – </p></li>
+<li><p><strong>partitioning</strong> (<a class="reference internal" href="#orange_cb_recsys.evaluation.partitioning.Partitioning" title="orange_cb_recsys.evaluation.partitioning.Partitioning"><em>Partitioning</em></a>) – Partitioning technique</p></li>
+<li><p><strong>metric_list</strong> (<em>list&lt;Metric&gt;</em>) – List of metrics that eval model will compute</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#PredictionAlgEvalModel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method performs the rating prediction evaluation by initializing internally</dt><dd><p>a recommender system that produces recommendations for all the
+users in the directory specified in the configuration phase.
+The evaluation is performed by creating a training set,
+and a test set with its corresponding
+truth base. The rating prediction will be computed on every item in the test eet.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>has a ‘from’ column, representing the user_ids for</dt><dd><p>which the metrics was computed, and then one different column for every metric
+performed. The returned DataFrames contain one row per user, and the corresponding
+metric values are given by the mean of the values obtained for that user.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>prediction_metric_results</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.eval_model.</code><code class="sig-name descname">RankingAlgEvalModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">partitioning</span></em>, <em class="sig-param"><span class="n">metric_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric">orange_cb_recsys.evaluation.metrics.Metric</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#RankingAlgEvalModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.eval_model.EvalModel" title="orange_cb_recsys.evaluation.eval_model.EvalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.eval_model.EvalModel</span></code></a></p>
+<p>Class for automating the process of recommending and
+evaluate produced recommendations.
+This subclass automate the computation of metrics
+whose input are the result of a RecSys
+configured with a ranking algorithm.
+The metrics are iteratively computed for each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.config.RecSysConfig" title="orange_cb_recsys.recsys.config.RecSysConfig"><em>RecSysConfig</em></a>) – Configuration of the</p></li>
+<li><p><strong>system that will be internally created</strong> (<em>recommender</em>) – </p></li>
+<li><p><strong>partitioning</strong> (<a class="reference internal" href="#orange_cb_recsys.evaluation.partitioning.Partitioning" title="orange_cb_recsys.evaluation.partitioning.Partitioning"><em>Partitioning</em></a>) – Partitioning technique</p></li>
+<li><p><strong>metric_list</strong> (<em>list&lt;Metric&gt;</em>) – List of metrics that eval model will compute</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#RankingAlgEvalModel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs the evaluation by initializing
+internally a recommender system that produces
+recommendations for all the users in the directory
+specified in the configuration phase.
+The evaluation is performed by creating a training set,
+and a test set with its corresponding
+truth base. The ranking algorithm will use the test set as candidate items list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>has a ‘from’ column, representing the user_ids for</dt><dd><p>which the metrics was computed, and then one different column for every metric
+performed. The returned DataFrames contain one row per user, and the corresponding
+metric values are given by the mean of the values obtained for that user.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ranking_metric_results</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.eval_model.ReportEvalModel">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.eval_model.</code><code class="sig-name descname">ReportEvalModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">recs_number</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">metric_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric">orange_cb_recsys.evaluation.metrics.Metric</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#ReportEvalModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.ReportEvalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.eval_model.EvalModel" title="orange_cb_recsys.evaluation.eval_model.EvalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.eval_model.EvalModel</span></code></a></p>
+<p>Class for automating the process of recommending
+and evaluate produced recommendations.
+This subclass automate the computation of metrics
+whose input is the result of a RecSys
+configured with a ranking algorithm.
+The recommendation are computed for each user and
+the metrics are computed only after the whole
+recommendation process, on the entire frame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.config.RecSysConfig" title="orange_cb_recsys.recsys.config.RecSysConfig"><em>RecSysConfig</em></a>) – Configuration of the</p></li>
+<li><p><strong>system that will be internally created</strong> (<em>recommender</em>) – </p></li>
+<li><p><strong>metric_list</strong> (<em>list&lt;Metric&gt;</em>) – List of metrics that eval model will compute</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.eval_model.ReportEvalModel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/eval_model.html#ReportEvalModel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.ReportEvalModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method performs the rating prediction evaluation by initializing internally</dt><dd><p>a recommender system that produces recommendations for all the
+users in the directory specified in the configuration phase.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>each element of this list is a metric</dt><dd><p>result that can be of different types,
+according to the metric, for example a DataFrame or a float</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>result_list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.fairness_metrics">
+<span id="orange-cb-recsys-evaluation-fairness-metrics-module"></span><h2>orange_cb_recsys.evaluation.fairness_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.fairness_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.CatalogCoverage">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">CatalogCoverage</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#CatalogCoverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.CatalogCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric</span></code></a></p>
+<img alt="../_images/cat_coverage.png" src="../_images/cat_coverage.png" />
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.CatalogCoverage.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#CatalogCoverage.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.CatalogCoverage.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the catalog coverage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>coverage percentage</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.DeltaGap">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">DeltaGap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#DeltaGap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.DeltaGap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric</span></code></a></p>
+<img alt="../_images/d_gap.png" src="../_images/d_gap.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_groups</strong> (<em>dict&lt;str</em><em>, </em><em>float&gt;</em>) – specify how to divide user in groups, so
+specify for each group:
+- name
+- percentage of users</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.DeltaGap.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#DeltaGap.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.DeltaGap.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Delta - GAP (Group Average Popularity) metric</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>each row contains (‘from_id’, ‘delta-gap’)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">FairnessMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#FairnessMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize fairness metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file that the metrics will serialize</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – directory in which the file will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.file_name">
+<em class="property">property </em><code class="sig-name descname">file_name</code><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.file_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.output_directory">
+<em class="property">property </em><code class="sig-name descname">output_directory</code><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.output_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#FairnessMetric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that execute the fairness metric computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.GiniIndex">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">GiniIndex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#GiniIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.GiniIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric</span></code></a></p>
+<p>Gini index</p>
+<img alt="../_images/gini.png" src="../_images/gini.png" />
+<p>Where:
+- n is the size of the user or item set
+- elem(i) is the user or the item in the i-th position in the sorted frame by user or item</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.GiniIndex.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#GiniIndex.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.GiniIndex.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Gini index score for each user or item in the DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>each row contains the ‘gini_index’ for each user or item</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">GroupFairnessMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#GroupFairnessMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric</span></code></a></p>
+<p>Fairness metrics based on user groups</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_groups</strong> (<em>dict&lt;str</em><em>, </em><em>float&gt;</em>) – specify how to divide user in groups, so
+specify for each group specify:
+- name
+- percentage of users</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file that the metrics will serialize</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – directory in which the file will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#GroupFairnessMetric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that execute the fairness metric computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric.user_groups">
+<em class="property">property </em><code class="sig-name descname">user_groups</code><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric.user_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.LongTailDistr">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">LongTailDistr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#LongTailDistr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.LongTailDistr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file that the metrics will serialize</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – directory in which the file will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.LongTailDistr.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#LongTailDistr.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.LongTailDistr.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the long tail distribution for the truth frame
+:param truth: original rating frame used for recsys config
+:type truth: pd.DataFrame
+:param predictions: dataframe with recommendations for multiple users
+:type predictions: pd.DataFrame</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.PopRatioVsRecs">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">PopRatioVsRecs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">store_frame</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#PopRatioVsRecs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.PopRatioVsRecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.GroupFairnessMetric</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file that the metrics will serialize</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – directory in which the file will be serialized</p></li>
+<li><p><strong>user_groups</strong> (<em>dict&lt;str</em><em>, </em><em>float&gt;</em>) – specify how to divide user in groups, so</p></li>
+<li><p><strong>for each group specify</strong> (<em>specify</em>) – </p></li>
+<li><p><strong>name</strong> (<em>-</em>) – </p></li>
+<li><p><strong>percentage of users</strong> (<em>-</em>) – </p></li>
+<li><p><strong>store_frame</strong> (<em>bool</em>) – True if you want to store the frame in a csv file, False otherwise</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.PopRatioVsRecs.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#PopRatioVsRecs.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.PopRatioVsRecs.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the comparison between the profile popularity and recommendation popularity and build a boxplot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains ‘user_group’, ‘profile_pop_ratio’, ‘recs_pop_ratio’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>score_frame (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.PopRecsCorrelation">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.fairness_metrics.</code><code class="sig-name descname">PopRecsCorrelation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#PopRecsCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.PopRecsCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.fairness_metrics.FairnessMetric</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file that the metrics will serialize</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – directory in which the file will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.fairness_metrics.PopRecsCorrelation.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/fairness_metrics.html#PopRecsCorrelation.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.fairness_metrics.PopRecsCorrelation.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the correlation between the two frames and store
+the correlation plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.metrics">
+<span id="orange-cb-recsys-evaluation-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.metrics.Metric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.metrics.</code><code class="sig-name descname">Metric</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/metrics.html#Metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.Metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class that generalize metric concept;</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.metrics.Metric.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/metrics.html#Metric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.Metric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that execute the metric computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe with known ratings,
+it is used as ground truth in metric computation
+predictions (pd.DataFrame): dataframe with predicted items and
+associated scores</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.novelty">
+<span id="orange-cb-recsys-evaluation-novelty-module"></span><h2>orange_cb_recsys.evaluation.novelty module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.novelty" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.novelty.Novelty">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.novelty.</code><code class="sig-name descname">Novelty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_of_recs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/novelty.html#Novelty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.novelty.Novelty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<img alt="../_images/novelty.png" src="../_images/novelty.png" />
+<p>where:
+- hits is a set of predicted items
+- Popularity(i) = % users who rated item i</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_of_recs</strong> – number of recommendation
+produced for each user</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.novelty.Novelty.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/novelty.html#Novelty.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.novelty.Novelty.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the novelty score</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Novelty score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>novelty (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.partitioning">
+<span id="orange-cb-recsys-evaluation-partitioning-module"></span><h2>orange_cb_recsys.evaluation.partitioning module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.partitioning" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.partitioning.KFoldPartitioning">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.partitioning.</code><code class="sig-name descname">KFoldPartitioning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_splits</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/partitioning.html#KFoldPartitioning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.partitioning.KFoldPartitioning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.partitioning.Partitioning" title="orange_cb_recsys.evaluation.partitioning.Partitioning"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.partitioning.Partitioning</span></code></a></p>
+<p>Class that perform K-Fold partitioning</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_splits</strong> (<em>int</em>) – number of splits</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – random state</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.partitioning.KFoldPartitioning.set_dataframe">
+<code class="sig-name descname">set_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataframe</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/partitioning.html#KFoldPartitioning.set_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.partitioning.KFoldPartitioning.set_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.partitioning.Partitioning">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.partitioning.</code><code class="sig-name descname">Partitioning</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/partitioning.html#Partitioning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.partitioning.Partitioning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract Class for partitioning technique</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.partitioning.Partitioning.dataframe">
+<em class="property">property </em><code class="sig-name descname">dataframe</code><a class="headerlink" href="#orange_cb_recsys.evaluation.partitioning.Partitioning.dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.prediction_metrics">
+<span id="orange-cb-recsys-evaluation-prediction-metrics-module"></span><h2>orange_cb_recsys.evaluation.prediction_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.prediction_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.MAE">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.prediction_metrics.</code><code class="sig-name descname">MAE</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#MAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.MAE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric" title="orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric</span></code></a></p>
+<img alt="../_images/mae.png" src="../_images/mae.png" />
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.MAE.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#MAE.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.MAE.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the MAE metric</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Mean Average Error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.prediction_metrics.</code><code class="sig-name descname">PredictionMetric</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#PredictionMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#PredictionMetric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that execute the prediction metric computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.RMSE">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.prediction_metrics.</code><code class="sig-name descname">RMSE</code><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#RMSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.RMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric" title="orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.prediction_metrics.PredictionMetric</span></code></a></p>
+<img alt="../_images/rmse.png" src="../_images/rmse.png" />
+<p>Where T is the test set and r’ is the actual score give by user u to item i</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.prediction_metrics.RMSE.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/prediction_metrics.html#RMSE.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.prediction_metrics.RMSE.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the RMSE metric</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Root Mean Squared Error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.ranking_metrics">
+<span id="orange-cb-recsys-evaluation-ranking-metrics-module"></span><h2>orange_cb_recsys.evaluation.ranking_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.ranking_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.Correlation">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.ranking_metrics.</code><code class="sig-name descname">Correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#Correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.Correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.ranking_metrics.RankingMetric" title="orange_cb_recsys.evaluation.ranking_metrics.RankingMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.ranking_metrics.RankingMetric</span></code></a></p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.Correlation.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#Correlation.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.Correlation.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the correlation between the two ranks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value of the specified correlation metric</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.NDCG">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.ranking_metrics.</code><code class="sig-name descname">NDCG</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevance_split</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#NDCG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.NDCG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.ranking_metrics.RankingMetric" title="orange_cb_recsys.evaluation.ranking_metrics.RankingMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.ranking_metrics.RankingMetric</span></code></a></p>
+<p>Discounted cumulative gain
+.. image:: metrics_img/dcg.png</p>
+<p>This is then normalized as follows:
+.. image:: metrics_img/ndcg.png</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.NDCG.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#NDCG.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.NDCG.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Normalized DCG measure using Truth rank as ideal DCG
+:param truth: dataframe whose columns are: to_id, rating
+:type truth: pd.DataFrame
+:param predictions: dataframe whose columns are: to_id, rating;</p>
+<blockquote>
+<div><p>it represents the ranking of all the items in the test set</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>array of ndcg</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndcg (List[float])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.NDCG.perform_DCG">
+<em class="property">static </em><code class="sig-name descname">perform_DCG</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gain_values</span><span class="p">:</span> <span class="n">pandas.core.series.Series</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>float<span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#NDCG.perform_DCG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.NDCG.perform_DCG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Discounted Cumulative Gain array of a gain vector
+:param gain_values: Series of gains
+:type gain_values: pd.Series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>array of dcg</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dcg (List&lt;float&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.RankingMetric">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.ranking_metrics.</code><code class="sig-name descname">RankingMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relevance_split</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#RankingMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.RankingMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize ranking metrics.
+It measures the quality of the given predicted ranking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevance_split</strong> – specify how to map each truth score</p></li>
+<li><p><strong>a discrete relevance judgement</strong> (<em>to</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.ranking_metrics.RankingMetric.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/ranking_metrics.html#RankingMetric.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.ranking_metrics.RankingMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the metric value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe whose columns are: to_id, rating;
+it represents the ranking of all the items in the test set</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.serendipity">
+<span id="orange-cb-recsys-evaluation-serendipity-module"></span><h2>orange_cb_recsys.evaluation.serendipity module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.serendipity" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.evaluation.serendipity.Serendipity">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.evaluation.serendipity.</code><code class="sig-name descname">Serendipity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_of_recs</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/serendipity.html#Serendipity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.serendipity.Serendipity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.Metric</span></code></a></p>
+<img alt="../_images/serendipity.png" src="../_images/serendipity.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_of_recs</strong> – number of recommendation
+produced for each user</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.evaluation.serendipity.Serendipity.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictions</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">truth</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/serendipity.html#Serendipity.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.serendipity.Serendipity.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the serendipity score: unexpected recommendations, surprisingly and interesting items a user
+might not have otherwise discovered</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The serendipity value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>serendipity (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation.utils">
+<span id="orange-cb-recsys-evaluation-utils-module"></span><h2>orange_cb_recsys.evaluation.utils module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.utils.get_profile_avg_pop_ratio">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.utils.</code><code class="sig-name descname">get_profile_avg_pop_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">users</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">pop_ratio_by_users</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/utils.html#get_profile_avg_pop_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.get_profile_avg_pop_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the average profile popularity ratio</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>users</strong> (<em>Set&lt;str&gt;</em>) – set of ‘from_id’ labels</p></li>
+<li><p><strong>pop_ratio_by_users</strong> (<em>pd.DataFrame</em>) – contains the ‘popularity_ratio’ for each ‘from_id’ (user)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>average profile popularity ratio</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.utils.get_recs_avg_pop_ratio">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.utils.</code><code class="sig-name descname">get_recs_avg_pop_ratio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">users</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">recommendations</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">most_popular_items</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/utils.html#get_recs_avg_pop_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.get_recs_avg_pop_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the popularity ratio
+:param users: set of ‘from_id’ labels
+:type users: Set[str]
+:param recommendations: DataFrame with columns = [‘from_id’, ‘to_id’, ‘rating’]
+:type recommendations: pd.DataFrame
+:param most_popular_items: set of most popular ‘to_id’ labels
+:type most_popular_items: Set[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>avg popularity ratio for recommendations</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.utils.pop_ratio_by_user">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.utils.</code><code class="sig-name descname">pop_ratio_by_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">most_pop_items</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/utils.html#pop_ratio_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.pop_ratio_by_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the popularity ratio for each user
+:param score_frame: each row contains index(the rank position), label, value predicted
+:type score_frame: pd.DataFrame
+:param most_pop_items: set of most popular ‘to_id’ labels
+:type most_pop_items: Set[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>contains the ‘popularity_ratio’ for each ‘from_id’ (user)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.utils.popular_items">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.utils.</code><code class="sig-name descname">popular_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; Set<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/utils.html#popular_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.popular_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a set of most popular items (‘to_id’s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>score_frame</strong> (<em>pd.DataFrame</em>) – each row contains index(the rank position), label, value predicted</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>set of most popular labels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Set&lt;str&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.evaluation.utils.split_user_in_groups">
+<code class="sig-prename descclassname">orange_cb_recsys.evaluation.utils.</code><code class="sig-name descname">split_user_in_groups</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">pop_items</span><span class="p">:</span> <span class="n">Set<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/evaluation/utils.html#split_user_in_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.split_user_in_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score_frame</strong> (<em>pd.DataFrame</em>) – DataFrame with columns = [‘from_id’, ‘to_id’, ‘rating’]</p></li>
+<li><p><strong>groups</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – each key contains the name of the group and each value contains the</p></li>
+<li><p><strong>of the specified group. If the groups don't cover the entire user collection</strong><strong>,</strong> (<em>percentage</em>) – </p></li>
+<li><p><strong>rest of the users are considered in a 'default_diverse' group</strong> (<em>the</em>) – </p></li>
+<li><p><strong>pop_items</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – set of most popular ‘to_id’ labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>key = group_name, value = Set of ‘from_id’ labels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>groups_dict (Dict&lt;str, Set&lt;str&gt;&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.evaluation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.evaluation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

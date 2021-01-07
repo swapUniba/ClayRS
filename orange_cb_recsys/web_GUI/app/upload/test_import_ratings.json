@@ -1,0 +1,6 @@
+{"user_id": "01", "item_id":  "a", "review_title": "not so good","text": "I expected more from this product", "stars": 2.0, "timestamp": 1234567}
+{"user_id": "01", "item_id":  "b", "review_title": "perfect","text": "I love this product", "stars": 5.0, "timestamp": 1234567}
+{"user_id": "01", "item_id":  "c", "review_title": "awesome","text": "The perfect gift for my darling", "stars": 4.0, "timestamp": 1234567}
+{"user_id": "02", "item_id":  "a", "review_title": "a disaster","text": "Too much expensive ", "stars": 1.0, "timestamp": 1234567}
+{"user_id": "02", "item_id":  "c", "review_title": "really good","text": "A good compromise", "stars": 3.5, "timestamp": 1234567}
+{"user_id": "03", "item_id":  "b", "review_title": "Awesome","text": "", "stars": 5.0, "timestamp": 1234567}

@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.information_processor.information_processor</span> <span class="kn">import</span> <span class="n">TextProcessor</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.information_processor.nlp</span> <span class="kn">import</span> <span class="n">NLTK</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.raw_information_source</span> <span class="kn">import</span> <span class="n">RawInformationSource</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.const</span> <span class="kn">import</span> <span class="n">DEVELOPING</span><span class="p">,</span> <span class="n">home_path</span><span class="p">,</span> <span class="n">logger</span>
+
+
+<div class="viewcode-block" id="EmbeddingLearner"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.embedding_learner.html#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner">[docs]</a><span class="k">class</span> <span class="nc">EmbeddingLearner</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract Class for the different kinds of embedding.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (RawInformationSource): Source where the content is stored.</span>
+<span class="sd">        preprocessor (InformationProcessor): Instance of the class InformationProcessor,</span>
+<span class="sd">        specify how to process (can be None) the source data, before</span>
+<span class="sd">        use it for model computation</span>
+<span class="sd">        field_list (List&lt;str&gt;): Field name list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">RawInformationSource</span><span class="p">,</span>
+                 <span class="n">preprocessor</span><span class="p">:</span> <span class="n">TextProcessor</span><span class="p">,</span>
+                 <span class="n">field_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__source</span><span class="p">:</span> <span class="n">RawInformationSource</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="k">if</span> <span class="n">preprocessor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__preprocessor</span><span class="p">:</span> <span class="n">TextProcessor</span> <span class="o">=</span> <span class="n">NLTK</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__preprocessor</span><span class="p">:</span> <span class="n">TextProcessor</span> <span class="o">=</span> <span class="n">preprocessor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__preprocessor</span><span class="o">.</span><span class="n">set_lang</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_list</span> <span class="o">=</span> <span class="n">field_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EmbeddingLearner.fit"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.embedding_learner.html#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method creates the model, in different ways according to the various implementations.</span>
+<span class="sd">        The model isn&#39;t then returned, but gets stored in the &#39;model&#39; class attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__source</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">preprocessor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__preprocessor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">field_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_list</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span>
+
+    <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="EmbeddingLearner.extract_corpus"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.embedding_learner.html#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.extract_corpus">[docs]</a>    <span class="k">def</span> <span class="nf">extract_corpus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts the datas from the source and processes them</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            corpus (list): List of processed data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">corpus</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># iter the source</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Document </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">doc_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_list</span><span class="p">:</span>
+                <span class="c1"># apply preprocessing and save the data in the list</span>
+                <span class="n">doc_data</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">doc</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">corpus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">doc_data</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">corpus</span></div>
+
+<div class="viewcode-block" id="EmbeddingLearner.save"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.embedding_learner.html#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the model. If you are in developing mode, the model is saved in the src directory.</span>
+<span class="sd">        If you are not in developing mode, the model will be saved in the embeddings</span>
+<span class="sd">        directory under the home path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">embeddings_path</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">DEVELOPING</span><span class="p">:</span>
+            <span class="n">embeddings_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s1">&#39;embeddings&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">embeddings_path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;.model&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

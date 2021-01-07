@@ -1,0 +1,54 @@
+orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques package
+===================================================================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique
+
+Submodules
+----------
+
+orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.entity\_linking module
+--------------------------------------------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.field\_content\_production\_technique module
+------------------------------------------------------------------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.synset\_document\_frequency module
+--------------------------------------------------------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.tf\_idf module
+------------------------------------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques
+   :members:
+   :undoc-members:
+   :show-inheritance:

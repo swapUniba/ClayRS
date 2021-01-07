@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.ratings_manager package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.content_analyzer.ratings_manager package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.rating_processor">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.score_combiner">orange_cb_recsys.content_analyzer.ratings_manager.score_combiner module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis">orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.ratings_manager">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.ratings_manager package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.content_analyzer.ratings_manager.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-content-analyzer-ratings-manager-package">
+<h1>orange_cb_recsys.content_analyzer.ratings_manager package<a class="headerlink" href="#orange-cb-recsys-content-analyzer-ratings-manager-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.ratings_manager.rating_processor">
+<span id="orange-cb-recsys-content-analyzer-ratings-manager-rating-processor-module"></span><h2>orange_cb_recsys.content_analyzer.ratings_manager.rating_processor module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.rating_processor" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.NumberNormalizer">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.</code><code class="sig-name descname">NumberNormalizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#NumberNormalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.NumberNormalizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor" title="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor</span></code></a></p>
+<p>Class that normalizes the ratings to a numeric scale in the range [-1.0,1.0]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min</strong> (<em>float</em>) – minimum value of the original scale</p></li>
+<li><p><strong>max</strong> (<em>float</em>) – maximum value of the original scale</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.NumberNormalizer.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_data</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#NumberNormalizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.NumberNormalizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>field_data</strong> – rating field that will be
+normalized</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>field_data normalized in the interval [-1, 1]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.</code><code class="sig-name descname">RatingProcessor</code><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#RatingProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class to process a rating with the personalized fit method
+that returns a score in the range [-1.0,1.0]</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_data</span><span class="p">:</span> <span class="n">object</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#RatingProcessor.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.</code><code class="sig-name descname">SentimentAnalysis</code><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#SentimentAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor" title="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor</span></code></a></p>
+<p>Abstract Class that generalizes the sentiment analysis technique</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_data</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/rating_processor.html#SentimentAnalysis.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer">
+<span id="orange-cb-recsys-content-analyzer-ratings-manager-ratings-importer-module"></span><h2>orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.</code><code class="sig-name descname">RatingsFieldConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">processor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor" title="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/ratings_importer.html#RatingsFieldConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for the configuration of the field containing the ratings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> (<em>str</em>) – Name of the field that contains the ratings</p></li>
+<li><p><strong>processor</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor" title="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.RatingProcessor"><em>RatingProcessor</em></a>) – Processor for the data in the rating field</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig.field_name">
+<em class="property">property </em><code class="sig-name descname">field_name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig.field_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig.processor">
+<em class="property">property </em><code class="sig-name descname">processor</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig.processor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.</code><code class="sig-name descname">RatingsImporter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">rating_configs</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsFieldConfig</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">from_field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">to_field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">timestamp_field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_directory</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">score_combiner</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'avg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/ratings_importer.html#RatingsImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that imports the ratings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source from which the ratings will be imported</p></li>
+<li><p><strong>rating_configs</strong> (<em>list&lt;RatingsFieldConfig&gt;</em>) – </p></li>
+<li><p><strong>from_field_name</strong> (<em>str</em>) – Name of the field containing the reference to the person who gave
+the rating (for example, the user id)</p></li>
+<li><p><strong>to_field_name</strong> (<em>str</em>) – Name of the field containing the reference to the item that a person
+rated</p></li>
+<li><p><strong>timestamp_field_name</strong> (<em>str</em>) – Name of the field containing the timestamp</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – Name of the directory where the acquired ratings will be stored</p></li>
+<li><p><strong>score_combiner</strong> (<em>str</em>) – Metric to use to combine the scores</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.frame_columns">
+<em class="property">property </em><code class="sig-name descname">frame_columns</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.frame_columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.from_field_name">
+<em class="property">property </em><code class="sig-name descname">from_field_name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.from_field_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.import_ratings">
+<code class="sig-name descname">import_ratings</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/ratings_importer.html#RatingsImporter.import_ratings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.import_ratings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports the ratings from the source and stores in a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ratings_frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.timestamp_field_name">
+<em class="property">property </em><code class="sig-name descname">timestamp_field_name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.timestamp_field_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.to_field_name">
+<em class="property">property </em><code class="sig-name descname">to_field_name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.RatingsImporter.to_field_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.show_progress">
+<code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.</code><code class="sig-name descname">show_progress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coll</span></em>, <em class="sig-param"><span class="n">milestones</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/ratings_importer.html#show_progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.show_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the elements contained in coll and prints to video how many have been processed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coll</strong> (<em>list</em>) – List that contains the ratings to process</p></li>
+<li><p><strong>milestones</strong> (<em>int</em>) – Tells to the method how often he has to print an update. For
+example, if milestones = 100, for every 100 items processed the method will
+print an update</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.ratings_manager.score_combiner">
+<span id="orange-cb-recsys-content-analyzer-ratings-manager-score-combiner-module"></span><h2>orange_cb_recsys.content_analyzer.ratings_manager.score_combiner module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.score_combiner" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.ScoreCombiner">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.</code><code class="sig-name descname">ScoreCombiner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/score_combiner.html#ScoreCombiner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.ScoreCombiner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that combines the scores given by a user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>function</strong> (<em>str</em>) – Name of the method to use to combine the ratings</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.ScoreCombiner.combine">
+<code class="sig-name descname">combine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/score_combiner.html#ScoreCombiner.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.ScoreCombiner.combine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.avg">
+<code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.</code><code class="sig-name descname">avg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/score_combiner.html#avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.avg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the average score</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.mode">
+<code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.</code><code class="sig-name descname">mode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/score_combiner.html#mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.score_combiner.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the mode between the ratings</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis">
+<span id="orange-cb-recsys-content-analyzer-ratings-manager-sentiment-analysis-module"></span><h2>orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.TextBlobSentimentAnalysis">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.</code><code class="sig-name descname">TextBlobSentimentAnalysis</code><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/sentiment_analysis.html#TextBlobSentimentAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.TextBlobSentimentAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis" title="orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.SentimentAnalysis</span></code></a></p>
+<p>Interface for the textblob library that does sentimental analysis on text.</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.TextBlobSentimentAnalysis.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_data</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/ratings_manager/sentiment_analysis.html#TextBlobSentimentAnalysis.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.TextBlobSentimentAnalysis.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method calculates the sentiment analysis score on textual reviews</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of sentiment analysis score</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>sentiment_data</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.ratings_manager">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.ratings_manager" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

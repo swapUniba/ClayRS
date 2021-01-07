@@ -1,0 +1,47 @@
+orange\_cb\_recsys.recsys package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   orange_cb_recsys.recsys.ranking_algorithms
+   orange_cb_recsys.recsys.score_prediction_algorithms
+
+Submodules
+----------
+
+orange\_cb\_recsys.recsys.algorithm module
+------------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.algorithm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.recsys.config module
+---------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.recsys.recsys module
+---------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.recsys
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: orange_cb_recsys.recsys
+   :members:
+   :undoc-members:
+   :show-inheritance:

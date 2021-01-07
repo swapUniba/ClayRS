@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.memory_interfaces.text_interface &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.memory_interfaces.text_interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.memory_interfaces.text_interface</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">lucene</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">from</span> <span class="nn">java.nio.file</span> <span class="kn">import</span> <span class="n">Paths</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.index</span> <span class="kn">import</span> <span class="n">IndexWriter</span><span class="p">,</span> <span class="n">IndexWriterConfig</span><span class="p">,</span> <span class="n">IndexOptions</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.analysis.core</span> <span class="kn">import</span> <span class="n">KeywordAnalyzer</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.queryparser.classic</span> <span class="kn">import</span> <span class="n">QueryParser</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.search</span> <span class="kn">import</span> <span class="n">IndexSearcher</span><span class="p">,</span> <span class="n">BooleanQuery</span><span class="p">,</span> <span class="n">BooleanClause</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.document</span> <span class="kn">import</span> <span class="n">Document</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">FieldType</span><span class="p">,</span> <span class="n">TextField</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.store</span> <span class="kn">import</span> <span class="n">SimpleFSDirectory</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.util</span> <span class="kn">import</span> <span class="n">BytesRefIterator</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.index</span> <span class="kn">import</span> <span class="n">DirectoryReader</span><span class="p">,</span> <span class="n">Term</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces</span> <span class="kn">import</span> <span class="n">TextInterface</span>
+
+
+<div class="viewcode-block" id="IndexInterface"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface">[docs]</a><span class="k">class</span> <span class="nc">IndexInterface</span><span class="p">(</span><span class="n">TextInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class that takes care of serializing and deserializing text in an indexed structure</span>
+<span class="sd">    This use lucene library</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory (str): Path of the directory where the content will be serialized</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_searching</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;IndexInterface&quot;</span>
+
+<div class="viewcode-block" id="IndexInterface.init_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.init_writing">[docs]</a>    <span class="k">def</span> <span class="nf">init_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_searching</span> <span class="o">=</span> <span class="n">FieldType</span><span class="p">(</span><span class="n">TextField</span><span class="o">.</span><span class="n">TYPE_STORED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span> <span class="o">=</span> <span class="n">FieldType</span><span class="p">(</span><span class="n">StringField</span><span class="o">.</span><span class="n">TYPE_STORED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="o">.</span><span class="n">setStored</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="o">.</span><span class="n">setTokenized</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="o">.</span><span class="n">setStoreTermVectors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="o">.</span><span class="n">setStoreTermVectorPositions</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="o">.</span>\
+            <span class="n">setIndexOptions</span><span class="p">(</span><span class="n">IndexOptions</span><span class="o">.</span><span class="n">DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS</span><span class="p">)</span>
+        <span class="n">fs_directory</span> <span class="o">=</span> <span class="n">SimpleFSDirectory</span><span class="p">(</span><span class="n">Paths</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span> <span class="o">=</span> <span class="n">IndexWriter</span><span class="p">(</span><span class="n">fs_directory</span><span class="p">,</span> <span class="n">IndexWriterConfig</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="IndexInterface.new_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.new_content">[docs]</a>    <span class="k">def</span> <span class="nf">new_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In the lucene index case the new content</span>
+<span class="sd">        is a new document in the index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IndexInterface.new_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.new_field">[docs]</a>    <span class="k">def</span> <span class="nf">new_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new field</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_name (str): Name of the new field</span>
+<span class="sd">            field_data: Data to put into the field</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">field_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__doc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__doc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_frequency</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IndexInterface.new_searching_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.new_searching_field">[docs]</a>    <span class="k">def</span> <span class="nf">new_searching_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new searching field. It will be used by the search engine recommender</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_name (str): Name of the new field</span>
+<span class="sd">            field_data: Data to put into the field</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_type_searching</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IndexInterface.serialize_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.serialize_content">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize the content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">doc_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="o">.</span><span class="n">addDocument</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc_index</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="IndexInterface.stop_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.stop_writing">[docs]</a>    <span class="k">def</span> <span class="nf">stop_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop the index writer and commit the operations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IndexInterface.get_tf_idf"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.get_tf_idf">[docs]</a>    <span class="k">def</span> <span class="nf">get_tf_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the tf-idf for the words contained in the field of the content whose id</span>
+<span class="sd">        is content_id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_name (str): Name of the field containing the words for which calculate the tf-idf</span>
+<span class="sd">            content_id (str): Id of the content that contains the specified field</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             words_bag (Dict &lt;str, float&gt;):</span>
+<span class="sd">             Dictionary whose keys are the words contained in the field,</span>
+<span class="sd">             and the corresponding values are the tf-idf values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">searcher</span> <span class="o">=</span> <span class="n">IndexSearcher</span><span class="p">(</span>
+            <span class="n">DirectoryReader</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SimpleFSDirectory</span><span class="p">(</span><span class="n">Paths</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">))))</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">QueryParser</span><span class="p">(</span>
+            <span class="s2">&quot;testo_libero&quot;</span><span class="p">,</span> <span class="n">KeywordAnalyzer</span><span class="p">())</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;content_id:</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">content_id</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">score_docs</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">scoreDocs</span>
+        <span class="n">document_offset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">score_doc</span> <span class="ow">in</span> <span class="n">score_docs</span><span class="p">:</span>
+            <span class="n">document_offset</span> <span class="o">=</span> <span class="n">score_doc</span><span class="o">.</span><span class="n">doc</span>
+
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">getIndexReader</span><span class="p">()</span>
+        <span class="n">words_bag</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">term_vector</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">getTermVector</span><span class="p">(</span><span class="n">document_offset</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+        <span class="n">term_enum</span> <span class="o">=</span> <span class="n">term_vector</span><span class="o">.</span><span class="n">iterator</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">BytesRefIterator</span><span class="o">.</span><span class="n">cast_</span><span class="p">(</span><span class="n">term_enum</span><span class="p">):</span>
+            <span class="n">term_text</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">utf8ToString</span><span class="p">()</span>
+            <span class="n">postings</span> <span class="o">=</span> <span class="n">term_enum</span><span class="o">.</span><span class="n">postings</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">postings</span><span class="o">.</span><span class="n">nextDoc</span><span class="p">()</span>
+            <span class="n">term_frequency</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">postings</span><span class="o">.</span><span class="n">freq</span><span class="p">())</span>  <span class="c1"># normalized term frequency</span>
+            <span class="n">inverse_document_frequency</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">maxDoc</span><span class="p">()</span> <span class="o">/</span> <span class="n">reader</span><span class="o">.</span><span class="n">docFreq</span><span class="p">(</span><span class="n">Term</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">term</span><span class="p">)))</span>
+            <span class="n">tf_idf</span> <span class="o">=</span> <span class="n">term_frequency</span> <span class="o">*</span> <span class="n">inverse_document_frequency</span>
+            <span class="n">words_bag</span><span class="p">[</span><span class="n">term_text</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf_idf</span>
+
+        <span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">words_bag</span></div>
+
+<div class="viewcode-block" id="IndexInterface.delete_index"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface.delete_index">[docs]</a>    <span class="k">def</span> <span class="nf">delete_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

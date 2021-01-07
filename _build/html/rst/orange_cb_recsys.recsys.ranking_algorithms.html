@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.recsys.ranking_algorithms package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.recsys.ranking_algorithms package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.recsys.ranking_algorithms.centroid_vector">orange_cb_recsys.recsys.ranking_algorithms.centroid_vector module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.recsys.ranking_algorithms.classifier">orange_cb_recsys.recsys.ranking_algorithms.classifier module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.recsys.ranking_algorithms.index_query">orange_cb_recsys.recsys.ranking_algorithms.index_query module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.recsys.ranking_algorithms.similarities">orange_cb_recsys.recsys.ranking_algorithms.similarities module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.recsys.ranking_algorithms">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.recsys.ranking_algorithms package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.recsys.ranking_algorithms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-recsys-ranking-algorithms-package">
+<h1>orange_cb_recsys.recsys.ranking_algorithms package<a class="headerlink" href="#orange-cb-recsys-recsys-ranking-algorithms-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.recsys.ranking_algorithms.centroid_vector">
+<span id="orange-cb-recsys-recsys-ranking-algorithms-centroid-vector-module"></span><h2>orange_cb_recsys.recsys.ranking_algorithms.centroid_vector module<a class="headerlink" href="#module-orange_cb_recsys.recsys.ranking_algorithms.centroid_vector" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.centroid_vector.CentroidVector">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.centroid_vector.</code><code class="sig-name descname">CentroidVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item_field</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">field_representation</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">similarity</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity">orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity</a></span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/centroid_vector.html#CentroidVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.centroid_vector.CentroidVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.algorithm.RankingAlgorithm" title="orange_cb_recsys.recsys.algorithm.RankingAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.algorithm.RankingAlgorithm</span></code></a></p>
+<p>Class that implements a centroid-like recommender. It first gets the centroid of the items that the user liked.
+Then computes the similarity between the centroid and the item of which predict the score.
+:param item_field: Name of the field that contains the content to use
+:param field_representation: Id of the field_representation content of which compute the centroid
+:param similarity: Kind of similarity to use
+:type similarity: Similarity
+:param threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered</p>
+<blockquote>
+<div><p>as positive</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.centroid_vector.CentroidVector.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ratings</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">recs_number</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">items_directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">candidate_item_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/centroid_vector.html#CentroidVector.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.centroid_vector.CentroidVector.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks:
+1) Checks if the representation corresponding to field_representation exists
+2) Checks if the field representation is a document embedding (whose shape equals 1)</p>
+<p>Example: item_field == “Plot” and field_representation == “1”, the function will check if the “01”
+representation of each “Plot” field is a document embedding or a tf-idf words bag, and then use the embedding
+or the frequency vector for algorithm computation.</p>
+<p>Computes the centroid of the positive rated items representations</p>
+<p>For each candidate item:
+1) Takes the embedding arrays
+2) Determines the similarity between the centroid and the field_representation of the item_field in candidate item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>candidate_item_id_list</strong> – list of the items that can be recommended, if None
+all unrated items will be used</p></li>
+<li><p><strong>user_id</strong> – user for which recommendations will be computed</p></li>
+<li><p><strong>recs_number</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><em>Content</em></a><em>]</em>) – How long the ranking will be</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – ratings of the user with id equal to user_id</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – Name of the directory where the items are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame whose columns are the ids of the items (to_id), and the similarities between the</dt><dd><p>items and the centroid (rating)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>scores (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.recsys.ranking_algorithms.classifier">
+<span id="orange-cb-recsys-recsys-ranking-algorithms-classifier-module"></span><h2>orange_cb_recsys.recsys.ranking_algorithms.classifier module<a class="headerlink" href="#module-orange_cb_recsys.recsys.ranking_algorithms.classifier" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.classifier.ClassifierRecommender">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.classifier.</code><code class="sig-name descname">ClassifierRecommender</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item_field</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">field_representation</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">classifier</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/classifier.html#ClassifierRecommender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.classifier.ClassifierRecommender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.algorithm.RankingAlgorithm" title="orange_cb_recsys.recsys.algorithm.RankingAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.algorithm.RankingAlgorithm</span></code></a></p>
+<p>Class that implements a logistic regression classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_field</strong> (<em>str</em>) – Name of the field that contains the content to use</p></li>
+<li><p><strong>field_representation</strong> (<em>str</em>) – Id of the field_representation content</p></li>
+<li><p><strong>classifier</strong> (<em>str</em>) – classifier that will be used
+can be one of the following values:
+random_forest, svm, log_regr,
+knn, decision_tree, gaussian_process
+threshold: ratings bigger than threshold will be
+considered as positive</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.classifier.ClassifierRecommender.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ratings</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">recs_number</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">items_directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">candidate_item_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/classifier.html#ClassifierRecommender.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.classifier.ClassifierRecommender.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>1) Goes into items_directory and for each item takes the values corresponding to the field_representation of
+the item_field. For example, if item_field == “Plot” and field_representation == “tf-idf”, the function will
+take the “tf-idf” representation of each  “Plot” field for every rated item, the tf-idf representation of rated items
+and items to classify will be parsed to dense arrays;
+2) Define target features, items with rating greater (lower) than threshold will be used as positive(negative) examples;
+3) Creates an object Classifier, uses the method fit and predicts the class of the new items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>candidate_item_id_list</strong> – list of the items that can be recommended, if None</p></li>
+<li><p><strong>unrated items will be used</strong> (<em>all</em>) – </p></li>
+<li><p><strong>user_id</strong> – user for which recommendations will be computed</p></li>
+<li><p><strong>recs_number</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><em>Content</em></a><em>]</em>) – How long the ranking will be</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – ratings of the user with id equal to user_id</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – Name of the directory where the items are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The predicted classes, or the predict values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.recsys.ranking_algorithms.index_query">
+<span id="orange-cb-recsys-recsys-ranking-algorithms-index-query-module"></span><h2>orange_cb_recsys.recsys.ranking_algorithms.index_query module<a class="headerlink" href="#module-orange_cb_recsys.recsys.ranking_algorithms.index_query" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.index_query.</code><code class="sig-name descname">IndexQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classic_similarity</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">positive_threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/index_query.html#IndexQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.algorithm.RankingAlgorithm" title="orange_cb_recsys.recsys.algorithm.RankingAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.algorithm.RankingAlgorithm</span></code></a></p>
+<p>Class for the search engine recommender</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ratings</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">recs_number</span></em>, <em class="sig-param"><span class="n">items_directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">candidate_item_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/index_query.html#IndexQuery.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the documents that the user liked and then calls __recs_query to execute the prediction
+:param candidate_item_id_list: list of the items that can be recommended, if None
+:param all unrated items will be used:
+:param user_id: user for which recommendations will be computed
+:param recs_number: How long the ranking will be
+:type recs_number: list[Content]
+:param ratings: ratings of the user with id equal to user_id
+:type ratings: pd.DataFrame
+:param items_directory: Name of the directory where the items are stored.
+:type items_directory: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.recsys.ranking_algorithms.similarities">
+<span id="orange-cb-recsys-recsys-ranking-algorithms-similarities-module"></span><h2>orange_cb_recsys.recsys.ranking_algorithms.similarities module<a class="headerlink" href="#module-orange_cb_recsys.recsys.ranking_algorithms.similarities" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.CosineSimilarity">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.similarities.</code><code class="sig-name descname">CosineSimilarity</code><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#CosineSimilarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.CosineSimilarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity</span></code></a></p>
+<p>Computes cosine similarity of given numpy arrays</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.CosineSimilarity.perform">
+<code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</a></span></em>, <em class="sig-param"><span class="n">v2</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#CosineSimilarity.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.CosineSimilarity.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the similarity between v1 and v2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.DenseVector">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.similarities.</code><code class="sig-name descname">DenseVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#DenseVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.DenseVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</span></code></a></p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.DenseVector.similarity">
+<code class="sig-name descname">similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#DenseVector.similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.DenseVector.similarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.similarities.</code><code class="sig-name descname">Similarity</code><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#Similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Class for the various types of similarity</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity.perform">
+<em class="property">abstract </em><code class="sig-name descname">perform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</a></span></em>, <em class="sig-param"><span class="n">v2</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#Similarity.perform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Similarity.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the similarity between v1 and v2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.SparseVector">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.similarities.</code><code class="sig-name descname">SparseVector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#SparseVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.SparseVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector</span></code></a></p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.SparseVector.similarity">
+<code class="sig-name descname">similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#SparseVector.similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.SparseVector.similarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.recsys.ranking_algorithms.similarities.</code><code class="sig-name descname">Vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#Vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector.similarity">
+<em class="property">abstract </em><code class="sig-name descname">similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/recsys/ranking_algorithms/similarities.html#Vector.similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector.similarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.recsys.ranking_algorithms.similarities.Vector.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.recsys.ranking_algorithms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.ranking_algorithms" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

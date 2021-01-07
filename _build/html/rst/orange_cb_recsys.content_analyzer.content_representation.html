@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.content_representation package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.content_analyzer.content_representation package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.content_representation.content">orange_cb_recsys.content_analyzer.content_representation.content module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.content_representation.content_field">orange_cb_recsys.content_analyzer.content_representation.content_field module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.content_representation">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.content_representation package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.content_analyzer.content_representation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-content-analyzer-content-representation-package">
+<h1>orange_cb_recsys.content_analyzer.content_representation package<a class="headerlink" href="#orange-cb-recsys-content-analyzer-content-representation-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.content_representation.content">
+<span id="orange-cb-recsys-content-analyzer-content-representation-content-module"></span><h2>orange_cb_recsys.content_analyzer.content_representation.content module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.content_representation.content" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content.</code><code class="sig-name descname">Content</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">field_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField" title="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField">orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exogenous_rep_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that represents a content. A content can be an item or a user.
+A content is identified by a string id and is composed by different fields</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content_id</strong> (<em>str</em>) – identifier</p></li>
+<li><p><strong>field_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField" title="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField"><em>ContentField</em></a><em>]</em>) – dictionary
+containing the fields instances for the content,
+and their name as dictionary key</p></li>
+<li><p><strong>exogenous_rep_dict</strong> (<em>Dict &lt;str</em><em>, </em><em>ExogenousProperties&gt;</em>) – different representations of content obtained
+using ExogenousPropertiesRetrieval, the dictionary key is
+the representation name</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">field</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField" title="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField">orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.append_exogenous_rep">
+<code class="sig-name descname">append_exogenous_rep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">exogenous_properties</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation">orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.append_exogenous_rep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.append_exogenous_rep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.content_id">
+<em class="property">property </em><code class="sig-name descname">content_id</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.content_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.field_dict">
+<em class="property">property </em><code class="sig-name descname">field_dict</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.field_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.get_exogenous_rep">
+<code class="sig-name descname">get_exogenous_rep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.get_exogenous_rep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.get_exogenous_rep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.get_field">
+<code class="sig-name descname">get_field</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.get_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.get_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.index_document_id">
+<em class="property">property </em><code class="sig-name descname">index_document_id</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.index_document_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the field named field_name from the field dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>field_name</strong> (<em>str</em>) – the name of the field to remove</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.Content.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_directory</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#Content.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.Content.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize a content instance using lzma compression algorithm,
+so the file extension is .xz</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_directory</strong> (<em>str</em>) – Name of the directory in which serialize</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content.</code><code class="sig-name descname">ExogenousPropertiesRepresentation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#ExogenousPropertiesRepresentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Output of LodPropertiesRetrieval, different representations
+exist according to different techniques</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – string identifier of the exogenous</p></li>
+<li><p><strong>representation</strong> (<em>properties</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation.value">
+<em class="property">abstract property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content.</code><code class="sig-name descname">PropertiesDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">features</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#PropertiesDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation</span></code></a></p>
+<p>Couples &lt;property name, property value&gt;
+retrieved by DBPediaMappingTechnique</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – string identifier of the exogenous
+properties representation</p></li>
+<li><p><strong>features</strong> – properties in the specified format</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>features dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Returns</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content.</code><code class="sig-name descname">RepresentedContentsRecap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">representation_list</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#RepresentedContentsRecap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that collects a string list with id and types for each representation
+:param representation_list: List of the names of the representations
+:type representation_list: list&lt;str&gt;</p>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">representation</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#RepresentedContentsRecap.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content.html#RepresentedContentsRecap.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content.RepresentedContentsRecap.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize strings</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.content_representation.content_field">
+<span id="orange-cb-recsys-content-analyzer-content-representation-content-field-module"></span><h2>orange_cb_recsys.content_analyzer.content_representation.content_field module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.content_representation.content_field" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content_field.</code><code class="sig-name descname">ContentField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">representation_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation">orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#ContentField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that represents a field, a field can have more than one representation for itself</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> (<em>str</em>) – the name of the field</p></li>
+<li><p><strong>timestamp</strong> (<em>str</em>) – string that represents the timestamp</p></li>
+<li><p><strong>representation_dict</strong> (<em>dict&lt;str</em><em>, </em><em>FieldRepresentation&gt;</em>) – Dictionary whose keys are the name
+of the various representations, and the values are the corresponding FieldRepresentation
+instances.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">representation_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">representation</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation">orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#ContentField.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.get_representation">
+<code class="sig-name descname">get_representation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">representation_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#ContentField.get_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.get_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.ContentField.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.EmbeddingField">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content_field.</code><code class="sig-name descname">EmbeddingField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">embedding_array</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#EmbeddingField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.EmbeddingField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation</span></code></a></p>
+<p>Class for field representation using embeddings (dense numeric vectors)
+this representation is produced by the EmbeddingTechnique.</p>
+<p class="rubric">Examples</p>
+<p>shape (4) = [x,x,x,x]
+shape (2,2) = [[x,x],</p>
+<blockquote>
+<div><p>[x,x]]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>embedding_array</strong> (<em>np.ndarray</em>) – embeddings array,
+it can be of different shapes according to the granularity of the technique</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.EmbeddingField.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.EmbeddingField.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content_field.</code><code class="sig-name descname">FeaturesBagField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">features</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>object<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#FeaturesBagField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation</span></code></a></p>
+<p>Class for field representation using a bag of features.
+This class can also be used to represent a bag of words: &lt;keyword, score&gt;;
+this representation is produced by the EntityLinking and tf-idf techniques</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>features</strong> (<em>dict&lt;str</em><em>, </em><em>object&gt;</em>) – the dictionary where features are stored</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.append_feature">
+<code class="sig-name descname">append_feature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feature_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">feature_value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#FeaturesBagField.append_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.append_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a feature (feature_key, feature_value) to the dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_key</strong> (<em>str</em>) – key, can be a url or a keyword</p></li>
+<li><p><strong>feature_value</strong> – the value of the field</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.get_feature">
+<code class="sig-name descname">get_feature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feature_key</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#FeaturesBagField.get_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.get_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the feature_value from the dict[feature_key]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>feature_key</strong> (<em>str</em>) – key, can be a url or a keyword</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of the field</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>feature_value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FeaturesBagField.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the features dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the features dict</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>features (dict&lt;str, object&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.content_representation.content_field.</code><code class="sig-name descname">FieldRepresentation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/content_representation/content_field.html#FieldRepresentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class that generalizes the concept of “field representation”,
+a field representation is a semantic way to represent a field of an item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the representation’s instance</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation.value">
+<em class="property">abstract property </em><code class="sig-name descname">value</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_representation.content_field.FieldRepresentation.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.content_representation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.content_representation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

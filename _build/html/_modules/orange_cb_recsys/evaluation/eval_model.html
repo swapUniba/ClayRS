@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.evaluation.eval_model &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.evaluation.eval_model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.evaluation.eval_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.evaluation.metrics</span> <span class="kn">import</span> <span class="n">Metric</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.evaluation.partitioning</span> <span class="kn">import</span> <span class="n">Partitioning</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.recsys.algorithm</span> <span class="kn">import</span> <span class="n">ScorePredictionAlgorithm</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.recsys.config</span> <span class="kn">import</span> <span class="n">RecSysConfig</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.recsys.recsys</span> <span class="kn">import</span> <span class="n">RecSys</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.const</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.load_content</span> <span class="kn">import</span> <span class="n">remove_not_existent_items</span>
+
+
+<div class="viewcode-block" id="EvalModel"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.EvalModel">[docs]</a><span class="k">class</span> <span class="nc">EvalModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for automating the process of recommending and</span>
+<span class="sd">    evaluate produced recommendations</span>
+<span class="sd">    Args:</span>
+<span class="sd">        config (RecSysConfig): Configuration of the</span>
+<span class="sd">        recommender system that will be internally created</span>
+<span class="sd">        partitioning (Partitioning): Partitioning technique</span>
+<span class="sd">        metric_list (list&lt;Metric&gt;): List of metrics that eval model will compute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">RecSysConfig</span><span class="p">,</span>
+                 <span class="n">partitioning</span><span class="p">:</span> <span class="n">Partitioning</span><span class="p">,</span>
+                 <span class="n">metric_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">metric_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">metric_list</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__metric_list</span> <span class="o">=</span> <span class="n">metric_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__config</span><span class="p">:</span> <span class="n">RecSysConfig</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__partitioning</span> <span class="o">=</span> <span class="n">partitioning</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">partitioning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__partitioning</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config</span>
+
+<div class="viewcode-block" id="EvalModel.append_metric"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.EvalModel.append_metric">[docs]</a>    <span class="k">def</span> <span class="nf">append_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__metric_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__metric_list</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">metric</span>
+
+<div class="viewcode-block" id="EvalModel.fit"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.EvalModel.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="RankingAlgEvalModel"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel">[docs]</a><span class="k">class</span> <span class="nc">RankingAlgEvalModel</span><span class="p">(</span><span class="n">EvalModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for automating the process of recommending and</span>
+<span class="sd">    evaluate produced recommendations.</span>
+<span class="sd">    This subclass automate the computation of metrics</span>
+<span class="sd">    whose input are the result of a RecSys</span>
+<span class="sd">    configured with a ranking algorithm.</span>
+<span class="sd">    The metrics are iteratively computed for each user</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (RecSysConfig): Configuration of the</span>
+<span class="sd">        recommender system that will be internally created</span>
+<span class="sd">        partitioning (Partitioning): Partitioning technique</span>
+<span class="sd">        metric_list (list&lt;Metric&gt;): List of metrics that eval model will compute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">partitioning</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">partitioning</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RankingAlgEvalModel.fit"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.RankingAlgEvalModel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method performs the evaluation by initializing</span>
+<span class="sd">        internally a recommender system that produces</span>
+<span class="sd">        recommendations for all the users in the directory</span>
+<span class="sd">        specified in the configuration phase.</span>
+<span class="sd">        The evaluation is performed by creating a training set,</span>
+<span class="sd">        and a test set with its corresponding</span>
+<span class="sd">        truth base. The ranking algorithm will use the test set as candidate items list.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ranking_metric_results: has a &#39;from&#39; column, representing the user_ids for</span>
+<span class="sd">                which the metrics was computed, and then one different column for every metric</span>
+<span class="sd">                performed. The returned DataFrames contain one row per user, and the corresponding</span>
+<span class="sd">                metric values are given by the mean of the values obtained for that user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialize recommender to call for prediction computing</span>
+        <span class="n">recsys</span> <span class="o">=</span> <span class="n">RecSys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># get all users in specified directory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user instances&quot;</span><span class="p">)</span>
+        <span class="n">user_id_list</span> <span class="o">=</span> \
+            <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">users_directory</span><span class="p">)]</span>
+
+        <span class="c1"># define results structure</span>
+        <span class="n">ranking_alg_metrics_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="c1"># calculate metrics on ranking algorithm results</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ranking_algorithm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must set ranking algorithm to compute ranking metrics&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="n">user_id_list</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing ranking metrics for user </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+            <span class="n">user_ratings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">partitioning</span><span class="o">.</span><span class="n">dataframe</span> <span class="o">=</span> <span class="n">user_ratings</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">partition_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partitioning</span><span class="p">:</span>
+                <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">train</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">partition_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">partition_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+                <span class="n">truth</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;to_id&#39;</span><span class="p">:</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+                <span class="n">truth</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;to_id&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">]</span>
+                <span class="n">recs_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="n">predictions</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">fit_eval_ranking</span><span class="p">(</span>
+                    <span class="n">user_id</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">truth</span><span class="p">[</span><span class="s1">&#39;to_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">recs_number</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+                    <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;from&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_id</span>
+                    <span class="n">result_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)]</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">truth</span><span class="p">)</span>
+
+                <span class="n">ranking_alg_metrics_results</span> <span class="o">=</span> \
+                    <span class="n">ranking_alg_metrics_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">ranking_alg_metrics_results</span> <span class="o">=</span> \
+            <span class="n">ranking_alg_metrics_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ranking_alg_metrics_results</span></div></div>
+
+
+<div class="viewcode-block" id="PredictionAlgEvalModel"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel">[docs]</a><span class="k">class</span> <span class="nc">PredictionAlgEvalModel</span><span class="p">(</span><span class="n">EvalModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for automating the process of recommending and evaluate produced recommendations.</span>
+<span class="sd">    This subclass automate the computation of metrics</span>
+<span class="sd">    whose input are the result of a RecSys</span>
+<span class="sd">    configured with a rating prediction algorithm.</span>
+<span class="sd">    The metrics are iteratively computed for each user</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (RecSysConfig): Configuration of the</span>
+<span class="sd">        recommender system that will be internally created</span>
+<span class="sd">        partitioning (Partitioning): Partitioning technique</span>
+<span class="sd">        metric_list (list&lt;Metric&gt;): List of metrics that eval model will compute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">partitioning</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">partitioning</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PredictionAlgEvalModel.fit"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.PredictionAlgEvalModel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method performs the rating prediction evaluation by initializing internally</span>
+<span class="sd">            a recommender system that produces recommendations for all the</span>
+<span class="sd">            users in the directory specified in the configuration phase.</span>
+<span class="sd">            The evaluation is performed by creating a training set,</span>
+<span class="sd">            and a test set with its corresponding</span>
+<span class="sd">            truth base. The rating prediction will be computed on every item in the test eet.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            prediction_metric_results: has a &#39;from&#39; column, representing the user_ids for</span>
+<span class="sd">                which the metrics was computed, and then one different column for every metric</span>
+<span class="sd">                performed. The returned DataFrames contain one row per user, and the corresponding</span>
+<span class="sd">                metric values are given by the mean of the values obtained for that user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialize recommender to call for prediction computing</span>
+        <span class="n">recsys</span> <span class="o">=</span> <span class="n">RecSys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># get all users in specified directory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user instances&quot;</span><span class="p">)</span>
+        <span class="n">user_id_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">users_directory</span><span class="p">)]</span>
+
+        <span class="c1"># define results structure</span>
+        <span class="n">prediction_metric_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="c1"># calculate metrics on prediction algorithm results</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">score_prediction_algorithm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must set score prediction algorithm to compute this eval model&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="n">user_id_list</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user ratings&quot;</span><span class="p">)</span>
+
+            <span class="n">user_ratings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">]</span>
+            <span class="n">user_ratings</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;to_id&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">partitioning</span><span class="o">.</span><span class="n">dataframe</span> <span class="o">=</span> <span class="n">user_ratings</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">partition_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partitioning</span><span class="p">:</span>
+                <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing prediction metrics&quot;</span><span class="p">)</span>
+                <span class="n">train</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">partition_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">partition_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">remove_not_existent_items</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">items_directory</span><span class="p">)</span>
+
+                <span class="n">predictions</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">fit_eval_predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+                    <span class="n">result_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)]</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
+
+                <span class="n">prediction_metric_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">prediction_metric_results</span> <span class="o">=</span> <span class="n">prediction_metric_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">prediction_metric_results</span></div></div>
+
+
+<div class="viewcode-block" id="ReportEvalModel"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.ReportEvalModel">[docs]</a><span class="k">class</span> <span class="nc">ReportEvalModel</span><span class="p">(</span><span class="n">EvalModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for automating the process of recommending</span>
+<span class="sd">    and evaluate produced recommendations.</span>
+<span class="sd">    This subclass automate the computation of metrics</span>
+<span class="sd">    whose input is the result of a RecSys</span>
+<span class="sd">    configured with a ranking algorithm.</span>
+<span class="sd">    The recommendation are computed for each user and</span>
+<span class="sd">    the metrics are computed only after the whole</span>
+<span class="sd">    recommendation process, on the entire frame</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (RecSysConfig): Configuration of the</span>
+<span class="sd">        recommender system that will be internally created</span>
+<span class="sd">        metric_list (list&lt;Metric&gt;): List of metrics that eval model will compute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__recs_number</span> <span class="o">=</span> <span class="n">recs_number</span>
+
+<div class="viewcode-block" id="ReportEvalModel.fit"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.eval_model.ReportEvalModel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method performs the rating prediction evaluation by initializing internally</span>
+<span class="sd">            a recommender system that produces recommendations for all the</span>
+<span class="sd">            users in the directory specified in the configuration phase.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            result_list: each element of this list is a metric</span>
+<span class="sd">                result that can be of different types,</span>
+<span class="sd">                according to the metric, for example a DataFrame or a float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialize recommender to call for prediction computing</span>
+        <span class="n">recsys</span> <span class="o">=</span> <span class="n">RecSys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># get all users in specified directory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading user instances&quot;</span><span class="p">)</span>
+        <span class="n">user_id_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">users_directory</span><span class="p">)]</span>
+
+        <span class="c1"># define results structure</span>
+        <span class="n">no_truth_metrics_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># calculate metrics that not require ground truth</span>
+        <span class="c1"># for example fairness metrics, serendipity, novelty</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">score_prediction_algorithm</span><span class="p">,</span> <span class="n">ScorePredictionAlgorithm</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must set ranking algorithm to compute this metrics&quot;</span><span class="p">)</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;from_id&quot;</span><span class="p">,</span> <span class="s2">&quot;to_id&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">]</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="n">user_id_list</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+            <span class="n">fit_result</span> <span class="o">=</span> <span class="n">recsys</span><span class="o">.</span><span class="n">fit_ranking</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__recs_number</span><span class="p">)</span>
+
+            <span class="n">fit_result_with_user</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+            <span class="n">fit_result</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;to_id&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fit_result</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">fit_result_with_user</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">fit_result_with_user</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span>
+                    <span class="p">[(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;to_id&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;rating&quot;</span><span class="p">])],</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">score_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">fit_result_with_user</span><span class="p">,</span> <span class="n">score_frame</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing no truth metrics&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">no_truth_metrics_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">metric</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="n">score_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">rating_frame</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">no_truth_metrics_results</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

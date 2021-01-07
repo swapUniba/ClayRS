@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orange CB Recsys</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<style>
+    .container{
+        width: 100%;
+        min-height: 100vh;
+        height: auto;
+        background-position: center;
+        background-size: cover;
+        position: absolute;
+        margin-top: 50px;
+        margin-left: 155px;
+        box-sizing: border-box;
+    }
+
+    <!---->
+    /*Sidebar div*/
+    .sidebar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 155px;
+        min-height: 100vh;
+        height: auto;
+        margin-top: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        align-items: center;
+    }
+
+     .div_option{
+         margin-top: 50px;
+         text-align: center;
+         width: 155px;
+         height: 35px;
+         font-family: cursive;
+         font-size: 15px;
+         font-weight: bold;
+         background-color: #1f1d1d;
+         color: #fff;
+         border: none;
+    }
+
+     .div_option:hover{
+         cursor: pointer;
+         background-color: lightgray;
+         color: #333333;
+         border: #1f1d1d;
+     }
+
+    <!---->
+    /*Navbar div*/
+
+    .navbar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 1500px;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .navbar nav{
+        flex: 1;
+    }
+
+    .navbar ul{
+        margin-left: 120px;
+    }
+
+    .navbar nav ul li{
+        list-style: none;
+        display: inline-block;
+    }
+
+    .navbar nav ul li a{
+        text-decoration: none;
+        font-size: 14px;
+        font-family: cursive;
+        color: #fff;
+        margin-right: 50px;
+    }
+
+    .a_nav{}
+    .a_nav:hover{
+        color: darkorange;
+    }
+
+    .checkbox{}
+    .checkbox:hover{
+        cursor: pointer;
+    }
+
+    <!---->
+    /*Container div*/
+    .description{
+        font-family: sans-serif;
+        font-size: 18px;
+        color: black;
+        margin-top: 15px;
+        margin-left: 290px;
+    }
+
+    .div_info{
+        display: none;
+        font-size: 25px;
+        color: black;
+    }
+
+    <!---->
+    /*Button next*/
+    .wrapper{
+      position: absolute;
+      top: 50%;
+      left: 41%;
+      transform: translate(-50%, -50%);
+    }
+
+    .link_wrapper{
+      position: relative;
+    }
+
+    a.next{
+      display: block;
+      width: 150px;
+      height: 50px;
+      line-height: 50px;
+      font-weight: bold;
+      text-decoration: none;
+      background: #333;
+      text-align: center;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 3px solid #333;
+      transition: all .35s;
+    }
+
+    .icon{
+      width: 50px;
+      height: 50px;
+      border: 3px solid transparent;
+      position: absolute;
+      transform: rotate(45deg);
+      right: 0;
+      top: 0;
+      z-index: -1;
+      transition: all .35s;
+    }
+
+    .icon svg{
+      width: 30px;
+      position: absolute;
+      top: calc(50% - 15px);
+      left: calc(50% - 15px);
+      transform: rotate(-45deg);
+      fill: darkorange;
+      transition: all .35s;
+    }
+
+    a.next:hover{
+      width: 150px;
+      border: 3px solid darkorange;
+      background: transparent;
+      color: darkorange;
+      cursor: pointer;
+    }
+
+    a.next:hover + .icon{
+      border: 3px solid darkorange;
+      right: -25%;
+    }
+
+    /* The actual popup (appears on top) */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 170px;
+      height: 40px;
+      background-color: firebrick;
+      color: #fff;
+      text-align: center;
+      border: 1px black solid;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -105px;
+      margin-bottom: 20px;
+    }
+
+    /* Popup arrow */
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+    }
+
+    /* Toggle this class when clicking on the popup container (hide and show the popup) */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+    .tech_link{
+        pointer-events: auto;
+    }
+
+    <!---->
+
+</style>
+<body>
+    <div class="sidebar">
+        <div style="margin-top: -25px;">
+            <div class="div_option">
+                <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('homepage')}}">Content type</a></p>
+            </div>
+
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto;" class="div_option">
+              <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('upload')}}">Upload File</a></p>
+            </div>
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto" class="div_option">
+              <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('select_fields')}}">Select Fields</a></p>
+                <div style="position: absolute; margin-top: 10%; margin-left: 5%;" class="popup">
+                    <span style="height: auto; margin-left: 50px; margin-bottom: 50px;" class="popuptext" id="tech_alert">Select one or more fields if you want to select techniques!</span>
+                </div>
+            </div>
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto" class="div_option">
+                <p style="margin-bottom: 5px; text-align: center" ><a onclick="checkEmpty_fields();" id="tech" class="tech_link" style="text-decoration: none;" href="{{url_for('technique_')}}">Select Technique</a></p>
+            </div>
+
+            <div style="margin-top: auto; color: #333333; background-color: darkorange" class="div_option">
+                <p style="margin-bottom: 5px; text-align: center" >Download file</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="navbar">
+        <nav>
+            <ul>
+                <li><a class="a_nav" href="/" onclick="save()">Home</a></li>
+                <li><a class="a_nav" href="{{url_for('help_')}}" onclick="save()">Help</a></li>
+                <li><a href="/" style="font-weight: bold; margin-left: 250px;" onclick="save()">ORANGE CB RECSYS</a></li>
+
+                <li>
+                    <a style="width: 250px; display: inline-block" href="https://www.uniba.it/ricerca/dipartimenti/informatica" onclick="save()">
+                        <img alt="Uniba logo" src="../static/uniba_logo.png" style="width: 250px; height: 40px;
+                        position: relative; margin-left: 250px; margin-top: -10px;">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <form>
+            <div class="form-group bloc30 w3-container w3-card-4 w3-light-grey" style="width: 700px; height: 250px; position: absolute;
+                top: 5%; left: 15%;">
+                <h2 style="color: black" class="w3-center">Download:</h2>
+                <a style="position: relative; margin-left: 270px;" href="{{url_for('download_')}}">Download files</a>
+
+            </div>
+
+            <!---->
+
+            <div class="wrapper">
+                <div class="link_wrapper">
+                    <a class="next" style="text-decoration: none;" href="/">Finish</a>
+                    <div class="icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268.832 268.832">
+                        <path d="M265.17 125.577l-80-80c-4.88-4.88-12.796-4.88-17.677 0-4.882 4.882-4.882
+                        12.796 0 17.678l58.66 58.66H12.5c-6.903 0-12.5 5.598-12.5 12.5 0 6.903 5.597 12.5
+                        12.5 12.5h213.654l-58.66 58.662c-4.88 4.882-4.88 12.796 0 17.678 2.44 2.44 5.64 3.66
+                        8.84 3.66s6.398-1.22 8.84-3.66l79.997-80c4.883-4.882 4.883-12.796 0-17.678z"/>
+                      </svg>
+                    </div>
+                </div>
+            </div>
+            <!---->
+
+        </form>
+
+    </div>
+</body>
+<script>
+    var selected_fields = JSON.parse('{{ selected_fields_|tojson }}');
+
+    function checkEmpty_fields(){
+        var tech_a = document.getElementById('tech')
+        if(selected_fields.length === 0){
+            tech_a.href = '#';
+
+            var alert = document.getElementById('tech_alert');
+            alert.classList.toggle("show");
+            setTimeout(function (){
+                alert.className = alert.className.replace("show", "");
+            }, 4000);
+        }
+    }
+</script>
+</html>

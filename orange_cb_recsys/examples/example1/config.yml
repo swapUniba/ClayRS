@@ -1,0 +1,48 @@
+---
+- content_type: 'ITEM'
+  output_directory: '../../../contents/examples/ex_1/movies_'
+  raw_source_path: '../../../datasets/examples/movies_info.json'
+  source_type: 'json'
+  id_field_name:
+    - 'imdbID'
+  fields:
+    - field_name: 'Title'
+      field_content_production:
+        class: 'lucene_tf-idf'
+    - field_name: 'Year'
+        field_content_production:
+          class: 'lucene_tf-idf'
+    - field_name: 'Genre'
+        preprocessing_list":
+          - class: 'nltk', lemmatization: 'True', stopwords_removal: 'True'
+        field_content_production:
+          class: 'lucene_tf-idf'
+    - field_name: 'PLot'
+        preprocessing_list":
+          - class: 'nltk', lemmatization: 'True', stopwords_removal: 'True'
+        field_content_production:
+          class: 'lucene_tf-idf'
+
+- content_type: 'USER'
+  output_directory: '../../../contents/examples/ex_1/users_'
+  raw_source_path: '../../../datasets/examples/users_70.dat'
+  source_type: 'dat'
+  id_field_name:
+    - '0'
+  fields: []
+
+- content_type: 'RATING'
+  output_directory: '../../../contents/examples/ex_1/ratings_'
+  raw_source_path: '../../../datasets/examples/new_ratings.csv'
+  source_type: 'csv'
+  from_field_name: 'user_id'
+  to_field_name: 'item_id'
+  timestamp_field_name: 'timestamp'
+  fields:
+    - field_name: 'points'
+      processor:
+        class: 'number_normalizer'
+        min: '1'
+        max: '5'
+
+

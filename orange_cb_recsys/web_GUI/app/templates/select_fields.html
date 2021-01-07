@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orange CB Recsys</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+        crossorigin="anonymous"></script>
+</head>
+<style>
+    .container{
+        width: 953px;
+        min-height: 100vh;
+        height: auto;
+        background-position: center;
+        background-size: cover;
+        position: absolute;
+        margin-top: 50px;
+        margin-left: 155px;
+        box-sizing: border-box;
+    }
+
+    <!---->
+    /*Sidebar div*/
+    .sidebar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 155px;
+        min-height: 100vh;
+        height: auto;
+        margin-top: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        align-items: center;
+    }
+
+     .div_option{
+         margin-top: 50px;
+         text-align: center;
+         width: 155px;
+         height: 35px;
+         font-family: cursive;
+         font-size: 15px;
+         font-weight: bold;
+         background-color: #1f1d1d;
+         color: #fff;
+         border: none;
+    }
+
+     .div_option:hover{
+         cursor: pointer;
+         background-color: lightgray;
+         color: #333333;
+         border: #1f1d1d;
+     }
+
+    <!---->
+    /*Navbar div*/
+
+    .navbar{
+        background-color: #1f1d1d;
+        color: #fff;
+        width: 100%;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .navbar nav{
+        flex: 1;
+    }
+
+    .navbar ul{
+        margin-left: 120px;
+    }
+
+    .navbar nav ul li{
+        list-style: none;
+        display: inline-block;
+    }
+
+    .navbar nav ul li a{
+        text-decoration: none;
+        font-size: 14px;
+        font-family: cursive;
+        color: #fff;
+        margin-right: 50px;
+    }
+
+    .a_nav{}
+    .a_nav:hover{
+        color: darkorange;
+    }
+
+    <!---->
+    /*Container div*/
+    .description{
+        font-family: sans-serif;
+        font-size: 14px;
+        color: black;
+        margin-top: 0;
+    }
+
+
+    <!---->
+    /*Button next*/
+    .wrapper{
+      position: absolute;
+      top: 40%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+    }
+
+    .link_wrapper{
+      position: relative;
+    }
+
+    button.next{
+      display: block;
+      width: 150px;
+      height: 50px;
+      line-height: 50px;
+      font-weight: bold;
+      text-decoration: none;
+      background: #333;
+      text-align: center;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 3px solid #333;
+      transition: all .35s;
+    }
+
+    .icon{
+      width: 50px;
+      height: 50px;
+      border: 3px solid transparent;
+      position: absolute;
+      transform: rotate(45deg);
+      right: 0;
+      top: 0;
+      z-index: -1;
+      transition: all .35s;
+    }
+
+    .icon svg{
+      width: 30px;
+      position: absolute;
+      top: calc(50% - 15px);
+      left: calc(50% - 15px);
+      transform: rotate(-45deg);
+      fill: darkorange;
+      transition: all .35s;
+    }
+
+    button.next:hover{
+      width: 150px;
+      border: 3px solid darkorange;
+      background: transparent;
+      color: darkorange;
+      cursor: pointer;
+    }
+
+    button.next:hover + .icon{
+      border: 3px solid darkorange;
+      right: -25%;
+    }
+
+
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip:hover{
+        cursor: pointer;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      height: auto;
+      background-color: #333333;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+      top: 2px;
+      left: 125%;
+
+      /* Position the tooltip text - see examples below! */
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: " ";
+      position: absolute;
+      top: 50%;
+      right: 100%; /* To the left of the tooltip */
+      margin-top: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent #333333 transparent transparent;
+    }
+
+        <!---->
+
+    /*modal box for dataset*/
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+      background-color: #fefefe;
+      color: black;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 150%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+      color: darkorange;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: -60px;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    <!---->
+    /*Checkboxes*/
+    .multiselect {
+        margin-top: 5px;
+        width: 160px;
+    }
+
+    .selectBox {
+        position: relative;
+        cursor: pointer;
+        height: 22px;
+    }
+
+    .selectBox select {
+        width: 100%;
+        font-weight: normal;
+        margin-bottom: 15px;
+    }
+
+    .overSelect {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        height: 22px;
+    }
+
+    .checkboxes {
+        margin-top: 0;
+        margin-bottom: 4px;
+        display: none;
+        border: 2px #333333 solid;
+        background-color: #fff;
+        color: black;
+        text-align: center;
+        align-items: center;
+        max-height: 100px;
+        overflow: auto;
+    }
+
+    .checkboxes label {
+        display: inline-block;
+        color: black;
+        transition: all 0.3s ease-out;
+    }
+
+
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip:hover{
+        cursor: pointer;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      height: 85px;
+      overflow-y: scroll;
+      background-color: #333333;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border: 2px solid gray;
+      top: 2px;
+      left: 95%;
+      font-size: 13px;
+
+      /* Position the tooltip text - see examples below! */
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    .tooltip .tooltiptext::after {}
+
+    .tooltip .tooltiptext::-webkit-scrollbar {
+      width: 10px;
+
+    }
+
+    .tooltip .tooltiptext::-webkit-scrollbar-track {
+      background: #333333;
+    }
+
+    .tooltip .tooltiptext::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+    }
+
+    /* Alert message */
+
+    /* Popup container */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    /* The actual popup (appears on top) */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 170px;
+      height: auto;
+      background-color: firebrick;
+      color: #fff;
+      text-align: center;
+      border: 1px black solid;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: 170px;
+      margin-bottom: 70px;
+    }
+
+    /* Popup arrow */
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+    }
+
+    /* Toggle this class when clicking on the popup container (hide and show the popup) */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+</style>
+<body>
+    <div class="sidebar">
+        <div style="margin-top: -25px;">
+            <div id="content_type" class="div_option">
+                <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('homepage')}}" onclick="save()">Content type</a></p>
+            </div>
+
+
+            <hr style="border: black">
+
+            <div style="margin-top: auto" class="div_option"><a style="text-decoration: none;" href="{{url_for('upload')}}" onclick="save()">Upload File</a></div>
+
+            <hr style="border: black">
+
+            <div style="color: #333333; background-color: darkorange; margin-top: auto" class="div_option">
+              <p style="margin-bottom: 5px; text-align: center" ><a style="text-decoration: none;" href="{{url_for('select_fields')}}" onclick="save()">Select Fields</a></p>
+            </div>
+            <div style="background-color: #333333; height: 65px; width: 155px; display: block;">
+                <div style="margin-left: 15px;"><span style="font-size: 13px; font-weight: bold">- View Dataset:</span></div>
+                <div style="margin-left: 42px;"><img id="modalBtn" src="../static/icon_file.png" alt="visualize dataset" style="width: 20px; height: 29px; margin-left: 25px; margin-top: 5px; cursor: pointer"></div>
+            </div>
+
+            <!--
+            <hr style="border: black">
+
+            <div style="margin-top: auto" class="div_option">
+                <p style="margin-bottom: 5px; text-align: center" >Select Technique</p>
+            </div>
+            -->
+
+        </div>
+    </div>
+
+    <div class="navbar">
+        <nav>
+            <ul>
+                <li><a class="a_nav" href="/" onclick="save()">Home</a></li>
+                <li><a class="a_nav" href="{{url_for('help_')}}" onclick="save()">Help</a></li>
+                <li><a href="/" style="font-weight: bold; margin-left: 250px;" onclick="save()">ORANGE CB RECSYS</a></li>
+
+                <li>
+                    <a style="width: 250px; display: inline-block" href="https://www.uniba.it/ricerca/dipartimenti/informatica" onclick="save()">
+                        <img alt="Uniba logo" src="../static/uniba_logo.png" style="width: 250px; height: 40px;
+                        position: relative; margin-left: 250px; margin-top: -10px;">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+
+            <!--modal box-->
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                  <h3 style="color: darkorange">View Dataset selected</h3>
+                <span class="close">&times;</span>
+                  {% for line in data %}
+                  <div style="width: auto">
+                    {{line}}
+                    <hr>
+                  </div>
+                  {% endfor %}
+              </div>
+
+            </div>
+
+        <form method="post" enctype="multipart/form-data" onsubmit="validateForm();">
+
+        <div style="width: 70%; height: auto; position: relative; left: 170px;" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+
+            <h2 style="color: black" class="w3-center">Select:</h2>
+
+            {% if content_type_ != 'RATING' %}
+            <div>
+                <div class="tooltip">
+                    <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                    <span class="tooltiptext">
+                        Here you have to specify the id of the dataset selected.
+                    </span>
+                </div>
+
+                <div class="multiselect" style="margin-left: 50px; width: 200px;">
+                    <div class="popup">
+                        <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_ID">Select one or more fields!</span>
+                    </div>
+
+                    <p style="color: black; font-weight: bold; margin-bottom: 5px; width: 200px;">Select the ID fields: </p><div class="selectBox" onclick="showCheckboxes('select_id')">
+                    <label>
+                        <select>
+                            <option style="font-weight: normal">Select id fields</option>
+                        </select>
+                    </label>
+                    <div class="overSelect"></div>
+                    </div>
+                    <div class="checkboxes" id="select_id">
+                        {% for field in list_field_ %}
+                        <div>
+                            <label style="color: black" for="{{field}}_id">
+                                <input id="{{field}}_id" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="checkbox" name="id_fields" value={{field}}>
+                            </label>{{field}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <hr style="border: 1px solid gainsboro; width: 300px; margin-left: 50px;">
+
+                <div class="tooltip">
+                    <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                    <span class="tooltiptext">
+                       Here you have to select the fields (present in the dataset selected) that you want to represent.
+                    </span>
+                </div>
+
+                <div class="multiselect" style="margin-bottom: 20px; margin-left: 50px; width: 200px;">
+                    <div class="popup">
+                        <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_">Select one or more fields!</span>
+                    </div>
+
+                    <p style="color: black; font-weight: bold; margin-bottom: 5px; width: 200px;">Select, if you want, the fields that you want to represent: </p><div class="selectBox" onclick="showCheckboxes('select_')">
+                    <label>
+                        <select>
+                            <option style="font-weight: normal">Select fields</option>
+                        </select>
+                    </label>
+                    <div class="overSelect"></div>
+                    </div>
+                    <div class="checkboxes" id="select_">
+                        {% for field in list_field_ %}
+                        <div>
+                            <label style="color: black" for="{{field}}_">
+                                <input id="{{field}}_" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="checkbox" name="fields" value={{field}}>
+                            </label>{{field}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+
+                <div style="width: auto;">
+                    <div class="tooltip" style="float: left">
+                        <img style="width: 20px; height: 20px; margin-left: 30px;" alt="info" src="../static/info__.png">
+                        <div class="tooltiptext">
+                            Here you will have to select the user field ('<strong>from user</strong>') relating to the
+                            users who voted, the item field ('<strong>to field</strong>') relating to the items voted,
+                            the timestamp field ('<strong>timestamp</strong>') present in the dataset.
+                        </div>
+                    </div>
+
+                    <div class="multiselect" style="float: left; margin-top: 15px;">
+                        <div class="popup">
+                            <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_from">Select one fields!</span>
+                        </div>
+                        <p style="color: black; font-weight: bold; margin-bottom: 5px;">Select an user fields: </p><div class="selectBox" onclick="showCheckboxes('select_from')">
+                        <label>
+                            <select>
+                                <option style="font-weight: normal">Select From fields</option>
+                            </select>
+                        </label>
+                        <div class="overSelect"></div>
+                        </div>
+                        <div class="checkboxes" id="select_from">
+                            {% for field in list_field_ %}
+                            <div>
+                                <label style="color: black" for="{{field}}_from">
+                                    <input id="{{field}}_from" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="radio" name="from_fields" value={{field}}>
+                                </label>{{field}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                    <div class="multiselect" style="float: left; margin-left: 20px; margin-top: 15px;">
+                        <div class="popup">
+                            <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_to">Select one fields!</span>
+                        </div>
+                        <p style="color: black; font-weight: bold; margin-bottom: 5px;">Select an item field: </p><div class="selectBox" onclick="showCheckboxes('select_to')">
+                        <label>
+                            <select>
+                                <option style="font-weight: normal;">Select To fields</option>
+                            </select>
+                        </label>
+                        <div class="overSelect"></div>
+                        </div>
+                        <div class="checkboxes" id="select_to">
+                            {% for field in list_field_ %}
+                            <div>
+                                <label style="color: black" for="{{field}}_to">
+                                    <input id="{{field}}_to" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="radio" name="to_fields" value={{field}}>
+                                </label>{{field}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!---->
+
+
+
+                <div class="multiselect" style="float: left; margin-left: 20px; margin-top: 15px;">
+                    <div class="popup">
+                        <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_ts">Select one fields!</span>
+                    </div>
+                    <p style="color: black; font-weight: bold; margin-bottom: 5px;">Select the timestamp: </p><div class="selectBox" onclick="showCheckboxes('select_timestamp')">
+                    <label>
+                        <select>
+                            <option style="font-weight: normal">Select Timestamp</option>
+                        </select>
+                    </label>
+                    <div class="overSelect"></div>
+                </div>
+                    <div class="checkboxes" id="select_timestamp">
+                        {% for field in list_field_ %}
+                        <div>
+                            <label style="color: black" for="{{field}}_timestamp">
+                                <input id="{{field}}_timestamp" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="radio" name="timestamp_fields" value={{field}}>
+                            </label>{{field}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                    <div class="multiselect" style=" margin-left: 50px; margin-bottom: 20px;">
+                        <div class="tooltip" style="margin-left: -35px; margin-top: 20px;">
+                            <img style="width: 20px; height: 20px; margin-left: 20px;" alt="info" src="../static/info__.png">
+                            <span class="tooltiptext">
+                                Here you have to select the fields (present in the dataset selected) that you want to represent.
+                            </span>
+                        </div>
+
+                         <div class="popup">
+                            <span style="margin-bottom: -40px; margin-left: 80px;" class="popuptext" id="alert_rating">Select one or more fields!</span>
+                        </div>
+
+                        <p style="color: black; font-weight: bold; margin-bottom: 5px;">Select the fields that you want to represent: </p><div class="selectBox" onclick="showCheckboxes('select_rating')">
+                        <label>
+                            <select style="">
+                                <option style="font-weight: normal;">Select fields</option>
+                            </select>
+                        </label>
+                        <div class="overSelect"></div>
+                        </div>
+                        <div style=" width: 160px;" class="checkboxes" id="select_rating">
+                            {% for field in list_field_ %}
+                            <div>
+                                <label style="color: black" for="{{field}}_rating">
+                                    <input id="{{field}}_rating" style="margin-right: 5px; margin-left: 5px; cursor: pointer;" type="checkbox" name="rating_fields" value={{field}}>
+                                </label>{{field}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+            {% endif %}
+            </div>
+            <!---->
+            <div class="wrapper" id="wrap">
+                <div class="link_wrapper">
+                    <button id="next" class="next" onclick="save();">Next</button>
+                    <div class="icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268.832 268.832">
+                        <path d="M265.17 125.577l-80-80c-4.88-4.88-12.796-4.88-17.677 0-4.882 4.882-4.882
+                        12.796 0 17.678l58.66 58.66H12.5c-6.903 0-12.5 5.598-12.5 12.5 0 6.903 5.597 12.5
+                        12.5 12.5h213.654l-58.66 58.662c-4.88 4.882-4.88 12.796 0 17.678 2.44 2.44 5.64 3.66
+                        8.84 3.66s6.398-1.22 8.84-3.66l79.997-80c4.883-4.882 4.883-12.796 0-17.678z"/>
+                      </svg>
+                    </div>
+                </div>
+            </div>
+            <!---->
+
+        </form>
+    </div>
+</body>
+<script>
+    //Modal section
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("modalBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    var expanded = false;
+
+    function showCheckboxes(type) {
+        var checkboxes = document.getElementById(type);
+        if (!expanded) {
+            checkboxes.style.display = "block";
+            expanded = true;
+        } else {
+            checkboxes.style.display = "none";
+            expanded = false;
+        }
+    }
+
+    var content_type_selected = JSON.parse('{{ content_type_|tojson }}');
+
+    var fields = JSON.parse('{{ list_field_|tojson }}');
+
+    /*Control one check for content type*/
+
+    function displayAlert(string){
+        var alert_ = document.getElementById(string);
+        alert_.classList.toggle("show");
+        setTimeout(function (){
+            alert_.className = alert_.className.replace("show", "");
+        }, 4000);
+    }
+
+    function show_alert(string){
+        displayAlert(string)
+    }
+
+    function isEmpty(attach_id, alert_id){
+        var i;
+        var empty = true;
+
+        i = 0;
+        do{
+            var checked = document.getElementById(fields[i] + attach_id).checked;
+            if(checked === true){
+                empty = false;
+            }
+            i++;
+        }while((i < fields.length) && (empty === true));
+
+        if(empty === true){
+            show_alert(alert_id);
+        }
+
+        return empty;
+    }
+
+    function validateForm(){
+        if(content_type_selected !== 'RATING'){
+            if(isEmpty('_id', 'alert_ID') === true){
+                /* (... || isEmpty('_', 'alert_') === true)){*/
+                event.preventDefault();
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if((isEmpty('_from', 'alert_from') === true || isEmpty('_to', 'alert_to') === true)
+                || isEmpty('_timestamp', 'alert_ts') === true || isEmpty('_rating', 'alert_rating') === true){
+                event.preventDefault();
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    // save all choice (local storage)
+    window.onload= function(){
+        var list = document.querySelectorAll(`[type*="checkbox"]`);
+        list.forEach( el => {
+            var checked = JSON.parse(sessionStorage.getItem(el.id));
+            document.getElementById(el.id).checked = checked;
+        });
+
+        var list_ = document.querySelectorAll(`[type*="radio"]`);
+        list_.forEach( el => {
+            var checked_ = JSON.parse(sessionStorage.getItem(el.id));
+            document.getElementById(el.id).checked = checked_;
+        });
+    }
+
+    save = function(){
+        var list = document.querySelectorAll(`[type*="checkbox"]`);
+        list.forEach( el => {
+            sessionStorage.setItem(el.id, el.checked);
+        })
+
+        var list_ = document.querySelectorAll(`[type*="radio"]`);
+        list_.forEach( el => {
+            sessionStorage.setItem(el.id, el.checked);
+        })
+    }
+
+</script>
+</html>

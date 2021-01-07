@@ -1,0 +1,46 @@
+orange\_cb\_recsys.recsys.ranking\_algorithms package
+=====================================================
+
+Submodules
+----------
+
+orange\_cb\_recsys.recsys.ranking\_algorithms.centroid\_vector module
+---------------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.ranking_algorithms.centroid_vector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.recsys.ranking\_algorithms.classifier module
+---------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.ranking_algorithms.classifier
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.recsys.ranking\_algorithms.index\_query module
+-----------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.ranking_algorithms.index_query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.recsys.ranking\_algorithms.similarities module
+-----------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.recsys.ranking_algorithms.similarities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: orange_cb_recsys.recsys.ranking_algorithms
+   :members:
+   :undoc-members:
+   :show-inheritance:

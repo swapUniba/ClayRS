@@ -1,0 +1,33 @@
+[{
+  "content_type": "ITEM",
+  "raw_source_path": "movies_info.json",
+  "source_type": "json",
+  "id_field_name": "imdbID",
+  "start_from": "0",
+  "end_up_at": "all",
+  "fields": [
+    {
+      "field_name": "Plot",
+      "memory_interface": "None",
+      "memory_interface_path": "./test-index-plot",
+      "pipeline_list": [
+        {
+        "field_content_production": {"class": "embedding",
+          "combining_technique": {"class":  "centroid"},
+          "embedding_source": {"class": "binary_file", "file_path": "./doc2vec/doc2vec.bin", "embedding_type":  2},
+          "granularity": 1},
+        "preprocessing_list": [
+          {"class": "nltk", "url_tagging":"True", "strip_multiple_whitespaces": "True"}
+          ]
+        }
+      ]
+    }
+  ]
+}]
+
+
+
+
+
+
+

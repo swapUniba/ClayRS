@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">sent_tokenize</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.content_representation.</span> \
+    <span class="n">content_field</span> <span class="kn">import</span> <span class="nn">FieldRepresentation</span><span class="o">,</span> <span class="nn">FeaturesBagField</span><span class="o">,</span> <span class="nn">EmbeddingField</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.information_processor.</span> \
+    <span class="n">information_processor</span> <span class="kn">import</span> <span class="nn">InformationProcessor</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.memory_interfaces.text_interface</span> <span class="kn">import</span> <span class="n">IndexInterface</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.raw_information_source</span> <span class="kn">import</span> <span class="n">RawInformationSource</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.check_tokenization</span> <span class="kn">import</span> <span class="n">check_tokenized</span><span class="p">,</span> <span class="n">check_not_tokenized</span>
+
+
+<div class="viewcode-block" id="FieldContentProductionTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.FieldContentProductionTechnique">[docs]</a><span class="k">class</span> <span class="nc">FieldContentProductionTechnique</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class that generalizes the techniques to use for producing the semantic description</span>
+<span class="sd">    of a content&#39;s field&#39;s representation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span> <span class="o">=</span> <span class="s2">&quot;EN&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lang</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span>
+
+    <span class="nd">@lang</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span> <span class="o">=</span> <span class="n">lang</span></div>
+
+
+<div class="viewcode-block" id="SearchIndexing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SearchIndexing">[docs]</a><span class="k">class</span> <span class="nc">SearchIndexing</span><span class="p">(</span><span class="n">FieldContentProductionTechnique</span><span class="p">):</span>
+<div class="viewcode-block" id="SearchIndexing.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SearchIndexing.produce_content">[docs]</a>    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">,</span> <span class="n">field_data</span><span class="p">,</span> <span class="n">indexer</span><span class="p">:</span> <span class="n">IndexInterface</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save field data as a document field using the given indexer,</span>
+<span class="sd">        the resulting can be used for an index query recommender</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            indexer: Index in which new field will be created</span>
+<span class="sd">            field_data: Data that will be stored in the index</span>
+<span class="sd">            pipeline_id: Second part of the field name in the indexer index,</span>
+<span class="sd">                complete field_name is field_name + pipeline_id</span>
+<span class="sd">            field_name (str): First part of the field name in the indexer index,</span>
+<span class="sd">                complete field_name is field_name + pipeline_id</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">field_data</span> <span class="o">=</span> <span class="n">check_not_tokenized</span><span class="p">(</span><span class="n">field_data</span><span class="p">)</span>
+        <span class="n">indexer</span><span class="o">.</span><span class="n">new_searching_field</span><span class="p">(</span><span class="n">field_name</span> <span class="o">+</span> <span class="n">pipeline_id</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Indexing for search-engine recommender&quot;</span></div>
+
+
+<div class="viewcode-block" id="CollectionBasedTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CollectionBasedTechnique">[docs]</a><span class="k">class</span> <span class="nc">CollectionBasedTechnique</span><span class="p">(</span><span class="n">FieldContentProductionTechnique</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class generalizes the techniques that work on the entire content collection,</span>
+<span class="sd">    such as the tf-idf technique</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_need_refactor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pipeline_need_refactor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__processor_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InformationProcessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">field_need_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_need_refactor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_need_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pipeline_need_refactor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">processor_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">InformationProcessor</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__processor_list</span>
+
+    <span class="nd">@field_need_refactor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">field_need_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__field_need_refactor</span> <span class="o">=</span> <span class="n">field_name</span>
+
+    <span class="nd">@pipeline_need_refactor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pipeline_need_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pipeline_need_refactor</span> <span class="o">=</span> <span class="n">pipeline_id</span>
+
+    <span class="nd">@processor_list</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">processor_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processor_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InformationProcessor</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__processor_list</span> <span class="o">=</span> <span class="n">processor_list</span>
+
+<div class="viewcode-block" id="CollectionBasedTechnique.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CollectionBasedTechnique.produce_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldRepresentation</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CollectionBasedTechnique.dataset_refactor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CollectionBasedTechnique.dataset_refactor">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">dataset_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">information_source</span><span class="p">:</span> <span class="n">RawInformationSource</span><span class="p">,</span> <span class="n">id_field_names</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method restructures the raw data in a way functional to the final representation.</span>
+<span class="sd">        This is done only for those field representations that require this phase to be done</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            information_source (RawInformationSource):</span>
+<span class="sd">            id_field_names: fields where to find data that compound content&#39;s id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CollectionBasedTechnique.delete_refactored"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CollectionBasedTechnique.delete_refactored">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">delete_refactored</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;CollectionBasedTechnique&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;CollectionBasedTechnique &quot;</span></div>
+
+
+<div class="viewcode-block" id="SingleContentTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SingleContentTechnique">[docs]</a><span class="k">class</span> <span class="nc">SingleContentTechnique</span><span class="p">(</span><span class="n">FieldContentProductionTechnique</span><span class="p">):</span>
+<div class="viewcode-block" id="SingleContentTechnique.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SingleContentTechnique.produce_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldRepresentation</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given data of certain field it returns a complex representation&#39;s instance of the field.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_representation_name: name of the field representation object that will be created</span>
+<span class="sd">            field_data: input for the complex representation production</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            FieldRepresentation: an instance of FieldRepresentation,</span>
+<span class="sd">                 the particular type of representation depends from the technique</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="TfIdfTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.TfIdfTechnique">[docs]</a><span class="k">class</span> <span class="nc">TfIdfTechnique</span><span class="p">(</span><span class="n">CollectionBasedTechnique</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class that produce a Bag of words with tf-idf metric</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TfIdfTechnique.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.TfIdfTechnique.produce_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeaturesBagField</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TfIdfTechnique.dataset_refactor"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.TfIdfTechnique.dataset_refactor">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">dataset_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">information_source</span><span class="p">:</span> <span class="n">RawInformationSource</span><span class="p">,</span> <span class="n">id_field_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TfIdfTechnique.delete_refactored"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.TfIdfTechnique.delete_refactored">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">delete_refactored</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;TfIdfTechnique&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;TfIdfTechnique &quot;</span></div>
+
+
+<div class="viewcode-block" id="EntityLinking"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EntityLinking">[docs]</a><span class="k">class</span> <span class="nc">EntityLinking</span><span class="p">(</span><span class="n">SingleContentTechnique</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class that generalizes implementations that use entity linking</span>
+<span class="sd">    for producing the semantic description</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EntityLinking.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EntityLinking.produce_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeaturesBagField</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="CombiningTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CombiningTechnique">[docs]</a><span class="k">class</span> <span class="nc">CombiningTechnique</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class that generalizes the modality in which loaded embeddings will be</span>
+<span class="sd">    combined to produce a semantic representation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="CombiningTechnique.combine"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.CombiningTechnique.combine">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Combine, in a way specified in the implementations,</span>
+<span class="sd">        the row of the input matrix</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding_matrix: matrix whose rows will be combined</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="EmbeddingSource"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingSource">[docs]</a><span class="k">class</span> <span class="nc">EmbeddingSource</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General class whose purpose is to store the loaded pre-trained embeddings model and</span>
+<span class="sd">    extract specified words from it</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        self.__model: embeddings model loaded from source</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span>
+
+    <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="EmbeddingSource.load"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingSource.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that extracts from the embeddings model</span>
+<span class="sd">        the vectors of the words contained in text</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text (list&lt;str&gt;): contains words of which vectors will be extracted</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            embedding_matrix (np.ndarray): bi-dimensional numpy vector,</span>
+<span class="sd">                each row is a term vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_vector_size</span><span class="p">()))</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">check_tokenized</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">embedding_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">embedding_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_vector_size</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">embedding_matrix</span></div>
+
+<div class="viewcode-block" id="EmbeddingSource.get_vector_size"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingSource.get_vector_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_vector_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">vector_size</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;EmbeddingSource&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;EmbeddingSource &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EmbeddingTechnique"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingTechnique">[docs]</a><span class="k">class</span> <span class="nc">EmbeddingTechnique</span><span class="p">(</span><span class="n">SingleContentTechnique</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class that can be used to combine different embeddings coming from various sources</span>
+<span class="sd">    in order to produce the semantic description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        combining_technique (CombiningTechnique): The technique that will be used</span>
+<span class="sd">        for combining the embeddings.</span>
+<span class="sd">        embedding_source (EmbeddingSource):</span>
+<span class="sd">        Source where the embeddings vectors for the words in field_data are stored.</span>
+<span class="sd">        granularity (Granularity): It can assume three values, depending on whether</span>
+<span class="sd">        the framework user wants to combine relatively to words, phrases or documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_technique</span><span class="p">:</span> <span class="n">CombiningTechnique</span><span class="p">,</span>
+                 <span class="n">embedding_source</span><span class="p">:</span> <span class="n">EmbeddingSource</span><span class="p">,</span>
+                 <span class="n">granularity</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__combining_technique</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">combining_technique</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="p">:</span> <span class="n">EmbeddingSource</span> <span class="o">=</span> <span class="n">embedding_source</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__granularity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">granularity</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<div class="viewcode-block" id="EmbeddingTechnique.produce_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingTechnique.produce_content">[docs]</a>    <span class="k">def</span> <span class="nf">produce_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_representation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmbeddingField</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that builds the semantic content starting from the embeddings contained in</span>
+<span class="sd">        field_data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_representation_name (str): Name of the field representation for which produce</span>
+<span class="sd">            the content</span>
+<span class="sd">            field_data: The terms whose embeddings will be combined.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            EmbeddingField</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__granularity</span> <span class="o">==</span> <span class="s2">&quot;word&quot;</span><span class="p">:</span>
+            <span class="n">doc_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">field_data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">EmbeddingField</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">,</span> <span class="n">doc_matrix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__granularity</span> <span class="o">==</span> <span class="s2">&quot;sentence&quot;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">nltk</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;punkt&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+                <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;punkt&#39;</span><span class="p">)</span>
+
+            <span class="n">sentences</span> <span class="o">=</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">field_data</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+                <span class="n">sentences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sentence</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">sentences_embeddings</span> <span class="o">=</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="o">.</span><span class="n">get_vector_size</span><span class="p">()))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+                <span class="n">sentence_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+                <span class="n">sentences_embeddings</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__combining_technique</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sentence_matrix</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">EmbeddingField</span><span class="p">(</span><span class="n">field_representation_name</span><span class="p">,</span> <span class="n">sentences_embeddings</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__granularity</span> <span class="o">==</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span>
+            <span class="n">doc_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">field_data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">EmbeddingField</span><span class="p">(</span>
+                <span class="n">field_representation_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__combining_technique</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">doc_matrix</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify a valid embedding technique granularity&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;EmbeddingTechnique&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;EmbeddingTechnique &quot;</span> \
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__combining_technique</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> \
+               <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__embedding_source</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> \
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granularity</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

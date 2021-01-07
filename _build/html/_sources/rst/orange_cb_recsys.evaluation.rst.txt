@@ -1,0 +1,102 @@
+orange\_cb\_recsys.evaluation package
+=====================================
+
+Submodules
+----------
+
+orange\_cb\_recsys.evaluation.classification\_metrics module
+------------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.classification_metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.delta\_gap module
+-----------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.delta_gap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.eval\_model module
+------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.eval_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.fairness\_metrics module
+------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.fairness_metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.metrics module
+--------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.novelty module
+--------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.novelty
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.partitioning module
+-------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.partitioning
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.prediction\_metrics module
+--------------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.prediction_metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.ranking\_metrics module
+-----------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.ranking_metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.serendipity module
+------------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.serendipity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+orange\_cb\_recsys.evaluation.utils module
+------------------------------------------
+
+.. automodule:: orange_cb_recsys.evaluation.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: orange_cb_recsys.evaluation
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.run &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.run</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.run</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">orange_cb_recsys.utils.runnable_instances</span> <span class="k">as</span> <span class="nn">r_i</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.config</span> <span class="kn">import</span> <span class="n">ContentAnalyzerConfig</span><span class="p">,</span> <span class="n">FieldConfig</span><span class="p">,</span> \
+    <span class="n">FieldRepresentationPipeline</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.content_analyzer_main</span> <span class="kn">import</span> <span class="n">ContentAnalyzer</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer</span> <span class="kn">import</span> \
+    <span class="n">RatingsImporter</span><span class="p">,</span> <span class="n">RatingsFieldConfig</span>
+
+<span class="kn">import</span> <span class="nn">lucene</span>
+
+<span class="n">lucene</span><span class="o">.</span><span class="n">initVM</span><span class="p">(</span><span class="n">vmargs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-Djava.awt.headless=true&#39;</span><span class="p">])</span>
+
+<span class="n">DEFAULT_CONFIG_PATH</span> <span class="o">=</span> <span class="s2">&quot;config_prova.json&quot;</span>
+
+<span class="n">implemented_preprocessing</span> <span class="o">=</span> <span class="n">r_i</span><span class="o">.</span><span class="n">get_cat</span><span class="p">(</span><span class="s1">&#39;preprocessor&#39;</span><span class="p">)</span>
+
+<span class="n">implemented_content_prod</span> <span class="o">=</span> <span class="n">r_i</span><span class="o">.</span><span class="n">get_cat</span><span class="p">(</span><span class="s1">&#39;content_production&#39;</span><span class="p">)</span>
+
+<span class="n">implemented_rating_proc</span> <span class="o">=</span> <span class="n">r_i</span><span class="o">.</span><span class="n">get_cat</span><span class="p">(</span><span class="s1">&#39;rating_processor&#39;</span><span class="p">)</span>
+
+<span class="n">runnable_instances</span> <span class="o">=</span> <span class="n">r_i</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="check_for_available"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.run.check_for_available">[docs]</a><span class="k">def</span> <span class="nf">check_for_available</span><span class="p">(</span><span class="n">content_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="c1"># check if need_interface is respected</span>
+    <span class="c1"># check runnable_instances</span>
+    <span class="k">if</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;source_type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="s1">&#39;sql&#39;</span><span class="p">,</span> <span class="s1">&#39;dat&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;content_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ratings&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;from&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> \
+                <span class="ow">or</span> <span class="s2">&quot;to&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> \
+                <span class="ow">or</span> <span class="s2">&quot;timestamp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> \
+                <span class="ow">or</span> <span class="s2">&quot;output_directory&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s1">&#39;rating_processor&#39;</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">implemented_rating_proc</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">field_dict</span> <span class="ow">in</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;memory_interface&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">pipeline_dict</span> <span class="ow">in</span> <span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;pipeline_list&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;field_content_production&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;field_content_production&#39;</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> \
+                        <span class="ow">not</span> <span class="ow">in</span> <span class="n">implemented_content_prod</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">preprocessing</span> <span class="ow">in</span> <span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;preprocessing_list&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">preprocessing</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">implemented_preprocessing</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="dict_detector"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.run.dict_detector">[docs]</a><span class="k">def</span> <span class="nf">dict_detector</span><span class="p">(</span><span class="n">technique_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    detect a a class constructor call in a sub-dict of a dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">technique_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">technique_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;class&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">parameter_class_name</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+            <span class="n">technique_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">runnable_instances</span><span class="p">[</span><span class="n">parameter_class_name</span><span class="p">](</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">technique_dict</span></div>
+
+
+<div class="viewcode-block" id="content_config_run"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.run.content_config_run">[docs]</a><span class="k">def</span> <span class="nf">content_config_run</span><span class="p">(</span><span class="n">config_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">content_config</span> <span class="ow">in</span> <span class="n">config_list</span><span class="p">:</span>
+        <span class="c1"># content production</span>
+        <span class="n">search_index</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s1">&#39;search_index&#39;</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">search_index</span> <span class="o">=</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;search_index&#39;</span><span class="p">]</span>
+
+        <span class="n">content_analyzer_config</span> <span class="o">=</span> <span class="n">ContentAnalyzerConfig</span><span class="p">(</span>
+            <span class="n">content_config</span><span class="p">[</span><span class="s2">&quot;content_type&quot;</span><span class="p">],</span>
+            <span class="n">runnable_instances</span><span class="p">[</span><span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;source_type&#39;</span><span class="p">]]</span>
+            <span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">content_config</span><span class="p">[</span><span class="s2">&quot;raw_source_path&quot;</span><span class="p">]),</span>
+            <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;id_field_name&#39;</span><span class="p">],</span>
+            <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;output_directory&#39;</span><span class="p">],</span>
+            <span class="n">search_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;get_lod_properties&#39;</span> <span class="ow">in</span> <span class="n">content_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ex_retrieval</span> <span class="ow">in</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;get_lod_properties&#39;</span><span class="p">]:</span>
+                <span class="n">class_name</span> <span class="o">=</span> <span class="n">ex_retrieval</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">dict_detector</span><span class="p">(</span><span class="n">ex_retrieval</span><span class="p">)</span>
+                <span class="n">content_analyzer_config</span><span class="o">.</span><span class="n">append_exogenous_properties_retrieval</span><span class="p">(</span><span class="n">runnable_instances</span><span class="p">[</span><span class="n">class_name</span><span class="p">](</span><span class="o">**</span><span class="n">args</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">field_dict</span> <span class="ow">in</span> <span class="n">content_config</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">field_config</span> <span class="o">=</span> <span class="n">FieldConfig</span><span class="p">(</span><span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;lang&#39;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">field_config</span> <span class="o">=</span> <span class="n">FieldConfig</span><span class="p">()</span>
+
+            <span class="c1"># setting the content analyzer config</span>
+
+            <span class="k">for</span> <span class="n">pipeline_dict</span> <span class="ow">in</span> <span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;pipeline_list&#39;</span><span class="p">]:</span>
+                <span class="n">preprocessing_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">preprocessing</span> <span class="ow">in</span> <span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;preprocessing_list&#39;</span><span class="p">]:</span>
+                    <span class="c1"># each preprocessing settings</span>
+                    <span class="n">class_name</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>  <span class="c1"># extract the class acronyms</span>
+                    <span class="n">preprocessing</span> <span class="o">=</span> <span class="n">dict_detector</span><span class="p">(</span><span class="n">preprocessing</span><span class="p">)</span>
+                    <span class="n">preprocessing_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">runnable_instances</span><span class="p">[</span><span class="n">class_name</span><span class="p">](</span><span class="o">**</span><span class="n">preprocessing</span><span class="p">))</span>  <span class="c1"># params for the class</span>
+                <span class="c1"># content production settings</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;field_content_production&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">class_name</span> <span class="o">=</span> \
+                        <span class="n">pipeline_dict</span><span class="p">[</span><span class="s1">&#39;field_content_production&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+                    <span class="c1"># append each field representation pipeline to the field config</span>
+                    <span class="n">technique_dict</span> <span class="o">=</span> <span class="n">pipeline_dict</span><span class="p">[</span><span class="s2">&quot;field_content_production&quot;</span><span class="p">]</span>
+                    <span class="n">technique_dict</span> <span class="o">=</span> <span class="n">dict_detector</span><span class="p">(</span><span class="n">technique_dict</span><span class="p">)</span>
+                    <span class="n">field_config</span><span class="o">.</span><span class="n">append_pipeline</span><span class="p">(</span>
+                        <span class="n">FieldRepresentationPipeline</span><span class="p">(</span>
+                            <span class="n">runnable_instances</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span>
+                            <span class="p">(</span><span class="o">**</span><span class="n">technique_dict</span><span class="p">),</span> <span class="n">preprocessing_list</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">field_config</span><span class="o">.</span><span class="n">append_pipeline</span><span class="p">(</span>
+                        <span class="n">FieldRepresentationPipeline</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">preprocessing_list</span><span class="p">))</span>
+            <span class="c1"># verify that the memory interface is set</span>
+            <span class="k">if</span> <span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;memory_interface&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+                <span class="n">field_config</span><span class="o">.</span><span class="n">memory_interface</span> <span class="o">=</span> <span class="n">runnable_instances</span><span class="p">[</span>
+                    <span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;memory_interface&#39;</span><span class="p">]](</span><span class="n">field_dict</span><span class="p">[</span><span class="s1">&#39;memory_interface_path&#39;</span><span class="p">])</span>
+
+            <span class="n">content_analyzer_config</span><span class="o">.</span><span class="n">append_field_config</span><span class="p">(</span><span class="n">field_dict</span><span class="p">[</span><span class="s2">&quot;field_name&quot;</span><span class="p">],</span> <span class="n">field_config</span><span class="p">)</span>
+
+        <span class="c1"># fitting the data for each</span>
+        <span class="n">content_analyzer</span> <span class="o">=</span> \
+            <span class="n">ContentAnalyzer</span><span class="p">(</span><span class="n">content_analyzer_config</span><span class="p">)</span>  <span class="c1"># need the id list (id configuration)</span>
+        <span class="n">content_analyzer</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="rating_config_run"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.run.rating_config_run">[docs]</a><span class="k">def</span> <span class="nf">rating_config_run</span><span class="p">(</span><span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="n">rating_configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">[</span><span class="s1">&#39;processor&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+        <span class="n">class_dict</span> <span class="o">=</span> <span class="n">dict_detector</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;processor&quot;</span><span class="p">])</span>
+        <span class="n">rating_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">RatingsFieldConfig</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;preference_field_name&quot;</span><span class="p">],</span>
+                               <span class="n">processor</span><span class="o">=</span><span class="n">runnable_instances</span><span class="p">[</span><span class="n">class_name</span><span class="p">](</span><span class="o">**</span><span class="n">class_dict</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sql&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">RatingsImporter</span><span class="p">(</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">runnable_instances</span><span class="p">[</span>
+            <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]](</span><span class="n">file_path</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;raw_source_path&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">args</span><span class="p">),</span>
+        <span class="n">output_directory</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;output_directory&quot;</span><span class="p">],</span>
+        <span class="n">rating_configs</span><span class="o">=</span><span class="n">rating_configs</span><span class="p">,</span>
+        <span class="n">from_field_name</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;from_field_name&quot;</span><span class="p">],</span>
+        <span class="n">to_field_name</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;to_field_name&quot;</span><span class="p">],</span>
+        <span class="n">timestamp_field_name</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;timestamp_field_name&quot;</span><span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">import_ratings</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">config_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">config_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG_PATH</span>
+    <span class="k">if</span> <span class="n">config_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.yml&#39;</span><span class="p">):</span>
+        <span class="n">config_list_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">),</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">config_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+        <span class="n">config_list_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Wrong file extension&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">config_dict</span> <span class="ow">in</span> <span class="n">config_list_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">check_for_available</span><span class="p">(</span><span class="n">config_dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">config_dict</span><span class="p">[</span><span class="s2">&quot;content_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;rating&quot;</span><span class="p">:</span>
+                <span class="n">rating_config_run</span><span class="p">(</span><span class="n">config_dict</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">content_config_run</span><span class="p">([</span><span class="n">config_dict</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Check for available instances failed.&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

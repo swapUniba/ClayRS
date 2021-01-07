@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.embedding_learner package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.content_analyzer.embedding_learner package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.doc2vec">orange_cb_recsys.content_analyzer.embedding_learner.doc2vec module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.fasttext">orange_cb_recsys.content_analyzer.embedding_learner.fasttext module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis">orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.random_indexing">orange_cb_recsys.content_analyzer.embedding_learner.random_indexing module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.word2vec">orange_cb_recsys.content_analyzer.embedding_learner.word2vec module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.content_analyzer.embedding_learner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.embedding_learner package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.content_analyzer.embedding_learner.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-content-analyzer-embedding-learner-package">
+<h1>orange_cb_recsys.content_analyzer.embedding_learner package<a class="headerlink" href="#orange-cb-recsys-content-analyzer-embedding-learner-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.doc2vec">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-doc2vec-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.doc2vec module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.doc2vec" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.doc2vec.GensimDoc2Vec">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.doc2vec.</code><code class="sig-name descname">GensimDoc2Vec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/doc2vec.html#GensimDoc2Vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.doc2vec.GensimDoc2Vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner</span></code></a></p>
+<p>”
+Class that implements the Abstract Class EmbeddingLearner.
+Implementation of Word2Vec using the Gensim library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,</p></li>
+<li><p><strong>how to process</strong> (<em>specify</em>) – </p></li>
+<li><p><strong>it for model computation</strong> (<em>use</em>) – </p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.doc2vec.GensimDoc2Vec.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/doc2vec.html#GensimDoc2Vec.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.doc2vec.GensimDoc2Vec.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, using Gensim Doc2Vec.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-embedding-learner-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.</code><code class="sig-name descname">EmbeddingLearner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/embedding_learner.html#EmbeddingLearner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract Class for the different kinds of embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,</p></li>
+<li><p><strong>how to process</strong> (<em>specify</em>) – </p></li>
+<li><p><strong>it for model computation</strong> (<em>use</em>) – </p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.extract_corpus">
+<code class="sig-name descname">extract_corpus</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/embedding_learner.html#EmbeddingLearner.extract_corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.extract_corpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the datas from the source and processes them</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of processed data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>corpus (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.field_list">
+<em class="property">property </em><code class="sig-name descname">field_list</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.field_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/embedding_learner.html#EmbeddingLearner.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, in different ways according to the various implementations.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.model">
+<em class="property">property </em><code class="sig-name descname">model</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.preprocessor">
+<em class="property">property </em><code class="sig-name descname">preprocessor</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.preprocessor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/embedding_learner.html#EmbeddingLearner.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the model. If you are in developing mode, the model is saved in the src directory.
+If you are not in developing mode, the model will be saved in the embeddings
+directory under the home path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.source">
+<em class="property">property </em><code class="sig-name descname">source</code><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.fasttext">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-fasttext-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.fasttext module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.fasttext" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.fasttext.GensimFastText">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.fasttext.</code><code class="sig-name descname">GensimFastText</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/fasttext.html#GensimFastText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.fasttext.GensimFastText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner</span></code></a></p>
+<p>”
+Class that implements the Abstract Class EmdeddingLearner.
+Implementation of FastText using the Gensim library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,
+specify how to process (can be None) the source data, before
+use it for model computation</p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.fasttext.GensimFastText.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/fasttext.html#GensimFastText.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.fasttext.GensimFastText.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, using Gensim FastText.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-latent-semantic-analysis-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis.GensimLatentSemanticAnalysis">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis.</code><code class="sig-name descname">GensimLatentSemanticAnalysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/latent_semantic_analysis.html#GensimLatentSemanticAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis.GensimLatentSemanticAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner</span></code></a></p>
+<p>Class that implements latent semantic analysis using Gensim</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,
+specify how to process (can be None) the source data, before
+use it for model computation</p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis.GensimLatentSemanticAnalysis.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/latent_semantic_analysis.html#GensimLatentSemanticAnalysis.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysis.GensimLatentSemanticAnalysis.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, using Gensim Latent Semantic Analysis.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.random_indexing">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-random-indexing-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.random_indexing module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.random_indexing" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.random_indexing.GensimRandomIndexing">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.random_indexing.</code><code class="sig-name descname">GensimRandomIndexing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/random_indexing.html#GensimRandomIndexing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.random_indexing.GensimRandomIndexing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner</span></code></a></p>
+<p>Class that implements the random indexing using Gensim</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,
+specify how to process (can be None) the source data, before
+use it for model computation</p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.random_indexing.GensimRandomIndexing.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/random_indexing.html#GensimRandomIndexing.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.random_indexing.GensimRandomIndexing.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, using Gensim Random Projection.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner.word2vec">
+<span id="orange-cb-recsys-content-analyzer-embedding-learner-word2vec-module"></span><h2>orange_cb_recsys.content_analyzer.embedding_learner.word2vec module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner.word2vec" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec">
+<em class="property">class </em><code class="sig-prename descclassname">orange_cb_recsys.content_analyzer.embedding_learner.word2vec.</code><code class="sig-name descname">GensimWord2Vec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</a></span></em>, <em class="sig-param"><span class="n">preprocessor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor">orange_cb_recsys.content_analyzer.information_processor.information_processor.TextProcessor</a></span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/word2vec.html#GensimWord2Vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner" title="orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner.EmbeddingLearner</span></code></a></p>
+<p>”
+Class that implements the Abstract Class EmbeddingLearner.
+Implementation of Word2Vec using the Gensim library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – Source where the content is stored.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a>) – Instance of the class InformationProcessor,
+specify how to process (can be None) the source data, before
+use it for model computation</p></li>
+<li><p><strong>field_list</strong> (<em>List&lt;str&gt;</em>) – Field name list.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/word2vec.html#GensimWord2Vec.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates the model, using Word 2 Vec.
+The model isn’t then returned, but gets stored in the ‘model’ class attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/content_analyzer/embedding_learner/word2vec.html#GensimWord2Vec.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.content_analyzer.embedding_learner.word2vec.GensimWord2Vec.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the model. If you are in developing mode, the model is saved in the src directory.
+If you are not in developing mode, the model will be saved in the embeddings
+directory under the home path.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.content_analyzer.embedding_learner">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.embedding_learner" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

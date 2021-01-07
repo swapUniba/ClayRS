@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<div class="viewcode-block" id="InformationInterface"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface">[docs]</a><span class="k">class</span> <span class="nc">InformationInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class that deals with the serialization</span>
+<span class="sd">    and deserialization of a field (of a content) data</span>
+<span class="sd">    basing on the type of element extracted.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory (str):</span>
+<span class="sd">            directory where to store the serialized content and where to access for deserialization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">directory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__directory</span>
+
+<div class="viewcode-block" id="InformationInterface.new_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface.new_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new item, that will be serialized by the apposite method.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="InformationInterface.new_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface.new_field">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize the raw data of a field.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_name: name of the created field</span>
+<span class="sd">            field_data: data to serialize</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="InformationInterface.serialize_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface.serialize_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">serialize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add to the serialized collection the current item</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="InformationInterface.init_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface.init_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">init_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the interface in writing mode,</span>
+<span class="sd">        if the specified directory does not exit a new one will be created</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="InformationInterface.stop_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface.stop_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">stop_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop writing mode</span>
+<span class="sd">        &quot;&quot;&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="ImageInterface"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface">[docs]</a><span class="k">class</span> <span class="nc">ImageInterface</span><span class="p">(</span><span class="n">InformationInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Future feature</span>
+<span class="sd">    Abstract class to use when the field information is in image format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ImageInterface.new_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface.new_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ImageInterface.new_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface.new_field">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ImageInterface.serialize_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface.serialize_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">serialize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ImageInterface.init_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface.init_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">init_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ImageInterface.stop_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.ImageInterface.stop_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">stop_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="AudioInterface"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface">[docs]</a><span class="k">class</span> <span class="nc">AudioInterface</span><span class="p">(</span><span class="n">InformationInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Future feature</span>
+<span class="sd">    Abstract class to use when the field information is in audio format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AudioInterface.new_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface.new_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="AudioInterface.new_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface.new_field">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AudioInterface.serialize_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface.serialize_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">serialize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="AudioInterface.init_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface.init_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">init_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="AudioInterface.stop_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.AudioInterface.stop_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">stop_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="TextInterface"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface">[docs]</a><span class="k">class</span> <span class="nc">TextInterface</span><span class="p">(</span><span class="n">InformationInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class to use when the field information is textual.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TextInterface.new_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.new_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TextInterface.new_field"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.new_field">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">new_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TextInterface.serialize_content"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.serialize_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">serialize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TextInterface.init_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.init_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">init_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TextInterface.stop_writing"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.stop_writing">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">stop_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TextInterface.get_tf_idf"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.TextInterface.get_tf_idf">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_tf_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

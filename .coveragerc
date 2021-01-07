@@ -1,0 +1,24 @@
+[run]
+omit =
+    */online/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    def __init__
+    def set
+    def get
+    def append
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    pass
+    if 0:
+    if __name__ == .__main__.:
+    if not DEVELOPING:
+    if DEVELOPING:
+    from
+    import

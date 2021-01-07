@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.evaluation.utils &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.evaluation.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.evaluation.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="popular_items"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.utils.popular_items">[docs]</a><span class="k">def</span> <span class="nf">popular_items</span><span class="p">(</span><span class="n">score_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find a set of most popular items (&#39;to_id&#39;s)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        score_frame (pd.DataFrame): each row contains index(the rank position), label, value predicted</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set&lt;str&gt;: set of most popular labels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">score_frame</span><span class="p">[[</span><span class="s1">&#39;to_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="n">ratings_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+    <span class="n">num_of_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratings_counter</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">top_n_percentage</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">top_n_index</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_of_items</span> <span class="o">*</span> <span class="n">top_n_percentage</span><span class="p">)</span>
+
+    <span class="c1"># a plot could be produced</span>
+    <span class="n">most_common</span> <span class="o">=</span> <span class="n">ratings_counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">top_n_index</span><span class="p">)</span>
+
+    <span class="c1"># removing counts from most_common</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">most_common</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pop_ratio_by_user"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.utils.pop_ratio_by_user">[docs]</a><span class="k">def</span> <span class="nf">pop_ratio_by_user</span><span class="p">(</span><span class="n">score_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">most_pop_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the popularity ratio for each user</span>
+<span class="sd">    Args:</span>
+<span class="sd">        score_frame (pd.DataFrame): each row contains index(the rank position), label, value predicted</span>
+<span class="sd">        most_pop_items (Set[str]): set of most popular &#39;to_id&#39; labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (pd.DataFrame): contains the &#39;popularity_ratio&#39; for each &#39;from_id&#39; (user)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Splitting users by popularity</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">score_frame</span><span class="p">[[</span><span class="s1">&#39;from_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="n">popularity_ratio_by_user</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="c1"># filters by the current user and returns all the items he has rated</span>
+        <span class="n">rated_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">score_frame</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;from_id == @user&#39;</span><span class="p">)[[</span><span class="s1">&#39;to_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="c1"># interesects rated_items with popular_items</span>
+        <span class="n">popular_rated_items</span> <span class="o">=</span> <span class="n">rated_items</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">most_pop_items</span><span class="p">)</span>
+        <span class="n">popularity_ratio</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">popular_rated_items</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">rated_items</span><span class="p">)</span>
+
+        <span class="n">popularity_ratio_by_user</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">=</span> <span class="n">popularity_ratio</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;from_id&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">popularity_ratio_by_user</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                                   <span class="s1">&#39;popularity_ratio&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">popularity_ratio_by_user</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span></div>
+
+
+<div class="viewcode-block" id="split_user_in_groups"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.utils.split_user_in_groups">[docs]</a><span class="k">def</span> <span class="nf">split_user_in_groups</span><span class="p">(</span><span class="n">score_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">pop_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+                         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        score_frame (pd.DataFrame): DataFrame with columns = [&#39;from_id&#39;, &#39;to_id&#39;, &#39;rating&#39;]</span>
+<span class="sd">        groups (Dict[str, float]): each key contains the name of the group and each value contains the</span>
+<span class="sd">        percentage of the specified group. If the groups don&#39;t cover the entire user collection,</span>
+<span class="sd">        the rest of the users are considered in a &#39;default_diverse&#39; group</span>
+<span class="sd">        pop_items (Set[str]): set of most popular &#39;to_id&#39; labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        groups_dict (Dict&lt;str, Set&lt;str&gt;&gt;): key = group_name, value = Set of &#39;from_id&#39; labels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pop_ratio_by_users</span> <span class="o">=</span> <span class="n">pop_ratio_by_user</span><span class="p">(</span><span class="n">score_frame</span><span class="p">,</span> <span class="n">most_pop_items</span><span class="o">=</span><span class="n">pop_items</span><span class="p">)</span>
+    <span class="n">pop_ratio_by_users</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;popularity_ratio&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">num_of_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">)</span>
+    <span class="n">groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">first_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">last_index</span> <span class="o">=</span> <span class="n">first_index</span>
+    <span class="n">percentage</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">percentage</span> <span class="o">+=</span> <span class="n">groups</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span>
+        <span class="n">group_index</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_of_users</span> <span class="o">*</span> <span class="n">percentage</span><span class="p">)</span>
+        <span class="n">groups_dict</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">][</span><span class="n">last_index</span><span class="p">:</span><span class="n">group_index</span><span class="p">])</span>
+        <span class="n">last_index</span> <span class="o">=</span> <span class="n">group_index</span>
+    <span class="k">if</span> <span class="n">percentage</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">group_index</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_of_users</span><span class="p">)</span>
+        <span class="n">groups_dict</span><span class="p">[</span><span class="s1">&#39;default_diverse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">[</span><span class="s1">&#39;from_id&#39;</span><span class="p">][</span><span class="n">last_index</span><span class="p">:</span><span class="n">group_index</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">groups_dict</span></div>
+
+
+<div class="viewcode-block" id="get_profile_avg_pop_ratio"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.utils.get_profile_avg_pop_ratio">[docs]</a><span class="k">def</span> <span class="nf">get_profile_avg_pop_ratio</span><span class="p">(</span><span class="n">users</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">pop_ratio_by_users</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the average profile popularity ratio</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        users (Set&lt;str&gt;): set of &#39;from_id&#39; labels</span>
+<span class="sd">        pop_ratio_by_users (pd.DataFrame): contains the &#39;popularity_ratio&#39; for each &#39;from_id&#39; (user)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (float): average profile popularity ratio</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">profile_pop_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="n">user_pop_ratio</span> <span class="o">=</span> <span class="n">pop_ratio_by_users</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;from_id == @user&#39;</span><span class="p">)[[</span><span class="s1">&#39;popularity_ratio&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">profile_pop_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">profile_pop_ratios</span><span class="p">,</span> <span class="n">user_pop_ratio</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">profile_pop_ratios</span></div>
+
+
+<div class="viewcode-block" id="get_recs_avg_pop_ratio"><a class="viewcode-back" href="../../../rst/orange_cb_recsys.evaluation.html#orange_cb_recsys.evaluation.utils.get_recs_avg_pop_ratio">[docs]</a><span class="k">def</span> <span class="nf">get_recs_avg_pop_ratio</span><span class="p">(</span><span class="n">users</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">recommendations</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">most_popular_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the popularity ratio</span>
+<span class="sd">    Args:</span>
+<span class="sd">        users (Set[str]): set of &#39;from_id&#39; labels</span>
+<span class="sd">        recommendations (pd.DataFrame): DataFrame with columns = [&#39;from_id&#39;, &#39;to_id&#39;, &#39;rating&#39;]</span>
+<span class="sd">        most_popular_items (Set[str]): set of most popular &#39;to_id&#39; labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        score (float): avg popularity ratio for recommendations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pop_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="n">recommended_items</span> <span class="o">=</span> <span class="n">recommendations</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;from_id == @user&#39;</span><span class="p">)[[</span><span class="s1">&#39;to_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">recommended_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pop_items_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">recommended_items</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">most_popular_items</span><span class="p">:</span>
+                    <span class="n">pop_items_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">pop_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pop_ratios</span><span class="p">,</span> <span class="n">pop_items_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">recommended_items</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pop_ratios</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

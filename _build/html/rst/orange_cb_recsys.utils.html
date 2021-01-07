@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.utils package &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">orange_cb_recsys.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.check_tokenization">orange_cb_recsys.utils.check_tokenization module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.const">orange_cb_recsys.utils.const module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.id_merger">orange_cb_recsys.utils.id_merger module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.load_content">orange_cb_recsys.utils.load_content module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.load_ratings">orange_cb_recsys.utils.load_ratings module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.runnable_instances">orange_cb_recsys.utils.runnable_instances module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils.string_cleaner">orange_cb_recsys.utils.string_cleaner module</a></li>
+<li><a class="reference internal" href="#module-orange_cb_recsys.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>orange_cb_recsys.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/orange_cb_recsys.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="orange-cb-recsys-utils-package">
+<h1>orange_cb_recsys.utils package<a class="headerlink" href="#orange-cb-recsys-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.check_tokenization">
+<span id="orange-cb-recsys-utils-check-tokenization-module"></span><h2>orange_cb_recsys.utils.check_tokenization module<a class="headerlink" href="#module-orange_cb_recsys.utils.check_tokenization" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.check_tokenization.check_not_tokenized">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.check_tokenization.</code><code class="sig-name descname">check_not_tokenized</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/check_tokenization.html#check_not_tokenized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.check_tokenization.check_not_tokenized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Untokenizes a tokenized text</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.check_tokenization.check_tokenized">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.check_tokenization.</code><code class="sig-name descname">check_tokenized</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/check_tokenization.html#check_tokenized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.check_tokenization.check_tokenized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizes a text</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.const">
+<span id="orange-cb-recsys-utils-const-module"></span><h2>orange_cb_recsys.utils.const module<a class="headerlink" href="#module-orange_cb_recsys.utils.const" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.id_merger">
+<span id="orange-cb-recsys-utils-id-merger-module"></span><h2>orange_cb_recsys.utils.id_merger module<a class="headerlink" href="#module-orange_cb_recsys.utils.id_merger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.id_merger.id_merger">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.id_merger.</code><code class="sig-name descname">id_merger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_content</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">field_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/orange_cb_recsys/utils/id_merger.html#id_merger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.id_merger.id_merger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates the list of ids and then calls id_values_merger to create a unique id</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.id_merger.id_values_merger">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.id_merger.</code><code class="sig-name descname">id_values_merger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_values</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/id_merger.html#id_values_merger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.id_merger.id_values_merger" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to compact a list of ids into a unique string. This can be useful when
+there is content whose id is composed by values coming from more than one field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id_values</strong> (<em>List&lt;str&gt;</em>) – List containing one or more ids</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String in which the values contained in the list given in input are
+merged</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>id_merged (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.load_content">
+<span id="orange-cb-recsys-utils-load-content-module"></span><h2>orange_cb_recsys.utils.load_content module<a class="headerlink" href="#module-orange_cb_recsys.utils.load_content" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.load_content.get_rated_items">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.load_content.</code><code class="sig-name descname">get_rated_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items_directory</span></em>, <em class="sig-param"><span class="n">ratings</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content">orange_cb_recsys.content_analyzer.content_representation.content.Content</a><span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/load_content.html#get_rated_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.load_content.get_rated_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the items that a user not rated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the items directory</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of the user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of items that the user has rated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>unrated_items (List&lt;Content&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.load_content.get_unrated_items">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.load_content.</code><code class="sig-name descname">get_unrated_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items_directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ratings</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content">orange_cb_recsys.content_analyzer.content_representation.content.Content</a><span class="p">]</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/load_content.html#get_unrated_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.load_content.get_unrated_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the items that a user has not rated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the items directory</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of a user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of items that the user has not rated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>unrated_items (List&lt;Content&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.load_content.load_content_instance">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.load_content.</code><code class="sig-name descname">load_content_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">content_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content">orange_cb_recsys.content_analyzer.content_representation.content.Content</a><a class="reference internal" href="../_modules/orange_cb_recsys/utils/load_content.html#load_content_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.load_content.load_content_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a serialized content
+:param directory: Path to the directory in which the content is stored
+:type directory: str
+:param content_id: Id of the content to load
+:type content_id: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>content (Content)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.load_content.remove_not_existent_items">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.load_content.</code><code class="sig-name descname">remove_not_existent_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratings</span></em>, <em class="sig-param"><span class="n">items_directory</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/load_content.html#remove_not_existent_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.load_content.remove_not_existent_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sometimes a dataset can contain ratings about an item which is not in the dataset. This
+function locates these items nd removes them from the ratings frame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of the user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the directory in which the items are stored</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.load_ratings">
+<span id="orange-cb-recsys-utils-load-ratings-module"></span><h2>orange_cb_recsys.utils.load_ratings module<a class="headerlink" href="#module-orange_cb_recsys.utils.load_ratings" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.load_ratings.load_ratings">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.load_ratings.</code><code class="sig-name descname">load_ratings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/load_ratings.html#load_ratings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.load_ratings.load_ratings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the ratings from the directory in which they are stored and puts them in a DataFrame
+:param filename: Name of the file that contains the ratings
+:type filename: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Ratings</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.runnable_instances">
+<span id="orange-cb-recsys-utils-runnable-instances-module"></span><h2>orange_cb_recsys.utils.runnable_instances module<a class="headerlink" href="#module-orange_cb_recsys.utils.runnable_instances" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.add">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">runnable_class</span><span class="p">:</span> <span class="n">object</span></em>, <em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>category: {‘rating_processor’, ‘content_production’, ‘preprocessor’}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.get">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.get_cat">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">get_cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alias</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#get_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.get_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>category: {‘rating_processor’, ‘content_production’, ‘preprocessor’}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.remove">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.remove_from_categories">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">remove_from_categories</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alias</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#remove_from_categories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.remove_from_categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="orange_cb_recsys.utils.runnable_instances.runnable_instances">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">runnable_instances</code><em class="property"> = {'babelpy': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking.BabelPyEntityLinking'&gt;, 'binary_file': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source.BinaryFile'&gt;, 'centroid': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Centroid'&gt;, 'csv': &lt;class 'orange_cb_recsys.content_analyzer.raw_information_source.CSVFile'&gt;, 'dat': &lt;class 'orange_cb_recsys.content_analyzer.raw_information_source.DATFile'&gt;, 'dbpedia_mapping': &lt;class 'orange_cb_recsys.content_analyzer.lod_properties_retrieval.DBPediaMappingTechnique'&gt;, 'embedding': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.EmbeddingTechnique'&gt;, 'gensim_downloader': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source.GensimDownloader'&gt;, 'index': &lt;class 'orange_cb_recsys.content_analyzer.memory_interfaces.text_interface.IndexInterface'&gt;, 'json': &lt;class 'orange_cb_recsys.content_analyzer.raw_information_source.JSONFile'&gt;, 'lucene_tf-idf': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf.LuceneTfIdf'&gt;, 'nltk': &lt;class 'orange_cb_recsys.content_analyzer.information_processor.nlp.NLTK'&gt;, 'number_normalizer': &lt;class 'orange_cb_recsys.content_analyzer.ratings_manager.rating_processor.NumberNormalizer'&gt;, 'search_index': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SearchIndexing'&gt;, 'sk_learn_tf-idf': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf.SkLearnTfIdf'&gt;, 'sql': &lt;class 'orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase'&gt;, 'synset_frequency': &lt;class 'orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency.SynsetDocumentFrequency'&gt;, 'text_blob_sentiment': &lt;class 'orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis.TextBlobSentimentAnalysis'&gt;}</em><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.runnable_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>This contains, for each alias a specific category</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.runnable_instances.show">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.runnable_instances.</code><code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">categories</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/runnable_instances.html#show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.runnable_instances.show" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils.string_cleaner">
+<span id="orange-cb-recsys-utils-string-cleaner-module"></span><h2>orange_cb_recsys.utils.string_cleaner module<a class="headerlink" href="#module-orange_cb_recsys.utils.string_cleaner" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.string_cleaner.clean_no_unders">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.string_cleaner.</code><code class="sig-name descname">clean_no_unders</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/string_cleaner.html#clean_no_unders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.string_cleaner.clean_no_unders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a clean string without punctuation and under_scores
+:param text: string
+:type text: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string without described symbols</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="orange_cb_recsys.utils.string_cleaner.clean_with_unders">
+<code class="sig-prename descclassname">orange_cb_recsys.utils.string_cleaner.</code><code class="sig-name descname">clean_with_unders</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orange_cb_recsys/utils/string_cleaner.html#clean_with_unders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#orange_cb_recsys.utils.string_cleaner.clean_with_unders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes . ? - $ ( ) symbols and replaces spaces with under_scores from the text
+:param text: string
+:type text: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string without described symbols</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-orange_cb_recsys.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

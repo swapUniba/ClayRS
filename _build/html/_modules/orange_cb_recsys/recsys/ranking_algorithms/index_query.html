@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>orange_cb_recsys.recsys.ranking_algorithms.index_query &mdash; Orange framework 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Orange framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Orange framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>orange_cb_recsys.recsys.ranking_algorithms.index_query</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for orange_cb_recsys.recsys.ranking_algorithms.index_query</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.recsys.algorithm</span> <span class="kn">import</span> <span class="n">RankingAlgorithm</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.const</span> <span class="kn">import</span> <span class="n">DEVELOPING</span><span class="p">,</span> <span class="n">home_path</span><span class="p">,</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">orange_cb_recsys.utils.load_content</span> <span class="kn">import</span> <span class="n">load_content_instance</span>
+
+<span class="kn">from</span> <span class="nn">java.nio.file</span> <span class="kn">import</span> <span class="n">Paths</span>
+
+<span class="kn">from</span> <span class="nn">org.apache.lucene.queryparser.classic</span> <span class="kn">import</span> <span class="n">QueryParser</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.search</span> <span class="kn">import</span> <span class="n">IndexSearcher</span><span class="p">,</span> <span class="n">BooleanQuery</span><span class="p">,</span> <span class="n">BooleanClause</span><span class="p">,</span> <span class="n">BoostQuery</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.store</span> <span class="kn">import</span> <span class="n">SimpleFSDirectory</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.index</span> <span class="kn">import</span> <span class="n">DirectoryReader</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.search.similarities</span> <span class="kn">import</span> <span class="n">ClassicSimilarity</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.analysis.core</span> <span class="kn">import</span> <span class="n">SimpleAnalyzer</span>
+<span class="kn">from</span> <span class="nn">org.apache.lucene.analysis.core</span> <span class="kn">import</span> <span class="n">KeywordAnalyzer</span>
+
+
+<div class="viewcode-block" id="IndexQuery"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.recsys.ranking_algorithms.html#orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery">[docs]</a><span class="k">class</span> <span class="nc">IndexQuery</span><span class="p">(</span><span class="n">RankingAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for the search engine recommender</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classic_similarity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">positive_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__classic_similarity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">classic_similarity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__positive_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">positive_threshold</span>
+
+    <span class="k">def</span> <span class="nf">__recs_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positive_rated_document_list</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">,</span> <span class="n">items_directory</span><span class="p">,</span>
+                     <span class="n">candidate_list</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a query using the contents that the user liked. The terms relative to the contents that</span>
+<span class="sd">        the user liked are boosted by the rating he/she gave. A filter clause is added to the query to</span>
+<span class="sd">        consider only candidate items</span>
+<span class="sd">        Args:</span>
+<span class="sd">            positive_rated_document_list: List of contents that the user liked</span>
+<span class="sd">            scores: Ratings given by the user</span>
+<span class="sd">            recs_number: How many items must be recommended. You can only specify the number, not</span>
+<span class="sd">            a specific item for which compute the prediction</span>
+<span class="sd">            items_directory: Directory where the items are stored</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            score_frame (pd.DataFrame): DataFrame containing the recommendations for the user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BooleanQuery</span><span class="o">.</span><span class="n">setMaxClauseCount</span><span class="p">(</span><span class="mi">2000000</span><span class="p">)</span>
+        <span class="n">searcher</span> <span class="o">=</span> <span class="n">IndexSearcher</span><span class="p">(</span><span class="n">DirectoryReader</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">SimpleFSDirectory</span><span class="p">(</span><span class="n">Paths</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">items_directory</span><span class="p">))))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__classic_similarity</span><span class="p">:</span>
+            <span class="n">searcher</span><span class="o">.</span><span class="n">setSimilarity</span><span class="p">(</span><span class="n">ClassicSimilarity</span><span class="p">())</span>
+
+        <span class="n">field_list</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="n">positive_rated_document_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">getFields</span><span class="p">()</span>
+        <span class="n">user_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">field_parsers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">analyzer</span> <span class="o">=</span> <span class="n">SimpleAnalyzer</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">field_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;content_id&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">user_fields</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">stringValue</span><span class="p">()</span>
+            <span class="n">field_parsers</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">QueryParser</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">analyzer</span><span class="p">)</span>
+
+        <span class="n">positive_rated_document_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">positive_rated_document_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">positive_rated_document_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">field_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;content_id&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">user_fields</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span> <span class="o">+=</span> <span class="n">field</span><span class="o">.</span><span class="n">stringValue</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Building query&quot;</span><span class="p">)</span>
+
+        <span class="n">query_builder</span> <span class="o">=</span> <span class="n">BooleanQuery</span><span class="o">.</span><span class="n">Builder</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">user_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s1">&#39;content_id&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">field_parsers</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">setDefaultOperator</span><span class="p">(</span><span class="n">QueryParser</span><span class="o">.</span><span class="n">Operator</span><span class="o">.</span><span class="n">OR</span><span class="p">)</span>
+
+                <span class="n">field_query</span> <span class="o">=</span> <span class="n">field_parsers</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">user_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">])</span>
+                <span class="n">field_query</span> <span class="o">=</span> <span class="n">field_parsers</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">field_query</span><span class="p">)</span>
+                <span class="n">field_query</span> <span class="o">=</span> <span class="n">BoostQuery</span><span class="p">(</span><span class="n">field_query</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+                <span class="n">query_builder</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">field_query</span><span class="p">,</span> <span class="n">BooleanClause</span><span class="o">.</span><span class="n">Occur</span><span class="o">.</span><span class="n">SHOULD</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">candidate_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">id_query_string</span> <span class="o">=</span> <span class="s1">&#39; OR &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;content_id:</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">content_id</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">content_id</span> <span class="ow">in</span> <span class="n">candidate_list</span><span class="p">)</span>
+            <span class="n">id_query</span> <span class="o">=</span> <span class="n">QueryParser</span><span class="p">(</span><span class="s2">&quot;testo_libero&quot;</span><span class="p">,</span> <span class="n">KeywordAnalyzer</span><span class="p">())</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id_query_string</span><span class="p">)</span>
+            <span class="n">query_builder</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">id_query</span><span class="p">,</span> <span class="n">BooleanClause</span><span class="o">.</span><span class="n">Occur</span><span class="o">.</span><span class="n">MUST</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">query_builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">docs_to_search</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">positive_rated_document_list</span><span class="p">)</span> <span class="o">+</span> <span class="n">recs_number</span>
+        <span class="n">scoreDocs</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">docs_to_search</span><span class="p">)</span><span class="o">.</span><span class="n">scoreDocs</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Building score frame to return&quot;</span><span class="p">)</span>
+
+        <span class="n">recorded_items</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;to_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">]</span>
+        <span class="n">score_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">scoreDoc</span> <span class="ow">in</span> <span class="n">scoreDocs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">recorded_items</span> <span class="o">&gt;=</span> <span class="n">recs_number</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">scoreDoc</span><span class="o">.</span><span class="n">doc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">positive_rated_document_list</span><span class="p">:</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="n">scoreDoc</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+                <span class="n">item_id</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getField</span><span class="p">(</span><span class="s2">&quot;content_id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">stringValue</span><span class="p">()</span>
+                <span class="n">recorded_items</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">score_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">score_frame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">([(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">scoreDoc</span><span class="o">.</span><span class="n">score</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)])</span>
+
+        <span class="k">return</span> <span class="n">score_frame</span>
+
+<div class="viewcode-block" id="IndexQuery.predict"><a class="viewcode-back" href="../../../../rst/orange_cb_recsys.recsys.ranking_algorithms.html#orange_cb_recsys.recsys.ranking_algorithms.index_query.IndexQuery.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">,</span> <span class="n">items_directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">candidate_item_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the documents that the user liked and then calls __recs_query to execute the prediction</span>
+<span class="sd">        Args:</span>
+<span class="sd">            candidate_item_id_list: list of the items that can be recommended, if None</span>
+<span class="sd">            all unrated items will be used</span>
+<span class="sd">            user_id: user for which recommendations will be computed</span>
+<span class="sd">            recs_number (list[Content]): How long the ranking will be</span>
+<span class="sd">            ratings (pd.DataFrame): ratings of the user with id equal to user_id</span>
+<span class="sd">            items_directory (str): Name of the directory where the items are stored.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (pd.DataFrame)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items_directory</span><span class="p">,</span> <span class="s1">&#39;search_index&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">DEVELOPING</span><span class="p">:</span>
+            <span class="n">index_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="n">items_directory</span><span class="p">,</span> <span class="s1">&#39;search_index&#39;</span><span class="p">)</span>
+
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rated_document_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ratings</span><span class="o">.</span><span class="n">to_id</span><span class="p">,</span> <span class="n">ratings</span><span class="o">.</span><span class="n">score</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">load_content_instance</span><span class="p">(</span><span class="n">items_directory</span><span class="p">,</span> <span class="n">item_id</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__positive_threshold</span><span class="p">:</span>
+                <span class="n">rated_document_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">index_document_id</span><span class="p">)</span>
+                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__recs_query</span><span class="p">(</span><span class="n">rated_document_list</span><span class="p">,</span>
+                                 <span class="n">scores</span><span class="p">,</span>
+                                 <span class="n">recs_number</span><span class="p">,</span>
+                                 <span class="n">index_path</span><span class="p">,</span>
+                                 <span class="n">candidate_item_id_list</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
