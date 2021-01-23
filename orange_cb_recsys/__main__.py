@@ -31,7 +31,7 @@ def check_for_available(content_config: Dict):
     # check runnable_instances
     if content_config['source_type'] not in ['json', 'csv', 'sql', 'dat']:
         return False
-    if content_config['content_type'].lower() == 'rating':
+    if content_config['content_type'].lower() == 'rating' or content_config['content_type'].lower() == 'ratings':
         if "from_field_name" not in content_config.keys() \
                 or "to_field_name" not in content_config.keys() \
                 or "timestamp_field_name" not in content_config.keys() \

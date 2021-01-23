@@ -140,11 +140,11 @@ class TestRun(TestCase):
         in_dict = {"content_type": "ratings", "source_type": "csv",
                    "fields": [{"preference_field_name": "_", "rating_processor": {"class": "text_blob"}}]}
         self.assertFalse(check_for_available(in_dict))
-        in_dict = {"content_type": "ratings", "source_type": "csv", "from": "_", "to": "_", "output_directory": "_",
-                   "timestamp": "_",
+        in_dict = {"content_type": "ratings", "source_type": "csv", "from_field_name": "_", "to_field_name": "_", "output_directory": "_",
+                   "timestamp_field_name": "_",
                    "fields": [{"preference_field_name": "_", "rating_processor": {"class": "text_blob_sentiment"}}]}
         self.assertTrue(check_for_available(in_dict))
-        in_dict = {"content_type": "ratings", "source_type": "csv", "from": "_", "to": "_", "output_directory": "_",
-                   "timestamp": "_",
+        in_dict = {"content_type": "ratings", "source_type": "csv", "from_field_name": "_", "to_field_name": "_", "output_directory": "_",
+                   "timestamp_field_name": "_",
                    "fields": [{"preference_field_name": "_", "rating_processor": {"class": "boh"}}]}
         self.assertFalse(check_for_available(in_dict))
