@@ -61,7 +61,7 @@ rating_config_dict_ = {
     "raw_source_path": "datasets/test_import_ratings.json",
     "output_directory": "datasets/test_ratings",
     "fields": [
-        {"preference_field_name": "stars", "processor": {"class": "number_normalizer", "max_": 5.0, "min_": 0.0}},
+        {"field_name": "stars", "processor": {"class": "number_normalizer", "max_": 5.0, "min_": 0.0}},
     ],
 }
 
@@ -74,8 +74,8 @@ rating_config_dict_2 = {
     "raw_source_path": "datasets/test_import_ratings.json",
     "output_directory": "datasets/test_ratings",
     "fields": [
-        {"preference_field_name": "stars", "processor": {"class": "number_normalizer", "max_": 5.0, "min_": 0.0}},
-        {"preference_field_name": "text", "processor": {"class": "text_blob_sentiment"}},
+        {"field_name": "stars", "processor": {"class": "number_normalizer", "max_": 5.0, "min_": 0.0}},
+        {"field_name": "text", "processor": {"class": "text_blob_sentiment"}},
     ],
 }
 
@@ -138,13 +138,13 @@ class TestRun(TestCase):
         in_dict = {"content_type": "ratings", "source_type": "csv"}
         self.assertFalse(check_for_available(in_dict))
         in_dict = {"content_type": "ratings", "source_type": "csv",
-                   "fields": [{"preference_field_name": "_", "rating_processor": {"class": "text_blob"}}]}
+                   "fields": [{"preference_field_name": "_", "processor": {"class": "text_blob"}}]}
         self.assertFalse(check_for_available(in_dict))
-        in_dict = {"content_type": "ratings", "source_type": "csv", "from": "_", "to": "_", "output_directory": "_",
-                   "timestamp": "_",
-                   "fields": [{"preference_field_name": "_", "rating_processor": {"class": "text_blob_sentiment"}}]}
+        in_dict = {"content_type": "ratings", "source_type": "csv", "from_field_name": "_", "to_field_name": "_", "output_directory": "_",
+                   "timestamp_field_name": "_",
+                   "fields": [{"preference_field_name": "_", "processor": {"class": "text_blob_sentiment"}}]}
         self.assertTrue(check_for_available(in_dict))
-        in_dict = {"content_type": "ratings", "source_type": "csv", "from": "_", "to": "_", "output_directory": "_",
-                   "timestamp": "_",
-                   "fields": [{"preference_field_name": "_", "rating_processor": {"class": "boh"}}]}
+        in_dict = {"content_type": "ratings", "source_type": "csv", "from_field_name": "_", "to_field_name": "_", "output_directory": "_",
+                   "timestamp_field_name": "_",
+                   "fields": [{"preference_field_name": "_", "processor": {"class": "boh"}}]}
         self.assertFalse(check_for_available(in_dict))
