@@ -16,8 +16,8 @@ services:
   - docker
 
 script:
-  - docker pull rbarile17/framework_dependencies
-  - container_id=$(docker run -d -it -v $(pwd):/usr/src rbarile17/framework_dependencies)
+  - docker pull silleellie/framework_dependencies
+  - container_id=$(docker run -d -it -v $(pwd):/usr/src silleellie/framework_dependencies)
   - docker exec -it $container_id pip install coverage coveralls
   - docker exec -it $container_id coverage run --source=orange_cb_recsys -m unittest
   - docker exec -it $container_id bash -c "TRAVIS_JOB_ID=$TRAVIS_JOB_ID TRAVIS_BRANCH=$TRAVIS_BRANCH COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls"
