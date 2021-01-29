@@ -45,7 +45,7 @@ jobs:
               done < files.txt
               rm files.txt
               if ${{ steps.check.outputs.must_build == 'false' }}; then
-                if ! docker pull ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest; then
+                if ! docker pull ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:latest; then
                     echo "::set-output name=must_build::true"
                     echo "Necessario buildare immagine Docker"
                 fi
@@ -64,12 +64,12 @@ jobs:
           context: ${{ github.WORKSPACE }}
           file:  Dockerfile/Dockerfile
           load: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:latest
       -
          name: Test
          run:
                |
-                container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME)
+                container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME})
                 docker exec -i $container_id pip install coverage coveralls pytest
                 docker exec -i $container_id coverage run --source=orange_cb_recsys -m unittest
                 docker exec -i $container_id bash -c "COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls"
@@ -79,5 +79,5 @@ jobs:
          name: Push image to docker hub
          id: docker_push
          if: ${{ steps.check.outputs.must_build == 'true' }}
-         run: docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME
+         run: docker push ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}
       
