@@ -20,4 +20,4 @@ RUN rm -rf pylucene
 COPY . /usr/src/repo
 
 WORKDIR /usr/src/repo
-RUN pip install wheel sphinx networkx lenskit && python repo/setup.py install
+RUN pip install wheel sphinx networkx lenskit && python setup.py install
