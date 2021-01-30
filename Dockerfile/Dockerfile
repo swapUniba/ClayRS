@@ -17,6 +17,7 @@ RUN make all install JCC='python -m jcc' ANT=ant PYTHON=python NUM_FILES=8
 WORKDIR /usr/src
 RUN rm -rf pylucene
 
-COPY setup.py requirements.txt README.md /usr/src
+COPY . /usr/src/repo
 
+WORKDIR /usr/src/repo
 RUN pip install wheel sphinx networkx lenskit && python setup.py install
