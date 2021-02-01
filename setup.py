@@ -25,7 +25,8 @@ setup(name='orange_cb_recsys',
           'textblob==0.15.3',
           'matplotlib==3.2.2',
           'pywsd==1.2.4',
-          'wn==0.0.23'
+          'wn==0.0.23',
+          'networkx==2.5'
       ],
       description='Python Framework for Content-Based Recommeder Systems',
       long_description=long_description,
