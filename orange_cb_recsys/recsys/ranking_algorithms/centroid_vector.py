@@ -169,6 +169,8 @@ class CentroidVector(RankingAlgorithm):
             else:
                 logger.info("Computing centroid")
                 centroid, unrated_matrix = self.__get_centroid_with_vectorizer(ratings, rated_items, unrated_items)
+            except ValueError as v:
+                return scores
 
                 logger.info("Computing similarities")
 
