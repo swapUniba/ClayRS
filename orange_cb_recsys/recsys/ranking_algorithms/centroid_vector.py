@@ -115,81 +115,79 @@ class CentroidVector(RankingAlgorithm):
                   items and the centroid (rating)
         """
 
-        try:
-            logger.info("Retrieving candidate items")
-            if candidate_item_id_list is None:
-                unrated_items = get_unrated_items(items_directory, ratings)
-            else:
-                unrated_items = [load_content_instance(items_directory, item_id) for item_id in candidate_item_id_list]
+        logger.info("Retrieving candidate items")
+        if candidate_item_id_list is None:
+            unrated_items = get_unrated_items(items_directory, ratings)
+        else:
+            unrated_items = [load_content_instance(items_directory, item_id) for item_id in candidate_item_id_list]
 
-            logger.info("Retrieving rated items")
-            rated_items = get_rated_items(items_directory, ratings)
-            if len(rated_items) == 0:
-              columns = ["to_id", "rating"]
-              scores = pd.DataFrame(columns=columns)
-              return scores
-            first_item = rated_items[0]
-            need_vectorizer = False
-            if self.item_field not in first_item.field_dict:
-                raise ValueError("The field name specified could not be found!")
-            else:
-                try:
-                    representation = first_item.get_field(self.item_field).get_representation(
-                        self.item_field_representation)
-                except KeyError:
-                    raise ValueError("The given representation id wasn't found for the specified field")
+        logger.info("Retrieving rated items")
+        rated_items = get_rated_items(items_directory, ratings)
+        if len(rated_items) == 0:
+          columns = ["to_id", "rating"]
+          scores = pd.DataFrame(columns=columns)
+          return scores
+        first_item = rated_items[0]
+        need_vectorizer = False
+        if self.item_field not in first_item.field_dict:
+            raise ValueError("The field name specified could not be found!")
+        else:
+            try:
+                representation = first_item.get_field(self.item_field).get_representation(
+                    self.item_field_representation)
+            except KeyError:
+                raise ValueError("The given representation id wasn't found for the specified field")
 
-                if not isinstance(representation, EmbeddingField) and not isinstance(representation, FeaturesBagField):
-                    raise ValueError("The given representation must be an embedding or a tf-idf vector")
+            if not isinstance(representation, EmbeddingField) and not isinstance(representation, FeaturesBagField):
+                raise ValueError("The given representation must be an embedding or a tf-idf vector")
 
-                if isinstance(representation, EmbeddingField):
-                    if len(representation.value.shape) != 1:
-                        raise ValueError("The specified representation is not a document embedding, so the centroid"
-                                         " can not be calculated")
+            if isinstance(representation, EmbeddingField):
+                if len(representation.value.shape) != 1:
+                    raise ValueError("The specified representation is not a document embedding, so the centroid"
+                                     " can not be calculated")
 
-                if isinstance(representation, FeaturesBagField):
-                    need_vectorizer = True
+            if isinstance(representation, FeaturesBagField):
+                need_vectorizer = True
 
-            columns = ["to_id", "rating"]
-            scores = pd.DataFrame(columns=columns)
+        columns = ["to_id", "rating"]
+        scores = pd.DataFrame(columns=columns)
 
-            if not need_vectorizer:
-                logger.info("Computing centroid")
-                centroid = self.__get_centroid_without_vectorizer(ratings, rated_items)
-                logger.info("Computing similarities")
+        if not need_vectorizer:
+            logger.info("Computing centroid")
+            centroid = self.__get_centroid_without_vectorizer(ratings, rated_items)
+            logger.info("Computing similarities")
 
-                for item in unrated_items:
-                    item_id = item.content_id
-                    item_field_representation = item.get_field(self.item_field).get_representation(
-                        self.item_field_representation).value
-                    logger.info("Computing similarity with %s" % item_id)
-                    similarity = self.__similarity.perform(DenseVector(centroid), DenseVector(item_field_representation))
-                    scores = pd.concat([scores, pd.DataFrame.from_records([(item_id, similarity)], columns=columns)],
-                                       ignore_index=True)
-            else:
-                logger.info("Computing centroid")
+            for item in unrated_items:
+                item_id = item.content_id
+                item_field_representation = item.get_field(self.item_field).get_representation(
+                    self.item_field_representation).value
+                logger.info("Computing similarity with %s" % item_id)
+                similarity = self.__similarity.perform(DenseVector(centroid), DenseVector(item_field_representation))
+                scores = pd.concat([scores, pd.DataFrame.from_records([(item_id, similarity)], columns=columns)],
+                                   ignore_index=True)
+        else:
+            logger.info("Computing centroid")
+            try:
                 centroid, unrated_matrix = self.__get_centroid_with_vectorizer(ratings, rated_items, unrated_items)
             except ValueError as v:
                 return scores
 
-                logger.info("Computing similarities")
+            logger.info("Computing similarities")
 
-                a = []
-                for x in unrated_items:
-                  if x is not None:
-                    a.append(x)
-                unrated_items = a
+            a = []
+            for x in unrated_items:
+              if x is not None:
+                a.append(x)
+            unrated_items = a
 
-                for item, item_array in zip(unrated_items, unrated_matrix):
-                    item_id = item.content_id
-                    logger.info("Computing similarity with %s" % item_id)
-                    similarity = self.__similarity.perform(SparseVector(centroid), SparseVector(item_array))
-                    scores = pd.concat([scores, pd.DataFrame.from_records([(item_id, similarity)], columns=columns)],
-                                       ignore_index=True)
+            for item, item_array in zip(unrated_items, unrated_matrix):
+                item_id = item.content_id
+                logger.info("Computing similarity with %s" % item_id)
+                similarity = self.__similarity.perform(SparseVector(centroid), SparseVector(item_array))
+                scores = pd.concat([scores, pd.DataFrame.from_records([(item_id, similarity)], columns=columns)],
+                                   ignore_index=True)
 
-            scores = scores.sort_values(['rating'], ascending=False).reset_index(drop=True)
-            scores = scores[:recs_number]
+        scores = scores.sort_values(['rating'], ascending=False).reset_index(drop=True)
+        scores = scores[:recs_number]
 
-            return scores
-        except ValueError as v:
-            print(str(v))
+        return scores
