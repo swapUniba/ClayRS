@@ -33,7 +33,7 @@ class CentroidVector(RankingAlgorithm):
     def __get_centroid_with_vectorizer(self, ratings: pd.DataFrame, rated_items, unrated_items):
         """
         1) For each rated item, checks if its rating is bigger than threshold. If false, skips
-        to the next item, if True add the item embedding array in a dictionary list taht will be
+        to the next item, if True add the item embedding array in a dictionary list that will be
         transformed in a scipy  csr_matrix (sparse) using sklearn DictVectorizer
         2) Computes the centroid of the obtained sparse matrix
 
