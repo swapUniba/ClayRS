@@ -96,7 +96,8 @@ class RankingAlgEvalModel(EvalModel):
             [os.path.splitext(filename)[0]
              for filename in os.listdir(self.config.users_directory)]
 
-        # define results structure
+        # define empty structure which will contain
+        # the results
         ranking_alg_metrics_results = pd.DataFrame()
 
         # calculate metrics on ranking algorithm results
