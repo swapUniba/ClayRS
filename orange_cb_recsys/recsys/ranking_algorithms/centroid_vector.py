@@ -33,7 +33,7 @@ class CentroidVector(RankingAlgorithm):
     def __get_centroid_with_vectorizer(self, ratings: pd.DataFrame, rated_items, unrated_items):
         """
         1) For each rated item, checks if its rating is bigger than threshold. If false, skips
-        to the next item, if True add the item embedding array in a dictionary list taht will be
+        to the next item, if True add the item embedding array in a dictionary list that will be
         transformed in a scipy  csr_matrix (sparse) using sklearn DictVectorizer
         2) Computes the centroid of the obtained sparse matrix
 
@@ -115,7 +115,6 @@ class CentroidVector(RankingAlgorithm):
                   items and the centroid (rating)
         """
 
-        # try:
         logger.info("Retrieving candidate items")
         if candidate_item_id_list is None:
             unrated_items = get_unrated_items(items_directory, ratings)
@@ -168,7 +167,10 @@ class CentroidVector(RankingAlgorithm):
                                    ignore_index=True)
         else:
             logger.info("Computing centroid")
-            centroid, unrated_matrix = self.__get_centroid_with_vectorizer(ratings, rated_items, unrated_items)
+            try:
+                centroid, unrated_matrix = self.__get_centroid_with_vectorizer(ratings, rated_items, unrated_items)
+            except ValueError as v:
+                return scores
 
             logger.info("Computing similarities")
 
@@ -189,6 +191,3 @@ class CentroidVector(RankingAlgorithm):
         scores = scores[:recs_number]
 
         return scores
-        # except ValueError as v:
-        #     raise ValueError
-        #     #print(str(v))

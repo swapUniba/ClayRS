@@ -1,6 +1,4 @@
 from unittest import TestCase
-import pandas as pd
-import numpy as np
 
 from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
@@ -67,26 +65,22 @@ class TestEvalModel(TestCase):
             score_prediction_algorithm=None,
             ranking_algorithm=CentroidVector(
                 item_field='Plot',
-                field_representation='1',
+                field_representation='0',
                 similarity=CosineSimilarity()
             ),
             rating_frame=t_ratings
         )
-        try:
-            RankingAlgEvalModel(config=recsys_config,
-                                partitioning=KFoldPartitioning(),
-                                metric_list=
-                                [
-                                    Precision(0.4),
-                                    Recall(0.4),
-                                    FNMeasure(1, 0.4),
-                                    MRR(0.4),
-                                    NDCG({0: (-1, 0), 1: (0, 1)}),
-                                    Correlation('pearson'),
-                                    Correlation('kendall'),
-                                    Correlation('spearman')
-                                ]).fit()
-        except TypeError:
-            pass
-        except ValueError:
-            pass
+        RankingAlgEvalModel(config=recsys_config,
+                            partitioning=KFoldPartitioning(),
+                            metric_list=
+                            [
+                                Precision(0.4),
+                                Recall(0.4),
+                                FNMeasure(1, 0.4),
+                                MRR(0.4),
+                                NDCG({0: (-1, 0), 1: (0, 1)}),
+                                Correlation('pearson'),
+                                Correlation('kendall'),
+                                Correlation('spearman')
+                            ]
+                            ).fit()
