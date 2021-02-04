@@ -1,3 +1,4 @@
+import bz2
 from unittest import TestCase
 import numpy as np
 
@@ -48,53 +49,49 @@ class TestGensimDownloader(TestCase):
 class TestWikipedia2VecDownloader(TestCase):
     def test_load(self):
         self.skipTest("SLOW")
+        url = 'http://wikipedia2vec.s3.amazonaws.com/models/it/2018-04-20/itwiki_20180420_100d.pkl.bz2'
+        #wget.download(url, '.')
+        path = None
+        with open('itwiki_20180420_100d.pkl.bz2', 'rb') as source, open('itwiki_20180420_100d.pkl', 'wb') as dest:
+            path = dest.write(bz2.decompress(source.read()))
 
-        source = Wikipedia2VecDownloader('../../../../datasets/wikipedia2vec/MODEL_FILE')
-        expected = np.ndarray(shape=(2, 100))
-        expected[0, :] = [0.9113617, -0.16422762, 0.29195637, -0.5079845, -0.24498372,
-                          -0.23359998, 0.11357953, -0.26665968, -0.42770126, 0.14040668,
-                          -0.23625416, -0.3995287, 0.2802729, 1.4072003, -0.6991014,
-                          0.35159022, 0.1359734, -0.20122118, -0.50963837, 0.36504865,
-                          0.14292698, -0.25394648, 0.08690099, 0.02234293, -0.16732648,
-                          -0.02937562, 0.04579485, -0.5521207, 0.35329795, -0.07194141,
-                          0.3464605, -0.19305374, -0.3200527, 0.18569043, -0.13610989,
-                          -0.2870403, 0.5056123, -0.4935016, 0.36145186, -0.328249,
-                          -0.38885072, 0.36092448, -0.41003436, -0.49896812, -0.97277784,
-                          0.06608371, 0.2831374, -0.02973103, -0.93057984, -0.6563575,
-                          0.0017389, -0.13686186, 1.1041245, 0.8039884, 0.43903843,
-                          -0.32882544, -0.6202658, 0.04793411, -0.08302873, 0.34030053,
-                          -0.04389457, -0.22238144, -0.3966373, -0.19364174, 0.8547167,
-                          -0.09434482, 0.01979835, -0.42662966, 0.90295327, -0.10957272,
-                          -0.01022598, -0.7432095, 0.6144721, 0.5314728, 0.7246612,
-                          -0.10316867, -0.3097405, 0.29169014, -0.16370276, -0.69296,
-                          -0.19743642, -0.11537066, 0.30410182, 0.10588095, 0.3580293,
-                          -0.31855756, -0.61124784, -0.13916153, -0.14975981, -0.14217573,
-                          -0.11661967, -0.16441974, -0.24196252, 0.39884397, -0.5931838,
-                          -0.04866777, 0.50146234, -0.21017258, -0.2786765, 0.36317846]
+        source = Wikipedia2VecDownloader('itwiki_20180420_100d.pkl')
 
-        expected[1, :] = [0.28312996, -0.1788087, 0.03203144, 0.11723588, -0.39848948,
-                          0.31468883, -0.3638821, -0.36848024, -0.4647756, -0.27375367,
-                          0.43275204, 0.24046534, 0.3181958, 0.91019815, -0.08030581,
-                          -0.02831636, 0.3622169, -0.14887914, -0.2134587, 0.5437428,
-                          0.41059586, -0.29065675, 0.08602623, 0.41740757, -0.06743675,
-                          -0.452779, -0.15264812, -0.03262068, -0.31282657, 0.34982398,
-                          0.06633418, 0.15853819, 0.2788552, 0.6395291, 0.48155418,
-                          -0.47929102, 0.30027667, -0.1407314, -0.40413344, -0.55801684,
-                          -0.37716717, -0.4143479, 0.10795735, 0.2482185, -0.41543058,
-                          -0.33412656, -0.38177335, -0.37114695, 0.23572417, -0.02307804,
-                          -0.36781183, -0.00912181, 0.57776487, 0.0338354, 0.18606435,
-                          -0.7382905, -0.33887747, 0.13776354, 0.19354428, 0.1029704,
-                          -0.642619, 0.13491046, 0.36207572, -0.26311886, 0.22916538,
-                          -0.79787374, 0.56587845, -0.02978418, 1.0875645, 0.0167608,
-                          -0.07216629, 0.80384785, 0.336056, 0.36411795, 0.09852715,
-                          0.17258792, 0.72595966, -0.09887329, -0.15544432, -0.42295107,
-                          -0.03302035, 0.16508514, 0.30657756, 0.07338545, -0.23908757,
-                          -0.27414083, -0.19644827, 0.2025203, -0.0500539, 0.13785328,
-                          0.18675512, 0.10200696, 0.09887865, 0.34445098, -0.45849535,
-                          0.11825627, 0.00971196, -0.4790937, 0.05219276, 0.04766607]
+        # result is a matrix containing 2 rows, one for 'notizie', one for 'nuove'
+        result = source.load('notizie nuove')
 
-        result = source.load(["text", "news"])
-        self.assertTrue(np.allclose(result, expected))
+        # Now let's convert those 2 vector in words and
+        # they should return 'title' and 'plot'.
+        words = []
+        for v in result:
+            # 'most_similar_by_vector()' returns a list with top n
+            # words similar to the vector given. I'm interested only in the most similar
+            # so n = 1
+            top_1 = source.model.most_similar_by_vector(v, 1)[0]
+            words.append(top_1)
+
+        # the expected shape of result is (2, 100):
+        # 2 for words and 100 due to the model 'itwiki_20180420_100d'
+        expected_shape = (2, 100)
+        self.assertEqual(expected_shape, result.shape)
+
+        # words[] contains [(<Word notizie>, 0.999...), (<Word nuove>, 1.000...)]
+        # So I'm using indices to access the tuples values.
+        # 'first_like' contains how similar is 'first_word' to the vector given result[0]
+        first_word = (words[0])[0]
+        first_like = (words[0])[1]
+        second_word = (words[1])[0]
+        second_like = (words[1])[1]
+
+        # Obviously due to approximation the conversion won't return the
+        # exact word, but if the likelihood it's equal to 1 with an approx of 'delta'
+        # I'm assuming it's exactly that word
+        # 'first_word' is an object so we must access the attribute 'text' to get the string
+        self.assertEqual(first_word.text, "notizie")
+        self.assertAlmostEqual(first_like, 1, delta=1e-6)
+        self.assertEqual(second_word.text, "nuove")
+        self.assertAlmostEqual(second_like, 1, delta=1e-6)
+
 
 
 class TestBinaryFile(TestCase):
