@@ -46,7 +46,6 @@ class TestEmbeddingLearner(TestCase):
         self.assertEqual(generated, expected)
 
     def test_save(self):
-        self.skipTest("_")
         preprocessor = NLTK(stopwords_removal=True)
         fields = ["Plot"]
         try:
