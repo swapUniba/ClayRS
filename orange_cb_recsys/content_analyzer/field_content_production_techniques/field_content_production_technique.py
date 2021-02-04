@@ -227,12 +227,13 @@ class EmbeddingSource(ABC):
             text (list<str>): contains words of which vectors will be extracted
 
         Returns:
-            embedding_matrix (np.ndarray): bi-dimensional numpy vector,
-                each row is a term vector
+            embedding_matrix (np.ndarray): numpy vector, where
+                each row is a term vector. Assuming text is a list of N words,
+                embedding_matrix will be N-dimensional.
         """
+        text = check_tokenized(text)
         embedding_matrix = np.ndarray(shape=(len(text), self.get_vector_size()))
 
-        text = check_tokenized(text)
         for i, word in enumerate(text):
             word = word.lower()
             try:
