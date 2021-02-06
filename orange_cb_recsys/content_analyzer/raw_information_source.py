@@ -42,6 +42,7 @@ class DATFile(RawInformationSource):
             for line in f:
                 fields = line.split('::')
                 for i, field in enumerate(fields):
+                    field = field.strip("\n\t\r")
                     line_dict[str(i)] = field
 
                 yield line_dict
