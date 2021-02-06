@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile
+from orange_cb_recsys.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile, DATFile
 
 
 class TestSQLDatabase(TestCase):
@@ -123,3 +123,24 @@ class TestJSONFile(TestCase):
         self.assertDictEqual(next(my_iter), d1)
         self.assertDictEqual(next(my_iter), d2)
         self.assertDictEqual(next(my_iter), d3)
+
+class TestDATFile(TestCase):
+    def test_iter(self):
+        filepath = '../../datasets/examples/users_70.dat'
+        try:
+            with open(filepath):
+                pass
+        except FileNotFoundError:
+            filepath = 'datasets/examples/users_70.dat'
+
+        dat = DATFile(filepath)
+        my_iter = iter(dat)
+
+        expected = [
+            {'0': '1', '1': 'F', '2': '1', '3': '10', '4': '48067'},
+            {'0': '2', '1': 'M', '2': '56', '3': '16', '4': '70072'},
+            {'0': '3', '1': 'M', '2': '25', '3': '15', '4': '55117'}
+        ]
+        for line in expected:
+            dat1 = next(my_iter)
+            self.assertEqual(line, dat1)
