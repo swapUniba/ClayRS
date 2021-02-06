@@ -187,13 +187,13 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                             ")" for property_name, field_name in
                             self.__additional_filters.items()])
 
-        if len(self.__has_label) != 0:
-            query += '. '
-
-        # label retrieval for fields with label
-        query += '. '.join(
-            ["?%s rdfs:label ?%s_label" % (field_name.lower(), field_name.lower())
-             for field_name in self.__has_label])
+        # if len(self.__has_label) != 0:
+        #     query += '. '
+        #
+        # # label retrieval for fields with label
+        # query += '. '.join(
+        #     ["?%s rdfs:label ?%s_label" % (field_name.lower(), field_name.lower())
+        #      for field_name in self.__has_label])
 
         # lang filter
         query += ". FILTER langMatches(lang(?%s), \"%s\"). " % (self.__label_field.lower(), self.__lang)
