@@ -199,8 +199,8 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         query += ". FILTER langMatches(lang(?%s), \"%s\"). " % (self.__label_field.lower(), self.__lang)
 
         # label filter
-        query += "FILTER regex(?%s, \"%s\", \"i\"). " % (
-            self.__label_field.lower(), clean_no_unders(raw_content[self.__label_field]))
+        query += "FILTER regex(str(?%s), \"%s\", \"i\"). " % (
+            self.__label_field.lower(), raw_content[self.__label_field])
 
         query += " } "
 
