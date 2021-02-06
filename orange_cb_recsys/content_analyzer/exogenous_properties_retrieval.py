@@ -61,10 +61,18 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
         for i, k in enumerate(raw_content.keys()):
             field_name = k
             if self.__field_name_list is not None:
-                field_name = self.__field_name_list[i]
-            prop_dict[field_name] = str(raw_content[k])
-            if self.mode == 'only_retrieved_evaluated' and raw_content[k] != '':
-                prop_dict.pop(k)
+                if i < len(self.__field_name_list):
+                    field_name = self.__field_name_list[i]
+                else:
+                    break
+
+            if(field_name in raw_content.keys()):
+                prop_dict[field_name] = str(raw_content[field_name])
+            else:
+                prop_dict[field_name] = ''
+
+            if self.mode == 'only_retrieved_evaluated' and prop_dict[field_name] == '':
+                prop_dict.pop(field_name)
             elif self.mode == 'all_retrieved' or self.mode == 'all' or self.mode == 'original_retrieved':
                 continue
 
