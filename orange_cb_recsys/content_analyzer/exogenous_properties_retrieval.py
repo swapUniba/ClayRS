@@ -181,11 +181,10 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         # filter fields assignments
         query += '. '.join(["?uri dbo:%s ?%s. " % (property_name, field_name.lower()) +
                             "FILTER (" +
-                            ' || '.join(["regex(?%s" % field_name.lower() +
-                                         ("_label" if field_name.lower() in self.__has_label else '') +
-                                         ', \"' + clean_no_unders(value) + '\", "i")'
+                            ' || '.join(["regex(str(?%s)" % field_name.lower() +
+                                         ', \"' + value + '\", "i")'
                                          for value in (raw_content[field_name].split(', '))]) +
-                            ")" for field_name, property_name in
+                            ")" for property_name, field_name in
                             self.__additional_filters.items()])
 
         if len(self.__has_label) != 0:
