@@ -93,8 +93,15 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             will be retrieved
         additional_filters: other fields to use as filters,
             useful if label is not enough.
-            You need to specify the name of the filed in your dataset
-            and the name of the corresponding DBPedia property
+            You need to specify the name of DBPedia property
+            and the name of the corresponding field in your dataset, IN ORDER.
+            EXAMPLE:
+                    DBPediaMappingTechnique("Film", "EN", "Title", {"budget": "budget_local"}
+
+                    Here 'budget' is the DBPedia property, 'budget_local' is the field in the raw_source.
+                    So we are looking for a resource in DBPedia that has as 'label' the value taken from
+                    the field 'Title' in the raw_source, AND as 'budget' the value taken from the field
+                    'budget_local' in the raw source.
         mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
     """
 
