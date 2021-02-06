@@ -61,10 +61,18 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
         for i, k in enumerate(raw_content.keys()):
             field_name = k
             if self.__field_name_list is not None:
-                field_name = self.__field_name_list[i]
-            prop_dict[field_name] = str(raw_content[k])
-            if self.mode == 'only_retrieved_evaluated' and raw_content[k] != '':
-                prop_dict.pop(k)
+                if i < len(self.__field_name_list):
+                    field_name = self.__field_name_list[i]
+                else:
+                    break
+
+            if(field_name in raw_content.keys()):
+                prop_dict[field_name] = str(raw_content[field_name])
+            else:
+                prop_dict[field_name] = ''
+
+            if self.mode == 'only_retrieved_evaluated' and prop_dict[field_name] == '':
+                prop_dict.pop(field_name)
             elif self.mode == 'all_retrieved' or self.mode == 'all' or self.mode == 'original_retrieved':
                 continue
 
@@ -85,8 +93,15 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             will be retrieved
         additional_filters: other fields to use as filters,
             useful if label is not enough.
-            You need to specify the name of the filed in your dataset
-            and the name of the corresponding DBPedia property
+            You need to specify the name of DBPedia property
+            and the name of the corresponding field in your dataset, IN ORDER.
+            EXAMPLE:
+                    DBPediaMappingTechnique("Film", "EN", "Title", {"budget": "budget_local"}
+
+                    Here 'budget' is the DBPedia property, 'budget_local' is the field in the raw_source.
+                    So we are looking for a resource in DBPedia that has as 'label' the value taken from
+                    the field 'Title' in the raw_source, AND as 'budget' the value taken from the field
+                    'budget_local' in the raw source.
         mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
     """
 
@@ -120,27 +135,31 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dbo: <http://dbpedia.org/ontology/>  "
             query += "SELECT DISTINCT "
 
-            query += ', '.join("?%s" % field_name.lower() for field_name in self.__additional_filters)
+            for property in self.__additional_filters:
+                query += "?%s_tmp AS ?%s" % (property.lower(), property.lower())
+                if property != list(self.__additional_filters)[-1]:
+                    query += ', '
 
             query += " WHERE { "
 
             query += '. '.join(
-                ["?uri dbo:" + property_name + ' ?' + field_name.lower() + "_tmp" for field_name, property_name in
-                 self.__additional_filters.items()]) + '. '
+                ["?uri dbo:" + property + ' ?' + property.lower() + "_tmp" for property in
+                 self.__additional_filters]) + '. '
 
             query += ' '.join(
-                ["OPTIONAL { ?" + field_name.lower() + "_tmp" + " rdfs:label" ' ?' + field_name.lower() + " }" for
-                 field_name, property_name in
-                 self.__additional_filters.items()])
+                ["OPTIONAL { ?" + property.lower() + "_tmp" + " rdfs:label" ' ?' + property.lower() + " }" for
+                 property in self.__additional_filters])
 
             query += " } LIMIT 1 OFFSET 0"
 
             self.__sparql.setQuery(query)
             results = self.__sparql.query().convert()
 
-            result = results["results"]["bindings"][0]
-
-            return result.keys()
+            if len(results["results"]["bindings"]) != 0:
+                result = results["results"]["bindings"][0]
+                return result.keys()
+            else:
+                return []
         else:
             return []
 
@@ -162,27 +181,26 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         # filter fields assignments
         query += '. '.join(["?uri dbo:%s ?%s. " % (property_name, field_name.lower()) +
                             "FILTER (" +
-                            ' || '.join(["regex(?%s" % field_name.lower() +
-                                         ("_label" if field_name.lower() in self.__has_label else '') +
-                                         ', \"' + clean_no_unders(value) + '\", "i")'
+                            ' || '.join(["regex(str(?%s)" % field_name.lower() +
+                                         ', \"' + value + '\", "i")'
                                          for value in (raw_content[field_name].split(', '))]) +
-                            ")" for field_name, property_name in
+                            ")" for property_name, field_name in
                             self.__additional_filters.items()])
 
-        if len(self.__has_label) != 0:
-            query += '. '
-
-        # label retrieval for fields with label
-        query += '. '.join(
-            ["?%s rdfs:label ?%s_label" % (field_name.lower(), field_name.lower())
-             for field_name in self.__has_label])
+        # if len(self.__has_label) != 0:
+        #     query += '. '
+        #
+        # # label retrieval for fields with label
+        # query += '. '.join(
+        #     ["?%s rdfs:label ?%s_label" % (field_name.lower(), field_name.lower())
+        #      for field_name in self.__has_label])
 
         # lang filter
         query += ". FILTER langMatches(lang(?%s), \"%s\"). " % (self.__label_field.lower(), self.__lang)
 
         # label filter
-        query += "FILTER regex(?%s, \"%s\", \"i\"). " % (
-            self.__label_field.lower(), clean_no_unders(raw_content[self.__label_field]))
+        query += "FILTER regex(str(?%s), \"%s\", \"i\"). " % (
+            self.__label_field.lower(), raw_content[self.__label_field])
 
         query += " } "
 
