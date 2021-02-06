@@ -135,18 +135,20 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dbo: <http://dbpedia.org/ontology/>  "
             query += "SELECT DISTINCT "
 
-            query += ', '.join("?%s" % field_name.lower() for field_name in self.__additional_filters)
+            for property in self.__additional_filters:
+                query += "?%s_tmp AS ?%s" % (property.lower(), property.lower())
+                if property != list(self.__additional_filters)[-1]:
+                    query += ', '
 
             query += " WHERE { "
 
             query += '. '.join(
-                ["?uri dbo:" + property_name + ' ?' + field_name.lower() + "_tmp" for field_name, property_name in
-                 self.__additional_filters.items()]) + '. '
+                ["?uri dbo:" + property + ' ?' + property.lower() + "_tmp" for property in
+                 self.__additional_filters]) + '. '
 
             query += ' '.join(
-                ["OPTIONAL { ?" + field_name.lower() + "_tmp" + " rdfs:label" ' ?' + field_name.lower() + " }" for
-                 field_name, property_name in
-                 self.__additional_filters.items()])
+                ["OPTIONAL { ?" + property.lower() + "_tmp" + " rdfs:label" ' ?' + property.lower() + " }" for
+                 property in self.__additional_filters])
 
             query += " } LIMIT 1 OFFSET 0"
 
