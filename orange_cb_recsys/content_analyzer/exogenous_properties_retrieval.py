@@ -155,9 +155,11 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             self.__sparql.setQuery(query)
             results = self.__sparql.query().convert()
 
-            result = results["results"]["bindings"][0]
-
-            return result.keys()
+            if len(results["results"]["bindings"]) != 0:
+                result = results["results"]["bindings"][0]
+                return result.keys()
+            else:
+                return []
         else:
             return []
 
