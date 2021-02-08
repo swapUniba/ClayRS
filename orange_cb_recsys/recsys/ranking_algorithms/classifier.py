@@ -142,7 +142,13 @@ class ClassifierRecommender(RankingAlgorithm):
             if self.__classifier_parameters is not None:
                 clf = neighbors.KNeighborsClassifier(**self.__classifier_parameters)
             else:
-                clf = neighbors.KNeighborsClassifier()
+                # KNN classifier throws an exception if rated_items < n_neighbors.
+                # By default n_neighbors = 5, so if there are less rated_items
+                # we decrease the n_neighbors
+                if len(rated_items) < 5:
+                    clf = neighbors.KNeighborsClassifier(n_neighbors=len(rated_items))
+                else:
+                    clf = neighbors.KNeighborsClassifier()
 
         elif self.__classifier.lower() == "decision_tree":
             if self.__classifier_parameters is not None:
