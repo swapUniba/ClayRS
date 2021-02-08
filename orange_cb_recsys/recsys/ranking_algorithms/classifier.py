@@ -1,3 +1,4 @@
+import collections
 from typing import List, Dict
 
 from scipy import sparse
@@ -48,6 +49,43 @@ class ClassifierRecommender(RankingAlgorithm):
         self.__field_representations = _fields_representations
         self.__classifier_parameters = classifier_parameters
         # aggiungi opzioni
+
+    def __check_svm(self, labels):
+        """
+        Private functions that check what number of folds should SVM classifier do.
+
+        By default SVM does 5 folds, so if there are less ratings we decrease the number of
+        folds because it would throw an exception otherwise.
+        Every class should have min 2 rated items, otherwise SVM can't work.
+
+        EXAMPLE:
+                labels = [1 1 0 1 0]
+
+            We count how many different values there are in the list with
+            collections.Counter(labels), so:
+                count = {"1": 3, "0": 2} # There are 3 rated_items of class 1
+                                        # and 2 rated_items of class 0
+
+            Then we search the min value in the dict with min(count.values()):
+                min_fold = 2
+
+        Args:
+            labels: list of labels of the rated_items
+        Returns:
+            Number of folds to do.
+
+        """
+        count = collections.Counter(labels)
+        min_fold = min(count.values())
+
+        if(min_fold < 2):
+            raise ValueError("There's too few rating for a class! There needs to be at least 2!")
+        elif(min_fold >= 5):
+            min_fold = 5
+
+        return min_fold
+
+
 
     def predict(self, user_id: str, ratings: pd.DataFrame, recs_number: int, items_directory: str, candidate_item_id_list: List = None) -> pd.DataFrame:
         """
@@ -130,7 +168,8 @@ class ClassifierRecommender(RankingAlgorithm):
             if self.__classifier_parameters is not None:
                 clf = CalibratedClassifierCV(LinearSVC(**self.__classifier_parameters))
             else:
-                clf = CalibratedClassifierCV(LinearSVC(random_state=42))
+                n_fold = self.__check_svm(labels)
+                clf = CalibratedClassifierCV(LinearSVC(random_state=42), cv=n_fold)
 
         elif self.__classifier.lower() == "log_regr":
             if self.__classifier_parameters is not None:
