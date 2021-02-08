@@ -15,39 +15,16 @@ from orange_cb_recsys.recsys.ranking_algorithms.centroid_vector import CentroidV
 
 class TestEvalModel(TestCase):
     def test_fit(self):
-        """
-        item_id_list = [
-            'tt0112281',
-            'tt0112302',
-            'tt0112346',
-            'tt0112453',
-            'tt0112641',
-            'tt0112760',
-            'tt0112896',
-            'tt0113041',
-            'tt0113101',
-            'tt0113189',
-            'tt0113228',
-            'tt0113277',
-            'tt0113497',
-            'tt0113845',
-            'tt0113987',
-            'tt0114319',
-            'tt0114388',
-            'tt0114576',
-            'tt0114709',
-            'tt0114885',
-        ]
-
-        record_list = []
-        for i in range(1, 7):
-            extract_items = set([x for i, x in enumerate(item_id_list) if np.random.randint(0, 2) == 1 and i < 10])
-            for item in extract_items:
-                record_list.append((str(i), item, str(np.random.randint(-0, 11) / 10)))
-
-        t_ratings = pd.DataFrame.from_records(record_list, columns=['from_id', 'to_id', 'score'])
-        """
         ratings_filename = 'datasets/examples/new_ratings.csv'
+        users_dir = 'contents/examples/ex_1/users_1600355755.1935306'
+        items_dir = 'contents/examples/ex_1/movies_1600355972.49884'
+        try:
+            open(ratings_filename)
+        except FileNotFoundError:
+            ratings_filename = '../../datasets/examples/new_ratings.csv'
+            users_dir = '../../contents/examples/ex_1/users_1600355755.1935306'
+            items_dir = '../../contents/examples/ex_1/movies_1600355972.49884'
+            
         t_ratings = RatingsImporter(
                 source=CSVFile(ratings_filename),
                 rating_configs=[RatingsFieldConfig(
