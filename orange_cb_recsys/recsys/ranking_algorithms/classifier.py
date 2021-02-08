@@ -192,10 +192,19 @@ class ClassifierRecommender(RankingAlgorithm):
 
         elif self.__classifier.lower() == "svm":
             if self.__classifier_parameters is not None:
-                clf = CalibratedClassifierCV(LinearSVC(**self.__classifier_parameters))
+                try:
+                    n_fold = self.__check_svm(labels)
+                    clf = CalibratedClassifierCV(SVC(kernel='linear', probability=True, **self.__classifier_parameters),
+                                                 cv=n_fold)
+                except ValueError:
+                    clf = SVC(kernel='linear', probability=True, **self.__classifier_parameters)
             else:
-                n_fold = self.__check_svm(labels)
-                clf = CalibratedClassifierCV(LinearSVC(random_state=42), cv=n_fold)
+                try:
+                    n_fold = self.__check_svm(labels)
+                    clf = CalibratedClassifierCV(SVC(kernel='linear', probability=True),
+                                                 cv=n_fold)
+                except ValueError:
+                    clf = SVC(kernel='linear', probability=True)
 
         elif self.__classifier.lower() == "log_regr":
             if self.__classifier_parameters is not None:
