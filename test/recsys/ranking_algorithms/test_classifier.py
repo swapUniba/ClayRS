@@ -54,6 +54,6 @@ class TestClassifierRecommender(TestCase):
                                     threshold=0,
                                     _fields_representations={"Plot": ["0"], "Year": ["0"]},
                                     _item_fields=["Plot", "Year"],
-                                    classifier_parameters={"n_neighbors": 2})
+                                    classifier_parameters={"n_neighbors": 3})
         result = alg.predict('A000', ratings, 1, path, ['tt0114576'])
         self.assertGreater(result.rating[0], 0)
