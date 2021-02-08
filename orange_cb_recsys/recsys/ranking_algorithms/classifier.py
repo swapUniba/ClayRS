@@ -1,7 +1,6 @@
 import collections
 from typing import List, Dict
 
-from scipy import sparse
 from sklearn import neighbors
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import RandomForestClassifier
@@ -10,7 +9,7 @@ from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import FunctionTransformer
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
@@ -85,7 +84,53 @@ class ClassifierRecommender(RankingAlgorithm):
 
         return min_fold
 
+    def __calculate_labels(self, rated_items, rated_features_bag_list, ratings, threshold):
+        """
+        Private functions that calculates labels of rated_items available locally.
 
+        For every rated_items available locally, if the rating given is >= threshold
+        then we label it as 1, 0 otherwise.
+        We also extract features from the rated items that we will use later to fit the
+        classifier.
+        IF there are no rated_items available locally or if there are only positive/negative
+        items,an exception is thrown.
+
+        Args:
+            rated_items: rated items by the user available locally
+            rated_features_bag_list: list that will be filled with features extracted
+                                    from the raed_items
+            ratings: Dataframe which contains ratings given by the user
+            threshold: float that separates positive ratings from the negative ones
+        Returns:
+            list of labels of the rated items.
+
+        """
+        labels = []
+
+        if self.__item_fields is None:
+            for item in rated_items:
+                rated_features_bag_list.append(item.get_field(self.item_field).get_representation(self.item_field_representation).value)
+                labels.append(1 if float(ratings[ratings['to_id'] == item.content_id].score) >= threshold else 0)
+        else:
+            for item in rated_items:
+                for item_field in self.__item_fields:
+                    if item_field in self.__field_representations.keys():
+                        __field_representations = self.__field_representations[item_field]
+                        for field_representation in __field_representations:
+                            rated_features_bag_list.append(
+                                item.get_field(item_field).get_representation(field_representation).value)
+                            labels.append(
+                                1 if float(ratings[
+                                               ratings['to_id'] == item.content_id].score) >= threshold else 0)
+
+        if len(labels) == 0:
+            raise FileNotFoundError("No rated item available locally!")
+        if 0 not in labels:
+            raise ValueError("There are only positive items available locally!")
+        elif 1 not in labels:
+            raise ValueError("There are only negative items available locally!")
+
+        return labels
 
     def predict(self, user_id: str, ratings: pd.DataFrame, recs_number: int, items_directory: str, candidate_item_id_list: List = None) -> pd.DataFrame:
         """
@@ -123,24 +168,7 @@ class ClassifierRecommender(RankingAlgorithm):
         else:
             threshold = self.__threshold
 
-        labels = []
-        if self.__item_fields is None:
-            for item in rated_items:
-                if item is not None:
-                    rated_features_bag_list.append(item.get_field(self.item_field).get_representation(self.item_field_representation).value)
-                    labels.append(1 if float(ratings[ratings['to_id'] == item.content_id].score) >= threshold else 0)
-        else:
-            for item in rated_items:
-                if item is not None:
-                    for item_field in self.__item_fields:
-                        if item_field in self.__field_representations.keys():
-                            __field_representations = self.__field_representations[item_field]
-                            for field_representation in __field_representations:
-                                rated_features_bag_list.append(
-                                    item.get_field(item_field).get_representation(field_representation).value)
-                                labels.append(
-                                    1 if float(ratings[
-                                                   ratings['to_id'] == item.content_id].score) >= threshold else 0)
+        labels = self.__calculate_labels(rated_items, rated_features_bag_list, ratings, threshold)
 
         logger.info("Labeling examples")
         if self.__item_fields is None:
@@ -166,10 +194,19 @@ class ClassifierRecommender(RankingAlgorithm):
 
         elif self.__classifier.lower() == "svm":
             if self.__classifier_parameters is not None:
-                clf = CalibratedClassifierCV(LinearSVC(**self.__classifier_parameters))
+                try:
+                    n_fold = self.__check_svm(labels)
+                    clf = CalibratedClassifierCV(SVC(kernel='linear', probability=True, **self.__classifier_parameters),
+                                                 cv=n_fold)
+                except ValueError:
+                    clf = SVC(kernel='linear', probability=True, **self.__classifier_parameters)
             else:
-                n_fold = self.__check_svm(labels)
-                clf = CalibratedClassifierCV(LinearSVC(random_state=42), cv=n_fold)
+                try:
+                    n_fold = self.__check_svm(labels)
+                    clf = CalibratedClassifierCV(SVC(kernel='linear', probability=True),
+                                                 cv=n_fold)
+                except ValueError:
+                    clf = SVC(kernel='linear', probability=True)
 
         elif self.__classifier.lower() == "log_regr":
             if self.__classifier_parameters is not None:
