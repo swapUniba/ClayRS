@@ -140,7 +140,7 @@ class ClassifierRecommender(RankingAlgorithm):
 
         elif self.__classifier.lower() == "knn":
             if self.__classifier_parameters is not None:
-                clf = neighbors.KNeighborsClassifier()
+                clf = neighbors.KNeighborsClassifier(**self.__classifier_parameters)
             else:
                 clf = neighbors.KNeighborsClassifier()
 
