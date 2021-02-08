@@ -1,7 +1,6 @@
 import collections
 from typing import List, Dict
 
-from scipy import sparse
 from sklearn import neighbors
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import RandomForestClassifier
@@ -10,7 +9,7 @@ from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import FunctionTransformer
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
