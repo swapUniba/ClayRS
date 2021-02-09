@@ -1,4 +1,4 @@
-![Build Status](https://github.com/Silleellie/orange_cb_recsys/workflows/Build%20&%20Test%20&%20Push/badge.svg)&nbsp;&nbsp;[![Coverage Status](https://coveralls.io/repos/github/m3ttiw/orange_cb_recsys/badge.png?branch=master)](https://coveralls.io/github/m3ttiw/orange_cb_recsys?branch=master)&nbsp;&nbsp;![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/rbarile17/framework_dependencies)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
+![Build Status](https://github.com/Silleellie/orange_cb_recsys/workflows/Build%20&%20Test%20&%20Push/badge.svg)&nbsp;&nbsp;![Coveralls github](https://img.shields.io/coveralls/github/m3ttiw/orange_cb_recsys/master?logo=coveralls)&nbsp;&nbsp;[![Docker hub repo](https://img.shields.io/badge/docker-pull-blue.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/silleellie/framework_dependencies)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
 
 # Orange_cb_recsys
 
@@ -12,7 +12,7 @@ pip install orange-cb-recsys
 
 [PyLucene](https://lucene.apache.org/pylucene/) is required and will not be installed like other dependencies, you will need to install it personally.
 
-You also need to manualy copy in the installing directory the files runnable_instances.xz e categories.xz that you can find in source directory
+You also need to manually copy in the installing directory the files runnable_instances.xz e categories.xz that you can find in source directory
 
 Usage
 =====
