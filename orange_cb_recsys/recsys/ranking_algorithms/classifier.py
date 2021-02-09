@@ -170,7 +170,13 @@ class ClassifierRecommender(RankingAlgorithm):
         else:
             threshold = self.__threshold
 
-        labels = self.__calculate_labels(rated_items, rated_features_bag_list, ratings, threshold)
+        try:
+            labels = self.__calculate_labels(rated_items, rated_features_bag_list, ratings, threshold)
+        except (ValueError, FileNotFoundError) as e:
+            logger.warning(str(e))
+            columns = ["to_id", "rating"]
+            score_frame = pd.DataFrame(columns=columns)
+            return score_frame
 
         logger.info("Labeling examples")
         if self.__item_fields is None:
