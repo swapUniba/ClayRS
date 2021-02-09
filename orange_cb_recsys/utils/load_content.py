@@ -2,6 +2,7 @@ import lzma
 import os
 import pickle
 import re
+import sys
 from typing import List
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
@@ -115,3 +116,34 @@ def remove_not_existent_items(ratings, items_directory: str):
     ratings = ratings[ratings["to_id"].isin(intersection)]
 
     return ratings
+
+
+def progressbar(it, prefix="", size=30, file=sys.stderr):
+    """
+    Class which shows visual progress for a loop.
+    USAGE:
+            for item in progressbar(item_list)
+                // calculate
+    Args:
+        it: collection iterable
+        prefix: string which will be shown at the left of the bar
+        size: how much long will the progress bar be
+        file: where to print the progress bar
+    """
+    def show(j):
+        x = int(size*j/count)
+        file.write("%s[%s%s] %i/%i\r" % (prefix, "#"*x, "."*(size-x), j, count))
+        file.flush()
+
+    count = len(it)
+    if count != 0:
+        show(0)
+        for i, item in enumerate(it):
+            yield item
+            show(i+1)
+    else:
+        file.write("%s[%s] 0/0\r" % (prefix, "." * (size)))
+        file.flush()
+
+    file.write("\n")
+    file.flush()
