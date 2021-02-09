@@ -2,10 +2,10 @@ import lzma
 import os
 import pickle
 import re
+import sys
 from typing import List
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.utils.const import logger
 
 
 def load_content_instance(directory: str, content_id: str) -> Content:
@@ -18,14 +18,14 @@ def load_content_instance(directory: str, content_id: str) -> Content:
     Returns:
         content (Content)
     """
-    logger.info("Loading %s" % content_id)
     try:
         content_filename = os.path.join(directory, content_id + '.xz')
         with lzma.open(content_filename, "rb") as content_file:
             content: Content = pickle.load(content_file)
         return content
     except FileNotFoundError:
-        print(content_filename + " Not Found")
+        # print(content_filename + " Not Found")
+        pass
 
 
 def get_unrated_items(items_directory: str, ratings) -> List[Content]:
@@ -43,21 +43,21 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
                                for filename in os.listdir(items_directory)
                                if filename != 'search_index']
 
-    logger.info("Getting filenames from IDs")
+    # logger.info("Getting filenames from IDs")
     # list of id of item without rating
     rated_items_filename_list = set([re.sub(r'[^\w\s]', '', item_id) for item_id in ratings.to_id])
 
-    logger.info("Checking if unrated")
+    #logger.info("Checking if unrated")
     filename_list = [item_id for item_id in directory_filename_list if
                      item_id not in rated_items_filename_list]
 
     intersection = [x for x in filename_list if x in directory_filename_list]
     filename_list = intersection
 
-    logger.info("Loading unrated items")
     unrated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in filename_list]
+        for item_id in progressbar(filename_list, "Loading unrated items:")]
+
     return unrated_items
 
 
@@ -76,11 +76,11 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
                                for filename in os.listdir(items_directory)
                                if filename != 'search_index']
 
-    logger.info("Getting filenames from IDs")
+    # logger.info("Getting filenames from IDs")
     # list of id of item without rating
     rated_items_filename_list = set([re.sub(r'[^\w\s]', '', item_id) for item_id in ratings.to_id])
 
-    logger.info("Checking if rated")
+    # logger.info("Checking if rated")
     filename_list = [item_id for item_id in directory_filename_list if
                      item_id in rated_items_filename_list]
 
@@ -89,9 +89,9 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
 
     filename_list.sort()
 
-    logger.info("Loading rated items")
     rated_items = [
-        load_content_instance(items_directory, item_id) for item_id in filename_list]
+        load_content_instance(items_directory, item_id)
+        for item_id in progressbar(filename_list, "Loading rated items")]
 
     return rated_items
 
@@ -115,3 +115,34 @@ def remove_not_existent_items(ratings, items_directory: str):
     ratings = ratings[ratings["to_id"].isin(intersection)]
 
     return ratings
+
+
+def progressbar(it, prefix="", size=30, file=sys.stderr):
+    """
+    Class which shows visual progress for a loop.
+    USAGE:
+            for item in progressbar(item_list)
+                // calculate
+    Args:
+        it: collection iterable
+        prefix: string which will be shown at the left of the bar
+        size: how much long will the progress bar be
+        file: where to print the progress bar
+    """
+    def show(j):
+        x = int(size*j/count)
+        file.write("%s[%s%s] %i/%i\r" % (prefix, "#"*x, "."*(size-x), j, count))
+        file.flush()
+
+    count = len(it)
+    if count != 0:
+        show(0)
+        for i, item in enumerate(it):
+            yield item
+            show(i+1)
+    else:
+        file.write("%s[%s] 0/0\r" % (prefix, "." * (size)))
+        file.flush()
+
+    file.write("\n")
+    file.flush()
