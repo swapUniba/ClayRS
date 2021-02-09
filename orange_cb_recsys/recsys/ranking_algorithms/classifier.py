@@ -124,11 +124,14 @@ class ClassifierRecommender(RankingAlgorithm):
                                                ratings['to_id'] == item.content_id].score) >= threshold else 0)
 
         if len(labels) == 0:
-            raise FileNotFoundError("No rated item available locally!")
+            raise FileNotFoundError("No rated item available locally!\n"
+                                    "The score frame will be empty for the user")
         if 0 not in labels:
-            raise ValueError("There are only positive items available locally!")
+            raise ValueError("There are only positive items available locally!\n"
+                             "The score frame will be empty for the user")
         elif 1 not in labels:
-            raise ValueError("There are only negative items available locally!")
+            raise ValueError("There are only negative items available locally!\n"
+                             "The score frame will be empty for the user")
 
         return labels
 
@@ -168,7 +171,13 @@ class ClassifierRecommender(RankingAlgorithm):
         else:
             threshold = self.__threshold
 
-        labels = self.__calculate_labels(rated_items, rated_features_bag_list, ratings, threshold)
+        try:
+            labels = self.__calculate_labels(rated_items, rated_features_bag_list, ratings, threshold)
+        except (ValueError, FileNotFoundError) as e:
+            logger.warning(str(e))
+            columns = ["to_id", "rating"]
+            score_frame = pd.DataFrame(columns=columns)
+            return score_frame
 
         logger.info("Labeling examples")
         if self.__item_fields is None:
