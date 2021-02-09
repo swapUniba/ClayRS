@@ -249,9 +249,16 @@ class ClassifierRecommender(RankingAlgorithm):
 
         logger.info("Fitting classifier")
         if self.__classifier.lower() == "gaussian_process":
-            pipe = make_pipeline(DictVectorizer(sparse=True), FunctionTransformer(lambda x: x.todense(), accept_sparse=True), clf)
+            if isinstance(rated_features_bag_list[0], dict):
+                pipe = make_pipeline(DictVectorizer(sparse=True),
+                                     FunctionTransformer(lambda x: x.todense(), accept_sparse=True), clf)
+            else:
+                pipe = make_pipeline(clf)
         else:
-            pipe = make_pipeline(DictVectorizer(sparse=True), clf)
+            if isinstance(rated_features_bag_list[0], dict):
+                pipe = make_pipeline(DictVectorizer(sparse=True), clf)
+            else:
+                pipe = make_pipeline(clf)
 
         pipe = pipe.fit(rated_features_bag_list, labels)
 

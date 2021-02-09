@@ -3,9 +3,11 @@ import os
 import pickle
 import re
 import sys
+from tqdm.auto import tqdm
 from typing import List
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
+from orange_cb_recsys.utils.const import logger
 
 
 def load_content_instance(directory: str, content_id: str) -> Content:
@@ -54,9 +56,10 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
     intersection = [x for x in filename_list if x in directory_filename_list]
     filename_list = intersection
 
+    logger.info("Loading unrated items")
     unrated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in progressbar(filename_list, "Loading unrated items:")]
+        for item_id in tqdm(filename_list, desc="Loading unrated items")]
 
     return unrated_items
 
@@ -91,7 +94,7 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
 
     rated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in progressbar(filename_list, "Loading rated items")]
+        for item_id in tqdm(filename_list, desc="Loading rated items")]
 
     return rated_items
 
@@ -116,33 +119,3 @@ def remove_not_existent_items(ratings, items_directory: str):
 
     return ratings
 
-
-def progressbar(it, prefix="", size=30, file=sys.stderr):
-    """
-    Class which shows visual progress for a loop.
-    USAGE:
-            for item in progressbar(item_list)
-                // calculate
-    Args:
-        it: collection iterable
-        prefix: string which will be shown at the left of the bar
-        size: how much long will the progress bar be
-        file: where to print the progress bar
-    """
-    def show(j):
-        x = int(size*j/count)
-        file.write("%s[%s%s] %i/%i\r" % (prefix, "#"*x, "."*(size-x), j, count))
-        file.flush()
-
-    count = len(it)
-    if count != 0:
-        show(0)
-        for i, item in enumerate(it):
-            yield item
-            show(i+1)
-    else:
-        file.write("%s[%s] 0/0\r" % (prefix, "." * (size)))
-        file.flush()
-
-    file.write("\n")
-    file.flush()
