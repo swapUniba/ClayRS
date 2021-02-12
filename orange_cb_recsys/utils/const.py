@@ -1,7 +1,7 @@
 from pathlib import Path
 import logging
-import sys
-
+import progressbar
+from progressbar import progressbar as progbar      #!!IMPORTANT DO NOT CANCEL
 from orange_cb_recsys.utils.custom_logger import CustomFormatter
 
 home_path = str(Path.home())
