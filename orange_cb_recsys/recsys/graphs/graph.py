@@ -335,7 +335,7 @@ class FullGraph(Graph):
         return self.__not_rated_value
 
     def is_exogenous_property(self, node) -> bool:
-        return not self.is_from_node(node) and not self.is_to_node(node)
+        return self.graph.has_node(node) and not self.is_from_node(node) and not self.is_to_node(node)
 
     def load_content(self, file_name: str) -> Content:
         try:
