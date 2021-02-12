@@ -354,7 +354,7 @@ class FullGraph(Graph):
         results_ = []
         rows = self.source_frame.loc[self.source_frame[column] == key]
         for row in rows.iterrows():
-            results_.append(row)
+            results_.append(row[1])
         return results_
 
     @abstractmethod
