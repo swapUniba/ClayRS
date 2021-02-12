@@ -104,6 +104,10 @@ class Content:
     def field_dict(self):
         return self.__field_dict
 
+    @property
+    def exogenous_rep_dict(self):
+        return self.__exogenous_rep_dict
+
     def get_field(self, field_name: str):
         return self.__field_dict[field_name]
 
