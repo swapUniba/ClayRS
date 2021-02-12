@@ -378,27 +378,41 @@ class FullGraph(Graph):
         for row in rows:
             content = self.load_content(str(node))
             if content is not None:
-                for prop_name in self.__item_exogenous_properties:
-                    properties: dict = content.get_exogenous_rep(prop_name)
 
-                    if properties is not None:
+                # Provided representation and properties
+                if self.__item_exogenous_representation is not None \
+                        and self.__item_exogenous_properties is not None:
+                    self.__prop_by_rep(content, row, "item")
 
-                        for prop_key in properties.keys():
-                            preference = self.get_preference(prop_key, row)
-                            self.add_edge(row['to_id'], properties[prop_key], preference, prop_key)
+                # Provided only the representation
+                elif self.__item_exogenous_representation is not None \
+                        and self.__item_exogenous_properties is None:
+                    self.__all_prop_in_rep(content, row, "item")
+
+                # Provided only the properties
+                elif self.__item_exogenous_representation is None \
+                        and self.__item_exogenous_properties is not None:
+                    self.__prop_in_all_rep(content, row, "item")
 
         rows = self.query_frame(str(node), 'from_id')
         for row in rows:
             content = self.load_content(str(node))
             if content is not None:
-                for prop_name in self.__item_exogenous_properties:
-                    properties: dict = content.get_exogenous_rep(prop_name)
 
-                    if properties is not None:
+                # Provided representation and properties
+                if self.__user_exogenous_representation is not None \
+                        and self.__user_exogenous_properties is not None:
+                    self.__prop_by_rep(content, row, "user")
 
-                        for prop_key in properties.keys():
-                            preference = self.get_preference(prop_key, row)
-                            self.add_edge(row['from_id'], properties[prop_key], preference, prop_key)
+                # Provided only the representation
+                elif self.__user_exogenous_representation is not None \
+                        and self.__user_exogenous_properties is None:
+                    self.__all_prop_in_rep(content, row, "user")
+
+                # Provided only the properties
+                elif self.__user_exogenous_representation is None \
+                        and self.__user_exogenous_properties is not None:
+                    self.__prop_in_all_rep(content, row, "user")
 
     @abstractmethod
     def add_edge(self, from_node: object, to_node: object, weight: float, label: str = 'weight'):
@@ -441,6 +455,7 @@ class FullGraph(Graph):
 
 class TripartiteGraph(Graph):
     """ rating su più fields -> più archi (import di RatingsProcessor)"""
+
     def __init__(self, source_frame: pd.DataFrame, contents_dir: str = None, exogenous_properties: List[str] = None,
                  **options):
 
@@ -594,5 +609,3 @@ class TripartiteGraph(Graph):
             if edge_data['label'] == self.get_default_score_label():
                 properties[edge_data['label']] = edge_data['weight']
         return properties
-
-
