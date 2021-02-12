@@ -182,33 +182,133 @@ class FullGraph(Graph):
                               label=self.__default_score_label)
                 content = self.load_content(row['to_id'])
                 if content is not None:
-                    for prop_name in self.__item_exogenous_properties:
-                        try:
-                            properties: dict = content.get_exogenous_rep(prop_name)
-                        except KeyError:
-                            properties = None
+                    # Provided representation and properties
+                    if self.__item_exogenous_representation is not None and \
+                            self.__item_exogenous_properties is not None:
+                        self.__prop_by_rep(content, row, "item")
 
-                        if properties is not None:
+                    # Provided only the representation
+                    elif self.__item_exogenous_representation is not None and \
+                            self.__item_exogenous_properties is None:
+                        self.__all_prop_in_rep(content, row, "item")
 
-                            for prop_key in properties.keys():
-                                preference = self.get_preference(prop_key, row)
-                                self.add_edge(row['to_id'], properties[prop_key], preference, prop_key)
+                    # Provided only the properties
+                    elif self.__item_exogenous_representation is None and \
+                            self.__item_exogenous_properties is not None:
+                        self.__prop_in_all_rep(content, row, "item")
+
 
                 content = self.load_content(row['from_id'])
                 if content is not None:
-                    for prop_name in self.__user_exogenous_properties:
-                        try:
-                            properties: dict = content.get_exogenous_rep(prop_name)
-                        except KeyError:
-                            properties = None
+                    # Provided representation and properties
+                    if self.__user_exogenous_representation is not None and \
+                            self.__user_exogenous_properties is not None:
+                        self.__prop_by_rep(content, row, "user")
 
-                        if properties is not None:
+                    # Provided only the representation
+                    elif self.__user_exogenous_representation is not None and \
+                            self.__user_exogenous_properties is None:
+                        self.__all_prop_in_rep(content, row, "user")
 
-                            for prop_key in properties.keys():
-                                preference = self.get_preference(prop_key, row)
-                                self.add_edge(row['from_id'], properties[prop_key], preference, prop_key)
+                    # Provided only the properties
+                    elif self.__user_exogenous_representation is None and \
+                            self.__user_exogenous_properties is not None:
+                        self.__prop_in_all_rep(content, row, "user")
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
+
+    def __prop_by_rep(self, content, row, usr_or_item):
+
+        if usr_or_item == "user":
+            rep_chosen = self.__user_exogenous_representation
+            prop_chosen = self.__user_exogenous_properties
+            col_id = 'from_id'
+        elif usr_or_item == "item":
+            rep_chosen = self.__item_exogenous_representation
+            prop_chosen = self.__item_exogenous_properties
+            col_id = 'to_id'
+        else:
+            logger.critical("Something's wrong in the constructor of the graph!")
+            return
+
+        properties = None
+        try:
+            properties = content.get_exogenous_rep(rep_chosen).value
+        except KeyError:
+            logger.warning("Representation " + rep_chosen + " not found for " + content.content_id)
+
+        if properties is not None:
+            for prop in prop_chosen:
+                if prop in properties.keys():
+                    preference = self.get_preference(prop, row)
+                    self.add_edge(row[col_id], properties[prop], preference, prop)
+                else:
+                    logger.warning("Property " + prop + " not found for " + content.content_id)
+
+    def __all_prop_in_rep(self, content, row, usr_or_item):
+
+        if usr_or_item == "user":
+            rep_chosen = self.__user_exogenous_representation
+            col_id = 'from_id'
+        elif usr_or_item == "item":
+            rep_chosen = self.__item_exogenous_representation
+            col_id = 'to_id'
+        else:
+            logger.critical("Something's wrong in the constructor of the graph!")
+            return
+
+        properties = None
+        try:
+            properties = content.get_exogenous_rep(rep_chosen).value
+        except KeyError:
+            logger.warning("Representation " + rep_chosen + " not found for " + content.content_id)
+
+        if properties is not None:
+            for prop_key in properties.keys():
+                preference = self.get_preference(prop_key, row)
+                self.add_edge(row[col_id], properties[prop_key], preference, prop_key)
+
+            if len(properties) == 0:
+                logger.warning("The chosen representation doesn't have any property!")
+
+    def __prop_in_all_rep(self, content, row, usr_or_item):
+
+        if usr_or_item == "user":
+            prop_chosen = self.__user_exogenous_properties
+            col_id = 'from_id'
+        elif usr_or_item == "item":
+            prop_chosen = self.__item_exogenous_properties
+            col_id = 'to_id'
+        else:
+            logger.critical("Something's wrong in the constructor of the graph!")
+            return
+
+        properties = None
+        properties_not_found = []
+        for rep in content.exogenous_rep_dict:
+            for prop in prop_chosen:
+                if prop in content.get_exogenous_rep(rep).value:
+                    if properties is None:
+                        properties = {}
+                    # properties = {director_0: aaaaa, director_1:bbbbb}
+                    properties[prop + "_" + rep] = content.get_exogenous_rep(rep).value[prop]
+                else:
+                    properties_not_found.append(prop)
+
+        if properties is not None:
+            for prop_key in properties.keys():
+                # EX. producer_0 -> producer so I can search for preference
+                # in the original frame source
+                original_prop_name = '_'.join(prop_key.split('_')[:-1])
+                preference = self.get_preference(original_prop_name, row)
+
+                self.add_edge(row[col_id], properties[prop_key], preference, prop_key)
+
+            if len(properties_not_found) != 0:
+                for prop in properties_not_found:
+                    logger.warning("Property " + prop + " not found for " + content.content_id)
+        else:
+            logger.warning("None of the property chosen was found for " + content.content_id)
 
     def get_user_exogenous_properties(self) -> List[str]:
         return self.__user_exogenous_properties
