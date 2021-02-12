@@ -7,12 +7,12 @@ import pandas as pd
 
 class NXFullGraph(FullGraph):
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
-                 user_exogenous_properties: List[str] = None,
-                 item_exogenous_properties: List[str] = None,
+                 user_exo_properties: List[str] = None, user_exo_representation: str = None,
+                 item_exo_properties: List[str] = None, item_exo_representation: str = None,
                  **options):
         super().__init__(source_frame=source_frame, user_contents_dir=user_contents_dir, item_contents_dir=item_contents_dir,
-                         user_exogenous_properties=user_exogenous_properties,
-                         item_exogenous_properties=item_exogenous_properties,
+                         user_exo_properties=user_exo_properties, user_exo_representation=user_exo_representation,
+                         item_exo_properties=item_exo_properties, item_exo_representation=item_exo_representation,
                          **options)
 
     def create_graph(self):
