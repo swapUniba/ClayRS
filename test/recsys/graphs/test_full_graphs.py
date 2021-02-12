@@ -14,9 +14,17 @@ from orange_cb_recsys.content_analyzer.content_representation.content_field impo
 
 class TestNXFullGraph(TestCase):
     def test_all(self):
-        ratings_filename = "../../../datasets/examples/new_ratings.csv"
-        movies_dir = '../../../contents/exo_prop/movielens_exo_1612956350.7812138'
-        user_dir = '../../../contents/exo_prop/user_exo_1612956381.4652517'
+
+        ratings_filename = "datasets/examples/new_ratings.csv"
+        movies_dir = 'contents/exo_prop/movielens_exo_1612956350.7812138'
+        user_dir = 'contents/exo_prop/user_exo_1612956381.4652517'
+        try:
+            open(ratings_filename)
+        except FileNotFoundError:
+            ratings_filename = "../../../datasets/examples/new_ratings.csv"
+            movies_dir = '../../../contents/exo_prop/movielens_exo_1612956350.7812138'
+            user_dir = '../../../contents/exo_prop/user_exo_1612956381.4652517'
+
 
         # output_dir = 'test_1m_'
         #
