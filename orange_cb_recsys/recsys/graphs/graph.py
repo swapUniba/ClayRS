@@ -143,8 +143,10 @@ class BipartiteGraph(Graph):
 
 class FullGraph(Graph):
     """ rating su più fields -> più archi (import di RatingsProcessor)"""
+
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
-                 user_exogenous_properties: List[str] = None, item_exogenous_properties: List[str] = None,
+                 user_exo_representation: str = None, user_exo_properties: List[str] = None,
+                 item_exo_representation: str = None, item_exo_properties: List[str] = None,
                  **options):
 
         self.__default_score_label = 'score_label'
@@ -155,13 +157,17 @@ class FullGraph(Graph):
         if 'not_rated_value' in options.keys():
             self.__not_rated_value = self.normalize_score(options['not_rated_value'])
 
-        self.__user_exogenous_properties: List[str] = user_exogenous_properties
-        if user_exogenous_properties is None:
-            self.__user_exogenous_properties: List[str] = []
+        self.__user_exogenous_representation: str = user_exo_representation
 
-        self.__item_exogenous_properties: List[str] = item_exogenous_properties
-        if item_exogenous_properties is None:
-            self.__item_exogenous_properties: List[str] = []
+        self.__user_exogenous_properties: List[str] = user_exo_properties
+        if user_exo_properties is None:
+            self.__user_exogenous_properties: List[str] = None
+
+        self.__item_exogenous_representation: str = item_exo_representation
+
+        self.__item_exogenous_properties: List[str] = item_exo_properties
+        if item_exo_properties is None:
+            self.__item_exogenous_properties: List[str] = None
 
         self.__item_contents_dir: str = item_contents_dir
         self.__user_contents_dir: str = user_contents_dir
