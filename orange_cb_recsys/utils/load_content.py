@@ -2,12 +2,10 @@ import lzma
 import os
 import pickle
 import re
-import sys
-from tqdm.auto import tqdm
 from typing import List
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, progbar
 
 
 def load_content_instance(directory: str, content_id: str) -> Content:
@@ -59,7 +57,7 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
     logger.info("Loading unrated items")
     unrated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in tqdm(filename_list, desc="Loading unrated items")]
+        for item_id in progbar(filename_list, prefix="Loading unrated items:")]
 
     return unrated_items
 
@@ -94,7 +92,7 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
 
     rated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in tqdm(filename_list, desc="Loading rated items")]
+        for item_id in progbar(filename_list, prefix="Loading rated items:")]
 
     return rated_items
 
