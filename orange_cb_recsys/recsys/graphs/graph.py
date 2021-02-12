@@ -2,16 +2,17 @@ import lzma
 import pickle
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Dict
-
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
+from orange_cb_recsys.utils.const import logger, progbar
 
 
 class Graph(ABC):
     """
     Abstract class that generalize the concept of a Graph
     """
+
     def __init__(self, source_frame: pd.DataFrame):
         self.__source_frame: pd.DataFrame = source_frame
         self.__graph = None
@@ -100,6 +101,7 @@ class BipartiteGraph(Graph):
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
             generated from this DataFrame
     """
+
     def __init__(self, source_frame: pd.DataFrame):
         super().__init__(source_frame)
         self.__graph = None
@@ -176,8 +178,9 @@ class FullGraph(Graph):
 
         if self.check_columns(source_frame):
             self.create_graph()
-
-            for idx, row in self.source_frame.iterrows():
+            for idx, row in progbar(self.source_frame.iterrows(),
+                                    max_value=self.source_frame.__len__(),
+                                    prefix="Creating Graph:"):
                 self.add_edge(row['from_id'], row['to_id'], self.normalize_score(row['score']),
                               label=self.__default_score_label)
                 content = self.load_content(row['to_id'])
