@@ -49,7 +49,7 @@ class PageRankAlg(RankingAlgorithm):
                 new_rank.pop(k)
             if remove_profile and self.__fullgraph.is_to_node(k) and k in extracted_profile.keys():
                 new_rank.pop(k)
-            if remove_properties and not self.__fullgraph.is_to_node(k) and not self.__fullgraph.is_from_node(k):
+            if remove_properties and self.__fullgraph.is_exogenous_property(k):
                 new_rank.pop(k)
         return new_rank
 
