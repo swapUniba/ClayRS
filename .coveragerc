@@ -1,6 +1,7 @@
 [run]
 omit =
     */online/*
+    *example*
 
 [report]
 exclude_lines =
