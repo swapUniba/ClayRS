@@ -45,7 +45,15 @@ class Graph(ABC):
         Returns:
             float in the range [0.0, 1.0]
         """
-        return 1 - (score + 1) / 2
+        old_max = 1
+        old_min = -1
+        new_max = 1
+        new_min = 0
+
+        old_range = (old_max - old_min)
+        new_range = (new_max - new_min)
+        new_value = (((score - old_min) * new_range) / old_range) + new_min
+        return new_value
 
     @property
     def source_frame(self):

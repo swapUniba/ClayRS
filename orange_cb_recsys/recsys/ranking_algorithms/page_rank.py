@@ -49,7 +49,7 @@ class PageRankAlg(RankingAlgorithm):
                 new_rank.pop(k)
             if remove_profile and self.__fullgraph.is_to_node(k) and k in extracted_profile.keys():
                 new_rank.pop(k)
-            if remove_properties and not self.__fullgraph.is_to_node(k) and not self.__fullgraph.is_from_node(k):
+            if remove_properties and self.__fullgraph.is_exogenous_property(k):
                 new_rank.pop(k)
         return new_rank
 
@@ -89,6 +89,7 @@ class NXPageRank(PageRankAlg):
             scores = nx.pagerank(self.fullgraph.graph)
         # clean the results removing user nodes, selected user profile and eventually properties
         scores = self.clean_rank(scores, user_id)
+        scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
         ks = list(scores.keys())
         ks = ks[:recs_number]
         new_scores = {k: scores[k] for k in scores.keys() if k in ks}
