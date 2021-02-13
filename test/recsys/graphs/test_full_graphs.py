@@ -54,7 +54,6 @@ class TestNXFullGraph(TestCase):
         # )
         #
         # ContentAnalyzer(config=users_ca_config).fit()
-        #content_analyzer.set_config(users_ca_config).fit()
 
         ratings_import = RatingsImporter(
             source=CSVFile(ratings_filename),
@@ -68,13 +67,17 @@ class TestNXFullGraph(TestCase):
 
         ratings_frame = ratings_import.import_ratings()
 
-        print(ratings_frame)
-
+        # Create graph with those properties from that representation
+        # EX. create graph with properties 'producer' and 'starring'
+        # from representation 0
         full_graph = NXFullGraph(
             source_frame=ratings_frame,
             item_contents_dir=movies_dir,
             user_contents_dir=user_dir,
-            item_exo_properties=['producer', 'starring']
+            item_exo_representation="0",
+            user_exo_representation="0",
+            item_exo_properties=['producer', 'starring'],
+            user_exo_properties=['1'] #It's the column in the users .DAT which identifies the gender
         )
 
         self.assertFalse(full_graph.graph.has_node('000'))
@@ -109,11 +112,40 @@ class TestNXFullGraph(TestCase):
             result.append(x)
         self.assertEqual(expected, result)
 
-        full_graph.add_tree('tt0112281')
+        full_graph.add_tree('tt0114885')
         self.assertFalse(full_graph.is_exogenous_property('1'))
-        self.assertFalse(full_graph.is_exogenous_property('tt0112281'))
+        self.assertFalse(full_graph.is_exogenous_property('tt0114885'))
         self.assertTrue(full_graph.is_exogenous_property('http://dbpedia.org/resource/Tom_Hanks'))
+        self.assertTrue(full_graph.is_exogenous_property('F'))
 
         # full_graph.get_voted_contents()
         # full_graph.get_properties()
 
+
+        # Create graph without setting particular representation,
+        # EX. Create graph with properties 'producer' and 'starring' from
+        # all exo representation, since there can be multiple exo representation
+        # containing the same properties
+        full_graph = NXFullGraph(
+            source_frame=ratings_frame,
+            item_contents_dir=movies_dir,
+            user_contents_dir=user_dir,
+            item_exo_properties=['producer', 'starring'],
+            user_exo_properties=['1'] #It's the column in the users DAT which identifies the gender
+        )
+
+        # simple assert just to make sure the graph is created
+        self.assertGreater(full_graph.graph.__len__(), 0)
+
+        # Create graph without setting particular properties,
+        # so ALL exo properties of the representation 0 will be retrieved
+        full_graph = NXFullGraph(
+            source_frame=ratings_frame,
+            item_contents_dir=movies_dir,
+            user_contents_dir=user_dir,
+            item_exo_representation="0",
+            user_exo_representation="0"
+        )
+
+        # simple assert just to make sure the graph is created
+        self.assertGreater(full_graph.graph.__len__(), 0)
