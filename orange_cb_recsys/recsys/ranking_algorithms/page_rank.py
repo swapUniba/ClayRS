@@ -80,11 +80,10 @@ class NXPageRank(PageRankAlg):
         if feature_selection_algorithm is not None:
             self.set_fullgraph(feature_selection_algorithm.perform(self.fullgraph.graph, ratings=ratings))
 
-        print(self.fullgraph.graph)
         # run the pageRank
         if self.personalized:
             profile = self.extract_profile(user_id)
-            scores = nx.pagerank(self.fullgraph.graph, personalization=profile)
+            scores = nx.pagerank(self.fullgraph.graph.to_undirected(), personalization=profile)
         else:
             scores = nx.pagerank(self.fullgraph.graph)
         # clean the results removing user nodes, selected user profile and eventually properties
