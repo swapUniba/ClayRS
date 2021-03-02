@@ -101,3 +101,5 @@ For example, for the tf-idf the nltk class is used which analyzes the natural la
 When using nltk these are the variables that can be changed: stopwords_removal, stemming, lemmatization, strip_multiple_white_space and url_tagging
 
 When specifying embedding as field_content_production one must also specify the combining_technique which is currently only centroid, the source of the embedding and the granularity of it which can be word, doc and sentence
+
+TEST
