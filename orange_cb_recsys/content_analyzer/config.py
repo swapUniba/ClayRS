@@ -13,6 +13,12 @@ class FieldRepresentationPipeline:
     """
     Pipeline which specifies how to produce one of the representations of a field.
 
+    If content technique is not specified or content_technique=None, the framework will
+    try to decode if the field_data is in the form of a bag of word ({'hello': 5.2, 'world':2})
+    or in the form of an embedding vector ([0.53653,0.784141,1.23565, ...])
+    If so, it will instantiates the corresponding an object of the corresponding class.
+    If not, it will instantiate a StringField representation for the field.
+
     Args:
         content_technique (FieldContentProductionTechnique):
             used to produce complex representation of the field given pre-processed information
@@ -22,7 +28,7 @@ class FieldRepresentationPipeline:
 
     instance_counter: int = 0
 
-    def __init__(self, content_technique: FieldContentProductionTechnique,
+    def __init__(self, content_technique: FieldContentProductionTechnique = None,
                  preprocessor_list: List[InformationProcessor] = None):
         if preprocessor_list is None:
             preprocessor_list = []
