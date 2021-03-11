@@ -28,7 +28,7 @@ class FieldRepresentationPipeline:
 
     instance_counter: int = 0
 
-    def __init__(self, content_technique: FieldContentProductionTechnique,
+    def __init__(self, content_technique: FieldContentProductionTechnique = None,
                  preprocessor_list: List[InformationProcessor] = None):
         if preprocessor_list is None:
             preprocessor_list = []
