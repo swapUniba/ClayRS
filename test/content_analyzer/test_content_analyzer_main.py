@@ -10,11 +10,9 @@ from orange_cb_recsys.content_analyzer.content_representation.content_field impo
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import LuceneTfIdf, EmbeddingTechnique, \
     Centroid, GensimDownloader
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
-
-import lucene
-lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 
 filepath = '../../datasets/movies_info_reduced.json'
 try:
@@ -45,7 +43,7 @@ class TestContentsProducer(TestCase):
             field_name='Title',
             field_config=FieldConfig(
                 pipelines_list=[FieldRepresentationPipeline(
-                    content_technique=LuceneTfIdf())]
+                    content_technique=SkLearnTfIdf())]
             ))
 
         content_analyzer = ContentAnalyzer(movies_ca_config)
