@@ -2,11 +2,11 @@ from unittest import TestCase
 
 import pandas as pd
 from orange_cb_recsys.recsys.graphs import NXBipartiteGraph
-
+import networkx as nx
 
 class TestNXBipartiteGraph(TestCase):
     def test_all(self):
-        df = pd.DataFrame.from_dict({'from_id': ["001", "001", "002", "aaa", "002", "003", "004", "004"],
+        df = pd.DataFrame.from_dict({'from_id': ["001", "001", "002", "002", "002", "003", "004", "004"],
                                      'to_id': ["aaa", "bbb", "aaa", "ddd", "ccc", "ccc", "ddd", "ccc"],
                                      'score': [0.8, 0.7, -0.4, 1.0, 0.4, 0.1, -0.3, 0.7]})
 
@@ -42,6 +42,13 @@ class TestNXBipartiteGraph(TestCase):
         self.assertTrue(g.is_to_node('Tenet'))
         self.assertIsNotNone(g.get_link_data('000', 'aaa'))
 
+        # Make a 'from' node also a 'to' node and a 'to' node also a 'from' node
+        self.assertFalse(g.is_from_node('aaa'))
+        self.assertFalse(g.is_to_node('000'))
+        g.link_from_to('aaa', '000', 0.5)
+        self.assertTrue(g.is_from_node('aaa'))
+        self.assertTrue(g.is_to_node('000'))
+
         # Get predecessors of a node
         result = g.get_predecessors('Tenet')
         expected = ['u1']
@@ -56,3 +63,6 @@ class TestNXBipartiteGraph(TestCase):
         result = g.get_voted_contents('u1')
         expected = ['Tenet']
         self.assertEqual(expected, result)
+
+        # simple assert just to test the _graph method
+        self.assertIsInstance(g._graph, nx.DiGraph)

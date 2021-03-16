@@ -5,6 +5,7 @@ from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import N
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
 from orange_cb_recsys.recsys.graphs.tripartite_graphs import NXTripartiteGraph
+import networkx as nx
 
 
 class TestNXTripartiteGraph(TestCase):
@@ -62,6 +63,18 @@ class TestNXTripartiteGraph(TestCase):
         self.assertTrue(g.is_to_node('Birdman'))
         self.assertIsNotNone(g.get_link_data('u2', 'Birdman'))
 
+        # Make a 'from' node also a 'to' node and a 'to' node also a 'from' node
+        g.add_from_node('000')
+        g.add_to_node('i1')
+        g.link_from_to('i1', '000', 0.5)
+        self.assertTrue(g.is_from_node('i1'))
+        self.assertTrue(g.is_to_node('000'))
+
+        # Make a 'from' node also a 'prop' node
+        self.assertFalse(g.is_property_node('000'))
+        g.add_prop_node('000')
+        self.assertTrue(g.is_property_node('000'))
+
         # Link existent 'to' node to existent 'property'
         g.link_prop_node('Tenet', 'Nolan', weight=0.5, label='Director')
         result = g.get_properties('Tenet')
@@ -115,3 +128,6 @@ class TestNXTripartiteGraph(TestCase):
         self.assertGreater(len(g.from_nodes), 0)
         self.assertGreater(len(g.to_nodes), 0)
         self.assertGreater(len(g.property_nodes), 0)
+
+        # simple assert just to test the _graph method
+        self.assertIsInstance(g._graph, nx.DiGraph)

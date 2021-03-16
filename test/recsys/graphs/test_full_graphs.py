@@ -103,6 +103,18 @@ class TestNXFullGraph(TestCase):
         self.assertTrue(g.is_from_node('u2'))
         self.assertTrue(g.is_to_node('Inception'))
 
+        # Make a 'from' node also a 'to' node and a 'to' node also a 'from' node
+        g.add_from_node('000')
+        g.add_to_node('i1')
+        g.link_from_to('i1', '000', 0.5)
+        self.assertTrue(g.is_from_node('i1'))
+        self.assertTrue(g.is_to_node('000'))
+
+        # Make a 'from' node also a 'prop' node
+        self.assertFalse(g.is_property_node('000'))
+        g.add_prop_node('000')
+        self.assertTrue(g.is_property_node('000'))
+
         # Create property 'Director' for item 'Tenet', then get all properties from item 'Tenet'
         g.link_prop_node('Tenet', 'Nolan', 0.5, 'Director')
         result = g.get_properties('Tenet')
