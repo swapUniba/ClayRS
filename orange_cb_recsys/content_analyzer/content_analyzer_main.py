@@ -48,6 +48,14 @@ class ContentAnalyzer:
                     technique.processor_list = pipeline.preprocessor_list
                     technique.dataset_refactor(
                         self.__config.source, self.__config.id_field_name_list)
+    
+#     def __config_recap(self):
+#         recap_list = [("Field: %s; representation id: %s: technique: %s",
+#                        field_name, str(pipeline), str(pipeline.content_technique))
+#                       for field_name in self.__config.get_field_name_list()
+#                       for pipeline in self.__config.get_pipeline_list(field_name)]
+
+#         return RepresentedContentsRecap(recap_list)             
 
     def fit(self):
         """
