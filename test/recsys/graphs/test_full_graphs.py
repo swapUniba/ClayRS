@@ -1,15 +1,11 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer import ContentAnalyzerConfig, ContentAnalyzer
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
-    PropertiesFromDataset
 from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
-from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile, JSONFile, DATFile
-from orange_cb_recsys.evaluation.graph_metrics import nx_dispersion, nx_degree_centrality
+from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
+from orange_cb_recsys.evaluation.graph_metrics import nx_degree_centrality, nx_closeness_centrality, nx_dispersion
 from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
-from orange_cb_recsys.content_analyzer.content_representation.content_field import EmbeddingField
 
 
 class TestNXFullGraph(TestCase):
@@ -70,76 +66,106 @@ class TestNXFullGraph(TestCase):
         # Create graph with those properties from that representation
         # EX. create graph with properties 'producer' and 'starring'
         # from representation 0
-        full_graph = NXFullGraph(
+        g = NXFullGraph(
             source_frame=ratings_frame,
             item_contents_dir=movies_dir,
             user_contents_dir=user_dir,
             item_exo_representation="0",
             user_exo_representation="0",
             item_exo_properties=['producer', 'starring'],
-            user_exo_properties=['1'] #It's the column in the users .DAT which identifies the gender
+            user_exo_properties=['1']  # It's the column in the users .DAT which identifies the gender
         )
 
-        self.assertFalse(full_graph.graph.has_node('000'))
-        full_graph.add_node('000')
-        self.assertTrue(full_graph.graph.has_node('000'))
+        # Add 'from' node
+        self.assertFalse(g.is_from_node('u1'))
+        g.add_from_node('u1')
+        self.assertTrue(g.is_from_node('u1'))
 
-        full_graph.add_edge('000', 'aaa', 0.5)
-        result = full_graph.get_edge_data('000', 'aaa')
-        expected = {'weight': 0.5, 'label': 'weight'}
+        # Add 'to' node
+        self.assertFalse(g.is_to_node('Tenet'))
+        g.add_to_node('Tenet')
+        self.assertTrue(g.is_to_node('Tenet'))
+
+        # Add 'property' node
+        self.assertFalse(g.is_to_node('Inarritu'))
+        g.add_prop_node('Inarritu')
+        self.assertTrue(g.is_property_node('Inarritu'))
+
+        # link 'from' and 'to' node already presents in the graph
+        self.assertIsNone(g.get_link_data('u1', 'Tenet'))
+        g.link_from_to('u1', 'Tenet', 0.5)
+        self.assertIsNotNone(g.get_link_data('u1', 'Tenet'))
+
+        # link 'from' and 'to' node which are not presents in the graph
+        self.assertFalse(g.is_from_node('u2'))
+        self.assertFalse(g.is_to_node('Inception'))
+        g.link_from_to('u2', 'Inception', 0.5)
+        self.assertTrue(g.is_from_node('u2'))
+        self.assertTrue(g.is_to_node('Inception'))
+
+        # Create property 'Director' for item 'Tenet', then get all properties from item 'Tenet'
+        g.link_prop_node('Tenet', 'Nolan', 0.5, 'Director')
+        result = g.get_properties('Tenet')
+        expected = [{'Director': 'Nolan'}]
         self.assertEqual(expected, result)
 
-        adj = full_graph.get_adj('000')
-        expected = ['aaa']
-        result = []
-        for x in adj:
-            result.append(x)
+        # Create property for a non existent node, so no property is not created
+        # since the node must be existent
+        g.link_prop_node('not existent', 'prop', 0.5, 'Director')
+        self.assertFalse(g.is_property_node('prop'))
+        self.assertIsNone(g.get_link_data('not existent', 'prop'))
+
+        # Get all predecessors of a node
+        result = g.get_predecessors('Tenet')
+        expected = ['u1']
         self.assertEqual(expected, result)
 
-        prec = full_graph.get_predecessors('aaa')
-        expected = ['000']
-        result = []
-        for x in prec:
-            result.append(x)
+        # Get all successors of a node
+        result = g.get_successors('u1')
+        expected = ['Tenet']
         self.assertEqual(expected, result)
 
-        full_graph.add_edge('000', 'bbb', 0.5)
+        # Add to_tree, so the 'to' node and its properties
+        self.assertFalse(g.is_to_node('tt0114709'))
+        self.assertFalse(g.is_property_node('http://dbpedia.org/resource/Tom_Hanks'))
+        g.add_to_tree('tt0114709')
+        self.assertTrue(g.is_to_node('tt0114709'))
+        self.assertTrue(g.is_property_node('http://dbpedia.org/resource/Tom_Hanks'))
 
-        succ = full_graph.get_successors('000')
-        expected = ['aaa', 'bbb']
-        result = []
-        for x in succ:
-            result.append(x)
+        # Add from_tree, so the 'from' node and its properties
+        self.assertFalse(g.is_from_node('11'))
+        g.add_from_tree('11')
+        self.assertTrue(g.is_from_node('11'))
+        self.assertTrue(g.is_property_node('M'))
+        self.assertTrue(g.is_property_node('F'))
+
+        # add a link from u1 to inception for testing multiple voted_contents
+        g.link_from_to('u1', 'Inception', 0.5)
+        # Get all voted elements by the user u1
+        result = g.get_voted_contents('u1')
+        expected = ['Tenet', 'Inception']
         self.assertEqual(expected, result)
-
-        full_graph.add_tree('tt0114885')
-        self.assertFalse(full_graph.is_exogenous_property('1'))
-        self.assertFalse(full_graph.is_exogenous_property('tt0114885'))
-        self.assertTrue(full_graph.is_exogenous_property('http://dbpedia.org/resource/Tom_Hanks'))
-        self.assertTrue(full_graph.is_exogenous_property('F'))
-
-        # full_graph.get_voted_contents()
-        # full_graph.get_properties()
-
 
         # Create graph without setting particular representation,
         # EX. Create graph with properties 'producer' and 'starring' from
         # all exo representation, since there can be multiple exo representation
         # containing the same properties
-        full_graph = NXFullGraph(
+        g = NXFullGraph(
             source_frame=ratings_frame,
             item_contents_dir=movies_dir,
             user_contents_dir=user_dir,
             item_exo_properties=['producer', 'starring'],
-            user_exo_properties=['1'] #It's the column in the users DAT which identifies the gender
+            user_exo_properties=['1']  # It's the column in the users DAT which identifies the gender
         )
 
         # simple assert just to make sure the graph is created
-        self.assertGreater(full_graph.graph.__len__(), 0)
+        self.assertGreater(len(g.from_nodes), 0)
+        self.assertGreater(len(g.to_nodes), 0)
+        self.assertGreater(len(g.property_nodes), 0)
 
         # Create graph without setting particular properties,
         # so ALL exo properties of the representation 0 will be retrieved
-        full_graph = NXFullGraph(
+        g = NXFullGraph(
             source_frame=ratings_frame,
             item_contents_dir=movies_dir,
             user_contents_dir=user_dir,
@@ -148,4 +174,12 @@ class TestNXFullGraph(TestCase):
         )
 
         # simple assert just to make sure the graph is created
-        self.assertGreater(full_graph.graph.__len__(), 0)
+        self.assertGreater(len(g.from_nodes), 0)
+        self.assertGreater(len(g.to_nodes), 0)
+        self.assertGreater(len(g.property_nodes), 0)
+
+        # we calculate some metrics, simple assert to make sure they are
+        # calculated
+        self.assertGreater(len(nx_degree_centrality(g)), 0)
+        self.assertGreater(len(nx_closeness_centrality(g)), 0)
+        self.assertGreater(len(nx_dispersion(g)), 0)

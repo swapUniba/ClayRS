@@ -3,12 +3,12 @@ import networkx as nx
 
 
 def nx_degree_centrality(g: NXFullGraph):
-    return nx.degree_centrality(g.graph)
+    return nx.degree_centrality(g._graph)
 
 
 def nx_closeness_centrality(g: NXFullGraph):
-    return nx.closeness_centrality(g.graph)
+    return nx.closeness_centrality(g._graph)
 
 
 def nx_dispersion(g: NXFullGraph):
-    return nx.dispersion(g.graph)
+    return nx.dispersion(g._graph)
