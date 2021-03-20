@@ -8,7 +8,7 @@ from whoosh.analysis import SimpleAnalyzer
 from whoosh.query import Term
 
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
-from orange_cb_recsys.utils.tf_idf_computations import TfIdf, TfIdfClassic
+import math
 
 
 class IndexInterface(TextInterface):
@@ -18,16 +18,14 @@ class IndexInterface(TextInterface):
 
     Args:
         directory (str): Path of the directory where the content will be serialized
-        tf_idf (TfIdf): How to compute the tf-idf metric
     """
 
-    def __init__(self, directory: str, tf_idf: TfIdf = TfIdfClassic()):
+    def __init__(self, directory: str):
         super().__init__(directory)
         self.__doc = None
         self.__writer = None
         self.__doc_index = 0
         self.__schema_changed = False
-        self.__tf_idf = tf_idf
 
     def __str__(self):
         return "IndexInterface"
@@ -94,16 +92,15 @@ class IndexInterface(TextInterface):
         """
         Calculates the tf-idf for the words contained in the field of the content whose id
         is content_id.
-        The tf-idf computation is specified by the tf_idf attribute
+        The tf-idf computation formula is: tf-idf = (1 + log10(tf)) * log10(idf)
 
         Args:
             field_name (str): Name of the field containing the words for which calculate the tf-idf
             content_id (str): Id of the content that contains the specified field
 
         Returns:
-             words_bag (Dict <str, float>):
-             Dictionary whose keys are the words contained in the field,
-             and the corresponding values are the tf-idf values
+             words_bag (Dict <str, float>): Dictionary whose keys are the words contained in the field,
+                and the corresponding values are the tf-idf values
         """
         ix = open_dir(self.directory)
         words_bag = {}
@@ -113,9 +110,9 @@ class IndexInterface(TextInterface):
             list_with_freq = [term_with_freq for term_with_freq
                               in searcher.vector(doc_num, field_name).items_as("frequency")]
             for term, freq in list_with_freq:
-                words_bag[term] = self.__tf_idf.compute_tf_idf(
-                    freq, searcher.doc_frequency(field_name, term), searcher.doc_count())
-
+                tf = 1 + math.log10(freq)
+                idf = math.log10(searcher.doc_count()/searcher.doc_frequency(field_name, term))
+                words_bag[term] = tf*idf
         return words_bag
 
     def delete_index(self):

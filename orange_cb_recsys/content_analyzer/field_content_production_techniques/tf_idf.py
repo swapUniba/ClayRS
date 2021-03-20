@@ -7,7 +7,6 @@ from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import I
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, check_not_tokenized
 from orange_cb_recsys.utils.id_merger import id_merger
-from orange_cb_recsys.utils.tf_idf_computations import TfIdf, TfIdfClassic
 
 
 class SkLearnTfIdf(TfIdfTechnique):
@@ -21,7 +20,7 @@ class SkLearnTfIdf(TfIdfTechnique):
         self.__feature_names = None
         self.__matching = {}
 
-    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: str):
+    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: list):
         """
         Creates a corpus structure, a list of string where each string is a document.
         Then call TfIdfVectorizer this collection, obtaining term-document
@@ -80,21 +79,20 @@ class SkLearnTfIdf(TfIdfTechnique):
         pass
 
 
-class LuceneTfIdf(TfIdfTechnique):
+class WhooshTfIdf(TfIdfTechnique):
     """
-    Class that produces a Bag of words with tf-idf metric using Lucene
+    Class that produces a Bag of words with tf-idf metric using Whoosh
     """
 
-    def __init__(self, tf_idf: TfIdf = TfIdfClassic()):
+    def __init__(self):
         super().__init__()
-        self.__tf_idf = tf_idf
-        self.__index = IndexInterface('./frequency-index', tf_idf)
+        self.__index = IndexInterface('./frequency-index')
 
     def __str__(self):
-        return "LuceneTfIdf"
+        return "WhooshTfIdf"
 
     def __repr__(self):
-        return "< LuceneTfIdf: " + "index = " + str(self.__index) + ">"
+        return "< WhooshTfIdf: " + "index = " + str(self.__index) + ">"
 
     def produce_content(self, field_representation_name: str, content_id: str,
                         field_name: str) -> FeaturesBagField:
@@ -102,22 +100,22 @@ class LuceneTfIdf(TfIdfTechnique):
         return FeaturesBagField(
             field_representation_name, self.__index.get_tf_idf(field_name, content_id))
 
-    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: str):
+    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: list):
         """
-        Save the processed data in a index that will be used for frequency calc
+        Saves the processed data in a index that will be used for frequency calculation
 
         Args:
             information_source (RawInformationSource): data source from
                 which extract the field data
                 to create the index for tf-idf computing
-            id_field_names: names of the fields that compounds the id
+            id_field_names (list<str>): names of the fields that compound the id
         """
 
         field_name = self.field_need_refactor
         preprocessor_list = self.processor_list
         pipeline_id = self.pipeline_need_refactor
 
-        self.__index = IndexInterface('./' + field_name + pipeline_id, self.__tf_idf)
+        self.__index = IndexInterface('./' + field_name + pipeline_id)
         self.__index.init_writing()
         for raw_content in information_source:
             self.__index.new_content()

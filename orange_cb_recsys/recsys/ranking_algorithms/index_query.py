@@ -1,12 +1,11 @@
 import os
-from typing import List
 
 from orange_cb_recsys.recsys.algorithm import RankingAlgorithm
 
 import pandas as pd
 
 from orange_cb_recsys.utils.const import DEVELOPING, home_path, logger
-from orange_cb_recsys.utils.load_content import load_content_instance
+from orange_cb_recsys.utils.load_content import load_content_instance, remove_not_existent_items
 
 from whoosh.index import open_dir
 from whoosh.query import Term, Or
@@ -27,8 +26,8 @@ class IndexQuery(RankingAlgorithm):
         self.__classic_similarity: bool = classic_similarity
         self.__positive_threshold: float = positive_threshold
 
-    def __recs_query(self, positive_rated_document_list: List, rated_document_list: List,
-                     scores: List, recs_number: int, items_directory: str, candidate_list: List) -> pd.DataFrame:
+    def __recs_query(self, positive_rated_document_list: list, rated_document_list: list,
+                     scores: list, recs_number: int, items_directory: str, candidate_list: list) -> pd.DataFrame:
         """
         Builds a query using the contents that the user liked. The terms relative to the contents that
         the user liked are boosted by the rating he/she gave. A filter clause is added to the query to
@@ -48,6 +47,7 @@ class IndexQuery(RankingAlgorithm):
         """
         ix = open_dir(items_directory)
         with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
+
             # Initializes user_docs which is a dictionary that has the document as key and
             # another dictionary as value. The dictionary value has the name of the field as key
             # and its contents as value. By doing so we obtain the data of the fields while
@@ -100,7 +100,7 @@ class IndexQuery(RankingAlgorithm):
                     candidate_query_list.append(Term("content_id", candidate))
                 candidate_query_list = Or(candidate_query_list)
 
-            # The filter and mask argument of the index searcher are used respectively
+            # The filter and mask arguments of the index searcher are used respectively
             # to find only candidate documents or to ignore documents rated by the user
             schema = ix.schema
             query = QueryParser("content_id", schema=schema, group=qparser.OrGroup).parse(string_query)
@@ -121,7 +121,7 @@ class IndexQuery(RankingAlgorithm):
         return score_frame
 
     def predict(self, user_id: str, ratings: pd.DataFrame, recs_number: int, items_directory: str,
-                candidate_item_id_list: List = None):
+                candidate_item_id_list: list = None):
         """
         Finds the documents that the user liked by comparing the score given by the user to the item
         against the positive_threshold of the index_query object (if the rating is greater than the threshold,
@@ -150,16 +150,17 @@ class IndexQuery(RankingAlgorithm):
         if not DEVELOPING:
             index_path = os.path.join(home_path, items_directory, 'search_index')
 
+        valid_ratings = remove_not_existent_items(ratings, items_directory)
         scores = []
         positive_rated_document_list = []
-        for item_id, score in zip(ratings.to_id, ratings.score):
+        for item_id, score in zip(valid_ratings.to_id, valid_ratings.score):
             if score > self.__positive_threshold:
                 item = load_content_instance(items_directory, item_id)
                 positive_rated_document_list.append(item.index_document_id)
                 scores.append(score)
 
         return self.__recs_query(positive_rated_document_list,
-                                 ratings.to_id,
+                                 valid_ratings.to_id,
                                  scores,
                                  recs_number,
                                  index_path,
