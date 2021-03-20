@@ -8,7 +8,7 @@ from whoosh.analysis import SimpleAnalyzer
 from whoosh.query import Term
 
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
-from orange_cb_recsys.utils.tf_idf_computations import TfIdf
+from orange_cb_recsys.utils.tf_idf_computations import TfIdf, TfIdfClassic
 
 
 class IndexInterface(TextInterface):
@@ -21,7 +21,7 @@ class IndexInterface(TextInterface):
         tf_idf (TfIdf): How to compute the tf-idf metric
     """
 
-    def __init__(self, directory: str, tf_idf: TfIdf = None):
+    def __init__(self, directory: str, tf_idf: TfIdf = TfIdfClassic()):
         super().__init__(directory)
         self.__doc = None
         self.__writer = None

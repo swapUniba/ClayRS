@@ -3,7 +3,6 @@ from unittest import TestCase
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import LuceneTfIdf, SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
-from orange_cb_recsys.utils.tf_idf_computations import TfIdfClassic
 
 
 class TestLuceneTfIdf(TestCase):
@@ -15,7 +14,7 @@ class TestLuceneTfIdf(TestCase):
         except FileNotFoundError:
             file_path = 'datasets/movies_info_reduced.json'
         try:
-            technique = LuceneTfIdf(TfIdfClassic())
+            technique = LuceneTfIdf()
             technique.field_need_refactor = "Plot"
             technique.pipeline_need_refactor = str(1)
             technique.processor_list = [NLTK()]

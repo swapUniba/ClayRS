@@ -47,23 +47,17 @@ class IndexQuery(RankingAlgorithm):
             score_frame (pd.DataFrame): dataFrame containing the recommendations for the user
         """
         ix = open_dir(items_directory)
-        if self.__classic_similarity:
-            weight = scoring.TF_IDF()
-        else:
-            weight = scoring.BM25F()
-        with ix.searcher(weighting=weight) as searcher:
-
-            field_list = searcher.stored_fields(positive_rated_document_list[0])
-
+        with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
             # Initializes user_docs which is a dictionary that has the document as key and
             # another dictionary as value. The dictionary value has the name of the field as key
             # and its contents as value. By doing so we obtain the data of the fields while
             # also storing information regarding the field and the document where it was
+            field_list = None
             user_docs = {}
             for doc in positive_rated_document_list:
                 user_docs[doc] = dict()
                 field_list = searcher.stored_fields(doc)
-                for field_name in field_list.keys():
+                for field_name in field_list:
                     if field_name == 'content_id':
                         continue
                     user_docs[doc][field_name] = field_list[field_name]
