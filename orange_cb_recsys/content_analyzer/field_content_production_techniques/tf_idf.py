@@ -7,6 +7,7 @@ from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import I
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, check_not_tokenized
 from orange_cb_recsys.utils.id_merger import id_merger
+from orange_cb_recsys.utils.tf_idf_computations import TfIdf
 
 
 class SkLearnTfIdf(TfIdfTechnique):
@@ -84,9 +85,10 @@ class LuceneTfIdf(TfIdfTechnique):
     Class that produces a Bag of words with tf-idf metric using Lucene
     """
 
-    def __init__(self):
+    def __init__(self, tf_idf: TfIdf):
         super().__init__()
-        self.__index = IndexInterface('./frequency-index')
+        self.__tf_idf = tf_idf
+        self.__index = IndexInterface('./frequency-index', tf_idf)
 
     def __str__(self):
         return "LuceneTfIdf"
@@ -115,7 +117,7 @@ class LuceneTfIdf(TfIdfTechnique):
         preprocessor_list = self.processor_list
         pipeline_id = self.pipeline_need_refactor
 
-        self.__index = IndexInterface('./' + field_name + pipeline_id)
+        self.__index = IndexInterface('./' + field_name + pipeline_id, self.__tf_idf)
         self.__index.init_writing()
         for raw_content in information_source:
             self.__index.new_content()
