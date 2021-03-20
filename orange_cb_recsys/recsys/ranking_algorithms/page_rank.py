@@ -1,14 +1,11 @@
 from typing import List, Dict
 import networkx as nx
 import pandas as pd
-import numpy as np
 from abc import abstractmethod
 
 from orange_cb_recsys.recsys.algorithm import RankingAlgorithm
-from orange_cb_recsys.recsys.graphs import Graph
 from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
-from orange_cb_recsys.recsys.graphs.tripartite_graphs import NXTripartiteGraph
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.feature_selection import FeatureSelection
 
@@ -39,30 +36,30 @@ class PageRankAlg(RankingAlgorithm):
         raise NotImplemented
 
     def clean_rank(self, rank: Dict, user_id: str,
-                        remove_from_nodes: bool = True,
-                        remove_profile: bool = True,
-                        remove_properties: bool = True) -> Dict:
+                   remove_from_nodes: bool = True,
+                   remove_profile: bool = True,
+                   remove_properties: bool = True) -> Dict:
         extracted_profile = self.extract_profile(user_id)
         new_rank = {k: rank[k] for k in rank.keys()}
         for k in rank.keys():
-            if remove_from_nodes and self.__fullgraph.is_from_node(k):
+            if remove_from_nodes and self.__fullgraph.is_user_node(k):
                 new_rank.pop(k)
-            if remove_profile and self.__fullgraph.is_to_node(k) and k in extracted_profile.keys():
+            if remove_profile and self.__fullgraph.is_item_node(k) and k in extracted_profile.keys():
                 new_rank.pop(k)
-            if remove_properties and self.__fullgraph.is_exogenous_property(k):
+            if remove_properties and self.__fullgraph.is_property_node(k):
                 new_rank.pop(k)
         return new_rank
 
     def extract_profile(self, user_id: str) -> Dict:
-        adj = self.__fullgraph.get_adj(user_id)
+        succ = self.__fullgraph.get_successors(user_id)
         profile = {}
-        #logger.info('unpack %s', str(adj))
-        for a in adj:
-            #logger.info('unpack %s', str(a))
-            edge_data = self.__fullgraph.get_edge_data(user_id, a)
-            profile[a] = edge_data['weight']
+        # logger.info('unpack %s', str(adj))
+        for a in succ:
+            # logger.info('unpack %s', str(a))
+            link_data = self.__fullgraph.get_link_data(user_id, a)
+            profile[a] = link_data['weight']
             logger.info('unpack %s, %s', str(a), str(profile[a]))
-        return profile #{t: w for (f, t, w) in adj}
+        return profile  # {t: w for (f, t, w) in adj}
 
 
 class NXPageRank(PageRankAlg):
@@ -71,21 +68,21 @@ class NXPageRank(PageRankAlg):
         super().__init__(graph=graph, personalized=personalized)
 
     def predict(self, user_id: str,
-                ratings: pd.DataFrame,                      # not used
+                ratings: pd.DataFrame,  # not used
                 recs_number: int,
-                candidate_item_id_list: List = None,        # not used
+                candidate_item_id_list: List = None,  # not used
                 feature_selection_algorithm: FeatureSelection = None):
         if self.fullgraph is None:
             return {}
         if feature_selection_algorithm is not None:
-            self.set_fullgraph(feature_selection_algorithm.perform(self.fullgraph.graph, ratings=ratings))
+            self.set_fullgraph(feature_selection_algorithm.perform(self.fullgraph._graph, ratings=ratings))
 
         # run the pageRank
         if self.personalized:
             profile = self.extract_profile(user_id)
-            scores = nx.pagerank(self.fullgraph.graph.to_undirected(), personalization=profile)
+            scores = nx.pagerank(self.fullgraph._graph.to_undirected(), personalization=profile)
         else:
-            scores = nx.pagerank(self.fullgraph.graph)
+            scores = nx.pagerank(self.fullgraph._graph)
         # clean the results removing user nodes, selected user profile and eventually properties
         scores = self.clean_rank(scores, user_id)
         scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))

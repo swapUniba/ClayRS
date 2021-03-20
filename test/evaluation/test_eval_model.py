@@ -12,6 +12,7 @@ from orange_cb_recsys.evaluation.ranking_metrics import NDCG, Correlation
 from orange_cb_recsys.recsys import CosineSimilarity, ClassifierRecommender
 from orange_cb_recsys.recsys.config import RecSysConfig
 from orange_cb_recsys.recsys.ranking_algorithms.centroid_vector import CentroidVector
+from orange_cb_recsys.recsys.ranking_algorithms.classifier import SVM
 
 ratings_filename = 'datasets/examples/new_ratings.csv'
 users_dir = 'contents/examples/ex_1/users_1600355755.1935306'
@@ -73,7 +74,9 @@ class TestReportEvalModel(TestCase):
             items_directory=items_dir,
             score_prediction_algorithm=None,
             ranking_algorithm=ClassifierRecommender(
-                "Plot", "0", "svm", 0
+                {"Plot": "0"},
+                SVM(),
+                0,
             ),
             rating_frame=t_ratings
         )

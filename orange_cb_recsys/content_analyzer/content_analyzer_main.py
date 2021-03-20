@@ -1,12 +1,15 @@
+import json
 from typing import Dict
 import time
 import os
+import numpy as np
 
 from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig, \
     FieldRepresentationPipeline
 from orange_cb_recsys.content_analyzer.content_representation.content import Content, \
     RepresentedContentsRecap
-from orange_cb_recsys.content_analyzer.content_representation.content_field import ContentField
+from orange_cb_recsys.content_analyzer.content_representation.content_field import ContentField, StringField, \
+    FeaturesBagField, EmbeddingField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques. \
     field_content_production_technique import \
     CollectionBasedTechnique, \
@@ -45,14 +48,6 @@ class ContentAnalyzer:
                     technique.processor_list = pipeline.preprocessor_list
                     technique.dataset_refactor(
                         self.__config.source, self.__config.id_field_name_list)
-
-    def __config_recap(self):
-        recap_list = [("Field: %s; representation id: %s: technique: %s",
-                       field_name, str(pipeline), str(pipeline.content_technique))
-                      for field_name in self.__config.get_field_name_list()
-                      for pipeline in self.__config.get_pipeline_list(field_name)]
-
-        return RepresentedContentsRecap(recap_list)
 
     def fit(self):
         """
@@ -182,7 +177,9 @@ class ContentsProducer:
         # produce representations
         field = ContentField(field_name, timestamp)
 
-        for i, pipeline in enumerate(self.__config.get_pipeline_list(field_name)):
+        pipeline_list = list(enumerate(self.__config.get_pipeline_list(field_name)))
+
+        for i, pipeline in pipeline_list:
             logger.info("processing representation %d", i)
             if isinstance(pipeline.content_technique,
                           CollectionBasedTechnique):
@@ -195,9 +192,52 @@ class ContentsProducer:
             elif isinstance(pipeline.content_technique, SearchIndexing):
                 self.__invoke_indexing_technique(field_name, field_data, pipeline)
             elif pipeline.content_technique is None:
-                field.append(str(i), field_data)
+                self.__decode_field_data(field, str(i), field_data)
 
         return field
+
+    def __decode_field_data(self, field: ContentField, field_name: str, field_data: str):
+        # Decode string into dict or list
+        try:
+            loaded = json.loads(field_data)
+        except json.JSONDecodeError:
+            try:
+                # in case the dict is {'foo': 1} json expects {"foo": 1}
+                reformatted_field_data = field_data.replace("\'", "\"")
+                loaded = json.loads(reformatted_field_data)
+            except json.JSONDecodeError:
+                # if it has issues decoding we consider the data as str
+                loaded = reformatted_field_data
+
+        # if the decoded is a list, maybe it is an EmbeddingField repr
+        if isinstance(loaded, list):
+            arr = np.array(loaded)
+            # if the array has only numbers then we consider it as a dense vector
+            # else it is not and we consider the field data as a string
+            if issubclass(arr.dtype.type, np.number):
+                result = EmbeddingField(field_name, arr)
+                field.append(field_name, result)
+            else:
+                result = StringField(field_name, field_data)
+                field.append(field_name, result)
+
+        # if the decoded is a dict, maybe it is a FeaturesBagField
+        elif isinstance(loaded, dict):
+            # if all values of the dict are numbers then we consider it as a bag of words
+            # else it is not and we consider it as a string
+            if len(loaded.values()) != 0 and \
+                    all(isinstance(value, (float, int)) for value in loaded.values()):
+
+                result = FeaturesBagField(field_name, loaded)
+                field.append(field_name, result)
+            else:
+                result = StringField(field_name, field_data)
+                field.append(field_name, result)
+
+        # if the decoded is a string, then it is a StringField
+        elif isinstance(loaded, str):
+            result = StringField(field_name, loaded)
+            field.append(field_name, result)
 
     def __invoke_indexing_technique(self, field_name: str, field_data: str,
                                     pipeline: FieldRepresentationPipeline):

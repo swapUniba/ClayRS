@@ -85,6 +85,30 @@ class FeaturesBagField(FieldRepresentation):
         return "%s \n %s" % (representation_string, str(self.__features))
 
 
+class StringField(FieldRepresentation):
+    """
+        Class for field with no complex representation.
+
+        Args:
+            value (str): string representing the value of the field
+        """
+
+    def __init__(self, name: str, value: str = None):
+        super().__init__(name)
+        self.__value: str = value
+
+    @property
+    def value(self) -> str:
+        return self.__value
+
+    def __eq__(self, other):
+        return self.__value == other.__value
+
+    def __str__(self):
+        representation_string = "Representation: " + self.name
+        return "%s \n %s" % (representation_string, str(self.__value))
+
+
 class EmbeddingField(FieldRepresentation):
     """
     Class for field representation using embeddings (dense numeric vectors)
