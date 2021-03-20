@@ -2,7 +2,6 @@ import lzma
 import os
 import pickle
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import List, Set
 import pandas as pd
 
@@ -10,25 +9,113 @@ from orange_cb_recsys.content_analyzer.content_representation.content import Con
 from orange_cb_recsys.utils.const import logger, progbar
 
 
-class Category(Enum):
+class Node(ABC):
     """
-    Enum class that represents the different categories that nodes in the graph can have
+    Abstract class that generalizes the concept of a Node
 
-    If graphs need to be extended (add the possibility of a 'context' node for example),
-    start here adding a new category.
+    The Node stores the actual value of the node in the 'value' attribute
+
+    If another type of Node must be added to the graph (EX. Context), create a subclass for
+    this class and create appropriate methods for the new Node in the Graph class
     """
-    From = 1
-    To = 2
-    Property = 3
+
+    def __init__(self, value: object):
+        self.__value = value
+
+    @property
+    def value(self):
+        return self.__value
+
+    def __hash__(self):
+        return hash(str(self.__value))
+
+    def __eq__(self, other):
+        # If we are comparing self to an instance of the 'Node' class
+        # then compare the value stored of self with the value stored
+        # of the other instance and check if they are of the same class (UserNode == UserNode),
+        # else compare the stored value of self directly to the other object
+        if isinstance(other, Node):
+            return self.value == other.value and type(self) is type(other)
+        else:
+            return self.value == other
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class UserNode(Node):
+    """
+    Class that represents 'user' nodes
+
+    Args:
+        value (object): the value to store in the node
+    """
+
+    def __init__(self, value: object):
+        super().__init__(value)
+
+    def __str__(self):
+        return "User " + str(self.value)
+
+    def __repr__(self):
+        return "User " + str(self.value)
+
+
+class ItemNode(Node):
+    """
+    Class that represents 'item' nodes
+
+    Args:
+        value (object): the value to store in the node
+    """
+
+    def __init__(self, value: object):
+        super().__init__(value)
+
+    def __str__(self):
+        return "Item " + str(self.value)
+
+    def __repr__(self):
+        return "Item " + str(self.value)
+
+
+class PropertyNode(Node):
+    """
+    Class that represents 'property' nodes
+
+    Args:
+        value (object): the value to store in the node
+    """
+
+    def __init__(self, value: object):
+        super().__init__(value)
+
+    def __str__(self):
+        return "Property " + str(self.value)
+
+    def __repr__(self):
+        return "Property " + str(self.value)
 
 
 class Graph(ABC):
     """
-    Abstract class that generalize the concept of a Graph
+    Abstract class that generalizes the concept of a Graph
 
     Every Graph "is born" from a rating dataframe
     """
-    def __init__(self, source_frame: pd.DataFrame):
+
+    def __init__(self, source_frame: pd.DataFrame,
+                 default_score_label: str = 'score_label', default_weight: float = 0.5):
+
+        self.__default_score_label = default_score_label
+
+        self.__default_weight = default_weight
+
         self.create_graph()
         self.populate_from_dataframe(source_frame)
 
@@ -75,6 +162,18 @@ class Graph(ABC):
         new_value = (((score - old_min) * new_range) / old_range) + new_min
         return new_value
 
+    def get_default_score_label(self) -> str:
+        """
+        Getter for default_score_label
+        """
+        return self.__default_score_label
+
+    def get_default_weight(self) -> float:
+        """
+        Getter for default_weight
+        """
+        return self.__default_weight
+
     @abstractmethod
     def create_graph(self):
         """
@@ -84,39 +183,40 @@ class Graph(ABC):
 
     @property
     @abstractmethod
-    def from_nodes(self) -> Set[object]:
+    def user_nodes(self) -> Set[object]:
         """
-        Returns a set of 'from' nodes
+        Returns a set of 'user' nodes
         """
         raise NotImplementedError
 
     @property
     @abstractmethod
-    def to_nodes(self) -> Set[object]:
+    def item_nodes(self) -> Set[object]:
         """
-        Returns a set of 'to' nodes'
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def add_from_node(self, node: object):
-        """
-        Add a 'from' node to the graph
+        Returns a set of 'item' nodes'
         """
         raise NotImplementedError
 
     @abstractmethod
-    def add_to_node(self, node: object):
+    def add_user_node(self, node: object):
         """
-        Add a 'to' node to the graph
+        Add a 'user' node to the graph
         """
         raise NotImplementedError
 
     @abstractmethod
-    def link_from_to(self, from_node: object, to_node: object, weight: float, label: str = 'weight'):
+    def add_item_node(self, node: object):
         """
-        Adds an edge between 'from_node' and 'to_node',
-        if the nodes are not in the graph adds the nodes
+        Add a 'item' node to the graph
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_link(self, start_node: object, final_node: object,
+                 weight: float, label: str):
+        """
+        Adds an edge between the 'start_node' and the 'final_node',
+        Both nodes must be present in the graph otherwise no link is created
         """
         raise NotImplementedError
 
@@ -143,16 +243,23 @@ class Graph(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def is_from_node(self, node: object) -> bool:
+    def node_exists(self, node: object) -> bool:
         """
-        Returns True if node is a 'from' node, false otherwise
+        Returns True if node exists in the graph, false otherwise
         """
         raise NotImplementedError
 
     @abstractmethod
-    def is_to_node(self, node: object) -> bool:
+    def is_user_node(self, node: object) -> bool:
         """
-        Returns True if node is a 'to' node, false otherwise
+        Returns True if node is a 'user' node, false otherwise
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_item_node(self, node: object) -> bool:
+        """
+        Returns True if node is a 'item' node, false otherwise
         """
         raise NotImplementedError
 
@@ -161,7 +268,7 @@ class Graph(ABC):
         Get all voted contents of a specified node
 
         Given a node, all voted contents of said node are his successors that are
-        'to' nodes or 'from' nodes (In case a user votes another user for example)
+        'item' nodes or 'user' nodes (In case a user votes another user for example)
 
         Args:
             node (object): the node from which we want to extract the voted contents
@@ -171,12 +278,13 @@ class Graph(ABC):
             parameter
         """
         voted_contents = []
-        for succ in self.get_successors(node):
-            # We append only if the linked node is a 'to_node'
-            # or a 'from_node' because if it is for example
-            # a 'property_node' then it isn't a voted content but a property
-            if self.is_from_node(succ) or self.is_to_node(succ):
-                voted_contents.append(succ)
+        if self.node_exists(node):
+            for succ in self.get_successors(node):
+                # We append only if the linked node is a 'to_node'
+                # or a 'from_node' because if it is for example
+                # a 'property_node' then it isn't a voted content but a property
+                if self.is_user_node(succ) or self.is_item_node(succ):
+                    voted_contents.append(succ)
         return voted_contents
 
     @property
@@ -193,17 +301,23 @@ class Graph(ABC):
 
 class BipartiteGraph(Graph):
     """
-    Abstract class that generalize the concept of a BipartiteGraph
+    Abstract class that generalizes the concept of a BipartiteGraph
 
-    A BipartiteGraph is a Graph containing only 'from' and 'to' nodes are allowed.
+    A BipartiteGraph is a Graph containing only 'user' and 'item' nodes.
 
     Attributes:
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
             generated from this DataFrame
+        default_score_label (str): the default label of the link between two nodes.
+            Default is 'score_label'
+        default_weight (float): the default value with which a link will be weighted
+            Default is 0.5
     """
 
-    def __init__(self, source_frame: pd.DataFrame):
-        super().__init__(source_frame)
+    def __init__(self, source_frame: pd.DataFrame,
+                 default_score_label: str = "score_label", default_weight: float = 0.5):
+        super().__init__(source_frame,
+                         default_score_label, default_weight)
 
     def populate_from_dataframe(self, source_frame: pd.DataFrame):
         """
@@ -220,7 +334,10 @@ class BipartiteGraph(Graph):
             for idx, row in progbar(source_frame.iterrows(),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
-                self.link_from_to(row['from_id'], row['to_id'], self.normalize_score(row['score']))
+                self.add_user_node(row['from_id'])
+                self.add_item_node(row['to_id'])
+                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
+                              label=self.get_default_score_label())
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 
@@ -229,8 +346,8 @@ class TripartiteGraph(BipartiteGraph):
     """
     Abstract class that generalize the concept of a TripartiteGraph
 
-    A TripartiteGraph is a Graph containing 'from', 'to' and 'property' nodes, but the latter ones
-    are allowed only for 'to' nodes.
+    A TripartiteGraph is a Graph containing 'user', 'item' and 'property' nodes, but the latter ones
+    are allowed only for 'item' nodes.
 
     Attributes:
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
@@ -238,19 +355,15 @@ class TripartiteGraph(BipartiteGraph):
         item_contents_dir (str): the path containing items serialized
         item_exo_representation (str): the exogenous representation we want to extract properties from
         item_exo_properties (list): the properties we want to extract from the exogenous representation
-        default_score_label(str): the label of the link between 'from' and 'to' nodes.
-                                Default is 'score_label'
-        default_not_rated_value(float): the default value with which the link will be weighted
-                                Default is 0.5
+        default_score_label (str): the default label of the link between two nodes.
+            Default is 'score_label'
+        default_weight (float): the default value with which a link will be weighted
+            Default is 0.5
     """
 
     def __init__(self, source_frame: pd.DataFrame, item_contents_dir: str = None,
                  item_exo_representation: str = None, item_exo_properties: List[str] = None,
-                 default_score_label: str = 'score_label', default_not_rated_value: float = 0.5):
-
-        self.__default_score_label = default_score_label
-
-        self.__not_rated_value = default_not_rated_value
+                 default_score_label: str = 'score_label', default_weight: float = 0.5):
 
         self.__item_exogenous_representation: str = item_exo_representation
 
@@ -258,7 +371,8 @@ class TripartiteGraph(BipartiteGraph):
 
         self.__item_contents_dir: str = item_contents_dir
 
-        super().__init__(source_frame)
+        super().__init__(source_frame,
+                         default_score_label, default_weight)
 
     def populate_from_dataframe(self, source_frame: pd.DataFrame):
         """
@@ -267,7 +381,7 @@ class TripartiteGraph(BipartiteGraph):
 
         We iterate every row, and create a weighted link for every user and item in the rating frame
         based on the score the user gave the item, creating the nodes if they don't exist.
-        We also add properties to 'to' nodes if the item_contents_dir is specified
+        We also add properties to 'item' nodes if the item_contents_dir is specified
 
         Args:
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
@@ -276,7 +390,10 @@ class TripartiteGraph(BipartiteGraph):
             for idx, row in progbar(source_frame.iterrows(),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
-                self.link_from_to(row['from_id'], row['to_id'], self.normalize_score(row['score']))
+                self.add_user_node(row['from_id'])
+                self.add_item_node(row['to_id'])
+                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
+                              label=self.get_default_score_label())
                 if self.get_item_contents_dir() is not None:
                     self._add_item_properties(row)
         else:
@@ -370,7 +487,8 @@ class TripartiteGraph(BipartiteGraph):
             for prop in exo_props:
                 if prop in properties.keys():
                     preference = self.get_preference(prop, row)
-                    self.link_prop_node(node, properties[prop], preference, prop)
+                    self.add_property_node(properties[prop])
+                    self.add_link(node, properties[prop], preference, prop)
                 else:
                     logger.warning("Property " + prop + " not found for " + content.content_id)
 
@@ -402,7 +520,8 @@ class TripartiteGraph(BipartiteGraph):
         if properties is not None:
             for prop_key in properties.keys():
                 preference = self.get_preference(prop_key, row)
-                self.link_prop_node(node, properties[prop_key], preference, prop_key)
+                self.add_property_node(properties[prop_key])
+                self.add_link(node, properties[prop_key], preference, prop_key)
 
             if len(properties) == 0:
                 logger.warning("The chosen representation doesn't have any property!")
@@ -449,7 +568,8 @@ class TripartiteGraph(BipartiteGraph):
                 original_prop_name = '_'.join(prop_key.split('_')[:-1])
                 preference = self.get_preference(original_prop_name, row)
 
-                self.link_prop_node(node, properties[prop_key], preference, prop_key)
+                self.add_property_node(properties[prop_key])
+                self.add_link(node, properties[prop_key], preference, prop_key)
 
             if len(properties_not_found) != 0:
                 for prop in properties_not_found:
@@ -468,12 +588,6 @@ class TripartiteGraph(BipartiteGraph):
         Getter for item_exogenous_properties
         """
         return self.__item_exogenous_properties
-
-    def get_default_score_label(self) -> str:
-        """
-        Getter for default_score_label
-        """
-        return self.__default_score_label
 
     def get_item_contents_dir(self) -> str:
         """
@@ -500,7 +614,7 @@ class TripartiteGraph(BipartiteGraph):
         ls = '{}_score'.format(label.lower())
         if ls in preferences_dict.keys():
             return preferences_dict[ls]
-        return self.__not_rated_value
+        return self.get_default_weight()
 
     @staticmethod
     def load_content(file_path: str) -> Content:
@@ -526,37 +640,30 @@ class TripartiteGraph(BipartiteGraph):
         raise NotImplementedError
 
     @abstractmethod
-    def add_prop_node(self, node: object):
+    def add_property_node(self, node: object):
         """
         Add a 'property' node to the graph
         """
         raise NotImplementedError
 
-    def add_to_tree(self, to_node: object):
+    def add_item_tree(self, item_node: object):
         """
-        Add a 'to' node if is not in the graph and load properties from disk
+        Add a 'item' node if is not in the graph and load properties from disk
         if the node has some
-        The method will try to load the content from the item_contents_dir and extract
+        The method will try to load the content from the 'item_contents_dir' and extract
         from the loaded content the properties specified in the constructor (item_exo_representation,
         item_exo_properties)
 
         Args:
-            to_node (object): 'to' node to add to the graph with its properties
+            item_node (object): 'item' node to add to the graph with its properties
         """
-        self.add_to_node(to_node)
+        self.add_item_node(item_node)
+
         if self.get_item_contents_dir() is not None:
-            self._add_item_properties({'to_id': to_node})
+            self._add_item_properties({'to_id': item_node})
         else:
             logger.warning("The dir is not specified! The node will be added with no "
                            "properties")
-
-    @abstractmethod
-    def link_prop_node(self, to_node: object, prop: object, weight: float, label: str):
-        """
-        Adds an edge between 'to_node' and a 'prop_node',
-        if the nodes are not in the graph adds the nodes
-        """
-        raise NotImplementedError
 
     def get_properties(self, node: object) -> List[object]:
         """
@@ -573,11 +680,12 @@ class TripartiteGraph(BipartiteGraph):
             parameter
         """
         properties = []
-        for succ in self.get_successors(node):
-            if self.is_property_node(succ):
-                link_data = self.get_link_data(node, succ)
-                prop: dict = {link_data['label']: succ}
-                properties.append(prop)
+        if self.node_exists(node):
+            for succ in self.get_successors(node):
+                if self.is_property_node(succ):
+                    link_data = self.get_link_data(node, succ)
+                    prop: dict = {link_data['label']: succ}
+                    properties.append(prop)
         return properties
 
     @abstractmethod
@@ -592,8 +700,8 @@ class FullGraph(TripartiteGraph):
     """
     Abstract class that generalize the concept of a FullGraph
 
-    A FullGraph is a Graph containing 'from', 'to' and 'property' nodes,
-    and properties can be added to both 'from' and 'to' nodes.
+    A FullGraph is a Graph containing 'user', 'item' and 'property' nodes,
+    and properties can be added with no restrictions to all nodes in the graph.
 
     Attributes:
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
@@ -604,16 +712,16 @@ class FullGraph(TripartiteGraph):
         user_exo_properties (list): the properties we want to extract from the exogenous representation for the users
         item_exo_representation (str): the exogenous representation we want to extract properties from for the items
         item_exo_properties (list): the properties we want to extract from the exogenous representation for the items
-        default_score_label(str): the label of the link between 'from' and 'to' nodes.
-                                Default is 'score_label'
-        default_not_rated_value(float): the default value with which the link will be weighted
-                                Default is 0.5
+        default_score_label (str): the default label of the link between two nodes.
+            Default is 'score_label'
+        default_weight (float): the default value with which a link will be weighted
+            Default is 0.5
     """
 
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
                  user_exo_representation: str = None, user_exo_properties: List[str] = None,
                  item_exo_representation: str = None, item_exo_properties: List[str] = None,
-                 default_score_label: str = 'score_label', default_not_rated_value: float = 0.5):
+                 default_score_label: str = 'score_label', default_weight: float = 0.5):
 
         self.__user_exogenous_representation: str = user_exo_representation
 
@@ -623,7 +731,7 @@ class FullGraph(TripartiteGraph):
 
         super().__init__(source_frame, item_contents_dir,
                          item_exo_representation, item_exo_properties,
-                         default_score_label, default_not_rated_value)
+                         default_score_label, default_weight)
 
     def populate_from_dataframe(self, source_frame: pd.DataFrame):
         """
@@ -632,8 +740,8 @@ class FullGraph(TripartiteGraph):
 
         We iterate every row, and create a weighted link for every user and item in the rating frame
         based on the score the user gave the item, creating the nodes if they don't exist.
-        We also add properties to 'to' nodes if the item_contents_dir is specified,
-        and add properties to 'from' nodes if the user_contents_dir is specified.
+        We also add properties to 'item' nodes if the item_contents_dir is specified,
+        and add properties to 'user' nodes if the user_contents_dir is specified.
 
         Args:
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
@@ -643,8 +751,10 @@ class FullGraph(TripartiteGraph):
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
 
-                self.link_from_to(row['from_id'], row['to_id'], self.normalize_score(row['score']),
-                                  label=self.get_default_score_label())
+                self.add_user_node(row['from_id'])
+                self.add_item_node(row['to_id'])
+                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
+                              label=self.get_default_score_label())
                 if self.get_item_contents_dir() is not None:
                     self._add_item_properties(row)
 
@@ -729,28 +839,21 @@ class FullGraph(TripartiteGraph):
         """
         return self.__user_contents_dir
 
-    @abstractmethod
-    def link_prop_node(self, node: object, prop: object, weight: float, label: str):
+    def add_user_tree(self, user_node: object):
         """
-        Adds an edge between a generic node and a 'prop_node'
-        the generic node must be in the graph otherwise no link will be created
-        """
-        raise NotImplementedError
-
-    def add_from_tree(self, from_node: object):
-        """
-        Add a 'from' node if is not in the graph and load properties from disk
+        Add a 'user' node if is not in the graph and load properties from disk
         if the node has some
-        The method will try to load the content from the user_contents_dir and extract
+        The method will try to load the content from the 'user_contents_dir' and extract
         from the loaded content the properties specified in the constructor (user_exo_representation,
         user_exo_properties)
 
         Args:
-            from_node (object): 'from' node to add to the graph with its properties
+            user_node (object): 'user' node to add to the graph with its properties
         """
-        self.add_from_node(from_node)
+        self.add_user_node(user_node)
+
         if self.get_user_contents_dir() is not None:
-            self._add_usr_properties({'from_id': from_node})
+            self._add_usr_properties({'from_id': user_node})
         else:
-            logger.warning("The dir is not specified for the users! The node will be added with no "
+            logger.warning("The dir is not specified! The node will be added with no "
                            "properties")
