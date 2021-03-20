@@ -1,14 +1,11 @@
 from typing import List, Dict
 import networkx as nx
 import pandas as pd
-import numpy as np
 from abc import abstractmethod
 
 from orange_cb_recsys.recsys.algorithm import RankingAlgorithm
-from orange_cb_recsys.recsys.graphs import Graph
 from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
-from orange_cb_recsys.recsys.graphs.tripartite_graphs import NXTripartiteGraph
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.feature_selection import FeatureSelection
 
@@ -45,9 +42,9 @@ class PageRankAlg(RankingAlgorithm):
         extracted_profile = self.extract_profile(user_id)
         new_rank = {k: rank[k] for k in rank.keys()}
         for k in rank.keys():
-            if remove_from_nodes and self.__fullgraph.is_from_node(k):
+            if remove_from_nodes and self.__fullgraph.is_user_node(k):
                 new_rank.pop(k)
-            if remove_profile and self.__fullgraph.is_to_node(k) and k in extracted_profile.keys():
+            if remove_profile and self.__fullgraph.is_item_node(k) and k in extracted_profile.keys():
                 new_rank.pop(k)
             if remove_properties and self.__fullgraph.is_property_node(k):
                 new_rank.pop(k)
