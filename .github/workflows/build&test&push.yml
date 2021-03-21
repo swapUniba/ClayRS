@@ -1,9 +1,5 @@
 name: Build & Test & Push
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: '**'
+on: [push, pull_request]
     
 env:
     IMAGE_NAME: framework_dependencies
