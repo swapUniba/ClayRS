@@ -3,7 +3,7 @@ import os
 import pickle
 from typing import Dict
 
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, LuceneTfIdf, \
+from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
     BinaryFile, GensimDownloader, Centroid, EmbeddingTechnique, SearchIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency import \
     SynsetDocumentFrequency
@@ -37,7 +37,7 @@ runnable_instances = {
     "index": IndexInterface,
     "babelpy": BabelPyEntityLinking,
     "nltk": NLTK,
-    "lucene_tf-idf": LuceneTfIdf,
+    "whoosh_tf-idf": WhooshTfIdf,
     "binary_file": BinaryFile,
     "gensim_downloader": GensimDownloader,
     "centroid": Centroid,
@@ -57,7 +57,7 @@ This contains, for each alias a specific category
 categories = {
     "embedding": 'content_production',
     "babelpy": 'content_production',
-    "lucene_tf-idf": 'content_production',
+    "whoosh_tf-idf": 'content_production',
     "search_index": 'content_production',
     "sk_learn_tf-idf": 'content_production',
     "synset_frequency": 'content_production',

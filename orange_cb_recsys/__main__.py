@@ -11,9 +11,6 @@ from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnaly
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import \
     RatingsImporter, RatingsFieldConfig
 
-import lucene
-
-lucene.initVM(vmargs=['-Djava.awt.headless=true'])
 
 DEFAULT_CONFIG_PATH = "web_GUI/app/configuration_files/config.json"  # "content_analyzer/config_prova2.json"
 
