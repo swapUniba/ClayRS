@@ -13,3 +13,4 @@ sklearn~=0.0
 scikit-learn~=0.23.1
 textblob~=0.15.3
 scipy~=1.4.1
+whoosh~=2.7.4

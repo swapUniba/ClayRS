@@ -1,11 +1,11 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import LuceneTfIdf, SkLearnTfIdf
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import WhooshTfIdf, SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
 
-class TestLuceneTfIdf(TestCase):
+class TestWhooshTfIdf(TestCase):
     def test_produce_content(self):
         file_path = '../../../datasets/movies_info_reduced.json'
         try:
@@ -14,7 +14,7 @@ class TestLuceneTfIdf(TestCase):
         except FileNotFoundError:
             file_path = 'datasets/movies_info_reduced.json'
         try:
-            technique = LuceneTfIdf()
+            technique = WhooshTfIdf()
             technique.field_need_refactor = "Plot"
             technique.pipeline_need_refactor = str(1)
             technique.processor_list = [NLTK()]
