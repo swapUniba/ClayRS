@@ -3,14 +3,14 @@ from orange_cb_recsys.recsys.graphs import BipartiteGraph
 import pandas as pd
 import networkx as nx
 
-from orange_cb_recsys.recsys.graphs.graph import Category
+from orange_cb_recsys.recsys.graphs.graph import UserNode, ItemNode
 from orange_cb_recsys.utils.const import logger
 
 
 class NXBipartiteGraph(BipartiteGraph):
     """
     Class that implements a Bipartite graph through networkx library.
-    It supports 'from' node and 'to' node only.
+    It supports 'user' node and 'item' node only.
     It creates a graph from an initial rating frame
     EXAMPLE:
             _| from_id | to_id | score|
@@ -18,15 +18,23 @@ class NXBipartiteGraph(BipartiteGraph):
 
         Becomes:
                 u1 -----> Tenet
-        with the edge weighted and labeled based on the score column
+        where 'u1' becomes a 'user' node and 'Tenet' becomes a 'item' node,
+        with the edge weighted and labelled based on the score column and on the
+        'default_score_label' parameter
 
     Args:
         source_frame (pd.DataFrame): the initial rating frame needed to create the graph
+        default_score_label (str): the default label of the link between two nodes.
+            Default is 'score_label'
+        default_weight (float): the default value with which a link will be weighted
+            Default is 0.5
 
     """
-    def __init__(self, source_frame: pd.DataFrame):
+    def __init__(self, source_frame: pd.DataFrame,
+                 default_score_label: str = "score_label", default_weight: float = 0.5):
         self.__graph: nx.DiGraph = None
-        super().__init__(source_frame)
+        super().__init__(source_frame,
+                         default_score_label, default_weight)
 
     def create_graph(self):
         """
@@ -35,103 +43,79 @@ class NXBipartiteGraph(BipartiteGraph):
         self.__graph = nx.DiGraph()
 
     @property
-    def from_nodes(self) -> Set[object]:
+    def user_nodes(self) -> Set[object]:
         """
-        Returns a set of all 'from' nodes in the graph
+        Returns a set of all 'user' nodes in the graph
         """
-        # node is a tuple like ('001', {'category': {'from'}})
-        # we need node[0] to access the node name,
-        # we need node[1] to access the dict containing the category
-        return set(node[0] for node in self.__graph.nodes(data=True) if self.is_from_node(node[0]))
+        return set(node for node in self.__graph.nodes if isinstance(node, UserNode))
 
     @property
-    def to_nodes(self) -> Set[object]:
+    def item_nodes(self) -> Set[object]:
         """
-        Returns a set of all 'to' nodes in the graph
+        Returns a set of all 'item' nodes in the graph
         """
-        # node is a tuple like ('001', {'category': {'from'}})
-        # we need node[0] to access the node name,
-        # we need node[1] to access the dict containing the category
-        # return set(node[0] for node in self.__graph.nodes(data=True) if 'to' in node[1]['category'])
-        return set(node[0] for node in self.__graph.nodes(data=True) if self.is_to_node(node[0]))
+        return set(node for node in self.__graph.nodes if isinstance(node, ItemNode))
 
-    def add_from_node(self, node: object):
+    def add_user_node(self, node: object):
         """
-        Adds a 'from' node to the graph.
-
+        Adds a 'user' node to the graph.
         If the node is not-existent then it is created and then added to the graph.
-        Otherwise if it is already existent we update the categories of the node adding a
-        'From' category.
 
         Args:
             node (object): node that needs to be added to the graph as a from node
         """
-        try:
-            # If the node is already existent, add to its categories the 'From' category
-            categories: set = self.__graph.nodes[node]['category']
-            categories.add(Category.From)
-        except KeyError:
-            # If the node is not-existent, create it and add it to the graph with the
-            # 'From' category
-            categories: set = set()
-            categories.add(Category.From)
-            self.__graph.add_node(node, category=categories)
+        self.__graph.add_node(UserNode(node))
 
-    def add_to_node(self, node: object):
+    def add_item_node(self, node: object):
         """
-        Creates a 'to' node and adds it to the graph
-
+        Creates a 'item' node and adds it to the graph
         If the node is not-existent then it is created and then added to the graph.
-        Otherwise if it is already existent we update the categories of the node adding a
-        'To' category.
 
         Args:
             node (object): node that needs to be added to the graph as a 'to' node
         """
-        try:
-            # If the node is already existent, add to its categories the 'From' category
-            categories: set = self.__graph.nodes[node]['category']
-            categories.add(Category.To)
-        except KeyError:
-            # If the node is not-existent, create it and add it to the graph with the
-            # 'To' category
-            categories: set = set()
-            categories.add(Category.To)
-            self.__graph.add_node(node, category=categories)
+        self.__graph.add_node(ItemNode(node))
 
-    def link_from_to(self, from_node: object, to_node: object, weight: float, label: str = 'weight'):
+    def add_link(self, start_node: object, final_node: object, weight: float = None, label: str = None):
         """
-        Creates a weighted link connecting the 'from_node' to the 'to_node'
+        Creates a weighted link connecting the 'start_node' to the 'final_node'
+        Both nodes must be present in the graph before calling this method
 
-        If nodes are not-existent, they will be created
+        'weight' and 'label' are optional parameters, if not specified default values
+        will be used.
 
         Args:
-            from_node (object): starting node of the link
-            to_node (object): ending node of the link
-            weight (float): weight of the link
-            label (str): label of the link, default is 'weight'
-
+            start_node (object): starting node of the link
+            final_node (object): ending node of the link
+            weight (float): weight of the link, default is 0.5
+            label (str): label of the link, default is 'score_label'
         """
-        self.add_from_node(from_node)
-        self.add_to_node(to_node)
-        self.__graph.add_edge(from_node, to_node, weight=weight, label=label)
+        if label is None:
+            label = self.get_default_score_label()
+
+        if weight is None:
+            weight = self.get_default_weight()
+
+        if self.node_exists(start_node) and self.node_exists(final_node):
+
+            self.__graph.add_edge(start_node, final_node, weight=weight, label=label)
+        else:
+            logger.warning("One of the nodes or both don't exist in the graph! Add them before "
+                           "calling this method.")
 
     def get_link_data(self, start_node: object, final_node: object):
         """
-        Get link data such as weight, label, between the 'start node' and the 'final node'.
+        Get link data such as weight, label, between the 'start_node' and the 'final_node'.
         Returns None if said link doesn't exists
 
-        Remember that this is a directed graph so the result differs if start_node and final_node
+        Remember that this is a directed graph so the result differs if 'start_node' and 'final_node'
         are switched.
 
         Args:
             start_node (object): node where the link starts
             final_node (object): node where the link ends
         """
-        try:
-            return self.__graph.get_edge_data(start_node, final_node)
-        except ValueError:
-            return None
+        return self.__graph.get_edge_data(start_node, final_node)
 
     def get_predecessors(self, node: object) -> List[object]:
         """
@@ -152,9 +136,8 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node(object): node of which we want to calculate predecessors
         """
-        if self.__graph.nodes.get(node) is None:
+        if not self.node_exists(node):
             logger.warning("The node specified is not in the graph! Return None")
-            return None
         else:
             return list(self.__graph.predecessors(node))
 
@@ -178,43 +161,37 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node(object): node of which we want to calculate successors
         """
-        if self.__graph.nodes.get(node) is None:
+        if not self.node_exists(node):
             logger.warning("The node specified is not in the graph! Return None")
-            return None
         else:
             return list(self.__graph.successors(node))
 
-    def is_from_node(self, node: object) -> bool:
+    def node_exists(self, node: object) -> bool:
         """
-        Returns True if the node passed is a 'From' node, False otherwise
-
-        In case the node has multiple categories, we just need that the 'From' category
-        is one of them
+        Returns True if the node passed exists in the graph, False otherwise
 
         Args:
-            node(object): node to check whether it's a 'from' node or not
+            node(object): node to check whether it's present in the graph
         """
-        n = self.__graph.nodes.get(node)
-        if n is not None and Category.From in n['category']:
-            return True
-        else:
-            return False
+        return self.__graph.nodes.get(node) is not None
 
-    def is_to_node(self, node: object) -> bool:
+    def is_user_node(self, node: object) -> bool:
         """
-        Returns True if the node passed is a 'to' node, False otherwise
-
-        In case the node has multiple categories, we just need that the 'To' category
-        is one of them
+        Returns True if the node passed is a 'user' node, False otherwise
 
         Args:
-            node(object): node to check whether it's a 'to' node or not
+            node(object): node to check whether it's a 'user' node or not
         """
-        n = self.__graph.nodes.get(node)
-        if n is not None and Category.To in n['category']:
-            return True
-        else:
-            return False
+        return node in self.user_nodes
+
+    def is_item_node(self, node: object) -> bool:
+        """
+        Returns True if the node passed is a 'item' node, False otherwise
+
+        Args:
+            node(object): node to check whether it's a 'item' node or not
+        """
+        return node in self.item_nodes
 
     @property
     def _graph(self):
