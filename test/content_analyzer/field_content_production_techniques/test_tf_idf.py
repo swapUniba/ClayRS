@@ -5,7 +5,7 @@ from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
 
-class TestLuceneTfIdf(TestCase):
+class TestWhooshTfIdf(TestCase):
     def test_produce_content(self):
         file_path = '../../../datasets/movies_info_reduced.json'
         try:
