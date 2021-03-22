@@ -4,7 +4,7 @@ FROM python:$VERSION
 COPY . /usr/src/repo
 
 WORKDIR /usr/src/repo
-RUN python setup.py install
+RUN pip install wheel && python setup.py install
 
 WORKDIR /usr/src
 RUN rm -rf repo
