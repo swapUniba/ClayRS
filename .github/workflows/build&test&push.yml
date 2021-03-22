@@ -1,9 +1,9 @@
 name: Build & Test & Push
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
     
 env:
     IMAGE_NAME: framework_dependencies
@@ -36,21 +36,21 @@ jobs:
         run: |
               git diff --name-only HEAD^ HEAD > files.txt
               echo "::set-output name=must_build::false"
-              must_build='false'
+              must_build="false"
               while IFS= read -r file
               do
                 if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]]; then
                   echo "::set-output name=must_build::true"
-                  must_build='true'
+                  must_build="true"
                   echo "Necessario buildare immagine Docker"
                   break
                 fi
               done < files.txt
               rm files.txt
-              if must_build=='false'; then
+              if [ "$must_build" = "false" ];  then
                 if ! docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest; then
                     echo "::set-output name=must_build::true"
-                    must_build='true'
+                    must_build="true"
                     echo "Necessario buildare immagine Docker"
                 fi
               fi

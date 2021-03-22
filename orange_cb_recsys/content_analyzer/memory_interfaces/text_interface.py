@@ -1,24 +1,20 @@
-import lucene
-import math
 import shutil
+import os
 
-from java.nio.file import Paths
-from org.apache.lucene.index import IndexWriter, IndexWriterConfig, IndexOptions
-from org.apache.lucene.analysis.core import KeywordAnalyzer
-from org.apache.lucene.queryparser.classic import QueryParser
-from org.apache.lucene.search import IndexSearcher, BooleanQuery, BooleanClause
-from org.apache.lucene.document import Document, Field, StringField, FieldType, TextField
-from org.apache.lucene.store import SimpleFSDirectory
-from org.apache.lucene.util import BytesRefIterator
-from org.apache.lucene.index import DirectoryReader, Term
+from whoosh.fields import Schema, TEXT, KEYWORD
+from whoosh.index import create_in, open_dir
+from whoosh.formats import Frequency
+from whoosh.analysis import SimpleAnalyzer
+from whoosh.query import Term
 
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
+import math
 
 
 class IndexInterface(TextInterface):
     """
     Abstract class that takes care of serializing and deserializing text in an indexed structure
-    This use lucene library
+    using the Whoosh library
 
     Args:
         directory (str): Path of the directory where the content will be serialized
@@ -28,30 +24,24 @@ class IndexInterface(TextInterface):
         super().__init__(directory)
         self.__doc = None
         self.__writer = None
-        self.__field_type_frequency = None
-        self.__field_type_searching = None
+        self.__doc_index = 0
+        self.__schema_changed = False
 
     def __str__(self):
         return "IndexInterface"
 
     def init_writing(self):
-        self.__field_type_searching = FieldType(TextField.TYPE_STORED)
-        self.__field_type_frequency = FieldType(StringField.TYPE_STORED)
-        self.__field_type_frequency.setStored(True)
-        self.__field_type_frequency.setTokenized(False)
-        self.__field_type_frequency.setStoreTermVectors(True)
-        self.__field_type_frequency.setStoreTermVectorPositions(True)
-        self.__field_type_frequency.\
-            setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
-        fs_directory = SimpleFSDirectory(Paths.get(self.directory))
-        self.__writer = IndexWriter(fs_directory, IndexWriterConfig())
+        if not os.path.exists(self.directory):
+            os.mkdir(self.directory)
+        ix = create_in(self.directory, Schema())
+        self.__writer = ix.writer()
 
     def new_content(self):
         """
-        In the lucene index case the new content
-        is a new document in the index
+        The new content is a document that will be indexed. In this case the document is a dictionary with
+        the name of the field as key and the data inside the field as value
         """
-        self.__doc = Document()
+        self.__doc = {}
 
     def new_field(self, field_name: str, field_data):
         """
@@ -61,11 +51,10 @@ class IndexInterface(TextInterface):
             field_name (str): Name of the new field
             field_data: Data to put into the field
         """
-        if isinstance(field_data, list):
-            for word in field_data:
-                self.__doc.add(Field(field_name, word, self.__field_type_frequency))
-        else:
-            self.__doc.add(Field(field_name, field_data, self.__field_type_frequency))
+        if field_name not in open_dir(self.directory).schema.names():
+            self.__writer.add_field(field_name, KEYWORD(stored=True, vector=Frequency()))
+            self.__schema_changed = True
+        self.__doc[field_name] = field_data
 
     def new_searching_field(self, field_name, field_data):
         """
@@ -75,59 +64,55 @@ class IndexInterface(TextInterface):
             field_name (str): Name of the new field
             field_data: Data to put into the field
         """
-        self.__doc.add(Field(field_name, field_data, self.__field_type_searching))
+        if field_name not in open_dir(self.directory).schema.names():
+            self.__writer.add_field(field_name, TEXT(stored=True, analyzer=SimpleAnalyzer()))
+            self.__schema_changed = True
+        self.__doc[field_name] = field_data
 
-    def serialize_content(self):
+    def serialize_content(self) -> int:
         """
         Serialize the content
         """
-        doc_index = self.__writer.addDocument(self.__doc)
-        return doc_index - 1
+        if self.__schema_changed:
+            self.__writer.commit()
+            self.__writer = open_dir(self.directory).writer()
+            self.__schema_changed = False
+        self.__writer.add_document(**self.__doc)
+        del self.__doc
+        self.__doc_index += 1
+        return self.__doc_index - 1
 
     def stop_writing(self):
         """
         Stop the index writer and commit the operations
         """
         self.__writer.commit()
-        self.__writer.close()
 
     def get_tf_idf(self, field_name: str, content_id: str):
         """
         Calculates the tf-idf for the words contained in the field of the content whose id
-        is content_id
+        is content_id.
+        The tf-idf computation formula is: tf-idf = (1 + log10(tf)) * log10(idf)
 
         Args:
             field_name (str): Name of the field containing the words for which calculate the tf-idf
             content_id (str): Id of the content that contains the specified field
 
         Returns:
-             words_bag (Dict <str, float>):
-             Dictionary whose keys are the words contained in the field,
-             and the corresponding values are the tf-idf values.
+             words_bag (Dict <str, float>): Dictionary whose keys are the words contained in the field,
+                and the corresponding values are the tf-idf values
         """
-        searcher = IndexSearcher(
-            DirectoryReader.open(SimpleFSDirectory(Paths.get(self.directory))))
-        query = QueryParser(
-            "testo_libero", KeywordAnalyzer()).parse("content_id:\"" + content_id + "\"")
-        score_docs = searcher.search(query, 1).scoreDocs
-        document_offset = -1
-        for score_doc in score_docs:
-            document_offset = score_doc.doc
-
-        reader = searcher.getIndexReader()
+        ix = open_dir(self.directory)
         words_bag = {}
-        term_vector = reader.getTermVector(document_offset, field_name)
-        term_enum = term_vector.iterator()
-        for term in BytesRefIterator.cast_(term_enum):
-            term_text = term.utf8ToString()
-            postings = term_enum.postings(None)
-            postings.nextDoc()
-            term_frequency = 1 + math.log10(postings.freq())  # normalized term frequency
-            inverse_document_frequency = math.log10(reader.maxDoc() / reader.docFreq(Term(field_name, term)))
-            tf_idf = term_frequency * inverse_document_frequency
-            words_bag[term_text] = tf_idf
-
-        reader.close()
+        with ix.searcher() as searcher:
+            query = Term("content_id", content_id)
+            doc_num = searcher.search(query).docnum(0)
+            list_with_freq = [term_with_freq for term_with_freq
+                              in searcher.vector(doc_num, field_name).items_as("frequency")]
+            for term, freq in list_with_freq:
+                tf = 1 + math.log10(freq)
+                idf = math.log10(searcher.doc_count()/searcher.doc_frequency(field_name, term))
+                words_bag[term] = tf*idf
         return words_bag
 
     def delete_index(self):

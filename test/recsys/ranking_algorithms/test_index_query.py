@@ -3,9 +3,8 @@ import os
 import pickle
 from unittest import TestCase
 import pandas as pd
-import lucene
 
-from orange_cb_recsys.recsys import IndexQuery, RecSysConfig, RecSys
+from orange_cb_recsys.recsys import IndexQuery
 
 
 class TestIndexQuery(TestCase):
@@ -40,9 +39,16 @@ class TestIndexQuery(TestCase):
             file2 = os.path.join(path, "tt0114709.xz")
             with lzma.open(file2, "rb") as content_file:
                 items.append(pickle.load(content_file))
-        t_index = IndexQuery()
-        try:
-            t_index.predict(user_id='A000', ratings=ratings, recs_number=2, items_directory=path)
-        except RuntimeError:
-            lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-            t_index.predict(user_id='A000', ratings=ratings, recs_number=2, items_directory=path)
+
+        t_index = IndexQuery(classic_similarity=False)
+
+        ranking = t_index.predict(user_id='A000', ratings=ratings, recs_number=2, items_directory=path)
+
+        self.assertEqual(2, len(ranking['to_id'].values))
+
+        ranking = t_index.predict(user_id='A000', ratings=ratings, recs_number=2, items_directory=path,
+                                  candidate_item_id_list=['tt0114576', 'tt0113987'])
+
+        self.assertIn('tt0114576', ranking['to_id'].values)
+        self.assertIn('tt0113987', ranking['to_id'].values)
+        self.assertEqual(2, len(ranking['to_id'].values))

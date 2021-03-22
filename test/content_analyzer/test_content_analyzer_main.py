@@ -7,7 +7,7 @@ import numpy as np
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, ContentAnalyzerConfig, FieldConfig, FieldRepresentationPipeline
 from orange_cb_recsys.content_analyzer.content_representation.content_field import StringField, FeaturesBagField, \
     EmbeddingField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import LuceneTfIdf, EmbeddingTechnique, \
+from orange_cb_recsys.content_analyzer.field_content_production_techniques import EmbeddingTechnique, \
     Centroid, GensimDownloader
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
