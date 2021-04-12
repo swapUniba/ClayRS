@@ -532,8 +532,8 @@ class ClassifierRecommender(RankingAlgorithm):
         unrated_features_bag_list = []
 
         for item in unrated_items:
+            single_item_bag_list = []
             if item is not None:
-                single_item_bag_list = []
                 for item_field in self.item_field:
                     field_representations = self.item_field[item_field]
 
@@ -577,8 +577,8 @@ class ClassifierRecommender(RankingAlgorithm):
         rated_features_bag_list = []
 
         for item in rated_items:
+            single_item_bag_list = []
             if item is not None:
-                single_item_bag_list = []
                 for item_field in self.item_field:
                     field_representations = self.item_field[item_field]
 
