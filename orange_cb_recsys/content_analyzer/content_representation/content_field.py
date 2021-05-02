@@ -8,17 +8,10 @@ class FieldRepresentation(ABC):
     """
     Abstract class that generalizes the concept of "field representation",
     a field representation is a semantic way to represent a field of an item.
-
-    Args:
-        name (str): name of the representation's instance
     """
 
-    def __init__(self, name: str):
-        self.__name = name
-
-    @property
-    def name(self) -> str:
-        return self.__name
+    def __init__(self):
+        pass
 
     def __str__(self):
         raise NotImplementedError
@@ -39,8 +32,8 @@ class FeaturesBagField(FieldRepresentation):
         features (dict<str, object>): the dictionary where features are stored
     """
 
-    def __init__(self, name: str, features: Dict[str, object] = None):
-        super().__init__(name)
+    def __init__(self, features: Dict[str, object] = None):
+        super().__init__()
         if features is None:
             features = {}
         self.__features: Dict[str, object] = features
@@ -55,58 +48,34 @@ class FeaturesBagField(FieldRepresentation):
         """
         return self.__features
 
-    def append_feature(self, feature_key: str, feature_value):
-        """
-        Add a feature (feature_key, feature_value) to the dict
-
-        Args:
-            feature_key (str): key, can be a url or a keyword
-            feature_value: the value of the field
-        """
-        self.__features[feature_key] = feature_value
-
-    def get_feature(self, feature_key):
-        """
-        Get the feature_value from the dict[feature_key]
-
-        Args:
-            feature_key (str): key, can be a url or a keyword
-
-        Returns:
-            feature_value: the value of the field
-        """
-        return self.__features[feature_key]
+    def __str__(self):
+        return "\n %s" % str(self.__features)
 
     def __eq__(self, other):
         return self.__features == other.__features
 
-    def __str__(self):
-        representation_string = "Representation: " + self.name
-        return "%s \n %s" % (representation_string, str(self.__features))
-
 
 class StringField(FieldRepresentation):
     """
-        Class for field with no complex representation.
+    Class for field with no complex representation.
 
-        Args:
-            value (str): string representing the value of the field
-        """
+    Args:
+        value (str): string representing the value of the field
+    """
 
-    def __init__(self, name: str, value: str = None):
-        super().__init__(name)
+    def __init__(self, value: str = None):
+        super().__init__()
         self.__value: str = value
 
     @property
     def value(self) -> str:
         return self.__value
 
+    def __str__(self):
+        return "\n %s" % str(self.__value)
+
     def __eq__(self, other):
         return self.__value == other.__value
-
-    def __str__(self):
-        representation_string = "Representation: " + self.name
-        return "%s \n %s" % (representation_string, str(self.__value))
 
 
 class EmbeddingField(FieldRepresentation):
@@ -124,9 +93,8 @@ class EmbeddingField(FieldRepresentation):
             it can be of different shapes according to the granularity of the technique
     """
 
-    def __init__(self, name: str,
-                 embedding_array: np.ndarray):
-        super().__init__(name)
+    def __init__(self, embedding_array: np.ndarray):
+        super().__init__()
         self.__embedding_array: np.ndarray = embedding_array
 
     @property
@@ -134,8 +102,7 @@ class EmbeddingField(FieldRepresentation):
         return self.__embedding_array
 
     def __str__(self):
-        representation_string = "Representation: " + self.name
-        return "%s \n\n %s" % (representation_string, str(self.__embedding_array))
+        return " \n %s" % str(self.__embedding_array)
 
     def __eq__(self, other):
         return self.__embedding_array == other.__embedding_array
@@ -143,33 +110,38 @@ class EmbeddingField(FieldRepresentation):
 
 class ContentField:
     """
-    Class that represents a field, a field can have more than one representation for itself
+    Class that represents a field, a field can have more than one representation for itself that are identified
+    by a specific representation name
 
     Args:
-        field_name (str): the name of the field
-        timestamp (str): string that represents the timestamp
         representation_dict (dict<str, FieldRepresentation>): Dictionary whose keys are the name
             of the various representations, and the values are the corresponding FieldRepresentation
             instances.
     """
 
-    def __init__(self, field_name: str,
-                 timestamp: str = None,
-                 representation_dict: Dict[str, FieldRepresentation] = None):
+    def __init__(self, representation_dict: Dict[str, FieldRepresentation] = None):
         if representation_dict is None:
             representation_dict = {}
-        self.__timestamp = timestamp
-        self.__field_name: str = field_name
-        self.__representation_dict: Dict[str, object] = representation_dict
 
-    @property
-    def name(self) -> str:
-        return self.__field_name
+        self.__representation_dict: Dict[str, FieldRepresentation] = representation_dict
 
     def append(self, representation_id: str, representation: FieldRepresentation):
+        """
+        Sets the field representation for a specific representation name
+
+        Args:
+            representation_id (str): name of the field representation
+            representation (FieldRepresentation): field representation's content
+        """
         self.__representation_dict[representation_id] = representation
 
-    def get_representation(self, representation_id: str):
+    def get_representation(self, representation_id: str) -> FieldRepresentation:
+        """
+        Getter for the FieldRepresentation instance of a specific field representation name
+
+        Returns:
+            FieldRepresentation: instance of the representation for the name passed as argument
+        """
         return self.__representation_dict[representation_id]
 
     def __eq__(self, other) -> bool:
@@ -182,11 +154,10 @@ class ContentField:
         Returns:
             bool: True if the names are equals
         """
-        return self.__field_name == \
-               other.name and self.__representation_dict == other.__representation_dict
+        return self.__representation_dict == other.__representation_dict
 
     def __str__(self):
-        field_string = "Field:" + self.__field_name
-        rep_string = '\n\n'.join(str(rep) for rep in self.__representation_dict.values())
+        rep_string = '\n\n'.join("Representation " + str(name) + ": " + str(rep)
+                                 for name, rep in self.__representation_dict.items())
 
-        return "%s \n\n %s ------------------------------------" % (field_string, rep_string)
+        return "\n\n %s \n------------------------------------" % rep_string
