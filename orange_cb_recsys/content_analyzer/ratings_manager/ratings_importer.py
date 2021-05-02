@@ -63,6 +63,9 @@ class RatingsImporter:
         self.__timestamp_field_name: str = timestamp_field_name
         self.__score_combiner = ScoreCombiner(score_combiner)
 
+        if not isinstance(self.__rating_configs, list):
+            self.__rating_configs = [self.__rating_configs]
+
         self.__columns: list = ["from_id", "to_id", "score", "timestamp"]
         for field in self.__rating_configs:
             self.__columns.append(field.field_name)

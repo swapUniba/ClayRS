@@ -7,7 +7,7 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 movies_info_reduced = os.path.join(THIS_DIR, "../../datasets/movies_info_reduced.json")
 user_info = os.path.join(THIS_DIR, "../../datasets/users_info.json")
 new_ratings = os.path.join(THIS_DIR, "../../datasets/examples/new_ratings.csv")
-test_ratings_file = os.path.join(THIS_DIR, "../../datasets/test_ratings_file")
+test_ratings_file = os.path.join(THIS_DIR, "../../datasets/test_ratings_file_script")
 users_example_1 = os.path.join(THIS_DIR, "../../contents/examples/ex_1/users_1600355755.1935306")
 items_example_1 = os.path.join(THIS_DIR, "../../contents/examples/ex_1/movies_1600355972.49884")
 items_example_2 = os.path.join(THIS_DIR, "../../contents/movies_multiple_repr")
@@ -23,7 +23,7 @@ class TestRun(TestCase):
             "content_type": "ITEM",
             "source": {"class": "json", "file_path": movies_info_reduced},
             "id": "imdbID",
-            "output_directory": "movielens_test",
+            "output_directory": "movielens_test_script",
             "field_dict": {"Plot": [{"class": "field_config", "content_technique": {"class": "sk_learn_tf-idf"},
                                      "preprocessing": {"class": "nltk"}, "id": "test"},
                                     {"class": "field_config", "content_technique": {"class": "sk_learn_tf-idf"},
@@ -35,7 +35,7 @@ class TestRun(TestCase):
             "content_type": "user",
             "source": {"class": "json", "file_path": user_info},
             "id": "user_id",
-            "output_directory": "user_test",
+            "output_directory": "user_test_script",
             "field_dict": {"name": [{"class": "field_config", "id": "test"}]}
         }
 
