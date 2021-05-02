@@ -76,9 +76,7 @@ class TestRun(TestCase):
         self.config_list = [item_config_dict, user_config_dict, rating_config_dict, recsys_config_dict, eval_config_dict]
 
     def test_run(self):
-        self.skipTest("Tests will be done once the Content Analyzer configuration changes are applied"
-                      "(The config dictionaries above refer to a different implementation that will be applied)")
-        # self.assertEqual(len(script_run(self.config_list)), 3)
+        self.assertEqual(len(script_run(self.config_list)), 3)
 
     def test_exceptions(self):
         # test for list not containing dictionaries only
