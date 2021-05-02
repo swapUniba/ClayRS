@@ -9,12 +9,11 @@ class TestSynsetDocumentFrequency(TestCase):
         technique = SynsetDocumentFrequency()
         example_text = "Hello, this is beautiful. And also beautiful"
 
-        syn = technique.produce_content("Synset", example_text)
+        syn = technique.produce_content(example_text)
 
         result = sorted(syn.value.elements())
 
         expected = [wn.synset('beautiful.s.02'), wn.synset('beautiful.s.02'),
                     wn.synset('besides.r.02'), wn.synset('hello.n.01')]
-
 
         self.assertEqual(result, expected)
