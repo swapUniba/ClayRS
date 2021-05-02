@@ -91,8 +91,7 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
         self.__processor_list = processor_list
 
     @abstractmethod
-    def produce_content(self, field_representation_name: str, content_id: str,
-                        field_name: str) -> FieldRepresentation:
+    def produce_content(self, content_id: str, field_name: str) -> FieldRepresentation:
         raise NotImplementedError
 
     @abstractmethod
@@ -120,12 +119,11 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
 
 class SingleContentTechnique(FieldContentProductionTechnique):
     @abstractmethod
-    def produce_content(self, field_representation_name: str, field_data) -> FieldRepresentation:
+    def produce_content(self, field_data) -> FieldRepresentation:
         """
         Given data of certain field it returns a complex representation's instance of the field.
 
         Args:
-            field_representation_name: name of the field representation object that will be created
             field_data: input for the complex representation production
 
         Returns:
@@ -144,8 +142,7 @@ class TfIdfTechnique(CollectionBasedTechnique):
         super().__init__()
 
     @abstractmethod
-    def produce_content(self, field_representation_name: str, content_id: str,
-                        field_name: str) -> FeaturesBagField:
+    def produce_content(self, content_id: str, field_name: str) -> FeaturesBagField:
         raise NotImplementedError
 
     @abstractmethod
@@ -170,7 +167,7 @@ class EntityLinking(SingleContentTechnique):
     """
 
     @abstractmethod
-    def produce_content(self, field_representation_name: str, field_data) -> FeaturesBagField:
+    def produce_content(self, field_data) -> FeaturesBagField:
         raise NotImplementedError
 
 
@@ -276,14 +273,12 @@ class EmbeddingTechnique(SingleContentTechnique):
 
         self.__granularity: str = granularity.lower()
 
-    def produce_content(self, field_representation_name: str, field_data) -> EmbeddingField:
+    def produce_content(self, field_data) -> EmbeddingField:
         """
         Method that builds the semantic content starting from the embeddings contained in
         field_data.
 
         Args:
-            field_representation_name (str): Name of the field representation for which produce
-            the content
             field_data: The terms whose embeddings will be combined.
 
         Returns:
@@ -292,7 +287,7 @@ class EmbeddingTechnique(SingleContentTechnique):
 
         if self.__granularity == "word":
             doc_matrix = self.__embedding_source.load(field_data)
-            return EmbeddingField(field_representation_name, doc_matrix)
+            return EmbeddingField(doc_matrix)
         if self.__granularity == "sentence":
             try:
                 nltk.data.find('punkt')
@@ -309,11 +304,10 @@ class EmbeddingTechnique(SingleContentTechnique):
                 sentence_matrix = self.__embedding_source.load(sentence)
                 sentences_embeddings[i, :] = self.__combining_technique.combine(sentence_matrix)
 
-            return EmbeddingField(field_representation_name, sentences_embeddings)
+            return EmbeddingField(sentences_embeddings)
         if self.__granularity == "doc":
             doc_matrix = self.__embedding_source.load(field_data)
-            return EmbeddingField(
-                field_representation_name, self.__combining_technique.combine(doc_matrix))
+            return EmbeddingField(self.__combining_technique.combine(doc_matrix))
         else:
             raise ValueError("Must specify a valid embedding technique granularity")
 

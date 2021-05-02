@@ -27,7 +27,7 @@ class SynsetDocumentFrequency(SingleContentTechnique):
     def __init__(self):
         super().__init__()
 
-    def produce_content(self, field_representation_name: str, field_data) -> FeaturesBagField:
+    def produce_content(self, field_data) -> FeaturesBagField:
         """
         Produces a bag of features whose key is a wordnet synset
         and whose value is the frequency of the synset in the
@@ -39,4 +39,4 @@ class SynsetDocumentFrequency(SingleContentTechnique):
         synsets = disambiguate(field_data)
         synsets = [synset for word, synset in synsets if synset is not None]
 
-        return FeaturesBagField(field_representation_name, Counter(synsets))
+        return FeaturesBagField(Counter(synsets))

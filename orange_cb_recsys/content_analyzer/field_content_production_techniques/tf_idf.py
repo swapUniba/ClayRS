@@ -51,13 +51,12 @@ class SkLearnTfIdf(TfIdfTechnique):
 
         self.__feature_names = tf_vectorizer.get_feature_names()
 
-    def produce_content(self, field_representation_name: str, content_id: str, field_name: str):
+    def produce_content(self, content_id: str, field_name: str):
         """
         Retrieve the tf-idf values, for terms in document that match with content_id,
         from the pre-computed word - document matrix.
 
         Args:
-            field_representation_name (str): Name of the field representation
             content_id (str): Id of the content that contains the terms for which extract the tf-idf
             field_name (str): Name of the field to consider
 
@@ -73,7 +72,7 @@ class SkLearnTfIdf(TfIdfTechnique):
         for word, score in [(self.__feature_names[i], score) for (i, score) in tfidf_scores]:
             features[word] = score
 
-        return FeaturesBagField(field_representation_name, features)
+        return FeaturesBagField(features)
 
     def delete_refactored(self):
         pass
@@ -94,11 +93,8 @@ class WhooshTfIdf(TfIdfTechnique):
     def __repr__(self):
         return "< WhooshTfIdf: " + "index = " + str(self.__index) + ">"
 
-    def produce_content(self, field_representation_name: str, content_id: str,
-                        field_name: str) -> FeaturesBagField:
-
-        return FeaturesBagField(
-            field_representation_name, self.__index.get_tf_idf(field_name, content_id))
+    def produce_content(self, content_id: str, field_name: str) -> FeaturesBagField:
+        return FeaturesBagField(self.__index.get_tf_idf(field_name, content_id))
 
     def dataset_refactor(self, information_source: RawInformationSource, id_field_names: list):
         """
