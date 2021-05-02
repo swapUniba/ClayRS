@@ -19,7 +19,18 @@ class Partitioning(ABC):
 
     @dataframe.setter
     def dataframe(self, dataframe: pd.DataFrame):
+        try:
+            self.check_dataframe(dataframe)
+        except ValueError as e:
+            raise e
         self.__dataframe = dataframe
+
+    def check_dataframe(self, dataframe: pd.DataFrame):
+        """
+        Used to check if the dataframe that is being set meets the requirements of the class extending Partitioning
+        Otherwise an exception is thrown
+        """
+        raise NotImplementedError
 
 
 class KFoldPartitioning(Partitioning):
@@ -35,10 +46,9 @@ class KFoldPartitioning(Partitioning):
         self.__n_splits = n_splits
         self.__random_state = random_state
 
-    def set_dataframe(self, dataframe: pd.DataFrame):
+    def check_dataframe(self, dataframe: pd.DataFrame):
         if len(dataframe) < self.__n_splits:
             raise ValueError("Number of splits larger than number of frame rows")
-        self.dataframe = dataframe
 
     def __iter__(self):
         kf = KFold(n_splits=self.__n_splits, shuffle=True, random_state=self.__random_state)

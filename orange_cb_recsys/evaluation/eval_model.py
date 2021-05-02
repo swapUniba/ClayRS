@@ -107,10 +107,14 @@ class RankingAlgEvalModel(EvalModel):
             logger.info("Computing ranking metrics for user %s", user_id)
             user_ratings = self.config.rating_frame[
                 self.config.rating_frame['from_id'] == user_id]
+            user_ratings = remove_not_existent_items(user_ratings, self.config.items_directory)
 
             try:
                 self.partitioning.dataframe = user_ratings
-            except ValueError:
+            except ValueError as e:
+                logger.warning(e)
+                logger.warning("The user %s doesn't have enough valid ratings. "
+                               "The user will be skipped", user_id)
                 continue
 
             for partition_index in self.partitioning:
@@ -121,8 +125,7 @@ class RankingAlgEvalModel(EvalModel):
                 truth = test.loc[:, 'to_id':'score']
                 truth.columns = ["to_id", "rating"]
                 recs_number = len(truth['rating'].values)
-                predictions = recsys.fit_eval_ranking(
-                    user_id, train, truth['to_id'].tolist(), recs_number)
+                predictions = recsys.fit_eval_ranking(user_id, train, truth['to_id'].tolist(), recs_number)
                 for metric in self.metrics:
                     result_dict['from'] = user_id
                     result_dict[str(metric)] = metric.perform(predictions, truth)
@@ -130,8 +133,9 @@ class RankingAlgEvalModel(EvalModel):
                 ranking_alg_metrics_results = \
                     ranking_alg_metrics_results.append(result_dict, ignore_index=True)
 
-        ranking_alg_metrics_results = \
-            ranking_alg_metrics_results.groupby('from').mean().reset_index()
+        if len(ranking_alg_metrics_results) != 0:
+            ranking_alg_metrics_results = \
+                ranking_alg_metrics_results.groupby('from').mean().reset_index()
 
         return ranking_alg_metrics_results
 
@@ -191,10 +195,14 @@ class PredictionAlgEvalModel(EvalModel):
             user_ratings = self.config.rating_frame[
                 self.config.rating_frame['from_id'] == user_id]
             user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
+            user_ratings = remove_not_existent_items(user_ratings, self.config.items_directory)
 
             try:
                 self.partitioning.dataframe = user_ratings
-            except ValueError:
+            except ValueError as e:
+                logger.warning(e)
+                logger.warning("The user %s doesn't have enough valid ratings. "
+                               "The user will be skipped", user_id)
                 continue
 
             for partition_index in self.partitioning:
@@ -202,7 +210,6 @@ class PredictionAlgEvalModel(EvalModel):
                 logger.info("Computing prediction metrics")
                 train = user_ratings.iloc[partition_index[0]]
                 test = user_ratings.iloc[partition_index[1]]
-                test = remove_not_existent_items(test, self.config.items_directory)
 
                 predictions = recsys.fit_eval_predict(user_id, train, test)
                 for metric in self.metrics:
@@ -210,7 +217,8 @@ class PredictionAlgEvalModel(EvalModel):
 
                 prediction_metric_results.append(result_dict, ignore_index=True)
 
-        prediction_metric_results = prediction_metric_results.groupby('from').mean().reset_index()
+        if len(prediction_metric_results) != 0:
+            prediction_metric_results = prediction_metric_results.groupby('from').mean().reset_index()
 
         return prediction_metric_results
 
