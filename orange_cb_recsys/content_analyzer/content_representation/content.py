@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Union
 
 from orange_cb_recsys.content_analyzer.content_representation.content_field import ContentField
+from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 
 
 class ExogenousPropertiesRepresentation(ABC):
@@ -49,20 +50,20 @@ class Content:
         content_id (str): string identifier
         field_dict (dict[str, ContentField]): dictionary containing the fields instances for the content,
             and their name as dictionary key
-        exogenous_rep_dict (Dict <str, ExogenousProperties>): different representations of content obtained
-            using ExogenousPropertiesRetrieval, the dictionary key is the representation name
+        exogenous_rep_container (RepresentationContainer): different representations of content obtained
+            using ExogenousPropertiesRetrieval
     """
     def __init__(self, content_id: str,
                  field_dict: Dict[str, ContentField] = None,
-                 exogenous_rep_dict: Dict[str, ExogenousPropertiesRepresentation] = None):
+                 exogenous_rep_container: RepresentationContainer = None):
         if field_dict is None:
             field_dict = {}       # list o dict
-        if exogenous_rep_dict is None:
-            exogenous_rep_dict = {}
+        if exogenous_rep_container is None:
+            exogenous_rep_container = RepresentationContainer()
 
         self.__content_id: str = content_id
         self.__field_dict: Dict[str, ContentField] = field_dict
-        self.__exogenous_rep_dict: Dict[str, ExogenousPropertiesRepresentation] = exogenous_rep_dict
+        self.__exogenous_rep_container: RepresentationContainer = exogenous_rep_container
         self.__index_document_id: int = None  # to be removed
 
     @property
@@ -88,11 +89,11 @@ class Content:
         return self.__field_dict
 
     @property
-    def exogenous_rep_dict(self):
+    def exogenous_rep_container(self):
         """
         Getter for the dictionary containing the content's exogenous representations
         """
-        return self.__exogenous_rep_dict
+        return self.__exogenous_rep_container
 
     def append_field(self, field_name: str, field: ContentField):
         """
@@ -113,26 +114,6 @@ class Content:
         """
         return self.__field_dict[field_name]
 
-    def append_exogenous(self, exo_name: str, exogenous_properties: ExogenousPropertiesRepresentation):
-        """
-        Sets a specific exogenous representation for the content
-
-        Args:
-            exo_name (str): name of the representation, it can be used to refer to the representation
-            exogenous_properties (ExogenousPropertiesRepresentation): represents the data in the
-                exogenous representation
-        """
-        self.__exogenous_rep_dict[exo_name] = exogenous_properties
-
-    def get_exogenous(self, exo_name: str) -> ExogenousPropertiesRepresentation:
-        """
-        Getter for the ExogenousPropertiesRepresentation of a specific exogenous representation name
-
-        Args:
-            exo_name (str): representation's name for which the ExogenousPropertiesRepresentation will be retrieved
-        """
-        return self.__exogenous_rep_dict[exo_name]
-
     def remove_field(self, field_name: str):
         """
         Removes the field named field_name from the field dictionary
@@ -142,14 +123,35 @@ class Content:
         """
         self.__field_dict.pop(field_name)
 
-    def remove_exogenous(self, exo_name: str):
+    def append_exogenous(self, exogenous_properties: ExogenousPropertiesRepresentation, exo_name: str = None):
         """
-        Removes the exogenous representation named exo_name from the exogenous representation dictionary
+        Sets a specific exogenous representation for the content
+
+
+        Args:
+            exo_name (str): name of the representation, it can be used to refer to the representation
+            exogenous_properties (ExogenousPropertiesRepresentation): represents the data in the
+                exogenous representation
+        """
+        self.__exogenous_rep_container.append(exogenous_properties, exo_name)
+
+    def get_exogenous(self, exo_name: Union[int, str]) -> ExogenousPropertiesRepresentation:
+        """
+        Getter for the ExogenousPropertiesRepresentation of a specific exogenous representation name
+
+        Args:
+            exo_name (str): representation's name for which the ExogenousPropertiesRepresentation will be retrieved
+        """
+        return self.__exogenous_rep_container[exo_name]
+
+    def remove_exogenous(self, exo_name: Union[str, int]):
+        """
+        Removes the exogenous representation named exo_name from the exogenous representation container
 
         Args:
             exo_name (str): the name of the exogenous representation to remove
         """
-        self.__exogenous_rep_dict.pop(exo_name)
+        self.__exogenous_rep_container.pop(exo_name)
 
     def __str__(self):
         content_string = "Content: %s" % self.__content_id

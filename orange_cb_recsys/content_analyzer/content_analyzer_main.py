@@ -13,6 +13,7 @@ from orange_cb_recsys.content_analyzer.content_representation.content_field impo
 from orange_cb_recsys.content_analyzer.field_content_production_techniques. \
     field_content_production_technique import CollectionBasedTechnique, SingleContentTechnique, SearchIndexing
 from orange_cb_recsys.content_analyzer.memory_interfaces import IndexInterface
+from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.id_merger import id_merger
 
@@ -95,10 +96,6 @@ class ContentAnalyzer:
         contents_producer = ContentsProducer.get_instance()
         contents_producer.set_config(self.__config)
 
-        interfaces = self.__config.get_interfaces()
-        for interface in interfaces:
-            interface.init_writing()
-
         self.__dataset_refactor()
         contents_producer.set_indexer(indexer)
         i = 0
@@ -110,9 +107,6 @@ class ContentAnalyzer:
 
         if self.__config.search_index:
             indexer.stop_writing()
-
-        for interface in interfaces:
-            interface.stop_writing()
 
         for field_name in self.__config.get_field_name_list():
             for config in self.__config.get_configs_list(field_name):
@@ -204,28 +198,28 @@ class ContentsProducer:
         """
         field_data = raw_content[field_name]
 
-        # serialize for explanation
-        memory_interfaces = self.__config.get_field_memory_interfaces(field_name)
-        for memory_interface in memory_interfaces:
-            memory_interface.new_field(field_name, field_data)
+        # two lists are instantiated, one for the configuration names (given by the user) and one for the field
+        # representations. These lists will maintain the data for the field creation. This is done
+        # because otherwise it would be necessary to append directly to the field. But in the ContentField class
+        # the representations are kept as dataframes and appending to dataframes is computationally heavy
+        field_representations_names = []
+        field_representations = []
 
-        # produce representations
-        field = ContentField()
-
-        for i, config in enumerate(self.__config.get_configs_list(field_name)):
-            # if no id is defined for the field representation name, a default one will be assigned
-            # based on the iteration's number
-            field_representation_name = config.id if config.id is not None else str(i)
-            logger.info("processing representation %s" % field_representation_name)
+        for config in self.__config.get_configs_list(field_name):
+            logger.info("Processing representation %d" % len(field_representations_names))
+            field_representations_names.append(config.id)
 
             if isinstance(config.content_technique, CollectionBasedTechnique):
-                field.append(field_representation_name, self.__create_representation_CBT(content_id, field_name, config))
+                field_representations.append(self.__create_representation_CBT(content_id, field_name, config))
             elif isinstance(config.content_technique, SingleContentTechnique):
-                field.append(field_representation_name, self.__create_representation(field_data, config))
+                field_representations.append(self.__create_representation(field_data, config))
             elif isinstance(config.content_technique, SearchIndexing):
                 self.__invoke_indexing_technique(field_name, field_data, config)
             elif config.content_technique is None:
-                field.append(field_representation_name, self.__decode_field_data(field_data))
+                field_representations.append(self.__decode_field_data(field_data))
+
+        # produce representations
+        field = ContentField(RepresentationContainer(field_representations, field_representations_names))
 
         return field
 
@@ -319,37 +313,33 @@ class ContentsProducer:
 
         CONTENT_ID = "content_id"
 
+        # two lists are instantiated, one for the configuration names (given by the user) and one for the exogenous
+        # properties representations. These lists will maintain the data for the content creation. This is done
+        # because otherwise it would be necessary to append directly to the content. But in the Content class
+        # the representations are kept as dataframes and appending to dataframes is computationally heavy
+        exo_config_names = []
+        exo_properties = []
+
+        for ex_config in self.__config.exogenous_representation_list:
+            lod_properties = ex_config.exogenous_technique.get_properties(raw_content)
+            exo_config_names.append(ex_config.id)
+            exo_properties.append(lod_properties)
+
         # construct id from the list of the fields that compound id
         content_id = id_merger(raw_content, self.__config.id)
-        content = Content(content_id)
-
-        for i, ex_config in enumerate(self.__config.exogenous_representation_list):
-            # if no id is defined for the exogenous representation name, a default one will be assigned
-            # based on the iteration's number
-            ex_config_name = ex_config.id if ex_config.id is not None else str(i)
-            lod_properties = ex_config.exogenous_technique.get_properties(raw_content)
-            content.append_exogenous(ex_config_name, lod_properties)
+        content = Content(content_id, exogenous_rep_container=RepresentationContainer(exo_properties, exo_config_names))
 
         if self.__indexer is not None:
             self.__indexer.new_content()
             self.__indexer.new_field(CONTENT_ID, content_id)
 
-        interfaces = self.__config.get_interfaces()
-        for interface in interfaces:
-            interface.new_content()
-            interface.new_field(CONTENT_ID, content_id)
-
         # produce
         for field_name in self.__config.get_field_name_list():
             logger.info("Processing field: %s", field_name)
-            # search for timestamp override on specific field
             content.append_field(field_name, self.__create_field(raw_content, field_name, content_id))
 
         if self.__indexer is not None:
             content.index_document_id = self.__indexer.serialize_content()
-
-        for interface in interfaces:
-            interface.serialize_content()
 
         return content
 

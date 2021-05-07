@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
-from typing import Dict
+from typing import Dict, Union
 import numpy as np
+
+from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 
 
 class FieldRepresentation(ABC):
@@ -114,18 +116,26 @@ class ContentField:
     by a specific representation name
 
     Args:
-        representation_dict (dict<str, FieldRepresentation>): Dictionary whose keys are the name
-            of the various representations, and the values are the corresponding FieldRepresentation
-            instances.
+        representation_container (RepresentationContainer): object that stores the ids for the representations
+        and the representation's instances in a dataframe
     """
 
-    def __init__(self, representation_dict: Dict[str, FieldRepresentation] = None):
-        if representation_dict is None:
-            representation_dict = {}
+    def __init__(self, representation_container: RepresentationContainer = None):
+        if representation_container is None:
+            representation_container = RepresentationContainer()
 
-        self.__representation_dict: Dict[str, FieldRepresentation] = representation_dict
+        self.__representation_container: RepresentationContainer = representation_container
 
-    def append(self, representation_id: str, representation: FieldRepresentation):
+    def get_representation(self, representation_id: Union[str, int]) -> FieldRepresentation:
+        """
+        Getter for the FieldRepresentation instance of a specific field representation name
+
+        Returns:
+            FieldRepresentation: instance of the representation for the name passed as argument
+        """
+        return self.__representation_container[representation_id]
+
+    def append(self, representation: FieldRepresentation, representation_id: str = None):
         """
         Sets the field representation for a specific representation name
 
@@ -133,16 +143,7 @@ class ContentField:
             representation_id (str): name of the field representation
             representation (FieldRepresentation): field representation's content
         """
-        self.__representation_dict[representation_id] = representation
-
-    def get_representation(self, representation_id: str) -> FieldRepresentation:
-        """
-        Getter for the FieldRepresentation instance of a specific field representation name
-
-        Returns:
-            FieldRepresentation: instance of the representation for the name passed as argument
-        """
-        return self.__representation_dict[representation_id]
+        self.__representation_container.append(representation, representation_id)
 
     def __eq__(self, other) -> bool:
         """
@@ -154,10 +155,9 @@ class ContentField:
         Returns:
             bool: True if the names are equals
         """
-        return self.__representation_dict == other.__representation_dict
+        return self.__representation_container == other.__representation_container
 
     def __str__(self):
-        rep_string = '\n\n'.join("Representation " + str(name) + ": " + str(rep)
-                                 for name, rep in self.__representation_dict.items())
+        rep_string = '\n\n'.join("Representation: \n" + str(self.__representation_container))
 
         return "\n\n %s \n------------------------------------" % rep_string
