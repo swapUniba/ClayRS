@@ -106,7 +106,10 @@ class RepresentationContainer:
         if len(representation) != len(external_id):
             raise ValueError("Representation and external_id lists must have the same length")
 
-        next_internal_id = self.__dataframe.index.get_level_values('internal_id')[-1] + 1
+        if len(self.get_internal_index()) == 0:
+            next_internal_id = 0
+        else:
+            next_internal_id = self.__dataframe.index.get_level_values('internal_id')[-1] + 1
         new_dataframe = pd.DataFrame({'external_id': external_id, 'representation': representation})
         new_dataframe['internal_id'] = list(range(next_internal_id, len(representation) + next_internal_id))
         new_dataframe.set_index(['internal_id', 'external_id'], inplace=True)
