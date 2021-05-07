@@ -145,8 +145,8 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(test_dir, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title").get_representation('0'), StringField)
-                    self.assertIsInstance(content.get_field("Title").get_representation('0').value, str)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0), StringField)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0).value, str)
                     break
 
     def test_decode_field_data_tfidf(self):
@@ -178,8 +178,8 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(test_dir, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title").get_representation('0'), FeaturesBagField)
-                    self.assertIsInstance(content.get_field("Title").get_representation('0').value, dict)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0), FeaturesBagField)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0).value, dict)
                     break
 
     def test_decode_field_data_embedding(self):
@@ -211,6 +211,6 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(test_dir, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title").get_representation('0'), EmbeddingField)
-                    self.assertIsInstance(content.get_field("Title").get_representation('0').value, np.ndarray)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0), EmbeddingField)
+                    self.assertIsInstance(content.get_field("Title").get_representation(0).value, np.ndarray)
                     break
