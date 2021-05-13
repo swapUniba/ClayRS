@@ -144,6 +144,12 @@ class Content:
         with lzma.open(path, 'wb') as f:
             pickle.dump(self, f)
 
+    def __hash__(self):
+        return hash(str(self.__content_id))
+
+    def __repr__(self):
+        return str(self.__content_id)
+
     def __str__(self):
         content_string = "Content: %s" % self.__content_id
         field_string = '\n'.join(str(field) for field in self.__field_dict.values())
