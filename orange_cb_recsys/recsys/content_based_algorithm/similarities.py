@@ -25,5 +25,11 @@ class CosineSimilarity(Similarity):
     def __init__(self):
         super().__init__()
 
-    def perform(self, v1: Vector, v2: Vector):
-        return v1.similarity(v2)
+    def perform(self, v1: np.ndarray, v2: np.ndarray):
+        """
+        Calculates the cosine similarity between v1 and v2
+        """
+
+        # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
+        # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
+        return 1 - cosine_distance(v1, v2)
