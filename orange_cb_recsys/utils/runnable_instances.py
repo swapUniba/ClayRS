@@ -3,8 +3,8 @@ import os
 import pickle
 from typing import Dict
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
-from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig, RatingsImporter
+from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig, UserAnalyzerConfig, ItemAnalyzerConfig
 from orange_cb_recsys.content_analyzer.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
     GensimLatentSemanticAnalysis, GensimRandomIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
@@ -24,7 +24,7 @@ from orange_cb_recsys.evaluation import RankingAlgEvalModel, KFoldPartitioning, 
     Serendipity
 from orange_cb_recsys.evaluation.eval_model import PredictionAlgEvalModel, ReportEvalModel
 from orange_cb_recsys.evaluation.prediction_metrics import RMSE, MAE
-from orange_cb_recsys.recsys import ClassifierRecommender, NXPageRank, IndexQuery
+from orange_cb_recsys.recsys import ClassifierRecommender, NXPageRank, IndexQuery, RecSysConfig, RecSys
 from orange_cb_recsys.recsys.ranking_algorithms.classifier import KNN, RandomForest, SVM, LogReg, DecisionTree, \
     GaussianProcess
 from orange_cb_recsys.utils.const import logger
@@ -44,8 +44,13 @@ with no arguments to add it permanently and also show in this file
 
 runnable_instances = {
     "field_config": FieldConfig,
+    "recsys_config": RecSysConfig,
     "exogenous_config": ExogenousConfig,
+    "item_analyzer": ItemAnalyzerConfig,
+    "user_analyzer": UserAnalyzerConfig,
+    "ratings": RatingsImporter,
     "ratings_config": RatingsFieldConfig,
+    "recsys": RecSys,
     "json": JSONFile,
     "csv": CSVFile,
     "sql": SQLDatabase,
@@ -233,3 +238,4 @@ def show(categories: bool=False):
         r_i = get()
         for k in r_i.keys():
             logger.info('< %s : %s >', k, str(r_i[k]))
+
