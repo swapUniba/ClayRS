@@ -3,9 +3,10 @@ import re
 import pandas as pd
 from typing import List
 
+
 from orange_cb_recsys.recsys.config import RecSysConfig
 from orange_cb_recsys.utils.const import logger
-from orange_cb_recsys.utils.load_content import load_content_instance, get_unrated_items
+from orange_cb_recsys.utils.load_content import load_content_instance
 
 
 class RecSys:
@@ -18,83 +19,47 @@ class RecSys:
     def __init__(self, config: RecSysConfig):
         self.__config: RecSysConfig = config
 
-    def __get_item_list(self, item_to_predict_id_list, user_ratings):
-        if item_to_predict_id_list is None:
-            # all items without rating if the list is not set
-            item_to_predict_list = get_unrated_items(self.__config.items_directory, user_ratings)
-        else:
-            item_to_predict_list = [
-                load_content_instance(self.__config.items_directory, re.sub(r'[^\w\s]', '', item_id))
-                for item_id in item_to_predict_id_list]
-
-        return item_to_predict_list
-
-    def fit_predict(self, user_id: str, item_to_predict_id_list: List[str] = None):
+    def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Computes the predicted rating for specified user and items,
-        should be used when a score prediction algorithm (instead of a ranking algorithm)
-        was chosen in the config
+        Method which predicts the ratings of a user for the unrated items.
+
+        One can specify which items must be predicted with the filter_list parameter,
+        in this case ONLY items in the filter_list will be predicted.
+        One can also pass items already seen by the user with the filter_list parameter.
+        Otherwise, ALL unrated items will be predicted.
 
         Args:
-            user_id: user for which calculate the predictions
-            item_to_predict_id_list: items for which the prediction will be computed,
-                if None all unrated items will be used
-        Returns:
-            score_frame (DataFrame): result frame whose columns are: to_id, rating
-
-        Raises:
-             ValueError: if the algorithm is a ranking algorithm
+            user_id (str): user for which the predictions will be calculated
+            filter_list (list): list of items that will be predicted. If None,
+                all items will be predicted
         """
-        if self.__config.score_prediction_algorithm is None:
-            raise ValueError("You must set score prediction algorithm to use this method")
-
-        # load user ratings
-        logger.info("Loading user ratings")
-        user_ratings = self.__config.rating_frame[self.__config.rating_frame['from_id'] == user_id]
-        user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
-
-        # define for which items calculate the prediction
-        logger.info("Defining for which items the prediction will be computed")
-        items = self.__get_item_list(item_to_predict_id_list, user_ratings)
 
         # calculate predictions
-        logger.info("Computing predicitons")
-        score_frame = self.__config.score_prediction_algorithm.predict(user_id, items, user_ratings,
-                                                                       self.__config.items_directory)
+        logger.info("Computing predictions")
+        score_frame = self.__config.algorithm.fit_predict(user_id, filter_list)
 
         return score_frame
 
-    def fit_ranking(self, user_id: str, recs_number: int, candidate_item_id_list: List[str] = None):
+    def fit_ranking(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Computes the predicted rating for specified user and items,
-        should be used when a  ranking algorithm (instead of a score prediction algorithm)
-        was chosen in the config
+        Method which predicts the ratings of a user for the unrated items and ranks them.
+
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All items will be ranked.
+
+        One can specify which items must be ranked with the filter_list parameter,
+        in this case ONLY items in the filter_list will be used to calculate the rank.
+        One can also pass items already seen by the user with the filter_list parameter.
+        Otherwise, ALL unrated items will be used to calculate the rank.
 
         Args:
-            candidate_item_id_list: list of items, in which search the recommendations,
-                if None all unrated items will be used as candidates
-            user_id: user for which compute the ranking recommendation
-            recs_number: how many items should the returned ranking contain,
-                the ranking length can be lower
-        Returns:
-            score_frame (DataFrame): result frame whose columns are: to_id, rating
-
-        Raises:
-             ValueError: if the algorithm is a score prediction algorithm
+            user_id (str): user for which the rank will be calculated
+            recs_number (int): number of the top items that will be present in the ranking
+            filter_list (list): list of items that will be ranked. If None,
+                all items will be ranked
         """
-        if self.__config.ranking_algorithm is None:
-            raise ValueError("You must set ranking algorithm to use this method")
-
-        # load user ratings
-        logger.info("Loading user ratings")
-        user_ratings = self.__config.rating_frame[self.__config.rating_frame['from_id'] == user_id]
-        user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
-
-        # calculate predictions
         logger.info("Computing ranking")
-        score_frame = self.__config.ranking_algorithm.predict(user_id, user_ratings, recs_number,
-                                                              self.__config.items_directory,
-                                                              candidate_item_id_list)
+        score_frame = self.__config.algorithm.fit_rank(user_id, recs_number, filter_list)
 
         return score_frame
 
