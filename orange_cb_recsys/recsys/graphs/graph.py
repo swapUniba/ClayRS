@@ -479,7 +479,7 @@ class TripartiteGraph(BipartiteGraph):
         """
         properties = None
         try:
-            properties = content.get_exogenous_rep(exo_rep).value
+            properties = content.get_exogenous(exo_rep).value
         except KeyError:
             logger.warning("Representation " + exo_rep + " not found for " + content.content_id)
 
@@ -513,7 +513,7 @@ class TripartiteGraph(BipartiteGraph):
         properties = None
 
         try:
-            properties = content.get_exogenous_rep(exo_rep).value
+            properties = content.get_exogenous(exo_rep).value
         except KeyError:
             logger.warning("Representation " + exo_rep + " not found for " + content.content_id)
 
@@ -553,11 +553,11 @@ class TripartiteGraph(BipartiteGraph):
         properties_not_found = []
         for rep in content.exogenous_rep_dict:
             for prop in exo_props:
-                if prop in content.get_exogenous_rep(rep).value:
+                if prop in content.get_exogenous(rep).value:
                     if properties is None:
                         properties = {}
                     # properties = {director_0: aaaaa, director_1:bbbbb}
-                    properties[prop + "_" + rep] = content.get_exogenous_rep(rep).value[prop]
+                    properties[prop + "_" + rep] = content.get_exogenous(rep).value[prop]
                 else:
                     properties_not_found.append(prop)
 

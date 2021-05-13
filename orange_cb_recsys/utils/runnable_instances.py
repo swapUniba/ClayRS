@@ -3,6 +3,8 @@ import os
 import pickle
 from typing import Dict
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
+from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig
 from orange_cb_recsys.content_analyzer.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
     GensimLatentSemanticAnalysis, GensimRandomIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
@@ -22,7 +24,7 @@ from orange_cb_recsys.evaluation import RankingAlgEvalModel, KFoldPartitioning, 
     Serendipity
 from orange_cb_recsys.evaluation.eval_model import PredictionAlgEvalModel, ReportEvalModel
 from orange_cb_recsys.evaluation.prediction_metrics import RMSE, MAE
-from orange_cb_recsys.recsys import ClassifierRecommender, NXPageRank, IndexQuery, CentroidVector
+from orange_cb_recsys.recsys import ClassifierRecommender, NXPageRank, IndexQuery
 from orange_cb_recsys.recsys.ranking_algorithms.classifier import KNN, RandomForest, SVM, LogReg, DecisionTree, \
     GaussianProcess
 from orange_cb_recsys.utils.const import logger
@@ -41,6 +43,9 @@ with no arguments to add it permanently and also show in this file
 """
 
 runnable_instances = {
+    "field_config": FieldConfig,
+    "exogenous_config": ExogenousConfig,
+    "ratings_config": RatingsFieldConfig,
     "json": JSONFile,
     "csv": CSVFile,
     "sql": SQLDatabase,
@@ -66,7 +71,6 @@ runnable_instances = {
     "dbpedia_mapping": DBPediaMappingTechnique,
     "properties_from_dataset": PropertiesFromDataset,
     "synset_frequency": SynsetDocumentFrequency,
-    "centroid_vector": CentroidVector,
     "classifier": ClassifierRecommender,
     "knn": KNN,
     "random_forest": RandomForest,

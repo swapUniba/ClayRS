@@ -13,7 +13,7 @@ class TestEmbeddingTechnique(TestCase):
     def test_produce_content(self):
         technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="doc")
 
-        result = technique.produce_content("Embedding", "title plot")
+        result = technique.produce_content("title plot")
         expected = np.ndarray(shape=(25,))
         expected[:] = [7.88080007e-01, 2.99764998e-01, 4.93862494e-02, -2.96350002e-01,
                        3.28214996e-01, -8.11504990e-01, 1.06998003e+00, -2.28915006e-01,
@@ -27,7 +27,7 @@ class TestEmbeddingTechnique(TestCase):
 
         technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="word")
 
-        result = technique.produce_content("Embedding", "title plot")
+        result = technique.produce_content("title plot")
 
         expected = np.ndarray(shape=(2, 25))
         expected[0, :] = np.array([8.50130022e-01, 4.52620000e-01, -7.05750007e-03, -8.77380013e-01,
@@ -50,7 +50,7 @@ class TestEmbeddingTechnique(TestCase):
 
         technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="sentence")
 
-        result = technique.produce_content("Embedding", "god is great! i won lottery.")
+        result = technique.produce_content("god is great! i won lottery.")
         expected = np.ndarray(shape=(2, 25))
 
         expected[0, :] = [-3.76183331e-01, 1.54346665e-01, -2.88810000e-01, -7.58733253e-02,

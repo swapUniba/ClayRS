@@ -9,7 +9,7 @@ class TestBabelPyEntityLinking(TestCase):
         babelfy_dict = {'bn:00076732n': 0.0}
         babel = BabelPyEntityLinking()
         babel.lang = 'EN'
-        content = babel.produce_content("provaEL", str_)
+        content = babel.produce_content(str_)
         if content is not None:
             features = content.value
             for key in features:

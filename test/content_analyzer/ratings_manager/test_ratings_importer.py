@@ -15,7 +15,6 @@ class TestRatingsImporter(TestCase):
         except FileNotFoundError:
             file_path = 'datasets/test_import_ratings.json'
 
-        print(file_path)
         RatingsImporter(source=JSONFile(file_path=file_path),
                         output_directory="test_ratings",
                         rating_configs=[

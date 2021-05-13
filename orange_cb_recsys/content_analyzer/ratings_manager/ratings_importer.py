@@ -1,7 +1,5 @@
 from typing import List
 
-import time
-
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
@@ -63,6 +61,9 @@ class RatingsImporter:
         self.__timestamp_field_name: str = timestamp_field_name
         self.__score_combiner = ScoreCombiner(score_combiner)
 
+        if not isinstance(self.__rating_configs, list):
+            self.__rating_configs = [self.__rating_configs]
+
         self.__columns: list = ["from_id", "to_id", "score", "timestamp"]
         for field in self.__rating_configs:
             self.__columns.append(field.field_name)
@@ -122,13 +123,13 @@ class RatingsImporter:
         if self.__file_name is not None:
             if not DEVELOPING:
                 ratings_frame.to_csv(
-                    "{}/ratings/{}_{}.csv".format(
-                        home_path, self.__file_name, int(time.time())),
+                    "{}/ratings/{}.csv".format(
+                        home_path, self.__file_name),
                     index=False, header=True)
             else:
                 ratings_frame.to_csv(
-                    "{}_{}.csv".format(
-                        self.__file_name, int(time.time())), index=False, header=True)
+                    "{}.csv".format(
+                        self.__file_name), index=False, header=True)
 
         return ratings_frame
 
