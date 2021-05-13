@@ -11,8 +11,8 @@ from orange_cb_recsys.evaluation.partitioning import KFoldPartitioning
 from orange_cb_recsys.evaluation.ranking_metrics import NDCG, Correlation
 from orange_cb_recsys.recsys import CosineSimilarity, ClassifierRecommender
 from orange_cb_recsys.recsys.config import RecSysConfig
-from orange_cb_recsys.recsys.ranking_algorithms.centroid_vector import CentroidVector
-from orange_cb_recsys.recsys.ranking_algorithms.classifier import SVM
+from orange_cb_recsys.recsys.ContentBasedAlgorithm import CentroidVector
+from orange_cb_recsys.recsys.ContentBasedAlgorithm.content_based_ranking.classifier import SVM
 
 ratings_filename = 'datasets/examples/new_ratings.csv'
 users_dir = 'contents/examples/ex_1/users_1600355755.1935306'
