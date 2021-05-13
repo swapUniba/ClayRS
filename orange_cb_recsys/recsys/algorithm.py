@@ -1,84 +1,54 @@
+import abc
 from abc import ABC
-from typing import Dict, List
-import pandas as pd
+from typing import List
 
-from orange_cb_recsys.content_analyzer.content_representation.content import Content
+import pandas as pd
 
 
 class Algorithm(ABC):
     """
-    Abstract class for the algorithms
-    Args:
-        item_field (str): Field on which execute the algorithm
-        item_field_representation (str): Field representation to consider
-        additional_item_fields (Dict<str, str>)
-        additional_user_fields (Dict<str, str>)
+    Abstract class for an Algorithm
     """
-    def __init__(self, item_field: str, item_field_representation: str,
-                 additional_item_fields: Dict[str, str] = None,
-                 additional_user_fields: Dict[str, str] = None):
-        super().__init__()
-        if additional_item_fields is None:
-            additional_item_fields = {}
-        if additional_user_fields is None:
-            additional_user_fields = {}
-        self.__additional_item_fields = additional_item_fields
-        self.__additional_user_fields = additional_user_fields
-        self.__item_field: str = item_field
-        self.__item_field_representation: str = item_field_representation
 
-    def append_item_field(self, field: str, field_representation: str):
-        self.__additional_item_fields[field] = field_representation
-
-    def append_user_field(self, field: str, field_representation: str):
-        self.__additional_user_fields[field] = field_representation
-
-    @property
-    def additional_item_fields(self):
-        return self.__additional_item_fields
-
-    @property
-    def additional_user_fields(self):
-        return self.__additional_user_fields
-
-    @property
-    def item_field(self):
-        return self.__item_field
-
-    @property
-    def item_field_representation(self):
-        return self.__item_field_representation
-
-    @item_field.setter
-    def item_field(self, item_field: str):
-        self.__item_field = item_field
-
-    @item_field_representation.setter
-    def item_field_representation(self, item_field_representation: str):
-        self.__item_field_representation = item_field_representation
-
-
-class RankingAlgorithm(Algorithm):
-    """
-    Abstract class for the ranking algorithms
-    """
-    def predict(self, user_id: str, ratings: pd.DataFrame, recs_number: int, items_directory: str,
-                candidate_item_id_list: List = None):
+    @abc.abstractmethod
+    def initialize(self, **kwargs):
         """
-        Args:
-            candidate_item_id_list: list of the items that can be recommended, if None
-                all unrated items will be used
-            user_id: user for which recommendations will be computed
-            recs_number (list[Content]): How long the ranking will be
-            ratings (pd.DataFrame): ratings of the user with id equal to user_id
-            items_directory (str): Name of the directory where the items are stored.
+        Method to call right after the instantiation of the algorithm.
+
+        Must be defined for every type of algorithm implemented, its task is to pass important parameters
+        to the algorithm, such as the graph for the graph-based algorithms, or the ratings, items path and
+        user path for the content-based algorithms
         """
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
+        """
+        Method which predicts the ratings of a user for the unrated items.
 
-class ScorePredictionAlgorithm(Algorithm):
-    """
-    Abstract class for the score prediction algorithms
-    """
-    def predict(self, user_id: str, items: List[Content], ratings: pd.DataFrame, items_directory: str):
+        If the 'filter_list' parameter is passed then the rating is predicted for those items,
+        otherwise all unrated items will be predicted.
+
+        Args:
+            user_id (str): user for which the predictions will be calculated
+            filter_list (list): list of items that will be predicted. If None,
+                all items will be predicted
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
+        """
+        Method which predicts the ratings of a user for the unrated items and ranks them.
+
+        If recs_number parameter is specified, only the top-n items are shown, where n is the recs_number.
+
+        If the 'filter_list' parameter is passed then the rating is predicted for those items,
+        otherwise all unrated items will be predicted and ranked.
+        Args:
+            user_id (str): user for which the rank will be calculated
+            recs_number (int): number of the top items that will be present in the ranking
+            filter_list (list): list of items that will be ranked. If None,
+                all items will be ranked
+        """
         raise NotImplementedError
