@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from orange_cb_recsys.content_analyzer.content_representation.content_field import FeaturesBagField
+from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.\
     field_content_production_technique import TfIdfTechnique
 from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import IndexInterface

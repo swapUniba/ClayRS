@@ -1,8 +1,112 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union
+import numpy as np
 
-from orange_cb_recsys.content_analyzer.content_representation.content_field import ContentField
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
+
+
+class FieldRepresentation(ABC):
+    """
+    Abstract class that generalizes the concept of "field representation",
+    a field representation is a semantic way to represent a field of an item.
+    """
+
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def value(self):
+        raise NotImplementedError
+
+
+class FeaturesBagField(FieldRepresentation):
+    """
+    Class for field representation using a bag of features.
+    This class can also be used to represent a bag of words: <keyword, score>;
+    this representation is produced by the EntityLinking and tf-idf techniques
+
+    Args:
+        features (dict<str, object>): the dictionary where features are stored
+    """
+
+    def __init__(self, features: Dict[str, object] = None):
+        super().__init__()
+        if features is None:
+            features = {}
+        self.__features: Dict[str, object] = features
+
+    @property
+    def value(self) -> Dict[str, object]:
+        """
+        Get the features dict
+
+        Returns:
+            features (dict<str, object>): the features dict
+        """
+        return self.__features
+
+    def __str__(self):
+        return "\n %s" % str(self.__features)
+
+    def __eq__(self, other):
+        return self.__features == other.__features
+
+
+class StringField(FieldRepresentation):
+    """
+    Class for field with no complex representation.
+
+    Args:
+        value (str): string representing the value of the field
+    """
+
+    def __init__(self, value: str = None):
+        super().__init__()
+        self.__value: str = value
+
+    @property
+    def value(self) -> str:
+        return self.__value
+
+    def __str__(self):
+        return "\n %s" % str(self.__value)
+
+    def __eq__(self, other):
+        return self.__value == other.__value
+
+
+class EmbeddingField(FieldRepresentation):
+    """
+    Class for field representation using embeddings (dense numeric vectors)
+    this representation is produced by the EmbeddingTechnique.
+
+    Examples:
+        shape (4) = [x,x,x,x]
+        shape (2,2) = [[x,x],
+                       [x,x]]
+
+    Args:
+        embedding_array (np.ndarray): embeddings array,
+            it can be of different shapes according to the granularity of the technique
+    """
+
+    def __init__(self, embedding_array: np.ndarray):
+        super().__init__()
+        self.__embedding_array: np.ndarray = embedding_array
+
+    @property
+    def value(self) -> np.ndarray:
+        return self.__embedding_array
+
+    def __str__(self):
+        return " \n %s" % str(self.__embedding_array)
+
+    def __eq__(self, other):
+        return self.__embedding_array == other.__embedding_array
 
 
 class ExogenousPropertiesRepresentation(ABC):
@@ -46,15 +150,19 @@ class Content:
     Class that represents a content. A content can be an item or a user.
     A content is identified by a string id and is composed by different fields and different exogenous representations.
 
+    The fields and the exogenous representations are stored as Representation Containers and they should not be
+    available to the end user. Methods that return Representation Containers must be exclusively used for internal
+    purposes.
+
     Args:
         content_id (str): string identifier
-        field_dict (dict[str, ContentField]): dictionary containing the fields instances for the content,
+        field_dict (dict[str, RepresentationContainer]): dictionary containing the fields instances for the content,
             and their name as dictionary key
         exogenous_rep_container (RepresentationContainer): different representations of content obtained
             using ExogenousPropertiesRetrieval
     """
     def __init__(self, content_id: str,
-                 field_dict: Dict[str, ContentField] = None,
+                 field_dict: Dict[str, RepresentationContainer] = None,
                  exogenous_rep_container: RepresentationContainer = None):
         if field_dict is None:
             field_dict = {}       # list o dict
@@ -62,7 +170,7 @@ class Content:
             exogenous_rep_container = RepresentationContainer()
 
         self.__content_id: str = content_id
-        self.__field_dict: Dict[str, ContentField] = field_dict
+        self.__field_dict: Dict[str, RepresentationContainer] = field_dict
         self.__exogenous_rep_container: RepresentationContainer = exogenous_rep_container
         self.__index_document_id: int = None  # to be removed
 
@@ -95,7 +203,7 @@ class Content:
         """
         return self.__exogenous_rep_container
 
-    def append_field(self, field_name: str, field: ContentField):
+    def append_field(self, field_name: str, field: RepresentationContainer):
         """
         Sets a specific field for the content
 
@@ -105,7 +213,7 @@ class Content:
         """
         self.__field_dict[field_name] = field
 
-    def get_field(self, field_name: str) -> ContentField:
+    def get_field(self, field_name: str) -> RepresentationContainer:
         """
         Getter for the ContentField of a specific field_name
 
@@ -123,10 +231,49 @@ class Content:
         """
         self.__field_dict.pop(field_name)
 
+    def append_field_representation(self, field_name: str, representation: FieldRepresentation,
+                                    representation_id: str = None):
+        """
+        Adds the given representation to the specific field_name with an external_id corresponding to the representation
+        id (if passed). If the field name is not in the content, it will be added.
+
+        Args:
+            field_name (str): field_name to which the specific representation will be added
+            representation (FieldRepresentation): field representation's content
+            representation_id (str): name of the field representation
+        """
+        if field_name not in self.__field_dict.keys():
+            self.__field_dict[field_name] = RepresentationContainer()
+        self.__field_dict[field_name].append(representation, representation_id)
+
+    def get_field_representation(self, field_name: str, representation_id: Union[int, str]) -> FieldRepresentation:
+        """
+        Getter for the FieldRepresentation instance of a specific field representation name
+
+        Args:
+            field_name (str): field_name from which the specific representation will be extracted
+            representation_id (Union[int, str]): id of the specific representation (either the internal or external id)
+
+        Returns:
+            FieldRepresentation: instance of the representation for the name passed as argument
+        """
+        return self.__field_dict[field_name][representation_id]
+
+    def remove_field_representation(self, field_name: str, representation_id: Union[int, str]):
+        """
+        Removes a specific representation, identified by the id passed as argument (either internal or external id),
+        from a specific field, identified by the field name passed as argument
+
+        Args:
+            field_name (str): field_name from which the specific representation will be removed
+            representation_id (Union[int, str]): id of the specific representation (either the internal or external id)
+        """
+        self.__field_dict[field_name].pop(representation_id)
+
     def append_exogenous(self, exogenous_properties: ExogenousPropertiesRepresentation, exo_name: str = None):
         """
-        Sets a specific exogenous representation for the content
-
+        Sets a specific exogenous representation for the content. If an exo_name is defined, it will be added
+        as external_id to the representation
 
         Args:
             exo_name (str): name of the representation, it can be used to refer to the representation

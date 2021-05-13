@@ -87,7 +87,7 @@ class RepresentationContainer:
         Method used to append a list of representations (or a single representation) and their list of
         external_ids (or a single external_id) to the main dataframe. In order to do so, a new dataframe is created
         for the arguments passed by the user and it will be appended to the original dataframe. The logic behind the
-        creation of the dataframe is the same as the constructor with only one difference: the internal_id index is
+        creation of the dataframe is the same as the constructor, with only one difference: the internal_id index is
         generated from the original dataframe one (so that the internal_ids are consecutive).
 
         Args:
@@ -139,8 +139,7 @@ class RepresentationContainer:
         """
         Access a specific representation using an index value. The index value can be either string or integer,
         if it is an integer, it means that it is referring to the 'internal_id' index, otherwise if it is a string,
-        it means that it is referring to the 'external_id' index. If the value is nor a string nor an integer,
-        a ValueError exception is thrown.
+        it means that it is referring to the 'external_id' index.
 
         Args:
             item (Union[str, int]): value used to refer to a specific representation by accessing the index columns

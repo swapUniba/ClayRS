@@ -5,8 +5,8 @@ import nltk
 import numpy as np
 
 from nltk.tokenize import sent_tokenize
-from orange_cb_recsys.content_analyzer.content_representation. \
-    content_field import FieldRepresentation, FeaturesBagField, EmbeddingField
+from orange_cb_recsys.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField,\
+    EmbeddingField
 from orange_cb_recsys.content_analyzer.information_processor. \
     information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import IndexInterface

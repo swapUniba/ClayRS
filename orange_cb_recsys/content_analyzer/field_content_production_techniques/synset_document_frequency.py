@@ -13,7 +13,7 @@ try:
 except LookupError:
     nltk.download('punkt')
 
-from orange_cb_recsys.content_analyzer.content_representation.content_field import FeaturesBagField
+from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import SingleContentTechnique
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 from pywsd import disambiguate

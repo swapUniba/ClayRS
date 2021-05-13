@@ -7,7 +7,7 @@ import numpy as np
 from orange_cb_recsys.content_analyzer.config import ExogenousConfig
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, ContentAnalyzerConfig, FieldConfig
-from orange_cb_recsys.content_analyzer.content_representation.content_field import StringField, FeaturesBagField, \
+from orange_cb_recsys.content_analyzer.content_representation.content import StringField, FeaturesBagField, \
     EmbeddingField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import EmbeddingTechnique, \
     Centroid, GensimDownloader

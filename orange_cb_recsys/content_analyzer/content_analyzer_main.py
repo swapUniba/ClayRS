@@ -7,8 +7,7 @@ import os
 import numpy as np
 
 from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig, FieldConfig
-from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.content_analyzer.content_representation.content_field import ContentField, StringField, \
+from orange_cb_recsys.content_analyzer.content_representation.content import Content, StringField, \
     FeaturesBagField, EmbeddingField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques. \
     field_content_production_technique import CollectionBasedTechnique, SingleContentTechnique, SearchIndexing
@@ -219,7 +218,7 @@ class ContentsProducer:
                 field_representations.append(self.__decode_field_data(field_data))
 
         # produce representations
-        field = ContentField(RepresentationContainer(field_representations, field_representations_names))
+        field = RepresentationContainer(field_representations, field_representations_names)
 
         return field
 
