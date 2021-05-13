@@ -1,41 +1,51 @@
-from orange_cb_recsys.recsys.algorithm import RankingAlgorithm, ScorePredictionAlgorithm
+from abc import ABC
 
-from orange_cb_recsys.utils.load_ratings import load_ratings
+from orange_cb_recsys.recsys.algorithm import Algorithm
+from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 import pandas as pd
 
 
-class RecSysConfig:
+class RecSysConfig(ABC):
     """
-    Configuration for the recommender system
+    Configuration for the recommender system.
+    Every type of RecSys needs to specify an algorithm to use.
+
     Args:
-        users_directory (str): Path to the directory in which the users are stored
-        items_directory (str): Path to the directory in which the items are stored
-        score_prediction_algorithm (ScorePredictionAlgorithm): Score prediction algorithm to use
-        ranking_algorithm (RankingAlgorithm): Ranking algorithm to use
-        rating_frame: Can be the path to the directory in which the ratings .csv is stored, or a DataFrame
-            that contains the ratings
+        algorithm (Algorithm): algorithm to use
     """
-    def __init__(self, users_directory: str,
+
+    def __init__(self, algorithm: Algorithm):
+        self.__alg = algorithm
+
+    @property
+    def algorithm(self):
+        return self.__alg
+
+
+class ContentBasedConfig(RecSysConfig):
+    """
+    Configuration for a content-based recommender system
+    Args:
+        algorithm (ContentBasedAlgorithm): content-based algorithm to use
+        rating_frame (pd.DataFrame): DataFrame containing all the ratings of the users
+        items_directory (str): Path to the directory in which the items are stored
+        users_directory (str): Path to the directory in which the users are stored. It's optional since
+            many content-based algorithms don't use users information
+    """
+    def __init__(self,
+                 algorithm: ContentBasedAlgorithm,
+                 rating_frame: pd.DataFrame,
                  items_directory: str,
-                 score_prediction_algorithm: ScorePredictionAlgorithm = None,
-                 ranking_algorithm: RankingAlgorithm = None,
-                 rating_frame=None):
-        self.__users_directory: str = users_directory
-        self.__items_directory: str = items_directory
-
-        self.__score_prediction_algorithm: ScorePredictionAlgorithm = score_prediction_algorithm
-        self.__ranking_algorithm: RankingAlgorithm = ranking_algorithm
-
-        if self.__score_prediction_algorithm is None and self.__ranking_algorithm is None:
-            raise ValueError("You must set at least one algorithm")
-
-        if type(rating_frame) is str:
-            self.__rating_frame = load_ratings(rating_frame)
-        else:
-            self.__rating_frame = rating_frame
-
-        self.__rating_frame['score'] = pd.to_numeric(self.__rating_frame["score"], downcast="float")
+                 users_directory: str = None):
+        self.__rating_frame = rating_frame
+        self.__items_directory = items_directory
+        self.__users_directory = users_directory
+        super().__init__(algorithm)
+        # Pass arguments to the algorithm
+        algorithm.initialize(rating_frame, items_directory, users_directory)
 
     @property
     def users_directory(self):
@@ -46,33 +56,25 @@ class RecSysConfig:
         return self.__items_directory
 
     @property
-    def score_prediction_algorithm(self):
-        return self.__score_prediction_algorithm
-
-    @property
-    def ranking_algorithm(self):
-        return self.__ranking_algorithm
-
-    @property
     def rating_frame(self):
         return self.__rating_frame
 
-    @users_directory.setter
-    def users_directory(self, users_directory: str):
-        self.__users_directory = users_directory
 
-    @ranking_algorithm.setter
-    def ranking_algorithm(self, ranking_algorithm: str):
-        self.__ranking_algorithm = ranking_algorithm
+class GraphBasedConfig(RecSysConfig):
+    """
+    Configuration for a graph-based recommender system
+    Args:
+        algorithm (GraphBasedAlgorithm): graph-based algorithm to use
+        graph (FullGraph): graph to use for calculating prediction and recommendation
+    """
+    def __init__(self,
+                 algorithm: GraphBasedAlgorithm,
+                 graph: FullGraph):
+        self.__graph = graph
+        super().__init__(algorithm)
+        # Pass arguments to the algorithm
+        algorithm.initialize(graph)
 
-    @score_prediction_algorithm.setter
-    def score_prediction_algorithm(self, score_prediction_algorithm: str):
-        self.__score_prediction_algorithm = score_prediction_algorithm
-
-    @items_directory.setter
-    def items_directory(self, items_directory: str):
-        self.__items_directory = items_directory
-
-    @rating_frame.setter
-    def rating_frame(self, rating_frame: str):
-        self.__rating_frame = rating_frame
+    @property
+    def graph(self):
+        return self.__graph
