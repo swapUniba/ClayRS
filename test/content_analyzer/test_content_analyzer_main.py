@@ -4,7 +4,7 @@ import lzma
 import pickle
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.config import ExogenousConfig
+from orange_cb_recsys.content_analyzer.config import ExogenousConfig, ItemAnalyzerConfig
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, ContentAnalyzerConfig, FieldConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import StringField, FeaturesBagField, \
@@ -28,7 +28,7 @@ class TestContentsProducer(TestCase):
     def test_create_content(self):
         plot_config = FieldConfig(BabelPyEntityLinking())
         exogenous_config = ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'))
-        content_analyzer_config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test")
+        content_analyzer_config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test")
         content_analyzer_config.append_field_config("Plot", plot_config)
         content_analyzer_config.append_exogenous_config(exogenous_config)
         content_analyzer = ContentAnalyzer(content_analyzer_config)
@@ -48,16 +48,16 @@ class TestContentsProducer(TestCase):
         field_dict["test"] = config_list
 
         with self.assertRaises(ValueError):
-            config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test", False, field_dict)
+            config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False, field_dict)
             ContentAnalyzer(config).fit()
 
         with self.assertRaises(ValueError):
-            config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test", False)
+            config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False)
             config.set_field_config_list("test", config_list)
             ContentAnalyzer(config).fit()
 
         with self.assertRaises(ValueError):
-            config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test", False)
+            config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False)
             config.append_field_config("test", config_1)
             config.append_field_config("test", config_2)
             ContentAnalyzer(config).fit()
@@ -73,19 +73,18 @@ class TestContentsProducer(TestCase):
         exogenous_representation_list = [config_1, config_2]
 
         with self.assertRaises(ValueError):
-            config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test", False,
-                                           exogenous_representation_list=exogenous_representation_list)
+            config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False,
+                                        exogenous_representation_list=exogenous_representation_list)
             ContentAnalyzer(config).fit()
 
         with self.assertRaises(ValueError):
-            config = ContentAnalyzerConfig('ITEM', JSONFile(filepath), ["imdbID"], "movielens_test", False)
+            config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False)
             config.append_exogenous_config(config_1)
             config.append_exogenous_config(config_2)
             ContentAnalyzer(config).fit()
 
     def test_create_content_tfidf(self):
-        movies_ca_config = ContentAnalyzerConfig(
-            content_type='Item',
+        movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(filepath),
             id='imdbID',
             output_directory="movielens_test_tfidf",
@@ -99,8 +98,7 @@ class TestContentsProducer(TestCase):
         content_analyzer.fit()
 
     def test_create_content_embedding(self):
-        movies_ca_config = ContentAnalyzerConfig(
-            content_type='Item',
+        movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(filepath),
             id=['imdbID'],
             output_directory="movielens_test_embedding",
@@ -125,8 +123,7 @@ class TestContentsProducer(TestCase):
             filepath = 'datasets/test_decode/movies_title_string.json'
             test_dir = 'datasets/test_decode/'
 
-        movies_ca_config = ContentAnalyzerConfig(
-            content_type='Item',
+        movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(filepath),
             id=['imdbID'],
             output_directory=test_dir + 'movies_string_'
@@ -159,8 +156,7 @@ class TestContentsProducer(TestCase):
             filepath = 'datasets/test_decode/movies_title_tfidf.json'
             test_dir = 'datasets/test_decode/'
 
-        movies_ca_config = ContentAnalyzerConfig(
-            content_type='Item',
+        movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(filepath),
             id=['imdbID'],
             output_directory=test_dir + 'movies_tfidf_'
@@ -192,8 +188,7 @@ class TestContentsProducer(TestCase):
             filepath = 'datasets/test_decode/movies_title_embedding.json'
             test_dir = 'datasets/test_decode/'
 
-        movies_ca_config = ContentAnalyzerConfig(
-            content_type='Item',
+        movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(filepath),
             id=['imdbID'],
             output_directory=test_dir + 'movies_embedding_'

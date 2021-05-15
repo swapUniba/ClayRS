@@ -1,55 +1,21 @@
 [
   {
-  "content_type": "ITEM",
+  "module": "item_analyzer",
+  "source": {"class": "json", "file_path": "../../datasets/movies_info_reduced"},
   "output_directory": "movielens_test",
-  "raw_source_path": "../../datasets/movies_info_reduced.json",
-  "source_type": "json",
-  "id_field_name": ["imdbID", "Title"],
-  "search_index": "True",
-  "fields": [
-    {
-      "field_name": "Plot",
-      "lang": "EN",
-      "memory_interface": "None",
-      "memory_interface_path": "None",
-      "pipeline_list": [
-        {
-        "field_content_production": {"class": "search_index"},
-        "preprocessing_list": [
-          ]
-        },
-        {
-        "field_content_production": {"class": "lucene_tf-idf"},
-        "preprocessing_list": [
-          {"class": "nltk", "lemmatization": "True"}
-          ]
-        }
-      ]
-    }
-  ]
+  "id": "imdbID",
+  "field_dict": {"Plot": [{"class": "field_config", "content_technique": {"class": "search_index"},
+                                     "preprocessing": {}, "id": "test"},
+                                    {"class": "field_config", "content_technique": {"class": "whoosh_tf-idf"},
+                                     "preprocessing": {"class": "nltk", "lemmatization": "True"}}]}
   },
+
   {
-    "content_type": "USER",
+    "module": "user_analyzer",
     "output_directory": "users_test",
-    "raw_source_path": "../../datasets/users_info.json",
-    "source_type": "json",
-    "id_field_name": ["user_id"],
-    "search_index": "False",
-    "fields": [
-    {
-      "field_name": "name",
-      "search_index": "False",
-      "memory_interface": "None",
-      "memory_interface_path": "None",
-      "pipeline_list": [
-        {
-        "field_content_production": "None",
-        "preprocessing_list": [
-          {"class": "nltk", "url_tagging":"True", "strip_multiple_whitespaces": "True"}
-          ]
-        }
-      ]
-    }
-  ]
+    "source": {"class": "json", "file_path": "../../datasets/user_info"},
+    "id": "user_id",
+    "output_directory": "user_test_script",
+    "field_dict": {"name": [{"class": "field_config", "preprocessing":{"class": "nltk", "url_tagging":"True", "strip_multiple_whitespaces": "True"},"id": "test"}]}
   }
 ]

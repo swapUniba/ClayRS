@@ -154,7 +154,7 @@ def __extract_parameters(config_dict: Dict, class_instance) -> dict:
         raise e
 
 
-def __content_config_run(content_config: Dict):
+def __content_config_run(content_config: Dict, module: str):
     """
     Method that extracts the parameters for the creation and fitting of a Content Analyzer
 
@@ -163,14 +163,16 @@ def __content_config_run(content_config: Dict):
             represents the config of the Content Analyzer
     """
     try:
-        content_analyzer_config = ContentAnalyzerConfig(**__extract_parameters(content_config, ContentAnalyzerConfig))
-        content_analyzer = ContentAnalyzer(content_analyzer_config)
-        content_analyzer.fit()
+        content_analyzer_class = runnable_instances[module]
+
+        content_analyzer_parameters = __extract_parameters(content_config, content_analyzer_class)
+        content_config = content_analyzer_class(**content_analyzer_parameters)
+        ContentAnalyzer(content_config).fit()
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
 
 
-def __rating_config_run(config_dict: Dict):
+def __rating_config_run(config_dict: Dict, module: str):
     """
     Method that extracts the parameters for the creation of a Ratings Importer and saves the DataFrame produced by
     the method import_ratings()
@@ -180,13 +182,14 @@ def __rating_config_run(config_dict: Dict):
             represents the config of the Ratings Importer
     """
     try:
-        ratings_parameters = __extract_parameters(config_dict, RatingsImporter)
-        RatingsImporter(**ratings_parameters).import_ratings()
+        rating_config_class = runnable_instances[module]
+        ratings_parameters = __extract_parameters(config_dict, rating_config_class)
+        rating_config_class(**ratings_parameters).import_ratings()
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
 
 
-def __recsys_config_run(config_dict: Dict) -> RecSysConfig:
+def __recsys_config_run(config_dict: Dict, recsys_config_module: str) -> RecSysConfig:
     """
     Method that extracts the parameters for the creation of a Recsys Config.
 
@@ -206,7 +209,8 @@ def __recsys_config_run(config_dict: Dict) -> RecSysConfig:
         recsys_config (RecSysConfig): instance of the RecSysConfig instantiated from the extracted parameters
     """
     try:
-        recsys_config_parameters = list(signature(RecSysConfig.__init__).parameters.keys())
+        recsys_config_class = runnable_instances[recsys_config_module]
+        recsys_config_parameters = list(signature(recsys_config_class.__init__).parameters.keys())
         recsys_config_parameters.remove("self")
 
         # extracts the parameters for the Recsys config from the dictionary passed as an argument
@@ -219,30 +223,31 @@ def __recsys_config_run(config_dict: Dict) -> RecSysConfig:
             config_dict.pop(recsys_config_parameter)
 
         recsys_parameters = __extract_parameters(recsys_config_dict, RecSysConfig)
-        recsys_config = RecSysConfig(**recsys_parameters)
+        recsys_config = recsys_config_class(**recsys_parameters)
         return recsys_config
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
 
 
-def __recsys_run(config_dict: Dict) -> list:
+def __recsys_run(config_dict: Dict, module: str):
     """
     Method that extracts the parameters for the creation of a Recsys. Also it allows
     to define what kind of ranking or predictions the user wants from the recommender system. In order to do so,
     two additional parameters (not in the RecSys class constructor) are considered, the first being the
     'predictions' parameter containing a list of parameters for the prediction algorithm, the second is
-    'rankings' which works as the first one but for the ranking algorithm.
+    'rankings' which works as the first one but for the ranking algorithm. Saves the ranking and the prediction's
+    results in two different csv files.
 
     Args:
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it represents
             the config of the predictions or rankings the user wants to run
-
-    Returns:
-        recsys_results (list): list containing two lists where the first one contains the results for the prediction
-        algorithm and the second one contains the results for the ranking algorithm
     """
     try:
-        recsys_config = __recsys_config_run(config_dict)
+        path_ranking = config_dict.pop('path_ranking')
+        path_prediction = config_dict.pop('path_prediction')
+        recsys_config_module = config_dict.pop('recsys_config_module')
+        recsys_config = __recsys_config_run(config_dict, recsys_config_module)
+
         config_dict["config"] = recsys_config
 
         # prediction and ranking parameters are extracted and the 'predictions' and 'rankings' keys are removed
@@ -263,62 +268,74 @@ def __recsys_run(config_dict: Dict) -> list:
                 ranking_parameters.append(ranking)
             config_dict.pop('rankings')
 
-        recsys = RecSys(**__extract_parameters(config_dict, RecSys))
+        recsys_parameters = __extract_parameters(config_dict, RecSys)
+        recsys = RecSys(**recsys_parameters)
 
         # predictions and rankings are computed and stored in two separate lists
         prediction_results = []
-        for prediction in prediction_parameters:
-            prediction_results.append(recsys.fit_predict(**__extract_parameters(prediction, recsys.fit_predict)))
-
         ranking_results = []
-        for ranking in ranking_parameters:
-            ranking_results.append(recsys.fit_ranking(**__extract_parameters(ranking, recsys.fit_ranking)))
-
-        recsys_results = list()
-        recsys_results.append(prediction_results)
-        recsys_results.append(ranking_results)
-        return recsys_results
+        # sets up a multi-index dataframe for the ranking dividing each run of different algorithms using a number to
+        # identify each one
+        for i, ranking in enumerate(ranking_parameters):
+            result = recsys.fit_ranking(**__extract_parameters(ranking, recsys.fit_ranking))
+            result['alg_number'] = [i] * len(result)
+            result['number'] = result.index
+            result.set_index(['alg_number', 'number'], inplace=True)
+            ranking_results.append(result)
+        # works as the algorithm above but it sets up a dataframe for the prediction
+        for i, prediction in enumerate(prediction_parameters):
+            result = recsys.fit_predict(**__extract_parameters(prediction, recsys.fit_predict))
+            result['alg_number'] = [i] * len(result)
+            result['number'] = result.index
+            result.set_index(['alg_number', 'number'], inplace=True)
+            prediction_results.append(result)
+        # transforms the ranking results in a dataframe that is then stored in a csv file
+        if len(ranking_results) != 0:
+            ranking_results = pd.concat(ranking_results)
+            ranking_results.to_csv(path_ranking)
+        # transforms the prediction results in a dataframe that is then stored in a csv file
+        if len(prediction_results) != 0:
+            prediction_results = pd.concat(prediction_results)
+            prediction_results.to_csv(path_prediction)
 
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
 
 
-def __eval_config_run(config_dict: Dict) -> pd.DataFrame():
+def __eval_config_run(config_dict: Dict, module: str):
     """
     Method that extracts the parameters for the creation of a Eval Model. In order to define what kind of eval_model
     has to be run and the parameters for said model (ranking_alg, prediction_alg, report, ...), an additional parameter
     is added to the config_dict, that being 'eval_type'. This allows the user to define what kind of eval model has to
-    be used (available in the runnable_instances file)
+    be used (available in the runnable_instances file). The results are stored in a csv file.
 
     Args:
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it represents
         the config for the Eval Model
-    Returns:
-        eval_results (pd.DataFrame): dataframe containing the results for the eval process for the metrics defined in
-        the metric_list
     """
     try:
-        recsys_config = __recsys_config_run(config_dict)
+        eval_path = config_dict.pop('path_eval')
+        recsys_config_module = config_dict.pop('recsys_config_module')
+        recsys_config = __recsys_config_run(config_dict, recsys_config_module)
         config_dict["config"] = recsys_config
-
-        if "eval_type" not in config_dict.keys():
-            raise KeyError("Eval model class type must be defined in order to use the module")
-        eval_class = config_dict.pop("eval_type").lower()
-        eval_class = runnable_instances[eval_class]
+        eval_class = runnable_instances[module]
 
         eval_parameters = __extract_parameters(config_dict, eval_class)
         eval_model = eval_class(**eval_parameters)
-        return eval_model.fit()
+        (eval_model.fit()).to_csv(eval_path)
 
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
 
 
 implemented_modules = {
-    "content_analyzer": __content_config_run,
-    "ratings": __rating_config_run,
+    "item_analyzer": __content_config_run,
+    "user_analyzer": __content_config_run,
     "recsys": __recsys_run,
-    "eval": __eval_config_run
+    "ratings": __rating_config_run,
+    "ranking_alg_eval_model": __eval_config_run,
+    "prediction_alg_eval_model": __eval_config_run,
+    "report_eval_model": __eval_config_run
 }
 
 
@@ -347,26 +364,17 @@ def script_run(config_list_dict: Union[dict, list]):
         if not all(isinstance(config_dict, dict) for config_dict in config_list_dict):
             raise ValueError("The list in the script must contain dictionaries only")
 
-        script_results = []
         for config_dict in config_list_dict:
 
             if "module" in config_dict.keys():
                 if config_dict["module"] in implemented_modules:
-                    module = config_dict.pop("module")
-                    returned_results = implemented_modules[module](config_dict)
-                    if returned_results is not None:
-                        if isinstance(returned_results, list):
-                            for returned_result in returned_results:
-                                script_results.append(returned_result)
-                        else:
-                            script_results.append(returned_results)
+                    module = config_dict.pop("module").lower()
+                    implemented_modules[module](config_dict, module)
                 else:
                     raise ValueError("You must specify a valid module: " + str(implemented_modules.keys()))
             else:
                 raise KeyError("A 'module' parameter must be specified and the value must be one of the following: " +
                                str(implemented_modules.keys()))
-
-        return script_results
 
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
@@ -385,4 +393,4 @@ if __name__ == "__main__":
     else:
         raise ValueError("Wrong file extension")
 
-    results = script_run(extracted_data)
+    script_run(extracted_data)

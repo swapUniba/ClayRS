@@ -1,3 +1,5 @@
+import abc
+from abc import ABC
 from typing import List, Dict, Union, Iterator
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
@@ -168,7 +170,7 @@ class ExogenousConfig:
                "\nExogenous Technique: " + str(self.__exogenous_technique) + " >"
 
 
-class ContentAnalyzerConfig:
+class ContentAnalyzerConfig(ABC):
     """
     Class that represents the configuration for the content analyzer. The configuration stores the data that
     will be used by the content analyzer main to create contents and process their fields with complex techniques
@@ -187,8 +189,7 @@ class ContentAnalyzerConfig:
             the contents
     """
 
-    def __init__(self, content_type: str,
-                 source: RawInformationSource,
+    def __init__(self, source: RawInformationSource,
                  id: Union[str, List[str]],
                  output_directory: str,
                  search_index=False,
@@ -200,7 +201,6 @@ class ContentAnalyzerConfig:
         if exogenous_representation_list is None:
             exogenous_representation_list = []
 
-        self.__content_type = content_type.lower()
         self.__source: RawInformationSource = source
         self.__id: List[str] = id
         self.__output_directory: str = output_directory
@@ -224,10 +224,6 @@ class ContentAnalyzerConfig:
         Getter for the output directory where the produced contents will be stored
         """
         return self.__output_directory
-
-    @property
-    def content_type(self):
-        return self.__content_type
 
     @property
     def id(self) -> List[str]:
@@ -308,12 +304,62 @@ class ContentAnalyzerConfig:
         """
         self.__exogenous_representation_list.append(exogenous_config)
 
+    @abc.abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class UserAnalyzerConfig(ContentAnalyzerConfig):
+    """
+        Class that represents the configuration for the content analyzer. The configuration stores the data that
+        will be used by the content analyzer main to create contents and process their fields with complex techniques.
+        In particular this class refers to users as the content.
+    """
+    def __init__(self, source: RawInformationSource,
+                 id: Union[str, List[str]],
+                 output_directory: str,
+                 search_index=False,
+                 field_dict: Dict[str, List[FieldConfig]] = None,
+                 exogenous_representation_list:
+                 Union[ExogenousConfig, List[ExogenousConfig]] = None):
+        super().__init__(source, id, output_directory, search_index, field_dict, exogenous_representation_list)
+
     def __str__(self):
         return str(self.__id)
 
     def __repr__(self):
-        msg = "< " + "ContentAnalyzerConfig:" +\
-              "\ncontent_type = " + str(self.__content_type) + ">" \
+        msg = "< " + "UserAnalyzerConfig:" +\
+              "\nid = " + str(self.__id) + "; " \
+              "\nsource = " + str(self.__source) + "; " \
+              "\nfield_dict = " + str(self.__field_dict) + "; " \
+              "\nexo_representation_list = " + str(self.__exogenous_representation_list) + " >"
+        return msg
+
+
+class ItemAnalyzerConfig(ContentAnalyzerConfig):
+    """
+        Class that represents the configuration for the content analyzer. The configuration stores the data that
+        will be used by the content analyzer main to create contents and process their fields with complex techniques.
+        In particular this class refers to items as the content.
+    """
+    def __init__(self, source: RawInformationSource,
+                 id: Union[str, List[str]],
+                 output_directory: str,
+                 search_index=False,
+                 field_dict: Dict[str, List[FieldConfig]] = None,
+                 exogenous_representation_list:
+                 Union[ExogenousConfig, List[ExogenousConfig]] = None):
+        super().__init__(source, id, output_directory, search_index, field_dict, exogenous_representation_list)
+
+    def __str__(self):
+        return str(self.__id)
+
+    def __repr__(self):
+        msg = "< " + "ItemAnalyzerConfig:" +\
               "\nid = " + str(self.__id) + "; " \
               "\nsource = " + str(self.__source) + "; " \
               "\nfield_dict = " + str(self.__field_dict) + "; " \
