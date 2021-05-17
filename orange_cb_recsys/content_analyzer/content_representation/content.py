@@ -50,7 +50,7 @@ class FeaturesBagField(FieldRepresentation):
         return self.__features
 
     def __str__(self):
-        return "\n %s" % str(self.__features)
+        return str(self.__features)
 
     def __eq__(self, other):
         return self.__features == other.__features
@@ -73,7 +73,7 @@ class StringField(FieldRepresentation):
         return self.__value
 
     def __str__(self):
-        return "\n %s" % str(self.__value)
+        return str(self.__value)
 
     def __eq__(self, other):
         return self.__value == other.__value
@@ -103,7 +103,7 @@ class EmbeddingField(FieldRepresentation):
         return self.__embedding_array
 
     def __str__(self):
-        return " \n %s" % str(self.__embedding_array)
+        return str(self.__embedding_array)
 
     def __eq__(self, other):
         return self.__embedding_array == other.__embedding_array
@@ -143,6 +143,9 @@ class PropertiesDict(ExogenousPropertiesRepresentation):
         Returns: features dictionary
         """
         return self.__features
+
+    def __str__(self):
+        return str(self.__features)
 
 
 class Content:
@@ -301,12 +304,20 @@ class Content:
         self.__exogenous_rep_container.pop(exo_name)
 
     def __str__(self):
-        content_string = "Content: %s" % self.__content_id
-        field_string = ''
-        for field, rep in self.__field_dict.items():
-            field_string += "\nField: %s %s" % (field, rep)
+        content_string = "Content: %s\n" % self.__content_id
+        if len(self.__exogenous_rep_container) != 0:
+            exo_string = "Exogenous representations: \n%s" % self.__exogenous_rep_container
+        else:
+            exo_string = "No exogenous representation for the Content"
 
-        return "%s \n\n %s \n##############################" % (content_string, field_string)
+        if len(self.__field_dict.items()) != 0:
+            field_string = ''
+            for field, rep in self.__field_dict.items():
+                field_string += "\nField: %s \n%s\n" % (field, rep)
+        else:
+            field_string = "No representation found for the Content fields"
+
+        return "%s\n%s\n%s\n##############################" % (content_string, exo_string, field_string)
 
     def __eq__(self, other):
         return self.__content_id == other.__content_id and self.__field_dict == other.__field_dict
