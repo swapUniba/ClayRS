@@ -269,40 +269,59 @@ class ContentAnalyzerConfig(ABC):
         """
         return list(self.__field_dict.keys())
 
-    def set_field_config_list(self, field_name: str, config_list: List[FieldConfig]):
+    def add_single_field(self, field_name: str, field_config: FieldConfig):
         """
-        Sets the value for a field_name in the field_dict with a config_list passed as argument
-
-        Args:
-            field_name (str): field_name for which the configuration list will be set in the field_dict
-            config_list (List[FieldConfig]): list of FieldConfigs that will be set for a specific field_name
-        """
-        self.__field_dict[field_name] = config_list
-
-    def append_field_config(self, field_name: str, field_config: FieldConfig):
-        """
-        Appends a specific FieldConfig passed as argument to the FieldConfigs list of the defined field_name.
-        If the field_name is not in the field_dict keys it means there is no list to append the FieldConfig to,
-        so a new list is instantiated
+        Adds a single FieldConfig passed as argument to the FieldConfigs list of the defined field_name.
 
         Args:
             field_name (str): field name for which the FieldConfig will be added to its config list in the field_dict
             field_config (FieldConfig): FieldConfig instance to append to the config list of the defined field
         """
-        if field_name in self.__field_dict.keys():
+        # If the field_name is not in the field_dict keys it means there is no list to append the FieldConfig to,
+        # so a new list is instantiated
+        if self.__field_dict.get(field_name) is not None:
             self.__field_dict[field_name].append(field_config)
         else:
             self.__field_dict[field_name] = list()
             self.__field_dict[field_name].append(field_config)
 
-    def append_exogenous_config(self, exogenous_config: ExogenousConfig):
+    def add_multiple_fields(self, field_name: str, config_list: List[FieldConfig]):
         """
-        Appends the Exogenous Config passed as argument to the exogenous representation list.
+        Adds multiple FieldConfig for a specific field
+
+        Useful when multiple representations must be specified at once for a field
+
+        Args:
+            field_name (str): field_name for which the configuration list will be set in the field_dict
+            config_list (List[FieldConfig]): list of FieldConfigs that will be added for a specific field_name
+        """
+        # If the field_name is not in the field_dict keys it means there is no list to append the FieldConfig to,
+        # so a new list is instantiated
+        if self.__field_dict.get(field_name) is not None:
+            self.__field_dict[field_name].extend(config_list)
+        else:
+            self.__field_dict[field_name] = list()
+            self.__field_dict[field_name].extend(config_list)
+
+    def add_single_exogenous(self, exogenous_config: ExogenousConfig):
+        """
+        Add the Exogenous Config passed as argument to the exogenous representation list.
 
         Args:
             exogenous_config (ExogenousConfig): exogenous config instance to append to the exogenous_representation_list
         """
         self.__exogenous_representation_list.append(exogenous_config)
+
+    def add_multiple_exogenous(self, config_list: List[ExogenousConfig]):
+        """
+        Adds multiple Exogenous Config passed as argument to the exogenous representation list.
+
+        Useful when multiple exogenous techniques must be specified at once
+
+        Args:
+            config_list (List[ExogenousConfig]): List of ExogenousConfig that will used to expand the Content
+        """
+        self.__exogenous_representation_list.extend(config_list)
 
     @abc.abstractmethod
     def __str__(self):
