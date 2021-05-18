@@ -7,9 +7,7 @@ import yaml
 import pandas as pd
 from inspect import signature, isclass
 
-from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnalyzer
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsImporter
 from orange_cb_recsys.recsys import RecSysConfig, RecSys
 
 DEFAULT_CONFIG_PATH = "web_GUI/app/configuration_files/config.json"
@@ -108,7 +106,7 @@ def __extract_parameters(config_dict: Dict, class_instance) -> dict:
         the final output will be:
 
         {"parameter_list_value": ["value1", "value2"], "parameter_dict_value": Class_from_alias(),
-        "parameter_str_value": "VALUE_str", "parameter_int_value": int_value
+        "parameter_str_value": "VALUE_str", "parameter_int_value": int_value}
 
     Args:
         config_dict (dict): dictionary representing the parameters for a method or class constructor
@@ -161,6 +159,7 @@ def __content_config_run(content_config: Dict, module: str):
     Args:
         content_config (dict): dictionary that represents a config defined in the config file, in this case it
             represents the config of the Content Analyzer
+        module (str): name of the config to instantiate for the Content Analyzer ("item_analyzer", for example)
     """
     try:
         content_analyzer_class = runnable_instances[module]
@@ -180,6 +179,7 @@ def __rating_config_run(config_dict: Dict, module: str):
     Args:
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it
             represents the config of the Ratings Importer
+        module (str): name of the Ratings Importer to instantiate ("ratings", for example)
     """
     try:
         rating_config_class = runnable_instances[module]
@@ -205,6 +205,7 @@ def __recsys_config_run(config_dict: Dict, recsys_config_module: str) -> RecSysC
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it represents
             the config of the recommender system and it can also contain other parameters from the main module
             who needed the recsys config
+        recsys_config_module (str): name of the RecSys config to instantiate ("recsys_config", for example)
     Returns:
         recsys_config (RecSysConfig): instance of the RecSysConfig instantiated from the extracted parameters
     """
@@ -233,20 +234,30 @@ def __recsys_run(config_dict: Dict, module: str):
     """
     Method that extracts the parameters for the creation of a Recsys. Also it allows
     to define what kind of ranking or predictions the user wants from the recommender system. In order to do so,
-    two additional parameters (not in the RecSys class constructor) are considered, the first being the
+    additional parameters (not in the RecSys class constructor) are considered. The first being the
     'predictions' parameter containing a list of parameters for the prediction algorithm, the second is
-    'rankings' which works as the first one but for the ranking algorithm. Saves the ranking and the prediction's
-    results in two different csv files.
+    'rankings' which works as the first one but for the ranking algorithm. There are also 'path_ranking' and
+    'path_prediction' that are used to define the path where the ranking and the prediction's results will be stored
+    (in two different csv files).
 
     Args:
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it represents
             the config of the predictions or rankings the user wants to run
+        module (str): name of the config to instantiate for the Recsys ("recsys_config", for example)
     """
     try:
-        path_ranking = config_dict.pop('path_ranking')
-        path_prediction = config_dict.pop('path_prediction')
-        recsys_config_module = config_dict.pop('recsys_config_module')
+        recsys_config_module = module
         recsys_config = __recsys_config_run(config_dict, recsys_config_module)
+
+        if 'path_ranking' in config_dict.keys():
+            ranking_path = config_dict.pop('path_ranking')
+        else:
+            ranking_path = None
+
+        if 'path_prediction' in config_dict.keys():
+            prediction_path = config_dict.pop('path_prediction')
+        else:
+            prediction_path = None
 
         config_dict["config"] = recsys_config
 
@@ -290,13 +301,13 @@ def __recsys_run(config_dict: Dict, module: str):
             result.set_index(['alg_number', 'number'], inplace=True)
             prediction_results.append(result)
         # transforms the ranking results in a dataframe that is then stored in a csv file
-        if len(ranking_results) != 0:
+        if len(ranking_results) != 0 and ranking_path is not None:
             ranking_results = pd.concat(ranking_results)
-            ranking_results.to_csv(path_ranking)
+            ranking_results.to_csv(ranking_path)
         # transforms the prediction results in a dataframe that is then stored in a csv file
-        if len(prediction_results) != 0:
+        if len(prediction_results) != 0 and prediction_path is not None:
             prediction_results = pd.concat(prediction_results)
-            prediction_results.to_csv(path_prediction)
+            prediction_results.to_csv(prediction_path)
 
     except (KeyError, ValueError, TypeError, FileNotFoundError) as e:
         raise e
@@ -304,14 +315,14 @@ def __recsys_run(config_dict: Dict, module: str):
 
 def __eval_config_run(config_dict: Dict, module: str):
     """
-    Method that extracts the parameters for the creation of a Eval Model. In order to define what kind of eval_model
-    has to be run and the parameters for said model (ranking_alg, prediction_alg, report, ...), an additional parameter
-    is added to the config_dict, that being 'eval_type'. This allows the user to define what kind of eval model has to
-    be used (available in the runnable_instances file). The results are stored in a csv file.
+    Method that extracts the parameters for the creation of a Eval Model. There are two additional parameters, the first
+    being the "recsys_config_module" which is used to define the class of the Recsys to instantiate for the Eval Model,
+    and the 'path_eval' which is the path where the results are stored (in a csv file).
 
     Args:
         config_dict (dict): dictionary that represents a config defined in the config file, in this case it represents
         the config for the Eval Model
+        module (str): name of the the EvalModel to instantiate ("ranking_alg_eval_model", for example)
     """
     try:
         eval_path = config_dict.pop('path_eval')
@@ -331,7 +342,7 @@ def __eval_config_run(config_dict: Dict, module: str):
 implemented_modules = {
     "item_analyzer": __content_config_run,
     "user_analyzer": __content_config_run,
-    "recsys": __recsys_run,
+    "recsys_config": __recsys_run,
     "ratings": __rating_config_run,
     "ranking_alg_eval_model": __eval_config_run,
     "prediction_alg_eval_model": __eval_config_run,
@@ -346,15 +357,8 @@ def script_run(config_list_dict: Union[dict, list]):
     that is used to understand what kind of operation it is supposed to perform (if it's meant for a Recommender System,
     a Content Analyzer, ...). If any of these prerequisites aren't matched a ValueError or KeyError exception is thrown.
 
-    If any of the functions (made for the modules) returns anything (could be the results of the predict method in the
-    Recsys), the return value is stored in a list which is then returned at the end of the script processing
-
     Args:
         config_list_dict: single dictionary or list of dictionaries extracted from the config file
-
-    Returns:
-        script_results (list): list containing the results returned by some of the functions (for example, it contains
-        the results of the RecSys or of the EvalModel)
     """
     try:
 

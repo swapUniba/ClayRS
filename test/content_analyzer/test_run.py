@@ -16,6 +16,7 @@ ranking_path = os.path.join(THIS_DIR, "ranking")
 prediction_path = os.path.join(THIS_DIR, "prediction")
 eval_path = os.path.join(THIS_DIR, "eval")
 
+
 class TestRun(TestCase):
 
     def setUp(self) -> None:
@@ -52,8 +53,7 @@ class TestRun(TestCase):
         }
 
         recsys_config_dict = {
-            "module": "recsys",
-            "recsys_config_module": "recsys_config",
+            "module": "recsys_config",
             "users_directory": users_example_1,
             "items_directory": items_example_2,
             "rating_frame": ratings_example,
@@ -61,8 +61,7 @@ class TestRun(TestCase):
                 "class": "classifier", "item_field": {"Plot": [0]}, "classifier": {"class": "knn"}},
             "rankings": [{"user_id": "10", "recs_number": 2},
                          {"user_id": "10", "recs_number": 3}],
-            "path_ranking": ranking_path,
-            "path_prediction": prediction_path
+            "path_ranking": ranking_path
         }
 
         eval_config_dict = {
