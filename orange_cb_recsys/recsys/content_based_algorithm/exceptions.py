@@ -23,6 +23,20 @@ class NoRatedItems(Exception):
     pass
 
 
+class NotRankingAlg(Exception):
+    """
+    Exception to raise when the algorithm is not a ranking algorithm, but it is asked to rank
+    """
+    pass
+
+
+class NotPredictionAlg(Exception):
+    """
+    Exception to raise when the algorithm is not a prediction algorithm, but it is asked to predict
+    """
+    pass
+
+
 def Handler_EmptyFrame(func):
     """
     Handler that catches the above exceptions.
