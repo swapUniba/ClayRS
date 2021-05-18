@@ -29,7 +29,7 @@ class TestContentsProducer(TestCase):
         plot_config = FieldConfig(BabelPyEntityLinking())
         exogenous_config = ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'))
         content_analyzer_config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test")
-        content_analyzer_config.add_single_field("Plot", plot_config)
+        content_analyzer_config.add_single_config("Plot", plot_config)
         content_analyzer_config.add_single_exogenous(exogenous_config)
         content_analyzer = ContentAnalyzer(content_analyzer_config)
         content_analyzer.fit()
@@ -53,13 +53,13 @@ class TestContentsProducer(TestCase):
 
         with self.assertRaises(ValueError):
             config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False)
-            config.add_multiple_fields("test", config_list)
+            config.add_multiple_config("test", config_list)
             ContentAnalyzer(config).fit()
 
         with self.assertRaises(ValueError):
             config = ItemAnalyzerConfig(JSONFile(filepath), ["imdbID"], "movielens_test", False)
-            config.add_single_field("test", config_1)
-            config.add_single_field("test", config_2)
+            config.add_single_config("test", config_1)
+            config.add_single_config("test", config_2)
             ContentAnalyzer(config).fit()
 
     def test_exogenous_exceptions(self):
@@ -90,7 +90,7 @@ class TestContentsProducer(TestCase):
             output_directory="movielens_test_tfidf",
         )
 
-        movies_ca_config.add_multiple_fields(
+        movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(SkLearnTfIdf())])
 
@@ -104,7 +104,7 @@ class TestContentsProducer(TestCase):
             output_directory="movielens_test_embedding",
         )
 
-        movies_ca_config.add_multiple_fields(
+        movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(
                     EmbeddingTechnique(Centroid(), GensimDownloader(name='glove-twitter-25'), 'doc'),
@@ -129,7 +129,7 @@ class TestContentsProducer(TestCase):
             output_directory=test_dir + 'movies_string_'
         )
 
-        movies_ca_config.add_multiple_fields(
+        movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig()]
         )
@@ -162,7 +162,7 @@ class TestContentsProducer(TestCase):
             output_directory=test_dir + 'movies_tfidf_'
         )
 
-        movies_ca_config.add_multiple_fields(
+        movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig()]
         )
@@ -194,7 +194,7 @@ class TestContentsProducer(TestCase):
             output_directory=test_dir + 'movies_embedding_'
         )
 
-        movies_ca_config.add_multiple_fields(
+        movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig()]
         )

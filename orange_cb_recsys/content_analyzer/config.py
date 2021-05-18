@@ -269,7 +269,7 @@ class ContentAnalyzerConfig(ABC):
         """
         return list(self.__field_dict.keys())
 
-    def add_single_field(self, field_name: str, field_config: FieldConfig):
+    def add_single_config(self, field_name: str, field_config: FieldConfig):
         """
         Adds a single FieldConfig passed as argument to the FieldConfigs list of the defined field_name.
 
@@ -285,7 +285,7 @@ class ContentAnalyzerConfig(ABC):
             self.__field_dict[field_name] = list()
             self.__field_dict[field_name].append(field_config)
 
-    def add_multiple_fields(self, field_name: str, config_list: List[FieldConfig]):
+    def add_multiple_config(self, field_name: str, config_list: List[FieldConfig]):
         """
         Adds multiple FieldConfig for a specific field
 
