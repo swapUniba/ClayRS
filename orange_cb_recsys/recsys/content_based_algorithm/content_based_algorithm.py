@@ -223,7 +223,11 @@ class ContentBasedAlgorithm(Algorithm):
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Abstract method that predicts how much a user will like unrated items.
+        |  Abstract method that predicts how much a user will like unrated items
+        |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
+
+        def predict():
+            raise NotPredictionAlg
 
         One can specify which items must be predicted with the filter_list parameter,
         in this case ONLY items in the filter_list will be predicted.
@@ -244,8 +248,12 @@ class ContentBasedAlgorithm(Algorithm):
     def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        |  All items will be ranked.
+        |  If the algorithm is not a Ranking Algorithm, implement this method like this:
+
+        def predict():
+            raise NotRankingAlg
 
         One can specify which items must be ranked with the filter_list parameter,
         in this case ONLY items in the filter_list will be used to calculate the rank.
