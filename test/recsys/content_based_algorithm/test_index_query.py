@@ -1,8 +1,8 @@
-import lzma
 import os
 from unittest import TestCase
 import pandas as pd
 
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.content_based_algorithm.index_query import IndexQuery
 from orange_cb_recsys.utils.const import root_path
 
@@ -32,17 +32,22 @@ class TestIndexQuery(TestCase):
         alg = IndexQuery({'Plot': '0'}, threshold=0)
         alg.initialize(self.ratings, self.movies_dir)
 
-        pred_result = alg.fit_predict('A000', self.filter_list)
-        self.assertEqual(len(pred_result), len(self.filter_list))
+        # Will raise Exception since it's not a Score Prediction Algorithm
+        with self.assertRaises(NotPredictionAlg):
+            alg.fit_predict('A000')
+
+    def test_rank(self):
+
+        # Test single representation
+        alg = IndexQuery({'Plot': '0'}, threshold=0)
+        alg.initialize(self.ratings, self.movies_dir)
 
         rank_result = alg.fit_rank('A000', recs_number=5)
         self.assertEqual(len(rank_result), 5)
 
+        # Test multiple representation
         alg = IndexQuery({'Plot': ['0', '1']}, threshold=0)
         alg.initialize(self.ratings, self.movies_dir)
-
-        pred_result = alg.fit_predict('A000', self.filter_list)
-        self.assertEqual(len(pred_result), len(self.filter_list))
 
         rank_result = alg.fit_rank('A000', recs_number=5)
         self.assertEqual(len(rank_result), 5)

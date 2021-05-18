@@ -1,6 +1,7 @@
 import pandas as pd
 from unittest import TestCase
 
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank import NXPageRank
 from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
 from orange_cb_recsys.utils.feature_selection import NXFSPageRank
@@ -28,17 +29,26 @@ class TestNXPageRank(TestCase):
         alg = NXPageRank()
         alg.initialize(self.graph)
 
-        pred_result = alg.fit_prediction('A000', self.filter_list)
-        self.assertEqual(len(pred_result), len(self.filter_list))
+        # Will raise Exception since it's not a Score Prediction Algorithm
+        with self.assertRaises(NotPredictionAlg):
+            alg.fit_predict('A000')
+
+    def test_rank(self):
+
+        # test not personalized
+        alg = NXPageRank()
+        alg.initialize(self.graph)
 
         rank_result = alg.fit_rank('A000', recs_number=2)
         self.assertEqual(len(rank_result), 2)
 
+        # test filter_list
+        rank_result = alg.fit_rank('A000', recs_number=2, filter_list=self.filter_list)
+        self.assertEqual(len(rank_result), 2)
+
+        # test personalized
         alg = NXPageRank(personalized=True)
         alg.initialize(self.graph)
-
-        pred_result = alg.fit_prediction('A000', self.filter_list)
-        self.assertEqual(len(pred_result), len(self.filter_list))
 
         rank_result = alg.fit_rank('A000', recs_number=2)
         self.assertEqual(len(rank_result), 2)
