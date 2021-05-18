@@ -1,7 +1,9 @@
 from typing import List
 import networkx as nx
 import pandas as pd
+from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
 from orange_cb_recsys.utils.feature_selection import FeatureSelection
@@ -32,6 +34,16 @@ class PageRankAlg(GraphBasedAlgorithm):
     def personalized(self, personalized: bool):
         self.__personalized = personalized
 
+    def predict(self, user_id: str, graph: FullGraph, filter_list: List[str] = None) -> pd.DataFrame:
+        """
+        PageRank is not a Prediction Score Algorithm, so if this method is called,
+        a NotPredictionAlg exception is raised
+
+        Raises:
+            NotPredictionAlg
+        """
+        raise NotPredictionAlg
+
 
 class NXPageRank(PageRankAlg):
     """
@@ -50,53 +62,6 @@ class NXPageRank(PageRankAlg):
 
     def __init__(self, personalized: bool = False, feature_selection: FeatureSelection = None):
         super().__init__(personalized, feature_selection)
-
-    def predict(self, user_id: str, graph: NXFullGraph, filter_list: List[str] = None) -> pd.DataFrame:
-        """
-        Method that predicts how much a user will like unrated items.
-
-        One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list which are present in the graph will be predicted.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items which are present in the graph will be predicted.
-
-        If a feature selection algorithm is passed in the constructor, it is performed before calculating
-        any prediction
-
-        Args:
-            user_id (str): id of the user of which predictions will be calculated
-            graph (FullGraph): a FullGraph containing users, items and eventually other categories of nodes
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted
-        """
-
-        columns = ["to_id", "rating"]
-        score_frame = pd.DataFrame(columns=columns)
-
-        if graph is None:
-            return score_frame
-        if self.feature_selection is not None:
-            graph = self.feature_selection.perform(graph)
-
-        # run the pageRank
-        if self.personalized:
-            profile = self.extract_profile(user_id)
-            scores = nx.pagerank(graph._graph.to_undirected(), personalization=profile)
-        else:
-            scores = nx.pagerank(graph._graph)
-
-        # clean the results removing user nodes, selected user profile and eventually properties
-        if filter_list is not None:
-            scores = self.filter_result(scores, filter_list)
-        else:
-            scores = self.clean_result(scores, user_id, graph)
-
-        score_frame.to_id = [node.value for node in scores.keys()]
-        score_frame.rating = scores.values()
-
-        return score_frame
 
     def rank(self, user_id: str, graph: NXFullGraph, recs_number: int, filter_list: List[str] = None) -> pd.DataFrame:
         """
@@ -125,10 +90,32 @@ class NXPageRank(PageRankAlg):
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
 
-        scores = self.predict(user_id, graph, filter_list)
+        columns = ["to_id", "rating"]
+        score_frame = pd.DataFrame(columns=columns)
 
-        scores.sort_values(by=["rating"], ascending=False, inplace=True)
+        if graph is None:
+            return score_frame
+        if self.feature_selection is not None:
+            graph = self.feature_selection.perform(graph)
 
-        rank = scores.head(recs_number)
+        # run the pageRank
+        if self.personalized:
+            profile = self.extract_profile(user_id)
+            scores = nx.pagerank(graph._graph.to_undirected(), personalization=profile)
+        else:
+            scores = nx.pagerank(graph._graph)
+
+        # clean the results removing user nodes, selected user profile and eventually properties
+        if filter_list is not None:
+            scores = self.filter_result(scores, filter_list)
+        else:
+            scores = self.clean_result(scores, user_id, graph)
+
+        score_frame.to_id = [node.value for node in scores.keys()]
+        score_frame.rating = scores.values()
+
+        score_frame.sort_values(by=["rating"], ascending=False, inplace=True)
+
+        rank = score_frame.head(recs_number)
 
         return rank

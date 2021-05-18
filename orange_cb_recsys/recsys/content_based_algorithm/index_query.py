@@ -5,6 +5,7 @@ import re
 import pandas as pd
 
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.utils.const import DEVELOPING, logger, home_path
 from orange_cb_recsys.utils.load_content import load_content_instance
 
@@ -186,46 +187,13 @@ class IndexQuery(ContentBasedAlgorithm):
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Predicts how much a user will like unrated items.
+        IndexQuery is not a Prediction Score Algorithm, so if this method is called,
+        a NotPredictionAlg exception is raised
 
-        Unrated items are compared to the built query that used only positive items
-
-        One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list will be predicted.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be predicted.
-
-        Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted
+        Raises:
+            NotPredictionAlg
         """
-
-        rated_query_list, candidate_query = self._build_mask_filter_query(user_ratings, filter_list)
-
-        index_path = os.path.join(items_directory, 'search_index')
-        if not DEVELOPING:
-            index_path = os.path.join(home_path, items_directory, 'search_index')
-
-        ix = open_dir(index_path)
-        with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
-
-            # The filter and mask arguments of the index searcher are used respectively
-            # to find only candidate documents or to ignore documents rated by the user
-            schema = ix.schema
-            query = QueryParser("content_id", schema=schema, group=qparser.OrGroup).parse(self.__string_query)
-
-            c = searcher.collector(limit=None, filter=candidate_query, mask=rated_query_list)
-            searcher.search_with_collector(query, c)
-            score_docs = Results(searcher, query, c.child.items)
-
-            logger.info("Building score frame to return")
-            score_frame = self._build_score_frame(score_docs)
-
-        return score_frame
+        raise NotPredictionAlg
 
     def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
