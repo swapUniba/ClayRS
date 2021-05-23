@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import shutil
 
 
 class InformationInterface(ABC):
@@ -8,11 +9,13 @@ class InformationInterface(ABC):
     basing on the type of element extracted.
 
     Args:
-        directory (str):
-            directory where to store the serialized content and where to access for deserialization
+        directory (str): directory where to store the serialized content and where to access for deserialization
     """
     def __init__(self, directory: str):
         self.__directory: str = directory
+
+    def delete(self):
+        shutil.rmtree(self.directory, ignore_errors=True)
 
     @property
     def directory(self):
@@ -23,6 +26,7 @@ class InformationInterface(ABC):
         """
         Creates a new item, that will be serialized by the apposite method.
         """
+        raise NotImplementedError
 
     @abstractmethod
     def new_field(self, field_name: str, field_data):
@@ -33,12 +37,14 @@ class InformationInterface(ABC):
             field_name: name of the created field
             field_data: data to serialize
         """
+        raise NotImplementedError
 
     @abstractmethod
     def serialize_content(self):
         """
         Add to the serialized collection the current item
         """
+        raise NotImplementedError
 
     @abstractmethod
     def init_writing(self):
@@ -46,12 +52,25 @@ class InformationInterface(ABC):
         Set the interface in writing mode,
         if the specified directory does not exit a new one will be created
         """
+        raise NotImplementedError
 
     @abstractmethod
     def stop_writing(self):
         """
         Stop writing mode
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_field(self, field_name: str, content_id: str):
+        """
+        Allows to retrieve the content stored in a field for a content
+
+        Args:
+            field_name (str): name of the field from which the data will be retrieved
+            content_id (str): id of the content
+        """
+        raise NotImplementedError
 
 
 class ImageInterface(InformationInterface):
@@ -79,6 +98,10 @@ class ImageInterface(InformationInterface):
     def stop_writing(self):
         raise NotImplementedError
 
+    @abstractmethod
+    def get_field(self, field_name: str, content_id: str):
+        raise NotImplementedError
+
 
 class AudioInterface(InformationInterface):
     """
@@ -91,9 +114,7 @@ class AudioInterface(InformationInterface):
 
     @abstractmethod
     def new_field(self, field_name: str, field_data):
-        """
-        Abstract method
-        """
+        raise NotImplementedError
 
     @abstractmethod
     def serialize_content(self):
@@ -105,6 +126,10 @@ class AudioInterface(InformationInterface):
 
     @abstractmethod
     def stop_writing(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_field(self, field_name: str, content_id: str):
         raise NotImplementedError
 
 
@@ -130,6 +155,10 @@ class TextInterface(InformationInterface):
 
     @abstractmethod
     def stop_writing(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_field(self, field_name: str, content_id: str):
         raise NotImplementedError
 
     @abstractmethod
