@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union
 import shutil
 
 
@@ -47,10 +48,16 @@ class InformationInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def init_writing(self):
+    def init_writing(self, delete_old: bool = False):
         """
         Set the interface in writing mode,
-        if the specified directory does not exit a new one will be created
+        tf the specified directory does not exit a new one will be created.
+        If the directory exists and an object associated to the IndexInterface already exists, what happens depends on
+        the delete_old attribute
+
+        Args:
+            delete_old (bool): if True, the object handled by the information interface that was in the same directory
+                is destroyed and replaced; if False, the object is simply opened
         """
         raise NotImplementedError
 
@@ -62,15 +69,22 @@ class InformationInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_field(self, field_name: str, content_id: str):
+    def get_field(self, field_name: str, content_id: Union[str, int]):
         """
         Allows to retrieve the content stored in a field for a content
 
         Args:
             field_name (str): name of the field from which the data will be retrieved
-            content_id (str): id of the content
+            content_id (Union[str, int]): either the position or Id of the content that contains the specified field
         """
         raise NotImplementedError
+
+    def __hash__(self):
+        return hash(str(self.__directory))
+
+    def __eq__(self, other):
+        if isinstance(other, InformationInterface):
+            return self.directory == other.directory
 
 
 class ImageInterface(InformationInterface):
@@ -91,7 +105,7 @@ class ImageInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def init_writing(self):
+    def init_writing(self, delete_old: bool = False):
         raise NotImplementedError
 
     @abstractmethod
@@ -99,7 +113,7 @@ class ImageInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def get_field(self, field_name: str, content_id: str):
+    def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
 
 
@@ -121,7 +135,7 @@ class AudioInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def init_writing(self):
+    def init_writing(self, delete_old: bool = False):
         raise NotImplementedError
 
     @abstractmethod
@@ -129,7 +143,7 @@ class AudioInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def get_field(self, field_name: str, content_id: str):
+    def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
 
 
@@ -150,7 +164,7 @@ class TextInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def init_writing(self):
+    def init_writing(self, delete_old: bool = False):
         raise NotImplementedError
 
     @abstractmethod
@@ -158,9 +172,9 @@ class TextInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
-    def get_field(self, field_name: str, content_id: str):
+    def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
 
     @abstractmethod
-    def get_tf_idf(self, field_name: str, content_id: str):
+    def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError

@@ -5,6 +5,7 @@ from whoosh.fields import Schema, TEXT, KEYWORD
 from whoosh.index import create_in, open_dir
 from whoosh.formats import Frequency
 from whoosh.query import Term
+from typing import Union
 
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
 import math
@@ -37,19 +38,29 @@ class IndexInterface(TextInterface):
         """
         raise NotImplementedError
 
-    def init_writing(self):
+    def init_writing(self, delete_old: bool = False):
         """
         Creates the index locally (in the directory passed in the constructor) and initializes the index writer.
-        If an index already exists in the directory, it is not overwritten but opened instead
+        If an index already exists in the directory, what happens depend on the attribute delete_old passed as argument
+
+        Args:
+            delete_old (bool): if True, the index that was in the same directory is destroyed and replaced;
+                if False, the index is simply opened
         """
-        if not os.path.exists(self.directory):
+        if os.path.exists(self.directory):
+            if delete_old:
+                self.delete()
+                os.mkdir(self.directory)
+                ix = create_in(self.directory, Schema())
+                self.__writer = ix.writer()
+            else:
+                ix = open_dir(self.directory)
+                self.__writer = ix.writer()
+                self.__doc_index = self.__writer.reader().doc_count()
+        else:
             os.mkdir(self.directory)
             ix = create_in(self.directory, Schema())
             self.__writer = ix.writer()
-        else:
-            ix = open_dir(self.directory)
-            self.__writer = ix.writer()
-            self.__doc_index = self.__writer.reader().doc_count()
 
     def new_content(self):
         """
@@ -94,34 +105,37 @@ class IndexInterface(TextInterface):
         self.__writer.commit()
         del self.__writer
 
-    def get_field(self, field_name: str, content_id: str) -> str:
+    def get_field(self, field_name: str, content_id: Union[str, int]) -> str:
         """
-        Uses a search index to retrieve the content corresponding to the content_id and returns the data in the field
-        corresponding to the field_name
+        Uses a search index to retrieve the content corresponding to the content_id (if it is a string) or in the
+        corresponding position (if it is an integer), and returns the data in the field corresponding to the field_name
 
         Args:
             field_name (str): name of the field from which the data will be retrieved
-            content_id (str): id of the content
+            content_id (Union[str, int]): either the position or Id of the content that contains the specified field
 
         Returns:
-            result (str): data container in the field of the content
+            result: data contained in the field of the content
         """
         ix = open_dir(self.directory)
         with ix.searcher() as searcher:
-            query = Term("content_id", content_id)
-            result = searcher.search(query)
-            result = result[0][field_name]
+            if isinstance(content_id, str):
+                query = Term("content_id", content_id)
+                result = searcher.search(query)
+                result = result[0][field_name]
+            elif isinstance(content_id, int):
+                result = searcher.reader().stored_fields(content_id)[field_name]
             return result
 
-    def get_tf_idf(self, field_name: str, content_id: str):
+    def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         """
         Calculates the tf-idf for the words contained in the field of the content whose id
-        is content_id.
+        is content_id (if it is a string) or in the given position (if it is an integer).
         The tf-idf computation formula is: tf-idf = (1 + log10(tf)) * log10(idf)
 
         Args:
             field_name (str): Name of the field containing the words for which calculate the tf-idf
-            content_id (str): Id of the content that contains the specified field
+            content_id (Union[str, int]): either the position or Id of the content that contains the specified field
 
         Returns:
              words_bag (Dict <str, float>): Dictionary whose keys are the words contained in the field,
@@ -130,8 +144,11 @@ class IndexInterface(TextInterface):
         ix = open_dir(self.directory)
         words_bag = {}
         with ix.searcher() as searcher:
-            query = Term("content_id", content_id)
-            doc_num = searcher.search(query).docnum(0)
+            if isinstance(content_id, str):
+                query = Term("content_id", content_id)
+                doc_num = searcher.search(query).docnum(0)
+            elif isinstance(content_id, int):
+                doc_num = content_id
             # retrieves the frequency vector (used for tf)
             list_with_freq = [term_with_freq for term_with_freq
                               in searcher.vector(doc_num, field_name).items_as("frequency")]
