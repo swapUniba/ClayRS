@@ -3,11 +3,12 @@ import re
 import lzma
 import os
 import shutil
-from typing import List
+from typing import List, Dict
 
 from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
+from orange_cb_recsys.content_analyzer.memory_interfaces import InformationInterface
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.id_merger import id_merger
 
@@ -18,7 +19,6 @@ class ContentAnalyzer:
     file to create and serialize the contents the user wants to produce. It also checks that the configurations the
     user wants to run on the raw contents have unique ids (otherwise it would be impossible to refer to a particular
     field representation or exogenous representation)
-
     Args:
         config (ContentAnalyzerConfig): configuration for processing the item fields. This parameter provides
             the possibility of customizing the way in which the input data is processed.
@@ -62,7 +62,6 @@ class ContentAnalyzer:
     def __serialize_content(self, content: Content):
         """
         This method serializes a specific content in the output directory defined by the content analyzer config
-
         Args:
             content (Content): content instance that will be serialized
         """
@@ -77,7 +76,6 @@ class ContentAnalyzer:
         """
         This function checks that there are no duplicate ids in the field_dict for a specific field_name.
         If this is not the case and a duplicate is found, a ValueError exception is thrown to warn the user.
-
         If the config id is None, the representation name will be kept as None even if it is not unique.
         So any case where the id is None is not considered.
         """
@@ -90,7 +88,6 @@ class ContentAnalyzer:
         """
         This function checks that there are no duplicate ids in the exogenous_representation_list.
         If this is not the case and a duplicate is found, a ValueError exception is thrown to warn the user.
-
         If the config id is None, the representation name will be kept as None even if it is not unique.
         So any case where the id is None is not considered
         """
@@ -129,7 +126,11 @@ class ContentsProducer:
 
     def __init__(self):
         self.__config: ContentAnalyzerConfig = None
-        self.__indexer = None
+        # dictionary of memory interfaces defined in the FieldConfigs. The key is the directory of the memory interface
+        # and the value is the memory interface itself (only one memory interface can be defined for each directory)
+        # if a memory interface has an already defined directory, the memory interface associated to said directory
+        # will be considered instead
+        self.__memory_interfaces: Dict[InformationInterface] = {}
         # Virtually private constructor.
         if ContentsProducer.__instance is not None:
             raise Exception("This class is a singleton!")
@@ -141,7 +142,6 @@ class ContentsProducer:
     def create_contents(self) -> List[Content]:
         """
         Creates the contents based on the information defined in the Content Analyzer's config
-
         Returns:
             contents_list (List[Content]): list of contents created by the method
         """
@@ -159,9 +159,8 @@ class ContentsProducer:
             exo_config_names = []
             exo_properties = []
 
-            exo_len = len(self.__config.exogenous_representation_list)
             for i, ex_config in enumerate(self.__config.exogenous_representation_list):
-                logger.info("Processing exogenous config: %d/%d" % (i, exo_len))
+                logger.info("Processing exogenous configs for content number %d" % (i + 1))
                 lod_properties = ex_config.exogenous_technique.get_properties(raw_content)
                 exo_config_names.append(ex_config.id)
                 exo_properties.append(lod_properties)
@@ -171,14 +170,20 @@ class ContentsProducer:
             contents_list.append(
                 Content(content_id, exogenous_rep_container=RepresentationContainer(exo_properties, exo_config_names)))
 
-        # this dictionary will store any representation list that will be kept in the index
-        # the elements will be in the form {'Plot_0': [FieldRepr for content1, FieldRepr for content2, ...]}
+        # this dictionary will store any representation list that will be kept in one of the the index
+        # the elements will be in the form:
+        #   { memory_interface: {'Plot_0': [FieldRepr for content1, FieldRepr for content2, ...]}}
         # the 0 after the Plot field name is used to define the representation number associated with the Plot field
         # since it's possible to store multiple Plot fields in the index
         index_representations_dict = {}
         for field_name in self.__config.get_field_name_list():
             logger.info("Processing field: %s", field_name)
-            index_field_repr = 0
+            # stores the number of instance of the field_name (the one in the main for) in each index
+            # the elements will be in the form:
+            #   { memory_interface: 0}
+            # if the field_name was "Plot", this means that the next field that will be added to the memory_interface
+            # will be "Plot_0"
+            index_field_repr = {}
             # stores the field representation for the field name
             results = []
             # stores the field config ids for the field name
@@ -190,26 +195,33 @@ class ContentsProducer:
                 # each field repr in the list will refer to a content
                 # technique_result[0] -> contents_list[0]
                 technique_result = field_config.content_technique.produce_content(
-                    field_name, field_config.preprocessing, self.__config)
+                    field_name, field_config.preprocessing, self.__config.source)
 
                 if field_config.memory_interface is not None:
-
-                    # if the index for the contents producer hasn't been defined yet, the index associated to the
-                    # field config that is being processed is set for the contents producer's index and will be used
-                    # for the future field configs with an assigned memory interface
-                    # this means that only the index defined in the first FieldConfig that has one will actually be used
-                    if self.__indexer is None:
-                        self.__indexer = field_config.memory_interface
-                    index_representations_dict[field_name + "_" + str(index_field_repr)] = technique_result
+                    memory_interface = field_config.memory_interface
+                    # if the index for the directory in the config hasn't been defined yet in the contents producer,
+                    # the index associated to the field config that is being processed is added to the
+                    # contents producer's memory interfaces list, and will be used for the future field configs with
+                    # an assigned memory interface that has the same directory.
+                    # This means that only the index defined in the first FieldConfig that has one will actually be used
+                    if memory_interface not in self.__memory_interfaces.values():
+                        self.__memory_interfaces[memory_interface.directory] = memory_interface
+                        index_representations_dict[memory_interface] = {}
+                    else:
+                        memory_interface = self.__memory_interfaces[memory_interface.directory]
+                    if memory_interface not in index_field_repr.keys():
+                        index_field_repr[memory_interface] = 0
+                    index_field_name = field_name + "_" + str(index_field_repr[memory_interface])
+                    index_representations_dict[memory_interface][index_field_name] = technique_result
                     result = []
 
                     # in order to refer to the representation that will be stored in the index, an IndexField repr will
                     # be added to each content (and it will contain all the necessary information to retrieve the data
                     # from the index)
-                    for content in contents_list:
-                        result.append(IndexField(field_name + "_" + str(index_field_repr),
-                                                 content.content_id, self.__indexer))
-                    index_field_repr += 1
+                    for i in range(0, len(contents_list)):
+                        result.append(
+                            IndexField(index_field_name, i, memory_interface))
+                    index_field_repr[memory_interface] += 1
                 else:
                     result = technique_result
 
@@ -224,19 +236,21 @@ class ContentsProducer:
                 content.append_field(field_name,
                                      RepresentationContainer(content_field_representations, field_config_ids))
 
-        # after the contents creation process, the data to be indexed will be serialized inside of the index
-        # for each created content, a new entry in the index will be created
+        # after the contents creation process, the data to be indexed will be serialized inside of the memory interfaces
+        # for each created content, a new entry in each index will be created
         # the entry will be in the following form: {"content_id": id, "Plot_0": "...", "Plot_1": "...", ...}
-        if self.__indexer is not None:
-            self.__indexer.init_writing()
-            for i in range(0, len(contents_list)):
-                self.__indexer.new_content()
-                self.__indexer.new_field("content_id", contents_list[i].content_id)
-                for field_name in index_representations_dict.keys():
-                    self.__indexer.new_field(field_name, index_representations_dict[field_name][i].value)
-                contents_list[i].index_document_id = self.__indexer.serialize_content()
-            self.__indexer.stop_writing()
-            self.__indexer = None
+        if len(self.__memory_interfaces) != 0:
+            for memory_interface in self.__memory_interfaces.values():
+                memory_interface.init_writing(True)
+                for i in range(0, len(contents_list)):
+                    memory_interface.new_content()
+                    memory_interface.new_field("content_id", contents_list[i].content_id)
+                    for field_name in index_representations_dict[memory_interface].keys():
+                        memory_interface.new_field(
+                            field_name, str(index_representations_dict[memory_interface][field_name][i].value))
+                    contents_list[i].index_document_id = memory_interface.serialize_content()
+                memory_interface.stop_writing()
+            self.__memory_interfaces.clear()
 
         return contents_list
 
