@@ -117,27 +117,27 @@ class IndexField(FieldRepresentation):
 
     Args:
         field_name (str): field's field_name located in the index
-            N.B. : it might differ from the original field_name, for example "Plot" might be "Plot0"
-        content_id (str): id of the content
+            N.B. : it might differ from the original field_name, for example "Plot" might be "Plot_0"
+        index_id (int): position of the content in the index
         index (InformationInterface): index from which the data will be retrieved
     """
 
-    def __init__(self, field_name: str, content_id: str, index: InformationInterface):
+    def __init__(self, field_name: str, index_id: int, index: InformationInterface):
         super().__init__()
         self.__field_name = field_name
-        self.__content_id = content_id
+        self.__index_id = index_id
         self.__index = index
 
     @property
     def value(self) -> str:
-        return self.__index.get_field(self.__field_name, self.__content_id)
+        return self.__index.get_field(self.__field_name, self.__index_id)
 
     def __str__(self):
         return str(self.value)
 
     def __eq__(self, other):
         return self.__field_name == other.__field_name \
-               and self.__content_id == other.__content_id \
+               and self.__index_id == other.__content_id \
                and self.__index == other.__index
 
 
