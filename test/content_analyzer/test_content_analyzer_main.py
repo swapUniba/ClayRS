@@ -13,7 +13,7 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques impor
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
+from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -146,7 +146,7 @@ class TestContentsProducer(TestCase):
                     self.assertIsInstance(content.get_field("Title")[0].value, np.ndarray)
                     break
 
-    def test_create_original_content_in_index(self):
+    def test_create_contents_in_index(self):
         movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(movies_info_reduced),
             id=['imdbID'],
@@ -156,8 +156,12 @@ class TestContentsProducer(TestCase):
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(OriginalData(), NLTK(lemmatization=True, stopwords_removal=True),
-                         SearchIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index"))),
-                         FieldConfig(id="test"),
+                         SearchIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index")), "test_search"),
+
+                         FieldConfig(SkLearnTfIdf(), NLTK(),
+                                     KeywordIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index1")),
+                                     "test_keyword"),
+
                          FieldConfig(OriginalData(), NLTK(),
                                      SearchIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index")))
                          ])
@@ -174,6 +178,8 @@ class TestContentsProducer(TestCase):
 
                     self.assertIsInstance(content.get_field("Title")[0], IndexField)
                     self.assertIsInstance(content.get_field("Title")[0].value, str)
+                    self.assertIsInstance(content.get_field("Title")[1], IndexField)
+                    self.assertIsInstance(content.get_field("Title")[1].value, str)
                     break
 
     def test_decode_field_data_string(self):
