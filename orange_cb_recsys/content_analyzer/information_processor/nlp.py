@@ -9,6 +9,7 @@ from nltk.corpus import wordnet
 from nltk.stem.snowball import SnowballStemmer
 
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import NLP
+from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
 def get_wordnet_pos(word):
@@ -249,6 +250,7 @@ class NLTK(NLP):
         return text
 
     def process(self, field_data) -> List[str]:
+        field_data = check_not_tokenized(field_data)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         if self.url_tagging:
