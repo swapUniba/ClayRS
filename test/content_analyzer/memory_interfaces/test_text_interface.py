@@ -118,3 +118,29 @@ class TestIndexInterface(TestCase):
         finally:
             index.delete()
 
+    def test_query(self):
+        index = SearchIndex("testing_query")
+        try:
+            index.init_writing()
+            index.new_content()
+            index.new_field("content_id", "0")
+            index.new_field("test1", "this is a test for the query on the index")
+            index.new_field("test2", "this is the second field")
+            index.serialize_content()
+            index.new_content()
+            index.new_field("content_id", "1")
+            index.new_field("test1", "field")
+            index.serialize_content()
+            index.new_content()
+            index.new_field("content_id", "2")
+            index.new_field("test1", "query on the index")
+            index.serialize_content()
+            index.stop_writing()
+
+            # test for querying the index
+            result = index.query("test1:(query on the index)", 2, ["2"], ["0", "1"], True)
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result["0"]["item"]["test1"], "this is a test for the query on the index")
+        finally:
+            index.delete()
+
