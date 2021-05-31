@@ -4,7 +4,9 @@ from whoosh.analysis import SimpleAnalyzer
 from whoosh.fields import Schema, TEXT, KEYWORD
 from whoosh.index import create_in, open_dir
 from whoosh.formats import Frequency
-from whoosh.query import Term
+from whoosh.qparser import QueryParser, OrGroup
+from whoosh.query import Term, Or
+from whoosh.scoring import TF_IDF, BM25F
 from typing import Union
 
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
@@ -126,6 +128,72 @@ class IndexInterface(TextInterface):
             elif isinstance(content_id, int):
                 result = searcher.reader().stored_fields(content_id)[field_name]
             return result
+
+    def query(self, string_query: str, results_number: int, mask_list: list = None,
+              candidate_list: list = None, classic_similarity: bool = True) -> dict:
+        """
+        Uses a search index to query the index in order to retrieve specific contents using a query expressed in string
+        form
+
+        Args:
+            string_query (str): query expressed as a string
+            results_number (int): number of results the searcher will return for the query
+            mask_list (list): list of content_ids of items to ignore in the search process
+            candidate_list (list): list of content_ids of items to consider in the search process,
+                if it is not None only items in the list will be considered
+            classic_similarity (bool): if True, classic tf idf is used for scoring, otherwise BM25F is used
+
+        Returns:
+            results (dict): the final results dictionary containing the results found from the search index for the
+                query. The dictionary will be in the following form:
+
+                    {content_id: {"item": item_dictionary, "score": item_score}, ...}
+
+                content_id is the content_id for the corresponding item
+                item_dictionary is the dictionary of the item containing the fields as keys and the contents as values.
+                So it will be in the following form: {"Plot": "this is the plot", "Genre": "this is the Genre"}
+                The item_dictionary will not contain the content_id since it is already defined and used as key of the
+                external dictionary
+                items_score is the score given to the item for the query by the index searcher
+        """
+        ix = open_dir(self.directory)
+        with ix.searcher(weighting=TF_IDF if classic_similarity else BM25F) as searcher:
+            candidate_query_list = None
+            mask_query_list = None
+
+            # the mask list contains the content_id for the items to ignore in the searching process
+            # from the mask list a mask query is created and it will be used by the searcher
+            if mask_list is not None:
+                mask_query_list = []
+                for document in mask_list:
+                    mask_query_list.append(Term("content_id", document))
+                mask_query_list = Or(mask_query_list)
+
+            # the candidate list contains the content_id for the items to consider in the searching process
+            # from the candidate list a candidate query is created and it will be used by the searcher
+            if candidate_list is not None:
+                candidate_query_list = []
+                for candidate in candidate_list:
+                    candidate_query_list.append(Term("content_id", candidate))
+                candidate_query_list = Or(candidate_query_list)
+
+            schema = ix.schema
+            query = QueryParser("content_id", schema=schema, group=OrGroup).parse(string_query)
+            score_docs = \
+                searcher.search(query, limit=results_number, filter=candidate_query_list, mask=mask_query_list)
+
+            # creation of the results dictionary, This phase is necessary because the Hit objects returned by the
+            # searcher as results need the reader inside the search index in order to return information
+            # so it would be impossible to access a field or the score of the item from outside this method
+            # because of that this dictionary containing the most important infos is created
+            results = {}
+            for hit in score_docs:
+                hit_dict = dict(hit)
+                content_id = hit_dict.pop("content_id")
+                results[content_id] = {}
+                results[content_id]["item"] = hit_dict
+                results[content_id]["score"] = hit.score
+            return results
 
     def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         """

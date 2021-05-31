@@ -176,5 +176,10 @@ class TextInterface(InformationInterface):
         raise NotImplementedError
 
     @abstractmethod
+    def query(self, string_query: str, results_number: int, mask_list: list = None,
+              candidate_list: list = None, classic_similarity: bool = True) -> dict:
+        raise NotImplementedError
+
+    @abstractmethod
     def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
