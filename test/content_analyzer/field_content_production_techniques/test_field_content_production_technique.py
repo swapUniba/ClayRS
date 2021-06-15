@@ -7,7 +7,7 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.embed
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source import \
     GensimDownloader
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
-    EmbeddingTechnique, OriginalData, DefaultTechnique
+    OriginalData, DefaultTechnique, DocumentEmbeddingTechnique, WordEmbeddingTechnique, SentenceEmbeddingTechnique
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,21 +16,21 @@ file_path = os.path.join(THIS_DIR, "../../../datasets/movies_info_reduced.json")
 
 class TestEmbeddingTechnique(TestCase):
     def test_produce_content(self):
-        technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="doc")
+        technique = DocumentEmbeddingTechnique(GensimDownloader('glove-twitter-25'), Centroid())
 
         embedding_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(embedding_list), 20)
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
-        technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="word")
+        technique = WordEmbeddingTechnique(GensimDownloader('glove-twitter-25'), Centroid())
 
         embedding_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(embedding_list), 20)
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
-        technique = EmbeddingTechnique(Centroid(), GensimDownloader('glove-twitter-25'), granularity="sentence")
+        technique = SentenceEmbeddingTechnique(GensimDownloader('glove-twitter-25'), Centroid())
 
         embedding_list = technique.produce_content("Title", [], JSONFile(file_path))
 

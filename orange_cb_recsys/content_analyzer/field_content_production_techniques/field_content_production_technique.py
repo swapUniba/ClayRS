@@ -418,29 +418,31 @@ class EmbeddingSource(ABC):
 
 class EmbeddingTechnique(SingleContentTechnique):
     """
-    Class that can be used to combine different embeddings coming from various sources
-    in order to produce the semantic description.
+    Abstract class that generalizes the techniques that create embedding vectors. By extending this class it is possible
+    to define different types of granularity for the embeddings ("word", "sentence", "doc")
 
     Args:
         combining_technique (CombiningTechnique): The technique that will be used for combining the embeddings.
         embedding_source (EmbeddingSource): Source where the embeddings vectors for the words in field_data are stored.
-        granularity (Granularity): It can assume three values, depending on whether the framework user wants to
-            combine relatively to words, phrases or documents.
     """
 
-    def __init__(self, combining_technique: CombiningTechnique,
-                 embedding_source: EmbeddingSource,
-                 granularity: str):
+    def __init__(self, embedding_source: EmbeddingSource, combining_technique: CombiningTechnique):
         super().__init__()
         self.__combining_technique: CombiningTechnique = combining_technique
         self.__embedding_source: EmbeddingSource = embedding_source
 
-        self.__granularity: str = granularity.lower()
+    @property
+    def embedding_source(self):
+        return self.__embedding_source
 
+    @property
+    def combining_technique(self):
+        return self.__combining_technique
+
+    @abstractmethod
     def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:
         """
-        Method that builds the semantic content starting from the embeddings contained in
-        field_data
+        Method that builds the semantic content starting from the embeddings contained in field_data
 
         Args:
             field_data: The terms whose embeddings will be combined.
@@ -448,37 +450,90 @@ class EmbeddingTechnique(SingleContentTechnique):
         Returns:
             EmbeddingField: complex representation created using the field data
         """
+        raise NotImplementedError
 
-        if self.__granularity == "word":
-            doc_matrix = self.__embedding_source.load(field_data)
-            return EmbeddingField(doc_matrix)
-        if self.__granularity == "sentence":
-            try:
-                nltk.data.find('punkt')
-            except LookupError:
-                nltk.download('punkt')
 
-            sentences = sent_tokenize(field_data)
-            for i, sentence in enumerate(sentences):
-                sentences[i] = sentence[:len(sentence) - 1]
+class WordEmbeddingTechnique(EmbeddingTechnique):
+    """
+    Class that creates the embedding field with granularity word
+    The argument combining_technique is not used because, with the word granularity, each row in the embedding matrix
+    represents a word, so there is nothing to combine
+    """
 
-            sentences_embeddings = \
-                np.ndarray(shape=(len(sentences), self.__embedding_source.get_vector_size()))
-            for i, sentence in enumerate(sentences):
-                sentence_matrix = self.__embedding_source.load(sentence)
-                sentences_embeddings[i, :] = self.__combining_technique.combine(sentence_matrix)
+    def __init__(self, embedding_source: EmbeddingSource, combining_technique: CombiningTechnique = None):
+        super().__init__(embedding_source, combining_technique)
 
-            return EmbeddingField(sentences_embeddings)
-        if self.__granularity == "doc":
-            doc_matrix = self.__embedding_source.load(field_data)
-            return EmbeddingField(self.__combining_technique.combine(doc_matrix))
-        else:
-            raise ValueError("Must specify a valid embedding technique granularity")
+    def produce_single_repr(self, field_data: List[str]) -> EmbeddingField:
+        """
+        Produces a single representation with word granularity by simply loading the embedding matrix from the source
+        """
+        doc_matrix = self.embedding_source.load(check_tokenized(field_data))
+        return EmbeddingField(doc_matrix)
 
     def __str__(self):
-        return "EmbeddingTechnique"
+        return "WordEmbeddingTechnique"
 
     def __repr__(self):
-        return "< EmbeddingTechnique: combining technique =  " + str(self.__combining_technique) \
-               + ", embedding source = " + str(self.__embedding_source) \
-               + ", granularity = " + str(self.__granularity) + " >"
+        return "< WordEmbeddingTechnique: embedding source =  " + str(self.embedding_source) + " >"
+
+
+class SentenceEmbeddingTechnique(EmbeddingTechnique):
+    """
+    Class that creates the embedding field with granularity sentence
+    """
+
+    def __init__(self, embedding_source: EmbeddingSource, combining_technique: CombiningTechnique):
+        super().__init__(embedding_source, combining_technique)
+
+    def produce_single_repr(self, field_data: str) -> EmbeddingField:
+        """
+        Produces a single representation with sentence granularity by splitting the text into sentences
+        and combining the embedding vectors in order to create an embedding matrix where each row represents a sentence
+        """
+        try:
+            nltk.data.find('punkt')
+        except LookupError:
+            nltk.download('punkt')
+
+        sentences = sent_tokenize(check_not_tokenized(field_data))
+        for i, sentence in enumerate(sentences):
+            sentences[i] = sentence[:len(sentence) - 1]
+
+        sentences_embeddings = \
+            np.ndarray(shape=(len(sentences), self.embedding_source.get_vector_size()))
+        for i, sentence in enumerate(sentences):
+            sentence_matrix = self.embedding_source.load(sentence)
+            sentences_embeddings[i, :] = self.combining_technique.combine(sentence_matrix)
+
+        return EmbeddingField(sentences_embeddings)
+
+    def __str__(self):
+        return "SentenceEmbeddingTechnique"
+
+    def __repr__(self):
+        return "< SentenceEmbeddingTechnique: combining technique =  " + str(self.__combining_technique) \
+               + ", embedding source = " + str(self.embedding_source) + " >"
+
+
+class DocumentEmbeddingTechnique(EmbeddingTechnique):
+    """
+    Class that creates the embedding field with granularity sentence
+    """
+
+    def __init__(self, embedding_source: EmbeddingSource, combining_technique: CombiningTechnique):
+        super().__init__(embedding_source, combining_technique)
+
+    def produce_single_repr(self, field_data: List[str]) -> EmbeddingField:
+        """
+        Produces a single representation with document granularity by combining the embedding vectors in order to
+        create an embedding vector that represents the document
+        """
+        doc_matrix = self.embedding_source.load(check_tokenized(field_data))
+        return EmbeddingField(self.combining_technique.combine(doc_matrix))
+
+    def __str__(self):
+        return "DocumentEmbeddingTechnique"
+
+    def __repr__(self):
+        return "< DocumentEmbeddingTechnique: combining technique =  " + str(self.__combining_technique) \
+               + ", embedding source = " + str(self.embedding_source) + " >"
