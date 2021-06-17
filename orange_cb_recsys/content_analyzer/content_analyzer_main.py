@@ -150,7 +150,7 @@ class ContentsProducer:
 
         # will store the contents and is the variable that will be returned by the method
         contents_list = []
-        for raw_content in self.__config.source:
+        for i, raw_content in enumerate(self.__config.source):
 
             # two lists are instantiated, one for the configuration names (given by the user) and one for the exogenous
             # properties representations. These lists will maintain the data for the content creation. This is done
@@ -159,8 +159,8 @@ class ContentsProducer:
             exo_config_names = []
             exo_properties = []
 
-            for i, ex_config in enumerate(self.__config.exogenous_representation_list):
-                logger.info("Processing exogenous configs for content number %d" % (i + 1))
+            for exo_config_number, ex_config in enumerate(self.__config.exogenous_representation_list):
+                logger.info("Processing exogenous config %d for content %d" % (exo_config_number + 1, i + 1))
                 lod_properties = ex_config.exogenous_technique.get_properties(raw_content)
                 exo_config_names.append(ex_config.id)
                 exo_properties.append(lod_properties)
