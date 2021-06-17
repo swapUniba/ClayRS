@@ -333,3 +333,13 @@ class EntityLinking(SingleContentTechnique):
     @abstractmethod
     def produce_single_repr(self, field_data: Union[List[str], str]) -> FeaturesBagField:
         raise NotImplementedError
+
+
+class SynsetDocumentFrequency(SingleContentTechnique):
+    """
+    Abstract class that generalizes implementations that use synsets
+    """
+
+    @abstractmethod
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> FeaturesBagField:
+        raise NotImplementedError
