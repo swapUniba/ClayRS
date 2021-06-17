@@ -14,7 +14,7 @@ from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(THIS_DIR, "../../../datasets/movies_info_reduced.json")
+file_path = os.path.join(THIS_DIR, "../../../../datasets/movies_info_reduced.json")
 
 
 class TestEmbeddingTechnique(TestCase):

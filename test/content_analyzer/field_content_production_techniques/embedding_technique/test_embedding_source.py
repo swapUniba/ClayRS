@@ -107,7 +107,7 @@ class TestWikipedia2VecDownloader(TestCase):
         self.assertAlmostEqual(second_like, 1, delta=1e-6)
 
 
-class TestWordEmbeddingSourceGensimLoader(TestCase, WordEmbeddingAssertion):
+class TestWordEmbeddingSourceGensimLearner(TestCase, WordEmbeddingAssertion):
     def test_doc2vec(self):
         source = GensimDoc2Vec(doc2vec_file_path)
         vector_size = 20
