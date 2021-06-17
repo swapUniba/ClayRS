@@ -8,7 +8,7 @@ from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig, User
 from orange_cb_recsys.content_analyzer.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
     GensimLatentSemanticAnalysis, GensimRandomIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
-    BinaryFile, GensimDownloader, Centroid, EmbeddingTechnique, SearchIndexing, Wikipedia2VecDownloader
+    Centroid
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency import \
     SynsetDocumentFrequency
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
@@ -59,19 +59,14 @@ runnable_instances = {
     "babelpy": BabelPyEntityLinking,
     "nltk": NLTK,
     "whoosh_tf-idf": WhooshTfIdf,
-    "binary_file": BinaryFile,
-    "gensim_downloader": GensimDownloader,
-    "wikipedia2vec_downloader": Wikipedia2VecDownloader,
     "word2vec": GensimWord2Vec,
     "doc2vec": GensimDoc2Vec,
     "fasttext": GensimFastText,
     "latent_semantic_analysis": GensimLatentSemanticAnalysis,
     "random_indexing": GensimRandomIndexing,
     "centroid": Centroid,
-    "embedding": EmbeddingTechnique,
     "text_blob_sentiment": TextBlobSentimentAnalysis,
     "number_normalizer": NumberNormalizer,
-    "search_index": SearchIndexing,
     "sk_learn_tf-idf": SkLearnTfIdf,
     "dbpedia_mapping": DBPediaMappingTechnique,
     "properties_from_dataset": PropertiesFromDataset,

@@ -1,16 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List, Union
 
-import nltk
 import numpy as np
 import json
 
-from nltk.tokenize import sent_tokenize
 from orange_cb_recsys.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField, \
     EmbeddingField, StringField
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
-from orange_cb_recsys.utils.check_tokenization import check_tokenized, check_not_tokenized
+from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
 class FieldContentProductionTechnique(ABC):
