@@ -14,14 +14,15 @@ except LookupError:
     nltk.download('punkt')
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import SingleContentTechnique
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+    SynsetDocumentFrequency
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 from typing import List, Union
 from pywsd import disambiguate
 from collections import Counter
 
 
-class SynsetDocumentFrequency(SingleContentTechnique):
+class PyWSDSynsetDocumentFrequency(SynsetDocumentFrequency):
     """
     Pywsd word sense disambiguation
     """
@@ -42,7 +43,7 @@ class SynsetDocumentFrequency(SingleContentTechnique):
         return FeaturesBagField(Counter(synsets))
 
     def __str__(self):
-        return "SynsetDocumentFrequency"
+        return "PyWSDSynsetDocumentFrequency"
 
     def __repr__(self):
-        return "< SynsetDocumentFrequency >"
+        return "< PyWSDSynsetDocumentFrequency >"

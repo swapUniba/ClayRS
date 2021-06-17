@@ -5,4 +5,4 @@ from .embedding_technique import Centroid, Gensim, Wikipedia2VecLoader, Sbert, W
     FromWordsDocumentEmbeddingTechnique, FromSentencesDocumentEmbeddingTechnique
 from .field_content_production_technique import FieldContentProductionTechnique, CollectionBasedTechnique, \
     SingleContentTechnique, OriginalData, DefaultTechnique
-from .synset_document_frequency import SynsetDocumentFrequency
+from .synset_document_frequency import PyWSDSynsetDocumentFrequency
