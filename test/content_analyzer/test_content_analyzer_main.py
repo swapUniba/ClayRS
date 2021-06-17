@@ -8,8 +8,10 @@ from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBP
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import StringField, FeaturesBagField, \
     EmbeddingField, IndexField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import EmbeddingTechnique, \
-    Centroid, GensimDownloader, OriginalData
+from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import Gensim
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
+    import WordEmbeddingTechnique
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
@@ -129,7 +131,7 @@ class TestContentsProducer(TestCase):
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(
-                    EmbeddingTechnique(Centroid(), GensimDownloader(name='glove-twitter-25'), 'doc'),
+                    WordEmbeddingTechnique(Gensim('glove-twitter-25')),
                     NLTK(lemmatization=True, stopwords_removal=True))])
 
         content_analyzer = ContentAnalyzer(movies_ca_config)

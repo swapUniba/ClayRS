@@ -28,7 +28,8 @@ setup(name='orange_cb_recsys',
           'wn==0.0.23',
           'networkx==2.5',
           'progressbar2==3.53.1',
-          'whoosh==2.7.4'
+          'whoosh==2.7.4',
+          'sentence-transformers==1.2.0'
       ],
       description='Python Framework for Content-Based Recommeder Systems',
       long_description=long_description,
