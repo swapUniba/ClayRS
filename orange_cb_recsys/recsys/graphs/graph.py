@@ -1,9 +1,10 @@
-import lzma
-import os
-import pickle
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import List, Set
 import pandas as pd
+
+from orange_cb_recsys.recsys.graphs.graph_metrics import GraphMetrics
+from orange_cb_recsys.utils.load_content import load_content_instance
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
 from orange_cb_recsys.utils.const import logger, progbar
@@ -27,7 +28,7 @@ class Node(ABC):
         return self.__value
 
     def __hash__(self):
-        return hash(str(self.__value))
+        return hash(self.__value)
 
     def __eq__(self, other):
         # If we are comparing self to an instance of the 'Node' class
@@ -38,6 +39,12 @@ class Node(ABC):
             return self.value == other.value and type(self) is type(other)
         else:
             return self.value == other
+
+    def __lt__(self, other):
+        if isinstance(other, Node):
+            return self.value < other.value
+        else:
+            return self.value < other
 
     @abstractmethod
     def __str__(self):
@@ -110,7 +117,7 @@ class Graph(ABC):
     """
 
     def __init__(self, source_frame: pd.DataFrame,
-                 default_score_label: str = 'score_label', default_weight: float = 0.5):
+                 default_score_label: str = 'score', default_weight: float = 0.5):
 
         self.__default_score_label = default_score_label
 
@@ -142,26 +149,6 @@ class Graph(ABC):
             return False
         return True
 
-    @staticmethod
-    def normalize_score(score: float) -> float:
-        """
-        Convert the score in the range [-1.0, 1.0] in a normalized weight [0.0, 1.0]
-        Args:
-            score (float): float in the range [-1.0, 1.0]
-
-        Returns:
-            float in the range [0.0, 1.0]
-        """
-        old_max = 1
-        old_min = -1
-        new_max = 1
-        new_min = 0
-
-        old_range = (old_max - old_min)
-        new_range = (new_max - new_min)
-        new_value = (((score - old_min) * new_range) / old_range) + new_min
-        return new_value
-
     def get_default_score_label(self) -> str:
         """
         Getter for default_score_label
@@ -183,7 +170,7 @@ class Graph(ABC):
 
     @property
     @abstractmethod
-    def user_nodes(self) -> Set[object]:
+    def user_nodes(self) -> Set[Node]:
         """
         Returns a set of 'user' nodes
         """
@@ -191,7 +178,7 @@ class Graph(ABC):
 
     @property
     @abstractmethod
-    def item_nodes(self) -> Set[object]:
+    def item_nodes(self) -> Set[Node]:
         """
         Returns a set of 'item' nodes'
         """
@@ -221,6 +208,14 @@ class Graph(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def remove_link(self, start_node: object, final_node: object):
+        """
+        Remove the edge between the 'start_node' and the 'final_node',
+        If there's no edge between the nodes, a warning is printed
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def get_link_data(self, start_node: object, final_node: object):
         """
         Get data of the link between two nodes
@@ -229,14 +224,14 @@ class Graph(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_predecessors(self, node: object) -> List[object]:
+    def get_predecessors(self, node: object) -> List[Node]:
         """
         Get all predecessors of a node
         """
         raise NotImplementedError
 
     @abstractmethod
-    def get_successors(self, node: object) -> List[object]:
+    def get_successors(self, node: object) -> List[Node]:
         """
         Get all successors of a node
         """
@@ -263,7 +258,7 @@ class Graph(ABC):
         """
         raise NotImplementedError
 
-    def get_voted_contents(self, node: object) -> List[object]:
+    def get_voted_contents(self, node: object) -> List[Node]:
         """
         Get all voted contents of a specified node
 
@@ -298,8 +293,41 @@ class Graph(ABC):
         """
         raise NotImplementedError
 
+    def convert_to_dataframe(self, only_values=False, with_label=False) -> pd.DataFrame:
 
-class BipartiteGraph(Graph):
+        result = {'from_id': [], 'to_id': [], 'score': []}
+        if with_label:
+            result['label'] = []
+
+        node_list = list(self.user_nodes) + list(self.item_nodes)
+
+        for node in node_list:
+            succ_list = self.get_successors(node)
+            for succ in succ_list:
+                link_data = self.get_link_data(node, succ)
+
+                if only_values:
+                    result['from_id'].append(node.value)
+                    result['to_id'].append(succ.value)
+                else:
+                    result['from_id'].append(node)
+                    result['to_id'].append(succ)
+                result['score'].append(link_data['weight'])
+                if with_label:
+                    result['label'].append(link_data['label'])
+
+        return pd.DataFrame(result)
+
+    def copy(self):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo = {id(self): result}
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
+
+
+class BipartiteGraph(Graph, GraphMetrics):
     """
     Abstract class that generalizes the concept of a BipartiteGraph
 
@@ -315,7 +343,7 @@ class BipartiteGraph(Graph):
     """
 
     def __init__(self, source_frame: pd.DataFrame,
-                 default_score_label: str = "score_label", default_weight: float = 0.5):
+                 default_score_label: str = 'score', default_weight: float = 0.5):
         super().__init__(source_frame,
                          default_score_label, default_weight)
 
@@ -336,8 +364,12 @@ class BipartiteGraph(Graph):
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
                 self.add_item_node(row['to_id'])
-                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
-                              label=self.get_default_score_label())
+                if 'label' in source_frame.columns:
+                    label = row['label']
+                else:
+                    label = self.get_default_score_label()
+                self.add_link(row['from_id'], row['to_id'], row['score'],
+                              label=label)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 
@@ -363,7 +395,7 @@ class TripartiteGraph(BipartiteGraph):
 
     def __init__(self, source_frame: pd.DataFrame, item_contents_dir: str = None,
                  item_exo_representation: str = None, item_exo_properties: List[str] = None,
-                 default_score_label: str = 'score_label', default_weight: float = 0.5):
+                 default_score_label: str = 'score', default_weight: float = 0.5):
 
         self.__item_exogenous_representation: str = item_exo_representation
 
@@ -392,8 +424,13 @@ class TripartiteGraph(BipartiteGraph):
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
                 self.add_item_node(row['to_id'])
-                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
-                              label=self.get_default_score_label())
+                if 'label' in source_frame.columns:
+                    label = row['label']
+                else:
+                    label = self.get_default_score_label()
+                self.add_link(row['from_id'], row['to_id'], row['score'],
+                              label=label)
+
                 if self.get_item_contents_dir() is not None:
                     self._add_item_properties(row)
         else:
@@ -432,8 +469,7 @@ class TripartiteGraph(BipartiteGraph):
         Args:
             row (dict): dict-like parameter containing at least a 'to_id' field
         """
-        filepath = os.path.join(self.__item_contents_dir, row['to_id'])
-        content = self.load_content(filepath)
+        content = load_content_instance(self.__item_contents_dir, row['to_id'])
         if content is not None:
             # Provided representation and properties
             if self.get_item_exogenous_representation() is not None and \
@@ -616,21 +652,6 @@ class TripartiteGraph(BipartiteGraph):
             return preferences_dict[ls]
         return self.get_default_weight()
 
-    @staticmethod
-    def load_content(file_path: str) -> Content:
-        """
-        Load the serialized content from the file_path specified
-
-        Args:
-            file_path (str): path to the file to load
-        """
-        try:
-            with lzma.open('{}.xz'.format(file_path), 'r') as file:
-                content = pickle.load(file)
-        except FileNotFoundError:
-            content = None
-        return content
-
     @property
     @abstractmethod
     def property_nodes(self) -> Set[object]:
@@ -721,7 +742,7 @@ class FullGraph(TripartiteGraph):
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
                  user_exo_representation: str = None, user_exo_properties: List[str] = None,
                  item_exo_representation: str = None, item_exo_properties: List[str] = None,
-                 default_score_label: str = 'score_label', default_weight: float = 0.5):
+                 default_score_label: str = 'score', default_weight: float = 0.5):
 
         self.__user_exogenous_representation: str = user_exo_representation
 
@@ -753,8 +774,15 @@ class FullGraph(TripartiteGraph):
 
                 self.add_user_node(row['from_id'])
                 self.add_item_node(row['to_id'])
-                self.add_link(row['from_id'], row['to_id'], self.normalize_score(row['score']),
-                              label=self.get_default_score_label())
+
+                if 'label' in source_frame.columns:
+                    label = row['label']
+                else:
+                    label = self.get_default_score_label()
+
+                self.add_link(row['from_id'], row['to_id'], row['score'],
+                              label=label)
+
                 if self.get_item_contents_dir() is not None:
                     self._add_item_properties(row)
 
@@ -796,8 +824,7 @@ class FullGraph(TripartiteGraph):
         Args:
             row (dict): dict-like parameter containing at least a 'from_id' field
         """
-        filepath = os.path.join(self.__user_contents_dir, row['from_id'])
-        content = self.load_content(filepath)
+        content = load_content_instance(self.__user_contents_dir, row['from_id'])
 
         if content is not None:
             # Provided representation and properties

@@ -1,92 +1,241 @@
+import os
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
-from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
-from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
-from orange_cb_recsys.evaluation import Serendipity, Novelty, CatalogCoverage
-from orange_cb_recsys.evaluation.classification_metrics import Precision, Recall, FNMeasure, MRR
-from orange_cb_recsys.evaluation.eval_model import RankingAlgEvalModel, ReportEvalModel
-from orange_cb_recsys.evaluation.partitioning import KFoldPartitioning
-from orange_cb_recsys.evaluation.ranking_metrics import NDCG, Correlation
-from orange_cb_recsys.recsys import CosineSimilarity, ClassifierRecommender
-from orange_cb_recsys.recsys.config import RecSysConfig
-from orange_cb_recsys.recsys.ContentBasedAlgorithm import CentroidVector
-from orange_cb_recsys.recsys.ContentBasedAlgorithm.content_based_ranking.classifier import SVM
+from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import TestItemsMethodology, AllItemsMethodology, \
+    TrainingItemsMethodology
+from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 
-ratings_filename = 'datasets/examples/new_ratings.csv'
-users_dir = 'contents/examples/ex_1/users_1600355755.1935306'
-items_dir = 'contents/examples/ex_1/movies_1600355972.49884'
-try:
-    open(ratings_filename)
-except FileNotFoundError:
-    ratings_filename = '../../datasets/examples/new_ratings.csv'
-    users_dir = '../../contents/examples/ex_1/users_1600355755.1935306'
-    items_dir = '../../contents/examples/ex_1/movies_1600355972.49884'
+from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, RPrecision
+from orange_cb_recsys.evaluation.eval_model import EvalModel
+from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import KFoldPartitioning
+from orange_cb_recsys.recsys.content_based_algorithm import CentroidVector, CosineSimilarity
 
-t_ratings = RatingsImporter(
-    source=CSVFile(ratings_filename),
-    rating_configs=[RatingsFieldConfig(
-        field_name='points',
-        processor=NumberNormalizer(min_=1, max_=5))],
-    from_field_name='user_id',
-    to_field_name='item_id',
-    timestamp_field_name='timestamp',
-).import_ratings()
+import pandas as pd
 
-class TestRankingEvalModel(TestCase):
-    def test_fit(self):
+from orange_cb_recsys.recsys.graph_based_algorithm.page_rank import NXPageRank
+from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
+from orange_cb_recsys.utils.const import root_path
 
-        recsys_config = RecSysConfig(
-            users_directory=users_dir,
-            items_directory=items_dir,
-            score_prediction_algorithm=None,
-            ranking_algorithm=CentroidVector(
-                item_field='Plot',
-                field_representation='0',
-                similarity=CosineSimilarity()
-            ),
-            rating_frame=t_ratings
-        )
+contents_path = os.path.join(root_path, 'contents')
+items_dir = os.path.join(contents_path, 'movies_multiple_repr')
 
-        RankingAlgEvalModel(
-            config=recsys_config,
-            partitioning=KFoldPartitioning(),
-            metric_list=
-            [
-                Precision(0.4),
-                Recall(0.4),
-                FNMeasure(1, 0.4),
-                MRR(0.4),
-                NDCG({0: (-1, 0), 1: (0, 1)}),
-                Correlation('pearson'),
-                Correlation('kendall'),
-                Correlation('spearman'),
-            ]).fit()
+ratings_filename = os.path.join(root_path, 'datasets', 'examples', 'new_ratings.csv')
+ratings = pd.read_csv(ratings_filename)
+ratings.columns = ['from_id', 'to_id', 'score', 'timestamp']
+ratings = ratings.head(1000)
 
 
+class TestEvalModel(TestCase):
 
-class TestReportEvalModel(TestCase):
-    def test_fit(self):
-
-        recsys_config = RecSysConfig(
-            users_directory=users_dir,
-            items_directory=items_dir,
-            score_prediction_algorithm=None,
-            ranking_algorithm=ClassifierRecommender(
+    def test_fit_cb_w_testrating_methodology(self):
+        rs = ContentBasedRS(
+            CentroidVector(
                 {"Plot": "0"},
-                SVM(),
-                0,
+                CosineSimilarity(),
             ),
-            rating_frame=t_ratings
+            ratings,
+            items_dir
         )
 
-        ReportEvalModel(
-            config=recsys_config,
-            recs_number=3,
-            metric_list=
-            [
-             Serendipity(num_of_recs=3),
-             Novelty(num_of_recs=3),
-             CatalogCoverage()
-        ]).fit()
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()])
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_cb_w_testitems_methodology(self):
+        rs = ContentBasedRS(
+            CentroidVector(
+                {"Plot": "0"},
+                CosineSimilarity(),
+            ),
+            ratings,
+            items_dir
+        )
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=TestItemsMethodology())
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_cb_w_trainingitems_methodology(self):
+        rs = ContentBasedRS(
+            CentroidVector(
+                {"Plot": "0"},
+                CosineSimilarity(),
+            ),
+            ratings,
+            items_dir
+        )
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=TrainingItemsMethodology())
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_cb_w_allitems_methodology(self):
+        rs = ContentBasedRS(
+            CentroidVector(
+                {"Plot": "0"},
+                CosineSimilarity(),
+            ),
+            ratings,
+            items_dir
+        )
+
+        items = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
+                     if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=AllItemsMethodology(items))
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_graph_w_testrating_methodology(self):
+        graph = NXFullGraph(ratings)
+
+        rs = GraphBasedRS(
+            NXPageRank(),
+            graph
+        )
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()])
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_graph_w_testitems_methodology(self):
+        graph = NXFullGraph(ratings)
+
+        rs = GraphBasedRS(
+            NXPageRank(),
+            graph
+        )
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=TestItemsMethodology())
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_graph_w_trainitems_methodology(self):
+        graph = NXFullGraph(ratings)
+
+        rs = GraphBasedRS(
+            NXPageRank(),
+            graph
+        )
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=TrainingItemsMethodology())
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+    def test_fit_graph_w_allitems_methodology(self):
+        graph = NXFullGraph(ratings)
+
+        rs = GraphBasedRS(
+            NXPageRank(),
+            graph
+        )
+
+        items = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
+                     if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
+
+        em = EvalModel(rs,
+                       KFoldPartitioning(),
+                       metric_list=[Precision()],
+                       methodology=AllItemsMethodology(items))
+
+        sys_result, users_result = em.fit()
+
+        self.assertIsInstance(sys_result, pd.DataFrame)
+        self.assertIsInstance(users_result, pd.DataFrame)
+
+# class TestEvalModelManyRatings(TestCase):
+#     def test_all(self):
+#         ratings_filename = os.path.join(contents_path, '..', 'datasets', 'examples', 'new_ratings.csv')
+#
+#         ratings_frame = load_ratings(ratings_filename)
+#
+#         ratings_frame.columns = ['from_id', 'to_id', 'score', 'timestamp']
+#
+#         ratings_frame["score"] = pd.to_numeric(ratings_frame["score"])
+#
+#         rs = ContentBasedRS(
+#             LinearPredictor(
+#                 {"Plot": "0"},
+#                 SkLinearRegression(),
+#             ),
+#             ratings_frame,
+#             items_dir
+#         )
+#
+#         catalog = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
+#                        if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
+#
+#         em = EvalModel(rs,
+#                        KFoldPartitioning(),
+#                        metric_list=[
+#                            Precision(relevant_threshold=3, sys_average='micro'),
+#                            PrecisionAtK(1, relevant_threshold=3, sys_average='micro'),
+#                            RPrecision(relevant_threshold=3),
+#                            Recall(relevant_threshold=3),
+#                            RecallAtK(3, relevant_threshold=3),
+#                            FMeasure(1, relevant_threshold=3, sys_average='macro'),
+#                            FMeasureAtK(2, beta=1, relevant_threshold=3, sys_average='micro'),
+#
+#                            NDCG(),
+#                            NDCGAtK(3),
+#                            MRR(relevant_threshold=3),
+#                            MRRAtK(5, relevant_threshold=3),
+#                            Correlation('pearson', top_n=5),
+#                            Correlation('kendall', top_n=3),
+#                            Correlation('spearman', top_n=4),
+#
+#                            MAE(),
+#                            MSE(),
+#                            RMSE(),
+#
+#                            CatalogCoverage(catalog),
+#                            CatalogCoverage(catalog, k=2),
+#                            CatalogCoverage(catalog, top_n=3),
+#                            GiniIndex(),
+#                            GiniIndex(top_n=3)
+#                        ],
+#                        )
+#
+#         result = em.fit()
+#
+#         print("we")
