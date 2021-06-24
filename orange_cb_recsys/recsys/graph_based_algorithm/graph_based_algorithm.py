@@ -24,23 +24,6 @@ class GraphBasedAlgorithm(Algorithm):
     """
     def __init__(self, feature_selection: FeatureSelection = None):
         self.__feature_selection: FeatureSelection = feature_selection
-        self.graph: FullGraph = None
-
-    @property
-    def fullgraph(self):
-        return self.graph
-
-    def initialize(self, graph: FullGraph):
-        """
-        Method to call right after the instantiation of the algorithm.
-
-        Its task is to pass important parameters to the algorithm, needed to calculate the rank
-        or the predictions
-
-        Args:
-            graph (FullGraph): a FullGraph containing users, items and eventually other categories of nodes
-        """
-        self.graph = graph
 
     @property
     def feature_selection(self):
@@ -50,7 +33,7 @@ class GraphBasedAlgorithm(Algorithm):
     def feature_selection(self, feature_selection: FeatureSelection):
         self.__feature_selection = feature_selection
 
-    def clean_result(self, result: Dict, user_id: str,
+    def clean_result(self, graph: FullGraph, result: Dict, user_id: str,
                      remove_users: bool = True,
                      remove_profile: bool = True,
                      remove_properties: bool = True) -> Dict:
@@ -74,16 +57,19 @@ class GraphBasedAlgorithm(Algorithm):
         Returns:
             new_result (dict): dictionary representing the cleaned result
         """
+        def is_valid(node: object, user_profile):
+            valid = True
+            if remove_users and graph.is_user_node(node) or \
+                remove_profile and node in user_profile or \
+                remove_properties and graph.is_property_node(node):
 
-        extracted_profile = self.extract_profile(user_id)
-        new_result = {k: result[k] for k in result.keys()}
-        for k in result.keys():
-            if remove_users and self.graph.is_user_node(k):
-                new_result.pop(k)
-            if remove_profile and self.graph.is_item_node(k) and k in extracted_profile.keys():
-                new_result.pop(k)
-            if remove_properties and self.graph.is_property_node(k):
-                new_result.pop(k)
+                valid = False
+
+            return valid
+
+        extracted_profile = self.extract_profile(graph, user_id)
+        new_result = {k: result[k] for k in result.keys() if is_valid(k, extracted_profile)}
+
         return new_result
 
     @staticmethod
@@ -100,7 +86,8 @@ class GraphBasedAlgorithm(Algorithm):
 
         return filtered_result
 
-    def extract_profile(self, user_id: str) -> Dict:
+    @staticmethod
+    def extract_profile(graph: FullGraph, user_id: str) -> Dict:
         """
         Extracts the user profile (the items that the user rated, or in general the nodes with a link to the user).
 
@@ -119,10 +106,10 @@ class GraphBasedAlgorithm(Algorithm):
             profile (dict): dictionary with item successor nodes to the user as keys and weights of the edge
                 connecting them in the graph as values
         """
-        succ = self.graph.get_successors(user_id)
+        succ = graph.get_successors(user_id)
         profile = {}
         for a in succ:
-            link_data = self.graph.get_link_data(user_id, a)
+            link_data = graph.get_link_data(user_id, a)
             profile[a] = link_data['weight']
         return profile  # {t: w for (f, t, w) in adj}
 
@@ -150,7 +137,7 @@ class GraphBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, user_id: str, graph: FullGraph, recs_number: int, filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_id: str, graph: FullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All items will be ranked.
@@ -177,44 +164,3 @@ class GraphBasedAlgorithm(Algorithm):
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
         raise NotImplementedError
-
-    def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
-        """
-        Method used to predict the rating of the user passed for all unrated items which are present in the graph
-        or for the items passed in the filter_list parameter which are also present in the graph.
-
-        The method fits the algorithm and then calculates the prediction, even though in the case of the
-        graph-based recommendation the fit process is non-existent
-
-        Args:
-            user_id (str): user_id of the user
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted
-        """
-
-        return self.predict(user_id, self.graph, filter_list)
-
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
-        """
-        Method used to rank for a particular user all unrated items which are present in the graph or the items
-        specified in the filter_list parameter which are also present in the graph.
-
-        The method fits the algorithm and then calculates the prediction, even though in the case of the
-        graph-based recommendation the fit process is non-existent
-
-        If the recs_number is specified, then the rank will contain the top-n items for the user.
-
-        Args:
-            user_id (str): user_id of the user
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
-        """
-
-        return self.rank(user_id, self.graph, recs_number, filter_list)

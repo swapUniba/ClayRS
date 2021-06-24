@@ -1,9 +1,8 @@
 from typing import List
 
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems
-from orange_cb_recsys.recsys.content_based_algorithm.similarities import Similarity
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, NotPredictionAlg
+from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
 from orange_cb_recsys.content_analyzer.content_representation.content_field import EmbeddingField, FeaturesBagField
 import pandas as pd
 import numpy as np
@@ -28,7 +27,7 @@ class CentroidVector(ContentBasedAlgorithm):
             as positive
     """
 
-    def __init__(self, item_field: dict, similarity: Similarity, threshold: float = 0):
+    def __init__(self, item_field: dict, similarity: Similarity, threshold: float = None):
         super().__init__(item_field, threshold)
         self.__similarity = similarity
         self.__centroid: np.array = None
@@ -75,9 +74,13 @@ class CentroidVector(ContentBasedAlgorithm):
         # Calculates labels and extract features from the positive rated items
         positive_rated_dict = {}
 
+        threshold = self.threshold
+        if threshold is None:
+            threshold = self._calc_mean_user_threshold(user_ratings)
+
         for item in rated_items:
             score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
-            if item is not None and score_assigned >= self.threshold:
+            if item is not None and score_assigned >= threshold:
 
                 positive_rated_dict[item] = self.extract_features_item(item)
 
@@ -87,7 +90,7 @@ class CentroidVector(ContentBasedAlgorithm):
                         self.__check_representation(
                             representation, repr_id, field)
 
-        if len(user_ratings) == 0:
+        if len(rated_items) == 0 or all(rated_items) is None:
             raise NoRatedItems("No rated items available locally!\n"
                                "The score frame will be empty for the user")
         if len(positive_rated_dict) == 0:
@@ -129,36 +132,7 @@ class CentroidVector(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted
         """
-
-        # Load items to predict
-        if filter_list is None:
-            items_to_predict = get_unrated_items(items_directory, user_ratings)
-        else:
-            items_to_predict = [load_content_instance(items_directory, item_id) for item_id in filter_list]
-
-        # Extract features of the items to predict
-        id_items_to_predict = []
-        features_items_to_predict = []
-        for item in items_to_predict:
-            id_items_to_predict.append(item.content_id)
-            features_items_to_predict.append(self.extract_features_item(item))
-
-        # Calculate predictions
-        logger.info("Computing similarity between centroid and unrated items")
-        features_fused = self.fuse_representations(features_items_to_predict)
-        similarities = [self.__similarity.perform(self.__centroid, item) for item in features_fused]
-
-        # Build the score frame
-        columns = ["to_id", "rating"]
-        score_frame = pd.DataFrame(columns=columns)
-
-        for item_id, similarity in zip(id_items_to_predict, similarities):
-            score_frame = pd.concat(
-                [score_frame,
-                 pd.DataFrame.from_records([(item_id, similarity)], columns=columns)],
-                ignore_index=True)
-
-        return score_frame
+        raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
     def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
@@ -181,11 +155,32 @@ class CentroidVector(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        # Load items to predict
+        if filter_list is None:
+            items_to_predict = get_unrated_items(items_directory, user_ratings)
+        else:
+            items_to_predict = [load_content_instance(items_directory, item_id) for item_id in filter_list]
 
-        result = self.predict(user_ratings, items_directory, filter_list)
+        # Extract features of the items to predict
+        id_items_to_predict = []
+        features_items_to_predict = []
+        for item in items_to_predict:
+            id_items_to_predict.append(item.content_id)
+            features_items_to_predict.append(self.extract_features_item(item))
 
-        result.sort_values(by=['rating'], ascending=False, inplace=True)
+        # Calculate predictions
+        logger.info("Computing similarity between centroid and unrated items")
+        features_fused = self.fuse_representations(features_items_to_predict)
+        similarities = [self.__similarity.perform(self.__centroid, item) for item in features_fused]
 
-        rank = result.head(recs_number)
+        # Build the score frame
+        result = {'to_id': id_items_to_predict, 'score': similarities}
+
+        result = pd.DataFrame(result, columns=['to_id', 'score'])
+
+        # Sort them in descending order
+        result.sort_values(by=['score'], ascending=False, inplace=True)
+
+        rank = result[:recs_number]
 
         return rank

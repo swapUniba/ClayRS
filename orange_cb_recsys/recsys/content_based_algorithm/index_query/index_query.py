@@ -30,7 +30,7 @@ class IndexQuery(ContentBasedAlgorithm):
         threshold (float): ratings bigger than threshold will be considered as positive
     """
 
-    def __init__(self, item_field: dict, classic_similarity: bool = True, threshold: float = 0):
+    def __init__(self, item_field: dict, classic_similarity: bool = True, threshold: float = None):
         super().__init__(item_field, threshold)
         self.__string_query: str = None
         self.__scores: list = None
@@ -69,6 +69,10 @@ class IndexQuery(ContentBasedAlgorithm):
         if not DEVELOPING:
             index_path = os.path.join(home_path, items_directory, 'search_index')
 
+        threshold = self.threshold
+        if threshold is None:
+            threshold = self._calc_mean_user_threshold(user_ratings)
+
         # Initializes positive_user_docs which is a dictionary that has the document_id as key and
         # another dictionary as value. The dictionary value has the name of the field as key
         # and its contents as value. By doing so we obtain the data of the fields while
@@ -84,7 +88,7 @@ class IndexQuery(ContentBasedAlgorithm):
                 if item is not None:
                     doc = item.index_document_id
 
-                    if score > self.threshold:
+                    if score >= threshold:
 
                         scores.append(score)
                         positive_user_docs[doc] = dict()
@@ -117,17 +121,16 @@ class IndexQuery(ContentBasedAlgorithm):
         # is boosted by the score given by the user to said document
         string_query = "("
         for doc, score in zip(self.__positive_user_docs.keys(), self.__scores):
-            if score > self.threshold:
-                string_query += "("
-                for field_name in self.__positive_user_docs[doc]:
-                    if field_name == 'content_id':
-                        continue
-                    word_list = self.__positive_user_docs[doc][field_name].split()
-                    string_query += field_name + ":("
-                    for term in word_list:
-                        string_query += term + " "
-                    string_query += ") "
-                string_query += ")^" + str(score) + " "
+            string_query += "("
+            for field_name in self.__positive_user_docs[doc]:
+                if field_name == 'content_id':
+                    continue
+                word_list = self.__positive_user_docs[doc][field_name].split()
+                string_query += field_name + ":("
+                for term in word_list:
+                    string_query += term + " "
+                string_query += ") "
+            string_query += ")^" + str(score) + " "
         string_query += ") "
 
         self.__string_query = string_query
@@ -193,7 +196,7 @@ class IndexQuery(ContentBasedAlgorithm):
         Raises:
             NotPredictionAlg
         """
-        raise NotPredictionAlg
+        raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
     def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
@@ -232,6 +235,11 @@ class IndexQuery(ContentBasedAlgorithm):
             score_docs = searcher.search(query, limit=recs_number, filter=candidate_query, mask=rated_query_list)
 
             logger.info("Building score frame to return")
-            rank = self._build_score_frame(score_docs)
 
-        return rank
+            results = {'to_id': [], 'score': []}
+
+            for result in score_docs:
+                results['to_id'].append(result['content_id'])
+                results['score'].append(result.score)
+
+        return pd.DataFrame(results)
