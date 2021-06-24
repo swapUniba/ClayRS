@@ -3,7 +3,8 @@ from unittest import TestCase
 
 from orange_cb_recsys.utils.load_content import load_content_instance
 
-from orange_cb_recsys.recsys.content_based_algorithm import CentroidVector, CosineSimilarity
+from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
+from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
 from orange_cb_recsys.utils.const import root_path
 
 contents_path = os.path.join(root_path, 'contents')
@@ -17,14 +18,6 @@ class TestContentBasedAlgorithm(TestCase):
         # a subclass to test its methods. No initialization since we are not testing
         # methods that need it
         self.alg = CentroidVector({'Plot': '0'}, CosineSimilarity(), 0)
-
-    def test_assign_class(self):
-
-        positive = self.alg.assign_class(0.5)
-        negative = self.alg.assign_class(-0.5)
-
-        self.assertEqual(1, positive)
-        self.assertEqual(0, negative)
 
     def test__bracket_representation(self):
 
