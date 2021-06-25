@@ -19,13 +19,13 @@ def load_content_instance(directory: str, content_id: str) -> Content:
         content (Content)
     """
     try:
-        content_filename = os.path.join(directory, content_id + '.xz')
+        content_filename = os.path.join(directory, '{}.xz'.format(content_id))
         with lzma.open(content_filename, "rb") as content_file:
-            content: Content = pickle.load(content_file)
-        return content
+            content = pickle.load(content_file)
     except FileNotFoundError:
-        # print(content_filename + " Not Found")
-        pass
+        content = None
+
+    return content
 
 
 def get_unrated_items(items_directory: str, ratings) -> List[Content]:
@@ -47,7 +47,7 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
     # list of id of item without rating
     rated_items_filename_list = set([re.sub(r'[^\w\s]', '', item_id) for item_id in ratings.to_id])
 
-    #logger.info("Checking if unrated")
+    # logger.info("Checking if unrated")
     filename_list = [item_id for item_id in directory_filename_list if
                      item_id not in rated_items_filename_list]
 
@@ -117,3 +117,20 @@ def remove_not_existent_items(ratings, items_directory: str):
 
     return ratings
 
+
+def remove_not_existent_items_list(items: list, items_dir: str):
+    """
+    Sometimes a dataset can contain ratings about an item which is not in the dataset. This
+    function locates these items nd removes them from the ratings frame
+
+    Args:
+        ratings (pd.DataFrame): Ratings of the user
+        items_directory (str): Path to the directory in which the items are stored
+    """
+
+    items_locally = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
+                         if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
+
+    intersection = [x for x in items if x in items_locally]
+
+    return intersection
