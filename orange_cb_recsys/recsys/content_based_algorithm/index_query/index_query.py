@@ -4,6 +4,7 @@ import re
 
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.utils.const import DEVELOPING, logger, home_path
@@ -54,7 +55,36 @@ class IndexQuery(ContentBasedAlgorithm):
 
         return self.item_field.get(field) is not None and repr_id in self.item_field.get(field)
 
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def __get_representations(self, index_representations: dict):
+        def find_valid(pattern: str):
+            field_index_retrieved = [field_index for field_index in index_representations
+                                     if re.match(pattern, field_index)]
+
+            if len(field_index_retrieved) == 0:
+                raise KeyError("Id {} not found for the field {}".format(id, k))
+            elif len(field_index_retrieved) > 1:
+                raise ValueError("This shouldn't happen! Duplicate fields?")
+            else:
+                valid = field_index_retrieved[0]
+
+            return valid
+
+        representations_valid = {}
+        for k in self.item_field:
+            for id in self.item_field[k]:
+                if isinstance(id, str):
+                    pattern = "^{}#.+#{}$".format(k, id)
+                else:
+                    # the id passed it's a int
+                    pattern = "^{}#{}.*$".format(k, id)
+
+                valid_key = find_valid(pattern)
+                representations_valid[valid_key] = index_representations[valid_key]
+
+        return representations_valid
+
+
+    def process_rated(self, user_ratings: pd.DataFrame, index_directory: str):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the query).
@@ -65,10 +95,6 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             items_directory (str): path of the directory where the items are stored
         """
-        index_path = os.path.join(items_directory, 'search_index')
-        if not DEVELOPING:
-            index_path = os.path.join(home_path, items_directory, 'search_index')
-
         threshold = self.threshold
         if threshold is None:
             threshold = self._calc_mean_user_threshold(user_ratings)
@@ -80,25 +106,35 @@ class IndexQuery(ContentBasedAlgorithm):
         scores = []
         positive_user_docs = {}
 
-        ix = open_dir(index_path)
-        with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
+        ix = SearchIndex(index_directory)
+        for item_id, score in zip(user_ratings.to_id, user_ratings.score):
+            if score >= threshold:
+                # {item_id: {"item": item_dictionary, "score": item_score}}
+                item_query = ix.query(item_id, 1, classic_similarity=self.__classic_similarity)
+                if len(item_query) != 0:
+                    item = item_query.pop(item_id).get('item')
+                    scores.append(score)
+                    positive_user_docs[item_id] = self.__get_representations(item)
 
-            for item_id, score in zip(user_ratings.to_id, user_ratings.score):
-                item = load_content_instance(items_directory, item_id)
-                if item is not None:
-                    doc = item.index_document_id
-
-                    if score >= threshold:
-
-                        scores.append(score)
-                        positive_user_docs[doc] = dict()
-                        field_list = searcher.stored_fields(doc)
-
-                        for field_name in field_list:
-                            if field_name == 'content_id':
-                                continue
-                            if self.__is_field_chosen(field_name):
-                                positive_user_docs[doc][field_name] = field_list[field_name]
+        # ix = open_dir(index_path)
+        # with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
+        #
+        #     for item_id, score in zip(user_ratings.to_id, user_ratings.score):
+        #         item = load_content_instance(items_directory, item_id)
+        #         if item is not None:
+        #             doc = item.index_document_id
+        #
+        #             if score >= threshold:
+        #
+        #                 scores.append(score)
+        #                 positive_user_docs[doc] = dict()
+        #                 field_list = searcher.stored_fields(doc)
+        #
+        #                 for field_name in field_list:
+        #                     if field_name == 'content_id':
+        #                         continue
+        #                     if self.__is_field_chosen(field_name):
+        #                         positive_user_docs[doc][field_name] = field_list[field_name]
 
         self.__positive_user_docs = positive_user_docs
         self.__scores = scores
@@ -149,20 +185,25 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             filter_list (list): list of the items to predict, if None all unrated items will be predicted
         """
-        candidate_query = None
+        # candidate_query = None
+        # if filter_list is not None:
+        #     candidate_query = [Term("content_id", candidate) for candidate in filter_list]
+        #     candidate_query = Or(candidate_query)
+        #
+        #     # Create mask query excluding items in the filter list
+        #     rated_query = [Term("content_id", document) for document in user_ratings.to_id
+        #                    if document not in filter_list]
+        # else:
+        #     rated_query = [Term("content_id", document) for document in user_ratings.to_id]
+        #
+        # rated_query = Or(rated_query)
+
         if filter_list is not None:
-            candidate_query = [Term("content_id", candidate) for candidate in filter_list]
-            candidate_query = Or(candidate_query)
-
-            # Create mask query excluding items in the filter list
-            rated_query = [Term("content_id", document) for document in user_ratings.to_id
-                           if document not in filter_list]
+            masked_list = list(user_ratings.query('to_id not in @filter_list')['to_id'])
         else:
-            rated_query = [Term("content_id", document) for document in user_ratings.to_id]
+            masked_list = list(user_ratings['to_id'])
 
-        rated_query = Or(rated_query)
-
-        return rated_query, candidate_query
+        return masked_list
 
     def _build_score_frame(self, score_docs: Results):
         """
@@ -198,7 +239,7 @@ class IndexQuery(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
+    def rank(self, user_ratings: pd.DataFrame, index_directory: str, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -220,26 +261,32 @@ class IndexQuery(ContentBasedAlgorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
 
-        rated_query_list, candidate_query = self._build_mask_filter_query(user_ratings, filter_list)
+        # rated_query_list, candidate_query = self._build_mask_filter_query(user_ratings, filter_list)
 
-        index_path = os.path.join(items_directory, 'search_index')
-        if not DEVELOPING:
-            index_path = os.path.join(home_path, items_directory, 'search_index')
+        masked_list = self._build_mask_filter_query(user_ratings, filter_list)
 
-        ix = open_dir(index_path)
-        with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
-            # The filter and mask arguments of the index searcher are used respectively
-            # to find only candidate documents or to ignore documents rated by the user
-            schema = ix.schema
-            query = QueryParser("content_id", schema=schema, group=qparser.OrGroup).parse(self.__string_query)
-            score_docs = searcher.search(query, limit=recs_number, filter=candidate_query, mask=rated_query_list)
+        ix = SearchIndex(index_directory)
+        score_docs = ix.query(self.__string_query, recs_number, masked_list, filter_list, self.__classic_similarity)
 
-            logger.info("Building score frame to return")
+        # index_path = os.path.join(items_directory, 'search_index')
+        # if not DEVELOPING:
+        #     index_path = os.path.join(home_path, items_directory, 'search_index')
+        #
+        # ix = open_dir(index_path)
+        # with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
+        #     # The filter and mask arguments of the index searcher are used respectively
+        #     # to find only candidate documents or to ignore documents rated by the user
+        #     schema = ix.schema
+        #     query = QueryParser("content_id", schema=schema, group=qparser.OrGroup).parse(self.__string_query)
+        #     score_docs = searcher.search(query, limit=recs_number, filter=candidate_query, mask=rated_query_list)
 
-            results = {'to_id': [], 'score': []}
+        logger.info("Building score frame to return")
 
-            for result in score_docs:
-                results['to_id'].append(result['content_id'])
-                results['score'].append(result.score)
+        results = {'to_id': [], 'score': []}
+
+        for result in score_docs:
+
+            results['to_id'].append(result)
+            results['score'].append(score_docs[result]['score'])
 
         return pd.DataFrame(results)
