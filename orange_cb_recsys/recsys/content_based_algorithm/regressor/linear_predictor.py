@@ -97,7 +97,6 @@ class LinearPredictor(ContentBasedAlgorithm):
                     rated_dict[item] = self.extract_features_item(item)
                     labels.append(score_assigned)
 
-
         self.__labels = labels
         self.__rated_dict = rated_dict
 

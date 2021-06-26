@@ -1,9 +1,10 @@
 from typing import List
 
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+    CombiningTechnique, Centroid
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, NotPredictionAlg
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
-from orange_cb_recsys.content_analyzer.content_representation.content_field import EmbeddingField, FeaturesBagField
 import pandas as pd
 import numpy as np
 
@@ -27,35 +28,13 @@ class CentroidVector(ContentBasedAlgorithm):
             as positive
     """
 
-    def __init__(self, item_field: dict, similarity: Similarity, threshold: float = None):
+    def __init__(self, item_field: dict, similarity: Similarity, threshold: float = None,
+                 embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, threshold)
         self.__similarity = similarity
+        self.__embedding_combiner = embedding_combiner
         self.__centroid: np.array = None
         self.__positive_rated_dict: dict = None
-
-    @staticmethod
-    def __check_representation(representation, representation_name: str, item_field: str):
-        """
-        Checks that the passed representation is an embedding (in which case the granularity must be document)
-        or a tf-idf vector, otherwise throws an exception because in these scenarios the centroid calculation
-        cannot be computed
-
-        Args:
-            representation: representation instance
-            representation_name (str): name of the item representation
-            item_field (str): name of the field that has said representation
-        """
-        if not isinstance(representation, EmbeddingField) and \
-                not isinstance(representation, FeaturesBagField):
-            raise ValueError(
-                "The representation %s for the %s field is not an embedding or a tf-idf vector"
-                % (representation_name, item_field))
-
-        if isinstance(representation, EmbeddingField):
-            if len(representation.value.shape) != 1:
-                raise ValueError(
-                    "The representation %s for the %s field is not a document embedding, "
-                    "so the centroid cannot be calculated" % (representation_name, item_field))
 
     def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
         """
@@ -84,12 +63,6 @@ class CentroidVector(ContentBasedAlgorithm):
 
                 positive_rated_dict[item] = self.extract_features_item(item)
 
-                for field in self.item_field.keys():
-                    for repr_id in self.item_field[field]:
-                        representation = item.get_field(field).get_representation(repr_id)
-                        self.__check_representation(
-                            representation, repr_id, field)
-
         if len(rated_items) == 0 or all(rated_items) is None:
             raise NoRatedItems("No rated items available locally!\n"
                                "The score frame will be empty for the user")
@@ -111,7 +84,7 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         positive_rated_features = list(self.__positive_rated_dict.values())
 
-        positive_rated_features_fused = self.fuse_representations(positive_rated_features)
+        positive_rated_features_fused = self.fuse_representations(positive_rated_features, self.__embedding_combiner)
         self.__centroid = np.array(positive_rated_features_fused).mean(axis=0)
 
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
@@ -170,7 +143,7 @@ class CentroidVector(ContentBasedAlgorithm):
 
         # Calculate predictions
         logger.info("Computing similarity between centroid and unrated items")
-        features_fused = self.fuse_representations(features_items_to_predict)
+        features_fused = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
         similarities = [self.__similarity.perform(self.__centroid, item) for item in features_fused]
 
         # Build the score frame

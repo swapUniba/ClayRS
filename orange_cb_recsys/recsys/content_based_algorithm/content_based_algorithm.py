@@ -1,12 +1,14 @@
 import abc
 from typing import List
 import pandas as pd
-from scipy.sparse import hstack
+from scipy import sparse
 from sklearn.exceptions import NotFittedError
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
 import numpy as np
 
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+    CombiningTechnique
 from orange_cb_recsys.recsys.algorithm import Algorithm
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
@@ -55,7 +57,7 @@ class ContentBasedAlgorithm(Algorithm):
             The item_field passed with all values inside a list
         """
         for field in item_field:
-            if isinstance(item_field[field], str):
+            if not isinstance(item_field[field], list):
                 item_field[field] = [item_field[field]]
 
         return item_field
@@ -89,12 +91,12 @@ class ContentBasedAlgorithm(Algorithm):
 
                 for representation in field_representations:
                     item_bag_list.append(
-                        item.get_field(field).get_representation(representation).value
+                        item.get_field_representation(field, representation).value
                     )
 
         return item_bag_list
 
-    def fuse_representations(self, X: list):
+    def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
         """
         Transform the X passed vectorizing if X contains dicts and merging
         multiple representations in a single one for every item in X.
@@ -118,6 +120,8 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
+        if any(not isinstance(rep, dict) and not isinstance(rep, np.ndarray) and not isinstance(rep, float) for rep in X[0]):
+            raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
         # We check if there are dicts as representation in the first element of X,
         # since the representations are the same for all elements in X we can check
@@ -129,34 +133,33 @@ class ContentBasedAlgorithm(Algorithm):
             try:
                 check_is_fitted(self.__transformer)
             except NotFittedError:
-                X_dicts = []
-                for item in X:
-                    for rep in item:
-                        if isinstance(rep, dict):
-                            X_dicts.append(rep)
-
+                X_dicts = [rep for item in X for rep in item if isinstance(rep, dict)]
                 self.__transformer.fit(X_dicts)
 
-            # In every case, we transform the input
-            X_vectorized = []
-            for sublist in X:
-                single_list = []
-                for item in sublist:
-                    if isinstance(item, dict):
-                        vector = self.__transformer.transform(item)
-                        single_list.append(vector)
-                    else:
-                        single_list.append(item)
-                X_vectorized.append(single_list)
-        else:
-            X_vectorized = X
+        # In every case, we transform the input
+        X_vectorized_sparse = []
+        for sublist in X:
+            single_sparse = sparse.csr_matrix((1, 0))
+            for item in sublist:
+                if need_vectorizer and isinstance(item, dict):
+                    vector = self.__transformer.transform(item)
+                    single_sparse = sparse.hstack((single_sparse, vector), format='csr')
+                elif isinstance(item, np.ndarray):
+                    if item.ndim > 1:
+                        item = embedding_combiner.combine(item)
 
-        try:
-            X_sparse = [hstack(sublist).toarray().flatten() for sublist in X_vectorized]
-        except ValueError:
-            X_sparse = [np.column_stack(sublist).flatten() for sublist in X_vectorized]
+                    item_sparse = sparse.csr_matrix(item)
+                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+                else:
+                    # it's a float
+                    item_sparse = sparse.csr_matrix(item)
+                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
 
-        return X_sparse
+            X_vectorized_sparse.append(single_sparse)
+
+        X_dense = [x.toarray().flatten() for x in X_vectorized_sparse]
+
+        return X_dense
 
     @abc.abstractmethod
     def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):

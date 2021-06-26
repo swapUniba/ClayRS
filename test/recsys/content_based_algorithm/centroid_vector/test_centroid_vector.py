@@ -27,10 +27,10 @@ class TestCentroidVector(TestCase):
 
         self.filter_list = ['tt0112641', 'tt0112760', 'tt0112896']
 
-        self.movies_dir = os.path.join(contents_path, 'movies_multiple_repr/')
+        self.movies_dir = os.path.join(contents_path, 'movies_codified/')
 
     def test_predict(self):
-        alg = CentroidVector({'Plot': ['0']}, CosineSimilarity(), threshold=0)
+        alg = CentroidVector({'Genre': ['embedding']}, CosineSimilarity(), threshold=0)
         user_ratings = self.ratings.query('from_id == "A000"')
         alg.process_rated(user_ratings, self.movies_dir)
         alg.fit()
@@ -41,7 +41,7 @@ class TestCentroidVector(TestCase):
 
     def test_rank_single_representation(self):
         # Single representation
-        alg = CentroidVector({'Plot': ['0']}, CosineSimilarity(), threshold=0)
+        alg = CentroidVector({'Genre': ['embedding']}, CosineSimilarity(), threshold=0)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -74,8 +74,9 @@ class TestCentroidVector(TestCase):
 
     def test_rank_multiple_representations(self):
         # Multiple representations with auto threshold based on the mean ratings of the user
-        alg = CentroidVector({'Plot': ['0', '1'],
-                              "Genre": ['0', '1']}, CosineSimilarity())
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding'],
+                              "Genre": ['tfidf', 'embedding'],
+                              'imdbRating': [0]}, CosineSimilarity())
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -112,7 +113,7 @@ class TestCentroidVector(TestCase):
             ("A000", "tt0112281", -1, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
 
-        alg = CentroidVector({'Plot': '0'}, CosineSimilarity(), 0)
+        alg = CentroidVector({'Plot': 'embedding'}, CosineSimilarity(), 0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         with self.assertRaises(OnlyNegativeItems):
@@ -123,7 +124,7 @@ class TestCentroidVector(TestCase):
             ("A000", "non existent", 1, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
 
-        alg = CentroidVector({'Plot': '0'}, CosineSimilarity(), 0)
+        alg = CentroidVector({'Plot': 'embedding'}, CosineSimilarity(), 0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         with self.assertRaises(NoRatedItems):

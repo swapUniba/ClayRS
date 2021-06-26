@@ -40,7 +40,7 @@ class TestClassifierRecommender(TestCase):
         # tt0112281 is rated for A000 but let's suppose we want to know its rank
         self.filter_list = ['tt0112281', 'tt0112760', 'tt0112896']
 
-        self.movies_dir = os.path.join(contents_path, 'movies_multiple_repr/')
+        self.movies_dir = os.path.join(contents_path, 'movies_codified/')
 
         # IMPORTANT! If a new classifier is added, just add it to this list to test it
         self.classifiers_list = [
@@ -50,7 +50,7 @@ class TestClassifierRecommender(TestCase):
 
     def test_predict(self):
         # Doesn't matter which classifier we chose
-        alg = ClassifierRecommender({'Plot': ['0']}, SkSVC(), threshold=0)
+        alg = ClassifierRecommender({'Plot': ['tfidf']}, SkSVC(), threshold=0)
         user_ratings = self.ratings.query('from_id == "A000"')
         alg.process_rated(user_ratings, self.movies_dir)
         alg.fit()
@@ -64,7 +64,7 @@ class TestClassifierRecommender(TestCase):
         clf = classifier
 
         # Single representation
-        alg = ClassifierRecommender({'Plot': ['0']}, clf, threshold=0)
+        alg = ClassifierRecommender({'Plot': ['tfidf']}, clf, threshold=0)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -100,8 +100,9 @@ class TestClassifierRecommender(TestCase):
         clf = classifier
 
         # Multiple representations with auto threshold based on the mean ratings of the user
-        alg = ClassifierRecommender({'Plot': ['0', '1'],
-                                     "Genre": ['0', '1']}, clf)
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding'],
+                                     'Genre': ['tfidf', 'embedding'],
+                                     'imdbRating': [0]}, clf)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -138,7 +139,7 @@ class TestClassifierRecommender(TestCase):
             ("A000", "tt0112281", 1, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
 
-        alg = ClassifierRecommender({'Plot': '0'}, SkKNN(), 0)
+        alg = ClassifierRecommender({'Plot': 'tfidf'}, SkKNN(), 0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         with self.assertRaises(OnlyPositiveItems):
@@ -149,7 +150,7 @@ class TestClassifierRecommender(TestCase):
             ("A000", "tt0112281", -1, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
 
-        alg = ClassifierRecommender({'Plot': '0'}, SkKNN(), 0)
+        alg = ClassifierRecommender({'Plot': 'tfidf'}, SkKNN(), 0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         with self.assertRaises(OnlyNegativeItems):
@@ -160,7 +161,7 @@ class TestClassifierRecommender(TestCase):
             ("A000", "non existent", 0.5, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
 
-        alg = ClassifierRecommender({'Plot': '0'}, SkKNN(), 0)
+        alg = ClassifierRecommender({'Plot': 'tfidf'}, SkKNN(), 0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         with self.assertRaises(NoRatedItems):

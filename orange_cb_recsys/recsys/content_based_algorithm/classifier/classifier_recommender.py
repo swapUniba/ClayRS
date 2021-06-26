@@ -2,6 +2,8 @@ from typing import List
 
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+    CombiningTechnique, Centroid
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
@@ -59,9 +61,11 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                considered as positive
        """
 
-    def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None):
+    def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
+                 embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, threshold)
         self.__classifier = classifier
+        self.__embedding_combiner = embedding_combiner
         self.__labels: list = None
         self.__rated_dict: dict = None
 
@@ -124,7 +128,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         rated_features = list(self.__rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features = self.fuse_representations(rated_features)
+        fused_features = self.fuse_representations(rated_features, self.__embedding_combiner)
 
         self.__classifier.fit(fused_features, self.__labels)
 
@@ -184,7 +188,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 features_items_to_predict.append(self.extract_features_item(item))
 
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features_items_to_pred = self.fuse_representations(features_items_to_predict)
+        fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
         logger.info("Predicting scores")
         score_labels = self.__classifier.predict_proba(fused_features_items_to_pred)
