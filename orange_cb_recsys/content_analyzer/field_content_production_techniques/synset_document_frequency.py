@@ -1,17 +1,17 @@
-import nltk
-
-try:
-    nltk.data.find('averaged_perceptron_tagger')
-except LookupError:
-    nltk.download('averaged_perceptron_tagger')
-try:
-    nltk.data.find('wordnet')
-except LookupError:
-    nltk.download('wordnet')
-try:
-    nltk.data.find('punkt')
-except LookupError:
-    nltk.download('punkt')
+# import nltk
+#
+# try:
+#     nltk.data.find('averaged_perceptron_tagger')
+# except LookupError:
+#     nltk.download('averaged_perceptron_tagger')
+# try:
+#     nltk.data.find('wordnet')
+# except LookupError:
+#     nltk.download('wordnet')
+# try:
+#     nltk.data.find('punkt')
+# except LookupError:
+#     nltk.download('punkt')
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \

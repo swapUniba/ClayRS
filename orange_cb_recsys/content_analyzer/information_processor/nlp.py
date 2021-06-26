@@ -26,6 +26,30 @@ def get_wordnet_pos(word):
 
 
 class NLTK(NLP):
+    try:
+        nltk.data.find('corpora/stopwords')
+    except LookupError:
+        nltk.download('stopwords')
+    try:
+        nltk.data.find('punkt')
+    except LookupError:
+        nltk.download('punkt')
+    try:
+        nltk.data.find('averaged_perceptron_tagger')
+    except LookupError:
+        nltk.download('averaged_perceptron_tagger')
+    try:
+        nltk.data.find('wordnet')
+    except LookupError:
+        nltk.download('wordnet')
+    try:
+        nltk.data.find('maxent_ne_chunker')
+    except LookupError:
+        nltk.download('maxent_ne_chunker')
+    try:
+        nltk.data.find('words')
+    except LookupError:
+        nltk.download('words')
     """
     Interface to the NLTK library for natural language processing features
 
@@ -61,30 +85,6 @@ class NLTK(NLP):
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
                          strip_multiple_whitespaces, url_tagging)
-        try:
-            nltk.data.find('corpora/stopwords')
-        except LookupError:
-            nltk.download('stopwords')
-        try:
-            nltk.data.find('punkt')
-        except LookupError:
-            nltk.download('punkt')
-        try:
-            nltk.data.find('averaged_perceptron_tagger')
-        except LookupError:
-            nltk.download('averaged_perceptron_tagger')
-        try:
-            nltk.data.find('wordnet')
-        except LookupError:
-            nltk.download('wordnet')
-        try:
-            nltk.data.find('maxent_ne_chunker')
-        except LookupError:
-            nltk.download('maxent_ne_chunker')
-        try:
-            nltk.data.find('words')
-        except LookupError:
-            nltk.download('words')
 
         self.__full_lang_code = lang
 
