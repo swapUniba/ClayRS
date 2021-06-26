@@ -1,4 +1,5 @@
 import abc
+import re
 from abc import ABC
 from typing import List, Dict, Union, Iterator
 
@@ -74,6 +75,9 @@ class FieldConfig:
         if preprocessing is None:
             preprocessing = []
 
+        if id is not None:
+            self._check_custom_id(id)
+
         self.__content_technique = content_technique
         self.__preprocessing = preprocessing
         self.__memory_interface = memory_interface
@@ -124,6 +128,11 @@ class FieldConfig:
         """
         return self.__lang
 
+    def _check_custom_id(self, id: str):
+        if not re.match("^[A-Za-z0-9_-]+$", id):
+            raise ValueError("The custom id {} is not valid!\n"
+                             "A custom id can only have numbers, letters and '_' or '-'!".format(id))
+
     def __str__(self):
         return "FieldConfig"
 
@@ -165,6 +174,9 @@ class ExogenousConfig:
     """
 
     def __init__(self, exogenous_technique: ExogenousPropertiesRetrieval, id: str = None):
+        if id is not None:
+            self._check_custom_id(id)
+
         self.__exogenous_technique = exogenous_technique
         self.__id = id
 
@@ -181,6 +193,11 @@ class ExogenousConfig:
         Getter for the ExogenousConfig id
         """
         return self.__id
+
+    def _check_custom_id(self, id: str):
+        if not re.match("^[A-Za-z0-9_-]+$", id):
+            raise ValueError("The custom id {} is not valid!\n"
+                             "A custom id can only have numbers, letters and '_' or '-'!".format(id))
 
     def __str__(self):
         return "ExogenousConfig"
