@@ -11,6 +11,7 @@ from orange_cb_recsys.content_analyzer.content_representation.representation_con
 from orange_cb_recsys.content_analyzer.memory_interfaces import InformationInterface
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.id_merger import id_merger
+from orange_cb_recsys.utils.const import progbar
 
 
 class ContentAnalyzer:
@@ -56,7 +57,7 @@ class ContentAnalyzer:
         contents_producer.set_config(self.__config)
         created_contents = contents_producer.create_contents()
 
-        for content in created_contents:
+        for content in progbar(created_contents, prefix="Serializing contents: "):
             self.__serialize_content(content)
 
     def __serialize_content(self, content: Content):
@@ -65,7 +66,6 @@ class ContentAnalyzer:
         Args:
             content (Content): content instance that will be serialized
         """
-        logger.info("Serializing content %s in %s", content.content_id, self.__config.output_directory)
 
         file_name = re.sub(r'[^\w\s]', '', content.content_id)
         path = os.path.join(self.__config.output_directory, file_name + '.xz')
@@ -80,8 +80,10 @@ class ContentAnalyzer:
         So any case where the id is None is not considered.
         """
         for field_name in self.__config.get_field_name_list():
-            if len([config.id for config in self.__config.get_configs_list(field_name) if config.id is not None]) != \
-               len(set(config.id for config in self.__config.get_configs_list(field_name) if config.id is not None)):
+            custom_id_list = [config.id for config in self.__config.get_configs_list(field_name)
+                              if config.id is not None]
+
+            if len(custom_id_list) != len(set(custom_id_list)):
                 raise ValueError("Each id for each field config of the field %s has to be unique" % field_name)
 
     def __check_exogenous_representation_list(self):
@@ -91,8 +93,8 @@ class ContentAnalyzer:
         If the config id is None, the representation name will be kept as None even if it is not unique.
         So any case where the id is None is not considered
         """
-        if len([config.id for config in self.__config.exogenous_representation_list if config.id is not None]) != \
-           len(set(config.id for config in self.__config.exogenous_representation_list if config.id is not None)):
+        custom_id_list = [config.id for config in self.__config.exogenous_representation_list if config.id is not None]
+        if len(custom_id_list) != len(set(custom_id_list)):
             raise ValueError("Each id for each exogenous config in the exogenous list has to be unique")
 
     def __str__(self):
@@ -211,7 +213,12 @@ class ContentsProducer:
                         memory_interface = self.__memory_interfaces[memory_interface.directory]
                     if memory_interface not in index_field_repr.keys():
                         index_field_repr[memory_interface] = 0
-                    index_field_name = field_name + "_" + str(index_field_repr[memory_interface])
+
+                    if field_config.id is not None:
+                        index_field_name = "{}#{}#{}".format(field_name, str(index_field_repr[memory_interface]), field_config.id)
+                    else:
+                        index_field_name = "{}#{}".format(field_name, str(index_field_repr[memory_interface]))
+
                     index_representations_dict[memory_interface][index_field_name] = technique_result
                     result = []
 
