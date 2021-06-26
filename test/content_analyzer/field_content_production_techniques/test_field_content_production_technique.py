@@ -1,7 +1,7 @@
 from unittest import TestCase
 import os
 
-from orange_cb_recsys.content_analyzer.content_representation.content import StringField
+from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     OriginalData, DefaultTechnique
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
@@ -17,7 +17,7 @@ class TestOriginalData(TestCase):
         data_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(data_list), 20)
-        self.assertIsInstance(data_list[0], StringField)
+        self.assertIsInstance(data_list[0], SimpleField)
 
 
 class TestDefaultTechnique(TestCase):
@@ -27,4 +27,4 @@ class TestDefaultTechnique(TestCase):
         data_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(data_list), 20)
-        self.assertIsInstance(data_list[0], StringField)
+        self.assertIsInstance(data_list[0], SimpleField)

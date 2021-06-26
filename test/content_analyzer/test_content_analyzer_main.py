@@ -6,7 +6,7 @@ import numpy as np
 
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
-from orange_cb_recsys.content_analyzer.content_representation.content import StringField, FeaturesBagField, \
+from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
     EmbeddingField, IndexField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import Gensim
@@ -204,7 +204,7 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title")[0], StringField)
+                    self.assertIsInstance(content.get_field("Title")[0], SimpleField)
                     self.assertIsInstance(content.get_field("Title")[0].value, str)
                     break
 
