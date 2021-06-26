@@ -274,7 +274,7 @@ class Sbert(SentenceEmbeddingLoader):
         return self.model.get_sentence_embedding_dimension()
 
     def get_embedding(self, sentence: str) -> np.ndarray:
-        return self.model.encode(sentence)
+        return self.model.encode(sentence, show_progress_bar=False)
 
     def __str__(self):
         return "Sbert"
