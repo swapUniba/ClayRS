@@ -587,9 +587,9 @@ class TripartiteGraph(BipartiteGraph):
         """
         properties = None
         properties_not_found = []
-        for rep in content.exogenous_rep_dict:
+        for rep in content.exogenous_rep_container.get_representations():
             for prop in exo_props:
-                if prop in content.get_exogenous(rep).value:
+                if prop in rep.value:
                     if properties is None:
                         properties = {}
                     # properties = {director_0: aaaaa, director_1:bbbbb}
