@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import List, Union, Callable
 
 import numpy as np
 import json
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField, \
-    EmbeddingField, StringField
+    EmbeddingField, SimpleField
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
@@ -223,22 +223,24 @@ class OriginalData(FieldContentProductionTechnique):
     data of the contents
     """
 
-    def __init__(self):
+    def __init__(self, dtype: Callable = str):
         super().__init__()
+        self.__dtype = dtype
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        source: RawInformationSource) -> List[StringField]:
+                        source: RawInformationSource) -> List[SimpleField]:
         """
-        The contents' raw data in the given field_name is extracted and stored in a StringField object.
-        The StringField objects created are stored in a list which is then returned.
+        The contents' raw data in the given field_name is extracted and stored in a SimpleField object.
+        The SimpleField objects created are stored in a list which is then returned.
         No further operations are done on the data in order to keep it in the original form.
         Because of that the preprocessor_list is ignored and not used by this technique
         """
 
-        representation_list: List[StringField] = []
+        representation_list: List[SimpleField] = []
 
         for content_data in source:
-            representation_list.append(StringField(check_not_tokenized(content_data[field_name])))
+            processed_data = self.process_data(content_data[field_name], preprocessor_list)
+            representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
 
         return representation_list
 
@@ -285,7 +287,7 @@ class DefaultTechnique(FieldContentProductionTechnique):
             if issubclass(arr.dtype.type, np.number):
                 return EmbeddingField(arr)
             else:
-                return StringField(check_not_tokenized(self.process_data(field_data, preprocessor_list)))
+                return SimpleField(check_not_tokenized(self.process_data(field_data, preprocessor_list)))
 
         # if the decoded is a dict, maybe it is a FeaturesBagField
         elif isinstance(loaded, dict):
@@ -295,12 +297,10 @@ class DefaultTechnique(FieldContentProductionTechnique):
                     all(isinstance(value, (float, int)) for value in loaded.values()):
 
                 return FeaturesBagField(loaded)
-            else:
-                return StringField(check_not_tokenized(self.process_data(field_data, preprocessor_list)))
 
-        # if the decoded is a string, then it is a StringField
-        elif isinstance(loaded, str):
-            return StringField(check_not_tokenized(self.process_data(field_data, preprocessor_list)))
+        # just store the field data whatever type it is (int, str, float, ...)
+        else:
+            return SimpleField(type(loaded)(check_not_tokenized(self.process_data(field_data, preprocessor_list))))
 
 
 class TfIdfTechnique(CollectionBasedTechnique):

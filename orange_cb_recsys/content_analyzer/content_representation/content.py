@@ -57,7 +57,7 @@ class FeaturesBagField(FieldRepresentation):
         return self.__features == other.__features
 
 
-class StringField(FieldRepresentation):
+class SimpleField(FieldRepresentation):
     """
     Class for field with no complex representation.
 
@@ -65,12 +65,12 @@ class StringField(FieldRepresentation):
         value (str): string representing the value of the field
     """
 
-    def __init__(self, value: str = None):
+    def __init__(self, value: object = None):
         super().__init__()
-        self.__value: str = value
+        self.__value: object = value
 
     @property
-    def value(self) -> str:
+    def value(self) -> object:
         return self.__value
 
     def __str__(self):
