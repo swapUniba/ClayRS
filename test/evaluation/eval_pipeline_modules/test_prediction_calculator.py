@@ -182,5 +182,5 @@ class TestPredictionCalculator(TestCase):
 
     def doCleanups(self) -> None:
         # We need to clean these class attributes otherwise the tests would overlap and fail
-        RankingNeededMetric.rank_truth_list = []
-        ScoresNeededMetric.score_truth_list = []
+        RankingNeededMetric._clean_pred_truth_list()
+        ScoresNeededMetric._clean_pred_truth_list()

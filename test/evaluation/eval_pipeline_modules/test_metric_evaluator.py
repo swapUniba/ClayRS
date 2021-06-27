@@ -13,7 +13,6 @@ from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopP
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, MRR, NDCGAtK, MRRAtK, Correlation
 
 
-
 # Every Metric is tested singularly, so we just check that everything goes smoothly at the
 # MetricEvaluator level
 class TestMetricCalculator(TestCase):
@@ -208,5 +207,5 @@ class TestMetricCalculator(TestCase):
         self.assertIsInstance(each_user_res, pd.DataFrame)
 
     def doCleanups(self) -> None:
-        RankingNeededMetric.rank_truth_list = []
-        ScoresNeededMetric.score_truth_list = []
+        RankingNeededMetric._clean_pred_truth_list()
+        ScoresNeededMetric._clean_pred_truth_list()

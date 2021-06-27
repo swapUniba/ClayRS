@@ -195,8 +195,8 @@ class TestEvalModel(TestCase):
         self.assertIsInstance(users_result, pd.DataFrame)
 
     def doCleanups(self) -> None:
-        RankingNeededMetric.rank_truth_list = []
-        ScoresNeededMetric.score_truth_list = []
+        RankingNeededMetric._clean_pred_truth_list()
+        ScoresNeededMetric._clean_pred_truth_list()
 
 
 @unittest.skip("Slow")
