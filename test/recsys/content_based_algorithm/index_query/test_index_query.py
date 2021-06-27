@@ -29,7 +29,7 @@ class TestIndexQuery(TestCase):
 
     def test_predict(self):
 
-        alg = IndexQuery({'Plot': '0'}, threshold=0)
+        alg = IndexQuery({'Plot': 'index_original'}, threshold=0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         alg.process_rated(user_ratings, self.index_path)
@@ -41,7 +41,7 @@ class TestIndexQuery(TestCase):
 
     def test_rank_single_representation(self):
         # Test single representation
-        alg = IndexQuery({'Genre': 'index_original'}, threshold=0)
+        alg = IndexQuery({'Plot': 'index_original'}, threshold=0)
         user_ratings = self.ratings.query('from_id == "A000"')
 
         alg.process_rated(user_ratings, self.index_path)
@@ -73,7 +73,8 @@ class TestIndexQuery(TestCase):
 
     def test_rank_multiple_representations(self):
         # Multiple representations with auto threshold based on the mean ratings of the user
-        alg = IndexQuery({'Plot': ['0', '1']})
+        alg = IndexQuery({'Plot': ['index_original', 'index_preprocessed'],
+                          'Genre': ['index_original', 3]})
         user_ratings = self.ratings.query('from_id == "A000"')
 
         alg.process_rated(user_ratings, self.index_path)

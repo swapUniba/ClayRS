@@ -1,4 +1,3 @@
-import os
 from typing import List
 import re
 
@@ -7,14 +6,7 @@ import pandas as pd
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from orange_cb_recsys.utils.const import DEVELOPING, logger, home_path
-from orange_cb_recsys.utils.load_content import load_content_instance
-
-from whoosh.index import open_dir
-from whoosh.query import Term, Or
-from whoosh.qparser import QueryParser
-from whoosh import scoring, qparser
-from whoosh.searching import Results
+from orange_cb_recsys.utils.const import logger
 
 
 class IndexQuery(ContentBasedAlgorithm):
@@ -37,23 +29,6 @@ class IndexQuery(ContentBasedAlgorithm):
         self.__scores: list = None
         self.__positive_user_docs: dict = None
         self.__classic_similarity: bool = classic_similarity
-
-    def __is_field_chosen(self, field_name: str) -> bool:
-        """
-        Private function that checks if the field name in the index is the one chosen with its corresponding
-        representation (in the item_field parameter of the constructor)
-
-        Args:
-            field_name (str): the field name present in the index
-
-        Returns:
-            True if the field_name passed must be considered, False otherwise
-        """
-        splitted = re.findall(r'(\w+?)(\d+)', field_name)[0]  # (Plot, 0)
-        field = splitted[0]
-        repr_id = splitted[1]
-
-        return self.item_field.get(field) is not None and repr_id in self.item_field.get(field)
 
     def __get_representations(self, index_representations: dict):
         def find_valid(pattern: str):
@@ -82,7 +57,6 @@ class IndexQuery(ContentBasedAlgorithm):
                 representations_valid[valid_key] = index_representations[valid_key]
 
         return representations_valid
-
 
     def process_rated(self, user_ratings: pd.DataFrame, index_directory: str):
         """
@@ -115,26 +89,6 @@ class IndexQuery(ContentBasedAlgorithm):
                     item = item_query.pop(item_id).get('item')
                     scores.append(score)
                     positive_user_docs[item_id] = self.__get_representations(item)
-
-        # ix = open_dir(index_path)
-        # with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
-        #
-        #     for item_id, score in zip(user_ratings.to_id, user_ratings.score):
-        #         item = load_content_instance(items_directory, item_id)
-        #         if item is not None:
-        #             doc = item.index_document_id
-        #
-        #             if score >= threshold:
-        #
-        #                 scores.append(score)
-        #                 positive_user_docs[doc] = dict()
-        #                 field_list = searcher.stored_fields(doc)
-        #
-        #                 for field_name in field_list:
-        #                     if field_name == 'content_id':
-        #                         continue
-        #                     if self.__is_field_chosen(field_name):
-        #                         positive_user_docs[doc][field_name] = field_list[field_name]
 
         self.__positive_user_docs = positive_user_docs
         self.__scores = scores
@@ -171,7 +125,7 @@ class IndexQuery(ContentBasedAlgorithm):
 
         self.__string_query = string_query
 
-    def _build_mask_filter_query(self, user_ratings: pd.DataFrame, filter_list: List[str] = None):
+    def _build_mask_list(self, user_ratings: pd.DataFrame, filter_list: List[str] = None):
         """
         Private function that calculate the mask query and the filter query for whoosh to use:
 
@@ -185,48 +139,12 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             filter_list (list): list of the items to predict, if None all unrated items will be predicted
         """
-        # candidate_query = None
-        # if filter_list is not None:
-        #     candidate_query = [Term("content_id", candidate) for candidate in filter_list]
-        #     candidate_query = Or(candidate_query)
-        #
-        #     # Create mask query excluding items in the filter list
-        #     rated_query = [Term("content_id", document) for document in user_ratings.to_id
-        #                    if document not in filter_list]
-        # else:
-        #     rated_query = [Term("content_id", document) for document in user_ratings.to_id]
-        #
-        # rated_query = Or(rated_query)
-
         if filter_list is not None:
             masked_list = list(user_ratings.query('to_id not in @filter_list')['to_id'])
         else:
             masked_list = list(user_ratings['to_id'])
 
         return masked_list
-
-    def _build_score_frame(self, score_docs: Results):
-        """
-        Private function that builds the DataFrame containing the items and the
-        corresponding rating predicted.
-
-        Args:
-            score_docs (Results): result of the whoosh query
-
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted
-        """
-        # Builds the recommendation frame
-        columns = ['to_id', 'rating']
-        score_frame = pd.DataFrame(columns=columns)
-        for result in score_docs:
-            item_id = result["content_id"]
-
-            score_frame = pd.concat([
-                score_frame, pd.DataFrame.from_records([(item_id, result.score)], columns=columns)])
-
-        return score_frame
 
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
                 filter_list: List[str] = None) -> pd.DataFrame:
@@ -261,24 +179,10 @@ class IndexQuery(ContentBasedAlgorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
 
-        # rated_query_list, candidate_query = self._build_mask_filter_query(user_ratings, filter_list)
-
-        masked_list = self._build_mask_filter_query(user_ratings, filter_list)
+        mask_list = self._build_mask_list(user_ratings, filter_list)
 
         ix = SearchIndex(index_directory)
-        score_docs = ix.query(self.__string_query, recs_number, masked_list, filter_list, self.__classic_similarity)
-
-        # index_path = os.path.join(items_directory, 'search_index')
-        # if not DEVELOPING:
-        #     index_path = os.path.join(home_path, items_directory, 'search_index')
-        #
-        # ix = open_dir(index_path)
-        # with ix.searcher(weighting=scoring.TF_IDF if self.__classic_similarity else scoring.BM25F) as searcher:
-        #     # The filter and mask arguments of the index searcher are used respectively
-        #     # to find only candidate documents or to ignore documents rated by the user
-        #     schema = ix.schema
-        #     query = QueryParser("content_id", schema=schema, group=qparser.OrGroup).parse(self.__string_query)
-        #     score_docs = searcher.search(query, limit=recs_number, filter=candidate_query, mask=rated_query_list)
+        score_docs = ix.query(self.__string_query, recs_number, mask_list, filter_list, self.__classic_similarity)
 
         logger.info("Building score frame to return")
 
