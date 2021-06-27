@@ -180,17 +180,11 @@ class ContentsProducer:
         index_representations_dict = {}
         for field_name in self.__config.get_field_name_list():
             logger.info("Processing field: %s", field_name)
-            # stores the number of instance of the field_name (the one in the main for) in each index
-            # the elements will be in the form:
-            #   { memory_interface: 0}
-            # if the field_name was "Plot", this means that the next field that will be added to the memory_interface
-            # will be "Plot_0"
-            index_field_repr = {}
             # stores the field representation for the field name
             results = []
             # stores the field config ids for the field name
             field_config_ids = []
-            for field_config in self.__config.get_configs_list(field_name):
+            for repr_number, field_config in enumerate(self.__config.get_configs_list(field_name)):
                 field_config_ids.append(field_config.id)
 
                 # technique_result is a list of field representation produced by the content technique
@@ -211,13 +205,11 @@ class ContentsProducer:
                         index_representations_dict[memory_interface] = {}
                     else:
                         memory_interface = self.__memory_interfaces[memory_interface.directory]
-                    if memory_interface not in index_field_repr.keys():
-                        index_field_repr[memory_interface] = 0
 
                     if field_config.id is not None:
-                        index_field_name = "{}#{}#{}".format(field_name, str(index_field_repr[memory_interface]), field_config.id)
+                        index_field_name = "{}#{}#{}".format(field_name, str(repr_number), field_config.id)
                     else:
-                        index_field_name = "{}#{}".format(field_name, str(index_field_repr[memory_interface]))
+                        index_field_name = "{}#{}".format(field_name, str(repr_number))
 
                     index_representations_dict[memory_interface][index_field_name] = technique_result
                     result = []
@@ -228,7 +220,6 @@ class ContentsProducer:
                     for i in range(0, len(contents_list)):
                         result.append(
                             IndexField(index_field_name, i, memory_interface))
-                    index_field_repr[memory_interface] += 1
                 else:
                     result = technique_result
 
