@@ -1,9 +1,8 @@
 name: Build & Test & Push
-on:
+on: 
   push:
-    branches:
-      - master
   pull_request:
+    types: [opened]
     
 env:
     IMAGE_NAME: framework_dependencies
@@ -18,7 +17,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+            fetch-depth: 0        
       -
         name: Setup python
         uses: actions/setup-python@v2
@@ -75,7 +74,7 @@ jobs:
               |
                container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }})
                docker exec -i $container_id pip install coverage coveralls pytest
-               docker exec -i $container_id coverage run --source=orange_cb_recsys -m pytest test/ -W ignore::DeprecationWarning ignore::RuntimeWarning
+               docker exec -i $container_id coverage run --source=orange_cb_recsys -m pytest test/ -W ignore::DeprecationWarning
                docker exec -i $container_id bash -c "COVERALLS_REPO_TOKEN=${{ env.COVERALLS_REPO_TOKEN }} coveralls"
                docker stop $container_id
                docker container rm $container_id
