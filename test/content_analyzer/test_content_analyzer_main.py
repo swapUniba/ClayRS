@@ -149,23 +149,24 @@ class TestContentsProducer(TestCase):
                     break
 
     def test_create_contents_in_index(self):
+        output_dir = os.path.join(THIS_DIR, "movielens_test_original_index")
         movies_ca_config = ItemAnalyzerConfig(
             source=JSONFile(movies_info_reduced),
             id=['imdbID'],
-            output_directory="movielens_test_original_index",
+            output_directory=output_dir,
         )
 
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(OriginalData(), NLTK(lemmatization=True, stopwords_removal=True),
-                         SearchIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index")), "test_search"),
+                         SearchIndex(os.path.join(output_dir, "index")), "test_search"),
 
                          FieldConfig(SkLearnTfIdf(), NLTK(),
-                                     KeywordIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index1")),
+                                     KeywordIndex(os.path.join(output_dir, "index1")),
                                      "test_keyword"),
 
                          FieldConfig(OriginalData(), NLTK(),
-                                     SearchIndex(os.path.join(THIS_DIR, "movielens_test_original_index/index")))
+                                     SearchIndex(os.path.join(output_dir, "index")))
                          ])
 
         content_analyzer = ContentAnalyzer(movies_ca_config)
