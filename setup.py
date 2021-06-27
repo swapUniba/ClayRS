@@ -11,7 +11,7 @@ setup(name='orange_cb_recsys',
       version='0.3.9',
       author='Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno',
       install_requires=[
-          'pandas==1.0.5',
+          'pandas==1.2.4',
           'PyYAML==5.3.1',
           'numpy==1.21.0',
           'gensim==3.8.3',
