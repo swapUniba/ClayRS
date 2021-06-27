@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
+from orange_cb_recsys.utils.const import logger
 
 import pandas as pd
 
@@ -26,6 +27,9 @@ class MetricCalculator:
 
             for split in split_list:
                 if not split.pred.empty and not split.truth.empty:
+                    from_id_valid = split.pred['from_id']
+                    # Remove from truth item of which we do not have predictions
+                    split.truth = split.truth.query('from_id in @from_id_valid')
                     metric_result = metric.perform(split)
                     metric_result_list.append(metric_result)
 
