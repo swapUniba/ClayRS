@@ -30,7 +30,7 @@ ratings = pd.DataFrame.from_records([
 class TestContentBasedRS(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.movies_multiple = os.path.join(contents_path, 'movies_multiple_repr/')
+        cls.movies_multiple = os.path.join(contents_path, 'movies_codified/')
         cls.filter_list = ['tt0114319', 'tt0114388']
 
     def test_empty_frame(self):
@@ -47,28 +47,28 @@ class TestContentBasedRS(TestCase):
             columns=["from_id", "to_id", "score", "timestamp"])
 
         # ClassifierRecommender returns an empty frame
-        alg = ClassifierRecommender({'Plot': ['0', '1']}, SkSVC(), threshold=3)
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
         rs = ContentBasedRS(alg, ratings_only_positive, self.movies_multiple)
         result = rs.fit_rank('A000')
         self.assertTrue(result.empty)
 
-        alg = ClassifierRecommender({'Plot': ['0', '1']}, SkSVC(), threshold=3)
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
         rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
         result = rs.fit_rank('A000')
         self.assertTrue(result.empty)
 
-        alg = ClassifierRecommender({'Plot': ['0', '1']}, SkSVC(), threshold=3)
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
         rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
         result = rs.fit_rank('A000')
         self.assertTrue(result.empty)
 
         # CentroidVector returns an empty frame
-        alg = CentroidVector({'Plot': ['0', '1']}, CosineSimilarity(), threshold=3)
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
         rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
         result = rs.fit_rank('A000')
         self.assertTrue(result.empty)
 
-        alg = CentroidVector({'Plot': ['0', '1']}, CosineSimilarity(), threshold=3)
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
         rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
         result = rs.fit_rank('A000')
         self.assertTrue(result.empty)
@@ -78,7 +78,7 @@ class TestContentBasedRS(TestCase):
         recs_number = 3
 
         # Test prediction and ranking with the Classifier Recommender algorithm
-        alg = ClassifierRecommender({'Plot': ['0', '1']}, SkSVC())
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC())
         rs = ContentBasedRS(alg, ratings, self.movies_multiple)
 
         # Prediction should raise error since it's not a ScorePredictionAlg
@@ -97,7 +97,7 @@ class TestContentBasedRS(TestCase):
         recs_number = 3
 
         # Test prediction and ranking with the Centroid Vector algorithm
-        alg = CentroidVector({'Plot': ['0', '1']}, CosineSimilarity())
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity())
         rs = ContentBasedRS(alg, ratings, self.movies_multiple)
 
         # Prediction should raise error since it's not a ScorePredictionAlg
@@ -113,12 +113,12 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(len(result_rank_numbered), recs_number)
 
     def test_index_query(self):
-        movies_index = os.path.join(contents_path, 'movies_multiple_repr_INDEX/')
+        movies_index = os.path.join(contents_path, 'index/')
         filter_list = ['tt0114319', 'tt0114388']
         recs_number = 3
 
         # Test prediction and ranking with the Index Query algorithm
-        alg = IndexQuery({'Plot': ['0', '1']})
+        alg = IndexQuery({'Plot': ['index_original', 'index_preprocessed']})
         rs = ContentBasedRS(alg, ratings, movies_index)
 
         # Prediction should raise error since it's not a ScorePredictionAlg

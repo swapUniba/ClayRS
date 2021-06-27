@@ -1,4 +1,3 @@
-import os
 from unittest import TestCase
 import pandas as pd
 
@@ -6,7 +5,6 @@ from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
-from orange_cb_recsys.utils.const import root_path
 
 
 class TestGraphBasedAlgorithm(TestCase):

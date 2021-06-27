@@ -17,26 +17,26 @@ class TestContentBasedAlgorithm(TestCase):
         # ContentBasedAlgorithm is an abstract class, so we need to instantiate
         # a subclass to test its methods. No initialization since we are not testing
         # methods that need it
-        self.alg = CentroidVector({'Plot': '0'}, CosineSimilarity(), 0)
+        self.alg = CentroidVector({'Plot': 'tfidf'}, CosineSimilarity(), 0)
 
     def test__bracket_representation(self):
 
-        item_field = {'Plot': '0',
-                      'Genre': ['0'],
-                      'Title': ['0', '1'],
-                      'Director': '5'}
+        item_field = {'Plot': 'tfidf',
+                      'Genre': [0],
+                      'Title': [0, 'trybracket'],
+                      'Director': 5}
 
-        item_field_bracketed = {'Plot': ['0'],
-                                'Genre': ['0'],
-                                'Title': ['0', '1'],
-                                'Director': ['5']}
+        item_field_bracketed = {'Plot': ['tfidf'],
+                                'Genre': [0],
+                                'Title': [0, 'trybracket'],
+                                'Director': [5]}
 
         result = self.alg._bracket_representation(item_field)
 
         self.assertEqual(item_field_bracketed, result)
 
     def test_extract_features_item(self):
-        movies_dir = os.path.join(contents_path, 'movies_multiple_repr')
+        movies_dir = os.path.join(contents_path, 'movies_codified/')
 
         content = load_content_instance(movies_dir, 'tt0112281')
 

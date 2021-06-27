@@ -4,7 +4,7 @@ from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
-from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode, Node
+from orange_cb_recsys.recsys.graphs.graph import ItemNode, Node
 from orange_cb_recsys.recsys.graphs.nx_tripartite_graphs import NXTripartiteGraph
 import networkx as nx
 import os
@@ -16,7 +16,7 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 contents_path = os.path.join(THIS_DIR, '../../../contents')
 
 ratings_filename = os.path.join(contents_path, 'exo_prop/new_ratings_small.csv')
-movies_dir = os.path.join(contents_path, 'exo_prop/movielens_exo_1612956350.7812138/')
+movies_dir = os.path.join(contents_path, 'movies_codified/')
 
 
 class TestNXTripartiteGraph(TestCase):
@@ -28,7 +28,7 @@ class TestNXTripartiteGraph(TestCase):
                                           'score': [0.8, 0.7, -0.4, 1.0, 0.4, 0.1, -0.3, 0.7]})
 
         self.g: NXTripartiteGraph = NXTripartiteGraph(self.df, movies_dir,
-                                                      item_exo_representation="0",
+                                                      item_exo_representation="dbpedia",
                                                       item_exo_properties=['starring'])
 
     def test_populate_from_dataframe_w_labels(self):
@@ -41,7 +41,7 @@ class TestNXTripartiteGraph(TestCase):
                                            })
 
         g: NXTripartiteGraph = NXTripartiteGraph(df_label, movies_dir,
-                                                 item_exo_representation="0",
+                                                 item_exo_representation="dbpedia",
                                                  item_exo_properties=['starring'])
 
         for user, item, score in zip(df_label['from_id'], df_label['to_id'], df_label['score']):
@@ -227,9 +227,9 @@ class TestNXTripartiteGraph(TestCase):
         )
         ratings_frame = ratings_import.import_ratings()
 
-        # Create graph using the property 'starring' from representation '0'
+        # Create graph using the property 'starring' from representation '0' ('dbpedia')
         g = NXTripartiteGraph(ratings_frame, movies_dir,
-                              item_exo_representation="0", item_exo_properties=['starring'])
+                              item_exo_representation=0, item_exo_properties=['starring'])
 
         # Simple assert just to make sure the graph is created
         self.assertGreater(len(g.user_nodes), 0)
@@ -238,7 +238,7 @@ class TestNXTripartiteGraph(TestCase):
 
         # Create graph specifying only the exo representation
         g = NXTripartiteGraph(ratings_frame, movies_dir,
-                              item_exo_representation="0")
+                              item_exo_representation="dbpedia")
 
         # Simple assert just to make sure the graph is created
         self.assertGreater(len(g.user_nodes), 0)

@@ -17,8 +17,8 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 contents_path = os.path.join(THIS_DIR, '../../../contents')
 
 ratings_filename = os.path.join(contents_path, 'exo_prop/new_ratings_small.csv')
-movies_dir = os.path.join(contents_path, 'exo_prop/movielens_exo_1612956350.7812138/')
-user_dir = os.path.join(contents_path, 'exo_prop/user_exo_1612956381.4652517/')
+movies_dir = os.path.join(contents_path, 'movies_codified/')
+user_dir = os.path.join(contents_path, 'users_codified/')
 
 
 class TestNXFullGraph(TestCase):
@@ -32,8 +32,8 @@ class TestNXFullGraph(TestCase):
         self.g: NXFullGraph = NXFullGraph(self.df,
                                           user_contents_dir=user_dir,
                                           item_contents_dir=movies_dir,
-                                          item_exo_representation="0",
-                                          user_exo_representation="0",
+                                          item_exo_representation="dbpedia",
+                                          user_exo_representation='local',
                                           item_exo_properties=['starring'],
                                           user_exo_properties=['1']  # It's the column in the users .DAT which
                                           # identifies the gender
@@ -51,8 +51,8 @@ class TestNXFullGraph(TestCase):
         g: NXFullGraph = NXFullGraph(df_label,
                                      user_contents_dir=user_dir,
                                      item_contents_dir=movies_dir,
-                                     item_exo_representation="0",
-                                     user_exo_representation="0",
+                                     item_exo_representation="dbpedia",
+                                     user_exo_representation="local",
                                      item_exo_properties=['starring'],
                                      user_exo_properties=['1']  # It's the column in the users .DAT which
                                      # identifies the gender
@@ -284,8 +284,8 @@ class TestNXFullGraph(TestCase):
             source_frame=ratings_frame,
             item_contents_dir=movies_dir,
             user_contents_dir=user_dir,
-            item_exo_representation="0",
-            user_exo_representation="0"
+            item_exo_representation="dbpedia",
+            user_exo_representation="local"
         )
 
         # Simple assert just to make sure the graph is created
@@ -295,6 +295,65 @@ class TestNXFullGraph(TestCase):
 
         # Create graph specifying without properties
         g = NXFullGraph(ratings_frame)
+
+        # Simple assert just to make sure the graph is created
+        self.assertGreater(len(g.user_nodes), 0)
+        self.assertGreater(len(g.item_nodes), 0)
+        self.assertEqual(len(g.property_nodes), 0)
+
+    def test_graph_creation_exo_missing(self):
+        # Test multiple graph creation possibilities with not existent exo_representations/exo_properties
+
+        # Import ratings as DataFrame
+        ratings_import = RatingsImporter(
+            source=CSVFile(ratings_filename),
+            rating_configs=[RatingsFieldConfig(
+                field_name='points',
+                processor=NumberNormalizer(min_=1, max_=5))],
+            from_field_name='user_id',
+            to_field_name='item_id',
+            timestamp_field_name='timestamp',
+        )
+        ratings_frame = ratings_import.import_ratings()
+
+        # Create graph with non-existent exo_properties
+        g = NXFullGraph(
+            source_frame=ratings_frame,
+            item_contents_dir=movies_dir,
+            user_contents_dir=user_dir,
+            item_exo_properties=['asdds', 'dsdds'],
+            user_exo_properties=['vvvv']  # It's the column in the users DAT which identifies the gender
+        )
+
+        # Simple assert just to make sure the graph is created
+        self.assertGreater(len(g.user_nodes), 0)
+        self.assertGreater(len(g.item_nodes), 0)
+        self.assertEqual(len(g.property_nodes), 0)
+
+        # Create graph with non-existent exo_representations
+        g = NXFullGraph(
+            source_frame=ratings_frame,
+            item_contents_dir=movies_dir,
+            user_contents_dir=user_dir,
+            item_exo_representation="asdsa",
+            user_exo_representation="dsdssd"
+        )
+
+        # Simple assert just to make sure the graph is created
+        self.assertGreater(len(g.user_nodes), 0)
+        self.assertGreater(len(g.item_nodes), 0)
+        self.assertEqual(len(g.property_nodes), 0)
+
+        # Create graph with non-existent exo_representations and non-existent exo_properties
+        g = NXFullGraph(
+            source_frame=ratings_frame,
+            item_contents_dir=movies_dir,
+            user_contents_dir=user_dir,
+            user_exo_representation='not_exist',
+            item_exo_representation='not_Exist2',
+            item_exo_properties=["asdsa"],
+            user_exo_properties=["dsdssd"]
+        )
 
         # Simple assert just to make sure the graph is created
         self.assertGreater(len(g.user_nodes), 0)

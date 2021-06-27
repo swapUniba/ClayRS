@@ -3,7 +3,7 @@ from unittest import TestCase
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
-    SkSGDRegressor, SkARDRegression, SkHuberRegressor, SkPassiveAggressiveRegressor, SkBayesianRidge, SkRidge,\
+    SkSGDRegressor, SkARDRegression, SkHuberRegressor, SkPassiveAggressiveRegressor, SkBayesianRidge, SkRidge, \
     Regressor
 from orange_cb_recsys.utils.const import root_path
 import os
@@ -39,7 +39,7 @@ class TestRegression(TestCase):
 
         cls.filter_list = ['tt0112641', 'tt0112760', 'tt0112896', 'tt0113497']
 
-        cls.movies_dir = os.path.join(contents_path, 'movies_multiple_repr/')
+        cls.movies_dir = os.path.join(contents_path, 'movies_codified/')
 
         # IMPORTANT! All models to test. If another model is implemented, append it to this list
         cls.models_list = [SkLinearRegression(), SkRidge(), SkBayesianRidge(),
@@ -51,7 +51,7 @@ class TestRegression(TestCase):
         lm = model
 
         # Single representation
-        alg = LinearPredictor({'Plot': ['0']}, lm)
+        alg = LinearPredictor({'Plot': ['tfidf']}, lm)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -77,8 +77,9 @@ class TestRegression(TestCase):
         lm = model
 
         # Multiple representations filtered only items with score >= 2
-        alg = LinearPredictor({'Plot': ['0', '1'],
-                               'Genre': ['0', '1']}, lm, only_greater_eq=2)
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding'],
+                               'Genre': ['tfidf', 'embedding'],
+                               'imdbRating': [0]}, lm, only_greater_eq=2)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -104,7 +105,7 @@ class TestRegression(TestCase):
         lm = model
 
         # Single representation
-        alg = LinearPredictor({'Plot': ['0']}, lm)
+        alg = LinearPredictor({'Plot': ['tfidf']}, lm)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
@@ -140,8 +141,9 @@ class TestRegression(TestCase):
         lm = model
 
         # Multiple representations filtered only items with score >= 2
-        alg = LinearPredictor({'Plot': ['0', '1'],
-                               'Genre': ['0', '1']}, lm, only_greater_eq=2)
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding'],
+                               'Genre': ['tfidf', 'embedding'],
+                               'imdbRating': [0]}, lm, only_greater_eq=2)
 
         user_ratings = self.ratings.query('from_id == "A000"')
 

@@ -1,5 +1,4 @@
 import os
-import unittest
 from unittest import TestCase
 
 import pandas as pd

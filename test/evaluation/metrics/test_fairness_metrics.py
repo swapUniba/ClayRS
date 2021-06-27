@@ -2,8 +2,9 @@ import unittest
 import pandas as pd
 import numpy as np
 
+from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers, PercentageError
 from orange_cb_recsys.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, DeltaGap, \
-    NotEnoughUsers, GroupFairnessMetric, PercentageError, Counter
+    GroupFairnessMetric, Counter
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 
 

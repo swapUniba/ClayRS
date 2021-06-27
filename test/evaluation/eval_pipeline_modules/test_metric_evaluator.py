@@ -1,6 +1,6 @@
 from unittest import TestCase
 import pandas as pd
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split, PartitionModule
+from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, PrecisionAtK, RPrecision, Recall, \
     RecallAtK, FMeasure, FMeasureAtK
 

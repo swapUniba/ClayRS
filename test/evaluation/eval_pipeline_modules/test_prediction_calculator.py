@@ -4,20 +4,21 @@ import os
 
 from orange_cb_recsys.evaluation.metrics.error_metrics import MAE
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG
-from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor, OrdinaryLeastSquares
+from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkKNN
+from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
+from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric, ScoresNeededMetric
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.prediction_calculator import PredictionCalculator, Split
 from orange_cb_recsys.recsys.content_based_algorithm import ClassifierRecommender
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import KNN
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank import NXPageRank
+from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.recsys import ContentBasedRS, GraphBasedRS
 from orange_cb_recsys.utils.const import root_path
 
 contents_path = os.path.join(root_path, 'contents')
 
-movies_dir = os.path.join(contents_path, 'movies_multiple_repr/')
+movies_dir = os.path.join(contents_path, 'movies_codified/')
 
 
 class TestPredictionCalculator(TestCase):
@@ -71,8 +72,8 @@ class TestPredictionCalculator(TestCase):
 
         recsys = ContentBasedRS(
             ClassifierRecommender(
-                {'Plot': '0'},
-                KNN(),
+                {'Plot': 'tfidf'},
+                SkKNN(),
                 threshold=3
             ),
             self.ratings_original,
@@ -95,8 +96,8 @@ class TestPredictionCalculator(TestCase):
     def test_calc_scores_content_based(self):
         recsys = ContentBasedRS(
             LinearPredictor(
-                {'Plot': '0'},
-                OrdinaryLeastSquares()
+                {'Plot': 'tfidf'},
+                SkLinearRegression()
             ),
             self.ratings_original,
             movies_dir
@@ -140,8 +141,8 @@ class TestPredictionCalculator(TestCase):
     def test_pop_invalid_metric(self):
         recsys = ContentBasedRS(
             ClassifierRecommender(
-                {'Plot': '0'},
-                KNN(),
+                {'Plot': 'tfidf'},
+                SkKNN(),
                 threshold=3
             ),
             self.ratings_original,
