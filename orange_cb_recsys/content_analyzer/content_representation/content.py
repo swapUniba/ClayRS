@@ -343,17 +343,18 @@ class Content:
 
     def __str__(self):
         content_string = "Content: %s\n" % self.__content_id
+        exo_string = "Exogenous representations:\n"
         if len(self.__exogenous_rep_container) != 0:
-            exo_string = "Exogenous representations: \n%s" % self.__exogenous_rep_container
+            exo_string += "%s\n" % self.__exogenous_rep_container
         else:
-            exo_string = "No exogenous representation for the Content"
+            exo_string = "\nNo representation found for the Content!\n"
 
         if len(self.__field_dict.items()) != 0:
             field_string = ''
             for field, rep in self.__field_dict.items():
                 field_string += "\nField: %s \n%s\n" % (field, rep)
         else:
-            field_string = "No representation found for the Content fields"
+            field_string = "Field representations:\n\nNo representation found for the Content fields!"
 
         return "%s\n%s\n%s\n##############################" % (content_string, exo_string, field_string)
 
