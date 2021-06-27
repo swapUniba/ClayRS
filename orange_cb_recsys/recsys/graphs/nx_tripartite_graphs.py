@@ -1,10 +1,10 @@
-from typing import List, Set
+from typing import List, Set, Union
 from orange_cb_recsys.recsys.graphs import TripartiteGraph, NXBipartiteGraph
 import pandas as pd
 import networkx as nx
 
-from orange_cb_recsys.recsys.graphs.graph import UserNode, ItemNode, PropertyNode
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.recsys.graphs.graph import PropertyNode
+from orange_cb_recsys.utils.const import logger
 
 
 # Multiple Inheritance so that we will use NXBipartite as an interface (we only use its methods)
@@ -42,7 +42,7 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
     """
 
     def __init__(self, source_frame: pd.DataFrame, item_contents_dir: str = None,
-                 item_exo_representation: str = None, item_exo_properties: List[str] = None,
+                 item_exo_representation: Union[str, int] = None, item_exo_properties: List[str] = None,
                  default_score_label: str = 'score', default_not_rated_value: float = 0.5):
 
         TripartiteGraph.__init__(self, source_frame, item_contents_dir,

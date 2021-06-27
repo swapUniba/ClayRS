@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from typing import List, Set
+from typing import List, Set, Union
 import pandas as pd
 
 from orange_cb_recsys.recsys.graphs.graph_metrics import GraphMetrics
@@ -394,7 +394,7 @@ class TripartiteGraph(BipartiteGraph):
     """
 
     def __init__(self, source_frame: pd.DataFrame, item_contents_dir: str = None,
-                 item_exo_representation: str = None, item_exo_properties: List[str] = None,
+                 item_exo_representation: Union[str, int] = None, item_exo_properties: List[str] = None,
                  default_score_label: str = 'score', default_weight: float = 0.5):
 
         self.__item_exogenous_representation: str = item_exo_representation
@@ -423,16 +423,23 @@ class TripartiteGraph(BipartiteGraph):
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
-                self.add_item_node(row['to_id'])
+
+                # If the node already exists then we don't add it and more importantly
+                # we don't retrieve its exo prop if specified, since they are already been retireved
+                # previously.
+                if not self.is_item_node(row['to_id']):
+                    self.add_item_node(row['to_id'])
+                    if self.get_item_contents_dir() is not None:
+                        self._add_item_properties(row)
+
                 if 'label' in source_frame.columns:
                     label = row['label']
                 else:
                     label = self.get_default_score_label()
+
                 self.add_link(row['from_id'], row['to_id'], row['score'],
                               label=label)
 
-                if self.get_item_contents_dir() is not None:
-                    self._add_item_properties(row)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 
@@ -517,7 +524,7 @@ class TripartiteGraph(BipartiteGraph):
         try:
             properties = content.get_exogenous(exo_rep).value
         except KeyError:
-            logger.warning("Representation " + exo_rep + " not found for " + content.content_id)
+            logger.warning("Representation " + exo_rep + " not found for content " + content.content_id)
 
         if properties is not None:
             for prop in exo_props:
@@ -526,7 +533,7 @@ class TripartiteGraph(BipartiteGraph):
                     self.add_property_node(properties[prop])
                     self.add_link(node, properties[prop], preference, prop)
                 else:
-                    logger.warning("Property " + prop + " not found for " + content.content_id)
+                    logger.warning("Property " + prop + " not found for content " + content.content_id)
 
     def _all_prop_in_rep(self, content, node, exo_rep, row):
         """
@@ -551,7 +558,7 @@ class TripartiteGraph(BipartiteGraph):
         try:
             properties = content.get_exogenous(exo_rep).value
         except KeyError:
-            logger.warning("Representation " + exo_rep + " not found for " + content.content_id)
+            logger.warning("Representation " + exo_rep + " not found for content " + content.content_id)
 
         if properties is not None:
             for prop_key in properties.keys():
@@ -585,33 +592,30 @@ class TripartiteGraph(BipartiteGraph):
             exo_props (list): the properties list to extract from 'content'
             row (dict): dict-like object containing eventual score for the properties
         """
-        properties = None
-        properties_not_found = []
-        for rep in content.exogenous_rep_container.get_representations():
-            for prop in exo_props:
-                if prop in rep.value:
-                    if properties is None:
-                        properties = {}
-                    # properties = {director_0: aaaaa, director_1:bbbbb}
-                    properties[prop + "_" + rep] = content.get_exogenous(rep).value[prop]
-                else:
-                    properties_not_found.append(prop)
+        internal_id_list = content.exogenous_rep_container.get_internal_index()
+        external_id_list = content.exogenous_rep_container.get_external_index()
+        for prop in exo_props:
+            property_found = False
+            for id_int, id_ext in zip(internal_id_list, external_id_list):
+                if prop in content.get_exogenous(id_int).value:
+                    property_found = True
 
-        if properties is not None:
-            for prop_key in properties.keys():
-                # EX. producer_0 -> producer so I can search for preference
-                # in the original frame source
-                original_prop_name = '_'.join(prop_key.split('_')[:-1])
-                preference = self.get_preference(original_prop_name, row)
+                    # edge_label = director_0_dbpedia, director_1_datasetlocal
+                    # OR edge_label = director_0, edge_label = director_1 if external id is NaN
+                    edge_label = "{}_{}".format(prop, str(id_int))
+                    if pd.notna(id_ext):
+                        edge_label += '_{}'.format(id_ext)
 
-                self.add_property_node(properties[prop_key])
-                self.add_link(node, properties[prop_key], preference, prop_key)
+                    property_node = content.get_exogenous(id_int).value[prop]
 
-            if len(properties_not_found) != 0:
-                for prop in properties_not_found:
-                    logger.warning("Property " + prop + " not found for " + content.content_id)
-        else:
-            logger.warning("None of the property chosen was found for " + content.content_id)
+                    # search preference for the property in the original frame source
+                    preference = self.get_preference(prop, row)
+
+                    self.add_property_node(property_node)
+                    self.add_link(node, property_node, preference, edge_label)
+
+            if not property_found:
+                logger.warning("Property {} not found in any representation of content {}".format(prop, content.content_id))
 
     def get_item_exogenous_representation(self) -> str:
         """
@@ -740,8 +744,8 @@ class FullGraph(TripartiteGraph):
     """
 
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
-                 user_exo_representation: str = None, user_exo_properties: List[str] = None,
-                 item_exo_representation: str = None, item_exo_properties: List[str] = None,
+                 user_exo_representation: Union[str, int] = None, user_exo_properties: List[str] = None,
+                 item_exo_representation: Union[str, int] = None, item_exo_properties: List[str] = None,
                  default_score_label: str = 'score', default_weight: float = 0.5):
 
         self.__user_exogenous_representation: str = user_exo_representation
@@ -772,8 +776,21 @@ class FullGraph(TripartiteGraph):
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
 
-                self.add_user_node(row['from_id'])
-                self.add_item_node(row['to_id'])
+                # If the node already exists then we don't add it and more importantly
+                # we don't retrieve its exo prop if specified, since they are already been retireved
+                # previously.
+                if not self.is_user_node(row['from_id']):
+                    self.add_user_node(row['from_id'])
+                    if self.get_user_contents_dir() is not None:
+                        self._add_usr_properties(row)
+
+                # If the node already exists then we don't add it and more importantly
+                # we don't retrieve its exo prop if specified, since they are already been retireved
+                # previously.
+                if not self.is_item_node(row['to_id']):
+                    self.add_item_node(row['to_id'])
+                    if self.get_item_contents_dir() is not None:
+                        self._add_item_properties(row)
 
                 if 'label' in source_frame.columns:
                     label = row['label']
@@ -782,12 +799,6 @@ class FullGraph(TripartiteGraph):
 
                 self.add_link(row['from_id'], row['to_id'], row['score'],
                               label=label)
-
-                if self.get_item_contents_dir() is not None:
-                    self._add_item_properties(row)
-
-                if self.get_user_contents_dir() is not None:
-                    self._add_usr_properties(row)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 

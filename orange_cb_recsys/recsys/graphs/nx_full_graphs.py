@@ -1,11 +1,11 @@
-from typing import List, Set
+from typing import List, Union
 
 from orange_cb_recsys.recsys.graphs import NXTripartiteGraph
-from orange_cb_recsys.recsys.graphs.graph import FullGraph, UserNode, ItemNode, PropertyNode
+from orange_cb_recsys.recsys.graphs.graph import FullGraph
 import networkx as nx
 import pandas as pd
 
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.utils.const import logger
 
 
 # Multiple Inheritance so that we will use NXTripartite as an interface (we only use its methods)
@@ -45,8 +45,8 @@ class NXFullGraph(NXTripartiteGraph, FullGraph):
     """
 
     def __init__(self, source_frame: pd.DataFrame, user_contents_dir: str = None, item_contents_dir: str = None,
-                 user_exo_properties: List[str] = None, user_exo_representation: str = None,
-                 item_exo_properties: List[str] = None, item_exo_representation: str = None,
+                 user_exo_properties: List[str] = None, user_exo_representation: Union[str, int] = None,
+                 item_exo_properties: List[str] = None, item_exo_representation: Union[str, int] = None,
                  default_score_label: str = 'score', default_not_rated_value: float = 0.5):
 
         FullGraph.__init__(self, source_frame=source_frame,

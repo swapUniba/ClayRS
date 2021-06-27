@@ -1,11 +1,8 @@
 import abc
-import re
 
 import pandas as pd
 from typing import List
 from abc import ABC
-
-from orange_cb_recsys.utils.load_content import remove_not_existent_items, remove_not_existent_items_list
 
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
@@ -48,14 +45,14 @@ class ContentBasedRS(RecSys):
                  items_directory: str,
                  users_directory: str = None):
 
-        frame_to_concat = []
-        for user in set(rating_frame['from_id']):
-            user_frame = rating_frame.query('from_id == @user')
-            valid_user_frame = remove_not_existent_items(user_frame, items_directory)
-            frame_to_concat.append(valid_user_frame)
-
-        valid_rating_frame = pd.concat(frame_to_concat)
-        super().__init__(valid_rating_frame)
+        # frame_to_concat = []
+        # for user in set(rating_frame['from_id']):
+        #     user_frame = rating_frame.query('from_id == @user')
+        #     valid_user_frame = remove_not_existent_items(user_frame, items_directory)
+        #     frame_to_concat.append(valid_user_frame)
+        #
+        # valid_rating_frame = pd.concat(frame_to_concat)
+        super().__init__(rating_frame)
 
         self.__algorithm = algorithm
         self.__items_directory = items_directory
