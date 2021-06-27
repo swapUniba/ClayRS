@@ -105,7 +105,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 else:
                     labels.append(0)
 
-        if len(labels) == 0:
+        if len(rated_dict) == 0:
             raise NoRatedItems("No rated item available locally!\n"
                                "The score frame will be empty for the user")
         if 0 not in labels:
@@ -125,6 +125,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         It uses private attributes to fit the classifier, that's why the method expects no parameter.
         """
+        self._set_transformer()
+
         rated_features = list(self.__rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
@@ -187,11 +189,14 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
+        if len(id_items_to_predict) > 0:
+            # Fuse the input if there are dicts, multiple representation, etc.
+            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
-        logger.info("Predicting scores")
-        score_labels = self.__classifier.predict_proba(fused_features_items_to_pred)
+            logger.info("Predicting scores")
+            score_labels = self.__classifier.predict_proba(fused_features_items_to_pred)
+        else:
+            score_labels = []
 
         result = {'to_id': [], 'score': []}
 

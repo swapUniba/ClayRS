@@ -36,6 +36,9 @@ class ContentBasedAlgorithm(Algorithm):
     def __init__(self, item_field: dict, threshold: float):
         self.item_field: dict = self._bracket_representation(item_field)
         self.threshold: float = threshold
+        self.__transformer = None
+
+    def _set_transformer(self):
         self.__transformer = DictVectorizer(sparse=True, sort=False)
 
     @staticmethod
@@ -120,6 +123,10 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
+        if self.__transformer is None:
+            raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
+                             " in its fit() method")
+
         if any(not isinstance(rep, dict) and not isinstance(rep, np.ndarray) and not isinstance(rep, float) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
@@ -249,64 +256,3 @@ class ContentBasedAlgorithm(Algorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
         raise NotImplementedError
-
-    # @Handler_EmptyFrame
-    # def fit_predict(self, user_id: str, filter_list: List[str] = None):
-    #     """
-    #     Method used to predict the rating of the user passed for all unrated items or for the items passed
-    #     in the filter_list parameter.
-    #
-    #     The method fits the algorithm and then calculates the prediction
-    #
-    #     Args:
-    #         user_id (str): user_id of the user
-    #         filter_list (list): list of the items to rank, if None all unrated items will be used to
-    #             calculate the rank
-    #     Returns:
-    #         pd.DataFrame: DataFrame containing one column with the items name,
-    #             one column with the rating predicted
-    #     """
-    #     # Extracts ratings of the user
-    #     user_ratings = self.ratings[self.ratings['from_id'] == user_id]
-    #
-    #     # Process rated items
-    #     self.process_rated(user_ratings, self.items_directory)
-    #
-    #     # Fit
-    #     self.fit()
-    #
-    #     # Predict
-    #     prediction = self.predict(user_ratings, self.items_directory, filter_list)
-    #     return prediction
-    #
-    # @Handler_EmptyFrame
-    # def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
-    #     """
-    #     Method used to rank for a particular user all unrated items or the items specified in
-    #     the filter_list parameter.
-    #
-    #     The method fits the algorithm and then calculates the rank.
-    #
-    #     If the recs_number is specified, then the rank will contain the top-n items for the user.
-    #
-    #     Args:
-    #         user_id (str): user_id of the user
-    #         recs_number (int): number of the top items that will be present in the ranking
-    #         filter_list (list): list of the items to rank, if None all unrated items will be used to
-    #             calculate the rank
-    #     Returns:
-    #         pd.DataFrame: DataFrame containing one column with the items name,
-    #             one column with the rating predicted, sorted in descending order by the 'rating' column
-    #     """
-    #     # Extracts ratings of the user
-    #     user_ratings = self.ratings[self.ratings['from_id'] == user_id]
-    #
-    #     # Process rated items
-    #     self.process_rated(user_ratings, self.items_directory)
-    #
-    #     # Fit
-    #     self.fit()
-    #
-    #     # Rank
-    #     rank = self.rank(user_ratings, self.items_directory, recs_number, filter_list)
-    #     return rank

@@ -49,7 +49,7 @@ def Handler_EmptyFrame(func):
             frame = func(*args, **kwargs)
         except (OnlyNegativeItems, OnlyPositiveItems, NoRatedItems) as e:
             logger.warning(e)
-            columns = ["to_id", "rating"]
+            columns = ["to_id", "score"]
             frame = pd.DataFrame(columns=columns)
         return frame
 

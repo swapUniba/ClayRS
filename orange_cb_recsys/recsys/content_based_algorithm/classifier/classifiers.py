@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import TypeVar, Callable, Any, Generic
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier

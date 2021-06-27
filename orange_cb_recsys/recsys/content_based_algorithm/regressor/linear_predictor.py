@@ -1,5 +1,8 @@
 from typing import List
 
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+    CombiningTechnique, Centroid
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
 from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance
 import pandas as pd
@@ -58,11 +61,13 @@ class LinearPredictor(ContentBasedAlgorithm):
                considered as positive
        """
 
-    def __init__(self, item_field: dict, regressor: Regressor, only_greater_eq: float = None):
+    def __init__(self, item_field: dict, regressor: Regressor, only_greater_eq: float = None,
+                 embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, only_greater_eq)
         self.__regressor = regressor
         self.__labels: list = None
         self.__rated_dict: dict = None
+        self.__embedding_combiner = embedding_combiner
 
     def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
         """
@@ -97,6 +102,10 @@ class LinearPredictor(ContentBasedAlgorithm):
                     rated_dict[item] = self.extract_features_item(item)
                     labels.append(score_assigned)
 
+        if len(rated_dict) == 0:
+            raise NoRatedItems("No rated item available locally!\n"
+                               "The score frame will be empty for the user")
+
         self.__labels = labels
         self.__rated_dict = rated_dict
 
@@ -107,10 +116,12 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         It uses private attributes to fit the classifier, that's why the method expects no parameter.
         """
+        self._set_transformer()
+
         rated_features = list(self.__rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features = self.fuse_representations(rated_features)
+        fused_features = self.fuse_representations(rated_features, self.__embedding_combiner)
 
         self.__regressor.fit(fused_features, self.__labels)
 
@@ -138,7 +149,6 @@ class LinearPredictor(ContentBasedAlgorithm):
         else:
             items_to_predict = [load_content_instance(items_directory, item_id) for item_id in filter_list]
 
-
         # Extract features of the items to predict
         id_items_to_predict = []
         features_items_to_predict = []
@@ -148,11 +158,14 @@ class LinearPredictor(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features_items_to_pred = self.fuse_representations(features_items_to_predict)
+        if len(id_items_to_predict) > 0:
+            # Fuse the input if there are dicts, multiple representation, etc.
+            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
-        logger.info("Predicting scores")
-        score_labels = self.__regressor.predict(fused_features_items_to_pred)
+            logger.info("Predicting scores")
+            score_labels = self.__regressor.predict(fused_features_items_to_pred)
+        else:
+            score_labels = []
 
         # Build the score_frame to return
         columns = ["to_id", "score"]

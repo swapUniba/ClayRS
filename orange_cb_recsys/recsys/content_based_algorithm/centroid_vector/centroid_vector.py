@@ -82,6 +82,8 @@ class CentroidVector(ContentBasedAlgorithm):
 
         The built centroid will also be stored in a private attribute.
         """
+        self._set_transformer()
+
         positive_rated_features = list(self.__positive_rated_dict.values())
 
         positive_rated_features_fused = self.fuse_representations(positive_rated_features, self.__embedding_combiner)
@@ -141,10 +143,13 @@ class CentroidVector(ContentBasedAlgorithm):
             id_items_to_predict.append(item.content_id)
             features_items_to_predict.append(self.extract_features_item(item))
 
-        # Calculate predictions
-        logger.info("Computing similarity between centroid and unrated items")
-        features_fused = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
-        similarities = [self.__similarity.perform(self.__centroid, item) for item in features_fused]
+        if len(id_items_to_predict) > 0:
+            # Calculate predictions
+            logger.info("Computing similarity between centroid and unrated items")
+            features_fused = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
+            similarities = [self.__similarity.perform(self.__centroid, item) for item in features_fused]
+        else:
+            similarities = []
 
         # Build the score frame
         result = {'to_id': id_items_to_predict, 'score': similarities}
