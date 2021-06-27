@@ -35,8 +35,8 @@ jobs:
         id: check
         run: |
               git diff --name-only HEAD^ HEAD > files.txt
-              echo "::set-output name=must_build::false"
-              must_build="false"
+              echo "::set-output name=must_build::true"
+              must_build="true"
               while IFS= read -r file
               do
                 if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]]; then
