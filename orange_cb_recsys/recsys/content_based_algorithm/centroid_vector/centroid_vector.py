@@ -140,8 +140,9 @@ class CentroidVector(ContentBasedAlgorithm):
         id_items_to_predict = []
         features_items_to_predict = []
         for item in items_to_predict:
-            id_items_to_predict.append(item.content_id)
-            features_items_to_predict.append(self.extract_features_item(item))
+            if item is not None:
+                id_items_to_predict.append(item.content_id)
+                features_items_to_predict.append(self.extract_features_item(item))
 
         if len(id_items_to_predict) > 0:
             # Calculate predictions
