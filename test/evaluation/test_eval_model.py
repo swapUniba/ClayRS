@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from orange_cb_recsys.evaluation.metrics.error_metrics import MAE, MSE, RMSE
 from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, GiniIndex, DeltaGap
+from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric, ScoresNeededMetric
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, MRR, MRRAtK, NDCGAtK, Correlation
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression
@@ -192,6 +193,10 @@ class TestEvalModel(TestCase):
 
         self.assertIsInstance(sys_result, pd.DataFrame)
         self.assertIsInstance(users_result, pd.DataFrame)
+
+    def doCleanups(self) -> None:
+        RankingNeededMetric.rank_truth_list = []
+        ScoresNeededMetric.score_truth_list = []
 
 
 @unittest.skip("Slow")

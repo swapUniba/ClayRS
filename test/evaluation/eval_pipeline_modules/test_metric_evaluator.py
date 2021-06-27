@@ -206,3 +206,7 @@ class TestMetricCalculator(TestCase):
 
         self.assertIsInstance(system_res, pd.DataFrame)
         self.assertIsInstance(each_user_res, pd.DataFrame)
+
+    def doCleanups(self) -> None:
+        RankingNeededMetric.rank_truth_list = []
+        ScoresNeededMetric.score_truth_list = []
