@@ -28,7 +28,7 @@ jobs:
          name: Test
          run:
                |
-                pip install wheel coverage coveralls pytest 
+                pip install numpy wheel coverage coveralls pytest 
                 python setup.py install
                 coverage run --source=orange_cb_recsys -m pytest test/ -W ignore::DeprecationWarning
 #                 container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }})
