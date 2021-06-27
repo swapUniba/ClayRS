@@ -1,10 +1,6 @@
-from typing import Set, Dict
+from typing import Set
 import pandas as pd
 from collections import Counter
-import numpy as np
-
-from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers, PercentageError
-from orange_cb_recsys.utils.const import logger
 
 
 def popular_items(score_frame: pd.DataFrame, pop_percentage: float = 0.2) -> Set[str]:

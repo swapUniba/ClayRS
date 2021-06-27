@@ -1,11 +1,10 @@
-from copy import deepcopy
 from typing import List, Set
 from orange_cb_recsys.recsys.graphs import BipartiteGraph
 import pandas as pd
 import networkx as nx
 
 from orange_cb_recsys.recsys.graphs.graph import UserNode, ItemNode
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.utils.const import logger
 
 
 class NXBipartiteGraph(BipartiteGraph):
