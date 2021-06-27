@@ -13,7 +13,7 @@ setup(name='orange_cb_recsys',
       install_requires=[
           'pandas==1.0.5',
           'PyYAML==5.3.1',
-          'numpy==1.18.4',
+          'numpy==1.21.0',
           'gensim==3.8.3',
           'nltk==3.5',
           'babelpy==1.0.1',
