@@ -4,7 +4,7 @@ from whoosh.analysis import SimpleAnalyzer
 from whoosh.fields import Schema, TEXT, KEYWORD
 from whoosh.index import create_in, open_dir
 from whoosh.formats import Frequency
-from whoosh.qparser import QueryParser, OrGroup
+from whoosh.qparser import QueryParser, OrGroup, FieldsPlugin
 from whoosh.query import Term, Or
 from whoosh.scoring import TF_IDF, BM25F
 from typing import Union
@@ -178,7 +178,11 @@ class IndexInterface(TextInterface):
                 candidate_query_list = Or(candidate_query_list)
 
             schema = ix.schema
-            query = QueryParser("content_id", schema=schema, group=OrGroup).parse(string_query)
+            parser = QueryParser("content_id", schema=schema, group=OrGroup)
+            # regular expression to match the possible field styles
+            # examples: "content_id" or "Genre#2" or "Genre#2#custom_id"
+            parser.add_plugin(FieldsPlugin('(?P<text>\w+(\#\w+(\#\w+)?)?|[*]):'))
+            query = parser.parse(string_query)
             score_docs = \
                 searcher.search(query, limit=results_number, filter=candidate_query_list, mask=mask_query_list)
 
