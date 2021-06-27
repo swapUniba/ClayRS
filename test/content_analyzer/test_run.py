@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
-from orange_cb_recsys.__main__ import script_run
+# from orange_cb_recsys.__main__ import script_run
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 movies_info_reduced = os.path.join(THIS_DIR, "../../datasets/movies_info_reduced.json")
