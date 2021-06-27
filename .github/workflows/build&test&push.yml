@@ -1,9 +1,5 @@
 name: Build & Test & Push
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+on: [push, pull_request]
     
 env:
     IMAGE_NAME: framework_dependencies
@@ -17,8 +13,6 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       -
         name: Setup python
         uses: actions/setup-python@v2
