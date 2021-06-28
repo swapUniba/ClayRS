@@ -102,16 +102,16 @@ class ClassificationMetric(RankingNeededMetric):
         if cutoff:
             # We consider as 'not_predicted' also those excluded from cutoff other than those
             # not effectively retrieved (score_pred is nan)
-            actually_predicted = user_merged.query('score_pred.notna()')[:cutoff]
-            not_predicted = user_merged.query('score_pred.notna()')[cutoff:]
-            if not user_merged.query('score_pred.isna()').empty:
-                not_predicted = pd.concat([not_predicted, user_merged.query('score_pred.isna()')])
+            actually_predicted = user_merged.query('score_pred.notna()', engine='python')[:cutoff]
+            not_predicted = user_merged.query('score_pred.notna()', engine='python')[cutoff:]
+            if not user_merged.query('score_pred.isna()', engine='python').empty:
+                not_predicted = pd.concat([not_predicted, user_merged.query('score_pred.isna()', engine='python')])
         else:
-            actually_predicted = user_merged.query('score_pred.notna()')
-            not_predicted = user_merged.query('score_pred.isna()')
+            actually_predicted = user_merged.query('score_pred.notna()', engine='python')
+            not_predicted = user_merged.query('score_pred.isna()', engine='python')
 
         tp = len(actually_predicted.query('score_truth >= @relevant_threshold'))
-        fp = len(actually_predicted.query('(score_truth < @relevant_threshold) or (score_truth.isna())'))
+        fp = len(actually_predicted.query('(score_truth < @relevant_threshold) or (score_truth.isna())', engine='python'))
         tn = len(not_predicted.query('score_truth < @relevant_threshold'))
         fn = len(not_predicted.query('score_truth >= @relevant_threshold'))
 

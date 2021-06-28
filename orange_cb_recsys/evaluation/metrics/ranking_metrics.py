@@ -119,7 +119,7 @@ class MRR(RankingMetric):
         else:
             relevant_threshold = self.relevant_threshold
 
-        actually_predicted = valid.query('score_pred.notna()')
+        actually_predicted = valid.query('score_pred.notna()', engine='python')
         reciprocal_rank = 0
         i = 1
         for item_id, score in zip(actually_predicted['to_id'], actually_predicted['score_truth']):
@@ -199,7 +199,7 @@ class MRRAtK(MRR):
         else:
             relevant_threshold = self.relevant_threshold
 
-        actually_predicted = valid.query('score_pred.notna()').head(self.__k)
+        actually_predicted = valid.query('score_pred.notna()', engine='python').head(self.__k)
         reciprocal_rank = 0
         i = 1
         for item_id, score in zip(actually_predicted['to_id'], actually_predicted['score_truth']):
