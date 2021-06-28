@@ -1,12 +1,13 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
+from typing import List
 
-from orange_cb_recsys.content_analyzer.content_representation.content_field import FeaturesBagField
+from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.\
     field_content_production_technique import TfIdfTechnique
-from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import IndexInterface
+from orange_cb_recsys.content_analyzer.information_processor import InformationProcessor
+from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import KeywordIndex
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, check_not_tokenized
-from orange_cb_recsys.utils.id_merger import id_merger
 
 
 class SkLearnTfIdf(TfIdfTechnique):
@@ -18,30 +19,33 @@ class SkLearnTfIdf(TfIdfTechnique):
         self.__corpus = []
         self.__tfidf_matrix = None
         self.__feature_names = None
-        self.__matching = {}
 
-    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: list):
+    def produce_single_repr(self, content_position: int) -> FeaturesBagField:
+        """
+        Retrieves the tf-idf values, for terms in document in the defined content_position,
+        from the pre-computed word - document matrix.
+        """
+        feature_index = self.__tfidf_matrix[content_position, :].nonzero()[1]
+        tfidf_scores = zip(feature_index, [self.__tfidf_matrix[content_position, x] for x in feature_index])
+
+        features = {}
+        for word, score in [(self.__feature_names[i], score) for (i, score) in tfidf_scores]:
+            features[word] = score
+
+        return FeaturesBagField(features)
+
+    def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
+                         preprocessor_list: List[InformationProcessor]) -> int:
         """
         Creates a corpus structure, a list of string where each string is a document.
-        Then call TfIdfVectorizer this collection, obtaining term-document
-        tf-idf matrix, the corpus is then deleted
-
-        Args:
-            information_source (RawInformationSource): Source for the raw data
-            id_field_names: names of the fields that compounds the id
+        Then calls TfIdfVectorizer on this collection, obtaining term-document tf-idf matrix, the corpus is then deleted
         """
-
-        field_name = self.field_need_refactor
-        preprocessor_list = self.processor_list
+        self.__corpus = []
 
         for raw_content in information_source:
-            processed_field_data = raw_content[field_name]
-            for preprocessor in preprocessor_list:
-                processed_field_data = preprocessor.process(processed_field_data)
+            processed_field_data = self.process_data(raw_content[field_name], preprocessor_list)
 
             processed_field_data = check_not_tokenized(processed_field_data)
-            content_id = id_merger(raw_content, id_field_names)
-            self.__matching[content_id] = len(self.__corpus)
             self.__corpus.append(processed_field_data)
 
         tf_vectorizer = TfidfVectorizer(sublinear_tf=True)
@@ -51,32 +55,17 @@ class SkLearnTfIdf(TfIdfTechnique):
 
         self.__feature_names = tf_vectorizer.get_feature_names()
 
-    def produce_content(self, field_representation_name: str, content_id: str, field_name: str):
-        """
-        Retrieve the tf-idf values, for terms in document that match with content_id,
-        from the pre-computed word - document matrix.
-
-        Args:
-            field_representation_name (str): Name of the field representation
-            content_id (str): Id of the content that contains the terms for which extract the tf-idf
-            field_name (str): Name of the field to consider
-
-        Returns:
-            (FeaturesBag): <term, tf-idf>
-        """
-
-        doc = self.__matching[content_id]
-        feature_index = self.__tfidf_matrix[doc, :].nonzero()[1]
-        tfidf_scores = zip(feature_index, [self.__tfidf_matrix[doc, x] for x in feature_index])
-
-        features = {}
-        for word, score in [(self.__feature_names[i], score) for (i, score) in tfidf_scores]:
-            features[word] = score
-
-        return FeaturesBagField(field_representation_name, features)
+        return self.__tfidf_matrix.shape[0]
 
     def delete_refactored(self):
-        pass
+        del self.__tfidf_matrix
+        del self.__feature_names
+
+    def __str__(self):
+        return "SkLearnTfIdf"
+
+    def __repr__(self):
+        return "< SkLearnTfIdf >"
 
 
 class WhooshTfIdf(TfIdfTechnique):
@@ -86,53 +75,42 @@ class WhooshTfIdf(TfIdfTechnique):
 
     def __init__(self):
         super().__init__()
-        self.__index = IndexInterface('./frequency-index')
+        self.__index = KeywordIndex('./frequency-index')
+        self.__field_name = None
+
+    def produce_single_repr(self, content_position: int) -> FeaturesBagField:
+        """
+        Retrieves the tf-idf value directly from the index
+        """
+        return FeaturesBagField(self.__index.get_tf_idf(self.__field_name, content_position))
+
+    def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
+                         preprocessor_list: List[InformationProcessor]):
+        """
+        Saves the processed data in a index that will be used for frequency calculation
+        """
+        self.__field_name = field_name
+        self.__index = KeywordIndex('./' + field_name)
+        self.__index.init_writing(True)
+        dataset_len = 0
+        for raw_content in information_source:
+            self.__index.new_content()
+            processed_field_data = self.process_data(raw_content[field_name], preprocessor_list)
+
+            processed_field_data = check_tokenized(processed_field_data)
+            self.__index.new_field(field_name, processed_field_data)
+            self.__index.serialize_content()
+            dataset_len += 1
+
+        self.__index.stop_writing()
+
+        return dataset_len
+
+    def delete_refactored(self):
+        self.__index.delete()
 
     def __str__(self):
         return "WhooshTfIdf"
 
     def __repr__(self):
-        return "< WhooshTfIdf: " + "index = " + str(self.__index) + ">"
-
-    def produce_content(self, field_representation_name: str, content_id: str,
-                        field_name: str) -> FeaturesBagField:
-
-        return FeaturesBagField(
-            field_representation_name, self.__index.get_tf_idf(field_name, content_id))
-
-    def dataset_refactor(self, information_source: RawInformationSource, id_field_names: list):
-        """
-        Saves the processed data in a index that will be used for frequency calculation
-
-        Args:
-            information_source (RawInformationSource): data source from
-                which extract the field data
-                to create the index for tf-idf computing
-            id_field_names (list<str>): names of the fields that compound the id
-        """
-
-        field_name = self.field_need_refactor
-        preprocessor_list = self.processor_list
-        pipeline_id = self.pipeline_need_refactor
-
-        self.__index = IndexInterface('./' + field_name + pipeline_id)
-        self.__index.init_writing()
-        for raw_content in information_source:
-            self.__index.new_content()
-            content_id = id_merger(raw_content, id_field_names)
-            self.__index.new_field("content_id", content_id)
-            processed_field_data = raw_content[field_name]
-            for preprocessor in preprocessor_list:
-                processed_field_data = preprocessor.process(processed_field_data)
-
-            processed_field_data = check_tokenized(processed_field_data)
-            self.__index.new_field(field_name, processed_field_data)
-            self.__index.serialize_content()
-
-        self.__index.stop_writing()
-
-    def delete_refactored(self):
-        """
-        Delete the index used for term vectors and relative frequencies
-        """
-        self.__index.delete_index()
+        return "< WhooshTfIdf >"

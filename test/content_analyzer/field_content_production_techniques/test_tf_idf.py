@@ -1,47 +1,30 @@
 from unittest import TestCase
+import os
 
+from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import WhooshTfIdf, SkLearnTfIdf
-from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(THIS_DIR, "../../../datasets/movies_info_reduced.json")
 
 
 class TestWhooshTfIdf(TestCase):
     def test_produce_content(self):
-        file_path = '../../../datasets/movies_info_reduced.json'
-        try:
-            with open(file_path):
-                pass
-        except FileNotFoundError:
-            file_path = 'datasets/movies_info_reduced.json'
-        try:
-            technique = WhooshTfIdf()
-            technique.field_need_refactor = "Plot"
-            technique.pipeline_need_refactor = str(1)
-            technique.processor_list = [NLTK()]
-            technique.dataset_refactor(JSONFile(file_path), ["imdbID"])
-            features_bag_test = technique.produce_content("test", "tt0113497", "Plot")
-            features = features_bag_test.value
+        technique = WhooshTfIdf()
 
-            self.assertEqual(features['years'], 0.6989700043360189)
-        except AttributeError:
-            pass
+        features_bag_list = technique.produce_content("Plot", [], JSONFile(file_path))
+
+        self.assertEqual(len(features_bag_list), 20)
+        self.assertIsInstance(features_bag_list[0], FeaturesBagField)
 
 
-class TestSkLearnTfIDF(TestCase):
+class TestSkLearnTfIdf(TestCase):
+
     def test_produce_content(self):
-        file_path = '../../../datasets/movies_info_reduced.json'
-        try:
-            with open(file_path):
-                pass
-        except FileNotFoundError:
-            file_path = 'datasets/movies_info_reduced.json'
-
         technique = SkLearnTfIdf()
-        technique.field_need_refactor = "Plot"
-        technique.pipeline_need_refactor = str(1)
-        technique.processor_list = [NLTK()]
-        technique.dataset_refactor(JSONFile(file_path), ["imdbID"])
-        features_bag_test = technique.produce_content("test", "tt0113497", "Plot")
-        features = features_bag_test.value
 
-        self.assertLess(features['the'], 0.15)
+        features_bag_list = technique.produce_content("Title", [], JSONFile(file_path))
+
+        self.assertEqual(len(features_bag_list), 20)
+        self.assertIsInstance(features_bag_list[0], FeaturesBagField)

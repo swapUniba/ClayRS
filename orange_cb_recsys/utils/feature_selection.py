@@ -2,7 +2,7 @@ import networkx as nx
 from abc import ABC, abstractmethod
 import pandas as pd
 
-from orange_cb_recsys.recsys.graphs.full_graphs import NXFullGraph
+from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 
 
 class FeatureSelection(ABC):

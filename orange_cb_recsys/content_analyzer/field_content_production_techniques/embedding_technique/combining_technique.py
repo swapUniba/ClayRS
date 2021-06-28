@@ -1,7 +1,29 @@
 import numpy as np
+from abc import ABC, abstractmethod
 
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
-    CombiningTechnique
+
+class CombiningTechnique(ABC):
+    """
+    Class that generalizes the modality in which loaded embeddings will be
+    combined to produce a semantic representation.
+    """
+
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def combine(self, embedding_matrix: np.ndarray):
+        """
+        Combine, in a way specified in the implementations,
+        the row of the input matrix
+
+        Args:
+            embedding_matrix: matrix whose rows will be combined
+
+        Returns:
+
+        """
+        raise NotImplementedError
 
 
 class Centroid(CombiningTechnique):

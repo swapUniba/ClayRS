@@ -1,144 +1,256 @@
-import re
+import abc
 
 import pandas as pd
 from typing import List
+from abc import ABC
 
-from orange_cb_recsys.recsys.config import RecSysConfig
-from orange_cb_recsys.utils.const import logger
-from orange_cb_recsys.utils.load_content import load_content_instance, get_unrated_items
+from orange_cb_recsys.recsys.graphs.graph import FullGraph
+
+from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import Handler_EmptyFrame
+from orange_cb_recsys.recsys.graph_based_algorithm import GraphBasedAlgorithm
 
 
-class RecSys:
-    """
-    Class that represent a recommender system
-    Args:
-        config (RecSysConfig): Configuration of the recommender system
-    """
+class RecSys(ABC):
 
-    def __init__(self, config: RecSysConfig):
-        self.__config: RecSysConfig = config
+    def __init__(self, rating_frame: pd.DataFrame):
+        self.__rating_frame = rating_frame
 
-    def __get_item_list(self, item_to_predict_id_list, user_ratings):
-        if item_to_predict_id_list is None:
-            # all items without rating if the list is not set
-            item_to_predict_list = get_unrated_items(self.__config.items_directory, user_ratings)
-        else:
-            item_to_predict_list = [
-                load_content_instance(self.__config.items_directory, re.sub(r'[^\w\s]', '', item_id))
-                for item_id in item_to_predict_id_list]
+    @property
+    def rating_frame(self):
+        return self.__rating_frame
 
-        return item_to_predict_list
+    @abc.abstractmethod
+    def fit_predict(self, user_id: str, filter_list: List[str] = None):
+        raise NotImplementedError
 
-    def fit_predict(self, user_id: str, item_to_predict_id_list: List[str] = None):
+    @abc.abstractmethod
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _eval_fit_predict(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _eval_fit_rank(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
+        raise NotImplementedError
+
+
+class ContentBasedRS(RecSys):
+
+    def __init__(self,
+                 algorithm: ContentBasedAlgorithm,
+                 rating_frame: pd.DataFrame,
+                 items_directory: str,
+                 users_directory: str = None):
+
+        # frame_to_concat = []
+        # for user in set(rating_frame['from_id']):
+        #     user_frame = rating_frame.query('from_id == @user')
+        #     valid_user_frame = remove_not_existent_items(user_frame, items_directory)
+        #     frame_to_concat.append(valid_user_frame)
+        #
+        # valid_rating_frame = pd.concat(frame_to_concat)
+        super().__init__(rating_frame)
+
+        self.__algorithm = algorithm
+        self.__items_directory = items_directory
+        self.__users_directory = users_directory
+
+    @property
+    def algorithm(self):
+        return self.__algorithm
+
+    @property
+    def items_directory(self):
+        return self.__items_directory
+
+    @property
+    def users_directory(self):
+        return self.__users_directory
+
+    @Handler_EmptyFrame
+    def fit_predict(self, user_id: str, filter_list: List[str] = None):
         """
-        Computes the predicted rating for specified user and items,
-        should be used when a score prediction algorithm (instead of a ranking algorithm)
-        was chosen in the config
+        Method used to predict the rating of the user passed for all unrated items or for the items passed
+        in the filter_list parameter.
+
+        The method fits the algorithm and then calculates the prediction
 
         Args:
-            user_id: user for which calculate the predictions
-            item_to_predict_id_list: items for which the prediction will be computed,
-                if None all unrated items will be used
+            user_id (str): user_id of the user
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
         Returns:
-            score_frame (DataFrame): result frame whose columns are: to_id, rating
-
-        Raises:
-             ValueError: if the algorithm is a ranking algorithm
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted
         """
-        if self.__config.score_prediction_algorithm is None:
-            raise ValueError("You must set score prediction algorithm to use this method")
+        # Extracts ratings of the user
+        user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
 
-        # load user ratings
-        logger.info("Loading user ratings")
-        user_ratings = self.__config.rating_frame[self.__config.rating_frame['from_id'] == user_id]
-        user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
+        alg = self.algorithm
 
-        # define for which items calculate the prediction
-        logger.info("Defining for which items the prediction will be computed")
-        items = self.__get_item_list(item_to_predict_id_list, user_ratings)
+        # Process rated items
+        alg.process_rated(user_ratings, self.items_directory)
 
-        # calculate predictions
-        logger.info("Computing predicitons")
-        score_frame = self.__config.score_prediction_algorithm.predict(user_id, items, user_ratings,
-                                                                       self.__config.items_directory)
+        # Fit
+        alg.fit()
+
+        # Predict
+        prediction = alg.predict(user_ratings, self.items_directory, filter_list)
+
+        prediction.insert(0, 'from_id', [user_id for i in range(len(prediction))])
+
+        return prediction
+
+    @Handler_EmptyFrame
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
+        """
+        Method used to rank for a particular user all unrated items or the items specified in
+        the filter_list parameter.
+
+        The method fits the algorithm and then calculates the rank.
+
+        If the recs_number is specified, then the rank will contain the top-n items for the user.
+
+        Args:
+            user_id (str): user_id of the user
+            recs_number (int): number of the top items that will be present in the ranking
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted, sorted in descending order by the 'rating' column
+        """
+        # Extracts ratings of the user
+        user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
+
+        alg = self.algorithm
+
+        # Process rated items
+        alg.process_rated(user_ratings, self.items_directory)
+
+        # Fit
+        alg.fit()
+
+        # Rank
+        rank = alg.rank(user_ratings, self.items_directory, recs_number, filter_list)
+
+        rank.insert(0, 'from_id', [user_id for i in range(len(rank))])
+
+        return rank
+
+    def _eval_fit_predict(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
+        user_id = user_ratings_train.from_id.iloc[0]
+
+        rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
+        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
+        return score_frame
+
+    def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
+        user_id = user_ratings_train.from_id.iloc[0]
+
+        rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
+        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
+        return score_frame
+
+
+class GraphBasedRS(RecSys):
+    def __init__(self,
+                 algorithm: GraphBasedAlgorithm,
+                 graph: FullGraph):
+        self.__algorithm = algorithm
+        self.__graph = graph
+        super().__init__(rating_frame=graph.convert_to_dataframe())
+
+    @property
+    def algorithm(self):
+        return self.__algorithm
+
+    @property
+    def rating_frame(self):
+        return self.__graph.convert_to_dataframe()
+
+    @property
+    def graph(self):
+        return self.__graph
+
+    def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
+        """
+        Method used to predict the rating of the user passed for all unrated items which are present in the graph
+        or for the items passed in the filter_list parameter which are also present in the graph.
+
+        The method fits the algorithm and then calculates the prediction, even though in the case of the
+        graph-based recommendation the fit process is non-existent
+
+        Args:
+            user_id (str): user_id of the user
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted
+        """
+
+        alg = self.algorithm
+
+        prediction = alg.predict(user_id, self.graph, filter_list)
+
+        prediction.insert(0, 'from_id', [user_id for i in range(len(prediction))])
+
+        return prediction
+
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
+        """
+        Method used to rank for a particular user all unrated items which are present in the graph or the items
+        specified in the filter_list parameter which are also present in the graph.
+
+        The method fits the algorithm and then calculates the prediction, even though in the case of the
+        graph-based recommendation the fit process is non-existent
+
+        If the recs_number is specified, then the rank will contain the top-n items for the user.
+
+        Args:
+            user_id (str): user_id of the user
+            recs_number (int): number of the top items that will be present in the ranking
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted, sorted in descending order by the 'rating' column
+        """
+        alg = self.algorithm
+
+        rank = alg.rank(user_id, self.graph, recs_number, filter_list)
+
+        rank.insert(0, 'from_id', [user_id for i in range(len(rank))])
+
+        return rank
+
+    def _eval_fit_predict(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
+        user_id = user_ratings_train.from_id.iloc[0]
+
+        eval_graph: FullGraph = self.graph.copy()
+
+        for idx, row in user_ratings_train.iterrows():
+            eval_graph.remove_link(row['from_id'], row['to_id'])
+
+        rs_eval = GraphBasedRS(self.algorithm, eval_graph)
+        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
 
         return score_frame
 
-    def fit_ranking(self, user_id: str, recs_number: int, candidate_item_id_list: List[str] = None):
-        """
-        Computes the predicted rating for specified user and items,
-        should be used when a  ranking algorithm (instead of a score prediction algorithm)
-        was chosen in the config
+    def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
+        user_id = user_ratings_train.from_id.iloc[0]
 
-        Args:
-            candidate_item_id_list: list of items, in which search the recommendations,
-                if None all unrated items will be used as candidates
-            user_id: user for which compute the ranking recommendation
-            recs_number: how many items should the returned ranking contain,
-                the ranking length can be lower
-        Returns:
-            score_frame (DataFrame): result frame whose columns are: to_id, rating
+        eval_graph: FullGraph = self.graph.copy()
 
-        Raises:
-             ValueError: if the algorithm is a score prediction algorithm
-        """
-        if self.__config.ranking_algorithm is None:
-            raise ValueError("You must set ranking algorithm to use this method")
+        for idx, row in user_ratings_train.iterrows():
+            eval_graph.remove_link(row['from_id'], row['to_id'])
 
-        # load user ratings
-        logger.info("Loading user ratings")
-        user_ratings = self.__config.rating_frame[self.__config.rating_frame['from_id'] == user_id]
-        user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
+        rs_eval = GraphBasedRS(self.algorithm, eval_graph)
 
-        # calculate predictions
-        logger.info("Computing ranking")
-        score_frame = self.__config.ranking_algorithm.predict(user_id, user_ratings, recs_number,
-                                                              self.__config.items_directory,
-                                                              candidate_item_id_list)
+        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
 
-        return score_frame
-
-    def fit_eval_predict(self, user_id, user_ratings: pd.DataFrame, test_set: pd.DataFrame):
-        """
-        Computes predicted ratings, or ranking (according to algorithm chosen in the config)
-        user ratings will be used as train set to fit the algorithm.
-        If the algorithm is score_prediction the rating for the item in the test set will
-        be predicted
-
-        Args:
-            user_id: user for which predictions will be computed
-            user_ratings: train set
-            test_set:
-        Returns:
-            score_frame (DataFrame): result frame whose columns are: to_id, rating
-        """
-        logger.info("Loading items")
-        item_to_predict_id_list = [item for item in test_set.to_id]  # unrated items list
-        items = [load_content_instance(self.__config.items_directory, re.sub(r'[^\w\s]', '', item_id))
-                 for item_id in item_to_predict_id_list]
-
-        logger.info("Loaded %d items" % len(items))
-
-        # calculate predictions
-        logger.info("Computing predictions")
-        score_frame = self.__config.score_prediction_algorithm.predict(user_id, items, user_ratings,
-                                                                       self.__config.items_directory)
-
-        return score_frame
-
-    def fit_eval_ranking(self, user_id, user_ratings: pd.DataFrame, test_set_items, recs_number):
-        """
-        Computes a ranking of specified length,
-        using as training set the ratings provided by the user
-
-        Args:
-            user_id:
-            user_ratings (pd.DataFrame): Training set
-            test_set_items (pd.DataFrame)
-            recs_number (int): Number of recommendations to provide
-        """
-        user_ratings = user_ratings.sort_values(['to_id'], ascending=True)
-        score_frame = self.__config.ranking_algorithm.predict(user_id, user_ratings, recs_number,
-                                                              self.__config.items_directory,
-                                                              test_set_items)
         return score_frame

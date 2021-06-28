@@ -6,6 +6,9 @@ from orange_cb_recsys.content_analyzer.embedding_learner.latent_semantic_analysi
 from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(THIS_DIR, '../../../datasets/movies_info_reduced.json')
+
 
 class TestEmbeddingLearner(TestCase):
     def test_extract_corpus(self):
@@ -32,31 +35,11 @@ class TestEmbeddingLearner(TestCase):
                     ['money', 'train', '22', 'nov', '1995'],
                     ['ace', 'ventura', ':', 'natur', 'call', '10', 'nov', '1995']]
 
-        file_path = "datasets/movies_info_reduced.json"
-        try:
-            with open(file_path):
-                pass
-        except FileNotFoundError:
-            file_path = "../../../datasets/movies_info_reduced.json"
-
         src = JSONFile(file_path)
-        learner = GensimLatentSemanticAnalysis(src, preprocessor, fields)
-        generated = learner.extract_corpus()
+        learner = GensimLatentSemanticAnalysis("./test_extract_corpus")
+        generated = learner.extract_corpus(src, fields, [preprocessor])
 
         self.assertEqual(generated, expected)
-
-    def test_save(self):
-        preprocessor = NLTK(stopwords_removal=True)
-        fields = ["Plot"]
-        try:
-            src = JSONFile("datasets/movies_info_reduced.json")
-            learner = GensimLatentSemanticAnalysis(src, preprocessor, fields)
-            learner.fit()
-        except FileNotFoundError:
-            src = JSONFile("../../../datasets/movies_info_reduced.json")
-            learner = GensimLatentSemanticAnalysis(src, preprocessor, fields)
-            learner.fit()
-        learner.save()
 
 
 

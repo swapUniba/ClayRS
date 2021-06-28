@@ -1,10 +1,7 @@
 ARG VERSION=3.8
 FROM python:$VERSION
 
-COPY . /usr/src/repo
+COPY requirements.txt /usr/src/
 
-WORKDIR /usr/src/repo
-RUN pip install wheel sphinx lenskit && python setup.py install
-
-WORKDIR /usr/src
-RUN rm -rf repo
+WORKDIR /usr/src/
+RUN pip install -r requirements.txt && rm requirements.txt

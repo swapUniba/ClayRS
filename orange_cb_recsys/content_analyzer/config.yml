@@ -1,10 +1,11 @@
 ---
-- content_type: "ITEM"
+- module: "item_analyzer",
   output_directory: "../../contents/movielens_test_exo_prop"
-  raw_source_path: "../../datasets/movies_info_reduced.json"
-  source_type: "json"
-  id_field_name:
-  - "imdbID"
+  source:
+    - class: 'json'
+      file_path": 'movies_info_reduced'
+  id:
+  - 'imdbID'
   get_exogenous_properties:
     - class: 'dbpedia_mapping'
       mode: 'only_retrieved_evaluated'
@@ -13,19 +14,22 @@
       label_field: 'Title'
   fields: []
 
-- content_type: "RATING"
-  output_directory: "file_path"
-  raw_source_path: "file_path"
-  source_type: "dot"
-  from_field_name: "from"
-  to_field_name: "to"
+- module: "ratings"
+  source:
+    - class: 'dat'
+      file_path": 'file-path'
+  from_field_name: "user_id"
+  to_field_name: "item_id"
   timestamp_field_name: "timestamp"
-  fields:
-    - field_name: "recensione"
+  output_directory: "file_path"
+  rating_configs:
+    - class: "ratings_config"
+      field_name: "recensione"
       processor:
         class: "text_blob_sentiment"
-    - field_name: "stelle"
+    - class: "ratings_config"
+      field_name: "stelle"
       processor:
-        class: "number_normalizer"
-        min: "1"
-        max: "5"
+        - class: "number_normalizer"
+          min: "1"
+          max: "5"

@@ -1,81 +1,172 @@
+import os
 from unittest import TestCase
 import pandas as pd
-from orange_cb_recsys.recsys import RecSys, RecSysConfig, ClassifierRecommender, CentroidVector, CosineSimilarity
-import numpy as np
 
-from orange_cb_recsys.recsys.ranking_algorithms.classifier import GaussianProcess
+from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
+from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
+from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
+from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
+from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
+from orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query import IndexQuery
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
+from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
+from orange_cb_recsys.recsys.graphs import NXFullGraph
+
+from orange_cb_recsys.utils.const import root_path
+
+contents_path = os.path.join(root_path, 'contents')
+
+ratings = pd.DataFrame.from_records([
+    ("A000", "tt0114576", 5, "54654675"),
+    ("A001", "tt0114576", 3, "54654675"),
+    ("A001", "tt0112896", 1, "54654675"),
+    ("A000", "tt0113041", 1, "54654675"),
+    ("A002", "tt0112453", 2, "54654675"),
+    ("A002", "tt0113497", 4, "54654675"),
+    ("A003", "tt0112453", 1, "54654675")],
+    columns=["from_id", "to_id", "score", "timestamp"])
 
 
-class TestRecSys(TestCase):
-    def test_recsys(self):
-        item_id_list = [
-            'tt0112281',
-            'tt0112302',
-            'tt0112346',
-            'tt0112453',
-            'tt0112641',
-            'tt0112760',
-            'tt0112896',
-            'tt0113041',
-            'tt0113101',
-            'tt0113189',
-            'tt0113228',
-            'tt0113277',
-            'tt0113497',
-            'tt0113845',
-            'tt0113987',
-            'tt0114319',
-            'tt0114388',
-            'tt0114576',
-            'tt0114709',
-            'tt0114885',
-        ]
-        record_list = []
-        for i in range(1, 7):
-            extract_items = set([x for i, x in enumerate(item_id_list) if np.random.randint(0, 2) == 1 and i < 10])
-            for item in extract_items:
-                record_list.append((str(i), item, str(np.random.randint(-10, 11) / 10)))
-        t_ratings = pd.DataFrame.from_records(record_list, columns=['from_id', 'to_id', 'score'])
-        #print(t_ratings)
+class TestContentBasedRS(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.movies_multiple = os.path.join(contents_path, 'movies_codified/')
+        cls.filter_list = ['tt0114319', 'tt0114388']
 
-        # path = '../../contents'
-        path = 'contents'
-        try:
-            RecSysConfig(users_directory='{}/users_test1591814865.8959296'.format(path),
-                         items_directory='{}/movielens_test1591885241.5520566'.format(path),
-                         rating_frame=t_ratings)
-        except ValueError:
-            pass
-        t_classifier = ClassifierRecommender(item_field={'Plot': '2'}, classifier=GaussianProcess())
-        t_config = RecSysConfig(users_directory='{}/users_test1591814865.8959296'.format(path),
-                                items_directory='{}/movielens_test1591885241.5520566'.format(path),
-                                rating_frame=t_ratings,
-                                ranking_algorithm=t_classifier)
-        t_recsys = RecSys(config=t_config)
-        # t_recsys.fit_predict('1', [x for x in item_id_list if np.random.randint(0, 2) == 1])
-        t_recsys.fit_ranking('1', 3)
+    def test_empty_frame(self):
+        ratings_only_positive = pd.DataFrame.from_records([
+            ("A000", "tt0114576", 5, "54654675")],
+            columns=["from_id", "to_id", "score", "timestamp"])
 
-        user_frame = t_ratings[t_ratings['from_id'] == '1']
-        test_set = pd.DataFrame({'to_id': ['tt0112281', 'tt0112302']})
-        t_recsys.fit_eval_ranking(user_id='1', user_ratings=user_frame, test_set_items=test_set.to_id.tolist(),
-                                  recs_number=len(test_set.to_id.tolist()))
-        try:
-            t_recsys.fit_ranking('1', 2)
-        except ValueError:
-            pass
+        ratings_only_negative = pd.DataFrame.from_records([
+            ("A000", "tt0114576", 1, "54654675")],
+            columns=["from_id", "to_id", "score", "timestamp"])
 
-        t_centroid = CentroidVector(item_field='Plot', field_representation='1', similarity=CosineSimilarity())
+        ratings_item_inexistent = pd.DataFrame.from_records([
+            ("A000", "not exists", 1, "54654675")],
+            columns=["from_id", "to_id", "score", "timestamp"])
 
-        t_config = RecSysConfig(users_directory='{}/users_test1591814865.8959296'.format(path),
-                                items_directory='{}/movielens_test1591885241.5520566'.format(path),
-                                rating_frame=t_ratings,
-                                ranking_algorithm=t_centroid)
-        t_recsys = RecSys(config=t_config)
-        t_recsys.fit_ranking('1', 2)
+        # ClassifierRecommender returns an empty frame
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
+        rs = ContentBasedRS(alg, ratings_only_positive, self.movies_multiple)
+        result = rs.fit_rank('A000')
+        self.assertTrue(result.empty)
 
-        t_recsys.fit_eval_ranking(user_id='1', user_ratings=user_frame, test_set_items=test_set.to_id.tolist(), recs_number=len(test_set.to_id.tolist()))
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
+        rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
+        result = rs.fit_rank('A000')
+        self.assertTrue(result.empty)
 
-        try:
-            t_recsys.fit_predict('1', [])
-        except ValueError:
-            pass
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
+        rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
+        result = rs.fit_rank('A000')
+        self.assertTrue(result.empty)
+
+        # CentroidVector returns an empty frame
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
+        rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
+        result = rs.fit_rank('A000')
+        self.assertTrue(result.empty)
+
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
+        rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
+        result = rs.fit_rank('A000')
+        self.assertTrue(result.empty)
+
+    # More tests in content_based_algorithm/test_classifier
+    def test_classifier_recommender(self):
+        recs_number = 3
+
+        # Test prediction and ranking with the Classifier Recommender algorithm
+        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC())
+        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+
+        # Prediction should raise error since it's not a ScorePredictionAlg
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000')
+
+        # Test ranking with the Classifier Recommender algorithm on specified items
+        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
+        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
+
+        # Test top-n ranking with the Classifier Recommender algorithm
+        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
+        self.assertEqual(len(result_rank_numbered), recs_number)
+
+    def test_centroid_vector(self):
+        recs_number = 3
+
+        # Test prediction and ranking with the Centroid Vector algorithm
+        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity())
+        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+
+        # Prediction should raise error since it's not a ScorePredictionAlg
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000')
+
+        # Test ranking with the Centroid Vector algorithm on specified items
+        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
+        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
+
+        # Test top-n ranking with the Centroid Vector algorithm
+        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
+        self.assertEqual(len(result_rank_numbered), recs_number)
+
+    def test_index_query(self):
+        movies_index = os.path.join(contents_path, 'index/')
+        filter_list = ['tt0114319', 'tt0114388']
+        recs_number = 3
+
+        # Test prediction and ranking with the Index Query algorithm
+        alg = IndexQuery({'Plot': ['index_original', 'index_preprocessed']})
+        rs = ContentBasedRS(alg, ratings, movies_index)
+
+        # Prediction should raise error since it's not a ScorePredictionAlg
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000')
+
+        result_rank = rs.fit_rank('A000')
+        self.assertGreater(len(result_rank), 0)
+
+        # Test prediction and ranking with the IndexQuery algorithm on specified items, prediction will raise exception
+        # since it's not a PredictionAlgorithm
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000', filter_list=filter_list)
+
+        result_rank_filtered = rs.fit_rank('A000', filter_list=filter_list)
+        self.assertGreater(len(result_rank_filtered), 0)
+
+        # Test top-n ranking with the IndexQuery algorithm
+        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
+        self.assertEqual(len(result_rank_numbered), recs_number)
+
+
+class TestGraphBasedRS(TestCase):
+    def test_nx_page_rank(self):
+        # Because graph based recommendation needs to have all items to predict in the ratings dataframe
+        filter_list = ['tt0112896', 'tt0113497']
+        recs_number = 1
+
+        graph = NXFullGraph(ratings)
+        alg = NXPageRank()
+        rs = GraphBasedRS(alg, graph)
+
+        # Test prediction and ranking with the Page Rank algorithm, prediction will raise exception
+        # since it's not a PredictionAlgorithm
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000')
+
+        result_rank = rs.fit_rank('A000')
+        self.assertEqual(len(result_rank), 3)
+
+        # Test prediction and ranking with the Page Rank algorithm on specified items, prediction will raise exception
+        # since it's not a PredictionAlgorithm
+        with self.assertRaises(NotPredictionAlg):
+            rs.fit_predict('A000', filter_list=filter_list)
+
+        result_rank_filtered = rs.fit_rank('A000', filter_list=filter_list)
+        self.assertEqual(len(result_rank_filtered), 2)
+
+        # Test top-n ranking with the Page Rank algorithm
+        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
+        self.assertEqual(len(result_rank_numbered), recs_number)

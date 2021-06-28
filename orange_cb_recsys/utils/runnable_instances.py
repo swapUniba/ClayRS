@@ -3,17 +3,30 @@ import os
 import pickle
 from typing import Dict
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig, RatingsImporter
+from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig, UserAnalyzerConfig, ItemAnalyzerConfig
+from orange_cb_recsys.content_analyzer.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
+    GensimLatentSemanticAnalysis, GensimRandomIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
-    BinaryFile, GensimDownloader, Centroid, EmbeddingTechnique, SearchIndexing
+    Centroid
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency import \
     SynsetDocumentFrequency
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique
+from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
+    PropertiesFromDataset
 from orange_cb_recsys.content_analyzer.memory_interfaces import IndexInterface
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis import TextBlobSentimentAnalysis
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile, CSVFile, SQLDatabase, DATFile
+from orange_cb_recsys.evaluation import RankingAlgEvalModel, KFoldPartitioning, NDCG, FNMeasure, Precision, Recall, \
+    MRR, GiniIndex, PopRecsCorrelation, LongTailDistr, CatalogCoverage, DeltaGap, PopRatioVsRecs, Novelty, Correlation,\
+    Serendipity
+from orange_cb_recsys.evaluation.eval_model import PredictionAlgEvalModel, ReportEvalModel
+from orange_cb_recsys.evaluation.prediction_metrics import RMSE, MAE
+from orange_cb_recsys.recsys import ClassifierRecommender, NXPageRank, IndexQuery, RecSysConfig, RecSys
+from orange_cb_recsys.recsys.ranking_algorithms.classifier import KNN, RandomForest, SVM, LogReg, DecisionTree, \
+    GaussianProcess
 from orange_cb_recsys.utils.const import logger
 
 import pathlib
@@ -30,6 +43,14 @@ with no arguments to add it permanently and also show in this file
 """
 
 runnable_instances = {
+    "field_config": FieldConfig,
+    "recsys_config": RecSysConfig,
+    "exogenous_config": ExogenousConfig,
+    "item_analyzer": ItemAnalyzerConfig,
+    "user_analyzer": UserAnalyzerConfig,
+    "ratings": RatingsImporter,
+    "ratings_config": RatingsFieldConfig,
+    "recsys": RecSys,
     "json": JSONFile,
     "csv": CSVFile,
     "sql": SQLDatabase,
@@ -38,16 +59,47 @@ runnable_instances = {
     "babelpy": BabelPyEntityLinking,
     "nltk": NLTK,
     "whoosh_tf-idf": WhooshTfIdf,
-    "binary_file": BinaryFile,
-    "gensim_downloader": GensimDownloader,
+    "word2vec": GensimWord2Vec,
+    "doc2vec": GensimDoc2Vec,
+    "fasttext": GensimFastText,
+    "latent_semantic_analysis": GensimLatentSemanticAnalysis,
+    "random_indexing": GensimRandomIndexing,
     "centroid": Centroid,
-    "embedding": EmbeddingTechnique,
     "text_blob_sentiment": TextBlobSentimentAnalysis,
     "number_normalizer": NumberNormalizer,
-    "search_index": SearchIndexing,
     "sk_learn_tf-idf": SkLearnTfIdf,
     "dbpedia_mapping": DBPediaMappingTechnique,
+    "properties_from_dataset": PropertiesFromDataset,
     "synset_frequency": SynsetDocumentFrequency,
+    "classifier": ClassifierRecommender,
+    "knn": KNN,
+    "random_forest": RandomForest,
+    "svm": SVM,
+    "log_reg": LogReg,
+    "decision_tree": DecisionTree,
+    "gaussian_process": GaussianProcess,
+    "nx_page_rank": NXPageRank,
+    "index_query": IndexQuery,
+    "ranking_alg_eval_model": RankingAlgEvalModel,
+    "prediction_alg_eval_model": PredictionAlgEvalModel,
+    "report_eval_model": ReportEvalModel,
+    "k_fold": KFoldPartitioning,
+    "precision": Precision,
+    "recall": Recall,
+    "mrr": MRR,
+    "fnmeasure": FNMeasure,
+    "gini_index": GiniIndex,
+    "pop_recs_correlation": PopRecsCorrelation,
+    "long_tail_distribution": LongTailDistr,
+    "catalog_coverage": CatalogCoverage,
+    "delta_gap": DeltaGap,
+    "popularity_ratio_vs_recs": PopRatioVsRecs,
+    "novelty": Novelty,
+    "rmse": RMSE,
+    "mae": MAE,
+    "ndcg": NDCG,
+    "correlation": Correlation,
+    "serendipity": Serendipity
 }
 
 """
@@ -181,5 +233,4 @@ def show(categories: bool=False):
         r_i = get()
         for k in r_i.keys():
             logger.info('< %s : %s >', k, str(r_i[k]))
-
 
