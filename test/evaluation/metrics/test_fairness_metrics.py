@@ -466,7 +466,7 @@ class TestDeltaGap(unittest.TestCase):
         result = metric.perform(split)
 
         for col in result.columns:
-            self.assertEqual(0, all(result[col]))
+            self.assertTrue(v == 0 for v in result[col])
 
     def test_perform_top_3(self):
 

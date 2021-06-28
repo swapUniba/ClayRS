@@ -1,7 +1,7 @@
 from typing import List
 
 from orange_cb_recsys.evaluation.exceptions import AlreadyFittedRecSys
-from orange_cb_recsys.evaluation.metrics.metrics import Metric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric, RankingNeededMetric
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
@@ -20,6 +20,12 @@ class PredictionCalculator:
     def calc_predictions(self, test_items_list: List[pd.DataFrame], metric_list: List[Metric]):
 
         metric_valid = metric_list.copy()
+
+        # We must clean otherwise on multiple runs if we want to calc other predictions
+        # the predictions are already there and they won't overwrite. So before every run of
+        # calc_predictions first of all we reset the predictions calculated previously
+        for metric in metric_list:
+            metric._clean_pred_truth_list()
 
         for metric in metric_list:
 

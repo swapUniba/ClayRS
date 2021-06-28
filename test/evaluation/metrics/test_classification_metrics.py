@@ -306,7 +306,7 @@ class TestRPrecision(TestCase):
         result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 0 / 2
+        expected_u2 = 2 / 3
         result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 

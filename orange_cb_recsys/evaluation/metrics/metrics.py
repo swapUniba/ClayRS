@@ -24,6 +24,11 @@ class Metric(ABC):
     def _get_pred_truth_list(cls) -> List[Split]:
         raise NotImplementedError
 
+    @classmethod
+    @abstractmethod
+    def _clean_pred_truth_list(cls) -> List[Split]:
+        raise NotImplementedError
+
     @abstractmethod
     def perform(self, split: Split):
         """
@@ -88,6 +93,10 @@ class RankingNeededMetric(Metric):
     def _get_pred_truth_list(cls):
         return cls.rank_truth_list
 
+    @classmethod
+    def _clean_pred_truth_list(cls):
+        RankingNeededMetric.rank_truth_list = []
+
 
 class ScoresNeededMetric(Metric):
     score_truth_list = []
@@ -135,3 +144,6 @@ class ScoresNeededMetric(Metric):
     def _get_pred_truth_list(cls):
         return cls.score_truth_list
 
+    @classmethod
+    def _clean_pred_truth_list(cls):
+        ScoresNeededMetric.score_truth_list = []
