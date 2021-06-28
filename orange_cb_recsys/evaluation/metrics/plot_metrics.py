@@ -175,8 +175,8 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         data_to_plot = []
         labels = []
         for group_name in user_groups:
-            truth_group = truth.query('from_id in @user_groups[@group_name]')
-            pred_group = predictions.query('from_id in @user_groups[@group_name]')
+            truth_group = truth.query('from_id in @user_groups[@group_name]', engine='python')
+            pred_group = predictions.query('from_id in @user_groups[@group_name]', engine='python')
 
             profile_pop_ratios_frame = pop_ratio_by_user(truth_group, most_popular_items)
             recs_pop_ratios_frame = pop_ratio_by_user(pred_group, most_popular_items)
