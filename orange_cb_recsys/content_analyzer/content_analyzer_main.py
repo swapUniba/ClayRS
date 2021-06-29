@@ -246,7 +246,7 @@ class ContentsProducer:
                     for field_name in index_representations_dict[memory_interface].keys():
                         memory_interface.new_field(
                             field_name, str(index_representations_dict[memory_interface][field_name][i].value))
-                    contents_list[i].index_document_id = memory_interface.serialize_content()
+                    memory_interface.serialize_content()
                 memory_interface.stop_writing()
             self.__memory_interfaces.clear()
 
