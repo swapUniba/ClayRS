@@ -207,7 +207,6 @@ class Content:
         self.__content_id: str = content_id
         self.__field_dict: Dict[str, RepresentationContainer] = field_dict
         self.__exogenous_rep_container: RepresentationContainer = exogenous_rep_container
-        self.__index_document_id: int = None  # to be removed
 
     @property
     def content_id(self):
@@ -215,14 +214,6 @@ class Content:
         Getter for the content id
         """
         return self.__content_id
-
-    @property
-    def index_document_id(self) -> int:
-        return self.__index_document_id
-
-    @index_document_id.setter
-    def index_document_id(self, index_document_id: int):
-        self.__index_document_id = index_document_id
 
     @property
     def field_dict(self):
