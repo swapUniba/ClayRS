@@ -7,9 +7,10 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.embed
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
-    OnlyNegativeItems, NotPredictionAlg
-from orange_cb_recsys.utils.const import logger
-from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance
+    OnlyNegativeItems, NotPredictionAlg, EmptyUserRatings
+from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance, \
+    get_chosen_items
+from orange_cb_recsys.utils.const import recsys_logger
 
 
 class ClassifierRecommender(ContentBasedAlgorithm):
@@ -94,6 +95,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         labels = []
         rated_dict = {}
 
+        recsys_logger.info("Processing rated items")
         for item in rated_items:
             if item is not None:
                 rated_dict[item] = self.extract_features_item(item)
@@ -105,15 +107,16 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 else:
                     labels.append(0)
 
+        if user_ratings.empty:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_id = user_ratings.from_id.iloc[0]
         if len(rated_dict) == 0:
-            raise NoRatedItems("No rated item available locally!\n"
-                               "The score frame will be empty for the user")
+            raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
         if 0 not in labels:
-            raise OnlyPositiveItems("There are only positive items available locally!\n"
-                                    "The score frame will be empty for the user")
+            raise OnlyPositiveItems("User {} - There are only positive items available locally!".format(user_id))
         elif 1 not in labels:
-            raise OnlyNegativeItems("There are only negative items available locally!\n"
-                                    "The score frame will be empty for the user")
+            raise OnlyNegativeItems("User {} - There are only negative items available locally!".format(user_id))
 
         self.__labels = labels
         self.__rated_dict = rated_dict
@@ -125,6 +128,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         It uses private attributes to fit the classifier, that's why the method expects no parameter.
         """
+        recsys_logger.info("Fitting {} classifier".format(self.__classifier))
         self._set_transformer()
 
         rated_features = list(self.__rated_dict.values())
@@ -179,7 +183,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         if filter_list is None:
             items_to_predict = get_unrated_items(items_directory, user_ratings)
         else:
-            items_to_predict = [load_content_instance(items_directory, item_id) for item_id in filter_list]
+            items_to_predict = get_chosen_items(items_directory, filter_list)
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -189,11 +193,11 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
+        recsys_logger.info("Calculating rank")
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
-            logger.info("Predicting scores")
             score_labels = self.__classifier.predict_proba(fused_features_items_to_pred)
         else:
             score_labels = []

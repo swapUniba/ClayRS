@@ -1,4 +1,4 @@
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import recsys_logger
 import pandas as pd
 
 
@@ -37,6 +37,13 @@ class NotPredictionAlg(Exception):
     pass
 
 
+class EmptyUserRatings(Exception):
+    """
+    Exception to raise when the user ratings is empty
+    """
+    pass
+
+
 def Handler_EmptyFrame(func):
     """
     Handler that catches the above exceptions.
@@ -47,8 +54,9 @@ def Handler_EmptyFrame(func):
     def Inner_Function(*args, **kwargs):
         try:
             frame = func(*args, **kwargs)
-        except (OnlyNegativeItems, OnlyPositiveItems, NoRatedItems) as e:
-            logger.warning(e)
+        except (OnlyNegativeItems, OnlyPositiveItems, NoRatedItems, EmptyUserRatings) as e:
+            warning_message = str(e) + "\nThe score frame will be empty for the user"
+            recsys_logger.warning(warning_message)
             columns = ["to_id", "score"]
             frame = pd.DataFrame(columns=columns)
         return frame

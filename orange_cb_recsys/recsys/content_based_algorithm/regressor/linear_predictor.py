@@ -1,15 +1,17 @@
+import logging
 from typing import List
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
-from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance
+from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance, \
+    get_chosen_items
 import pandas as pd
 
 
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import recsys_logger
 
 
 class LinearPredictor(ContentBasedAlgorithm):
@@ -90,6 +92,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         labels = []
         rated_dict = {}
 
+        recsys_logger.info("Processing rated items")
         for item in rated_items:
             if item is not None:
                 # This conversion raises Exception when there are multiple equals 'to_id' for the user
@@ -102,9 +105,12 @@ class LinearPredictor(ContentBasedAlgorithm):
                     rated_dict[item] = self.extract_features_item(item)
                     labels.append(score_assigned)
 
+        if user_ratings.empty:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_id = user_ratings.from_id.iloc[0]
         if len(rated_dict) == 0:
-            raise NoRatedItems("No rated item available locally!\n"
-                               "The score frame will be empty for the user")
+            raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
 
         self.__labels = labels
         self.__rated_dict = rated_dict
@@ -116,6 +122,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         It uses private attributes to fit the classifier, that's why the method expects no parameter.
         """
+        recsys_logger.info("Fitting {} regressor".format(self.__regressor))
         self._set_transformer()
 
         rated_features = list(self.__rated_dict.values())
@@ -147,7 +154,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         if filter_list is None:
             items_to_predict = get_unrated_items(items_directory, user_ratings)
         else:
-            items_to_predict = [load_content_instance(items_directory, item_id) for item_id in filter_list]
+            items_to_predict = get_chosen_items(items_directory, filter_list)
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -158,11 +165,11 @@ class LinearPredictor(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
+        recsys_logger.info("Calculating score predictions")
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
-            logger.info("Predicting scores")
             score_labels = self.__regressor.predict(fused_features_items_to_pred)
         else:
             score_labels = []
@@ -197,6 +204,8 @@ class LinearPredictor(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        recsys_logger.info("Calculating rank")
+        recsys_logger.disable(logging.WARNING)
 
         # Predict the rating for the items and sort them in descending order
         result = self.predict(user_ratings, items_directory, filter_list)
@@ -205,4 +214,5 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         rank = result.head(recs_number)
 
+        recsys_logger.enable()
         return rank

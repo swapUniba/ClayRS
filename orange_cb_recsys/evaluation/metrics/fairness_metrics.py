@@ -73,24 +73,24 @@ class GroupFairnessMetric(FairnessMetric):
             avg_pop_by_users (Dict<str, float>): average popularity by user
         """
 
-        def show_progress(coll, milestones=10):
-            processed = 0
-            for element in coll:
-                yield element
-                processed += 1
-                if processed % milestones == 0:
-                    logger.info('Processed %s user in the group', processed)
+        # def show_progress(coll, milestones=10):
+        #     processed = 0
+        #     for element in coll:
+        #         yield element
+        #         processed += 1
+        #         if processed % milestones == 0:
+        #             logger.info('Processed %s user in the group', processed)
 
         if group is None:
             group = set(data['from_id'])
-        logger.info("Group length: %d", len(group))
+
         series_by_user = {
             user: data[data.from_id == user].to_id.values.flatten()
-            for user in show_progress(group)
+            for user in group
         }
         avg_pop_by_users = {
             user: get_avg_pop(series_by_user[user], pop_by_items)
-            for user in show_progress(group)
+            for user in group
         }
 
         return avg_pop_by_users
@@ -243,8 +243,6 @@ class PredictionCoverage(FairnessMetric):
         Returns:
             score (float): coverage percentage
         """
-        logger.info("Computing catalog coverage")
-
         prediction = {'from_id': [], str(self): []}
         catalog = self.__catalog
 
@@ -404,11 +402,12 @@ class DeltaGap(GroupFairnessMetric):
         pop_by_items = Counter(list(truth.to_id))
 
         for group_name in user_groups:
+            # Computing avg pop by users recs for delta gap
             avg_pop_by_users_recs = self.get_avg_pop_by_users(predictions, pop_by_items, user_groups[group_name])
-            logger.info("Computing avg pop by users profiles for delta gap")
+            # Computing avg pop by users profiles for delta gap
             avg_pop_by_users_profiles = self.get_avg_pop_by_users(truth, pop_by_items, user_groups[group_name])
-            logger.info("Computing delta gap for group: %s" % group_name)
 
+            # Computing delta gap for every group
             recs_gap = self.calculate_gap(group=user_groups[group_name], avg_pop_by_users=avg_pop_by_users_recs)
             profile_gap = self.calculate_gap(group=user_groups[group_name], avg_pop_by_users=avg_pop_by_users_profiles)
             group_delta_gap = self.calculate_delta_gap(recs_gap=recs_gap, profile_gap=profile_gap)

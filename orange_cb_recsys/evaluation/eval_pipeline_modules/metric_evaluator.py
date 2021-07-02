@@ -1,8 +1,9 @@
+import logging
 from typing import List, Tuple
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import progbar, eval_logger
 
 import pandas as pd
 
@@ -17,7 +18,10 @@ class MetricCalculator:
 
         frames_to_concat = []
 
-        for metric in metric_list:
+        eval_logger.info('Performing metrics chosen')
+
+        for metric in progbar(metric_list, prefix='Performing {}:', substitute_with_current=True):
+
             metric_result_list = []
 
             if self._split_list is None:

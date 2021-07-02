@@ -6,7 +6,7 @@ import pandas as pd
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
 from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import recsys_logger
 
 
 class IndexQuery(ContentBasedAlgorithm):
@@ -80,6 +80,7 @@ class IndexQuery(ContentBasedAlgorithm):
         scores = []
         positive_user_docs = {}
 
+        recsys_logger.info("Processing rated items")
         ix = SearchIndex(index_directory)
         for item_id, score in zip(user_ratings.to_id, user_ratings.score):
             if score >= threshold:
@@ -104,7 +105,7 @@ class IndexQuery(ContentBasedAlgorithm):
 
         The built query will also be stored in a private attribute.
         """
-
+        recsys_logger.info("Building query")
         # For each field of each document one string (containing the name of the field and the data in it)
         # is created and added to the query.
         # Also each part of the query that refers to a document
@@ -178,13 +179,12 @@ class IndexQuery(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        recsys_logger.info("Calculating rank")
 
         mask_list = self._build_mask_list(user_ratings, filter_list)
 
         ix = SearchIndex(index_directory)
         score_docs = ix.query(self.__string_query, recs_number, mask_list, filter_list, self.__classic_similarity)
-
-        logger.info("Building score frame to return")
 
         results = {'to_id': [], 'score': []}
 

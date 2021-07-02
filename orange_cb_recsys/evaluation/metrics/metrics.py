@@ -7,6 +7,7 @@ from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import S
 
 from orange_cb_recsys.evaluation.exceptions import AlreadyFittedRecSys
 from orange_cb_recsys.recsys.recsys import RecSys
+from orange_cb_recsys.utils.const import progbar
 
 
 class Metric(ABC):
@@ -55,7 +56,7 @@ class RankingNeededMetric(Metric):
         if len(cls.rank_truth_list) != 0:
             raise AlreadyFittedRecSys
 
-        for split, test_items_frame in zip(split_list, test_items_list):
+        for counter, (split, test_items_frame) in enumerate(zip(split_list, test_items_list), start=1):
 
             train = split.train
             test = split.test
@@ -66,7 +67,9 @@ class RankingNeededMetric(Metric):
             frame_to_concat = []
             user_list_to_fit = set(train.from_id)
 
-            for user in user_list_to_fit:
+            for user in progbar(user_list_to_fit,
+                                prefix='Calculating rank for user {} - split {}'.format('{}', counter),
+                                substitute_with_current=True):
 
                 user_ratings_train = train.loc[train['from_id'] == user]
 
@@ -74,16 +77,7 @@ class RankingNeededMetric(Metric):
 
                 result = recsys._eval_fit_rank(user_ratings_train, test_items)
 
-                # if len(result) != 0:
                 frame_to_concat.append(result)
-                # else:
-                #     nan_result = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
-                #
-                #     nan_result.from_id = user_ratings_test.from_id
-                #     nan_result.to_id = user_ratings_test.to_id
-                #     nan_result.score = [np.nan for i in range(len(user_ratings_test))]
-                #
-                #     frame_to_concat.append(nan_result)
 
             rank_truth.pred = pd.concat(frame_to_concat)
 
@@ -106,7 +100,7 @@ class ScoresNeededMetric(Metric):
         if len(cls.score_truth_list) != 0:
             raise AlreadyFittedRecSys
 
-        for split, test_items_frame in zip(split_list, test_items_list):
+        for counter, (split, test_items_frame) in enumerate(zip(split_list, test_items_list), start=1):
 
             train = split.train
             test = split.test
@@ -117,7 +111,9 @@ class ScoresNeededMetric(Metric):
             frame_to_concat = []
             user_list_to_fit = set(train.from_id)
 
-            for user in user_list_to_fit:
+            for user in progbar(user_list_to_fit,
+                                prefix='Calculating score predictions for user {} - split {}'.format('{}', counter),
+                                substitute_with_current=True):
 
                 user_ratings_train = train.loc[train['from_id'] == user]
 
@@ -125,16 +121,7 @@ class ScoresNeededMetric(Metric):
 
                 result = recsys._eval_fit_predict(user_ratings_train, test_items)
 
-                # if len(result) != 0:
                 frame_to_concat.append(result)
-                # else:
-                #     nan_result = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
-                #
-                #     nan_result.from_id = user_ratings_test.from_id
-                #     nan_result.to_id = user_ratings_test.to_id
-                #     nan_result.score = [np.nan for i in range(len(user_ratings_test))]
-                #
-                #     frame_to_concat.append(nan_result)
 
             score_truth.pred = pd.concat(frame_to_concat)
 

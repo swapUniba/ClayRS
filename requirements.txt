@@ -14,6 +14,5 @@ matplotlib==3.2.2
 pywsd==1.2.4
 wn==0.0.23
 networkx==2.5
-progressbar2==3.53.1
 whoosh==2.7.4
 sentence-transformers==1.2.0

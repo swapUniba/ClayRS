@@ -61,12 +61,18 @@ class SkLinearRegression(Regressor):
 
         super().__init__(model)
 
+    def __str__(self):
+        return "SkLinearRegression"
+
 
 class SkRidge(Regressor):
     def __init__(self, *args, **kwargs):
         model = Ridge(*args, **kwargs)
 
         super().__init__(model)
+
+    def __str__(self):
+        return "SkRidge"
 
 
 class SkBayesianRidge(Regressor):
@@ -75,11 +81,17 @@ class SkBayesianRidge(Regressor):
 
         super().__init__(model)
 
+    def __str__(self):
+        return "SkBayesianRidge"
+
 
 class SkSGDRegressor(Regressor):
     def __init__(self, *args, **kwargs):
         model = SGDRegressor(*args, **kwargs)
         super().__init__(model)
+
+    def __str__(self):
+        return "SkSGDRegressor"
 
 
 class SkARDRegression(Regressor):
@@ -88,6 +100,9 @@ class SkARDRegression(Regressor):
         model = ARDRegression(*args, **kwargs)
         super().__init__(model)
 
+    def __str__(self):
+        return "SkARDRegression"
+
 
 class SkHuberRegressor(Regressor):
     def __init__(self, *args, **kwargs):
@@ -95,9 +110,15 @@ class SkHuberRegressor(Regressor):
         model = HuberRegressor(*args, **kwargs)
         super().__init__(model)
 
+    def __str__(self):
+        return "SkHuberRegressor"
+
 
 class SkPassiveAggressiveRegressor(Regressor):
     def __init__(self, *args, **kwargs):
 
         model = PassiveAggressiveRegressor(*args, **kwargs)
         super().__init__(model)
+
+    def __str__(self):
+        return "SkPassiveAggressiveRegressor"

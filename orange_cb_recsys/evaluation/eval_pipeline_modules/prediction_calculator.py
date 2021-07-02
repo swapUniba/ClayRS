@@ -1,12 +1,13 @@
+import logging
 from typing import List
 
 from orange_cb_recsys.evaluation.exceptions import AlreadyFittedRecSys
-from orange_cb_recsys.evaluation.metrics.metrics import Metric, RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.recsys import RecSys
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import eval_logger, recsys_logger, utils_logger
 
 import pandas as pd
 
@@ -27,6 +28,10 @@ class PredictionCalculator:
         for metric in metric_list:
             metric._clean_pred_truth_list()
 
+        eval_logger.info("Calculating predictions needed to evaluate the RecSys")
+        recsys_logger.disable(logging.WARNING)
+        utils_logger.disable()
+
         for metric in metric_list:
 
             try:
@@ -35,9 +40,11 @@ class PredictionCalculator:
             except AlreadyFittedRecSys:
                 continue
             except NotPredictionAlg:
-                logger.warning("The RecSys chosen can't predict the score, only ranking!\n"
-                               "The {} metric won't be calculated".format(metric))
+                eval_logger.warning("The RecSys chosen can't predict the score, only ranking!\n"
+                                    "The {} metric won't be calculated".format(metric))
                 metric_valid.remove(metric)
                 continue
 
+        recsys_logger.enable()
+        utils_logger.enable()
         return metric_valid

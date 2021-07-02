@@ -3,9 +3,10 @@ import os
 import pickle
 import re
 from typing import List
+import pandas as pd
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.utils.const import utils_logger
 
 
 def load_content_instance(directory: str, content_id: str) -> Content:
@@ -28,7 +29,7 @@ def load_content_instance(directory: str, content_id: str) -> Content:
     return content
 
 
-def get_unrated_items(items_directory: str, ratings) -> List[Content]:
+def get_unrated_items(items_directory: str, ratings: pd.DataFrame) -> List[Content]:
     """
     Gets the items that a user has not rated
 
@@ -39,6 +40,7 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
     Returns:
         unrated_items (List<Content>): List of items that the user has not rated
     """
+
     directory_filename_list = [os.path.splitext(filename)[0]
                                for filename in os.listdir(items_directory)
                                if filename != 'search_index']
@@ -54,15 +56,15 @@ def get_unrated_items(items_directory: str, ratings) -> List[Content]:
     intersection = [x for x in filename_list if x in directory_filename_list]
     filename_list = intersection
 
-    logger.info("Loading unrated items")
+    utils_logger.info("Loading {} unrated items".format(len(filename_list)))
     unrated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in progbar(filename_list, prefix="Loading unrated items:")]
+        for item_id in filename_list]
 
     return unrated_items
 
 
-def get_rated_items(items_directory, ratings) -> List[Content]:
+def get_rated_items(items_directory: str, ratings: pd.DataFrame) -> List[Content]:
     """
     Gets the items that a user not rated
 
@@ -73,6 +75,7 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
     Returns:
         unrated_items (List<Content>): List of items that the user has rated
     """
+
     directory_filename_list = [os.path.splitext(filename)[0]
                                for filename in os.listdir(items_directory)
                                if filename != 'search_index']
@@ -89,12 +92,19 @@ def get_rated_items(items_directory, ratings) -> List[Content]:
     filename_list = intersection
 
     filename_list.sort()
-
+    utils_logger.info("Loading {} rated items".format(len(filename_list)))
     rated_items = [
         load_content_instance(items_directory, item_id)
-        for item_id in progbar(filename_list, prefix="Loading rated items:")]
+        for item_id in filename_list]
 
     return rated_items
+
+
+def get_chosen_items(items_directory: str, items_chosen: List[str]):
+    utils_logger.info("Loading {} chosen items".format(len(items_chosen)))
+    items_loaded = [load_content_instance(items_directory, item_id)
+                    for item_id in items_chosen]
+    return items_loaded
 
 
 def remove_not_existent_items(ratings, items_directory: str):
@@ -116,21 +126,3 @@ def remove_not_existent_items(ratings, items_directory: str):
     ratings = ratings[ratings["to_id"].isin(intersection)]
 
     return ratings
-
-
-def remove_not_existent_items_list(items: list, items_dir: str):
-    """
-    Sometimes a dataset can contain ratings about an item which is not in the dataset. This
-    function locates these items nd removes them from the ratings frame
-
-    Args:
-        ratings (pd.DataFrame): Ratings of the user
-        items_directory (str): Path to the directory in which the items are stored
-    """
-
-    items_locally = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
-                         if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
-
-    intersection = [x for x in items if x in items_locally]
-
-    return intersection

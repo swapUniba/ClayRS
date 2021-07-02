@@ -152,8 +152,6 @@ class MRR(RankingMetric):
         Returns:
             (float): the mrr value
         """
-        logger.info("Computing MRR")
-
         pred = split.pred
         truth = split.truth
 
@@ -247,8 +245,6 @@ class Correlation(RankingMetric):
         Returns:
             (float): value of the specified correlation metric
         """
-        logger.info("Computing correlation")
-
         pred = split.pred
         truth = split.truth
 
@@ -265,7 +261,7 @@ class Correlation(RankingMetric):
 
             ideal, actual = self._get_ideal_actual_rank(valid)
 
-            if len(actual) == 0:
+            if len(actual) < 2:
                 coef = np.nan
             else:
                 ideal_ranking = pd.Series(ideal)
