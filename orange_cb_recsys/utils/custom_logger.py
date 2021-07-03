@@ -27,22 +27,13 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-class CustomLogger(logging.Logger):
-    def __init__(self, name: str):
-        super().__init__(name)
-        self.setLevel(logging.INFO)
+def getCustomLogger(name: str):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
 
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.INFO)
-        handler.setFormatter(CustomFormatter("\r%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"))
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(CustomFormatter("\r%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"))
 
-        self.addHandler(handler)
-
-    def enable(self, level=logging.INFO):
-        self.setLevel(level)
-
-    def disable(self, level=logging.CRITICAL):
-        self.setLevel(level)
-
-    def get_logger(self):
-        return self
+    logger.addHandler(handler)
+    return logger

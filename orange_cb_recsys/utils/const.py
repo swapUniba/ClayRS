@@ -3,7 +3,7 @@ import re
 import os
 from pathlib import Path
 import sys
-from orange_cb_recsys.utils.custom_logger import CustomLogger
+from orange_cb_recsys.utils.custom_logger import getCustomLogger
 
 home_path = str(Path.home())
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +36,6 @@ def progbar(it, prefix='', max_value: int = None, file=sys.stderr, substitute_wi
     prefix_orig = prefix
 
     for count, item in enumerate(it, start=1):
-        yield item
         if substitute_with_current:
             prefix = re.sub('{}', str(item), prefix_orig)
 
@@ -46,13 +45,16 @@ def progbar(it, prefix='', max_value: int = None, file=sys.stderr, substitute_wi
             known_length_progbar(count, len(it), prefix)
         else:
             unknown_length_progbar(count, prefix)
+
+        yield item
+
     file.write("\n")
 
 
-logger = CustomLogger('custom_logger').get_logger()
+logger = getCustomLogger('custom_logger')
 
-recsys_logger = CustomLogger('recsys_logger').get_logger()
+recsys_logger = getCustomLogger('recsys_logger')
 
-eval_logger = CustomLogger('eval_logger').get_logger()
+eval_logger = getCustomLogger('eval_logger')
 
-utils_logger = CustomLogger('utils_logger').get_logger()
+utils_logger = getCustomLogger('utils_logger')

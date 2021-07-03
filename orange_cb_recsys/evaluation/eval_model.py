@@ -22,12 +22,14 @@ class EvalModel:
     def __init__(self, recsys: RecSys,
                  partitioning: Partitioning,
                  metric_list: List[Metric],
-                 methodology: Methodology = TestRatingsMethodology()):
+                 methodology: Methodology = TestRatingsMethodology(),
+                 verbose_predictions: bool = False):
 
         self.__recsys = recsys
         self.__partitioning = partitioning
         self.__metrics = metric_list
         self.__methodology = methodology
+        self.__verbose_predictions = verbose_predictions
 
     @property
     def partitioning(self):
@@ -44,6 +46,10 @@ class EvalModel:
     @property
     def methodology(self):
         return self.__methodology
+
+    @property
+    def verbose_predictions(self):
+        return self.__verbose_predictions
 
     def append_metric(self, metric: Metric):
         self.__metrics.append(metric)
@@ -72,7 +78,8 @@ class EvalModel:
 
         test_items_list = self.methodology.get_item_to_predict(splitted_ratings)
 
-        metric_valid = PredictionCalculator(splitted_ratings, self.recsys).calc_predictions(test_items_list, self.metrics)
+        metric_valid = PredictionCalculator(splitted_ratings, self.recsys).calc_predictions(
+            test_items_list, self.metrics, self.verbose_predictions)
 
         # We pass the parameter at None so that the MetricCalculator will use the predictions
         # calculated with the PredictionCalculator module. Those predictions are in the class attribute

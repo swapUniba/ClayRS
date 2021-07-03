@@ -18,7 +18,7 @@ class PredictionCalculator:
         self.__split_list = split_list
         self.__recsys = recsys
 
-    def calc_predictions(self, test_items_list: List[pd.DataFrame], metric_list: List[Metric]):
+    def calc_predictions(self, test_items_list: List[pd.DataFrame], metric_list: List[Metric], verbose: bool = False):
 
         metric_valid = metric_list.copy()
 
@@ -29,8 +29,16 @@ class PredictionCalculator:
             metric._clean_pred_truth_list()
 
         eval_logger.info("Calculating predictions needed to evaluate the RecSys")
-        recsys_logger.disable(logging.WARNING)
-        utils_logger.disable()
+
+        if verbose:
+            precedent_level_recsys_logger = recsys_logger.getEffectiveLevel()
+            recsys_logger.setLevel(logging.WARNING)
+        else:
+            precedent_level_recsys_logger = recsys_logger.getEffectiveLevel()
+            recsys_logger.setLevel(logging.CRITICAL)
+
+        precedent_level_utils_logger = utils_logger.getEffectiveLevel()
+        utils_logger.setLevel(logging.CRITICAL)
 
         for metric in metric_list:
 
@@ -45,6 +53,6 @@ class PredictionCalculator:
                 metric_valid.remove(metric)
                 continue
 
-        recsys_logger.enable()
-        utils_logger.enable()
+        recsys_logger.setLevel(precedent_level_recsys_logger)
+        utils_logger.setLevel(precedent_level_utils_logger)
         return metric_valid

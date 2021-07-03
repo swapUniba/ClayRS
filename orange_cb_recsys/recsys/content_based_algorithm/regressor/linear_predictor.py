@@ -205,7 +205,9 @@ class LinearPredictor(ContentBasedAlgorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
         recsys_logger.info("Calculating rank")
-        recsys_logger.disable(logging.WARNING)
+        # we get the precedent level of the logger, so we will re-enable it at that level
+        precedent_level_recsys_logger = recsys_logger.getEffectiveLevel()
+        recsys_logger.setLevel(logging.WARNING)
 
         # Predict the rating for the items and sort them in descending order
         result = self.predict(user_ratings, items_directory, filter_list)
@@ -214,5 +216,5 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         rank = result.head(recs_number)
 
-        recsys_logger.enable()
+        recsys_logger.setLevel(precedent_level_recsys_logger)
         return rank
