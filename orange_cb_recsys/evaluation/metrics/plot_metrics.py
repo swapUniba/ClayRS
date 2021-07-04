@@ -4,7 +4,6 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 import os
 
 from orange_cb_recsys.evaluation.exceptions import StringNotSupported, PercentageError
@@ -37,7 +36,6 @@ class PlotMetric(RankingNeededMetric):
     @property
     def overwrite(self):
         return self.__overwrite
-
 
     def get_valid_filename(self, filename: str, format: str):
         filename_try = "{}.{}".format(filename, format)
@@ -188,10 +186,10 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
             split_result['profile_pop_ratio'].append(profile_pop_ratios)
             split_result['recs_pop_ratio'].append(recs_pop_ratios)
 
-            profile_data = np.array(profile_pop_ratios)
+            profile_data = profile_pop_ratios
             data_to_plot.append(profile_data)
             labels.append('{}_profile'.format(group_name))
-            recs_data = np.array(recs_pop_ratios)
+            recs_data = recs_pop_ratios
             data_to_plot.append(recs_data)
             labels.append('{}_recs'.format(group_name))
 

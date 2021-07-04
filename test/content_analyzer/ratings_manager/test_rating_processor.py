@@ -4,12 +4,22 @@ from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import N
 
 class TestNumberNormalizer(TestCase):
     def test_fit(self):
-        self.assertAlmostEqual(NumberNormalizer(-10, -5).fit(-6), .6, places=3)
-        self.assertAlmostEqual(NumberNormalizer(-5, 4).fit(0.5), 0.222, places=3)
-        self.assertAlmostEqual(NumberNormalizer(0, 5).fit(2), -0.2, places=3)
-        self.assertAlmostEqual(NumberNormalizer(1, 5).fit(2), -0.5, places=3)
-        self.assertAlmostEqual(NumberNormalizer(-7, 0).fit(-6), -0.714, places=3)
-        self.assertAlmostEqual(NumberNormalizer(0, 10).fit(0.5), -0.9, places=3)
-        self.assertAlmostEqual(NumberNormalizer(0, 10).fit(11), 10, places=3)
-        self.assertAlmostEqual(NumberNormalizer(0, 10).fit(-1), 0, places=3)
+        scores = [1, 2, 5, 5, 3, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 10]
+        result = NumberNormalizer().fit(scores)
 
+        expected = [-1.0, -0.77777777, -0.11111111, -0.11111111,
+                    -0.55555555, -0.44444444, -0.42222222, -0.39999999,
+                    -0.37777777, -0.35555555, -0.33333333, 1.0]
+
+        for expected_score, result_score in zip(expected, result):
+            self.assertAlmostEqual(expected_score, result_score)
+
+        # Test with rounding at the fourth digit
+        result_rounded = NumberNormalizer(decimal_rounding=4).fit(scores)
+
+        expected_rounded = [-1.0, -0.7778, -0.1111, -0.1111, -0.5556,
+                            -0.4444, -0.4222, -0.4, -0.3778, -0.3556,
+                            -0.3333, 1.0]
+
+        for expected_score_rounded, result_score_rounded in zip(expected_rounded, result_rounded):
+            self.assertAlmostEqual(expected_score_rounded, result_score_rounded)

@@ -12,11 +12,9 @@ class RawInformationSource(ABC):
     Abstract Class that generalizes the acquisition of raw descriptions of the contents
     from one of the possible acquisition channels.
     """
-    def __init__(self):
-        pass
 
     @abstractmethod
-    def __iter__(self) -> Dict:
+    def __iter__(self) -> Dict[str, str]:
         """
         Iter on contents in the source,
         each iteration returns a dict representing the raw content
@@ -33,13 +31,12 @@ class DATFile(RawInformationSource):
     """
 
     def __init__(self, file_path: str):
-        super().__init__()
-        self.__file_path: str = file_path
+        self.__file_path = file_path
 
-    def __iter__(self) -> Dict:
+    def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path) as f:
-            line_dict = {}
             for line in f:
+                line_dict = {}
                 fields = line.split('::')
                 for i, field in enumerate(fields):
                     field = field.strip("\n\t\r")
@@ -59,13 +56,12 @@ class JSONFile(RawInformationSource):
     def __init__(self, file_path: str):
         """
         """
-        super().__init__()
-        self.__file_path: str = file_path
+        self.__file_path = file_path
 
-    def __iter__(self) -> Dict:
+    def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path) as j:
             for line in j:
-                line_dict = json.loads(line)
+                line_dict = json.loads(line, parse_int=str, parse_float=str)
                 yield line_dict
 
 
@@ -77,15 +73,21 @@ class CSVFile(RawInformationSource):
         file_path (str)
     """
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, has_header: bool = True):
         """
         """
-        super().__init__()
-        self.__file_path: str = file_path
+        self.__file_path = file_path
+        self.__has_header = has_header
 
-    def __iter__(self) -> Dict:
+    def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path, newline='', encoding='utf-8-sig') as csv_file:
-            reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+            if self.__has_header:
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+            else:
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+                reader.fieldnames = [str(i) for i in range(len(reader.fieldnames))]
+                csv_file.seek(0)
+
             for line in reader:
                 yield line
 
@@ -171,7 +173,7 @@ class SQLDatabase(RawInformationSource):
     def conn(self, conn):
         self.__conn = conn
 
-    def __iter__(self) -> Dict:
+    def __iter__(self) -> Dict[str, str]:
         cursor = self.conn.cursor(dictionary=True)
         query = """SELECT * FROM """ + self.table_name + """;"""
         cursor.execute(query)

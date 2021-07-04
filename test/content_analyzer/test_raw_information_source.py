@@ -1,6 +1,8 @@
+import os
 from unittest import TestCase
 
 from orange_cb_recsys.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile, DATFile
+from orange_cb_recsys.utils.const import datasets_path
 
 
 class TestSQLDatabase(TestCase):
@@ -19,15 +21,13 @@ class TestSQLDatabase(TestCase):
 
 class TestCSVFile(TestCase):
 
-    def test_iter(self):
-        filepath = '../../datasets/movies_info_reduced.csv'
-        try:
-            with open(filepath):
-                pass
-        except FileNotFoundError:
-            filepath = 'datasets/movies_info_reduced.csv'
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.filepath_no_header = os.path.join(datasets_path, 'test_ratings', 'ratings_1591277020.csv')
+        cls.filepath_w_header = os.path.join(datasets_path, 'movies_info_reduced.csv')
 
-        csv = CSVFile(filepath)
+    def test_iter(self):
+        csv = CSVFile(self.filepath_w_header)
         my_iter = iter(csv)
         d1 = {"Title": "Jumanji", "Year": "1995", "Rated": "PG", "Released": "15 Dec 1995", "Runtime": "104 min",
               "Genre": "Adventure, Family, Fantasy", "Director": "Joe Johnston",
@@ -66,6 +66,41 @@ class TestCSVFile(TestCase):
         self.assertDictEqual(next(my_iter), d1)
         self.assertDictEqual(next(my_iter), d2)
         self.assertDictEqual(next(my_iter), d3)
+
+    def test_iter_no_header(self):
+        csv = CSVFile(self.filepath_no_header, has_header=False)
+
+        expected_row_1 = {'0': '01', '1': 'a', '2': '0.2333333333333333', '3': '1234567', '4': 'not so good',
+                          '5': 'I expected more from this product', '6': '2.0'}
+        expected_row_2 = {'0': '01', '1': 'b', '2': '0.8333333333333334', '3': '1234567', '4': 'perfect',
+                          '5': 'I love this product', '6': '5.0'}
+        expected_row_3 = {'0': '01', '1': 'c', '2': '0.8666666666666667', '3': '1234567', '4': 'awesome',
+                          '5': 'The perfect gift for my darling', '6': '4.0'}
+        expected_row_4 = {'0': '02', '1': 'a', '2': '-0.3666666666666667', '3': '1234567', '4': 'a disaster',
+                          '5': 'Too much expensive ', '6': '1.0'}
+        expected_row_5 = {'0': '02', '1': 'c', '2': '0.6', '3': '1234567', '4': 'really good',
+                          '5': 'A good compromise', '6': '3.5'}
+        expected_row_6 = {'0': '03', '1': 'b', '2': '0.6666666666666666', '3': '1234567', '4': 'Awesome',
+                          '5': '', '6': '5.0'}
+
+        csv_iterator = iter(csv)
+
+        result_row_1 = next(csv_iterator)
+        result_row_2 = next(csv_iterator)
+        result_row_3 = next(csv_iterator)
+        result_row_4 = next(csv_iterator)
+        result_row_5 = next(csv_iterator)
+        result_row_6 = next(csv_iterator)
+
+        with self.assertRaises(StopIteration):
+            next(csv_iterator)
+
+        self.assertDictEqual(expected_row_1, result_row_1)
+        self.assertDictEqual(expected_row_2, result_row_2)
+        self.assertDictEqual(expected_row_3, result_row_3)
+        self.assertDictEqual(expected_row_4, result_row_4)
+        self.assertDictEqual(expected_row_5, result_row_5)
+        self.assertDictEqual(expected_row_6, result_row_6)
 
 
 class TestJSONFile(TestCase):
@@ -123,6 +158,7 @@ class TestJSONFile(TestCase):
         self.assertDictEqual(next(my_iter), d1)
         self.assertDictEqual(next(my_iter), d2)
         self.assertDictEqual(next(my_iter), d3)
+
 
 class TestDATFile(TestCase):
     def test_iter(self):

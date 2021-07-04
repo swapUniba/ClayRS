@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
 from orange_cb_recsys.recsys.graphs.graph import ItemNode, Node
 from orange_cb_recsys.recsys.graphs.nx_tripartite_graphs import NXTripartiteGraph
@@ -218,12 +217,11 @@ class TestNXTripartiteGraph(TestCase):
         # Import ratings as DataFrame
         ratings_import = RatingsImporter(
             source=CSVFile(ratings_filename),
-            rating_configs=[RatingsFieldConfig(
-                field_name='points',
-                processor=NumberNormalizer(min_=1, max_=5))],
-            from_field_name='user_id',
-            to_field_name='item_id',
-            timestamp_field_name='timestamp',
+            from_id_column='user_id',
+            to_id_column='item_id',
+            score_column='points',
+            timestamp_column='timestamp',
+            score_processor=NumberNormalizer()
         )
         ratings_frame = ratings_import.import_ratings()
 

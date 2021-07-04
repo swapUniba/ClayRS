@@ -1,33 +1,13 @@
-from typing import List
+import os
+from pathlib import Path
+from typing import List, Dict, Union
 
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer.exceptions import Handler_ScoreNotFloat
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
-from orange_cb_recsys.content_analyzer.ratings_manager.score_combiner import ScoreCombiner
-from orange_cb_recsys.utils.const import home_path, logger, DEVELOPING
-
-
-class RatingsFieldConfig:
-    """
-    Class for the configuration of the field containing the ratings
-
-    Args:
-        field_name (str): Name of the field that contains the ratings
-        processor (RatingProcessor): Processor for the data in the rating field
-    """
-    def __init__(self, field_name: str,
-                 processor: RatingProcessor):
-        self.__field_name = field_name
-        self.__processor = processor
-
-    @property
-    def field_name(self):
-        return self.__field_name
-
-    @property
-    def processor(self):
-        return self.__processor
+from orange_cb_recsys.utils.const import progbar
 
 
 class RatingsImporter:
@@ -37,53 +17,60 @@ class RatingsImporter:
     Args:
         source (RawInformationSource): Source from which the ratings will be imported
         rating_configs (list<RatingsFieldConfig>):
-        from_field_name (str): Name of the field containing the reference to the person who gave
+        from_id_column (str): Name of the field containing the reference to the person who gave
             the rating (for example, the user id)
-        to_field_name (str): Name of the field containing the reference to the item that a person
+        to_id_column (str): Name of the field containing the reference to the item that a person
             rated
-        timestamp_field_name (str): Name of the field containing the timestamp
+        timestamp_column (str): Name of the field containing the timestamp
         output_directory (str): Name of the directory where the acquired ratings will be stored
         score_combiner (str): Metric to use to combine the scores
     """
+
     def __init__(self, source: RawInformationSource,
-                 rating_configs: List[RatingsFieldConfig],
-                 from_field_name: str,
-                 to_field_name: str,
-                 timestamp_field_name: str,
-                 output_directory: str = None,
-                 score_combiner: str = "avg"):
+                 from_id_column: Union[str, int] = 0,
+                 to_id_column: Union[str, int] = 1,
+                 score_column: Union[str, int] = 2,
+                 timestamp_column: Union[str, int] = None,
+                 score_processor: RatingProcessor = None):
 
-        self.__source: RawInformationSource = source
-        self.__file_name: str = output_directory
-        self.__rating_configs: List[RatingsFieldConfig] = rating_configs
-        self.__from_field_name: str = from_field_name
-        self.__to_field_name: str = to_field_name
-        self.__timestamp_field_name: str = timestamp_field_name
-        self.__score_combiner = ScoreCombiner(score_combiner)
+        self.__source = source
+        self.__from_id_column = from_id_column
+        self.__to_id_column = to_id_column
+        self.__score_column = score_column
+        self.__timestamp_column = timestamp_column
+        self.__score_processor = score_processor
 
-        if not isinstance(self.__rating_configs, list):
-            self.__rating_configs = [self.__rating_configs]
-
-        self.__columns: list = ["from_id", "to_id", "score", "timestamp"]
-        for field in self.__rating_configs:
-            self.__columns.append(field.field_name)
+        self.__rating_frame: pd.DataFrame = pd.DataFrame(columns=['from_id', 'to_id', 'score'])
 
     @property
-    def frame_columns(self) -> list:
-        return self.__columns
+    def from_id_column(self) -> Union[str, int]:
+        return self.__from_id_column
 
     @property
-    def from_field_name(self) -> str:
-        return self.__from_field_name
+    def to_id_column(self) -> Union[str, int]:
+        return self.__to_id_column
 
     @property
-    def to_field_name(self) -> str:
-        return self.__to_field_name
+    def score_column(self) -> Union[str, int]:
+        return self.__score_column
 
     @property
-    def timestamp_field_name(self) -> str:
-        return self.__timestamp_field_name
+    def timestamp_column(self) -> Union[str, int]:
+        return self.__timestamp_column
 
+    @property
+    def score_processor(self) -> RatingProcessor:
+        return self.__score_processor
+
+    @property
+    def rating_frame(self) -> pd.DataFrame:
+        return self.__rating_frame
+
+    @rating_frame.setter
+    def rating_frame(self, frame: pd.DataFrame):
+        self.__rating_frame = frame
+
+    @Handler_ScoreNotFloat
     def import_ratings(self) -> pd.DataFrame:
         """
         Imports the ratings from the source and stores in a dataframe
@@ -91,62 +78,76 @@ class RatingsImporter:
         Returns:
             ratings_frame: pd.DataFrame
         """
-        ratings_frame = pd.DataFrame(columns=list(self.__columns))
+        ratings_frame = {'from_id': [], 'to_id': [], 'score': [], 'timestamp': []}
+        for row in progbar(list(self.__source), prefix="Importing ratings:"):
 
-        dicts = \
-            [
-                {
-                    **{
-                        "from_id": raw_rating[self.__from_field_name],
-                        "to_id": raw_rating[self.__to_field_name],
-                        "timestamp": raw_rating[self.__timestamp_field_name],
-                        "score": self.__score_combiner.combine(
-                            [preference.processor.fit(raw_rating[preference.field_name])
-                             for preference in self.__rating_configs])
-                    },
-                    **{
-                        preference.field_name:
-                            raw_rating[preference.field_name]
-                        for preference in self.__rating_configs
-                    },
-                    **{
-                        "{}_score".format(preference.field_name.lower()):
-                            preference.processor.fit(raw_rating[preference.field_name])
-                        for preference in self.__rating_configs
-                    }
-                }
-                for raw_rating in show_progress(self.__source)
-            ]
+            ratings_frame['from_id'].append(self._get_field_data(self.from_id_column, row))
 
-        ratings_frame = ratings_frame.append(dicts, ignore_index=True)
+            ratings_frame['to_id'].append(self._get_field_data(self.to_id_column, row))
 
-        if self.__file_name is not None:
-            if not DEVELOPING:
-                ratings_frame.to_csv(
-                    "{}/ratings/{}.csv".format(
-                        home_path, self.__file_name),
-                    index=False, header=True)
+            if self.timestamp_column:
+                ratings_frame['timestamp'].append(self._get_field_data(self.timestamp_column, row))
+
+            ratings_frame['score'].append(self._get_field_data(self.score_column, row))
+
+        if len(ratings_frame['timestamp']) == 0:
+            del ratings_frame['timestamp']
+
+        if self.score_processor:
+            ratings_frame['score'] = self.score_processor.fit(ratings_frame['score'])
+        else:
+            ratings_frame['score'] = [float(score) for score in ratings_frame['score']]
+
+        self.rating_frame = pd.DataFrame(ratings_frame)
+        return self.rating_frame
+
+    def imported_ratings_to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False):
+        Path(output_directory).mkdir(parents=True, exist_ok=True)
+
+        file_name = self._get_valid_filename(output_directory, file_name, 'csv', overwrite)
+        self.rating_frame.to_csv(os.path.join(output_directory, file_name), index=False, header=True)
+
+    @Handler_ScoreNotFloat
+    def add_score_column(self, score_column: Union[str, int], column_name: str, score_processor: RatingProcessor = None):
+        col_to_add = []
+        for row in progbar(list(self.__source), prefix="Adding column {}:".format(column_name)):
+
+            col_to_add.append(self._get_field_data(score_column, row))
+
+        if score_processor:
+            col_to_add = score_processor.fit(col_to_add)
+        else:
+            col_to_add = [float(score) for score in col_to_add]
+
+        self.rating_frame[column_name] = col_to_add
+
+        return self.rating_frame
+
+    @staticmethod
+    def _get_field_data(field_name: Union[str, int], row: Dict):
+        try:
+            if isinstance(field_name, str):
+                data = row[field_name]
             else:
-                ratings_frame.to_csv(
-                    "{}.csv".format(
-                        self.__file_name), index=False, header=True)
+                row_keys = list(row.keys())
+                key = row_keys[field_name]
+                data = row[key]
 
-        return ratings_frame
+        except KeyError:
+            raise KeyError("Column {} not found in the raw source".format(field_name))
+        except IndexError:
+            raise IndexError("Column index {} not present in the raw source".format(field_name))
 
+        return str(data)
 
-def show_progress(coll, milestones=100):
-    """
-    Yields the elements contained in coll and prints to video how many have been processed
+    @staticmethod
+    def _get_valid_filename(output_directory: str, filename: str, format: str, overwrite: bool):
+        filename_try = "{}.{}".format(filename, format)
 
-    Args:
-        coll (list): List that contains the ratings to process
-        milestones (int): Tells to the method how often he has to print an update. For
-            example, if milestones = 100, for every 100 items processed the method will
-            print an update
-    """
-    processed = 0
-    for element in coll:
-        yield element
-        processed += 1
-        if processed % milestones == 0:
-            logger.info('Processed %s elements', processed)
+        if overwrite is False:
+            i = 0
+            while os.path.isfile(os.path.join(output_directory, filename_try)):
+                i += 1
+                filename_try = "{} ({}).{}".format(filename, i, format)
+
+        return filename_try
