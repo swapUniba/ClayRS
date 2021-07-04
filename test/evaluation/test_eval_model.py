@@ -2,13 +2,18 @@ import os
 import unittest
 from unittest import TestCase
 
+from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
+
+from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
+
 from orange_cb_recsys.evaluation.metrics.error_metrics import MAE, MSE, RMSE
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, GiniIndex, DeltaGap
+from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, GiniIndex, DeltaGap, \
+    PredictionCoverage
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric, ScoresNeededMetric
+from orange_cb_recsys.evaluation.metrics.plot_metrics import PopProfileVsRecs, PopRecsCorrelation, LongTailDistr
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, MRR, MRRAtK, NDCGAtK, Correlation
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression
-from orange_cb_recsys.utils.load_ratings import load_ratings
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import TestItemsMethodology, AllItemsMethodology, \
     TrainingItemsMethodology
@@ -204,11 +209,7 @@ class TestEvalModelManyRatings(TestCase):
     def test_all(self):
         ratings_filename = os.path.join(contents_path, '..', 'datasets', 'examples', 'new_ratings.csv')
 
-        ratings_frame = load_ratings(ratings_filename)
-
-        ratings_frame.columns = ['from_id', 'to_id', 'score', 'timestamp']
-
-        ratings_frame["score"] = pd.to_numeric(ratings_frame["score"])
+        ratings_frame = RatingsImporter(CSVFile(ratings_filename)).import_ratings()
 
         rs = ContentBasedRS(
             LinearPredictor(
@@ -256,3 +257,50 @@ class TestEvalModelManyRatings(TestCase):
                        )
 
         result = em.fit()
+
+    def test_graph(self):
+        catalog = set(ratings.to_id)
+
+        users_dir = os.path.join(contents_path, 'users_codified/')
+
+        graph = NXFullGraph(
+            ratings,
+            user_contents_dir=users_dir,
+            item_contents_dir=items_dir,
+            item_exo_representation="dbpedia",
+            user_exo_representation='local',
+            item_exo_properties=['starring'],
+            user_exo_properties=['1']  # It's the column in the users .DAT which
+            # identifies the gender
+        )
+
+        graph_rs = GraphBasedRS(
+            NXPageRank(),
+            graph
+        )
+
+        em = EvalModel(
+            graph_rs,
+            KFoldPartitioning(),
+            metric_list=[
+                Precision(relevant_threshold=3),
+                Recall(),
+                FMeasure(beta=1),
+                FMeasure(beta=2, sys_average='micro'),
+
+                MRR(),
+
+                Correlation('pearson'),
+                GiniIndex(),
+                DeltaGap({'popular': 0.5, 'niche': 0.5}),
+                PredictionCoverage(catalog),
+
+                PopProfileVsRecs(user_groups={'popular': 0.5, 'niche': 0.5}, out_dir='plots/'),
+                LongTailDistr('plots/', format='svg'),
+                PopRecsCorrelation('plots/')
+            ],
+            verbose_predictions=True,
+            methodology=TestItemsMethodology()
+        )
+
+        em.fit()
