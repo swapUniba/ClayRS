@@ -35,8 +35,8 @@ class DATFile(RawInformationSource):
 
     def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path) as f:
-            line_dict = {}
             for line in f:
+                line_dict = {}
                 fields = line.split('::')
                 for i, field in enumerate(fields):
                     field = field.strip("\n\t\r")
