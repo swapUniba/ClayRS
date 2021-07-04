@@ -1,15 +1,13 @@
 import inspect
 import re
 import os
-from pathlib import Path
 import sys
 from orange_cb_recsys.utils.custom_logger import getCustomLogger
 
-home_path = str(Path.home())
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.join(THIS_DIR, '../../')
-
-DEVELOPING = True
+contents_path = os.path.join(root_path, 'contents/')
+datasets_path = os.path.join(root_path, 'datasets/')
 
 
 def progbar(it, prefix='', max_value: int = None, file=sys.stderr, substitute_with_current=False):
