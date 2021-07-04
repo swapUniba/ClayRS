@@ -81,7 +81,13 @@ class CSVFile(RawInformationSource):
 
     def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path, newline='', encoding='utf-8-sig') as csv_file:
-            reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+            if self.__has_header:
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+            else:
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+                reader.fieldnames = [str(i) for i in range(len(reader.fieldnames))]
+                csv_file.seek(0)
+
             for line in reader:
                 yield line
 
