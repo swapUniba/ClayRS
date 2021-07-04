@@ -72,7 +72,7 @@ class EvalModel:
         """
 
         if user_id_list is None:
-            user_id_list = set(self.recsys.rating_frame.from_id)
+            user_id_list = self.recsys.users
 
         splitted_ratings = PartitionModule(self.partitioning).split_all(self.recsys.rating_frame, user_id_list)
 

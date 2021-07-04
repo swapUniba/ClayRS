@@ -28,6 +28,11 @@ class RecSys(ABC):
     def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
         raise NotImplementedError
 
+    @property
+    @abc.abstractmethod
+    def users(self):
+        raise NotImplementedError
+
     @abc.abstractmethod
     def _eval_fit_predict(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
         raise NotImplementedError
@@ -61,6 +66,10 @@ class ContentBasedRS(RecSys):
     @property
     def algorithm(self):
         return self.__algorithm
+
+    @property
+    def users(self):
+        return set(self.rating_frame['from_id'])
 
     @property
     def items_directory(self):
@@ -171,6 +180,10 @@ class GraphBasedRS(RecSys):
     @property
     def rating_frame(self):
         return self.__graph.convert_to_dataframe()
+
+    @property
+    def users(self):
+        return self.__graph.user_nodes
 
     @property
     def graph(self):
