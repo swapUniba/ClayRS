@@ -28,6 +28,10 @@ class Partitioning(ABC):
     def set_dataframe(self, dataframe: pd.DataFrame):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
 
 class KFoldPartitioning(Partitioning):
     """
@@ -57,6 +61,9 @@ class KFoldPartitioning(Partitioning):
         # iloc because split_result are list of ints
         for train_index, test_index in split_result:
             yield self.dataframe.iloc[train_index], self.dataframe.iloc[test_index]
+
+    def __str__(self):
+        return "KFoldPartitioningTechnique"
 
 
 class HoldOutPartitioning(Partitioning):
@@ -94,3 +101,6 @@ class HoldOutPartitioning(Partitioning):
 
         # loc because split_result are Indexes so we must search by labels
         yield self.dataframe.loc[train_index], self.dataframe.loc[test_index]
+
+    def __str__(self):
+        return "HoldOutPartitioningTechnique"

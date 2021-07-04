@@ -73,6 +73,9 @@ class SkSVC(Classifier):
 
         super().__init__(clf)
 
+    def __str__(self):
+        return "SkSVC"
+
 
 class SkKNN(Classifier):
     """
@@ -107,6 +110,9 @@ class SkKNN(Classifier):
 
         super().fit(X, Y)
 
+    def __str__(self):
+        return "SkKNN"
+
 
 class SkRandomForest(Classifier):
     """
@@ -119,6 +125,9 @@ class SkRandomForest(Classifier):
         clf = RandomForestClassifier(*args, **kwargs)
 
         super().__init__(clf)
+
+    def __str__(self):
+        return "SkRandomForest"
 
 
 class SkLogisticRegression(Classifier):
@@ -133,6 +142,9 @@ class SkLogisticRegression(Classifier):
         clf = LogisticRegression(*args, **kwargs)
         super().__init__(clf)
 
+    def __str__(self):
+        return "SkLogisticRegression"
+
 
 class SkDecisionTree(Classifier):
     """
@@ -146,6 +158,9 @@ class SkDecisionTree(Classifier):
         clf = DecisionTreeClassifier(*args, **kwargs)
         super().__init__(clf)
 
+    def __str__(self):
+        return "SkDecisionTree"
+
 
 class SkGaussianProcess(Classifier):
     """
@@ -158,3 +173,6 @@ class SkGaussianProcess(Classifier):
 
         clf = GaussianProcessClassifier(*args, **kwargs)
         super().__init__(clf)
+
+    def __str__(self):
+        return "SkGaussianProcess"

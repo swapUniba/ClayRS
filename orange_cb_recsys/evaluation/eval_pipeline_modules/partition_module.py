@@ -4,7 +4,7 @@ import pandas as pd
 
 from orange_cb_recsys.evaluation.exceptions import PartitionError
 from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import Partitioning
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import eval_logger, progbar
 
 
 class Split:
@@ -47,12 +47,13 @@ class PartitionModule:
 
         split_list = []
 
-        for user_id in user_id_list:
+        eval_logger.info("Performing {} on ratings of every user".format(str(self._partition_technique)))
+        for user_id in progbar(user_id_list, prefix="Current user - {}:", substitute_with_current=True):
             user_ratings = ratings[ratings['from_id'] == user_id]
             try:
                 user_splits_list = self._split_single(user_ratings)
             except PartitionError as e:
-                logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
                 continue
 
             if len(split_list) != 0:

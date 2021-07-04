@@ -35,14 +35,14 @@ jobs:
         id: check
         run: |
              git diff --name-only HEAD^ HEAD > files.txt
-             echo "::set-output name=must_build::true"
-             must_build="true"
+             echo "::set-output name=must_build::false"
+             must_build="false"
              while IFS= read -r file
              do
-               if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]]; then
+               if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]] || [[ $file == requirements.txt ]]; then
                  echo "::set-output name=must_build::true"
                  must_build="true"
-                 echo "Necessario buildare immagine Docker"
+                 echo "Need to build Docker Image"
                  break
                fi
              done < files.txt
@@ -51,10 +51,9 @@ jobs:
                if ! docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest; then
                    echo "::set-output name=must_build::true"
                    must_build="true"
-                   echo "Necessario buildare immagine Docker"
+                   echo "Need to build Docker Image"
                fi
              fi
-              
       -
         name: Set up Docker Buildx
         if: ${{ steps.check.outputs.must_build == 'true' }}

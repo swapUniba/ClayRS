@@ -59,13 +59,13 @@ class TestRegression(TestCase):
         alg.fit()
 
         # predict with filter_list
-        res_filtered = alg.rank(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.predict(user_ratings, self.movies_dir, filter_list=self.filter_list)
         item_scored_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.rank(user_ratings, self.movies_dir)
+        res_all_unrated = alg.predict(user_ratings, self.movies_dir)
         item_rated_set = set(user_ratings['to_id'])
         item_scored_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -87,13 +87,13 @@ class TestRegression(TestCase):
         alg.fit()
 
         # predict with filter_list
-        res_filtered = alg.rank(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.predict(user_ratings, self.movies_dir, filter_list=self.filter_list)
         item_scored_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.rank(user_ratings, self.movies_dir)
+        res_all_unrated = alg.predict(user_ratings, self.movies_dir)
         item_rated_set = set(user_ratings['to_id'])
         item_scored_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)

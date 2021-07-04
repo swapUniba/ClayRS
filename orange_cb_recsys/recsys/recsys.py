@@ -71,7 +71,7 @@ class ContentBasedRS(RecSys):
         return self.__users_directory
 
     @Handler_EmptyFrame
-    def fit_predict(self, user_id: str, filter_list: List[str] = None):
+    def fit_predict(self, user_id: str, filter_list: List[str] = None, show_progbar: bool = True):
         """
         Method used to predict the rating of the user passed for all unrated items or for the items passed
         in the filter_list parameter.
@@ -105,7 +105,7 @@ class ContentBasedRS(RecSys):
         return prediction
 
     @Handler_EmptyFrame
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None, show_progbar: bool = True):
         """
         Method used to rank for a particular user all unrated items or the items specified in
         the filter_list parameter.
@@ -145,14 +145,14 @@ class ContentBasedRS(RecSys):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
+        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list, show_progbar=False)
         return score_frame
 
     def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
+        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list, show_progbar=False)
         return score_frame
 
 

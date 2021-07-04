@@ -4,6 +4,7 @@ from typing import List, Set
 import pandas as pd
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.utils.const import eval_logger
 
 
 class Methodology(ABC):
@@ -11,7 +12,9 @@ class Methodology(ABC):
     def get_item_to_predict(self, split_list: List[Split]) -> List[pd.DataFrame]:
 
         items_to_predict = []
-        for split in split_list:
+        for counter, split in enumerate(split_list, start=1):
+            eval_logger.info("Getting items to predict with {} for split {}".format(str(self), counter))
+
             user_list = set(split.truth.from_id)
 
             single_split_items = {'from_id': [], 'to_id': []}
@@ -33,10 +36,17 @@ class Methodology(ABC):
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
 
 class TestRatingsMethodology(Methodology):
     def __init__(self, only_greater_eq: float = None):
         self.__threshold = only_greater_eq
+
+    def __str__(self):
+        return "TestRatingsMethodology"
 
     @property
     def threshold(self):
@@ -60,6 +70,9 @@ class TestItemsMethodology(Methodology):
     def threshold(self):
         return self.__threshold
 
+    def __str__(self):
+        return "TestItemsMethodology"
+
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
         # variable used by pandas query
         user_ratings_train = split.train.query('from_id == @user')
@@ -81,6 +94,9 @@ class TrainingItemsMethodology(Methodology):
     def threshold(self):
         return self.__threshold
 
+    def __str__(self):
+        return "TrainingItemsMethodology"
+
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
         # variable used by pandas query
         user_ratings_train = split.train.query('from_id == @user')
@@ -98,6 +114,9 @@ class AllItemsMethodology(Methodology):
 
     def __init__(self, items_list: Set[str]):
         self.__items_list = items_list
+
+    def __str__(self):
+        return "AllItemsMethodology"
 
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
 

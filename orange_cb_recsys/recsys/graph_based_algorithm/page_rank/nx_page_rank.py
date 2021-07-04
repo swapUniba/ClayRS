@@ -4,6 +4,7 @@ import networkx as nx
 
 from orange_cb_recsys.recsys.graphs import NXFullGraph
 from orange_cb_recsys.utils.feature_selection import FeatureSelection
+from orange_cb_recsys.utils.const import recsys_logger
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank import PageRankAlg
 
@@ -52,6 +53,7 @@ class NXPageRank(PageRankAlg):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
+        recsys_logger.info("Calculating rank")
 
         columns = ["to_id", "score"]
         score_frame = pd.DataFrame(columns=columns)
