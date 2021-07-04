@@ -61,7 +61,7 @@ class JSONFile(RawInformationSource):
     def __iter__(self) -> Dict[str, str]:
         with open(self.__file_path) as j:
             for line in j:
-                line_dict = json.loads(line)
+                line_dict = json.loads(line, parse_int=str, parse_float=str)
                 yield line_dict
 
 
