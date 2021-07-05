@@ -4,6 +4,7 @@ import os
 
 from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from orange_cb_recsys.utils.const import datasets_path
 from test.content_analyzer.embeddings.test_embedding_source import TestEmbeddingSource
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.doc2vec import GensimDoc2Vec
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.fasttext import GensimFastText
@@ -12,12 +13,11 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_index
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.word2vec import GensimWord2Vec
 
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(THIS_DIR, '../../../../datasets/movies_info_reduced.json')
-doc2vec_file_path = os.path.join(THIS_DIR, "../../../datasets/test_embedding_models/doc2vec_model.model")
-lsa_file_path = os.path.join(THIS_DIR, "../../../datasets/test_embedding_models/lsa/lsa_model.model")
-ri_file_path = os.path.join(THIS_DIR, "../../../datasets/test_embedding_models/ri_model.model")
-word2vec_file_path = os.path.join(THIS_DIR, "../../../datasets/test_embedding_models/word2vec_model.bin")
+file_path = os.path.join(datasets_path, 'movies_info_reduced.json')
+doc2vec_file_path = os.path.join(datasets_path, "test_embedding_models/doc2vec_model.model")
+lsa_file_path = os.path.join(datasets_path, "test_embedding_models/lsa/lsa_model.model")
+ri_file_path = os.path.join(datasets_path, "test_embedding_models/ri_model.model")
+word2vec_file_path = os.path.join(datasets_path, "test_embedding_models/word2vec_model.bin")
 
 
 class TestEmbeddingLearner(TestCase):

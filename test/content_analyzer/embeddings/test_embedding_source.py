@@ -14,7 +14,7 @@ class TestEmbeddingSource(TestCase):
         # words similar to the vector given. I'm interested only in the most similar
         # so n = 1
         # for example, top_1 will be in the following form ("title", 1.0)
-        top_1 = source.model.similar_by_vector(embedding, 1)[0]
+        top_1 = source.model.wv.similar_by_vector(embedding, 1)[0]
 
         # So I'm using indices to access the tuples values.
         # 'like' contains how similar is 'embedding_word' to the 'embedding' vector given
