@@ -5,7 +5,7 @@ from typing import Dict
 
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsFieldConfig, RatingsImporter
 from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig, UserAnalyzerConfig, ItemAnalyzerConfig
-from orange_cb_recsys.content_analyzer.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import GensimWord2Vec, GensimDoc2Vec, GensimFastText, \
     GensimLatentSemanticAnalysis, GensimRandomIndexing
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import BabelPyEntityLinking, WhooshTfIdf, \
     Centroid

@@ -6,9 +6,9 @@ from abc import ABC
 
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
-from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import Handler_EmptyFrame
-from orange_cb_recsys.recsys.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 
 
 class RecSys(ABC):

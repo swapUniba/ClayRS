@@ -1,1 +1,4 @@
-from .graph_based_algorithm import GraphBasedAlgorithm
+from . import page_rank
+
+from .page_rank import *
+

@@ -2,7 +2,7 @@ from typing import List
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 from orange_cb_recsys.utils.const import recsys_logger
-from orange_cb_recsys.utils.load_content import get_unrated_items, get_rated_items, load_content_instance, \
+from orange_cb_recsys.utils.load_content import get_unrated_items, get_rated_items, \
     get_chosen_items
 
 

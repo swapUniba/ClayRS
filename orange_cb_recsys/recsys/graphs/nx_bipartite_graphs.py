@@ -1,5 +1,5 @@
 from typing import List, Set
-from orange_cb_recsys.recsys.graphs import BipartiteGraph
+from orange_cb_recsys.recsys.graphs.graph import BipartiteGraph
 import pandas as pd
 import networkx as nx
 

@@ -4,7 +4,7 @@ from typing import List
 from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.\
     field_content_production_technique import TfIdfTechnique
-from orange_cb_recsys.content_analyzer.information_processor import InformationProcessor
+from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import KeywordIndex
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, check_not_tokenized

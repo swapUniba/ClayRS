@@ -1,4 +1,3 @@
-from .combining_technique import Centroid
-from .embedding_source import Gensim, Sbert, Wikipedia2VecLoader
+from .combining_technique import Centroid, Sum
 from .embedding_technique import WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, \
     FromWordsSentenceEmbeddingTechnique, FromSentencesDocumentEmbeddingTechnique, FromWordsDocumentEmbeddingTechnique

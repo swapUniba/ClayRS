@@ -12,19 +12,6 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
-def get_wordnet_pos(word):
-    """
-    Map POS tag to first character lemmatize() accepts
-    """
-    tag = nltk.pos_tag([word])[0][1][0].upper()
-    tag_dict = {"J": wordnet.ADJ,
-                "N": wordnet.NOUN,
-                "V": wordnet.VERB,
-                "R": wordnet.ADV}
-
-    return tag_dict.get(tag, wordnet.NOUN)
-
-
 class NLTK(NLP):
     try:
         nltk.data.find('corpora/stopwords')
@@ -169,6 +156,17 @@ class NLTK(NLP):
         Returns:
             lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
         """
+        def get_wordnet_pos(word):
+            """
+            Map POS tag to first character lemmatize() accepts
+            """
+            tag = nltk.pos_tag([word])[0][1][0].upper()
+            tag_dict = {"J": wordnet.ADJ,
+                        "N": wordnet.NOUN,
+                        "V": wordnet.VERB,
+                        "R": wordnet.ADV}
+
+            return tag_dict.get(tag, wordnet.NOUN)
 
         lemmatizer = WordNetLemmatizer()
         lemmatized_text = []

@@ -3,7 +3,7 @@ from typing import List
 from gensim.corpora import Dictionary
 from gensim.models import LsiModel
 
-from orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner import GensimProjectionsWordEmbeddingLearner
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import GensimProjectionsWordEmbeddingLearner
 
 
 class GensimLatentSemanticAnalysis(GensimProjectionsWordEmbeddingLearner):

@@ -4,7 +4,7 @@ from typing import Union
 from sklearn.linear_model._base import LinearModel as SKLinearModel
 from sklearn.linear_model._stochastic_gradient import BaseSGDRegressor
 
-from sklearn.linear_model import LinearRegression, BayesianRidge, Ridge, SGDRegressor, ARDRegression,\
+from sklearn.linear_model import LinearRegression, BayesianRidge, Ridge, SGDRegressor, ARDRegression, \
     HuberRegressor, PassiveAggressiveRegressor
 
 

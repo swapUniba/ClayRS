@@ -5,12 +5,12 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.embed
     CombiningTechnique, Centroid
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
-from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, load_content_instance, \
+from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, \
     get_chosen_items
 import pandas as pd
 
 
-from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.utils.const import recsys_logger
 
 

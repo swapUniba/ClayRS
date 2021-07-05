@@ -2,14 +2,14 @@ from unittest import TestCase
 import os
 
 from orange_cb_recsys.content_analyzer.content_representation.content import EmbeddingField
-from orange_cb_recsys.content_analyzer.embedding_learner import GensimFastText
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import GensimFastText
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import \
     SentenceEmbeddingTechnique, FromWordsSentenceEmbeddingTechnique, FromWordsDocumentEmbeddingTechnique, \
     FromSentencesDocumentEmbeddingTechnique, WordEmbeddingTechnique, DocumentEmbeddingTechnique
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique \
     import Centroid
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source import \
-    Gensim, Sbert
+from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
+from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert import Sbert
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 

@@ -4,7 +4,7 @@ import re
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
-from orange_cb_recsys.recsys.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.utils.const import recsys_logger
 

@@ -1,5 +1,8 @@
 from typing import List, Set, Union
-from orange_cb_recsys.recsys.graphs import TripartiteGraph, NXBipartiteGraph
+
+from orange_cb_recsys.recsys.graphs.nx_bipartite_graphs import NXBipartiteGraph
+
+from orange_cb_recsys.recsys.graphs.graph import TripartiteGraph
 import pandas as pd
 import networkx as nx
 
