@@ -3,7 +3,7 @@ import pandas as pd
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from orange_cb_recsys.recsys.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.utils.feature_selection import FeatureSelection
 
 

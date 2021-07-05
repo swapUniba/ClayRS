@@ -3,7 +3,7 @@ from typing import List
 from gensim.models import RpModel
 from gensim.corpora import Dictionary
 
-from orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner import GensimProjectionsWordEmbeddingLearner
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import GensimProjectionsWordEmbeddingLearner
 
 
 class GensimRandomIndexing(GensimProjectionsWordEmbeddingLearner):

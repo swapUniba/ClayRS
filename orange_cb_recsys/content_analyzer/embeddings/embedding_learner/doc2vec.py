@@ -2,7 +2,7 @@ from typing import List
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
-from orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner import GensimWordEmbeddingLearner
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import GensimWordEmbeddingLearner
 
 
 class GensimDoc2Vec(GensimWordEmbeddingLearner):

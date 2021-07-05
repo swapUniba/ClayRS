@@ -8,7 +8,7 @@ from typing import List, Dict
 from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
-from orange_cb_recsys.content_analyzer.memory_interfaces import InformationInterface
+from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from orange_cb_recsys.utils.const import logger
 from orange_cb_recsys.utils.id_merger import id_merger
 from orange_cb_recsys.utils.const import progbar

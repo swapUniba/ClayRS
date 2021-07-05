@@ -3,7 +3,7 @@ from typing import List, Union
 
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source import \
+from orange_cb_recsys.content_analyzer.embeddings.embedding_source import \
     EmbeddingSource
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource

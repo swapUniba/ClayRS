@@ -4,16 +4,15 @@ from abc import abstractmethod
 import numpy as np
 
 from orange_cb_recsys.content_analyzer.content_representation.content import EmbeddingField, FieldRepresentation
-from orange_cb_recsys.content_analyzer.embedding_learner import EmbeddingLearner
-from orange_cb_recsys.content_analyzer.embedding_learner.embedding_learner import WordEmbeddingLearner, \
-    SentenceEmbeddingLearner, DocumentEmbeddingLearner
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner, \
+    WordEmbeddingLearner, SentenceEmbeddingLearner, DocumentEmbeddingLearner
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_source import \
+from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader import \
     WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader, EmbeddingLoader, EmbeddingSource
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     SingleContentTechnique
-from orange_cb_recsys.content_analyzer.information_processor import InformationProcessor
+from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes

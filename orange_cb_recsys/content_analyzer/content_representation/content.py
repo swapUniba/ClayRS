@@ -3,7 +3,7 @@ from typing import Dict, Union
 import numpy as np
 
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
-from orange_cb_recsys.content_analyzer.memory_interfaces import InformationInterface
+from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 
 
 class FieldRepresentation(ABC):

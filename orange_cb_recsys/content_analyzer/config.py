@@ -7,7 +7,7 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.field
     FieldContentProductionTechnique, DefaultTechnique
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
-from orange_cb_recsys.content_analyzer.memory_interfaces import InformationInterface
+from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 
 
