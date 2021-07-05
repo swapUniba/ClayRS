@@ -9,7 +9,7 @@ from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, Exog
 from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
     EmbeddingField, IndexField
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import Gensim
+from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
     import WordEmbeddingTechnique
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
