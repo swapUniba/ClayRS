@@ -262,11 +262,22 @@ class DefaultTechnique(FieldContentProductionTechnique):
         representation_list: List[FieldRepresentation] = []
 
         for content_data in source:
-            representation_list.append(self.__decode_field_data(content_data[field_name], preprocessor_list))
+            # if a preprocessor is specified, then surely we must import the field data as a string,
+            # there's no other option
+            if len(preprocessor_list) != 0:
+                representation = SimpleField(check_not_tokenized(self.process_data(str(content_data[field_name]),
+                                                                                   preprocessor_list)))
+
+            # If a preprocessor isn't specified, well maybe it is a complex representation:
+            # let's decode what kind of complex representation it is and import it accordingly.
+            else:
+                representation = self.__decode_field_data(str(content_data[field_name]))
+
+            representation_list.append(representation)
 
         return representation_list
 
-    def __decode_field_data(self, field_data: str, preprocessor_list: List[InformationProcessor]):
+    def __decode_field_data(self, field_data: str):
         # Decode string into dict or list
         try:
             loaded = json.loads(field_data)
@@ -279,28 +290,39 @@ class DefaultTechnique(FieldContentProductionTechnique):
                 # if it has issues decoding we consider the data as str
                 loaded = reformatted_field_data
 
+        # By default the representation decoded is what json tells us
+        decoded = SimpleField(loaded)
+
         # if the decoded is a list, maybe it is an EmbeddingField repr
         if isinstance(loaded, list):
             arr = np.array(loaded)
-            # if the array has only numbers then we consider it as a dense vector
-            # else it is not and we consider the field data as a string
-            if issubclass(arr.dtype.type, np.number):
-                return EmbeddingField(arr)
-            else:
-                return SimpleField(check_not_tokenized(self.process_data(field_data, preprocessor_list)))
+
+            # if the array values has can be converted into floats then we consider it as a dense vector
+            # else it is not and we do nothing
+            try:
+                arr = arr.astype(float)
+                decoded = EmbeddingField(arr)
+
+            # Can't be converted
+            except ValueError:
+                pass
 
         # if the decoded is a dict, maybe it is a FeaturesBagField
         elif isinstance(loaded, dict):
-            # if all values of the dict are numbers then we consider it as a bag of words
-            # else it is not and we consider it as a string
-            if len(loaded.values()) != 0 and \
-                    all(isinstance(value, (float, int)) for value in loaded.values()):
+            # if all values of the dict are numbers or can be converted into numbers,
+            # then we consider it as a bag of words
+            # else it is not and we do nothing
+            if len(loaded.values()) != 0:
+                try:
+                    dict_converted = {k: float(loaded[k]) for k in loaded}
 
-                return FeaturesBagField(loaded)
+                    decoded = FeaturesBagField(dict_converted)
 
-        # just store the field data whatever type it is (int, str, float, ...)
-        else:
-            return SimpleField(type(loaded)(check_not_tokenized(self.process_data(field_data, preprocessor_list))))
+                # Can't be converted
+                except ValueError:
+                    pass
+
+        return decoded
 
 
 class TfIdfTechnique(CollectionBasedTechnique):
