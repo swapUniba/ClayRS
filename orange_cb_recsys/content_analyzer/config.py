@@ -229,7 +229,8 @@ class ContentAnalyzerConfig(ABC):
                  output_directory: str,
                  field_dict: Dict[str, List[FieldConfig]] = None,
                  exogenous_representation_list:
-                 Union[ExogenousConfig, List[ExogenousConfig]] = None):
+                 Union[ExogenousConfig, List[ExogenousConfig]] = None,
+                 export_json: bool = False):
         if field_dict is None:
             field_dict = {}
         if exogenous_representation_list is None:
@@ -240,6 +241,7 @@ class ContentAnalyzerConfig(ABC):
         self.__output_directory: str = output_directory
         self.__field_dict: Dict[str, List[FieldConfig]] = field_dict
         self.__exogenous_representation_list: List[ExogenousPropertiesRetrieval] = exogenous_representation_list
+        self.__export_json: bool = export_json
 
         if not isinstance(self.__exogenous_representation_list, list):
             self.__exogenous_representation_list = [self.__exogenous_representation_list]
@@ -274,6 +276,10 @@ class ContentAnalyzerConfig(ABC):
         Getter for the exogenous_representation_list
         """
         return self.__exogenous_representation_list
+
+    @property
+    def export_json(self) -> bool:
+        return self.__export_json
 
     def get_configs_list(self, field_name: str) -> Iterator[FieldConfig]:
         """
@@ -366,14 +372,6 @@ class UserAnalyzerConfig(ContentAnalyzerConfig):
         will be used by the content analyzer main to create contents and process their fields with complex techniques.
         In particular this class refers to users as the content.
     """
-    def __init__(self, source: RawInformationSource,
-                 id: Union[str, List[str]],
-                 output_directory: str,
-                 field_dict: Dict[str, List[FieldConfig]] = None,
-                 exogenous_representation_list:
-                 Union[ExogenousConfig, List[ExogenousConfig]] = None):
-        super().__init__(source, id, output_directory, field_dict, exogenous_representation_list)
-
     def __str__(self):
         return str(self.__id)
 
@@ -392,14 +390,6 @@ class ItemAnalyzerConfig(ContentAnalyzerConfig):
         will be used by the content analyzer main to create contents and process their fields with complex techniques.
         In particular this class refers to items as the content.
     """
-    def __init__(self, source: RawInformationSource,
-                 id: Union[str, List[str]],
-                 output_directory: str,
-                 field_dict: Dict[str, List[FieldConfig]] = None,
-                 exogenous_representation_list:
-                 Union[ExogenousConfig, List[ExogenousConfig]] = None):
-        super().__init__(source, id, output_directory, field_dict, exogenous_representation_list)
-
     def __str__(self):
         return str(self.__id)
 

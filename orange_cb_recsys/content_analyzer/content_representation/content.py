@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union
 import numpy as np
+import json
 
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
@@ -75,6 +76,9 @@ class SimpleField(FieldRepresentation):
 
     def __str__(self):
         return str(self.__value)
+
+    def __repr__(self):
+        return '{} - {}'.format(str(self), type(self.value))
 
     def __eq__(self, other):
         return self.__value == other.__value
@@ -351,3 +355,23 @@ class Content:
 
     def __eq__(self, other):
         return self.__content_id == other.__content_id and self.__field_dict == other.__field_dict
+
+
+class ContentEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Content):
+            content = {'content_id': obj.content_id}
+            for row in obj.exogenous_rep_container:
+                key = 'Exo#{}'.format(row['internal_id'])
+                content[key] = str(row['representation'])
+
+            for field in obj.field_dict:
+                field_container = obj.field_dict[field]
+
+                for row in field_container:
+                    key = '{}#{}'.format(field, row['internal_id'])
+                    content[key] = str(row['representation'])
+
+            return content
+        # Let the base class default method raise the TypeError
+        return json.JSONEncoder.default(self, obj)

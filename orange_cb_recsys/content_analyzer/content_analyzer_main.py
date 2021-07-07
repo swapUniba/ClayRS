@@ -1,3 +1,4 @@
+import json
 import pickle
 import re
 import lzma
@@ -6,7 +7,7 @@ import shutil
 from typing import List, Dict
 
 from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
-from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField
+from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from orange_cb_recsys.utils.const import logger
@@ -56,6 +57,11 @@ class ContentAnalyzer:
         contents_producer = ContentsProducer.get_instance()
         contents_producer.set_config(self.__config)
         created_contents = contents_producer.create_contents()
+
+        if self.__config.export_json:
+            json_path = os.path.join(self.__config.output_directory, 'contents.json')
+            with open(json_path, "w") as data:
+                json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
         for content in progbar(created_contents, prefix="Serializing contents: "):
             self.__serialize_content(content)
