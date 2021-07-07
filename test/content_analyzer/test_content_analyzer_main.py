@@ -1,4 +1,5 @@
 import os
+import shutil
 from unittest import TestCase
 import lzma
 import pickle
@@ -254,3 +255,36 @@ class TestContentsProducer(TestCase):
                     self.assertIsInstance(content.get_field("Title")[0], EmbeddingField)
                     self.assertIsInstance(content.get_field("Title")[0].value, np.ndarray)
                     break
+
+
+class TestContentAnalyzer(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.out_dir = 'test_export_json/'
+
+    def test_fit_export_json(self):
+        movies_ca_config = ItemAnalyzerConfig(
+            source=JSONFile(movies_info_reduced),
+            id=['imdbID'],
+            output_directory=self.out_dir,
+            export_json=True
+        )
+
+        movies_ca_config.add_single_config('Plot', FieldConfig(OriginalData()))
+        movies_ca_config.add_single_config('Plot', FieldConfig(SkLearnTfIdf()))
+        movies_ca_config.add_single_config('imdbRating', FieldConfig())
+
+        ContentAnalyzer(movies_ca_config).fit()
+
+        self.assertTrue(os.path.isfile(os.path.join(self.out_dir, 'contents.json')))
+        processed_source = list(JSONFile(os.path.join(self.out_dir, 'contents.json')))
+
+        self.assertEqual(len(processed_source), 20)
+        for processed_content in processed_source:
+            self.assertIn('Plot#0', processed_content)
+            self.assertIn('Plot#1', processed_content)
+            self.assertIn('imdbRating#0', processed_content)
+
+    # def doCleanups(self) -> None:
+    #     if os.path.isdir(self.out_dir):
+    #         shutil.rmtree(self.out_dir)
