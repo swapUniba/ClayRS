@@ -2,7 +2,7 @@ import csv
 from abc import ABC, abstractmethod
 
 import json
-from typing import Dict
+from typing import Dict, Iterator
 
 import mysql.connector
 
@@ -14,7 +14,7 @@ class RawInformationSource(ABC):
     """
 
     @abstractmethod
-    def __iter__(self) -> Dict[str, str]:
+    def __iter__(self) -> Iterator[Dict[str, str]]:
         """
         Iter on contents in the source,
         each iteration returns a dict representing the raw content
@@ -33,7 +33,7 @@ class DATFile(RawInformationSource):
     def __init__(self, file_path: str):
         self.__file_path = file_path
 
-    def __iter__(self) -> Dict[str, str]:
+    def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path) as f:
             for line in f:
                 line_dict = {}
@@ -58,11 +58,11 @@ class JSONFile(RawInformationSource):
         """
         self.__file_path = file_path
 
-    def __iter__(self) -> Dict[str, str]:
-        with open(self.__file_path) as j:
-            for line in j:
-                line_dict = json.loads(line, parse_int=str, parse_float=str)
-                yield line_dict
+    def __iter__(self) -> Iterator[Dict[str, str]]:
+        with open(self.__file_path, 'r') as j:
+            all_lines = json.load(j, parse_int=str, parse_float=str)
+            for line in all_lines:
+                yield line
 
 
 class CSVFile(RawInformationSource):
@@ -79,7 +79,7 @@ class CSVFile(RawInformationSource):
         self.__file_path = file_path
         self.__has_header = has_header
 
-    def __iter__(self) -> Dict[str, str]:
+    def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, newline='', encoding='utf-8-sig') as csv_file:
             if self.__has_header:
                 reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
@@ -173,7 +173,7 @@ class SQLDatabase(RawInformationSource):
     def conn(self, conn):
         self.__conn = conn
 
-    def __iter__(self) -> Dict[str, str]:
+    def __iter__(self) -> Iterator[Dict[str, str]]:
         cursor = self.conn.cursor(dictionary=True)
         query = """SELECT * FROM """ + self.table_name + """;"""
         cursor.execute(query)
