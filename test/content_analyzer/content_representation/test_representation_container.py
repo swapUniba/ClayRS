@@ -41,3 +41,22 @@ class TestRepresentationContainer(TestCase):
 
         with self.assertRaises(ValueError):
             rep_container.append(['rep1', 'rep2'], ['test1'])
+
+    def test_iter(self):
+        rep_container = RepresentationContainer(['rep1', 'rep2', 'rep3'], ['test1', None, 'test3'])
+
+        expected_list = [
+            {'internal_id': 0, 'external_id': 'test1', 'representation': 'rep1'},
+            {'internal_id': 1, 'external_id': np.nan, 'representation': 'rep2'},
+            {'internal_id': 2, 'external_id': 'test3', 'representation': 'rep3'}
+        ]
+
+        it = iter(rep_container)
+
+        self.assertEqual(expected_list[0], next(it))
+        self.assertEqual(expected_list[1], next(it))
+        self.assertEqual(expected_list[2], next(it))
+
+        # Check that the iterator gives an error since there aren't any items left
+        with self.assertRaises(StopIteration):
+            next(it)

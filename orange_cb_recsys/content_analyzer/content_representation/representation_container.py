@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List, Any, Union
+from typing import List, Any, Union, Iterator, Dict
 
 
 class RepresentationContainer:
@@ -148,6 +148,11 @@ class RepresentationContainer:
             return self.__dataframe.iloc[item]['representation']
         elif isinstance(item, str):
             return self.__dataframe.loc(axis=0)[pd.IndexSlice[:, item]]['representation'].item()
+
+    def __iter__(self) -> Iterator[Dict]:
+        for internal_index, external_index, representation in \
+                zip(self.get_internal_index(), self.get_external_index(), self.get_representations()):
+            yield {'internal_id': internal_index, 'external_id': external_index, 'representation': representation}
 
     def __len__(self):
         return len(self.get_internal_index())
