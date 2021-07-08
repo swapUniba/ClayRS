@@ -2,6 +2,7 @@ import os
 from unittest import TestCase
 import pandas as pd
 
+from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
 from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
@@ -93,6 +94,26 @@ class TestContentBasedRS(TestCase):
         result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
         self.assertEqual(len(result_rank_numbered), recs_number)
 
+    # More tests in content_based_algorithm/test_linear_predictor
+    def test_linear_predictor(self):
+        recs_number = 3
+
+        # Test prediction and ranking with the Classifier Recommender algorithm
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+
+        # Prediction
+        result_pred_filtered = rs.fit_predict('A000', filter_list=self.filter_list)
+        self.assertEqual(len(result_pred_filtered), len(self.filter_list))
+
+        # Test ranking with the Classifier Recommender algorithm on specified items
+        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
+        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
+
+        # Test top-n ranking with the Classifier Recommender algorithm
+        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
+        self.assertEqual(len(result_rank_numbered), recs_number)
+
     def test_centroid_vector(self):
         recs_number = 3
 
@@ -140,11 +161,40 @@ class TestContentBasedRS(TestCase):
         result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
         self.assertEqual(len(result_rank_numbered), recs_number)
 
+    def test_multiple(self):
+        recs_number = 3
+        user_id_list = ['A000', 'A001']
+
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+
+        # Prediction
+        result_pred_filtered = rs.multiple_fit_predict(user_id_list, filter_list=self.filter_list)
+        self.assertEqual(set(user_id_list), set(result_pred_filtered['from_id']))
+        for user in user_id_list:
+            self.assertEqual(len(result_pred_filtered.query('from_id == @user')), len(self.filter_list))
+
+        # Test ranking with the Classifier Recommender algorithm on specified items
+        result_rank_filtered = rs.multiple_fit_rank(user_id_list, filter_list=self.filter_list)
+        self.assertEqual(set(user_id_list), set(result_rank_filtered['from_id']))
+        for user in user_id_list:
+            self.assertEqual(len(result_rank_filtered.query('from_id == @user')), len(self.filter_list))
+
+        # Test top-n ranking with the Classifier Recommender algorithm
+        result_rank_numbered = rs.multiple_fit_rank(user_id_list, recs_number=recs_number)
+        self.assertEqual(set(user_id_list), set(result_rank_numbered['from_id']))
+        for user in user_id_list:
+            self.assertEqual(len(result_rank_numbered.query('from_id == @user')), recs_number)
+
 
 class TestGraphBasedRS(TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.filter_list = ['tt0112896', 'tt0113497']
+
     def test_nx_page_rank(self):
         # Because graph based recommendation needs to have all items to predict in the ratings dataframe
-        filter_list = ['tt0112896', 'tt0113497']
         recs_number = 1
 
         graph = NXFullGraph(ratings)
@@ -162,11 +212,35 @@ class TestGraphBasedRS(TestCase):
         # Test prediction and ranking with the Page Rank algorithm on specified items, prediction will raise exception
         # since it's not a PredictionAlgorithm
         with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000', filter_list=filter_list)
+            rs.fit_predict('A000', filter_list=self.filter_list)
 
-        result_rank_filtered = rs.fit_rank('A000', filter_list=filter_list)
+        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
         self.assertEqual(len(result_rank_filtered), 2)
 
         # Test top-n ranking with the Page Rank algorithm
         result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
         self.assertEqual(len(result_rank_numbered), recs_number)
+
+    def test_multiple(self):
+        recs_number = 3
+        user_id_list = ['A000', 'A001']
+        # Test prediction and ranking with the Classifier Recommender algorithm
+        graph = NXFullGraph(ratings)
+        alg = NXPageRank()
+        rs = GraphBasedRS(alg, graph)
+
+        # Prediction
+        with self.assertRaises(NotPredictionAlg):
+            rs.multiple_fit_predict(user_id_list, filter_list=self.filter_list)
+
+        # Test ranking with the Classifier Recommender algorithm on specified items
+        result_rank_filtered = rs.multiple_fit_rank(user_id_list, filter_list=self.filter_list)
+        self.assertEqual(set(user_id_list), set(result_rank_filtered['from_id']))
+        for user in user_id_list:
+            self.assertEqual(len(result_rank_filtered.query('from_id == @user')), len(self.filter_list))
+
+        # Test top-n ranking with the Classifier Recommender algorithm
+        result_rank_numbered = rs.multiple_fit_rank(user_id_list, recs_number=recs_number)
+        self.assertEqual(set(user_id_list), set(result_rank_numbered['from_id']))
+        for user in user_id_list:
+            self.assertEqual(len(result_rank_numbered.query('from_id == @user')), recs_number)
