@@ -205,14 +205,14 @@ class ContentBasedRS(RecSys):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list, show_progbar=False)
+        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
         return score_frame
 
     def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list, show_progbar=False)
+        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
         return score_frame
 
 
