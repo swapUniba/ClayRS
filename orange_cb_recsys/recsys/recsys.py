@@ -20,6 +20,11 @@ class RecSys(ABC):
     def rating_frame(self):
         return self.__rating_frame
 
+    @property
+    @abc.abstractmethod
+    def users(self):
+        raise NotImplementedError
+
     @abc.abstractmethod
     def fit_predict(self, user_id: str, filter_list: List[str] = None):
         raise NotImplementedError
@@ -28,10 +33,56 @@ class RecSys(ABC):
     def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
         raise NotImplementedError
 
-    @property
-    @abc.abstractmethod
-    def users(self):
-        raise NotImplementedError
+    def multiple_fit_rank(self, user_id_list: List[str], recs_number: int = None, filter_list: List[str] = None):
+        """
+        Method used to rank for a particular user all unrated items or the items specified in
+        the filter_list parameter.
+
+        The method fits the algorithm and then calculates the rank.
+
+        If the recs_number is specified, then the rank will contain the top-n items for the user.
+
+        Args:
+            user_id (str): user_id of the user
+            recs_number (int): number of the top items that will be present in the ranking
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted, sorted in descending order by the 'rating' column
+        """
+        rank_list = []
+        for user_id in user_id_list:
+            rank = self.fit_rank(user_id, recs_number, filter_list)
+
+            rank_list.append(rank)
+
+        concat_rank = pd.concat(rank_list)
+        return concat_rank
+
+    def multiple_fit_predict(self, user_id_list: List[str], filter_list: List[str] = None):
+        """
+        Method used to predict the rating of the user passed for all unrated items or for the items passed
+        in the filter_list parameter.
+
+        The method fits the algorithm and then calculates the prediction
+
+        Args:
+            user_id (str): user_id of the user
+            filter_list (list): list of the items to rank, if None all unrated items will be used to
+                calculate the rank
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the rating predicted
+        """
+        score_preds_list = []
+        for user_id in user_id_list:
+            score_preds = self.fit_predict(user_id, filter_list)
+
+            score_preds_list.append(score_preds)
+
+        concat_score_preds = pd.concat(score_preds_list)
+        return concat_score_preds
 
     @abc.abstractmethod
     def _eval_fit_predict(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
@@ -80,7 +131,7 @@ class ContentBasedRS(RecSys):
         return self.__users_directory
 
     @Handler_EmptyFrame
-    def fit_predict(self, user_id: str, filter_list: List[str] = None, show_progbar: bool = True):
+    def fit_predict(self, user_id: str, filter_list: List[str] = None):
         """
         Method used to predict the rating of the user passed for all unrated items or for the items passed
         in the filter_list parameter.
@@ -109,12 +160,12 @@ class ContentBasedRS(RecSys):
         # Predict
         prediction = alg.predict(user_ratings, self.items_directory, filter_list)
 
-        prediction.insert(0, 'from_id', [user_id for i in range(len(prediction))])
+        prediction.insert(0, 'from_id', [user_id for _ in range(len(prediction))])
 
         return prediction
 
     @Handler_EmptyFrame
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None, show_progbar: bool = True):
+    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
         """
         Method used to rank for a particular user all unrated items or the items specified in
         the filter_list parameter.
@@ -146,7 +197,7 @@ class ContentBasedRS(RecSys):
         # Rank
         rank = alg.rank(user_ratings, self.items_directory, recs_number, filter_list)
 
-        rank.insert(0, 'from_id', [user_id for i in range(len(rank))])
+        rank.insert(0, 'from_id', [user_id for _ in range(len(rank))])
 
         return rank
 
@@ -154,14 +205,14 @@ class ContentBasedRS(RecSys):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list, show_progbar=False)
+        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
         return score_frame
 
     def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
         user_id = user_ratings_train.from_id.iloc[0]
 
         rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list, show_progbar=False)
+        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
         return score_frame
 
 
