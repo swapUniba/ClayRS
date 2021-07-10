@@ -1,11 +1,15 @@
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
     PropertiesFromDataset
 
 
 class TestDBPediaMappingTechnique(TestCase):
-    def test_get_properties(self):
+
+    @mock.patch('orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.SPARQLWrapper')
+    def test_get_properties(self, mock):
+        instance = mock.return_value
+        instance.query().convert.return_value = {'results': {'bindings': {'cinematography': 'http://dbpedia.org/resource/Thomas_E._Ackerman'}}} #DOO
 
         raw_content = {"Title": "Jumanji", "Year": "1995", "Rated": "PG",
                        "Released": "15 Dec 1995", "Budget_source": "6.5E7",
