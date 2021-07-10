@@ -5,6 +5,7 @@ from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBP
 
 
 class TestDBPediaMappingTechnique(TestCase):
+
     def test_get_properties(self):
 
         raw_content = {"Title": "Jumanji", "Year": "1995", "Rated": "PG",
