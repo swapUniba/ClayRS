@@ -1,28 +1,23 @@
-import unittest
 from unittest import TestCase
-# from orange_cb_recsys.utils.runnable_instances import *
+import pathlib as pl
+import os
 
-@unittest.skip("Script not yet implemented")
+from orange_cb_recsys.content_analyzer import FieldConfig
+from orange_cb_recsys.utils.const import root_path
+from orange_cb_recsys.utils.runnable_instances import serialize_classes, get_classes
+
+classes_path = os.path.join(root_path, "orange_cb_recsys/classes.xz")
+
+
 class Test(TestCase):
+    def test_serialize_get(self):
+        serialize_classes()
 
-    def test_runnable_instances(self):
-        show()
+        self.assertEqual(pl.Path(classes_path).is_file(), True)
 
-        get()
+        classes = get_classes()
+        self.assertIsInstance(classes, dict)
+        self.assertEqual(classes['fieldconfig'], FieldConfig)
 
-        add('test', 'test_test')
-
-        remove('test')
-
-        show()
-
-        add('test2', 'test_cat', 'preprocessor')
-
-        try:
-            add('test2', 'test_cat', 'test_fail')
-        except ValueError:
-            pass
-
-        show(True)
-
-        print(get_cat('preprocessor'))
+        with self.assertRaises(KeyError):
+            cls = classes['not_existing_class_name']

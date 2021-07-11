@@ -1,6 +1,9 @@
 from orange_cb_recsys.utils.const import recsys_logger
 import pandas as pd
 
+from functools import wraps
+
+
 
 class OnlyPositiveItems(Exception):
     """
@@ -51,6 +54,7 @@ def Handler_EmptyFrame(func):
     Tries to run the functions normally, if one of the above exceptions is caught then it must return
     an empty frame for the user since predictions can't be calculated for it.
     """
+    @wraps(func)
     def Inner_Function(*args, **kwargs):
         try:
             frame = func(*args, **kwargs)

@@ -1,3 +1,6 @@
+from functools import wraps
+
+
 def Handler_ScoreNotFloat(func):
     """
     Handler that catches the above exceptions.
@@ -5,6 +8,7 @@ def Handler_ScoreNotFloat(func):
     Tries to run the functions normally, if one of the above exceptions is caught then it must return
     an empty frame for the user since predictions can't be calculated for it.
     """
+    @wraps(func)
     def Inner_Function(*args, **kwargs):
         try:
             return func(*args, **kwargs)
