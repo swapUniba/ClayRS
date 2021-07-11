@@ -6,7 +6,7 @@ from orange_cb_recsys.content_analyzer import FieldConfig
 from orange_cb_recsys.utils.const import root_path
 from orange_cb_recsys.utils.runnable_instances import serialize_classes, get_classes
 
-classes_path = os.path.join(root_path, "classes.xz")
+classes_path = os.path.join(root_path, "orange_cb_recsys/classes.xz")
 
 
 class Test(TestCase):
