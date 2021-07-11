@@ -15,7 +15,7 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.field
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from orange_cb_recsys.utils.class_utils import get_all_implemented_classes
+from orange_cb_recsys.utils.class_utils import get_all_implemented_subclasses
 from orange_cb_recsys.utils.const import logger
 
 
@@ -63,7 +63,7 @@ class EmbeddingTechnique(SingleContentTechnique):
             embedding_source (EmbeddingSource): embedding source which can load the model
         """
         # retrieves all implementations (meaning not abstract classes) inheriting from loader_class
-        possible_implementations = get_all_implemented_classes(loader_class)
+        possible_implementations = get_all_implemented_subclasses(loader_class)
         # each implementation is tested and, when one of the implementations loads the model successfully, the loader
         # instance is returned
         for implementation in possible_implementations:
