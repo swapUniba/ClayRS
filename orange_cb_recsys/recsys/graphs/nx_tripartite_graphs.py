@@ -53,7 +53,7 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
                                  default_score_label, default_not_rated_value)
 
     @property
-    def property_nodes(self) -> Set[object]:
+    def property_nodes(self) -> Set[PropertyNode]:
         """
         Returns a set of all 'property' nodes in the graph
         """
