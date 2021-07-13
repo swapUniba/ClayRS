@@ -2,8 +2,7 @@ import abc
 from typing import Dict, List
 
 from orange_cb_recsys.recsys.algorithm import Algorithm
-
-from orange_cb_recsys.utils.feature_selection import FeatureSelection
+from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
@@ -20,17 +19,17 @@ class GraphBasedAlgorithm(Algorithm):
     Said method must be called right after the instantiation of the Algorithm
 
     Args:
-    feature_selection (FeatureSelection): a FeatureSelection algorithm if the graph needs to be reduced
+    feature_selection (FeatureSelectionAlgorithm): a FeatureSelectionAlgorithm algorithm if the graph needs to be reduced
     """
-    def __init__(self, feature_selection: FeatureSelection = None):
-        self.__feature_selection: FeatureSelection = feature_selection
+    def __init__(self, feature_selection: FeatureSelectionAlgorithm = None):
+        self.__feature_selection: FeatureSelectionAlgorithm = feature_selection
 
     @property
     def feature_selection(self):
         return self.__feature_selection
 
     @feature_selection.setter
-    def feature_selection(self, feature_selection: FeatureSelection):
+    def feature_selection(self, feature_selection: FeatureSelectionAlgorithm):
         self.__feature_selection = feature_selection
 
     def clean_result(self, graph: FullGraph, result: Dict, user_id: str,
