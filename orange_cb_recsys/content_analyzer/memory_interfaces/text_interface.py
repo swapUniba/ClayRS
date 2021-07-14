@@ -181,7 +181,7 @@ class IndexInterface(TextInterface):
             parser = QueryParser("content_id", schema=schema, group=OrGroup)
             # regular expression to match the possible field styles
             # examples: "content_id" or "Genre#2" or "Genre#2#custom_id"
-            parser.add_plugin(FieldsPlugin('(?P<text>\w+(\#\w+(\#\w+)?)?|[*]):'))
+            parser.add_plugin(FieldsPlugin(r'(?P<text>[\w-]+(\#[\w-]+(\#[\w-]+)?)?|[*]):'))
             query = parser.parse(string_query)
             score_docs = \
                 searcher.search(query, limit=results_number, filter=candidate_query_list, mask=mask_query_list)
