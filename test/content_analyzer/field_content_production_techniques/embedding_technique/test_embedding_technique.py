@@ -25,6 +25,7 @@ class TestEmbeddingTechnique(TestCase):
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
     def test_produce_content_str(self):
+        self.skipTest("Test requires internet but is too complex to be mocked")
         technique = WordEmbeddingTechnique('glove-twitter-25')
         self.assertIsInstance(technique.embedding_source, Gensim)
         embedding_list = technique.produce_content("Plot", [NLTK()], JSONFile(file_path))
@@ -56,6 +57,7 @@ class TestEmbeddingTechnique(TestCase):
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
     def test_load_not_existing_source(self):
+        self.skipTest("Test requires internet but is too complex to be mocked")
         with self.assertRaises(FileNotFoundError):
             WordEmbeddingTechnique('not_existing_model')
 
