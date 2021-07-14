@@ -92,8 +92,7 @@ class TestFeatureSelectionHandler(TestCase):
         labels = FeatureSelectionHandler(NXTopKPageRank()).\
             _get_property_labels_info(self.g_None_item_repr, set(self.df['to_id']))
 
-        self.assertEqual(labels, ['starring#0#dbpedia', 'editing#0#dbpedia',
-                                  'producer#0#dbpedia', 'production_company#0#dbpedia'])
+        self.assertEqual(labels, ['starring', 'editing', 'producer', 'production_company'])
 
     def test_special_cases_feature_selection_handler(self):
         # algorithm failed to converge both for items and users

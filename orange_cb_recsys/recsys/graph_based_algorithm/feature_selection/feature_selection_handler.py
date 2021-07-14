@@ -103,7 +103,12 @@ class FeatureSelectionHandler:
     def _get_property_labels_info(graph: FullGraph, nodes_to_get_properties: Iterable[object]) -> list:
         """
         This method retrieves the properties (which in the graph are property labels) and returns them in a list. It's
-        possible to define a custom Iterable of nodes from the FullGraph from which properties will be extracted
+        possible to define a custom Iterable of nodes from the FullGraph from which properties will be extracted.
+
+        Note that in case of multiple representations, this function will return the properties in their basic form.
+        So, for example:
+
+            [starring#0#dbpedia, producer#0#dbpedia, ...] -> [starring, producer, ...]
 
         Args:
             graph (FullGraph): the original graph from which the properties will be extracted
@@ -122,6 +127,8 @@ class FeatureSelectionHandler:
             for successor_node in graph.get_successors(node):
                 if graph.is_property_node(successor_node):
                     property_label = graph.get_link_data(node, successor_node)['label']
+                    # in case of multiple representations
+                    property_label = property_label.split('#')[0] if '#' in property_label else property_label
                     if property_label not in properties:
                         properties.append(property_label)
         return properties
