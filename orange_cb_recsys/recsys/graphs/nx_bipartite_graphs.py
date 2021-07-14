@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List, Set, Iterable
 from orange_cb_recsys.recsys.graphs.graph import BipartiteGraph
 import pandas as pd
 import networkx as nx
@@ -43,14 +43,14 @@ class NXBipartiteGraph(BipartiteGraph):
         self.__graph = nx.DiGraph()
 
     @property
-    def user_nodes(self) -> Set[object]:
+    def user_nodes(self) -> Set[UserNode]:
         """
         Returns a set of all 'user' nodes in the graph
         """
         return set(node for node in self._graph.nodes if isinstance(node, UserNode))
 
     @property
-    def item_nodes(self) -> Set[object]:
+    def item_nodes(self) -> Set[ItemNode]:
         """
         Returns a set of all 'item' nodes in the graph
         """
@@ -225,6 +225,17 @@ class NXBipartiteGraph(BipartiteGraph):
         In case some metrics needs to be performed on the newtowrkx graph
         """
         return self.__graph
+
+    def _remove_nodes_from_graph(self, nodes_to_remove: Iterable):
+        """
+        PRIVATE USAGE ONLY
+
+        Used in the Feature Selection process to remove certain nodes from the graph
+
+        Args:
+            nodes_to_remove (Iterable): iterable object containing the nodes to remove from the graph
+        """
+        self.__graph.remove_nodes_from(nodes_to_remove)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

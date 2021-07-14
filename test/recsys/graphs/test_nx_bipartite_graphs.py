@@ -129,6 +129,13 @@ class TestNXBipartiteGraph(TestCase):
         # Simple assert just to test the _graph method
         self.assertIsInstance(self.g._graph, nx.DiGraph)
 
+    def test__remove_nodes_from_graph(self):
+        graph_to_test = self.g.copy()
+        node_to_remove = list(graph_to_test.user_nodes)[0]
+        graph_to_test._remove_nodes_from_graph([node_to_remove])
+        self.assertTrue(len(graph_to_test.user_nodes) == len(self.g.user_nodes) - 1)
+        self.assertTrue(node_to_remove not in graph_to_test.user_nodes)
+
     def test_convert_to_dataframe(self):
         converted_df = self.g.convert_to_dataframe()
         self.assertNotIn('label', converted_df.columns)

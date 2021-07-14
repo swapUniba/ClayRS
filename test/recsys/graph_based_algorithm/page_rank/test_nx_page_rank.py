@@ -1,11 +1,13 @@
 import pandas as pd
 from unittest import TestCase
 import numpy as np
+import os
 
+from orange_cb_recsys.recsys import NXTopKPageRank
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
-from orange_cb_recsys.utils.feature_selection import NXFSPageRank
+from orange_cb_recsys.utils.const import root_path
 
 
 class TestNXPageRank(TestCase):
@@ -82,3 +84,48 @@ class TestNXPageRank(TestCase):
         # logger.info('pg_rk results')
         # for r in rank_fs.keys():
         #     print(str(r) + " " + str(rank_fs[r]))
+
+    def test_page_rank_with_feature_selection(self):
+        # the PageRank algorithm is tested with the NXTopKPageRank Feature Selection algorithm
+        # since the Feature Selection is already tested in the dedicated test file
+        # this test only checks that the PageRank run works while defining a Feature Selection algorithm
+
+        contents_path = os.path.join(root_path, 'contents')
+        movies_dir = os.path.join(contents_path, 'movies_codified/')
+        user_dir = os.path.join(contents_path, 'users_codified/')
+
+        df = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3", "4", "4"],
+                                     'to_id': ["tt0113228", "tt0113041", "tt0113228", "tt0112346",
+                                               "tt0112453", "tt0112453", "tt0112346", "tt0112453"],
+                                     'score': [0.8, 0.7, -0.4, 1.0, 0.4, 0.1, -0.3, 0.7]})
+
+        # only one property from the dbpedia repr extracted
+        graph_with_properties: NXFullGraph = NXFullGraph(df,
+                                                         user_contents_dir=user_dir,
+                                                         item_contents_dir=movies_dir,
+                                                         item_exo_representation='dbpedia',
+                                                         user_exo_representation='local',
+                                                         item_exo_properties=None,
+                                                         user_exo_properties=['1']
+                                                         )
+
+        # fs standard algorithm
+        alg = NXPageRank(feature_selection=NXTopKPageRank())
+        result = alg.rank('4', graph_with_properties)
+        self.assertEqual(len(result), 2)
+
+        # fs personalized algorithm
+        alg = NXPageRank(personalized=True, feature_selection=NXTopKPageRank())
+        result_personalized = alg.rank('4', graph_with_properties)
+        self.assertEqual(len(result_personalized), 2)
+
+        # fs personalized algorithm and filter list
+        alg = NXPageRank(personalized=True, feature_selection=NXTopKPageRank())
+        result_personalized = alg.rank('4', graph_with_properties, filter_list=['tt0113228'])
+        self.assertEqual(len(result_personalized), 1)
+
+        # fs personalized algorithm and empty filter list
+        alg = NXPageRank(personalized=True, feature_selection=NXTopKPageRank())
+        result_personalized = alg.rank('4', graph_with_properties, filter_list=[])
+        self.assertEqual(len(result_personalized), 0)
+

@@ -2,8 +2,10 @@ from typing import List
 import pandas as pd
 import networkx as nx
 
+from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
+from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler import \
+    FeatureSelectionHandler
 from orange_cb_recsys.recsys.graphs import NXFullGraph
-from orange_cb_recsys.utils.feature_selection import FeatureSelection
 from orange_cb_recsys.utils.const import recsys_logger
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank import PageRankAlg
@@ -20,11 +22,11 @@ class NXPageRank(PageRankAlg):
     Args:
         personalized (bool): boolean value that specifies if the page rank must be calculated with Priors
             considering the user profile as personalization vector. Default is False
-        feature_selection (FeatureSelection): a FeatureSelection algorithm if the graph needs to be reduced
+        feature_selection (FeatureSelectionAlgorithm): a FeatureSelection algorithm if the graph needs to be reduced
 
     """
 
-    def __init__(self, personalized: bool = False, feature_selection: FeatureSelection = None):
+    def __init__(self, personalized: bool = False, feature_selection: FeatureSelectionAlgorithm = None):
         super().__init__(personalized, feature_selection)
 
     def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
@@ -61,7 +63,15 @@ class NXPageRank(PageRankAlg):
         if graph is None:
             return score_frame
         if self.feature_selection is not None:
-            graph = self.feature_selection.perform(graph)
+            user_target_nodes = list(graph.user_nodes)
+            # only items recommendable to the user will be considered in the feature selection process
+            if filter_list is None:
+                item_target_nodes = [node for node in graph.item_nodes if node not in graph.get_successors(user_id)]
+            else:
+                item_target_nodes = [node for node in graph.item_nodes if node not in graph.get_successors(user_id) and
+                                     node in filter_list]
+            graph = FeatureSelectionHandler(self.feature_selection).\
+                process_feature_selection_on_fullgraph(graph, user_target_nodes, item_target_nodes)
 
         # run the pageRank
         if self.personalized:

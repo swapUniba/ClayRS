@@ -19,6 +19,7 @@ from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import R
 
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
+from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 from orange_cb_recsys.recsys.graphs.graph_metrics import GraphMetrics
 from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graphs.graph import Graph
@@ -43,7 +44,7 @@ base_classes: List[Type] = [
     InformationInterface, EmbeddingSource, CombiningTechnique, RatingProcessor, RawInformationSource,
     ExogenousPropertiesRetrieval, RatingsImporter, ContentAnalyzer,
 
-    RecSys, Algorithm, Graph, Similarity, Classifier, Regressor, GraphMetrics,
+    RecSys, Algorithm, Graph, Similarity, Classifier, Regressor, GraphMetrics, FeatureSelectionAlgorithm,
 
     EvalModel, Metric, MetricCalculator, Partitioning, Methodology, Split, PartitionModule
 ]
