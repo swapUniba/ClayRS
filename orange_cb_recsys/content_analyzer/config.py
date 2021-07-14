@@ -90,8 +90,6 @@ class FieldConfig:
 
         for preprocessor in self.__preprocessing:
             preprocessor.lang = self.__lang
-        if self.__content_technique is not None:
-            self.__content_technique.lang = self.__lang
 
     @property
     def memory_interface(self):
