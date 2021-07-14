@@ -612,8 +612,8 @@ class TripartiteGraph(BipartiteGraph):
                 if prop in content.get_exogenous(id_int).value:
                     property_found = True
 
-                    # edge_label = director_0_dbpedia, director_1_datasetlocal
-                    # OR edge_label = director_0, edge_label = director_1 if external id is NaN
+                    # edge_label = director#0#dbpedia, director#1#datasetlocal
+                    # OR edge_label = director#0, edge_label = director#1 if external id is NaN
                     edge_label = "{}#{}".format(prop, str(id_int))
                     if pd.notna(id_ext):
                         edge_label += '#{}'.format(id_ext)
