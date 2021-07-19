@@ -47,12 +47,12 @@ class TestFeatureSelection(TestCase):
 
         self.target_item_nodes = recommendable_items_for_user_4
 
-        # writer is the label that appears less often, so, since the example graph is pretty simple,
+        # producer is the label that appears less often, so, since the example graph is pretty simple,
         # the result of feature selection algorithms should not include it
-        self.less_important_property_label_None_prop = 'writer'
+        self.less_important_property_label_None_prop = 'producer'
 
         # same as above
-        self.less_important_property_label_None_repr = 'writer#0#dbpedia'
+        self.less_important_property_label_None_repr = 'producer#0#dbpedia'
 
     def test_perform_NXTopKPageRank(self):
         result = NXTopKPageRank(2).perform(self.g_None_item_prop, self.target_item_nodes)
