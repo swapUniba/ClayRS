@@ -119,80 +119,80 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
     # INITIAL IDEA ON HOW TO USE ADDITIONAL FILTERS TO RETIREVE CONTENTS
     # def __get_uris_all_contents_with_additional(self, raw_source: RawInformationSource):
-        # prefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-        # prefixes += "PREFIX dbo: <http://dbpedia.org/ontology/> "
-        # prefixes += "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-        # prefixes += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
-        #
-        # all_contents_labels_original_order = [str(raw_content[self.__label_field]) for raw_content in raw_source]
-        # all_contents_labels = sorted(all_contents_labels_original_order)
-        #
-        # values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels) + "} "
-        #
-        # additional_fields_select = [
-        #     f"(str(?{self.__additional_filters[prop]}) as ?str_{self.__additional_filters[prop]})"
-        #     for prop in self.__additional_filters.keys()]
-        #
-        # select_clause = f"SELECT ?contents ?uri {' '.join(additional_fields_select)} "
-        # where_clause = "WHERE { "
-        # optional_clause = "OPTIONAL {"
-        # optional_clause += f"?uri rdf:type {self.__entity_type} . " \
-        #                    "?uri rdfs:label ?label . " \
-        #                    "BIND(str(?label) as ?str_label) " \
-        #                    "FILTER(?contents=?str_label) "
-        #
-        # if self.__additional_filters is not None:
-        #     optional_clause += "OPTIONAL { "
-        #     additional_fields = ' '.join([f"?uri {prop} ?{self.__additional_filters[prop]} ."
-        #                                   for prop in self.__additional_filters.keys()])
-        #     optional_clause += additional_fields + "} "
-        #
-        # optional_clause += "} }"
-        #
-        # query = prefixes + select_clause + where_clause + values + optional_clause
-        #
-        # self.__sparql.setQuery(query)
-        # results = self.__sparql.query().convert()["results"]["bindings"]
-        #
-        # contents_taken = sorted([row['contents']['value'] for row in results])
-        # while len(contents_taken) < len(all_contents_labels):
-        #     contents_missing = all_contents_labels[len(contents_taken):]
-        #     values_incomplete = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in contents_missing) + "} "
-        #     query_incomplete = prefixes + select_clause + where_clause + values_incomplete + optional_clause
-        #
-        #     self.__sparql.setQuery(query_incomplete)
-        #     result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
-        #
-        #     results.extend(result_incomplete)
-        #     contents_taken.extend([row['contents']['value'] for row in result_incomplete])
-        #
-        # if len(results) == 0:
-        #     raise ValueError("No mapping found")
-        #
-        # # Reset the order of contents
-        # results = sorted(results, key=lambda k: all_contents_labels_original_order.index(k['contents']['value']))
-        #
-        # uri_lables_dict = {'uri': [], 'label': []}
-        # uri_lables_dict.update({additional_field: [] for additional_field in self.__additional_filters.values()})
-        # for row in results:
-        #     # We are sure there is always the label, it's how the query is built
-        #     uri_lables_dict['label'].append(row["contents"]["value"])
-        #
-        #     if row.get('uri') is not None:
-        #         uri_lables_dict['uri'].append(row['uri']['value'])
-        #         for additional_field in self.__additional_filters.values():
-        #             if row.get('str_' + additional_field) is not None:
-        #                 uri_lables_dict[additional_field].append(row['str_' + additional_field]['value'])
-        #             else:
-        #                 uri_lables_dict[additional_field].append(np.nan)
-        #     else:
-        #         uri_lables_dict['uri'].append(np.nan)
-        #         for additional_field in self.__additional_filters.values():
-        #             uri_lables_dict[additional_field].append(np.nan)
-        #
-        # results_df = pd.DataFrame.from_dict(uri_lables_dict)
-        #
-        # return results_df
+    # prefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+    # prefixes += "PREFIX dbo: <http://dbpedia.org/ontology/> "
+    # prefixes += "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+    # prefixes += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
+    #
+    # all_contents_labels_original_order = [str(raw_content[self.__label_field]) for raw_content in raw_source]
+    # all_contents_labels = sorted(all_contents_labels_original_order)
+    #
+    # values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels) + "} "
+    #
+    # additional_fields_select = [
+    #     f"(str(?{self.__additional_filters[prop]}) as ?str_{self.__additional_filters[prop]})"
+    #     for prop in self.__additional_filters.keys()]
+    #
+    # select_clause = f"SELECT ?contents ?uri {' '.join(additional_fields_select)} "
+    # where_clause = "WHERE { "
+    # optional_clause = "OPTIONAL {"
+    # optional_clause += f"?uri rdf:type {self.__entity_type} . " \
+    #                    "?uri rdfs:label ?label . " \
+    #                    "BIND(str(?label) as ?str_label) " \
+    #                    "FILTER(?contents=?str_label) "
+    #
+    # if self.__additional_filters is not None:
+    #     optional_clause += "OPTIONAL { "
+    #     additional_fields = ' '.join([f"?uri {prop} ?{self.__additional_filters[prop]} ."
+    #                                   for prop in self.__additional_filters.keys()])
+    #     optional_clause += additional_fields + "} "
+    #
+    # optional_clause += "} }"
+    #
+    # query = prefixes + select_clause + where_clause + values + optional_clause
+    #
+    # self.__sparql.setQuery(query)
+    # results = self.__sparql.query().convert()["results"]["bindings"]
+    #
+    # contents_taken = sorted([row['contents']['value'] for row in results])
+    # while len(contents_taken) < len(all_contents_labels):
+    #     contents_missing = all_contents_labels[len(contents_taken):]
+    #     values_incomplete = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in contents_missing) + "} "
+    #     query_incomplete = prefixes + select_clause + where_clause + values_incomplete + optional_clause
+    #
+    #     self.__sparql.setQuery(query_incomplete)
+    #     result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
+    #
+    #     results.extend(result_incomplete)
+    #     contents_taken.extend([row['contents']['value'] for row in result_incomplete])
+    #
+    # if len(results) == 0:
+    #     raise ValueError("No mapping found")
+    #
+    # # Reset the order of contents
+    # results = sorted(results, key=lambda k: all_contents_labels_original_order.index(k['contents']['value']))
+    #
+    # uri_lables_dict = {'uri': [], 'label': []}
+    # uri_lables_dict.update({additional_field: [] for additional_field in self.__additional_filters.values()})
+    # for row in results:
+    #     # We are sure there is always the label, it's how the query is built
+    #     uri_lables_dict['label'].append(row["contents"]["value"])
+    #
+    #     if row.get('uri') is not None:
+    #         uri_lables_dict['uri'].append(row['uri']['value'])
+    #         for additional_field in self.__additional_filters.values():
+    #             if row.get('str_' + additional_field) is not None:
+    #                 uri_lables_dict[additional_field].append(row['str_' + additional_field]['value'])
+    #             else:
+    #                 uri_lables_dict[additional_field].append(np.nan)
+    #     else:
+    #         uri_lables_dict['uri'].append(np.nan)
+    #         for additional_field in self.__additional_filters.values():
+    #             uri_lables_dict[additional_field].append(np.nan)
+    #
+    # results_df = pd.DataFrame.from_dict(uri_lables_dict)
+    #
+    # return results_df
 
     def __get_uris_all_contents(self, raw_source: RawInformationSource):
         prefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -200,29 +200,29 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         prefixes += "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
         prefixes += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
 
-        all_contents_labels_original_order = [str(raw_content[self.__label_field]) for raw_content in raw_source]
-        all_contents_labels = sorted(all_contents_labels_original_order)
+        all_contents_labels_original = [str(raw_content[self.__label_field]) for raw_content in raw_source]
+        all_contents_labels_set = sorted(set(all_contents_labels_original))
 
-        values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels) + "} "
+        values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels_set) + "} "
 
-        select_clause = f"SELECT ?contents (sample(?_uri) as ?uri)"
+        select_clause = f"SELECT ?contents ?uri "
         where_clause = "WHERE { "
         optional_clause = "OPTIONAL {"
-        optional_clause += f"?_uri rdf:type {self.__entity_type} . " \
-                           "?_uri rdfs:label ?label . " \
+        optional_clause += f"?uri rdf:type {self.__entity_type} . " \
+                           "?uri rdfs:label ?label . " \
                            "BIND(str(?label) as ?str_label) " \
                            "FILTER(?contents=?str_label) "
 
-        optional_clause += "} } GROUP BY ?contents"
+        optional_clause += "} }"
 
         query = prefixes + select_clause + where_clause + values + optional_clause
 
         self.__sparql.setQuery(query)
         results = self.__sparql.query().convert()["results"]["bindings"]
 
-        contents_taken = sorted([row['contents']['value'] for row in results])
-        while len(contents_taken) < len(all_contents_labels):
-            contents_missing = all_contents_labels[len(contents_taken):]
+        contents_taken = sorted(set([row['contents']['value'] for row in results]))
+        while len(contents_taken) < len(all_contents_labels_set):
+            contents_missing = all_contents_labels_set[len(contents_taken):]
             values_incomplete = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in contents_missing) + "} "
             query_incomplete = prefixes + select_clause + where_clause + values_incomplete + optional_clause
 
@@ -230,23 +230,17 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
 
             results.extend(result_incomplete)
-            contents_taken.extend([row['contents']['value'] for row in result_incomplete])
+            contents_taken.extend(set([row['contents']['value'] for row in result_incomplete]))
 
         if len(results) == 0:
             raise ValueError("No mapping found")
 
         # Reset the order of contents
-        results = sorted(results, key=lambda k: all_contents_labels_original_order.index(k['contents']['value']))
-
-        uri_lables_dict = {'uri': [], 'label': []}
-        for row in results:
-            # We are sure there is always the label, it's how the query is built
-            uri_lables_dict['label'].append(row["contents"]["value"])
-
-            if row.get('uri') is not None:
-                uri_lables_dict['uri'].append(row['uri']['value'])
-            else:
-                uri_lables_dict['uri'].append(np.nan)
+        # results = sorted(results, key=lambda k: all_contents_labels_original.index(k['contents']['value']))
+        res = {row["contents"]["value"]: row["uri"]["value"] if row.get("uri") is not None else np.nan
+               for row in results}
+        uri_lables_dict = {'uri': [res[content] for content in all_contents_labels_original],
+                           'label': all_contents_labels_original}
 
         results_df = pd.DataFrame.from_dict(uri_lables_dict)
 
@@ -280,7 +274,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return properties_df
 
-    def __retrieve_properties_contents(self, uris):
+    def __retrieve_properties_contents(self, uris: pd.DataFrame):
         query = "PREFIX dbo: <http://dbpedia.org/ontology/> "
         query += "SELECT ?uri ?property ?o WHERE { "
 
@@ -293,13 +287,24 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         query += "} "
 
         query += "OPTIONAL {?uri ?property ?o . } "
-        query += "}"
+        query += "} ORDER BY ?uri ?property ?o"
 
         self.__sparql.setQuery(query)
-        results = self.__sparql.query().convert()
+        results = self.__sparql.query().convert()["results"]["bindings"]
+
+        offset = 0
+        while len(results) < (len(self.__class_properties) * len(uris)):
+
+            offset += len(results)
+            query_incomplete = query + f"OFFSET {str(offset)} "
+
+            self.__sparql.setQuery(query_incomplete)
+            result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
+
+            results.extend(result_incomplete)
 
         result_dict = {}
-        for row in results["results"]["bindings"]:
+        for row in results:
 
             uri_item = row["uri"]["value"]
             property = row["property"]["value"]
@@ -318,6 +323,9 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                     result_dict[uri_item][property] = [value]
             else:
                 result_dict[uri_item] = {property: [value]}
+
+        index_map = {v: i for i, v in enumerate(list(uris['uri']))}
+        result_dict = dict(sorted(result_dict.items(), key=lambda pair: index_map[pair[0]]))
 
         # if some properties have only one value, then remove the list that wraps them
         # eg. director: [Inarritu] -> director: Inarritu
