@@ -31,7 +31,7 @@ class TestNXFullGraph(TestNXTripartiteGraph):
                                           item_contents_dir=movies_dir,
                                           item_exo_representation="dbpedia",
                                           user_exo_representation='local',
-                                          item_exo_properties=['starring'],
+                                          item_exo_properties=['film director'],
                                           user_exo_properties=['1']  # It's the column in the users .DAT which
                                           # identifies the gender
                                           )

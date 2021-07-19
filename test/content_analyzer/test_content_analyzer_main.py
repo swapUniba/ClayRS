@@ -30,7 +30,7 @@ decode_path = os.path.join(THIS_DIR, '../../datasets/test_decode/')
 class TestContentsProducer(TestCase):
     def test_create_content(self):
         plot_config = FieldConfig(BabelPyEntityLinking())
-        exogenous_config = ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'))
+        exogenous_config = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'))
         content_analyzer_config = ItemAnalyzerConfig(JSONFile(movies_info_reduced), ["imdbID"], "movielens_test")
         content_analyzer_config.add_single_config("Title", plot_config)
         content_analyzer_config.add_single_exogenous(exogenous_config)
@@ -82,8 +82,8 @@ class TestContentsProducer(TestCase):
         # exogenous_representation_list with duplicate ids as argument for the content_analyzer,
         # and when appending an ExogenousConfig to the list but the config id is already in the list
 
-        config_1 = ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'), "test")
-        config_2 = ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'), "test")
+        config_1 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
+        config_2 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
         exogenous_representation_list = [config_1, config_2]
 
         with self.assertRaises(ValueError):

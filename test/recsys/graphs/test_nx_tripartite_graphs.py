@@ -27,7 +27,7 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
 
         self.g: NXTripartiteGraph = NXTripartiteGraph(self.df, movies_dir,
                                                       item_exo_representation="dbpedia",
-                                                      item_exo_properties=['starring'])
+                                                      item_exo_properties=['film director'])
 
     def test_populate_from_dataframe_w_labels(self):
         df_label = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3", "4", "4"],
@@ -40,7 +40,7 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
 
         g: NXTripartiteGraph = NXTripartiteGraph(df_label, movies_dir,
                                                  item_exo_representation="dbpedia",
-                                                 item_exo_properties=['starring'])
+                                                 item_exo_properties=['film director'])
 
         for user, item, score in zip(df_label['from_id'], df_label['to_id'], df_label['score']):
             expected = {'label': 'score_df', 'weight': score}
@@ -145,10 +145,10 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
     def test_add_item_tree(self):
         # Add 'item' tree, so add 'item' node and its properties to the graph
         self.assertFalse(self.g.is_item_node('tt0114709'))
-        self.assertFalse(self.g.is_property_node('http://dbpedia.org/resource/Tom_Hanks'))
+        self.assertFalse(self.g.is_property_node('http://dbpedia.org/resource/John_Lasseter'))
         self.g.add_item_tree('tt0114709')
         self.assertTrue(self.g.is_item_node('tt0114709'))
-        self.assertTrue(self.g.is_property_node('http://dbpedia.org/resource/Tom_Hanks'))
+        self.assertTrue(self.g.is_property_node('http://dbpedia.org/resource/John_Lasseter'))
 
         # Try to add 'user' tree
         self.g.add_user_node('20')

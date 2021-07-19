@@ -174,7 +174,7 @@ class TestPropertiesFromDataset(TestCase):
         # will be discarded
         expected_1 = {"Title": "Jumanji", "Year": "1995", "Rated": "PG", "Released": "15 Dec 1995",
                       "Budget_source": "6.5E7", "wiki_id": "3700174", "runtime (m)": "104.0"}
-        expected_2 = {"Title": "Toy Story", "Budget_source":  "3.0E7"}
+        expected_2 = {"Title": "Inception", "Budget_source":  "1.6E8"}
         mapp = PropertiesFromDataset()
         results = mapp.get_properties(raw_source)
 
@@ -188,7 +188,7 @@ class TestPropertiesFromDataset(TestCase):
         expected_1 = {"Title": "Jumanji", "Year": "1995", "Rated": "PG", "Released": "15 Dec 1995",
                       "Budget_source": "6.5E7", "cinematography": "", "only_local": "", "wiki_id": "3700174",
                       "runtime (m)": "104.0"}
-        expected_2 = {"Title": "Toy Story", "Budget_source": "3.0E7", "only_local": ""}
+        expected_2 = {"Title": "Inception", "Budget_source": "1.6E8", "only_local": ""}
         mapp.mode = 'all'
         results = mapp.get_properties(raw_source)
 
@@ -200,7 +200,7 @@ class TestPropertiesFromDataset(TestCase):
         # field_name_list with 'title' is passed, and mode is 'only_retrieved_evaluated',
         # so only the field 'title' will be retrieved
         expected_1 = {'Title': 'Jumanji'}
-        expected_2 = {'Title': 'Toy Story'}
+        expected_2 = {'Title': 'Inception'}
         mapp = PropertiesFromDataset(field_name_list=['Title'])
         results = mapp.get_properties(raw_source)
 
