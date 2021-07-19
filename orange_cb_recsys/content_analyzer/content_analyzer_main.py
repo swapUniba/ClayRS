@@ -158,25 +158,18 @@ class ContentsProducer:
 
         # will store the contents and is the variable that will be returned by the method
         contents_list = []
-        for i, raw_content in enumerate(self.__config.source):
 
-            # two lists are instantiated, one for the configuration names (given by the user) and one for the exogenous
-            # properties representations. These lists will maintain the data for the content creation. This is done
-            # because otherwise it would be necessary to append directly to the content. But in the Content class
-            # the representations are kept as dataframes and appending to dataframes is computationally heavy
-            exo_config_names = []
-            exo_properties = []
+        # two lists are instantiated, one for the configuration names (given by the user) and one for the exogenous
+        # properties representations. These lists will maintain the data for the content creation. This is done
+        # because otherwise it would be necessary to append directly to the content. But in the Content class
+        # the representations are kept as dataframes and appending to dataframes is computationally heavy
+        exo_config_names = []
+        exo_properties = []
 
-            for exo_config_number, ex_config in enumerate(self.__config.exogenous_representation_list):
-                logger.info("Processing exogenous config %d for content %d" % (exo_config_number + 1, i + 1))
-                lod_properties = ex_config.exogenous_technique.get_properties(raw_content)
-                exo_config_names.append(ex_config.id)
-                exo_properties.append(lod_properties)
-
-            # construct id from the list of the fields that compound id
-            content_id = id_merger(raw_content, self.__config.id)
-            contents_list.append(
-                Content(content_id, exogenous_rep_container=RepresentationContainer(exo_properties, exo_config_names)))
+        for ex_config in self.__config.exogenous_representation_list:
+            lod_properties = ex_config.exogenous_technique.get_properties(self.__config.source)
+            exo_config_names.append(ex_config.id)
+            exo_properties.append(lod_properties)
 
         # this dictionary will store any representation list that will be kept in one of the the index
         # the elements will be in the form:
@@ -184,6 +177,7 @@ class ContentsProducer:
         # the 0 after the Plot field name is used to define the representation number associated with the Plot field
         # since it's possible to store multiple Plot fields in the index
         index_representations_dict = {}
+        field_representations_dict = {}
         for field_name in self.__config.get_field_name_list():
             logger.info("Processing field: %s", field_name)
             # stores the field representation for the field name
@@ -223,7 +217,7 @@ class ContentsProducer:
                     # in order to refer to the representation that will be stored in the index, an IndexField repr will
                     # be added to each content (and it will contain all the necessary information to retrieve the data
                     # from the index)
-                    for i in range(0, len(contents_list)):
+                    for i in range(0, len(list(self.__config.source))):
                         result.append(
                             IndexField(index_field_name, i, memory_interface))
                 else:
@@ -231,14 +225,29 @@ class ContentsProducer:
 
                 results.append(result)
 
-            # each representation is added to the corresponding content
-            for i, content in enumerate(contents_list):
-                content_field_representations = []
-                # retrieves the representations associated with the content
-                for representation in results:
-                    content_field_representations.append(representation[i])
+            field_representations_dict[field_name] = {'results': results, 'ids': field_config_ids}
+
+        # each representation is added to the corresponding content
+        for i, raw_content in enumerate(self.__config.source):
+            # construct id from the list of the fields that compound id
+            content_id = id_merger(raw_content, self.__config.id)
+            content = Content(content_id)
+
+            # retrieves the exogenous representations associated with the content
+            content_exo_representations = [exo_representation[i] for exo_representation in exo_properties]
+            content.append_exogenous_representation(content_exo_representations, exo_config_names)
+
+            # retrieves the field representations associated with the content
+            for field_name in field_representations_dict:
+                content_field_representations = [representation[i] for representation
+                                                 in field_representations_dict[field_name]['results']]
+
+                ids = field_representations_dict[field_name]['ids']
+
                 content.append_field(field_name,
-                                     RepresentationContainer(content_field_representations, field_config_ids))
+                                     RepresentationContainer(content_field_representations, ids))
+
+            contents_list.append(content)
 
         # after the contents creation process, the data to be indexed will be serialized inside of the memory interfaces
         # for each created content, a new entry in each index will be created
