@@ -534,7 +534,7 @@ class TripartiteGraph(BipartiteGraph):
         """
         properties = None
         try:
-            properties = content.get_exogenous(exo_rep).value
+            properties = content.get_exogenous_representation(exo_rep).value
         except KeyError:
             logger.warning("Representation " + exo_rep + " not found for content " + content.content_id)
 
@@ -568,7 +568,7 @@ class TripartiteGraph(BipartiteGraph):
         properties = None
 
         try:
-            properties = content.get_exogenous(exo_rep).value
+            properties = content.get_exogenous_representation(exo_rep).value
         except KeyError:
             logger.warning("Representation " + exo_rep + " not found for content " + content.content_id)
 
@@ -609,7 +609,7 @@ class TripartiteGraph(BipartiteGraph):
         for prop in exo_props:
             property_found = False
             for id_int, id_ext in zip(internal_id_list, external_id_list):
-                if prop in content.get_exogenous(id_int).value:
+                if prop in content.get_exogenous_representation(id_int).value:
                     property_found = True
 
                     # edge_label = director#0#dbpedia, director#1#datasetlocal
@@ -618,7 +618,7 @@ class TripartiteGraph(BipartiteGraph):
                     if pd.notna(id_ext):
                         edge_label += '#{}'.format(id_ext)
 
-                    property_node = content.get_exogenous(id_int).value[prop]
+                    property_node = content.get_exogenous_representation(id_int).value[prop]
 
                     # search preference for the property in the original frame source
                     preference = self.get_preference(prop, row)

@@ -35,16 +35,36 @@ class TestContent(TestCase):
         features_bag = dict()
         features_bag["test_key"] = "test_value"
 
+        # test append_field_repr when field already existent
         content_field_repr_1 = FeaturesBagField(features_bag)
         content_field = RepresentationContainer(content_field_repr_1, "test_1")
         content = Content("001")
         content.append_field("test_field", content_field)
 
+        # test append_field_repr when field not existent
         content_field_repr_2 = FeaturesBagField(features_bag)
         content.append_field_representation("test_field_2", content_field_repr_2, "test_2")
         self.assertEqual(content.get_field_representation("test_field_2", "test_2"), content_field_repr_2)
         self.assertEqual(len(content.get_field("test_field_2")), 1)
 
+        # test append_field_repr with list of repr
+        content_field_repr_3_first = FeaturesBagField(features_bag)
+        content_field_repr_3_second = FeaturesBagField(features_bag)
+        content.append_field_representation("test_field_3", [content_field_repr_3_first, content_field_repr_3_second],
+                                            ["test_3_first", "test_3_second"])
+        self.assertEqual(content.get_field_representation("test_field_3", "test_3_first"), content_field_repr_3_first)
+        self.assertEqual(content.get_field_representation("test_field_3", "test_3_second"), content_field_repr_3_second)
+        self.assertEqual(len(content.get_field("test_field_3")), 2)
+
+        # test append_field_repr with list of repr and no id specified
+        content_field_repr_4_first = FeaturesBagField(features_bag)
+        content_field_repr_4_second = FeaturesBagField(features_bag)
+        content.append_field_representation("test_field_4", [content_field_repr_4_first, content_field_repr_4_second])
+        self.assertEqual(content.get_field_representation("test_field_4", 0), content_field_repr_4_first)
+        self.assertEqual(content.get_field_representation("test_field_4", 1), content_field_repr_4_second)
+        self.assertEqual(len(content.get_field("test_field_4")), 2)
+
+        # test remove
         content.remove_field_representation("test_field_2", "test_2")
         self.assertEqual(len(content.get_field("test_field_2")), 0)
 
@@ -56,13 +76,31 @@ class TestContent(TestCase):
         exo_features["test_key"] = "test_value"
 
         content_exo_repr = PropertiesDict(exo_features)
+        content_exo_repr2 = PropertiesDict({"test_key2": 'test_value2'})
+
         content1 = Content("001")
-        content1.append_exogenous(content_exo_repr, "test_exo")
+        content1.append_exogenous_representation(content_exo_repr, "test_exo")
 
         content2 = Content("002")
-        content2.append_exogenous(content_exo_repr, "test_exo")
+        content2.append_exogenous_representation(content_exo_repr, "test_exo")
         content_exo_repr = PropertiesDict(exo_features)
-        content2.append_exogenous(content_exo_repr, "test_exo2")
-        content2.remove_exogenous("test_exo2")
+        content2.append_exogenous_representation(content_exo_repr, "test_exo2")
+        content2.remove_exogenous_representation("test_exo2")
         self.assertEqual(content1.exogenous_rep_container, content2.exogenous_rep_container)
-        self.assertEqual(content1.get_exogenous("test_exo"), content2.get_exogenous("test_exo"))
+        self.assertEqual(content1.get_exogenous_representation("test_exo"),
+                         content2.get_exogenous_representation("test_exo"))
+
+        # test append list of representations
+        content3 = Content("003")
+
+        content3.append_exogenous_representation([content_exo_repr, content_exo_repr2], ["id1", "id2"])
+        self.assertEqual(len(content3.exogenous_rep_container), 2)
+        self.assertEqual(content3.get_exogenous_representation("id1").value, content_exo_repr.value)
+        self.assertEqual(content3.get_exogenous_representation("id2").value, content_exo_repr2.value)
+
+        # test append list of representations without id
+        content4 = Content("004")
+        content4.append_exogenous_representation([content_exo_repr, content_exo_repr2])
+        self.assertEqual(len(content3.exogenous_rep_container), 2)
+        self.assertEqual(content3.get_exogenous_representation(0).value, content_exo_repr.value)
+        self.assertEqual(content3.get_exogenous_representation(1).value, content_exo_repr2.value)

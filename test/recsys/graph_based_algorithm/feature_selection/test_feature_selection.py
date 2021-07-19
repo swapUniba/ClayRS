@@ -38,7 +38,7 @@ class TestFeatureSelection(TestCase):
                                                          item_exo_representation=None,
                                                          user_exo_representation='local',
                                                          item_exo_properties=['starring', 'editing', 'producer',
-                                                                              'production_company'],
+                                                                              'writer'],
                                                          user_exo_properties=['1']
                                                          )
 
@@ -47,12 +47,12 @@ class TestFeatureSelection(TestCase):
 
         self.target_item_nodes = recommendable_items_for_user_4
 
-        # production_company is the label that appears less often, so, since the example graph is pretty simple,
+        # producer is the label that appears less often, so, since the example graph is pretty simple,
         # the result of feature selection algorithms should not include it
-        self.less_important_property_label_None_prop = 'production_company'
+        self.less_important_property_label_None_prop = 'producer'
 
         # same as above
-        self.less_important_property_label_None_repr = 'production_comapny#0dbpedia'
+        self.less_important_property_label_None_repr = 'producer#0#dbpedia'
 
     def test_perform_NXTopKPageRank(self):
         result = NXTopKPageRank(2).perform(self.g_None_item_prop, self.target_item_nodes)

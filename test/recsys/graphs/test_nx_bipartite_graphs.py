@@ -44,12 +44,19 @@ class TestNXBipartiteGraph(TestCase):
         self.g.add_user_node('u0')
         self.assertTrue(self.g.is_user_node('u0'))
 
+        # Add a list of 'user' nodes
+        list_nodes = ['u1_list', 'u2_list', 'u3_list']
+        self.g.add_user_node(list_nodes)
+        for n in list_nodes:
+            self.assertTrue(self.g.is_user_node(n))
+
         # Add 'user' node but it already exists as
         # an 'item' node, so it exists as both
-        self.assertTrue(self.g.is_item_node('i1'))
-        self.g.add_user_node('i1')
-        self.assertTrue(self.g.is_user_node('i1'))
-        self.assertTrue(self.g.is_item_node('i1'))
+        self.g.add_item_node('i0')
+        self.assertTrue(self.g.is_item_node('i0'))
+        self.g.add_user_node('i0')
+        self.assertTrue(self.g.is_user_node('i0'))
+        self.assertTrue(self.g.is_item_node('i0'))
 
     def test_add_item(self):
         # Add 'item' node
@@ -57,12 +64,19 @@ class TestNXBipartiteGraph(TestCase):
         self.g.add_item_node('i0')
         self.assertTrue(self.g.is_item_node('i0'))
 
+        # Add a list of 'item' nodes
+        list_nodes = ['i1_list', 'i2_list', 'i3_list']
+        self.g.add_item_node(list_nodes)
+        for n in list_nodes:
+            self.assertTrue(self.g.is_item_node(n))
+
         # Add 'item' node but it already exists as
         # a 'user' node, so it exists as both
-        self.assertTrue(self.g.is_user_node('u1'))
-        self.g.add_item_node('u1')
-        self.assertTrue(self.g.is_item_node('u1'))
-        self.assertTrue(self.g.is_user_node('u1'))
+        self.g.add_user_node('u0')
+        self.assertTrue(self.g.is_user_node('u0'))
+        self.g.add_item_node('u0')
+        self.assertTrue(self.g.is_item_node('u0'))
+        self.assertTrue(self.g.is_user_node('u0'))
 
     def test_add_link_user_item(self):
         # Link existent 'user' node to an existent 'item' node
@@ -74,6 +88,17 @@ class TestNXBipartiteGraph(TestCase):
         result = self.g.get_link_data('u0', 'Tenet')
         self.assertEqual(expected, result)
 
+        # Link existent 'user' node to a list of existent 'item' node
+        self.g.add_user_node('u_list')
+        items_list = ['i1_list', 'i2_list', 'i3_list']
+        self.g.add_item_node(items_list)
+        self.g.add_link('u_list', items_list)
+        for item in items_list:
+            result = self.g.get_link_data('u_list', item)
+            expected = {'label': 'score', 'weight': 0.5}
+
+            self.assertEqual(expected, result)
+
         # Link existent 'item' node to an existent 'user' node
         self.g.add_item_node('Tenet')
         self.g.add_user_node('1')
@@ -82,6 +107,17 @@ class TestNXBipartiteGraph(TestCase):
         self.assertFalse(self.g.is_user_node('Tenet'))
         self.assertFalse(self.g.is_item_node('1'))
         self.assertIsNotNone(self.g.get_link_data('Tenet', '1'))
+
+        # Link existent 'item' node to a list of existent 'user' node
+        self.g.add_item_node('i_list')
+        users_list = ['u1_list', 'u2_list', 'u3_list']
+        self.g.add_user_node(users_list)
+        self.g.add_link('i_list', users_list)
+        for user in users_list:
+            result = self.g.get_link_data('i_list', user)
+            expected = {'label': 'score', 'weight': 0.5}
+
+            self.assertEqual(expected, result)
 
         # Try to Link non-existent 'user' node and non-existent 'item' node,
         # so no link is created

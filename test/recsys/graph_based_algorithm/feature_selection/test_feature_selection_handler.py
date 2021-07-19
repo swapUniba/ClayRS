@@ -55,7 +55,7 @@ class TestFeatureSelectionHandler(TestCase):
                                                          item_exo_representation=None,
                                                          user_exo_representation='local',
                                                          item_exo_properties=['starring', 'editing', 'producer',
-                                                                              'production_company'],
+                                                                              'writer'],
                                                          user_exo_properties=['1']
                                                          )
 
@@ -92,7 +92,7 @@ class TestFeatureSelectionHandler(TestCase):
         labels = FeatureSelectionHandler(NXTopKPageRank()).\
             _get_property_labels_info(self.g_None_item_repr, set(self.df['to_id']))
 
-        self.assertEqual(labels, ['starring', 'editing', 'producer', 'production_company'])
+        self.assertEqual(set(labels), set(self.g_None_item_repr.get_item_exogenous_properties()))
 
     def test_special_cases_feature_selection_handler(self):
         # algorithm failed to converge both for items and users

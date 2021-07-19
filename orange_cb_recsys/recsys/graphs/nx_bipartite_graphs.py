@@ -1,4 +1,4 @@
-from typing import List, Set, Iterable
+from typing import List, Set, Iterable, Union
 from orange_cb_recsys.recsys.graphs.graph import BipartiteGraph
 import pandas as pd
 import networkx as nx
@@ -56,7 +56,7 @@ class NXBipartiteGraph(BipartiteGraph):
         """
         return set(node for node in self._graph.nodes if isinstance(node, ItemNode))
 
-    def add_user_node(self, node: object):
+    def add_user_node(self, node: Union[object, List[object]]):
         """
         Adds a 'user' node to the graph.
         If the node is not-existent then it is created and then added to the graph.
@@ -64,9 +64,13 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node (object): node that needs to be added to the graph as a from node
         """
-        self._graph.add_node(UserNode(node))
+        if not isinstance(node, list):
+            node = [node]
 
-    def add_item_node(self, node: object):
+        for n in node:
+            self._graph.add_node(UserNode(n))
+
+    def add_item_node(self, node: Union[object, List[object]]):
         """
         Creates a 'item' node and adds it to the graph
         If the node is not-existent then it is created and then added to the graph.
@@ -74,9 +78,13 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node (object): node that needs to be added to the graph as a 'to' node
         """
-        self._graph.add_node(ItemNode(node))
+        if not isinstance(node, list):
+            node = [node]
 
-    def add_link(self, start_node: object, final_node: object, weight: float = None, label: str = None):
+        for n in node:
+            self._graph.add_node(ItemNode(n))
+
+    def add_link(self, start_node: object, final_node: Union[object, List[object]], weight: float = None, label: str = None):
         """
         Creates a weighted link connecting the 'start_node' to the 'final_node'
         Both nodes must be present in the graph before calling this method
@@ -96,19 +104,24 @@ class NXBipartiteGraph(BipartiteGraph):
         if weight is None:
             weight = self.get_default_weight()
 
-        if self.node_exists(start_node) and self.node_exists(final_node):
+        if not isinstance(final_node, list):
+            final_node = [final_node]
 
-            # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
-            # we get its instance and link the start node to the instance, otherwise networkx
-            # links 'start' node to the string 'i1' and not the ItemNode!!
-            nodes_list = list(self._graph.nodes)
-            index_first = nodes_list.index(start_node)
-            index_second = nodes_list.index(final_node)
+        for final in final_node:
 
-            self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
-        else:
-            logger.warning("One of the nodes or both don't exist in the graph! Add them before "
-                           "calling this method.")
+            if self.node_exists(start_node) and self.node_exists(final):
+
+                # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
+                # we get its instance and link the start node to the instance, otherwise networkx
+                # links 'start' node to the string 'i1' and not the ItemNode!!
+                nodes_list = list(self._graph.nodes)
+                index_first = nodes_list.index(start_node)
+                index_second = nodes_list.index(final)
+
+                self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
+            else:
+                logger.warning("One of the nodes or both don't exist in the graph! Add them before "
+                               "calling this method.")
 
     def remove_link(self, start_node: object, final_node: object):
         try:

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Union
+from typing import Dict, Union, List
 import numpy as np
 import json
 
@@ -16,8 +16,12 @@ class FieldRepresentation(ABC):
     def __init__(self):
         pass
 
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
+
+    def __repr__(self):
+        return str(self)
 
     @property
     @abstractmethod
@@ -152,6 +156,13 @@ class ExogenousPropertiesRepresentation(ABC):
     def __init__(self):
         pass
 
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return str(self)
+
     @property
     @abstractmethod
     def value(self):
@@ -261,17 +272,30 @@ class Content:
         """
         self.__field_dict.pop(field_name)
 
-    def append_field_representation(self, field_name: str, representation: FieldRepresentation,
-                                    representation_id: str = None):
+    def append_field_representation(self, field_name: str,
+                                    representation: Union[List[FieldRepresentation], FieldRepresentation],
+                                    representation_id: Union[List[str], str] = None):
         """
-        Adds the given representation to the specific field_name with an external_id corresponding to the representation
-        id (if passed). If the field name is not in the content, it will be added.
+        Adds the given representation(s) to the specific field_name with an external_id corresponding to
+        the representation id(s) (if passed). If the field name is not in the content, it will be added.
+
+        It can be passed a single representation and a single id, or a list of representations and a corresponding
+        list of ids. In this case the two lists must be of the same length and ids are linked to representations
+        by position.
+        EXAMPLE:
+            representation = [rep1, rep2, rep3]
+            representation_id = [id_rep1, id_rep2, id_rep3]
 
         Args:
             field_name (str): field_name to which the specific representation will be added
-            representation (FieldRepresentation): field representation's content
-            representation_id (str): name of the field representation
+            representation (Union[List[FieldRepresentation], FieldRepresentation]): single representation or a list of
+                representations for the content
+            representation_id (Union[List[str], str]): single name of the field representation or a list of names for
+                the field representations.
         """
+        if isinstance(representation, list) and representation_id is None:
+            representation_id = [None for _ in range(len(representation))]
+
         if field_name not in self.__field_dict.keys():
             self.__field_dict[field_name] = RepresentationContainer()
         self.__field_dict[field_name].append(representation, representation_id)
@@ -300,19 +324,32 @@ class Content:
         """
         self.__field_dict[field_name].pop(representation_id)
 
-    def append_exogenous(self, exogenous_properties: ExogenousPropertiesRepresentation, exo_name: str = None):
+    def append_exogenous_representation(self, exogenous_properties: Union[List[ExogenousPropertiesRepresentation],
+                                                                          ExogenousPropertiesRepresentation],
+                                        exo_name: Union[List[str], str] = None):
         """
-        Sets a specific exogenous representation for the content. If an exo_name is defined, it will be added
-        as external_id to the representation
+        Sets a specific or multiple exogenous representations for the content. If an exo_name or a list of exo name is
+        defined, it will be added as external_id to the representation(s)
+
+        It can be passed a single representation and a single exo_name, or a list of representations and a corresponding
+        list of exo_names. In this case the two lists must be of the same length and exo_names are linked to
+        representations by position.
+        EXAMPLE:
+            exogenous_properties = [rep1, rep2, rep3]
+           exo_name = [exo_name_rep1, exo_name_rep2, exo_name_rep3]
 
         Args:
-            exo_name (str): name of the representation, it can be used to refer to the representation
-            exogenous_properties (ExogenousPropertiesRepresentation): represents the data in the
-                exogenous representation
+            exogenous_properties (Union[List[ExogenousPropertiesRepresentation], ExogenousPropertiesRepresentation]):
+                single exogenous representation or a list of exogenous representations for the content
+            exo_name (Union[List[str], str]): single name of the exogenous representation or a list of names for
+                the exogenous representations.
         """
+        if isinstance(exogenous_properties, list) and exo_name is None:
+            exo_name = [None for _ in range(len(exogenous_properties))]
+
         self.__exogenous_rep_container.append(exogenous_properties, exo_name)
 
-    def get_exogenous(self, exo_name: Union[int, str]) -> ExogenousPropertiesRepresentation:
+    def get_exogenous_representation(self, exo_name: Union[int, str]) -> ExogenousPropertiesRepresentation:
         """
         Getter for the ExogenousPropertiesRepresentation of a specific exogenous representation name
 
@@ -321,7 +358,7 @@ class Content:
         """
         return self.__exogenous_rep_container[exo_name]
 
-    def remove_exogenous(self, exo_name: Union[str, int]):
+    def remove_exogenous_representation(self, exo_name: Union[str, int]):
         """
         Removes the exogenous representation named exo_name from the exogenous representation container
 
