@@ -55,7 +55,7 @@ class NXFullGraph(NXTripartiteGraph, FullGraph):
                            item_exo_properties=item_exo_properties, item_exo_representation=item_exo_representation,
                            default_score_label=default_score_label, default_weight=default_not_rated_value)
 
-    def add_link(self, start_node: object, final_node: object,
+    def add_link(self, start_node: object, final_node: Union[object, List[object]],
                  weight: float = None, label: str = None):
         """
         Creates a weighted link connecting the 'start_node' to the 'final_node'
@@ -75,18 +75,23 @@ class NXFullGraph(NXTripartiteGraph, FullGraph):
         if label is None:
             label = self.get_default_score_label()
 
-        if self.node_exists(start_node) and self.node_exists(final_node):
-            # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
-            # we get its instance and link the start node to the instance, otherwise networkx
-            # links 'start' node to the string 'i1' and not the ItemNode!!
-            nodes_list = list(self._graph.nodes)
-            index_first = nodes_list.index(start_node)
-            index_second = nodes_list.index(final_node)
+        if not isinstance(final_node, list):
+            final_node = [final_node]
 
-            self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
-        else:
-            logger.warning("One of the nodes or both don't exist in the graph! Add them before "
-                           "calling this method.")
+        for final in final_node:
+
+            if self.node_exists(start_node) and self.node_exists(final):
+                # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
+                # we get its instance and link the start node to the instance, otherwise networkx
+                # links 'start' node to the string 'i1' and not the ItemNode!!
+                nodes_list = list(self._graph.nodes)
+                index_first = nodes_list.index(start_node)
+                index_second = nodes_list.index(final)
+
+                self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
+            else:
+                logger.warning("One of the nodes or both don't exist in the graph! Add them before "
+                               "calling this method.")
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

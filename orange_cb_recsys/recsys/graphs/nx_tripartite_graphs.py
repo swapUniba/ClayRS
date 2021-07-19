@@ -59,7 +59,7 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
         """
         return set(node for node in self._graph.nodes if isinstance(node, PropertyNode))
 
-    def add_property_node(self, node: object):
+    def add_property_node(self, node: Union[object, List[object]]):
         """
         Creates a 'property' node and adds it to the graph
         If the node is not-existent then it is created and then added to the graph.
@@ -67,9 +67,13 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
         Args:
             node (object): node that needs to be added to the graph as a 'property' node
         """
-        self._graph.add_node(PropertyNode(node))
+        if not isinstance(node, list):
+            node = [node]
 
-    def add_link(self, start_node: object, final_node: object,
+        for n in node:
+            self._graph.add_node(PropertyNode(n))
+
+    def add_link(self, start_node: object, final_node: Union[object, List[object]],
                  weight: float = None, label: str = None):
         """
         Creates a weighted link connecting the 'start_node' to the 'final_node'
@@ -90,22 +94,26 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
         if label is None:
             label = self.get_default_score_label()
 
-        if self.__is_not_valid_link(start_node, final_node):
-            logger.warning("Property nodes can only be linked to item nodes! Use a Full Graph instead")
-            return
+        if not isinstance(final_node, list):
+            final_node = [final_node]
 
-        if self.node_exists(start_node) and self.node_exists(final_node):
-            # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
-            # we get its instance and link the start node to the instance, otherwise networkx
-            # links 'start' node to the string 'i1' and not the ItemNode!!
-            nodes_list = list(self._graph.nodes)
-            index_first = nodes_list.index(start_node)
-            index_second = nodes_list.index(final_node)
+        for final in final_node:
+            if self.__is_not_valid_link(start_node, final):
+                logger.warning("Property nodes can only be linked to item nodes! Use a Full Graph instead")
+                return
 
-            self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
-        else:
-            logger.warning("One of the nodes or both don't exist in the graph! Add them before "
-                           "calling this method.")
+            if self.node_exists(start_node) and self.node_exists(final):
+                # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
+                # we get its instance and link the start node to the instance, otherwise networkx
+                # links 'start' node to the string 'i1' and not the ItemNode!!
+                nodes_list = list(self._graph.nodes)
+                index_first = nodes_list.index(start_node)
+                index_second = nodes_list.index(final)
+
+                self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
+            else:
+                logger.warning("One of the nodes or both don't exist in the graph! Add them before "
+                               "calling this method.")
 
     def __is_not_valid_link(self, start_node: object, final_node: object):
         return (self.is_property_node(final_node) and not self.is_item_node(start_node)) or \
