@@ -221,13 +221,16 @@ class IndexInterface(TextInterface):
                 doc_num = searcher.search(query).docnum(0)
             elif isinstance(content_id, int):
                 doc_num = content_id
-            # retrieves the frequency vector (used for tf)
-            list_with_freq = [term_with_freq for term_with_freq
-                              in searcher.vector(doc_num, field_name).items_as("frequency")]
-            for term, freq in list_with_freq:
-                tf = 1 + math.log10(freq)
-                idf = math.log10(searcher.doc_count()/searcher.doc_frequency(field_name, term))
-                words_bag[term] = tf*idf
+
+            # if the document has the field == "" (length == 0) then the bag of word is empty
+            if len(searcher.ixreader.stored_fields(doc_num)[field_name]) > 0:
+                # retrieves the frequency vector (used for tf)
+                list_with_freq = [term_with_freq for term_with_freq
+                                  in searcher.vector(doc_num, field_name).items_as("frequency")]
+                for term, freq in list_with_freq:
+                    tf = 1 + math.log10(freq)
+                    idf = math.log10(searcher.doc_count()/searcher.doc_frequency(field_name, term))
+                    words_bag[term] = tf*idf
         return words_bag
 
 

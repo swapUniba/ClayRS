@@ -379,7 +379,7 @@ class Content:
         if len(self.__exogenous_rep_container) != 0:
             exo_string += "%s\n" % self.__exogenous_rep_container
         else:
-            exo_string = "\nNo representation found for the Content!\n"
+            exo_string += "\nNo representation found for the Content!\n"
 
         if len(self.__field_dict.items()) != 0:
             field_string = ''
