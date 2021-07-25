@@ -170,7 +170,7 @@ class PrecisionAtK(Precision):
         return self.__k
 
     def __str__(self):
-        return "Precision@{}".format(self.k)
+        return "Precision@{} - {}".format(self.k, self.sys_avg)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
         return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.k)
@@ -188,7 +188,7 @@ class RPrecision(Precision):
     """
 
     def __str__(self):
-        return "R-Precision"
+        return "R-Precision - {}".format(self.sys_avg)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
         if self.relevant_threshold is None:
@@ -212,7 +212,7 @@ class Recall(ClassificationMetric):
     """
 
     def __str__(self):
-        return "Recall"
+        return "Recall - {}".format(self.sys_avg)
 
     def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
         return self._perform_division(true_positive, (true_positive + false_negative))
@@ -240,7 +240,7 @@ class RecallAtK(Recall):
         return self.__k
 
     def __str__(self):
-        return "Recall@{}".format(self.k)
+        return "Recall@{} - ".format(self.k, self.sys_avg)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
         return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.__k)
@@ -267,7 +267,7 @@ class FMeasure(ClassificationMetric):
         return self.__beta
 
     def __str__(self):
-        return "F{}".format(self.beta)
+        return "F{} - {}".format(self.beta, self.sys_avg)
 
     def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
         prec = Precision()._calc_metric(true_positive, false_positive, true_negative, false_negative)
@@ -306,7 +306,7 @@ class FMeasureAtK(FMeasure):
         return self.__k
 
     def __str__(self):
-        return "F{}@{}".format(self.beta, self.k)
+        return "F{}@{} - {}".format(self.beta, self.k, self.sys_avg)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
         return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.k)
