@@ -1,11 +1,10 @@
-import xml
 from abc import ABC, abstractmethod
-from xml.dom.minidom import Document
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Union
-from SPARQLWrapper import SPARQLWrapper, JSON, TSV, CSV, XML, POST, POSTDIRECTLY, JSONLD
+from typing import List
+from SPARQLWrapper import SPARQLWrapper, JSON, POST, POSTDIRECTLY
+
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 
 from orange_cb_recsys.content_analyzer.content_representation.content import PropertiesDict
@@ -101,6 +100,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         self.__sparql = SPARQLWrapper("http://factforge.net/repositories/ff-news")
         self.__sparql.setMethod(POST)
+        self.__sparql.setRequestMethod(POSTDIRECTLY)
         self.__sparql.setReturnFormat(JSON)
 
         self.__class_properties = self.__get_properties_class()
@@ -237,8 +237,8 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         # Reset the order of contents
         # results = sorted(results, key=lambda k: all_contents_labels_original.index(k['contents']['value']))
-        res = {content: row["uri"]["value"] if row.get("uri") is not None else np.nan
-               for content, row in zip(all_contents_labels_set, results)}
+        res = {row["contents"]["value"]: row["uri"]["value"] if row.get("uri") is not None else np.nan
+               for row in results}
         uri_lables_dict = {'uri': [res[content] for content in all_contents_labels_original],
                            'label': all_contents_labels_original}
 
@@ -294,7 +294,6 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         offset = 0
         while len(results) < (len(self.__class_properties) * len(uris)):
-
             offset += len(results)
             query_incomplete = query + f"OFFSET {str(offset)} "
 

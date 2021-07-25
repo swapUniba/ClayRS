@@ -165,6 +165,10 @@ class TestDBPediaMappingTechnique(TestCase):
         # prop2 = results[1]
         # self.assertEqual(prop2.value[uri_prop_director], "http://dbpedia.org/resource/John_Lasseter")
 
+    def test_entity_doesnt_exists(self):
+        with self.assertRaises(ValueError):
+            DBPediaMappingTechnique("dbo:not_exists", "Title")
+
 
 class TestPropertiesFromDataset(TestCase):
     def test_get_properties(self):
