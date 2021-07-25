@@ -237,8 +237,8 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         # Reset the order of contents
         # results = sorted(results, key=lambda k: all_contents_labels_original.index(k['contents']['value']))
-        res = {row["contents"]["value"]: row["uri"]["value"] if row.get("uri") is not None else np.nan
-               for row in results}
+        res = {content: row["uri"]["value"] if row.get("uri") is not None else np.nan
+               for content, row in zip(all_contents_labels_set, results)}
         uri_lables_dict = {'uri': [res[content] for content in all_contents_labels_original],
                            'label': all_contents_labels_original}
 
