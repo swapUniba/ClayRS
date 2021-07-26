@@ -579,7 +579,7 @@ class TripartiteGraph(BipartiteGraph):
                 self.add_link(node, properties[prop_key], preference, prop_key)
 
             if len(properties) == 0:
-                logger.warning("The chosen representation doesn't have any property!")
+                logger.warning("Representation {} empty for content {}".format(exo_rep, content.content_id))
 
     def _prop_in_all_rep(self, content, node, exo_props, row):
         """
