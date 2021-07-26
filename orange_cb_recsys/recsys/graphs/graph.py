@@ -380,7 +380,7 @@ class BipartiteGraph(Graph, GraphMetrics):
                     label = row['label']
                 else:
                     label = self.get_default_score_label()
-                self.add_link(row['from_id'], row['to_id'], row['score'],
+                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
                               label=label)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
@@ -449,7 +449,7 @@ class TripartiteGraph(BipartiteGraph):
                 else:
                     label = self.get_default_score_label()
 
-                self.add_link(row['from_id'], row['to_id'], row['score'],
+                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
                               label=label)
 
         else:
@@ -493,21 +493,21 @@ class TripartiteGraph(BipartiteGraph):
             # Provided representation and properties
             if self.get_item_exogenous_representation() is not None and \
                     self.get_item_exogenous_properties() is not None:
-                self._prop_by_rep(content, row['to_id'],
+                self._prop_by_rep(content, ItemNode(row['to_id']),
                                   self.get_item_exogenous_representation(), self.get_item_exogenous_properties(),
                                   row)
 
             # Provided only the representation
             elif self.get_item_exogenous_representation() is not None and \
                     self.get_item_exogenous_properties() is None:
-                self._all_prop_in_rep(content, row['to_id'],
+                self._all_prop_in_rep(content, ItemNode(row['to_id']),
                                       self.get_item_exogenous_representation(),
                                       row)
 
             # Provided only the properties
             elif self.get_item_exogenous_representation() is None and \
                     self.get_item_exogenous_properties() is not None:
-                self._prop_in_all_rep(content, row['to_id'],
+                self._prop_in_all_rep(content, ItemNode(row['to_id']),
                                       self.get_item_exogenous_properties(),
                                       row)
 
@@ -809,7 +809,7 @@ class FullGraph(TripartiteGraph):
                 else:
                     label = self.get_default_score_label()
 
-                self.add_link(row['from_id'], row['to_id'], row['score'],
+                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
                               label=label)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
@@ -853,21 +853,21 @@ class FullGraph(TripartiteGraph):
             # Provided representation and properties
             if self.get_user_exogenous_representation() is not None and \
                     self.get_user_exogenous_properties() is not None:
-                self._prop_by_rep(content, row['from_id'],
+                self._prop_by_rep(content, UserNode(row['from_id']),
                                   self.get_user_exogenous_representation(), self.get_user_exogenous_properties(),
                                   row)
 
             # Provided only the representation
             elif self.get_user_exogenous_representation() is not None and \
                     self.get_user_exogenous_properties() is None:
-                self._all_prop_in_rep(content, row['from_id'],
+                self._all_prop_in_rep(content, UserNode(row['from_id']),
                                       self.get_user_exogenous_representation(),
                                       row)
 
             # Provided only the properties
             elif self.get_user_exogenous_representation() is None and \
                     self.get_user_exogenous_properties() is not None:
-                self._prop_in_all_rep(content, row['from_id'],
+                self._prop_in_all_rep(content, UserNode(row['from_id']),
                                       self.get_user_exogenous_properties(),
                                       row)
 
