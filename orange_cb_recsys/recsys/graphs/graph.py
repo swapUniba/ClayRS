@@ -371,7 +371,7 @@ class BipartiteGraph(Graph, GraphMetrics):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for idx, row in progbar(source_frame.iterrows(),
+            for idx, row in progbar(source_frame.to_dict('records'),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
@@ -431,7 +431,7 @@ class TripartiteGraph(BipartiteGraph):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for idx, row in progbar(source_frame.iterrows(),
+            for idx, row in progbar(source_frame.to_dict('records'),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
@@ -545,7 +545,8 @@ class TripartiteGraph(BipartiteGraph):
                     self.add_property_node(properties[prop])
                     self.add_link(node, properties[prop], preference, prop)
                 else:
-                    logger.warning("Property " + prop + " not found for content " + content.content_id)
+                    # logger.warning("Property " + prop + " not found for content " + content.content_id)
+                    pass
 
     def _all_prop_in_rep(self, content, node, exo_rep, row):
         """
@@ -578,8 +579,8 @@ class TripartiteGraph(BipartiteGraph):
                 self.add_property_node(properties[prop_key])
                 self.add_link(node, properties[prop_key], preference, prop_key)
 
-            if len(properties) == 0:
-                logger.warning("The chosen representation doesn't have any property!")
+            # if len(properties) == 0:
+            #     logger.warning("The chosen representation doesn't have any property!")
 
     def _prop_in_all_rep(self, content, node, exo_props, row):
         """
@@ -607,10 +608,10 @@ class TripartiteGraph(BipartiteGraph):
         internal_id_list = content.exogenous_rep_container.get_internal_index()
         external_id_list = content.exogenous_rep_container.get_external_index()
         for prop in exo_props:
-            property_found = False
+            # property_found = False
             for id_int, id_ext in zip(internal_id_list, external_id_list):
                 if prop in content.get_exogenous_representation(id_int).value:
-                    property_found = True
+                    # property_found = True
 
                     # edge_label = director#0#dbpedia, director#1#datasetlocal
                     # OR edge_label = director#0, edge_label = director#1 if external id is NaN
@@ -626,8 +627,8 @@ class TripartiteGraph(BipartiteGraph):
                     self.add_property_node(property_node)
                     self.add_link(node, property_node, preference, edge_label)
 
-            if not property_found:
-                logger.warning("Property {} not found in any representation of content {}".format(prop, content.content_id))
+            # if not property_found:
+            #     logger.warning("Property {} not found in any representation of content {}".format(prop, content.content_id))
 
     def get_item_exogenous_representation(self) -> str:
         """
@@ -784,7 +785,7 @@ class FullGraph(TripartiteGraph):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for idx, row in progbar(source_frame.iterrows(),
+            for row in progbar(source_frame.to_dict('records'),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
 
