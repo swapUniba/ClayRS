@@ -371,7 +371,7 @@ class BipartiteGraph(Graph, GraphMetrics):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for idx, row in progbar(source_frame.to_dict('records'),
+            for row in progbar(source_frame.to_dict('records'),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
@@ -431,7 +431,7 @@ class TripartiteGraph(BipartiteGraph):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for idx, row in progbar(source_frame.to_dict('records'),
+            for row in progbar(source_frame.to_dict('records'),
                                     max_value=source_frame.__len__(),
                                     prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
