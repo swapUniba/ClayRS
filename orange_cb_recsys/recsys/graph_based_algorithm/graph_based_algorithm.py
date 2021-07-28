@@ -4,7 +4,7 @@ from typing import Dict, List
 from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 
-from orange_cb_recsys.recsys.graphs.graph import FullGraph
+from orange_cb_recsys.recsys.graphs.graph import FullGraph, UserNode
 
 import pandas as pd
 
@@ -105,10 +105,10 @@ class GraphBasedAlgorithm(Algorithm):
             profile (dict): dictionary with item successor nodes to the user as keys and weights of the edge
                 connecting them in the graph as values
         """
-        succ = graph.get_successors(user_id)
+        succ = graph.get_successors(UserNode(user_id))
         profile = {}
         for a in succ:
-            link_data = graph.get_link_data(user_id, a)
+            link_data = graph.get_link_data(UserNode(user_id), a)
             profile[a] = link_data['weight']
         return profile  # {t: w for (f, t, w) in adj}
 
