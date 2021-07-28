@@ -195,10 +195,11 @@ class TestRun(TestCase):
             ratings.columns = ['from_id', 'to_id', 'score', 'timestamp']
             ratings_path = os.path.join(multiple_params_dir, "ratings.csv")
             ratings.to_csv(ratings_path, index=False)
+            print(root_path)
 
             recsys_config_dict_multiple_params = {
-                "users_directory": os.path.join(THIS_DIR, '../contents/users_codified'),
-                "items_directory": os.path.join(THIS_DIR, '../contents/items_codified'),
+                "users_directory": os.path.join(root_path, 'contents/users_codified'),
+                "items_directory": os.path.join(root_path, 'contents/movies_codified'),
                 "rating_frame": ratings_path,
                 "algorithm": {
                     "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
