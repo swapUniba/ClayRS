@@ -1,4 +1,6 @@
 import os
+import yaml
+import json
 import pandas as pd
 from typing import Dict, Union, Type, Callable
 from abc import ABC, abstractmethod
@@ -143,7 +145,8 @@ class Run(ABC):
                             parameter_signature = class_signature[parameter]
                             if (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == pd.DataFrame) or \
                                     (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == pd.DataFrame):
-                                technique[parameter] = pd.read_csv(technique[parameter])
+                                technique[parameter] = pd.read_csv(
+                                    technique[parameter], dtype={"from_id": str, "to_id": str, "score": float})
 
                         # recursively calls dict_detector to check if the value for the parameter is
                         # an object to instantiate
@@ -238,7 +241,8 @@ class Run(ABC):
                             parameter_signature = signature(class_or_function).parameters[config_line]
                             if (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == pd.DataFrame) or \
                                     (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == pd.DataFrame):
-                                config_dict[config_line] = pd.read_csv(config_dict[config_line])
+                                config_dict[config_line] = pd.read_csv(
+                                    config_dict[config_line], dtype={"from_id": str, "to_id": str, "score": float})
 
                         parameters[config_line] = config_dict[config_line]
 
@@ -683,7 +687,7 @@ def __setup_implemented_modules_dictionary():
     return implemented_modules
 
 
-def script_run(config_list_dict: Union[dict, list]):
+def handle_script_contents(config_list_dict: Union[dict, list]):
     """
     Method that controls the entire process of script running. It checks that the loaded contents from a
     script match the required prerequisites. The data must contain dictionaries and each dictionary must have a "module"
@@ -719,3 +723,42 @@ def script_run(config_list_dict: Union[dict, list]):
                                                "of the following: " + str(implemented_modules.keys()))
     except (ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, FileNotFoundError) as e:
         raise e
+
+
+def script_run(config_path: str):
+    """
+    Method used to elaborate a script file (either in .yml or .json) which will then execute the instructions
+    declared in the script file. This allows to use a configuration file containing the instructions on what to do
+    rather than using the API directly.
+
+    The file should contain a list of dictionaries where each dictionary will be in the following form:
+
+    {
+    "module": "ContentAnalyzer",
+    "parameter1": value,
+    "parameter2": value,
+    ...
+    "function_to_execute": dictionary containing the parameters for said function (empty dictionary if 0 parameters),
+    "function_to_execute": OR list of dictionaries containing the parameters (in case the function has to be executed multiple times),
+    ...
+    }
+
+    module is the most important key and it defines which module of the framework should be used (possible values are
+    strings referring to the most important classes in the framework, for example ContentAnalyzer or ContentBasedRS).
+
+    Other keys in the dictionary are strings referring to the parameters of the module or the methods to execute
+    related to said module. If a parameter is an object the following notationg should be used:
+
+    {"class": "FieldConfig", "parameter_for_class": value, ...}
+
+    Args:
+        config_path (str): path where the configuration file is stored
+    """
+    if config_path.endswith('.yml'):
+        extracted_data = yaml.load(open(config_path), Loader=yaml.FullLoader)
+    elif config_path.endswith('.json'):
+        extracted_data = json.load(open(config_path))
+    else:
+        raise ScriptConfigurationError("Wrong file extension")
+
+    handle_script_contents(extracted_data)
