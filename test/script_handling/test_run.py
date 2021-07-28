@@ -7,8 +7,8 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_le
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.evaluation import MetricCalculator
 from orange_cb_recsys.exceptions import ScriptConfigurationError, ParametersError, NoOutputDirectoryDefined
-from orange_cb_recsys.script_handling import script_run, RecSysRun, EvalRun, MethodologyRun, MetricCalculatorRun, \
-    PartitioningRun, Run, NeedsSerializationRun
+from orange_cb_recsys.script_handling import handle_script_contents, RecSysRun, EvalRun, MethodologyRun, MetricCalculatorRun, \
+    PartitioningRun, Run, NeedsSerializationRun, script_run
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 from orange_cb_recsys.utils.const import root_path
@@ -98,11 +98,11 @@ class TestRun(TestCase):
             "rating_frame": ratings_example,
             "algorithm": {
                 "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
-            "fit_rank": {"user_id": 8, "recs_number": 10,
+            "fit_rank": {"user_id": "8", "recs_number": 10,
                          "filter_list": ["tt0114885", "tt0113987", "tt0114709", "tt0112641", "tt0114388"]},
-            "fit_predict": {"user_id": 8, "filter_list": ["tt0112281", "tt0112896"]},
-            "multiple_fit_rank": {"user_id_list": [8, 9]},
-            "multiple_fit_predict": {"user_id_list": [8, 9]},
+            "fit_predict": {"user_id": "8", "filter_list": ["tt0112281", "tt0112896"]},
+            "multiple_fit_rank": {"user_id_list": ["8", "9"]},
+            "multiple_fit_predict": {"user_id_list": ["8", "9"]},
             "output_directory": run_dir
         }
 
@@ -133,7 +133,7 @@ class TestRun(TestCase):
         methodology_dict = {
             "module": "testratingsmethodology",
             "output_directory": run_dir,
-            "only_greater_eq": 2,
+            "only_greater_eq": 0.5,
             "get_item_to_predict": {
                 "split_list": [{"class": "Split",
                                 "first_set": os.path.join(run_dir, "training_0_0#0.csv"),
@@ -147,7 +147,7 @@ class TestRun(TestCase):
             "partition_technique": {"class": "KFoldPartitioning"},
             "split_all": {
                 "ratings": ratings_example,
-                "user_id_list": [8]
+                "user_id_list": ["8"]
             }
         }
 
@@ -160,7 +160,7 @@ class TestRun(TestCase):
             if not os.path.exists(run_dir):
                 os.mkdir(run_dir)
 
-            script_run(self.config_list)
+            handle_script_contents(self.config_list)
 
             self.assertEqual(pl.Path(os.path.join(run_dir, "eval_sys_results_0_0.csv")).is_file(), True)
             self.assertEqual(pl.Path(os.path.join(run_dir, "eval_user_results_0_0.csv")).is_file(), True)
@@ -197,13 +197,13 @@ class TestRun(TestCase):
             ratings.to_csv(ratings_path, index=False)
 
             recsys_config_dict_multiple_params = {
-                "users_directory": users_example,
-                "items_directory": items_example,
+                "users_directory": os.path.join(THIS_DIR, '../contents/users_codified'),
+                "items_directory": os.path.join(THIS_DIR, '../contents/items_codified'),
                 "rating_frame": ratings_path,
                 "algorithm": {
                     "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
-                "fit_rank": [{"user_id": 5}, {"user_id": 6}],
-                "fit_predict": [{"user_id": 5}, {"user_id": 6}],
+                "fit_rank": [{"user_id": "5"}, {"user_id": "6"}],
+                "fit_predict": [{"user_id": "5"}, {"user_id": "6"}],
                 "output_directory": multiple_params_dir
             }
 
@@ -232,8 +232,8 @@ class TestRun(TestCase):
             partitioning_dict_multiple_params = {
                 "output_directory": multiple_params_dir,
                 "partition_technique": {"class": "KFoldPartitioning"},
-                "split_all": [{"ratings": ratings_path, "user_id_list": [5]},
-                              {"ratings": ratings_path, "user_id_list": [6]}]
+                "split_all": [{"ratings": ratings_path, "user_id_list": ["5"]},
+                              {"ratings": ratings_path, "user_id_list": ["6"]}]
             }
 
             PartitioningRun.run(partitioning_dict_multiple_params, "partitionmodule")
@@ -275,17 +275,17 @@ class TestRun(TestCase):
         # test for list not containing dictionaries only
         test_config_list_dict = [set(), dict()]
         with self.assertRaises(ScriptConfigurationError):
-            script_run(test_config_list_dict)
+            handle_script_contents(test_config_list_dict)
 
         # test for dictionary in the list with no "module" parameter
         test_config_list_dict = {"parameter": "test"}
         with self.assertRaises(ScriptConfigurationError):
-            script_run(test_config_list_dict)
+            handle_script_contents(test_config_list_dict)
 
         # test for dictionary in the list with "module" parameter but not valid value
         test_config_list_dict = [{"module": "test"}]
         with self.assertRaises(ScriptConfigurationError):
-            script_run(test_config_list_dict)
+            handle_script_contents(test_config_list_dict)
 
         # test for not defined output directory in module that needs it
         test_dict = {"module": "contentbasedrs",
@@ -347,3 +347,14 @@ class TestRun(TestCase):
 
         with self.assertRaises(ParametersError):
             Run.dict_detector(dictionary)
+
+    def test_config_file_loading(self):
+        # there are no asserts because the files loaded by the script run only contain an empty list
+        # therefore nothing will be done
+        # this test is used to make sure that nothing happens
+        script_run(os.path.join(root_path, 'datasets/test_script/empty_list.json'))
+        script_run(os.path.join(root_path, 'datasets/test_script/empty_list.yml'))
+
+        # test for loading a script file witt a non supported format (csv)
+        with self.assertRaises(ScriptConfigurationError):
+            script_run(os.path.join(root_path, 'datasets/movies_info_reduced.csv'))
