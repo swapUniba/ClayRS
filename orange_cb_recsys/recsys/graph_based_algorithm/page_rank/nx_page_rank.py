@@ -75,11 +75,18 @@ class NXPageRank(PageRankAlg):
 
         # run the pageRank
         if self.personalized:
+            # the personalization vector is formed by the nodes that the user voted with their weight
+            # + all the other nodes in the graph with weight as the min weight given by the user
+            # (This because if a node isn't specified in the personalization vector will have 0 score in page rank)
             profile = self.extract_profile(graph, user_id)
+            pers = {node: profile[node] if node in profile else min(set(profile.values()))
+                    for node in graph._graph.nodes}
 
-            scores = nx.pagerank(graph._graph.to_undirected(), personalization=profile)
+            # pagerank_scipy faster than pagerank or pagerank_numpy
+            scores = nx.pagerank_scipy(graph._graph, personalization=pers)
         else:
-            scores = nx.pagerank(graph._graph)
+            # pagerank_scipy faster than pagerank or pagerank_numpy
+            scores = nx.pagerank_scipy(graph._graph)
 
         # clean the results removing user nodes, selected user profile and eventually properties
         if filter_list is not None:
