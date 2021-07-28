@@ -1,7 +1,7 @@
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode
+from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode, PropertyNode
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
@@ -30,7 +30,8 @@ class TestGraphBasedAlgorithm(TestCase):
         self.alg = NXPageRank()
 
     def test_clean_rank(self):
-        rank = {"A000": 0.5, "tt0114576": 0.5, "A001": 0.5, "tt0113497": 0.5, "tt0112453": 0.5, "Nolan": 0.5}
+        rank = {UserNode("A000"): 0.5, ItemNode("tt0114576"): 0.5, UserNode("A001"): 0.5, ItemNode("tt0113497"): 0.5,
+                ItemNode("tt0112453"): 0.5, PropertyNode("Nolan"): 0.5}
 
         # remove from rank all nodes except Item nodes
         result = self.alg.clean_result(self.graph, rank, user_id="A000")
