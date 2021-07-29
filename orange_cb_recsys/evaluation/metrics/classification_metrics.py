@@ -240,7 +240,7 @@ class RecallAtK(Recall):
         return self.__k
 
     def __str__(self):
-        return "Recall@{} - ".format(self.k, self.sys_avg)
+        return "Recall@{} - {}".format(self.k, self.sys_avg)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
         return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.__k)
