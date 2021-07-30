@@ -439,7 +439,7 @@ class TripartiteGraph(BipartiteGraph):
                 # If the node already exists then we don't add it and more importantly
                 # we don't retrieve its exo prop if specified, since they are already been retireved
                 # previously.
-                if not self.is_item_node(row['to_id']):
+                if not self.node_exists(ItemNode(row['to_id'])):
                     self.add_item_node(row['to_id'])
                     if self.get_item_contents_dir() is not None:
                         self._add_item_properties(row)
@@ -792,7 +792,7 @@ class FullGraph(TripartiteGraph):
                 # If the node already exists then we don't add it and more importantly
                 # we don't retrieve its exo prop if specified, since they are already been retireved
                 # previously.
-                if not self.is_user_node(row['from_id']):
+                if not self.node_exists(UserNode(row['from_id'])):
                     self.add_user_node(row['from_id'])
                     if self.get_user_contents_dir() is not None:
                         self._add_usr_properties(row)
@@ -800,7 +800,7 @@ class FullGraph(TripartiteGraph):
                 # If the node already exists then we don't add it and more importantly
                 # we don't retrieve its exo prop if specified, since they are already been retireved
                 # previously.
-                if not self.is_item_node(row['to_id']):
+                if not self.node_exists(ItemNode(row['to_id'])):
                     self.add_item_node(row['to_id'])
                     if self.get_item_contents_dir() is not None:
                         self._add_item_properties(row)

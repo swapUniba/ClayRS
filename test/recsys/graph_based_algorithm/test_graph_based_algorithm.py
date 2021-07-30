@@ -53,6 +53,23 @@ class TestGraphBasedAlgorithm(TestCase):
         expected = {'tt0113497': 0.5, 'Nolan': 0.5}
         self.assertEqual(expected, result)
 
+    def test_filter_result(self):
+        result_page_rank = {ItemNode("i1"): 0.8, ItemNode("i2"): 0.7,
+                            UserNode('u1'): 0.2, PropertyNode("p1"): 0.1}
+
+        result = self.alg.filter_result(result_page_rank, ['i1'])
+        expected = {ItemNode("i1"): 0.8}
+        self.assertEqual(expected, result)
+
+        result = self.alg.filter_result(result_page_rank, ['u1', 'p1'])
+        expected = {UserNode('u1'): 0.2, PropertyNode("p1"): 0.1}
+        self.assertEqual(expected, result)
+
+        # filter with non existent nodes, result will be empty
+        result = self.alg.filter_result(result_page_rank, ['not exists', 'i20'])
+        expected = {}
+        self.assertEqual(expected, result)
+
     def test_extract_profile(self):
 
         result = self.alg.extract_profile(self.graph, "A000")
