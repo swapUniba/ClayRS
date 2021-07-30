@@ -594,19 +594,22 @@ class BabelPyEntityLinking(EntityLinking):
             self.__babel_client.babelfy(data_to_disambiguate)
 
             properties_content = {}
-            if self.__babel_client.merged_entities is not None:
+            try:
+                if self.__babel_client.merged_entities is not None:
 
-                for entity in self.__babel_client.merged_entities:
-                    properties_entity = {'babelSynsetID': '', 'DBPediaURL': '', 'BabelNetURL': '', 'score': '',
-                                         'coherenceScore': '', 'globalScore': '', 'source': ''}
+                    for entity in self.__babel_client.merged_entities:
+                        properties_entity = {'babelSynsetID': '', 'DBPediaURL': '', 'BabelNetURL': '', 'score': '',
+                                             'coherenceScore': '', 'globalScore': '', 'source': ''}
 
-                    for key in properties_entity:
-                        if entity.get(key) is not None:
-                            properties_entity[key] = entity[key]
+                        for key in properties_entity:
+                            if entity.get(key) is not None:
+                                properties_entity[key] = entity[key]
 
-                    properties_content[entity['text']] = properties_entity
+                        properties_content[entity['text']] = properties_entity
 
-            properties_list.append(EntitiesProp(properties_content))
+                properties_list.append(EntitiesProp(properties_content))
+            except AttributeError:
+                raise AttributeError("BabelFy limit reached! Insert an api key or change it if you inserted one!")
 
         return properties_list
 
