@@ -81,7 +81,7 @@ class GraphBasedAlgorithm(Algorithm):
             filter_list (list): list of the items to predict, if None all unrated items will be predicted
         """
 
-        filtered_result = {k: result[k] for k in result.keys() if k in filter_list}
+        filtered_result = {k: result[k] for k in filter_list if result.get(k) is not None}
 
         return filtered_result
 
