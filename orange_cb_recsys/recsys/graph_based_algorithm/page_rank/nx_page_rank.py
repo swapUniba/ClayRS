@@ -91,7 +91,7 @@ class NXPageRank(PageRankAlg):
         # clean the results removing user nodes, selected user profile and eventually properties
         if filter_list is not None:
             nodes = list(scores.keys())
-            wrapped_index = [nodes.index(filter_str) for filter_str in filter_list]
+            wrapped_index = [nodes.index(filter_str) for filter_str in filter_list if graph.node_exists(filter_str)]
             wrapped_filter = [nodes[i] for i in wrapped_index]
             scores = self.filter_result(scores, wrapped_filter)
         else:
