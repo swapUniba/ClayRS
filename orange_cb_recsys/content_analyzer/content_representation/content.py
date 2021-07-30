@@ -195,6 +195,32 @@ class PropertiesDict(ExogenousPropertiesRepresentation):
         return str(self.__features)
 
 
+class EntitiesProp(ExogenousPropertiesRepresentation):
+    """
+    Couples <property name, property value> retrieved by DBPediaMappingTechnique
+
+    Args:
+        features: properties in the specified format
+    """
+
+    def __init__(self, features: Dict[str, Dict] = None):
+        super().__init__()
+        if features is None:
+            features = {}
+
+        self.__features: Dict[str, Dict] = features
+
+    @property
+    def value(self):
+        """
+        Returns: features dictionary
+        """
+        return self.__features
+
+    def __str__(self):
+        return str(self.__features)
+
+
 class Content:
     """
     Class that represents a content. A content can be an item or a user.

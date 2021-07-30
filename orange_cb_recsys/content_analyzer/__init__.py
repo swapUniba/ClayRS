@@ -13,5 +13,5 @@ from .memory_interfaces import *
 from .ratings_manager import *
 from .config import ExogenousConfig, UserAnalyzerConfig, ItemAnalyzerConfig, FieldConfig
 from .content_analyzer_main import ContentAnalyzer
-from .exogenous_properties_retrieval import DBPediaMappingTechnique, PropertiesFromDataset
+from .exogenous_properties_retrieval import DBPediaMappingTechnique, PropertiesFromDataset, BabelPyEntityLinking
 from .raw_information_source import CSVFile, JSONFile, DATFile, SQLDatabase

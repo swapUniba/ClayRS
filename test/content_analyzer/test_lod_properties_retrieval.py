@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from orange_cb_recsys.content_analyzer import JSONFile
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
-    PropertiesFromDataset
+    PropertiesFromDataset, BabelPyEntityLinking
 from orange_cb_recsys.utils.const import datasets_path
 
 source_path = os.path.join(datasets_path, 'test_dbpedia', 'movies_info_reduced.json')
@@ -236,3 +236,36 @@ class TestPropertiesFromDataset(TestCase):
         prop2 = results[1]
         self.assertEqual(prop1.value, expected_1)
         self.assertEqual(prop2.value, expected_2)
+
+
+class TestBabelPyEntityLinking(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw_source = JSONFile(source_path)
+
+    def test_get_properties(self):
+
+        result = BabelPyEntityLinking('Title').get_properties(self.raw_source)
+
+        entities_content_1 = result[0].value
+        self.assertEqual(len(entities_content_1), 1)
+        self.assertIn('Jumanji', entities_content_1)
+        self.assertNotEqual(entities_content_1['Jumanji']['babelSynsetID'], '')
+
+        entities_content_2 = result[1].value
+        self.assertEqual(len(entities_content_2), 1)
+        self.assertIn('Inception', entities_content_2)
+        self.assertNotEqual(entities_content_2['Inception']['babelSynsetID'], '')
+
+        entities_content_3 = result[2].value
+        self.assertEqual(len(entities_content_3), 1)
+        self.assertIn('Demon Island', entities_content_3)
+        self.assertNotEqual(entities_content_3['Demon Island']['babelSynsetID'], '')
+
+        entities_content_4 = result[3].value
+        self.assertEqual(len(entities_content_4), 1)
+        self.assertIn('Léon: The Professional', entities_content_4)
+        self.assertNotEqual(entities_content_4['Léon: The Professional']['babelSynsetID'], '')
+
+        entities_content_5 = result[4].value
+        self.assertEqual(len(entities_content_5), 0)
