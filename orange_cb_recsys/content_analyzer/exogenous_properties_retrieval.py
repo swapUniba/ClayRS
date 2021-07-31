@@ -7,8 +7,11 @@ from SPARQLWrapper import SPARQLWrapper, JSON, POST, POSTDIRECTLY
 
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 
-from orange_cb_recsys.content_analyzer.content_representation.content import PropertiesDict
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.content_analyzer.content_representation.content import PropertiesDict, \
+    ExogenousPropertiesRepresentation, EntitiesProp
+from orange_cb_recsys.utils.const import logger, progbar
+from babelpy.babelfy import BabelfyClient
+from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
 class ExogenousPropertiesRetrieval(ABC):
@@ -46,7 +49,7 @@ class ExogenousPropertiesRetrieval(ABC):
         self.__mode = self.__check_mode(mode)
 
     @abstractmethod
-    def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
+    def get_properties(self, raw_source: RawInformationSource) -> List[ExogenousPropertiesRepresentation]:
         raise NotImplementedError
 
 
@@ -544,3 +547,74 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
             prop_dict_list = self.__get_all_properties(uris, all_properties, raw_source)
 
         return prop_dict_list
+
+
+class EntityLinking(ExogenousPropertiesRetrieval):
+    """
+    Abstract class that generalizes implementations that use entity linking for producing the semantic description
+    """
+
+    @abstractmethod
+    def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
+        raise NotImplementedError
+
+
+class BabelPyEntityLinking(EntityLinking):
+    """
+    Interface for the Babelpy library that wraps some feature of Babelfy entity Linking.
+
+    Args:
+        api_key: string obtained by registering to babelfy website, with None babelpy key only few
+            queries can be executed
+    """
+
+    def __init__(self, field_to_link: str, api_key: str = None, lang: str = "EN"):
+        super().__init__("all_retrieved")
+        self.__field_to_link = field_to_link
+        self.__api_key = api_key
+        self.__babel_client = BabelfyClient(self.__api_key, {"lang": lang})
+
+    def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
+        """
+        Produces a list of EntitiesProp objects for every raw content in the raw source where .
+
+        An Entity Prop object is basically a dict where the keys are the entity linked (since there can be multiple
+        entities in a field) and values are properties retrieved from BabelPy for that entity.
+        EXAMPLE:
+            properties_list = [EntityProp(), EntityProp(), ...]
+
+            EntityProp.value -> {'DiCaprio': {'babelSynsetID': ..., ...},'Nolan': {'babelSynsetID: ..., ...}, ...}
+
+        """
+        properties_list = []
+        logger.info("Doing Entity Linking with BabelFy")
+        for raw_content in progbar(raw_source, max_value=len(list(raw_source))):
+            data_to_disambiguate = check_not_tokenized(raw_content[self.__field_to_link])
+
+            self.__babel_client.babelfy(data_to_disambiguate)
+
+            properties_content = {}
+            try:
+                if self.__babel_client.merged_entities is not None:
+
+                    for entity in self.__babel_client.merged_entities:
+                        properties_entity = {'babelSynsetID': '', 'DBPediaURL': '', 'BabelNetURL': '', 'score': '',
+                                             'coherenceScore': '', 'globalScore': '', 'source': ''}
+
+                        for key in properties_entity:
+                            if entity.get(key) is not None:
+                                properties_entity[key] = entity[key]
+
+                        properties_content[entity['text']] = properties_entity
+
+                properties_list.append(EntitiesProp(properties_content))
+            except AttributeError:
+                raise AttributeError("BabelFy limit reached! Insert an api key or change it if you inserted one!")
+
+        return properties_list
+
+    def __str__(self):
+        return "BabelPyEntityLinking"
+
+    def __repr__(self):
+        return "< BabelPyEntityLinking: babel client = " + str(self.__babel_client) + " >"

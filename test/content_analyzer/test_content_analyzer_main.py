@@ -5,15 +5,15 @@ import lzma
 import pickle
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique
+from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
+    BabelPyEntityLinking
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
-    EmbeddingField, IndexField
+    EmbeddingField, IndexField, EntitiesProp
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
     import WordEmbeddingTechnique
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.entity_linking import BabelPyEntityLinking
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
@@ -29,11 +29,10 @@ decode_path = os.path.join(THIS_DIR, '../../datasets/test_decode/')
 
 class TestContentsProducer(TestCase):
     def test_create_content(self):
-        plot_config = FieldConfig(BabelPyEntityLinking())
         exogenous_config = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'))
         content_analyzer_config = ItemAnalyzerConfig(JSONFile(movies_info_reduced), ["imdbID"], "movielens_test")
-        content_analyzer_config.add_single_config("Title", plot_config)
         content_analyzer_config.add_single_exogenous(exogenous_config)
+        content_analyzer_config.add_single_exogenous(ExogenousConfig(BabelPyEntityLinking('Title')))
         content_analyzer = ContentAnalyzer(content_analyzer_config)
         content_analyzer.fit()
 
@@ -44,7 +43,7 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(THIS_DIR, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
+                    self.assertIsInstance(content.get_field("Title")[0], EntitiesProp)
                     self.assertIsInstance(content.get_field("Title")[0].value, dict)
                     break
 
