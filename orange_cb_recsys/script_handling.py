@@ -1,8 +1,11 @@
 import os
+
 import yaml
 import json
+import lzma
+import pickle
 import pandas as pd
-from typing import Dict, Union, Type, Callable
+from typing import Dict, Union, Type, Callable, Any, Mapping, List, Set
 from abc import ABC, abstractmethod
 from inspect import signature, isclass, isfunction, getmembers, Parameter
 import orange_cb_recsys.utils.runnable_instances as r_i
@@ -14,8 +17,10 @@ from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import PartitionModule
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError
-from orange_cb_recsys.recsys.recsys import RecSys
+from orange_cb_recsys.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
+    InvalidFilePath
+from orange_cb_recsys.recsys.recsys import RecSys, FullGraph
+from orange_cb_recsys.recsys.graphs.graph import Graph
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
 
 """
@@ -93,6 +98,129 @@ class Run(ABC):
         class_instance = run_class(**class_parameters)
         cls.execute_methods(methods, class_instance)
 
+    @staticmethod
+    def __convert_string_path_to_object(parameter_signature: Parameter, parameter_value: Any):
+        """
+        Private method used to convert paths pointing to serialized objects into the object instance itself. This is
+        done because there are objects created by the framework which cannot be handled the same way they are handled
+        in the API (for example, the rating frame parameter for the RecSys requires a DataFrame object, from API we
+        could simply use the pd.read_csv method and store it in a variable, however, this behavior cannot be reproduced
+        in the script file). So, instead, the user can define a path instead of the actual object instance. If the
+        parameter is not a string or a valid path to a file, the original parameter value is returned.
+
+        EXAMPLE:
+
+            ratings_frame: pd.DataFrame <--- 'somedir/file_name.csv
+
+            OR
+
+            graph: FullGraph <--- 'somedir/file_name.xz'
+
+        Args:
+            parameter_signature (inspect.Parameter): object that contains the infos regarding the parameter (used to
+                retrieve annotation and default value data)
+            parameter_value (Any): value associated with the parameter
+
+        Returns:
+            parameter_to_return: new value (from string path to object if the parameter was a string path)
+        """
+
+        def __check_existing_file_path(file_path: str, parameter: str):
+            if not os.path.exists(file_path):
+                raise InvalidFilePath("%s is an invalid file path for %s" % (file_path, parameter))
+
+        if isinstance(parameter_value, str):
+            if (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == pd.DataFrame) or \
+                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == pd.DataFrame):
+
+                __check_existing_file_path(parameter_value, parameter_signature.name)
+                parameter_to_return = pd.read_csv(parameter_value, dtype={"from_id": str, "to_id": str, "score": float})
+
+            elif (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == FullGraph) or \
+                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == FullGraph):
+
+                __check_existing_file_path(parameter_value, parameter_signature.name)
+                with lzma.open(parameter_value, "rb") as graph_file:
+                    parameter_to_return = pickle.load(graph_file)
+
+            elif (not parameter_signature.annotation == Parameter.empty and
+                  (parameter_signature.annotation == List[str] or parameter_signature.annotation == Set[str])):
+
+                __check_existing_file_path(parameter_value, parameter_signature.name)
+                with open(parameter_value) as json_file:
+                    parameter_to_return = json.load(json_file)
+
+                if parameter_signature.annotation == Set[str]:
+                    parameter_to_return = set(parameter_to_return)
+
+            else:
+                parameter_to_return = parameter_value
+        else:
+            parameter_to_return = parameter_value
+
+        return parameter_to_return
+
+    @staticmethod
+    def __check_parameters(signature_parameters: Mapping, technique: dict, parameter_technique_name: str):
+        """
+        Method used to check the parameters defined in the dictionary containing the parameters and their values
+        for a specific class constructor or function. It checks for 2 possible cases that can raise exception:
+
+            - Not all parameters without a default value defined in the signature are found in the dictionary
+            defined by the user
+
+            - If kwargs or args are not defined in the original signature, all the parameters in the dictionary
+            defined by the user should be in the original signature (so if the user dictionary contains a key
+            such as 'parameter_name' but 'parameter_name' is not in the original signature, this scenario will
+            raise exception)
+
+        In both cases, a ParametersError exception will be raised
+
+        Args:
+            signature_parameters (Mapping): mapping containing the signature of the class constructor or function
+            technique (dict): dictionary defined by the user containing the parameters and their values related to the
+                original signature
+            parameter_technique_name (str): name of the technique associated with the signature (for example, if the
+                original signature is related to a function foo(a), this should be 'foo')
+        """
+
+        any_number_params = False
+
+        if 'args' in signature_parameters.keys() or 'kwargs' in signature_parameters.keys():
+            any_number_params = True
+
+        not_default_parameters = list()
+        actual_parameters = list()
+
+        for parameter, parameter_signature in signature_parameters.items():
+            if parameter not in ['self', 'args', 'kwargs']:
+                if parameter_signature.default is Parameter.empty and parameter not in technique.keys():
+                    not_default_parameters.append(parameter)
+                if not any_number_params:
+                    actual_parameters.append(parameter)
+
+        if len(not_default_parameters) != 0:
+            raise ParametersError("All parameters without default value must be defined for %s\n"
+                                  "The following parameters are missing: %s"
+                                  % (parameter_technique_name, str(not_default_parameters)))
+
+        if not any_number_params:
+
+            not_defined_parameters = set(technique.keys()).difference(set(actual_parameters))
+            if len(not_defined_parameters) != 0:
+                if parameter_technique_name.lower() in runnable_instances.keys():
+                    raise ParametersError("Some defined parameters/methods weren't found in the actual parameters/methods for %s\n"
+                                          "Not found parameters or functions: %s\n"
+                                          "Actual parameters: %s\n"
+                                          "Actual methods: %s" %
+                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters),
+                                           str([name[0] for name in getmembers(runnable_instances[parameter_technique_name.lower()], predicate=isfunction) if not name[0].startswith("_")])))
+                else:
+                    raise ParametersError("Some defined parameters weren't found in the actual parameters for %s\n"
+                                          "Not found parameters: %s\n"
+                                          "Actual parameters: %s" %
+                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters)))
+
     @classmethod
     def dict_detector(cls, technique: Union[dict, list]):
         """
@@ -136,29 +264,21 @@ class Run(ABC):
             if 'class' in technique.keys():
                 parameter_class_name = technique.pop('class')
                 class_signature = signature(runnable_instances[parameter_class_name.lower()]).parameters
+                cls.__check_parameters(class_signature, technique, parameter_class_name)
                 try:
                     # checks if any value is a dictionary representing an object
                     for parameter in technique.keys():
-                        # checks if the parameter should be a DataFrame, in which case the configuration dictionary will
-                        # contain a path to a csv file. The csv file is loaded into a DataFrame
                         if parameter in class_signature.keys():
                             parameter_signature = class_signature[parameter]
-                            if (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == pd.DataFrame) or \
-                                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == pd.DataFrame):
-                                technique[parameter] = pd.read_csv(
-                                    technique[parameter], dtype={"from_id": str, "to_id": str, "score": float})
+                            technique[parameter] = \
+                                cls.__convert_string_path_to_object(parameter_signature, technique[parameter])
 
                         # recursively calls dict_detector to check if the value for the parameter is
                         # an object to instantiate
                         technique[parameter] = cls.dict_detector(technique[parameter])
                     return runnable_instances[parameter_class_name.lower()](**technique)
-                except TypeError:
-                    passed_parameters = list(technique.keys())
-                    actual_parameters = list(signature(
-                        runnable_instances[parameter_class_name.lower()].__init__).parameters.keys())
-                    actual_parameters.remove("self")
-                    raise ParametersError("The following parameters: " + str(passed_parameters) + "\n" +
-                                          "Don't match the actual parameters: " + str(actual_parameters))
+                except TypeError as e:
+                    raise ParametersError(str(e))
             # otherwise it's just a standard dictionary and every value is checked (in case one of them is a dictionary
             # representing an object)
             else:
@@ -209,46 +329,33 @@ class Run(ABC):
             # if the method receives a class it will extract the parameters from the constructor, otherwise
             # it will just extract the parameters directly (this happens if the passed argument is a function)
             if isclass(class_or_function):
-                signature_parameters = list(signature(class_or_function.__init__).parameters.keys())
+                signature_parameters = signature(class_or_function.__init__).parameters
             else:
-                signature_parameters = list(signature(class_or_function).parameters.keys())
+                signature_parameters = signature(class_or_function).parameters
+            cls.__check_parameters(signature_parameters, config_dict, class_or_function.__name__)
+            signature_parameters = list(signature_parameters.keys())
             if "self" in signature_parameters:
                 signature_parameters.remove("self")
-
-            # checks if the signature of the method or class is able to take any number of parameters
-            # the next operation done by the method will use this information and won't check for
-            # matches between the parameters passed by the user (in the dictionary) and the signature parameters
-            any_parameters = False
-            if "kwargs" in signature_parameters or "args" in signature_parameters:
-                any_parameters = True
 
             # the method checks every key of the dictionary in order to modify the value (in case it is a dictionary
             # representing an object or a string to be lowered) and makes sure that all the keys are in the
             # previously extracted parameters
             parameters = dict()
             for config_line in config_dict.keys():
-                if not any_parameters and config_line not in signature_parameters:
-                    raise ParametersError("%s is not a parameter for %s"
-                                          "\nThe actual parameters are: " %
-                                          (config_line, class_or_function.__name__) + str(signature_parameters))
+                if isinstance(config_dict[config_line], dict) or isinstance(config_dict[config_line], list):
+                    parameters[config_line] = cls.dict_detector(config_dict[config_line])
                 else:
-                    if isinstance(config_dict[config_line], dict) or isinstance(config_dict[config_line], list):
-                        parameters[config_line] = cls.dict_detector(config_dict[config_line])
-                    else:
-                        if config_line in signature_parameters:
-                            # checks if the parameter should be a DataFrame, in which case the configuration dictionary
-                            # will contain a path to a csv file. The csv file is loaded into a DataFrame
-                            parameter_signature = signature(class_or_function).parameters[config_line]
-                            if (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == pd.DataFrame) or \
-                                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == pd.DataFrame):
-                                config_dict[config_line] = pd.read_csv(
-                                    config_dict[config_line], dtype={"from_id": str, "to_id": str, "score": float})
+                    if config_line in signature_parameters:
+                        parameter_signature = signature(class_or_function).parameters[config_line]
+                        config_dict[config_line] = \
+                            cls.__convert_string_path_to_object(parameter_signature, config_dict[config_line])
 
-                        parameters[config_line] = config_dict[config_line]
+                    parameters[config_line] = config_dict[config_line]
 
             return parameters
-        except ParametersError as e:
-            raise e
+        except (ParametersError, InvalidFilePath) as e:
+            raise type(e)("Error encountered while processing %s: \n"
+                          "%s" % (class_or_function.__name__, str(e)))
 
     @staticmethod
     def check_for_methods(config_dict: dict, cls: Type) -> Dict[str, Union[dict, list]]:
@@ -365,7 +472,7 @@ class NeedsSerializationRun(Run):
         Works as the run method defined in the Run class but also considers the output directory
         """
         run_class = runnable_instances[module]
-        output_directory = cls.setup_output_directory(config_dict, module)
+        output_directory = cls.setup_output_directory(config_dict, run_class)
         methods = cls.check_for_methods(config_dict, run_class)
         class_parameters = cls.extract_parameters(config_dict, run_class)
         class_instance = run_class(**class_parameters)
@@ -373,7 +480,7 @@ class NeedsSerializationRun(Run):
         cls.serialize_results(executed_methods_results, output_directory)
 
     @staticmethod
-    def setup_output_directory(config_dict: dict, module: str):
+    def setup_output_directory(config_dict: dict, run_class: Type):
         """
         This method extracts the output_directory from the configuration dictionary and allows for the basic setup of
         said output directory.
@@ -385,7 +492,7 @@ class NeedsSerializationRun(Run):
 
         Args:
             config_dict (dict): dictionary representing the parameters for a class constructor
-            module (str): name of the module to use (example: "ContentAnalyzer")
+            run_class (Type): class related to the Run (example: ContentAnalyzer)
 
         Returns:
             output_directory(str): output_directory extracted from the config_dict
@@ -394,7 +501,7 @@ class NeedsSerializationRun(Run):
             output_directory = config_dict.pop('output_directory')
         except KeyError:
             raise NoOutputDirectoryDefined(
-                "Output directory must be defined for %s" % runnable_instances[module].__name__)
+                "Output directory must be defined for %s" % run_class.__name__)
 
         if not os.path.exists(output_directory):
             os.mkdir(output_directory)
@@ -441,6 +548,16 @@ class RatingsRun(Run):
     @classmethod
     def get_associated_class(cls):
         return RatingsImporter
+
+
+class GraphRun(Run):
+    """
+    Run associated with the Graph
+    """
+
+    @classmethod
+    def get_associated_class(cls) -> Type:
+        return Graph
 
 
 class RecSysRun(NeedsSerializationRun):
@@ -699,6 +816,7 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
         config_list_dict: single dictionary or list of dictionaries extracted from the config file
     """
     implemented_modules = __setup_implemented_modules_dictionary()
+    config_dict_number = 0
     try:
 
         if not isinstance(config_list_dict, list):
@@ -708,6 +826,8 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
             raise ScriptConfigurationError("The list in the script must contain dictionaries only")
 
         for config_dict in config_list_dict:
+
+            config_dict_number += 1
 
             if "module" in config_dict.keys():
                 module = config_dict.pop("module").lower()
@@ -722,7 +842,10 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
                 raise ScriptConfigurationError("A 'module' parameter must be specified and the value must be one "
                                                "of the following: " + str(implemented_modules.keys()))
     except (ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, FileNotFoundError) as e:
-        raise e
+        if config_dict_number != 0:
+            raise type(e)("[Configuration dictionary number #%s in the script file]\n" % str(config_dict_number) + str(e))
+        else:
+            raise e
 
 
 def script_run(config_path: str):
@@ -755,10 +878,12 @@ def script_run(config_path: str):
         config_path (str): path where the configuration file is stored
     """
     if config_path.endswith('.yml'):
-        extracted_data = yaml.load(open(config_path), Loader=yaml.FullLoader)
+        with open(config_path) as config_file:
+            extracted_data = yaml.load(config_file, Loader=yaml.FullLoader)
     elif config_path.endswith('.json'):
-        extracted_data = json.load(open(config_path))
+        with open(config_path) as config_file:
+            extracted_data = json.load(config_file)
     else:
-        raise ScriptConfigurationError("Wrong file extension")
+        raise ScriptConfigurationError("Wrong file extension, only .json and .yml extensions supported")
 
     handle_script_contents(extracted_data)

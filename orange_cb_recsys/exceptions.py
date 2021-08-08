@@ -6,6 +6,13 @@ class NoOutputDirectoryDefined(Exception):
     pass
 
 
+class InvalidFilePath(Exception):
+    """
+    Exception raised when a file path defined in the script file is not valid
+    """
+    pass
+
+
 class ParametersError(Exception):
     """
     Exception raised for any error regarding the parameters passed by the user in the script file for a method or class
