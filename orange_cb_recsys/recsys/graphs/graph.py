@@ -1,3 +1,6 @@
+import os
+import pickle
+import lzma
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import List, Set, Union, Iterable
@@ -337,6 +340,17 @@ class Graph(ABC):
         for k, v in self.__dict__.items():
             setattr(result, k, deepcopy(v, memo))
         return result
+
+    def serialize(self, output_directory: str = ".", file_name: str = 'graph.xz'):
+        if not os.path.exists(output_directory):
+            os.mkdir(output_directory)
+
+        if not file_name.endswith('.xz'):
+            file_name += '.xz'
+
+        path = os.path.join(output_directory, file_name)
+        with lzma.open(path, 'wb') as f:
+            pickle.dump(self, f)
 
 
 class BipartiteGraph(Graph, GraphMetrics):

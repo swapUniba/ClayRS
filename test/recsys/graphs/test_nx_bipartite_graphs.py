@@ -1,6 +1,9 @@
 from unittest import TestCase
 
 import pandas as pd
+import os
+import lzma
+import pickle
 from orange_cb_recsys.recsys.graphs import NXBipartiteGraph
 import networkx as nx
 import numpy as np
@@ -203,3 +206,13 @@ class TestNXBipartiteGraph(TestCase):
         copy.add_user_node('prova')
 
         self.assertNotEqual(copy, self.g)
+
+    def test_serialize(self):
+
+        self.g.serialize(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_serialize'), 'test_graph')
+
+        with lzma.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_serialize/test_graph.xz'), 'rb') \
+                as graph_file:
+            graph = pickle.load(graph_file)
+
+        self.assertEqual(self.g, graph)
