@@ -211,7 +211,7 @@ class TestNXBipartiteGraph(TestCase):
 
         self.g.serialize(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_serialize'), 'test_graph')
 
-        with lzma.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_serialize/test_graph.xz', 'rb')) \
+        with lzma.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_serialize/test_graph.xz'), 'rb') \
                 as graph_file:
             graph = pickle.load(graph_file)
 
