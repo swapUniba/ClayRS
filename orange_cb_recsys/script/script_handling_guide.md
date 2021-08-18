@@ -10,7 +10,7 @@
 the top of the file. </p>
 
 <h2> 3. Add a Class as a standalone Module that can be used directly from the Script File </h2>
-<p> Go to <B>"script_handling.py"</B> in the <B>orange_cb_recsys</B> package and add a new class that inherits from the 
+<p> Go to <B>"script_handling.py"</B> in the <B>orange_cb_recsys.script</B> package and add a new class that inherits from the 
 <B>Run</B> class (or from <B>NeedsSerializationRun</B> if the module returns something that has to be stored locally). 
 Implement the <I>get_associated_class</I> method (and the <I>serialize_results</I> method in the case of NeedsSerializationRun). 
 <I>get_associated_class</I> should return the class associated with the run configuration (so the class you want to add). 
