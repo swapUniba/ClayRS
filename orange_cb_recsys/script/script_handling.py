@@ -8,7 +8,7 @@ import pandas as pd
 from typing import Dict, Union, Type, Callable, Any, Mapping, List, Set
 from abc import ABC, abstractmethod
 from inspect import signature, isclass, isfunction, getmembers, Parameter
-import orange_cb_recsys.utils.runnable_instances as r_i
+import orange_cb_recsys.runnable_instances as r_i
 
 from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnalyzer
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
@@ -17,16 +17,11 @@ from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import PartitionModule
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
+from orange_cb_recsys.script.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
     InvalidFilePath
 from orange_cb_recsys.recsys.recsys import RecSys, FullGraph
 from orange_cb_recsys.recsys.graphs.graph import Graph
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
-
-"""
-All the available implementations are extracted
-"""
-runnable_instances = r_i.get_classes()
 
 
 class Run(ABC):
@@ -37,6 +32,22 @@ class Run(ABC):
     This class is mainly used by the script_run method to recognise the run configuration related to a main module of
     the framework (for example, the Run class related to RecSys is RecSysRun)
     """
+
+    _runnable_instances = None
+
+    @classmethod
+    def get_runnable_instances(cls):
+        return cls._runnable_instances
+
+    @classmethod
+    def set_runnable_instances(cls, classes_dict: Dict[str, Type]):
+        """
+        Used to set the dictionary that will be used by the Run to retrieve the Class related to a given name
+
+        Args:
+            classes_dict (dict): dictionary containing the names of the classes as keys and the classes as values
+        """
+        cls._runnable_instances = classes_dict
 
     @classmethod
     @abstractmethod
@@ -92,7 +103,7 @@ class Run(ABC):
 
             module (str): name of the module to use (example: "ContentAnalyzer")
         """
-        run_class = runnable_instances[module]
+        run_class = cls._runnable_instances[module]
         methods = cls.check_for_methods(config_dict, run_class)
         class_parameters = cls.extract_parameters(config_dict, run_class)
         class_instance = run_class(**class_parameters)
@@ -160,8 +171,8 @@ class Run(ABC):
 
         return parameter_to_return
 
-    @staticmethod
-    def __check_parameters(signature_parameters: Mapping, technique: dict, parameter_technique_name: str):
+    @classmethod
+    def __check_parameters(cls, signature_parameters: Mapping, technique: dict, parameter_technique_name: str):
         """
         Method used to check the parameters defined in the dictionary containing the parameters and their values
         for a specific class constructor or function. It checks for 2 possible cases that can raise exception:
@@ -208,13 +219,13 @@ class Run(ABC):
 
             not_defined_parameters = set(technique.keys()).difference(set(actual_parameters))
             if len(not_defined_parameters) != 0:
-                if parameter_technique_name.lower() in runnable_instances.keys():
+                if parameter_technique_name.lower() in cls._runnable_instances.keys():
                     raise ParametersError("Some defined parameters/methods weren't found in the actual parameters/methods for %s\n"
                                           "Not found parameters or functions: %s\n"
                                           "Actual parameters: %s\n"
                                           "Actual methods: %s" %
                                           (parameter_technique_name, str(not_defined_parameters), str(actual_parameters),
-                                           str([name[0] for name in getmembers(runnable_instances[parameter_technique_name.lower()], predicate=isfunction) if not name[0].startswith("_")])))
+                                           str([name[0] for name in getmembers(cls._runnable_instances[parameter_technique_name.lower()], predicate=isfunction) if not name[0].startswith("_")])))
                 else:
                     raise ParametersError("Some defined parameters weren't found in the actual parameters for %s\n"
                                           "Not found parameters: %s\n"
@@ -263,7 +274,7 @@ class Run(ABC):
             # if a parameter class is defined it means that the dictionary represents an object instance
             if 'class' in technique.keys():
                 parameter_class_name = technique.pop('class')
-                class_signature = signature(runnable_instances[parameter_class_name.lower()]).parameters
+                class_signature = signature(cls._runnable_instances[parameter_class_name.lower()]).parameters
                 cls.__check_parameters(class_signature, technique, parameter_class_name)
                 try:
                     # checks if any value is a dictionary representing an object
@@ -276,7 +287,7 @@ class Run(ABC):
                         # recursively calls dict_detector to check if the value for the parameter is
                         # an object to instantiate
                         technique[parameter] = cls.dict_detector(technique[parameter])
-                    return runnable_instances[parameter_class_name.lower()](**technique)
+                    return cls._runnable_instances[parameter_class_name.lower()](**technique)
                 except TypeError as e:
                     raise ParametersError(str(e))
             # otherwise it's just a standard dictionary and every value is checked (in case one of them is a dictionary
@@ -471,7 +482,7 @@ class NeedsSerializationRun(Run):
         """
         Works as the run method defined in the Run class but also considers the output directory
         """
-        run_class = runnable_instances[module]
+        run_class = cls._runnable_instances[module]
         output_directory = cls.setup_output_directory(config_dict, run_class)
         methods = cls.check_for_methods(config_dict, run_class)
         class_parameters = cls.extract_parameters(config_dict, run_class)
@@ -848,7 +859,33 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
             raise e
 
 
-def script_run(config_path: str):
+def script_run_standard(config_path: str):
+    """
+    Standard script run where the classes dictionary necessary for the the run configurations will be created
+    dynamically by the system itself
+
+    Args:
+        config_path (str): path where the configuration file is located
+    """
+    __script_run(config_path, r_i.get_classes())
+
+
+def script_run_with_classes_file(config_path: str, file_path: str = "classes.xz"):
+    """
+    Script run where the classes dictionary necessary for the run configuration has to be passed by the user,
+    defining where the file is located. To create such file, use the serialize_classes() method importable from
+    the "runnable_instances.py" file in the "orange_cb_recsys" package
+
+    Args:
+        config_path (str): path where the configuration file is located
+        file_path (str): path where the classes file is located
+    """
+    with lzma.open(file_path, "rb") as f:
+        classes_dict = pickle.load(f)
+    __script_run(config_path, classes_dict)
+
+
+def __script_run(config_path: str, classes_dict: Dict[str, Type]):
     """
     Method used to elaborate a script file (either in .yml or .json) which will then execute the instructions
     declared in the script file. This allows to use a configuration file containing the instructions on what to do
@@ -861,8 +898,8 @@ def script_run(config_path: str):
     "parameter1": value,
     "parameter2": value,
     ...
-    "function_to_execute": dictionary containing the parameters for said function (empty dictionary if 0 parameters),
-    "function_to_execute": OR list of dictionaries containing the parameters (in case the function has to be executed multiple times),
+    "function_to_execute_1": dictionary containing the parameters for said function (empty dictionary if 0 parameters),
+    "function_to_execute_2": OR list of dictionaries containing the parameters (in case the function has to be executed multiple times),
     ...
     }
 
@@ -870,13 +907,23 @@ def script_run(config_path: str):
     strings referring to the most important classes in the framework, for example ContentAnalyzer or ContentBasedRS).
 
     Other keys in the dictionary are strings referring to the parameters of the module or the methods to execute
-    related to said module. If a parameter is an object the following notationg should be used:
+    related to said module. If a parameter is an object the following notation should be used:
 
     {"class": "FieldConfig", "parameter_for_class": value, ...}
 
     Args:
         config_path (str): path where the configuration file is stored
+        classes_dict (dict): dictionary containing all the classes in the framework with their respective name. So the
+        dictionary will be in the following form:
+
+            {"contentanalyzer": ContentAnalyzer,
+             "fieldconfig": FieldConfig,
+             ...}
+
+        where the values of the dictionary are the classes themselves
     """
+    Run.set_runnable_instances(classes_dict)
+
     if config_path.endswith('.yml'):
         with open(config_path) as config_file:
             extracted_data = yaml.load(config_file, Loader=yaml.FullLoader)

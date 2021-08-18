@@ -1,6 +1,6 @@
 import sys
 
-from orange_cb_recsys.script_handling import script_run
+from orange_cb_recsys.script.script_handling import script_run
 
 DEFAULT_CONFIG_PATH = "web_GUI/app/configuration_files/config.json"
 
