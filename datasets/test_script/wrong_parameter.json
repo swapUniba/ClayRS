@@ -1,0 +1,5 @@
+[
+  {"class": "ContentAnalyzer",
+   "not_existing_parameter": {"class": "FieldConfig"},
+   "fit": {}}
+]

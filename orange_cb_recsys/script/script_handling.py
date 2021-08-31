@@ -36,10 +36,6 @@ class Run(ABC):
     _runnable_instances = None
 
     @classmethod
-    def get_runnable_instances(cls):
-        return cls._runnable_instances
-
-    @classmethod
     def set_runnable_instances(cls, classes_dict: Dict[str, Type]):
         """
         Used to set the dictionary that will be used by the Run to retrieve the Class related to a given name
@@ -62,15 +58,15 @@ class Run(ABC):
         raise NotImplementedError
 
     @classmethod
-    def run(cls, config_dict: Dict, module: str):
+    def run(cls, info_dict: Dict):
         """
         Main method of the class that defines what happens as a result of using the run configuration
 
         In particular, there is a pipeline of operations:
-            - The module is instantiated by retrieving the module's class
-                (using the file serialized in the runnable_instances.py file)
+            - An object of the class associated with the module is instantiated and the parameters defined in the
+             info dictionary as argument are passed to the constructor
 
-            - The methods that are defined in the configuration dictionary are extracted from it
+            - The methods that are defined in the info dictionary are executed
 
                 EXAMPLE:
 
@@ -82,32 +78,190 @@ class Run(ABC):
                 associated to the method or a list of said dictionary) and saved in a new dictionary containing all
                 these methods ( {"method_name": {"method_parameter": value} )
 
-            - The parameters for the class constructor defined in the configuration dictionary are extracted from it
-
-            - An object of the class associated with the module is instantiated and the parameters extracted from the
-                configuration dictionary as argument are passed to the constructor
-
-            - The methods extracted are executed
-
         Args:
-            config_dict (dict): dictionary extracted from the script file which contains the parameters for the
+            info_dict (dict): dictionary extracted from the script file which contains the parameters for the
                 constructor (and methods eventually) for the framework's class associated to the Run subclass
 
             the dictionary will be in the following form:
 
                 {
-                    "output_directory": "dir",
-                    "object_example": {"class": "object_class", "constructor_parameter": "value"},
+                    "run_class": Callable,
+                    "config_dict": Dictionary containing the parameters for the constructor (Example:
+                        {
+                            "parameter1": value1,
+                            "parameter2": value2
+                        }
+                    )
+                    "methods": Dictionary containing the methods to call and their parameters (Example:
+                        {
+                            "method1": dictionary containing parameters,
+                            "method2": list of dictionary containing parameters (in this case the method will be
+                                executed as many times as the number of dictionaries in the list)
+                        }
+                    )
+                }
+        """
+        run_class = info_dict['run_class']
+        class_parameters = cls.extract_parameters(info_dict['config_dict'], run_class)
+        class_instance = run_class(**class_parameters)
+        cls.execute_methods(info_dict['methods'], class_instance)
+
+    @classmethod
+    def check_and_setup(cls, config_dict: dict, module: str):
+        """
+        This method is used to check that the parameters defined in a configuration dictionary are correct (
+        both for the class constructor and the methods' arguments). It also initializes a new dictionary that
+        will contain all relevant infos in a structured manner (said dictionary can be passed to the run method).
+
+        Notice: objects are not instantiated in this phase because of particular cases that may cause problems.
+        For example, if the user defined a Graph and said graph was instantiated during the check process, the
+        code inside the Graph's constructor would be executed (this is unwanted behavior because when using
+        several Run classes and executing the check phase for each one of them, if a different Run class
+        raises an exception the whole process will be stopped and the resulting graph wouldn't be used, which
+        is even worse if, like in this case, the code related to the class constructor takes a lot of time to be
+        executed)
+
+        Args:
+            config_dict (dict): dictionary containing all relevant information for the configuration in the following
+                way
+
+                {
+                    "constructor_parameter_name_1": value,
+                    "constructor_parameter_name_2": value,
+                    ...
+                    "method_name_1": dictionary containing parameters (or list of dictionaries eventually),
+                    "method_name_2": dictionary containing parameters (or list of dictionaries eventually),
                     ...
                 }
 
-            module (str): name of the module to use (example: "ContentAnalyzer")
+            module (str): name of the class instantiated from the script run
+
+        Returns:
+            info_dict (dict): dictionary containing the relevant information in a more structured manner, in particular,
+                the dictionary is now organized under 3 main keys:
+
+                    {
+                        "run_class": Class to instantiate.
+                        "methods": dictionary containing methods' names as keys and their parameters as values,
+                        "config_dict": dictionary containing the constructor parameters only
+                    }
         """
-        run_class = cls._runnable_instances[module]
-        methods = cls.check_for_methods(config_dict, run_class)
-        class_parameters = cls.extract_parameters(config_dict, run_class)
-        class_instance = run_class(**class_parameters)
-        cls.execute_methods(methods, class_instance)
+        info_dict = dict()
+        info_dict['run_class'] = cls._runnable_instances[module]
+        info_dict['methods'] = cls.check_for_methods(config_dict, info_dict['run_class'])
+        info_dict['config_dict'] = config_dict
+
+        cls.check_correct_parameters(config_dict, info_dict['run_class'])
+
+        return info_dict
+
+    @classmethod
+    def check_correct_parameters(cls, config_dict: dict, reference: Union[Type, Callable]):
+        """
+        Checks that the correct parameters are defined in the config_dict for the given class or function.
+        If some error is encountered a ParametersError exception is raised
+
+        Args:
+            config_dict (dict): dictionary containing the parameters defined by the user for a function call or
+                class constructor
+            reference (Union[Type, Callable]): Class or function for which the parameters will be checked (in case
+                of a class, constructor's parameters will be checked)
+        """
+        sign = signature(reference.__init__).parameters if isclass(reference) else signature(reference).parameters
+        cls.__check_parameters(sign, config_dict, reference.__name__)
+        cls.__check_value(config_dict)
+
+    @classmethod
+    def __check_parameters(cls, signature_parameters: Mapping, technique: dict, parameter_technique_name: str):
+        """
+        Method used to check the parameters defined in the dictionary containing the parameters and their values
+        for a specific class constructor or function. It checks for 2 possible cases that can raise exception:
+
+            - Not all parameters without a default value defined in the signature are found in the dictionary
+            defined by the user
+
+            - If kwargs or args are not defined in the original signature, all the parameters in the dictionary
+            defined by the user should be in the original signature (so if the user dictionary contains a key
+            such as 'parameter_name' but 'parameter_name' is not in the original signature, this scenario will
+            raise exception)
+
+        In both cases, a ParametersError exception will be raised
+
+        Args:
+            signature_parameters (Mapping): mapping containing the signature of the class constructor or function
+            technique (dict): dictionary defined by the user containing the parameters and their values related to the
+                original signature
+            parameter_technique_name (str): name of the technique associated with the signature (for example, if the
+                original signature is related to a function foo(a), this should be 'foo')
+        """
+
+        any_number_params = False
+
+        if 'args' in signature_parameters.keys() or 'kwargs' in signature_parameters.keys():
+            any_number_params = True
+
+        not_default_parameters = list()
+        actual_parameters = list()
+
+        for parameter, parameter_signature in signature_parameters.items():
+            if parameter not in ['self', 'args', 'kwargs', 'class']:
+                if parameter_signature.default is Parameter.empty and parameter not in technique.keys():
+                    not_default_parameters.append(parameter)
+                if not any_number_params:
+                    actual_parameters.append(parameter)
+
+        if len(not_default_parameters) != 0:
+            raise ParametersError("All parameters without default value must be defined for %s\n"
+                                  "The following parameters are missing: %s"
+                                  % (parameter_technique_name, str(not_default_parameters)))
+
+        if not any_number_params:
+
+            user_defined_params = set(technique.keys())
+            if 'class' in user_defined_params:
+                user_defined_params.remove('class')
+            not_defined_parameters = user_defined_params.difference(set(actual_parameters))
+            if len(not_defined_parameters) != 0:
+                if parameter_technique_name.lower() in cls._runnable_instances.keys():
+                    raise ParametersError("Some defined parameters/methods weren't found in the actual parameters/methods for %s\n"
+                                          "Not found parameters or functions: %s\n"
+                                          "Actual parameters: %s\n"
+                                          "Actual methods: %s" %
+                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters),
+                                           str([name[0] for name in getmembers(cls._runnable_instances[parameter_technique_name.lower()], predicate=isfunction) if not name[0].startswith("_")])))
+                else:
+                    raise ParametersError("Some defined parameters weren't found in the actual parameters for %s\n"
+                                          "Not found parameters: %s\n"
+                                          "Actual parameters: %s" %
+                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters)))
+
+    @classmethod
+    def __check_value(cls, value: Union[dict, list, Any]):
+        """
+        Method that checks a single value recursively in order to find dictionaries representing objects and
+        checking the correct definition of their parameters
+
+        Args:
+            value: if the value is a list or dictionary, the process continues in order to determine if there are
+            any dictionaries representing objects in these structures (or if the dictionary itself represents an
+            object)
+        """
+        if isinstance(value, dict):
+            for param, value in value.items():
+                if isinstance(value, list):
+                    for val in value:
+                        cls.__check_value(val)
+                elif isinstance(value, dict):
+                    if 'class' in value.keys():
+                        cl = cls._runnable_instances[value['class'].lower()]
+                        cls.check_correct_parameters(value, cl)
+                    for sub_param in value.keys():
+                        if isinstance(value[sub_param], dict) or isinstance(value[sub_param], list):
+                            cls.__check_value(value[sub_param])
+        elif isinstance(value, list):
+            for val in value:
+                if isinstance(val, dict) or isinstance(val, list):
+                    cls.__check_value(val)
 
     @staticmethod
     def __convert_string_path_to_object(parameter_signature: Parameter, parameter_value: Any):
@@ -172,67 +326,6 @@ class Run(ABC):
         return parameter_to_return
 
     @classmethod
-    def __check_parameters(cls, signature_parameters: Mapping, technique: dict, parameter_technique_name: str):
-        """
-        Method used to check the parameters defined in the dictionary containing the parameters and their values
-        for a specific class constructor or function. It checks for 2 possible cases that can raise exception:
-
-            - Not all parameters without a default value defined in the signature are found in the dictionary
-            defined by the user
-
-            - If kwargs or args are not defined in the original signature, all the parameters in the dictionary
-            defined by the user should be in the original signature (so if the user dictionary contains a key
-            such as 'parameter_name' but 'parameter_name' is not in the original signature, this scenario will
-            raise exception)
-
-        In both cases, a ParametersError exception will be raised
-
-        Args:
-            signature_parameters (Mapping): mapping containing the signature of the class constructor or function
-            technique (dict): dictionary defined by the user containing the parameters and their values related to the
-                original signature
-            parameter_technique_name (str): name of the technique associated with the signature (for example, if the
-                original signature is related to a function foo(a), this should be 'foo')
-        """
-
-        any_number_params = False
-
-        if 'args' in signature_parameters.keys() or 'kwargs' in signature_parameters.keys():
-            any_number_params = True
-
-        not_default_parameters = list()
-        actual_parameters = list()
-
-        for parameter, parameter_signature in signature_parameters.items():
-            if parameter not in ['self', 'args', 'kwargs']:
-                if parameter_signature.default is Parameter.empty and parameter not in technique.keys():
-                    not_default_parameters.append(parameter)
-                if not any_number_params:
-                    actual_parameters.append(parameter)
-
-        if len(not_default_parameters) != 0:
-            raise ParametersError("All parameters without default value must be defined for %s\n"
-                                  "The following parameters are missing: %s"
-                                  % (parameter_technique_name, str(not_default_parameters)))
-
-        if not any_number_params:
-
-            not_defined_parameters = set(technique.keys()).difference(set(actual_parameters))
-            if len(not_defined_parameters) != 0:
-                if parameter_technique_name.lower() in cls._runnable_instances.keys():
-                    raise ParametersError("Some defined parameters/methods weren't found in the actual parameters/methods for %s\n"
-                                          "Not found parameters or functions: %s\n"
-                                          "Actual parameters: %s\n"
-                                          "Actual methods: %s" %
-                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters),
-                                           str([name[0] for name in getmembers(cls._runnable_instances[parameter_technique_name.lower()], predicate=isfunction) if not name[0].startswith("_")])))
-                else:
-                    raise ParametersError("Some defined parameters weren't found in the actual parameters for %s\n"
-                                          "Not found parameters: %s\n"
-                                          "Actual parameters: %s" %
-                                          (parameter_technique_name, str(not_defined_parameters), str(actual_parameters)))
-
-    @classmethod
     def dict_detector(cls, technique: Union[dict, list]):
         """
         Detects a class constructor (defined by a dictionary with a class parameter that stores the alias for the class)
@@ -275,7 +368,6 @@ class Run(ABC):
             if 'class' in technique.keys():
                 parameter_class_name = technique.pop('class')
                 class_signature = signature(cls._runnable_instances[parameter_class_name.lower()]).parameters
-                cls.__check_parameters(class_signature, technique, parameter_class_name)
                 try:
                     # checks if any value is a dictionary representing an object
                     for parameter in technique.keys():
@@ -340,11 +432,9 @@ class Run(ABC):
             # if the method receives a class it will extract the parameters from the constructor, otherwise
             # it will just extract the parameters directly (this happens if the passed argument is a function)
             if isclass(class_or_function):
-                signature_parameters = signature(class_or_function.__init__).parameters
+                signature_parameters = list(signature(class_or_function.__init__).parameters.keys())
             else:
-                signature_parameters = signature(class_or_function).parameters
-            cls.__check_parameters(signature_parameters, config_dict, class_or_function.__name__)
-            signature_parameters = list(signature_parameters.keys())
+                signature_parameters = list(signature(class_or_function).parameters.keys())
             if "self" in signature_parameters:
                 signature_parameters.remove("self")
 
@@ -368,8 +458,8 @@ class Run(ABC):
             raise type(e)("Error encountered while processing %s: \n"
                           "%s" % (class_or_function.__name__, str(e)))
 
-    @staticmethod
-    def check_for_methods(config_dict: dict, cls: Type) -> Dict[str, Union[dict, list]]:
+    @classmethod
+    def check_for_methods(cls, config_dict: dict, cl: Type) -> Dict[str, Union[dict, list]]:
         """
         Method that searches for the public methods implemented in the class passed as argument. If the
         configuration dict passed as argument contains one of them, it is removed from the configuration
@@ -392,20 +482,25 @@ class Run(ABC):
 
         Args:
             config_dict (dict): configuration dictionary for a specific module in the script file
-            cls (Type): class from which the methods will be retrieved
+            cl (Type): class from which the methods will be retrieved
 
         Returns:
             found_methods (dict): dictionary containing the methods to execute, the keys will be the methods' names and
                 the values will be the parameters for said methods
         """
         # [method_name, method_name, ...]
-        methods = [name[0] for name in getmembers(cls, predicate=isfunction) if not name[0].startswith("_")]
+        methods = [name[0] for name in getmembers(cl, predicate=isfunction) if not name[0].startswith("_")]
         found_methods = {}
         # removes the method name from the list of methods and from the config_dict and adds the name as key
         # to the dictionary to return and the parameters defined in the config_dict as value
         for parameter in list(config_dict.keys()):
             if parameter in methods:
                 found_methods[parameter] = config_dict.pop(parameter)
+                if isinstance(found_methods[parameter], list):
+                    for method_params in found_methods[parameter]:
+                        cls.check_correct_parameters(method_params, getattr(cl, parameter))
+                else:
+                    cls.check_correct_parameters(found_methods[parameter], getattr(cl, parameter))
 
         return found_methods
 
@@ -478,20 +573,42 @@ class NeedsSerializationRun(Run):
         raise NotImplementedError
 
     @classmethod
-    def run(cls, config_dict: Dict, module: str):
+    def run(cls, info_dict: Dict):
         """
         Works as the run method defined in the Run class but also considers the output directory
         """
-        run_class = cls._runnable_instances[module]
-        output_directory = cls.setup_output_directory(config_dict, run_class)
-        methods = cls.check_for_methods(config_dict, run_class)
-        class_parameters = cls.extract_parameters(config_dict, run_class)
+        run_class = info_dict['run_class']
+        output_dir = cls.setup_output_directory(info_dict)
+        class_parameters = cls.extract_parameters(info_dict['config_dict'], run_class)
         class_instance = run_class(**class_parameters)
-        executed_methods_results = cls.execute_methods(methods, class_instance)
-        cls.serialize_results(executed_methods_results, output_directory)
+        executed_methods_results = cls.execute_methods(info_dict['methods'], class_instance)
+        cls.serialize_results(executed_methods_results, output_dir)
+
+    @classmethod
+    def check_and_setup(cls, config_dict: dict, module: str):
+        """
+        Same as the Run case, but this time an additional parameter is added to the config_dict, which is the
+        'output_directory' necessary for the serialization of the results generated by the methods of the
+        object generated during run execution
+        """
+        info_dict = dict()
+        info_dict['run_class'] = cls._runnable_instances[module]
+        info_dict['methods'] = cls.check_for_methods(config_dict, info_dict['run_class'])
+
+        try:
+            info_dict['output_directory'] = config_dict.pop('output_directory')
+        except KeyError:
+            raise NoOutputDirectoryDefined(
+                "Output directory must be defined for %s" % module)
+
+        info_dict['config_dict'] = config_dict
+
+        cls.check_correct_parameters(config_dict, info_dict['run_class'])
+
+        return info_dict
 
     @staticmethod
-    def setup_output_directory(config_dict: dict, run_class: Type):
+    def setup_output_directory(config_dict: dict):
         """
         This method extracts the output_directory from the configuration dictionary and allows for the basic setup of
         said output directory.
@@ -503,16 +620,11 @@ class NeedsSerializationRun(Run):
 
         Args:
             config_dict (dict): dictionary representing the parameters for a class constructor
-            run_class (Type): class related to the Run (example: ContentAnalyzer)
 
         Returns:
             output_directory(str): output_directory extracted from the config_dict
         """
-        try:
-            output_directory = config_dict.pop('output_directory')
-        except KeyError:
-            raise NoOutputDirectoryDefined(
-                "Output directory must be defined for %s" % run_class.__name__)
+        output_directory = config_dict.pop('output_directory')
 
         if not os.path.exists(output_directory):
             os.mkdir(output_directory)
@@ -547,7 +659,7 @@ class EmbeddingLearnerRun(Run):
     """
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return EmbeddingLearner
 
 
@@ -557,7 +669,7 @@ class RatingsRun(Run):
     """
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return RatingsImporter
 
 
@@ -600,7 +712,7 @@ class RecSysRun(NeedsSerializationRun):
     recsys_number = 0
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return RecSys
 
     @classmethod
@@ -652,7 +764,7 @@ class EvalRun(NeedsSerializationRun):
     eval_number = 0
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return EvalModel
 
     @classmethod
@@ -688,7 +800,7 @@ class MetricCalculatorRun(NeedsSerializationRun):
     metric_calculator_number = 0
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return MetricCalculator
 
     @classmethod
@@ -726,7 +838,7 @@ class MethodologyRun(NeedsSerializationRun):
     methodology_number = 0
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return Methodology
 
     @classmethod
@@ -765,7 +877,7 @@ class PartitioningRun(NeedsSerializationRun):
     partitioning_number = 0
 
     @classmethod
-    def get_associated_class(cls):
+    def get_associated_class(cls) -> Type:
         return PartitionModule
 
     @classmethod
@@ -836,6 +948,8 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
         if not all(isinstance(config_dict, dict) for config_dict in config_list_dict):
             raise ScriptConfigurationError("The list in the script must contain dictionaries only")
 
+        run_list = []
+
         for config_dict in config_list_dict:
 
             config_dict_number += 1
@@ -848,10 +962,17 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
                     raise ScriptConfigurationError(
                         "You must specify a valid module: " + str(implemented_modules.keys()))
 
-                run_class.run(config_dict, module)
+                run_list.append((run_class, run_class.check_and_setup(config_dict, module)))
             else:
                 raise ScriptConfigurationError("A 'module' parameter must be specified and the value must be one "
                                                "of the following: " + str(implemented_modules.keys()))
+
+        config_dict_number = 0
+        for run_config in run_list:
+            config_dict_number += 1
+            run_class, run_infos = run_config
+            run_class.run(run_infos)
+
     except (ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, FileNotFoundError) as e:
         if config_dict_number != 0:
             raise type(e)("[Configuration dictionary number #%s in the script file]\n" % str(config_dict_number) + str(e))
