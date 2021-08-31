@@ -15,6 +15,7 @@ setup(name='orange_cb_recsys',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/m3ttiw/orange_cb_recsys',
+      include_package_data=True,
       packages=setuptools.find_packages(),
       python_requires='>=3.6'
       )
