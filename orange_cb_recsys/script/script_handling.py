@@ -8,7 +8,6 @@ import pandas as pd
 from typing import Dict, Union, Type, Callable, Any, Mapping, List, Set
 from abc import ABC, abstractmethod
 from inspect import signature, isclass, isfunction, getmembers, Parameter
-import orange_cb_recsys.runnable_instances as r_i
 
 from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnalyzer
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
@@ -980,33 +979,7 @@ def handle_script_contents(config_list_dict: Union[dict, list]):
             raise e
 
 
-def script_run_standard(config_path: str):
-    """
-    Standard script run where the classes dictionary necessary for the the run configurations will be created
-    dynamically by the system itself
-
-    Args:
-        config_path (str): path where the configuration file is located
-    """
-    __script_run(config_path, r_i.get_classes())
-
-
-def script_run_with_classes_file(config_path: str, file_path: str = "classes.xz"):
-    """
-    Script run where the classes dictionary necessary for the run configuration has to be passed by the user,
-    defining where the file is located. To create such file, use the serialize_classes() method importable from
-    the "runnable_instances.py" file in the "orange_cb_recsys" package
-
-    Args:
-        config_path (str): path where the configuration file is located
-        file_path (str): path where the classes file is located
-    """
-    with lzma.open(file_path, "rb") as f:
-        classes_dict = pickle.load(f)
-    __script_run(config_path, classes_dict)
-
-
-def __script_run(config_path: str, classes_dict: Dict[str, Type]):
+def script_run(config_path: str):
     """
     Method used to elaborate a script file (either in .yml or .json) which will then execute the instructions
     declared in the script file. This allows to use a configuration file containing the instructions on what to do
@@ -1034,15 +1007,12 @@ def __script_run(config_path: str, classes_dict: Dict[str, Type]):
 
     Args:
         config_path (str): path where the configuration file is stored
-        classes_dict (dict): dictionary containing all the classes in the framework with their respective name. So the
-        dictionary will be in the following form:
-
-            {"contentanalyzer": ContentAnalyzer,
-             "fieldconfig": FieldConfig,
-             ...}
-
-        where the values of the dictionary are the classes themselves
     """
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+
+    with lzma.open(os.path.join(this_dir, 'classes.xz'), "rb") as f:
+        classes_dict = pickle.load(f)
+
     Run.set_runnable_instances(classes_dict)
 
     if config_path.endswith('.yml'):
