@@ -3,19 +3,18 @@ import pathlib as pl
 import pandas as pd
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
-from orange_cb_recsys.recsys.recsys import ContentBasedRS
-from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
-from orange_cb_recsys.evaluation import MetricCalculator
-from orange_cb_recsys.script.exceptions import ScriptConfigurationError, ParametersError, NoOutputDirectoryDefined, \
-    InvalidFilePath
-from orange_cb_recsys.script.script_handling import handle_script_contents, RecSysRun, EvalRun, MethodologyRun, MetricCalculatorRun, \
-    PartitioningRun, Run, NeedsSerializationRun, script_run_standard, script_run_with_classes_file
-from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
-from orange_cb_recsys.runnable_instances import serialize_classes
+from orange_cb_recsys.script.exceptions import ScriptConfigurationError, ParametersError, InvalidFilePath, \
+    NoOutputDirectoryDefined
+from orange_cb_recsys.script.script_handling import handle_script_contents, RecSysRun, EvalRun, MethodologyRun, \
+    MetricCalculatorRun, PartitioningRun, Run, NeedsSerializationRun, script_run_standard, script_run_with_classes_file
+from orange_cb_recsys.runnable_instances import serialize_classes, get_classes
 from orange_cb_recsys.utils.const import root_path
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
+from orange_cb_recsys.content_analyzer import NumberNormalizer, NLTK, JSONFile
+from orange_cb_recsys.recsys import GraphBasedRS, ContentBasedRS
+from orange_cb_recsys.evaluation import TestRatingsMethodology, PartitionModule, MetricCalculator
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 movies_info_reduced = os.path.join(root_path, "datasets/movies_info_reduced.json")
@@ -43,6 +42,7 @@ class TestRun(TestCase):
         PartitioningRun.partitioning_number = 0
 
     def setUp(self) -> None:
+        Run.set_runnable_instances(get_classes())
 
         item_config_dict = {
             "module": "ContentAnalyzer",
@@ -187,25 +187,25 @@ class TestRun(TestCase):
 
             handle_script_contents(self.config_list)
 
-            self.assertEqual(pl.Path(os.path.join(run_dir, "eval_sys_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "eval_user_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "item_to_predict_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "mc_sys_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "mc_user_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "predict_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "rank_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "multiple_rank_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "multiple_predict_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "testing_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "testing_0_0#1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "training_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "training_0_0#1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "graph_test/graph.xz")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(run_dir, "rank_1_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(ratings_example).is_file(), True)
-            self.assertEqual(pl.Path(embedding_example).is_file(), True)
-            self.assertEqual(pl.Path(items_example).is_dir(), True)
-            self.assertEqual(pl.Path(users_example).is_dir(), True)
+            self.assertTrue(pl.Path(os.path.join(run_dir, "eval_sys_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "eval_user_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "item_to_predict_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "mc_sys_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "mc_user_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "predict_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "rank_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "multiple_rank_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "multiple_predict_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "testing_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "testing_0_0#1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "training_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "training_0_0#1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "graph_test/graph.xz")).is_file())
+            self.assertTrue(pl.Path(os.path.join(run_dir, "rank_1_0.csv")).is_file())
+            self.assertTrue(pl.Path(ratings_example).is_file())
+            self.assertTrue(pl.Path(embedding_example).is_file())
+            self.assertTrue(pl.Path(items_example).is_dir())
+            self.assertTrue(pl.Path(users_example).is_dir())
 
         finally:
             self.resetRuns()
@@ -224,76 +224,96 @@ class TestRun(TestCase):
             ratings.to_csv(ratings_path, index=False)
 
             recsys_config_dict_multiple_params = {
-                "users_directory": os.path.join(root_path, 'contents/users_codified'),
-                "items_directory": os.path.join(root_path, 'contents/movies_codified'),
-                "rating_frame": ratings_path,
-                "algorithm": {
-                    "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
-                "fit_rank": [{"user_id": "5"}, {"user_id": "6"}],
-                "fit_predict": [{"user_id": "5"}, {"user_id": "6"}],
+                "run_class": ContentBasedRS,
+                "config_dict": {
+                    "users_directory": os.path.join(root_path, 'contents/users_codified'),
+                    "items_directory": os.path.join(root_path, 'contents/movies_codified'),
+                    "rating_frame": ratings_path,
+                    "algorithm": {
+                        "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
+                },
+                "methods": {
+                    "fit_rank": [{"user_id": "5"}, {"user_id": "6"}],
+                    "fit_predict": [{"user_id": "5"}, {"user_id": "6"}]
+                },
                 "output_directory": multiple_params_dir
             }
 
-            RecSysRun.run(recsys_config_dict_multiple_params, "contentbasedrs")
+            RecSysRun.run(recsys_config_dict_multiple_params)
 
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "rank_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "rank_0_1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "predict_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "predict_0_1.csv")).is_file(), True)
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "rank_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "rank_0_1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "predict_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "predict_0_1.csv")).is_file())
 
             metric_calculator_dict_multiple_params = {
-                "predictions_truths": [{"class": "Split", "first_set": os.path.join(multiple_params_dir, "rank_0_0.csv"),
-                                        "second_set": ratings_path}],
+                "run_class": MetricCalculator,
+                "config_dict": {
+                    "predictions_truths": [{"class": "Split", "first_set": os.path.join(multiple_params_dir, "rank_0_0.csv"),
+                                            "second_set": ratings_path}],
+                },
                 "output_directory": multiple_params_dir,
-                "eval_metrics": [{"metric_list": [{"class": "Precision"}]},
-                                 {"metric_list": [{"class": "NDCG"}]}]
+                "methods": {
+                    "eval_metrics": [{"metric_list": [{"class": "Precision"}]},
+                                     {"metric_list": [{"class": "NDCG"}]}]
+                }
             }
 
-            MetricCalculatorRun.run(metric_calculator_dict_multiple_params, "metriccalculator")
+            MetricCalculatorRun.run(metric_calculator_dict_multiple_params)
 
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "mc_sys_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "mc_user_results_0_0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "mc_sys_results_0_1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "mc_user_results_0_1.csv")).is_file(), True)
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "mc_sys_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "mc_user_results_0_0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "mc_sys_results_0_1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "mc_user_results_0_1.csv")).is_file())
 
             partitioning_dict_multiple_params = {
+                "run_class": PartitionModule,
                 "output_directory": multiple_params_dir,
-                "partition_technique": {"class": "KFoldPartitioning"},
-                "split_all": [{"ratings": ratings_path, "user_id_list": ["5"]},
-                              {"ratings": ratings_path, "user_id_list": ["6"]}]
+                "config_dict": {
+                    "partition_technique": {"class": "KFoldPartitioning"},
+                },
+                "methods": {
+                    "split_all": [{"ratings": ratings_path, "user_id_list": ["5"]},
+                                  {"ratings": ratings_path, "user_id_list": ["6"]}]
+                }
             }
 
-            PartitioningRun.run(partitioning_dict_multiple_params, "partitionmodule")
+            PartitioningRun.run(partitioning_dict_multiple_params)
 
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "training_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "training_0_0#1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "training_0_1#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "training_0_1#1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "testing_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "testing_0_0#1.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "testing_0_1#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "testing_0_1#1.csv")).is_file(), True)
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "training_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "training_0_0#1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "training_0_1#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "training_0_1#1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "testing_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "testing_0_0#1.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "testing_0_1#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "testing_0_1#1.csv")).is_file())
 
             methodology_dict_multiple_params = {
+                "run_class": TestRatingsMethodology,
                 "output_directory": multiple_params_dir,
-                "only_greater_eq": 2,
-                "get_item_to_predict": [
-                    {"split_list": [{"class": "Split",
-                                     "first_set": os.path.join(multiple_params_dir, "training_0_0#0.csv"),
-                                     "second_set": os.path.join(multiple_params_dir, "testing_0_0#0.csv")}]},
-                    {"split_list": [{"class": "Split",
-                                     "first_set": os.path.join(multiple_params_dir, "training_0_0#1.csv"),
-                                     "second_set": os.path.join(multiple_params_dir, "testing_0_0#1.csv")},
-                                    {"class": "Split",
-                                     "first_set": os.path.join(multiple_params_dir, "training_0_1#0.csv"),
-                                     "second_set": os.path.join(multiple_params_dir, "testing_0_1#0.csv")}]}]
+                "config_dict": {
+                    "only_greater_eq": 2,
+                },
+                "methods": {
+                    "get_item_to_predict": [
+                        {"split_list": [{"class": "Split",
+                                         "first_set": os.path.join(multiple_params_dir, "training_0_0#0.csv"),
+                                         "second_set": os.path.join(multiple_params_dir, "testing_0_0#0.csv")}]},
+                        {"split_list": [{"class": "Split",
+                                         "first_set": os.path.join(multiple_params_dir, "training_0_0#1.csv"),
+                                         "second_set": os.path.join(multiple_params_dir, "testing_0_0#1.csv")},
+                                        {"class": "Split",
+                                         "first_set": os.path.join(multiple_params_dir, "training_0_1#0.csv"),
+                                         "second_set": os.path.join(multiple_params_dir, "testing_0_1#0.csv")}]}]
+                }
             }
 
-            MethodologyRun.run(methodology_dict_multiple_params, "testratingsmethodology")
+            MethodologyRun.run(methodology_dict_multiple_params)
 
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_0#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_1#0.csv")).is_file(), True)
-            self.assertEqual(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_1#1.csv")).is_file(), True)
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_0#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_1#0.csv")).is_file())
+            self.assertTrue(pl.Path(os.path.join(multiple_params_dir, "item_to_predict_0_1#1.csv")).is_file())
 
         finally:
             self.resetRuns()
@@ -315,35 +335,43 @@ class TestRun(TestCase):
             with self.assertRaises(ScriptConfigurationError):
                 handle_script_contents(test_config_list_dict)
 
-            # test for not defined output directory in module that needs it
-            test_dict = {"module": "contentbasedrs",
-                         "rating_frame": ratings_example}
-            with self.assertRaises(NoOutputDirectoryDefined):
-                NeedsSerializationRun.setup_output_directory(test_dict, ContentBasedRS)
-
             # test for not valid ratings frame csv path
-            test_dict = {"rating_frame": "not_valid_path",
-                         "items_directory": "some_dir",
-                         "algorithm": {
-                            "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
-                         "output_directory": "some_dir"
+            test_dict = {"run_class": ContentBasedRS,
+                         "config_dict": {
+                            "rating_frame": "not_valid_path",
+                            "items_directory": "some_dir",
+                            "algorithm": {
+                                "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
+
+                         },
+                         "output_directory": "some_dir",
+                         "methods": {}
                          }
             with self.assertRaises(InvalidFilePath):
-                RecSysRun.run(test_dict, "contentbasedrs")
+                RecSysRun.run(test_dict)
 
             # test for not valid graph path
-            test_dict = {"graph": "not_valid_path",
-                         "algorithm": {"class": "NXPageRank", "personalized": True},
-                         "output_directory": "some_dir"}
+            test_dict = {"run_class": GraphBasedRS,
+                         "config_dict": {
+                            "graph": "not_valid_path",
+                            "algorithm": {"class": "NXPageRank", "personalized": True}
+                         },
+                         "output_directory": "some_dir",
+                         "methods": {}}
             with self.assertRaises(InvalidFilePath):
-                RecSysRun.run(test_dict, "graphbasedrs")
+                RecSysRun.run(test_dict)
 
             # test for not valid json list path
-            test_dict = {"partition_technique": {"class": "KFoldPartitioning"},
+            test_dict = {"run_class": PartitionModule,
+                         "config_dict": {
+                            "partition_technique": {"class": "KFoldPartitioning"},
+                         },
                          "output_directory": "some_dir",
-                         "split_all": {"user_id_list": "not_valid_path", "ratings": ratings_example}}
+                         "methods": {
+                            "split_all": {"user_id_list": "not_valid_path", "ratings": ratings_example}}
+                         }
             with self.assertRaises(InvalidFilePath):
-                PartitioningRun.run(test_dict, "partitionmodule")
+                PartitioningRun.run(test_dict)
         finally:
             self.resetRuns()
 
@@ -367,12 +395,6 @@ class TestRun(TestCase):
 
         self.assertIsInstance(parameters["predictions_truths"][0], Split)
         self.assertIsInstance(parameters["predictions_truths"][0].truth, pd.DataFrame)
-
-        # test for parameters extraction on wrong parameter for fit method
-        with self.assertRaises(ParametersError):
-            Run.extract_parameters({
-                "wrong_parameter": "test"
-            }, EmbeddingLearner.fit)
 
     def test_dict_detector(self):
         # test for dictionary detector where each key of the dictionary represents a different case
@@ -424,3 +446,90 @@ class TestRun(TestCase):
 
         with self.assertRaises(ScriptConfigurationError):
             script_run_with_classes_file(os.path.join(root_path, 'datasets/movies_info_reduced.csv'), classes_file_path)
+
+    def test_check(self):
+        correct_config_run = {
+            "config": {"class": "ItemAnalyzerConfig",
+                       "source": "source",
+                       "id": "id",
+                       "output_directory": "dir"},
+            "fit": {}
+        }
+
+        Run.check_and_setup(correct_config_run, 'contentanalyzer')
+
+        wrong_class_param_config_run = {
+            "confeg": {"class": "ItemAnalyzerConfig",
+                       "source": "source",
+                       "id": "id",
+                       "output_directory": "dir"},
+            "fit": {}
+        }
+
+        with self.assertRaises(ParametersError):
+            Run.check_and_setup(wrong_class_param_config_run, 'contentanalyzer')
+
+        wrong_method_param_config_run = {
+            "config": {"class": "ItemAnalyzerConfig",
+                       "source": "source",
+                       "id": "id",
+                       "output_directory": "dir"},
+            "fet": {}
+        }
+
+        with self.assertRaises(ParametersError):
+            Run.check_and_setup(wrong_method_param_config_run, 'contentanalyzer')
+
+        correct_config_ns_run = {
+            "predictions_truths": [],
+            "output_directory": "dir",
+            "eval_metrics": {
+                "metric_list": []
+            }
+        }
+
+        NeedsSerializationRun.check_and_setup(correct_config_ns_run, 'metriccalculator')
+
+        wrong_class_param_config_ns_run = {
+            "predections_truths": [],
+            "output_directory": "dir",
+            "eval_metrics": {
+                "metric_list": []
+            }
+        }
+
+        with self.assertRaises(ParametersError):
+            NeedsSerializationRun.check_and_setup(wrong_class_param_config_ns_run, 'metriccalculator')
+
+        wrong_method_param_config_ns_run = {
+            "predictions_truths": [],
+            "output_directory": "dir",
+            "evel_metrics": {
+                "metric_list": []
+            }
+        }
+
+        with self.assertRaises(ParametersError):
+            NeedsSerializationRun.check_and_setup(wrong_method_param_config_ns_run, 'metriccalculator')
+
+        wrong_output_dir_config_ns_run = {
+            "predictions_truths": [],
+            "output_derectory": "dir",
+            "evel_metrics": {
+                "metric_list": []
+            }
+        }
+
+        with self.assertRaises(NoOutputDirectoryDefined):
+            NeedsSerializationRun.check_and_setup(wrong_output_dir_config_ns_run, 'metriccalculator')
+
+    def test_check_file(self):
+        json_path = os.path.join(root_path, 'datasets/test_script/wrong_parameter.json')
+        yml_path = os.path.join(root_path, 'datasets/test_script/wrong_parameter.yml')
+
+        with self.assertRaises(ScriptConfigurationError):
+            script_run_standard(json_path)
+
+        with self.assertRaises(ScriptConfigurationError):
+            script_run_standard(yml_path)
+
