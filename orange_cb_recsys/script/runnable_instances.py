@@ -101,3 +101,7 @@ def serialize_classes(output_directory: str = "."):
 
     with lzma.open(file_path, 'wb') as f:
         pickle.dump(classes_dict, f)
+
+
+if __name__ == '__main__':
+    serialize_classes()

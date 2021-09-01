@@ -6,8 +6,8 @@ from unittest import TestCase
 from orange_cb_recsys.script.exceptions import ScriptConfigurationError, ParametersError, InvalidFilePath, \
     NoOutputDirectoryDefined
 from orange_cb_recsys.script.script_handling import handle_script_contents, RecSysRun, EvalRun, MethodologyRun, \
-    MetricCalculatorRun, PartitioningRun, Run, NeedsSerializationRun, script_run_standard, script_run_with_classes_file
-from orange_cb_recsys.runnable_instances import serialize_classes, get_classes
+    MetricCalculatorRun, PartitioningRun, Run, NeedsSerializationRun, script_run
+from orange_cb_recsys.script.runnable_instances import get_classes
 from orange_cb_recsys.utils.const import root_path
 from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 
@@ -430,22 +430,12 @@ class TestRun(TestCase):
         # there are no asserts because the files loaded by the script run only contain an empty list
         # therefore nothing will be done
         # this test is used to make sure that nothing happens
-        script_run_standard(json_path)
-        script_run_standard(yml_path)
-
-        serialize_classes(THIS_DIR)
-        classes_file_path = os.path.join(THIS_DIR, 'classes.xz')
-
-        # same as above
-        script_run_with_classes_file(json_path, classes_file_path)
-        script_run_with_classes_file(yml_path, classes_file_path)
+        script_run(json_path)
+        script_run(yml_path)
 
         # tests for loading a script file witt a non supported format (csv)
         with self.assertRaises(ScriptConfigurationError):
-            script_run_standard(os.path.join(root_path, 'datasets/movies_info_reduced.csv'))
-
-        with self.assertRaises(ScriptConfigurationError):
-            script_run_with_classes_file(os.path.join(root_path, 'datasets/movies_info_reduced.csv'), classes_file_path)
+            script_run(os.path.join(root_path, 'datasets/movies_info_reduced.csv'))
 
     def test_check(self):
         correct_config_run = {
@@ -528,8 +518,8 @@ class TestRun(TestCase):
         yml_path = os.path.join(root_path, 'datasets/test_script/wrong_parameter.yml')
 
         with self.assertRaises(ScriptConfigurationError):
-            script_run_standard(json_path)
+            script_run(json_path)
 
         with self.assertRaises(ScriptConfigurationError):
-            script_run_standard(yml_path)
+            script_run(yml_path)
 

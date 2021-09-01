@@ -5,7 +5,7 @@ import lzma
 import pickle
 
 from orange_cb_recsys.content_analyzer import FieldConfig
-from orange_cb_recsys.runnable_instances import serialize_classes, get_classes
+from orange_cb_recsys.script.runnable_instances import serialize_classes, get_classes
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
