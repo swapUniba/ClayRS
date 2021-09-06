@@ -11,7 +11,17 @@ class RawInformationSource(ABC):
     """
     Abstract Class that generalizes the acquisition of raw descriptions of the contents
     from one of the possible acquisition channels.
+
+    Args:
+        encoding (str): define the type of encoding of data stored in the source (example: "utf-8")
     """
+
+    def __init__(self, encoding: str):
+        self.__encoding = encoding
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @abstractmethod
     def __iter__(self) -> Iterator[Dict[str, str]]:
@@ -30,11 +40,12 @@ class DATFile(RawInformationSource):
         file_path (str)
     """
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, encoding: str = "utf-8"):
+        super().__init__(encoding)
         self.__file_path = file_path
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path) as f:
+        with open(self.__file_path, encoding=self.encoding) as f:
             for line in f:
                 line_dict = {}
                 fields = line.split('::')
@@ -53,13 +64,12 @@ class JSONFile(RawInformationSource):
         file_path (str)
     """
 
-    def __init__(self, file_path: str):
-        """
-        """
+    def __init__(self, file_path: str, encoding: str = "utf-8"):
+        super().__init__(encoding)
         self.__file_path = file_path
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path, 'r') as j:
+        with open(self.__file_path, encoding=self.encoding) as j:
             all_lines = json.load(j, parse_int=str, parse_float=str)
             for line in all_lines:
                 yield line
@@ -73,14 +83,13 @@ class CSVFile(RawInformationSource):
         file_path (str)
     """
 
-    def __init__(self, file_path: str, has_header: bool = True):
-        """
-        """
+    def __init__(self, file_path: str, has_header: bool = True, encoding: str = "utf-8-sig"):
+        super().__init__(encoding)
         self.__file_path = file_path
         self.__has_header = has_header
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path, newline='', encoding='utf-8-sig') as csv_file:
+        with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
             if self.__has_header:
                 reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
             else:
@@ -108,8 +117,9 @@ class SQLDatabase(RawInformationSource):
                  username: str,
                  password: str,
                  database_name: str,
-                 table_name: str):
-        super().__init__()
+                 table_name: str,
+                 encoding: str = "utf8"):
+        super().__init__(encoding)
         self.__host: str = host
         self.__username: str = username
         self.__password: str = password
@@ -118,7 +128,8 @@ class SQLDatabase(RawInformationSource):
 
         conn = mysql.connector.connect(host=self.__host,
                                        user=self.__username,
-                                       password=self.__password)
+                                       password=self.__password,
+                                       charset=self.encoding)
         cursor = conn.cursor()
         query = """USE """ + self.__database_name + """;"""
         cursor.execute(query)
