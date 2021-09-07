@@ -30,6 +30,9 @@ class CosineSimilarity(Similarity):
         Calculates the cosine similarity between v1 and v2
         """
 
-        # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
-        # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
-        return 1 - cosine_distance(v1, v2)
+        if not v1.any() or not v2.any():
+            return 0
+        else:
+            # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
+            # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
+            return 1 - cosine_distance(v1, v2)
