@@ -8,8 +8,29 @@ from orange_cb_recsys.utils.const import eval_logger
 
 
 class Methodology(ABC):
+    """
+    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
+    which items must be used in order to generate a recommendation list
+
+    The methodologies here implemented follow the 'Precision-Oriented Evaluation of Recommender Systems: An Algorithmic
+    Comparison' paper, check it for more
+    """
 
     def get_item_to_predict(self, split_list: List[Split]) -> List[pd.DataFrame]:
+        """
+        Method which effectively calculates which items must be used in order to generate a recommendation list
+
+        It takes in input all splits containing 'train set' and 'test set' and returns a list of DataFrame, one for
+        every split. A single DataFrame contains, for every user inside the train set, all items which must be
+        recommended based on the methodology chosen.
+
+        Args:
+            split_list (List[Split]): List of split where every split contains a 'train set' and a 'test set'.
+
+        Returns:
+            A list of DataFrame, one for every split. A single DataFrame contains all items which must be
+            recommended to every user based on the methodology chosen.
+        """
 
         items_to_predict = []
         for counter, split in enumerate(split_list, start=1):
@@ -34,6 +55,10 @@ class Methodology(ABC):
 
     @abc.abstractmethod
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
+        """
+        Abstract method in which must be specified how to calculate which items must be part of the recommendation list
+        of a single user
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -42,6 +67,21 @@ class Methodology(ABC):
 
 
 class TestRatingsMethodology(Methodology):
+    """
+    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
+    which items must be used in order to generate a recommendation list
+
+    With TestRatingsMethodology, given a user U, items to recommend for U are simply those items that appear in its
+    'test set'
+    \n
+
+    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    returned
+
+    Args:
+        only_greater_eq (float): float which acts as a filter, if specified only items with
+            rating score >= only_greater_eq will be returned
+    """
     def __init__(self, only_greater_eq: float = None):
         self.__threshold = only_greater_eq
 
@@ -53,6 +93,14 @@ class TestRatingsMethodology(Methodology):
         return self.__threshold
 
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
+        """
+        Private method that returns items that needs to be part of the recommendation list of a single user.
+        Since it's the TestRatings Methodology, only items that appear in the 'test set' of the user will be returned
+
+        Args:
+            user (str): User of which we want to calculate items that must appear in its recommendation list
+            split (Split): Split containing 'train set' and 'test set'
+        """
         if self.__threshold is not None:
             single_user_to_id = set(split.test.query('(from_id == @user) '
                                                      'and (score >= @self.threshold)').to_id)
@@ -63,6 +111,20 @@ class TestRatingsMethodology(Methodology):
 
 
 class TestItemsMethodology(Methodology):
+    """
+    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
+    which items must be used in order to generate a recommendation list
+
+    With TestItemsMethodology, given a user U, items to recommend for U are all items that appear in the 'test set' of
+    every user excluding those items that appear in the 'train set' of U
+    \n
+    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    returned
+
+    Args:
+        only_greater_eq (float): float which acts as a filter, if specified only items with
+            rating score >= only_greater_eq will be returned
+    """
     def __init__(self, only_greater_eq: float = None):
         self.__threshold = only_greater_eq
 
@@ -74,6 +136,15 @@ class TestItemsMethodology(Methodology):
         return "TestItemsMethodology"
 
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
+        """
+        Private method that returns items that needs to be part of the recommendation list of a single user.
+        Since it's the TestItems Methodology, all items that appear in the 'test set' of every user will be returned,
+        except for those that appear in the 'train set' of the user passed as parameter
+
+        Args:
+            user (str): User of which we want to calculate items that must appear in its recommendation list
+            split (Split): Split containing 'train set' and 'test set'
+        """
         # variable used by pandas query
         user_ratings_train = split.train.query('from_id == @user')
 
@@ -87,6 +158,20 @@ class TestItemsMethodology(Methodology):
 
 
 class TrainingItemsMethodology(Methodology):
+    """
+    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
+    which items must be used in order to generate a recommendation list
+
+    With TrainingItemsMethodology, given a user U, items to recommend for U are all items that appear in the 'train set'
+    of every user excluding those items that appear in the 'train set' of U
+    \n
+    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    returned
+
+    Args:
+        only_greater_eq (float): float which acts as a filter, if specified only items with
+            rating score >= only_greater_eq will be returned
+    """
     def __init__(self, only_greater_eq: float = None):
         self.__threshold = only_greater_eq
 
@@ -98,6 +183,15 @@ class TrainingItemsMethodology(Methodology):
         return "TrainingItemsMethodology"
 
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
+        """
+        Private method that returns items that needs to be part of the recommendation list of a single user.
+        Since it's the TrainingItems Methodology, all items that appear in the 'test set' of every user will be returned,
+        except for those that appear in the 'train set' of the user passed as parameter
+
+        Args:
+            user (str): User of which we want to calculate items that must appear in its recommendation list
+            split (Split): Split containing 'train set' and 'test set'
+        """
         # variable used by pandas query
         user_ratings_train = split.train.query('from_id == @user')
 
@@ -111,6 +205,19 @@ class TrainingItemsMethodology(Methodology):
 
 
 class AllItemsMethodology(Methodology):
+    """
+    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
+    which items must be used in order to generate a recommendation list
+
+    With AllItemsMethodology, given a user U, items to recommend for U are all items that appear in 'items_list'
+    parameter excluding those items that appear in the 'train set' of U
+    \n
+    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    returned
+
+    Args:
+        items_list (Set[str]): Items set that must appear in the recommendation list of every user
+    """
 
     def __init__(self, items_list: Set[str]):
         self.__items_list = items_list
@@ -119,6 +226,15 @@ class AllItemsMethodology(Methodology):
         return "AllItemsMethodology"
 
     def _get_single_user_to_id(self, user: str, split: Split) -> Set:
+        """
+        Private method that returns items that needs to be part of the recommendation list of a single user.
+        Since it's the AllItems Methodology, all items that appear in the 'items_list' parameter of the constructor
+        will be returned, except for those that appear in the 'train set' of the user passed as parameter
+
+        Args:
+            user (str): User of which we want to calculate items that must appear in its recommendation list
+            split (Split): Split containing 'train set' and 'test set'
+        """
 
         user_ratings_train = split.train.query('from_id == @user')
 

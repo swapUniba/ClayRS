@@ -32,12 +32,12 @@ class NXPageRank(PageRankAlg):
     def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        All unrated items will be ranked (or only items in the filter list, if specified).
 
         One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list which are present in the graph will be ranked.
+        in this case ONLY items in the filter_list parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items which are present in the graph will be used to calculate the rank.
+        Otherwise, ALL unrated items will be ranked.
 
         If a feature selection algorithm is passed in the constructor, it is performed before calculating
         any prediction

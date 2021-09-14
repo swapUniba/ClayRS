@@ -18,19 +18,18 @@ class ContentBasedAlgorithm(Algorithm):
     """
     Abstract class for the content-based algorithms
 
-    Like every subclass of Algorithm, it must implements the 'initialize(...)' method where one must pass
-    important parameters for the usage of this specific type of Algorithm
-
-    Said method must be called right after the instantiation of the Algorithm
+    Every Content Based Algorithm base its prediction (let it be score prediction or ranking) on representations
+    serialized by the Content Analyzer. It can be used a single representation or multiple ones for a single field or
+    multiple ones
 
     Args:
     item_field (dict): dict where the key is the name of the field
-        that contains the content to use, value is the representation(s) that will be
+        that contains the content to use, value is the representation(s) id(s) that will be
         used for the said item. The value of a field can be a string or a list,
         use a list if you want to use multiple representations for a particular field.
-        Check the example above for more.
-    threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-        as positive
+    threshold (float): Threshold for the ratings. Some algorithms use this threshold in order to
+        separate positive items from the negative ones, others may use only ratings that are >= than this
+        threshold. See the documentation of the algorithm used for more
     """
 
     def __init__(self, item_field: dict, threshold: float):
@@ -39,6 +38,9 @@ class ContentBasedAlgorithm(Algorithm):
         self.__transformer = None
 
     def _set_transformer(self):
+        """
+        Private method that set the transformer later used in order to fuse multiple representations
+        """
         self.__transformer = DictVectorizer(sparse=True, sort=False)
 
     @staticmethod
@@ -48,10 +50,10 @@ class ContentBasedAlgorithm(Algorithm):
         instead of a list.
 
         EXAMPLE::
-            > item_field = {'Plot': '0', 'Genre': ['0', '1']}
+            > item_field = {'Plot': 0, 'Genre': ['tfidf', 1]}
             > print(_bracket_representation(item_field))
 
-            > {'Plot': ['0'], 'Genre': ['0', '1']}
+            > {'Plot': [0], 'Genre': ['tfidf', 1]}
 
         Args:
             item_field (dict): dict that may contain values that need to be bracketed
@@ -67,6 +69,9 @@ class ContentBasedAlgorithm(Algorithm):
 
     @staticmethod
     def _calc_mean_user_threshold(user_ratings: pd.DataFrame):
+        """
+        Private method which simply calculates the average rating by the user given its ratings
+        """
         return user_ratings['score'].mean()
 
     def extract_features_item(self, item: Content):
@@ -77,9 +82,9 @@ class ContentBasedAlgorithm(Algorithm):
         It extracts only the chosen representations of the chosen fields in the item loaded
         EXAMPLE:
 
-            with item_field = {'Plot': ['0'], 'Genre': ['0', '1']}, the function will extracts
-            only the representation with the '0' id for the field 'Plot' and both the representations
-            with '0' and '1' id for the field 'Genre'
+            with item_field = {'Plot': [0], 'Genre': ['tfidf', 1]}, the function will extracts
+            only the representation with '0' as internal id for the field 'Plot' and two representations
+            for the field 'Genre': one with 'tfidf' as external id and the other with 1 as internal id
 
         Args:
             item (Content): item loaded of which we need to extract its feature
@@ -101,25 +106,30 @@ class ContentBasedAlgorithm(Algorithm):
 
     def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
         """
-        Transform the X passed vectorizing if X contains dicts and merging
+        Method which transforms the X passed vectorizing if X contains dicts and merging
         multiple representations in a single one for every item in X.
         So if X = [
-                    [dict, arr, arr]
+                    [dict, np.array, np.array]
                         ...
-                    [dict, arr, arr]
+                    [dict, np.array, np.array]
                 ]
         where every sublist contains multiple representation for a single item,
         the function returns:
         X = [
-                arr,
+                np.array,
                 ...
-                arr
+                np.array
             ]
         Where every row is the fused representation for the item
 
+        In case np.array have different row size, every array will be transformed in a one dimensional one
+        using the parameter embedding combiner. Check all the available combining technique to know how rows of
+        a np.array can be merged into one
+
         Args:
             X (list): list that contains representations of the items
-
+            embedding_combiner (CombiningTechnique): combining technique in case there are multiple
+                vectors with different row size
         Returns:
             X fused and vectorized
         """
@@ -204,7 +214,7 @@ class ContentBasedAlgorithm(Algorithm):
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
-        |  Abstract method that predicts how much a user will like unrated items
+        |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
 
         def predict():
@@ -218,7 +228,7 @@ class ContentBasedAlgorithm(Algorithm):
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             items_directory (str): path of the directory where the items are stored
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted
@@ -230,20 +240,16 @@ class ContentBasedAlgorithm(Algorithm):
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        |  All items will be ranked.
+        |  all items will be ranked.
         |  If the algorithm is not a Ranking Algorithm, implement this method like this:
 
-        def predict():
+        def rank():
             raise NotRankingAlg
 
         One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be used to calculate the rank.
+        in this case ONLY items in the filter_list will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be used to calculate the rank.
-
-        Most of the time the rank is calculated by calling the predict() method and sorting the ratings
-        predicted, but it's abstract since some algorithm may implement some optimizations to calculate
-        the rank.
+        Otherwise, ALL unrated items will be ranked.
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user

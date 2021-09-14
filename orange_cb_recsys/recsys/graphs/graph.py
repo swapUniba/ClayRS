@@ -116,7 +116,7 @@ class Graph(ABC):
     """
     Abstract class that generalizes the concept of a Graph
 
-    Every Graph "is born" from a rating dataframe
+    Every Graph "is born" from a dataframe which contains
     """
 
     def __init__(self, source_frame: pd.DataFrame,
@@ -308,7 +308,17 @@ class Graph(ABC):
         """
         raise NotImplementedError
 
-    def convert_to_dataframe(self, only_values=False, with_label=False) -> pd.DataFrame:
+    def convert_to_dataframe(self, only_values: bool = False, with_label: bool = False) -> pd.DataFrame:
+        """
+        Convert the graph into a DataFrame containing all interactions between the nodes
+
+        Args:
+            only_values (bool): if True, the value of the node will be inserted into the dataframe. Otherwise,
+                the node itself will be inserted (given the user 'u1', only_values = True -> 'u1' vs
+                only_values = False -> UserNode('u1'))
+            with_label (bool): if True, the resulting DataFrame will contain the 'label' column in which the label of
+                every interaction will be inserted
+        """
 
         result = {'from_id': [], 'to_id': [], 'score': []}
         if with_label:
@@ -334,6 +344,9 @@ class Graph(ABC):
         return pd.DataFrame(result)
 
     def copy(self):
+        """
+        Make a deep copy the graph
+        """
         cls = self.__class__
         result = cls.__new__(cls)
         memo = {id(self): result}
@@ -342,6 +355,13 @@ class Graph(ABC):
         return result
 
     def serialize(self, output_directory: str = ".", file_name: str = 'graph.xz'):
+        """
+        Serialize the graph with the pickle.dump() method
+
+        Args:
+            output_directory (str): location where the graph will be serialized
+            file_name (str): name of the file which will contain the graph serialized
+        """
         if not os.path.exists(output_directory):
             os.mkdir(output_directory)
 
@@ -363,7 +383,7 @@ class BipartiteGraph(Graph, GraphMetrics):
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
             generated from this DataFrame
         default_score_label (str): the default label of the link between two nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_weight (float): the default value with which a link will be weighted
             Default is 0.5
     """
@@ -378,7 +398,7 @@ class BipartiteGraph(Graph, GraphMetrics):
         Populate the graph using a DataFrame.
         It must have a 'from_id', 'to_id' and 'score' column.
 
-        We iterate every row, and create a weighted link for every user and item in the rating frame
+        This method will iterate for every row, and create a weighted link for every user and item in the rating frame
         based on the score the user gave the item, creating the nodes if they don't exist.
 
         Args:
@@ -386,8 +406,8 @@ class BipartiteGraph(Graph, GraphMetrics):
         """
         if self._check_columns(source_frame):
             for row in progbar(source_frame.to_dict('records'),
-                                    max_value=source_frame.__len__(),
-                                    prefix="Populating Graph:"):
+                               max_value=source_frame.__len__(),
+                               prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
                 self.add_item_node(row['to_id'])
                 if 'label' in source_frame.columns:
@@ -405,7 +425,7 @@ class TripartiteGraph(BipartiteGraph):
     Abstract class that generalize the concept of a TripartiteGraph
 
     A TripartiteGraph is a Graph containing 'user', 'item' and 'property' nodes, but the latter ones
-    are allowed only for 'item' nodes.
+    are only allowed to be linked to 'item' nodes.
 
     Attributes:
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
@@ -414,7 +434,7 @@ class TripartiteGraph(BipartiteGraph):
         item_exo_representation (str): the exogenous representation we want to extract properties from
         item_exo_properties (list): the properties we want to extract from the exogenous representation
         default_score_label (str): the default label of the link between two nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_weight (float): the default value with which a link will be weighted
             Default is 0.5
     """
@@ -437,7 +457,7 @@ class TripartiteGraph(BipartiteGraph):
         Populate the graph using a DataFrame.
         It must have a 'from_id', 'to_id' and 'score' column.
 
-        We iterate every row, and create a weighted link for every user and item in the rating frame
+        It will iterate for every row, and create a weighted link for every user and item in the rating frame
         based on the score the user gave the item, creating the nodes if they don't exist.
         We also add properties to 'item' nodes if the item_contents_dir is specified
 
@@ -446,8 +466,8 @@ class TripartiteGraph(BipartiteGraph):
         """
         if self._check_columns(source_frame):
             for row in progbar(source_frame.to_dict('records'),
-                                    max_value=source_frame.__len__(),
-                                    prefix="Populating Graph:"):
+                               max_value=source_frame.__len__(),
+                               prefix="Populating Graph:"):
                 self.add_user_node(row['from_id'])
 
                 # If the node already exists then we don't add it and more importantly
@@ -700,8 +720,8 @@ class TripartiteGraph(BipartiteGraph):
 
     def add_item_tree(self, item_node: object):
         """
-        Add a 'item' node if is not in the graph and load properties from disk
-        if the node has some
+        Add a 'item' node if is not in the graph and load properties from disk if the node has some.
+
         The method will try to load the content from the 'item_contents_dir' and extract
         from the loaded content the properties specified in the constructor (item_exo_representation,
         item_exo_properties)
@@ -752,8 +772,8 @@ class FullGraph(TripartiteGraph):
     """
     Abstract class that generalize the concept of a FullGraph
 
-    A FullGraph is a Graph containing 'user', 'item' and 'property' nodes,
-    and properties can be added with no restrictions to all nodes in the graph.
+    A FullGraph is a Graph containing 'user', 'item', 'property' nodes, and every other type of node that may be
+    implemented, with no restrictions in linking.
 
     Attributes:
         source_frame (pandas.DataFrame): must contains at least 'from_id', 'to_id', 'score' columns. The graph will be
@@ -765,7 +785,7 @@ class FullGraph(TripartiteGraph):
         item_exo_representation (str): the exogenous representation we want to extract properties from for the items
         item_exo_properties (list): the properties we want to extract from the exogenous representation for the items
         default_score_label (str): the default label of the link between two nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_weight (float): the default value with which a link will be weighted
             Default is 0.5
     """
@@ -790,7 +810,7 @@ class FullGraph(TripartiteGraph):
         Populate the graph using a DataFrame.
         It must have a 'from_id', 'to_id' and 'score' column.
 
-        We iterate every row, and create a weighted link for every user and item in the rating frame
+        The method will iterate for every row, and create a weighted link for every user and item in the rating frame
         based on the score the user gave the item, creating the nodes if they don't exist.
         We also add properties to 'item' nodes if the item_contents_dir is specified,
         and add properties to 'user' nodes if the user_contents_dir is specified.
@@ -800,8 +820,8 @@ class FullGraph(TripartiteGraph):
         """
         if self._check_columns(source_frame):
             for row in progbar(source_frame.to_dict('records'),
-                                    max_value=source_frame.__len__(),
-                                    prefix="Populating Graph:"):
+                               max_value=source_frame.__len__(),
+                               prefix="Populating Graph:"):
 
                 # If the node already exists then we don't add it and more importantly
                 # we don't retrieve its exo prop if specified, since they are already been retireved

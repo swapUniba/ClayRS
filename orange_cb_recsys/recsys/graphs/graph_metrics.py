@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class GraphMetrics(ABC):
+    """
+    Interface for graph metrics
+    """
 
     @abstractmethod
     def degree_centrality(self):

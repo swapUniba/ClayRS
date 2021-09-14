@@ -16,51 +16,45 @@ from orange_cb_recsys.utils.const import recsys_logger
 
 class LinearPredictor(ContentBasedAlgorithm):
     """
-       Class that implements recommendation through a specified Classifier.
+    Class that implements recommendation through a specified linear predictor.
+    It's a score prediction algorithm, so it can predict what rating a user would give to an unseen item.
+    As such, it's also a ranking algorithm (it simply ranks in descending order unseen items by the predicted rating)
 
-       In the constructor must be specified parameter needed for the recommendations.
-       After instantiating the Recommender, the initialize() method of the superclass MUST BE CALLED!!
-       Check the initialize() method documentation to see what need to be passed.
+    USAGE:
+        > # Interested in only a field representation, LinearRegression regressor from sklearn,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = LinearPredictor({"Plot": 0}, SkLinearRegression(), 3)
 
-       The usage of the recommender is automated using the RecSys class (including the initialized part),
-       but one can use the algorithm manually
-        EXAMPLE:
-            # Interested in only a field representation, DecisionTree classifier,
-            # threshold = 0
-            alg = ClassifierRecommender({"Plot": "0"}, DecisionTree(), 0)
-            alg.initialize(...)
+        > # Interested in only a field representation, Ridge regressor from sklearn with custom parameters,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = LinearPredictor({"Plot": 0}, SkRidge(alpha=0.8), 0)
 
-            # Interested in only a field representation, KNN classifier with custom parameter,
-            # threshold = 0
-            alg = ClassifierRecommender({"Plot": "0"}, KNN(n_neighbors=3), 0)
-            alg.initialize(...)
+        > # Interested in multiple field representations of the items, Ridge regressor from sklearn with custom
+        > # parameters, threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = LinearPredictor(
+        >                       item_field={"Plot": [0, "tfidf"],
+        >                                   "Genre": [0, 1],
+        >                                   "Director": "doc2vec"},
+        >                       regressor=SkRidge(alpha=0.8),
+        >                       threshold=3)
 
-            # Interested in multiple field representations of the items, KNN classifier with custom parameter,
-            # threshold = 0
-            alg = ClassifierRecommender(
-                                        item_field={"Plot": ["0", "1"],
-                                                    "Genre": ["0", "1"],
-                                                    "Director": "1"},
-                                        classifier=KNN(n_neighbors=3),
-                                        threshold=0 )
-            alg.initialize(...)
-
-            # After instantiating and initializing the ClassifierRecommender, call the superclass method
-            # calc_prediction() or calc_ranking() to calculate recommendations.
-            # Check the corresponding method documentation for more
-            alg.calc_prediction('U1', filter_list=['i1', 'i2])
-            alg.calc_ranking('U1', recs_number=5)
+        > # After instantiating the LinearPredictor algorithm, pass it in the initialization of
+        > # a CBRS and the use its method to predict ratings or calculate ranking for a single user or multiple users:
+        > cbrs = ContentBasedRS(algorithm=alg, ...)
+        > cbrs.fit_predict(...)
+        > cbrs.fit_rank(...)
+        > ...
+        > # Check the corresponding method documentation for more
 
        Args:
-           item_field (dict): dict where the key is the name of the field
-                that contains the content to use, value is the representation(s) that will be
+            item_field (dict): dict where the key is the name of the field
+                that contains the content to use, value is the representation(s) id(s) that will be
                 used for the said item. The value of a field can be a string or a list,
                 use a list if you want to use multiple representations for a particular field.
-                Check the example above for more.
-           classifier (Classifier): classifier that will be used.
+            regressor (Regressor): classifier that will be used.
                Can be one object of the Classifier class.
-           threshold (float): ratings bigger than threshold will be
-               considered as positive
+            only_greater_eq (float): Threshold for the ratings. Only ratings which are greater or equal than the
+                threshold will be considered, ratings which are less than the threshold will be discarded
        """
 
     def __init__(self, item_field: dict, regressor: Regressor, only_greater_eq: float = None,
@@ -78,8 +72,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         Features and labels will be stored in private attributes of the class.
 
-        IF there are no rated_items available locally or if there are only positive/negative
-        items, an exception is thrown.
+        IF there are no rated_items available locally, an exception is thrown.
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
@@ -117,10 +110,11 @@ class LinearPredictor(ContentBasedAlgorithm):
 
     def fit(self):
         """
-        Fit the classifier specified in the constructor with the features and labels
+        Fit the regressor specified in the constructor with the features and labels
         extracted with the process_rated() method.
 
-        It uses private attributes to fit the classifier, that's why the method expects no parameter.
+        It uses private attributes to fit the classifier, so process_rated() must be called
+        before this method.
         """
         recsys_logger.info("Fitting {} regressor".format(self.__regressor))
         self._set_transformer()

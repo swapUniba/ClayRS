@@ -152,7 +152,7 @@ class PrecisionAtK(Precision):
     """
     Precision@K
 
-    .. image:: metrics_img/precision.png
+    .. image:: precision.png
     \n\n
     Args:
         relevant_threshold: specify the minimum value to consider

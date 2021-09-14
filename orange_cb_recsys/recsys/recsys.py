@@ -12,44 +12,83 @@ from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import 
 
 
 class RecSys(ABC):
+    """
+    Abstract class for a Recommender System
+
+    There exists various type of recommender systems, content-based, graph-based, etc. so extend this class
+    if another type must be implemented into the framework.
+
+    Every recommender system do its prediction based on a rating frame, containing interactions between
+    users and items
+
+    Args:
+        rating_frame (pd.DataFrame): a dataframe containing interactions between users and items
+    """
 
     def __init__(self, rating_frame: pd.DataFrame):
         self.__rating_frame = rating_frame
 
     @property
     def rating_frame(self):
+        """
+        The DataFrame containing interactions between users and items
+        """
         return self.__rating_frame
 
     @property
     @abc.abstractmethod
     def users(self):
+        """
+        Users of the recommender systems (users that have at least one interaction in the rating_frame)
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def fit_predict(self, user_id: str, filter_list: List[str] = None):
+        """
+        Method to call when score prediction must be done for the specified user_id
+
+        By default, score prediction will be done for all unrated items by the user, unless the
+        filter_list parameter is specified.
+
+        If the filter_list parameter is specified, then score_prediction is executed only for the
+        items inside the filter_list
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
+        """
+        Method to call when ranking must be calculated for the specified user_id
+
+        If the recs_number parameter is specified, only the top-n recommendation will be returned.
+        Otherwise ranking of all the unrated items by the user will be returned
+
+        If the filter_list parameter is specified, then the ranking is calculated only for the
+        items inside the filter list
+        """
         raise NotImplementedError
 
     def multiple_fit_rank(self, user_id_list: List[str], recs_number: int = None, filter_list: List[str] = None):
         """
-        Method used to rank for a particular user all unrated items or the items specified in
-        the filter_list parameter.
+        Method used to calculate ranking for a list of users
 
-        The method fits the algorithm and then calculates the rank.
+        The method fits the algorithm (when eligible) and then calculates the rank.
 
-        If the recs_number is specified, then the rank will contain the top-n items for the user.
+        If the recs_number is specified, then the rank will contain the top-n items for the particular user.
+        Otherwise the rank will contain all unrated items of the particular user
+
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        particular user
 
         Args:
-            user_id (str): user_id of the user
+            user_id_list (List[str]): list of all the users ids of which ranking must be calculated
             recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            filter_list (list): list of the items to rank, if None all unrated items of the particular user
+                will be ranked
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            pd.DataFrame: DataFrame containing ranking for all users specified
         """
         rank_list = []
         for user_id in user_id_list:
@@ -62,18 +101,20 @@ class RecSys(ABC):
 
     def multiple_fit_predict(self, user_id_list: List[str], filter_list: List[str] = None):
         """
-        Method used to predict the rating of the user passed for all unrated items or for the items passed
-        in the filter_list parameter.
+        Method used to calculate score prediction for a list of users
 
-        The method fits the algorithm and then calculates the prediction
+        The method fits the algorithm (when eligible) and then calculates the prediction
+
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        particular user
 
         Args:
-            user_id (str): user_id of the user
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            user_id_list (List[str]): list of all the users ids of which score prediction must be calculated
+            filter_list (list): list of the items to score predict, if None all unrated items of the particular user
+                will be score predicted
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted
+            pd.DataFrame: DataFrame containing score predictions for all users specified
         """
         score_preds_list = []
         for user_id in user_id_list:
@@ -86,14 +127,37 @@ class RecSys(ABC):
 
     @abc.abstractmethod
     def _eval_fit_predict(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
+        """
+        Private method used by the evaluation module
+
+        It calculates score prediction on the test set items based on the train ratings items
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def _eval_fit_rank(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
+        """
+        Private method used by the evaluation module
+
+        It calculates ranking on the test set items based on the train ratings items
+        """
         raise NotImplementedError
 
 
 class ContentBasedRS(RecSys):
+    """
+    Class for recommender systems which use the items' content in order to make predictions,
+    some algorithms may also use users' content
+
+    Every CBRS differ from each other based the algorithm chosen
+
+    Args:
+        algorithm (ContentBasedAlgorithm): the content based algorithm that will be used in order to
+            rank or make score prediction
+        rating_frame (pd.DataFrame): a DataFrame containing interactions between users and items
+        items_directory (str): the path of the items serialized by the Content Analyzer
+        users_directory (str): the path of the users serialized by the Content Analyzer
+    """
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
@@ -116,6 +180,9 @@ class ContentBasedRS(RecSys):
 
     @property
     def algorithm(self):
+        """
+        The content based algorithm chosen
+        """
         return self.__algorithm
 
     @property
@@ -124,27 +191,35 @@ class ContentBasedRS(RecSys):
 
     @property
     def items_directory(self):
+        """
+        Path of the serialized items
+        """
         return self.__items_directory
 
     @property
     def users_directory(self):
+        """
+        Path of the serialized users
+        """
         return self.__users_directory
 
     @Handler_EmptyFrame
     def fit_predict(self, user_id: str, filter_list: List[str] = None):
         """
-        Method used to predict the rating of the user passed for all unrated items or for the items passed
-        in the filter_list parameter.
+        Method used to predict the rating of the user specified
+
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        user
 
         The method fits the algorithm and then calculates the prediction
 
         Args:
             user_id (str): user_id of the user
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            filter_list (list): list of the items to score predict, if None all unrated items will
+                be score predicted
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted
+            pd.DataFrame: DataFrame containing score predictions for the user
         """
         # Extracts ratings of the user
         user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
@@ -167,21 +242,23 @@ class ContentBasedRS(RecSys):
     @Handler_EmptyFrame
     def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
         """
-        Method used to rank for a particular user all unrated items or the items specified in
-        the filter_list parameter.
+        Method used to calculate ranking for the specified user
 
         The method fits the algorithm and then calculates the rank.
 
         If the recs_number is specified, then the rank will contain the top-n items for the user.
+        Otherwise the rank will contain all unrated items of the user
+
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        particular user
 
         Args:
             user_id (str): user_id of the user
             recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            filter_list (list): list of the items to rank, if None all unrated items will be ranked
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            pd.DataFrame: DataFrame containing ranking for the user specified
         """
         # Extracts ratings of the user
         user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
@@ -217,6 +294,17 @@ class ContentBasedRS(RecSys):
 
 
 class GraphBasedRS(RecSys):
+    """
+    Class for recommender systems which use a graph in order to make predictions
+
+    Every graph based recommender system differ from each other based the algorithm chosen
+
+    Args:
+        algorithm (GraphBasedAlgorithm): the graph based algorithm that will be used in order to
+            rank or make score prediction
+        graph (FullGraph): a FullGraph containing interactions
+    """
+
     def __init__(self,
                  algorithm: GraphBasedAlgorithm,
                  graph: FullGraph):
@@ -226,6 +314,9 @@ class GraphBasedRS(RecSys):
 
     @property
     def algorithm(self):
+        """
+        The content based algorithm chosen
+        """
         return self.__algorithm
 
     @property
@@ -238,25 +329,26 @@ class GraphBasedRS(RecSys):
 
     @property
     def graph(self):
+        """
+        The graph containing interactions
+        """
         return self.__graph
 
     def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Method used to predict the rating of the user passed for all unrated items which are present in the graph
-        or for the items passed in the filter_list parameter which are also present in the graph.
+        Method used to predict the rating of the user specified
 
-        The method fits the algorithm and then calculates the prediction, even though in the case of the
-        graph-based recommendation the fit process is non-existent
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        user
 
         Args:
             user_id (str): user_id of the user
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            filter_list (list): list of the items to score predict, if None all unrated items will
+                be score predicted
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted
+            pd.DataFrame: DataFrame containing score predictions for the user
         """
-
         alg = self.algorithm
 
         prediction = alg.predict(user_id, self.graph, filter_list)
@@ -267,22 +359,21 @@ class GraphBasedRS(RecSys):
 
     def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Method used to rank for a particular user all unrated items which are present in the graph or the items
-        specified in the filter_list parameter which are also present in the graph.
-
-        The method fits the algorithm and then calculates the prediction, even though in the case of the
-        graph-based recommendation the fit process is non-existent
+        Method used to calculate ranking for the specified user
 
         If the recs_number is specified, then the rank will contain the top-n items for the user.
+        Otherwise the rank will contain all unrated items of the user
+
+        If the filter_list parameter is specified, score prediction is executed only for the items
+        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
+        particular user
 
         Args:
             user_id (str): user_id of the user
             recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            filter_list (list): list of the items to rank, if None all unrated items will be ranked
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            pd.DataFrame: DataFrame containing ranking for the user specified
         """
         alg = self.algorithm
 
@@ -297,6 +388,8 @@ class GraphBasedRS(RecSys):
 
         eval_graph: FullGraph = self.graph.copy()
 
+        # we remove the interaction between user and items in the training set in order
+        # to make items unknown to the user
         for idx, row in user_ratings_train.iterrows():
             eval_graph.remove_link(row['from_id'], row['to_id'])
 
@@ -310,6 +403,8 @@ class GraphBasedRS(RecSys):
 
         eval_graph: FullGraph = self.graph.copy()
 
+        # we remove the interaction between user and items in the training set in order
+        # to make items unknown to the user
         for idx, row in user_ratings_train.iterrows():
             eval_graph.remove_link(row['from_id'], row['to_id'])
 
