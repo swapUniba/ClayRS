@@ -15,36 +15,34 @@ from orange_cb_recsys.utils.const import logger
 
 class FairnessMetric(RankingNeededMetric):
     """
-    Abstract class that generalize fairness metrics.
-
-    Args:
-        file_name (str): name of the file that the metrics will serialize
-        out_dir (str): directory in which the file will be serialized
+    Abstract class that generalize fairness metrics
     """
 
     @abstractmethod
     def perform(self, split: Split):
-        """
-        Method that execute the fairness metric computation
-
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-        """
         raise NotImplementedError
 
 
 class GroupFairnessMetric(FairnessMetric):
     """
-    Fairness metrics based on user groups
+    Abstract class for fairness metrics based on user groups
+
+    It has some concrete methods useful for group divisions, since every subclass needs to split users into groups:
+
+    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
+    and percentage of how many user must contain a group as values. For example::
+
+        user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+
+    Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+    percentage of users we specified as value in the dictionary):
+    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+    into one of the last groups
 
     Args:
-        user_groups (dict<str, float>): specify how to divide user in groups, so
-            specify for each group specify:
-            - name
-            - percentage of users
-        file_name (str): name of the file that the metrics will serialize
-        out_dir (str): directory in which the file will be serialized
+        user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
+            split users in groups. Users with more popular items rated are grouped into the first group, users with
+            slightly less popular items rated are grouped into the second one, etc.
     """
 
     def __init__(self, user_groups: Dict[str, float]):
@@ -149,13 +147,26 @@ class GroupFairnessMetric(FairnessMetric):
 
 class GiniIndex(FairnessMetric):
     """
-    Gini index
-    
-    .. image:: metrics_img/gini.png
-    \n\n
+    The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
+    result it will be returned and not those of every user.
+    The metric is calculated as such:
+
+    .. math:: Gini_sys = \\frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    |
     Where:
-    - n is the size of the user or item set
-    - elem(i) is the user or the item in the i-th position in the sorted frame by user or item
+
+    - :math:`n` is the total number of distinct items that are being recommended
+    - :math:`x_i` is the number of times that the item :math:`i` has been recommended
+
+    A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+    index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1
+
+    If the 'top_n' parameter is specified, then the Gini index will measure inequality considering only the first
+    *n* items of every recommendation list of all users
+
+    Args:
+        top_n (int): it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+            'n' items of every recommendation list of all users. Default is None
     """
 
     def __init__(self, top_n: int = None):
@@ -169,20 +180,12 @@ class GiniIndex(FairnessMetric):
         return name
 
     def perform(self, split: Split):
-        """
-        Calculate Gini index score for each user or item in the DataFrame
-
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-
-        Returns:
-            results (pd.DataFrame): each row contains the 'gini_index' for each user or item
-        """
-
         def gini(x: List):
             """
-            https://stackoverflow.com/questions/48999542/more-efficient-weighted-gini-coefficient-in-python
+            Inner method which given a list of values, calculates the gini index
+
+            Args:
+                x (list): list of values of which we want to measure inequality
             """
             # The rest of the code requires numpy arrays.
             x = np.asarray(x)
@@ -211,11 +214,21 @@ class GiniIndex(FairnessMetric):
 
 class PredictionCoverage(FairnessMetric):
     """
-    Prediction Coverage
-    https://www.researchgate.net/publication/221140976_Beyond_accuracy_Evaluating_recommender_systems_by_coverage_and_serendipity
+    The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+    to all available items. It's a system wide metric, so only its result it will be returned and not those of every
+    user.
+    The metric is calculated as such:
 
-    .. image:: metrics_img/cat_coverage.png
-    \n\n
+    .. math:: Prediction Coverage_sys = (\\frac{|I_p|}{|I|})\cdot100
+    |
+    Where:
+
+    - :math:`I` is the set of all available items
+    - :math:`I_p` is the set of recommended items
+
+    The :math:`I` must be specified through the 'catalog' parameter
+
+    Check the 'Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity' paper for more
     """
 
     def __init__(self, catalog: Set[str]):
@@ -229,20 +242,20 @@ class PredictionCoverage(FairnessMetric):
         return self.__catalog
 
     def _get_covered(self, pred: pd.DataFrame):
+        """
+        Private function which calculates all recommended items given a catalog of all available items (specified in
+        the constructor)
+
+        Args:
+            pred (pd.DataFrame): DataFrame containing recommendation lists of all users
+
+        Returns:
+            Set of distinct items that have been recommended that also appear in the catalog
+        """
         catalog = self.catalog
         return set(pred.query('to_id in @catalog')['to_id'])
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Calculates the catalog coverage
-
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-
-        Returns:
-            score (float): coverage percentage
-        """
         prediction = {'from_id': [], str(self): []}
         catalog = self.__catalog
 
@@ -261,7 +274,38 @@ class PredictionCoverage(FairnessMetric):
 
 class CatalogCoverage(PredictionCoverage):
     """
-    https://www.researchgate.net/publication/221140976_Beyond_accuracy_Evaluating_recommender_systems_by_coverage_and_serendipity
+    The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+    to all available items. It's a system wide metric, so only its result it will be returned and not those of every
+    user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
+    parameter is passed then it's a simple Prediction Coverage.
+    The metric is calculated as such:
+
+    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    |
+    Where:
+
+    - :math:`N` is the total number of users
+    - :math:`reclist(u_j)` is the set of items contained in the recommendation list of user :math:`j`
+    - :math:`I` is the set of all available items
+
+    The :math:`I` must be specified through the 'catalog' parameter
+
+    The recommendation list of every user (:math:`reclist(u_j)`) can be reduced to the first *n* parameter with the
+    top-n parameter, so that catalog coverage is measured considering only the most highest ranked items.
+
+    With the 'k' parameter one could specify the number of users that will be used to calculate catalog coverage:
+    k users will be randomly sampled and their recommendation lists will be used. The formula above becomes:
+
+    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
+    |
+    Where:
+
+    - :math:`k` is the parameter specified
+
+    Obviously 'k' < N, else simply recommendation lists of all users will be used
+
+    Check the 'Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity' paper and
+    page 13 of the 'Comparison of group recommendation algorithms' paper for more
     """
 
     def __init__(self, catalog: Set[str], top_n: int = None, k: int = None):
@@ -304,15 +348,36 @@ class CatalogCoverage(PredictionCoverage):
 
 class DeltaGap(GroupFairnessMetric):
     """
-    DeltaGap
+    The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
+    multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
+    It's a system wide metric and results of every group will be returned.
 
-    .. image:: metrics_img/d_gap.png
-    \n\n
+    It is calculated as such:
+
+    .. math:: \Delta GAP = \\frac{recs_GAP - profile_GAP}{profile_GAP}
+
+    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
+    and percentage of how many user must contain a group as values. For example::
+
+        user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+
+    Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+    percentage of users we specified as value in the dictionary):
+    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+    into one of the last groups
+
+    If the 'top_n' parameter is specified, then the Delta GAP will be calculed considering only the first
+    *n* items of every recommendation list of all users
+
+
+
     Args:
-        user_groups (dict<str, float>): specify how to divide user in groups, so
-            specify for each group:
-            - name
-            - percentage of users
+        user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
+            split users in groups. Users with more popular items rated are grouped into the first group, users with
+            slightly less popular items rated are grouped into the second one, etc.
+        top_n (int): it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+            'n' items of every recommendation list of all users. Default is None
+        pop_percentage (float): How many (in percentage) 'most popular items' must be considered. Default is 0.2
     """
 
     def __init__(self, user_groups: Dict[str, float], top_n: int = None, pop_percentage: float = 0.2):
@@ -335,13 +400,13 @@ class DeltaGap(GroupFairnessMetric):
         Compute the GAP (Group Average Popularity) formula
 
 
-        .. image:: metrics_img/gap.png
-
+        .. math:: GAP = \\frac{\sum_{u \in U}\cdot \\frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
 
         Where:
-          • G is the set of users
-          • iu is the set of items rated by user u
-          • pop_i is the popularity of item i
+
+        - G is the set of users
+        - iu is the set of items rated by user u
+        - pop_i is the popularity of item i
 
         Args:
             group (Set<str>): the set of users (from_id)
@@ -375,16 +440,6 @@ class DeltaGap(GroupFairnessMetric):
         return result
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Compute the Delta - GAP (Group Average Popularity) metric
-
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-
-        Returns:
-            results (pd.DataFrame): each row contains ('from_id', 'delta-gap')
-        """
         predictions = split.pred
         truth = split.truth
 

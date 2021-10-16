@@ -14,6 +14,23 @@ from orange_cb_recsys.utils.const import logger
 
 
 class PlotMetric(RankingNeededMetric):
+    """
+    A plot metric is a metric which generates a plot and saves it to the directory specified
+
+    The plot file will be saved as *out_dir/file_name.format*
+
+    Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
+    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    so that for every split a plot is generated without overwriting any file previously generated
+
+    Args:
+        out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
+            in the same directory where the python script it's being executed
+        file_name (str): Name of the plot file. Every plot metric as a default file name
+        format (str): Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
+        overwrite (bool): parameter which specifies if the plot saved must overwrite any file that as the same name
+            ('file_name.format'). Default is False
+    """
 
     def __init__(self, out_dir: str = '.', file_name: str = None, format: str = 'png', overwrite: bool = False):
         self.__out_dir = out_dir
@@ -37,8 +54,21 @@ class PlotMetric(RankingNeededMetric):
     def overwrite(self):
         return self.__overwrite
 
-    def get_valid_filename(self, filename: str, format: str):
-        filename_try = "{}.{}".format(filename, format)
+    def get_valid_filename(self, filename: str, format: str) -> str:
+        """
+        Concrete method which gets a valid *filename.format* based on the overwrite parameter
+
+        If overwrite=False and there are existent file named as *filename.format* in the output directory, the method
+        checks if there are also files named as *filename (1).format*, *filename (2).format*, *filename (3).format*.
+        It stops at the first non existent *filename (x).format* in the output directory specified in the constructor.
+        Args:
+            filename (str): Name of the file to save
+            format (str): Format of the file to save
+
+        Returns:
+            A valid 'filename.format' string based on the overwrite parameter
+        """
+        filename_try = f"{filename}.{format}"
 
         if self.overwrite is False:
             i = 0
@@ -49,6 +79,14 @@ class PlotMetric(RankingNeededMetric):
         return filename_try
 
     def save_figure(self, fig, file_name: str):
+        """
+        Concrete method which given the figure to save and its file name, it saves the figure in the output directory
+        and with the format specified in the constructor
+
+        Args:
+            fig: figure to save
+            file_name (str): name of the file to save
+        """
         Path(self.output_directory).mkdir(parents=True, exist_ok=True)
 
         file_name = self.get_valid_filename(file_name, self.format)
@@ -59,11 +97,32 @@ class PlotMetric(RankingNeededMetric):
 
 class LongTailDistr(PlotMetric):
     """
-    LongTailDistr
+    This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+    specified. The plot can be generated both for the *truth set* or the *predictions set* (based on
+    the *on* parameter):
+
+    - **on = 'truth'**: in this case the long tail distribution is useful to see which are the most popular items (the
+      most rated ones)
+
+    - **on = 'pred'**: in this case the long tail distribution is useful to see which are the most recommended items
+
+    The plot file will be saved as *out_dir/file_name.format*
+
+    Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
+    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    so that for every split a plot is generated without overwriting any file previously generated
 
     Args:
-        file_name (str): name of the file that the metrics will serialize
-        out_dir (str): directory in which the file will be serialized
+        out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
+            in the same directory where the python script it's being executed
+        file_name (str): Name of the plot file. Default is 'long_tail_distr'
+        on (str): Set on which the Long Tail Distribution plot will be generated. Values accepted are 'truth' or 'pred'
+        format (str): Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
+        overwrite (bool): parameter which specifies if the plot saved must overwrite any file that as the same name
+            ('file_name.format'). Default is False
+
+    Raises:
+        StringNotSupported: exception raised when a invalid value for the 'on' parameter is specified
     """
 
     def __init__(self, out_dir: str = '.', file_name: str = 'long_tail_distr', on='truth', format: str = 'png',
@@ -80,12 +139,6 @@ class LongTailDistr(PlotMetric):
         return "LongTailDistr"
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Plot the long tail distribution for the truth frame
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-        """
         if self.__on == 'truth':
             frame = split.truth
         else:
@@ -122,16 +175,48 @@ class LongTailDistr(PlotMetric):
 
 class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
     """
-    PopProfileVsRecs
+    This metric generates a plot where users are splitted into groups and, for every group, a boxplot comparing
+    profile popularity and recommendations popularity is drawn
+
+    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
+    and percentage of how many user must contain a group as values. For example::
+
+        user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+
+    Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+    percentage of users we specified as value in the dictionary):
+    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+    into one of the last groups
+
+    You could also specify how many *most popular items* must be considered with the 'pop_percentage' parameter. By
+    default is set to 0.2 which means that the top 20% items are considered as most popular
+
+    The plot file will be saved as *out_dir/file_name.format*
+
+    Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
+    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    so that for every split a plot is generated without overwriting any file previously generated
+
+    Thanks to the 'store_frame' parameter it's also possible to store a csv containing the calculations done in order
+    to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
+    with the .csv format):
+
+    The csv will be saved as *out_dir/file_name.csv*
+
 
     Args:
-        file_name (str): name of the file that the metrics will serialize
-        out_dir (str): directory in which the file will be serialized
-        user_groups (dict<str, float>): specify how to divide user in groups, so
-        specify for each group specify:
-        - name
-        - percentage of users
-        store_frame (bool): True if you want to store the frame in a csv file, False otherwise
+        user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
+            split users in groups. Users with more popular items rated are grouped into the first group, users with
+            slightly less popular items rated are grouped into the second one, etc.
+        out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
+            in the same directory where the python script it's being executed
+        file_name (str): Name of the plot file. Default is 'pop_ratio_profile_vs_recs'
+        pop_percentage (float): How many (in percentage) 'most popular items' must be considered. Default is 0.2
+        store_frame (bool): True if you want to store calculations done in order to build every boxplot in a csv file,
+            False otherwise. Default is set to False
+        format (str): Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
+        overwrite (bool): parameter which specifies if the plot saved must overwrite any file that as the same name
+            ('file_name.format'). Default is False
     """
 
     def __init__(self, user_groups: Dict[str, float], out_dir: str = '.',
@@ -152,16 +237,6 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         return "PopProfileVsRecs"
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Perform the comparison between the profile popularity and recommendation popularity and build a boxplot
-
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-
-        Returns:
-            score_frame (pd.DataFrame): contains 'user_group', 'profile_pop_ratio', 'recs_pop_ratio'
-        """
         predictions = split.pred
         truth = split.truth
 
@@ -259,10 +334,40 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
 class PopRecsCorrelation(PlotMetric):
     """
-    PopRecsCorrelation
+    This metric generates a plot which has as the X-axis the popularity and as Y-axis number of recommendations, so
+    that it can be easily seen the correlation between popular (niche) items and how many times are being recommended
+    by the recsys
+
+    The plot file will be saved as *out_dir/file_name.format*
+
+    Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
+    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    so that for every split a plot is generated without overwriting any file previously generated
+
+    There exists cases in which some items are not recommended even once, so in the graph could appear
+    **zero recommendations**. One could change this behaviour thanks to the 'mode' parameter:
+
+    - **mode='both'**: two graphs will be created, the first one containing eventual *zero recommendations*, the
+      second one where *zero recommendations* are excluded. This additional graph will be stored as
+      *out_dir/file_name_no_zeros.format* (the string '_no_zeros' will be added to the file_name chosen automatically)
+
+    - **mode='w_zeros'**: only a graph containing eventual *zero recommendations* will be created
+
+    - **mode='no_zeros'**: only a graph excluding eventual *zero recommendations* will be created. The graph will be
+      saved as *out_dir/file_name_no_zeros.format* (the string '_no_zeros' will be added to the file_name chosen
+      automatically)
+
+
     Args:
-        file_name (str): name of the file that the metrics will serialize
-        out_dir (str): directory in which the file will be serialized
+        out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
+            in the same directory where the python script it's being executed
+        file_name (str): Name of the plot file. Default is 'pop_recs_correlation'
+        mode (str): Parameter which dictates which graph must be created. By default is 'both', so the graph with
+            eventual zero recommendations as well as the graph excluding eventual zero recommendations will be created.
+            Check the class documentation for more
+        format (str): Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
+        overwrite (bool): parameter which specifies if the plot saved must overwrite any file that as the same name
+            ('file_name.format'). Default is False
     """
 
     def __init__(self, out_dir: str = '.', file_name: str = 'pop_recs_correlation', mode: str = 'both',
@@ -280,6 +385,18 @@ class PopRecsCorrelation(PlotMetric):
         return "PopRecsCorrelation"
 
     def build_plot(self, x: list, y: list, title: str):
+        """
+        Method which builds a matplotlib plot given x-axis values, y-axis values and the title of the plot.
+        X-axis label and Y-axis label are hard-coded as 'Popularity' and 'Recommendation frequency' respectively.
+
+        Args:
+            x (list): List containing x-axis values
+            y (list): List containing y-axis values
+            title (str): title of the plot
+
+        Returns:
+            The matplotlib figure
+        """
         fig = plt.figure()
         ax = fig.add_subplot()
 
@@ -292,6 +409,14 @@ class PopRecsCorrelation(PlotMetric):
         return fig
 
     def build_w_zeros_plot(self, popularities: list, recommendations: list):
+        """
+        Method which builds and saves the plot containing eventual *zero recommendations*
+        It saves the plot as *out_dir/filename.format*, according to their value passed in the constructor
+
+        Args:
+            popularities (list): x-axis values representing popularity of every item
+            recommendations (list): y-axis values representing number of times every item has been recommended
+        """
         title = 'Popularity-Recommendations Correlation'
         fig = self.build_plot(popularities, recommendations, title)
 
@@ -300,6 +425,15 @@ class PopRecsCorrelation(PlotMetric):
         self.save_figure(fig, file_name)
 
     def build_no_zeros_plot(self, popularities: list, recommendations: list):
+        """
+        Method which builds and saves the plot **excluding** eventual *zero recommendations*
+        It saves the plot as *out_dir/filename_no_zeros.format*, according to their value passed in the constructor.
+        Note that the '_no_zeros' string is automatically added to the file_name chosen
+
+        Args:
+            popularities (list): x-axis values representing popularity of every item
+            recommendations (list): y-axis values representing number of times every item has been recommended
+        """
         title = 'Popularity-Recommendations Correlation (No zeros)'
         fig = self.build_plot(popularities, recommendations, title)
 
@@ -308,14 +442,6 @@ class PopRecsCorrelation(PlotMetric):
         self.save_figure(fig, file_name)
 
     def perform(self, split: Split):
-        """
-        Calculates the correlation between the two frames and store
-        the correlation plot
-        Args:
-              truth (pd.DataFrame): original rating frame used for recsys config
-              predictions (pd.DataFrame): dataframe with recommendations for multiple users
-        """
-
         predictions = split.pred
         truth = split.truth
 
@@ -350,8 +476,9 @@ class PopRecsCorrelation(PlotMetric):
             if at_least_one_zero:
                 self.build_no_zeros_plot(popularities_no_zeros, recommendations_no_zeros)
             else:
+                self.build_no_zeros_plot(popularities, recommendations)
                 logger.warning("There's no zero recommendation!\n"
-                               "The graph with 'no-zero' won't be created, it would be identical to the 'w-zero' one!")
+                               "The graph with 'no-zero' is identical to the 'w-zero' one!")
 
         elif self.__mode == 'w_zeros':
             self.build_w_zeros_plot(popularities, recommendations)
