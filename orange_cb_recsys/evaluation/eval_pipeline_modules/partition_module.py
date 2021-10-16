@@ -8,6 +8,31 @@ from orange_cb_recsys.utils.const import eval_logger, progbar
 
 
 class Split:
+    """
+    Class container for two pandas DataFrame
+
+    It may represent a split containing 'train set' and 'test set', or a split containing a ground truth and predictions
+    for it, etc.
+
+    Once instantiated, one can access the two dataframes in different ways:
+
+    | > sp = Split()
+    | > # Various ways of accessing the FIRST DataFrame
+    | > sp.train
+    | > sp.pred
+    | > sp.first
+    | >
+    | > # Various ways of accessing the SECOND DataFrame
+    | > sp.test
+    | > sp.truth
+    | > sp.second
+
+    Args:
+        first_set (pd.DatFrame): the first DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id', and 'score' column will be instantiated
+        second_set (pd.DataFrame): the second DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id' and 'score' column will be instantiated
+    """
     def __init__(self,
                  first_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []}),
                  second_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})):
@@ -32,11 +57,28 @@ class Split:
 
 
 class PartitionModule:
+    """
+    Module of the Evaluation pipeline which has the task of splitting the original interactions in 'train set' and 'test
+    set'.
+
+    Different kinds of partitioning technique may be used, check the correspondent documentation for more
+
+    Args:
+        partition_technique (Partitioning): The technique that will be used to split original interactions in
+            'train set' and 'test set'.
+    """
 
     def __init__(self, partition_technique: Partitioning):
         self._partition_technique = partition_technique
 
     def _split_single(self, user_ratings: pd.DataFrame):
+        """
+        Private method that splits the ratings of a single user into 'train set' and 'test set'
+
+        Args:
+            user_ratings (pd.DataFrame): DataFrame containing the ratings of a single user that will be splitted into
+                'train set' and 'test set'
+        """
 
         self._partition_technique.set_dataframe(user_ratings)  # May raise exception
 
@@ -44,6 +86,16 @@ class PartitionModule:
         return user_splits
 
     def split_all(self, ratings: pd.DataFrame, user_id_list: Set[str]):
+        """
+        Method that effectively splits the 'ratings' parameter into 'train set' and 'test set'.
+        It must be specified a 'user_id_list' parameter so that the method will do the splitting only for the users
+        specified inside the list.
+
+        Args:
+            ratings (pd.DataFrame): The DataFrame which contains the interactions of the users that must be splitted
+                into 'train set' and 'test set'
+            user_id_list (Set[str]): The set of users for which splitting will be done
+        """
 
         split_list = []
 

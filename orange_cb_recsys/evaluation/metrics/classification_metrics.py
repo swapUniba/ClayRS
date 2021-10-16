@@ -11,12 +11,13 @@ import pandas as pd
 class ClassificationMetric(RankingNeededMetric):
     """
     Abstract class that generalize classification metrics.
-    A classification metric measure if
-    known relevant items are predicted as relevant
+    A classification metric uses confusion matrix terminology (true positive, false positive, etc.) to classify each
+    item predicted
 
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __init__(self, relevant_threshold: float = None, sys_average: str = 'macro'):
@@ -38,19 +39,9 @@ class ClassificationMetric(RankingNeededMetric):
         return self.__avg
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Computes the precision of each user's list of recommendations, and averages precision over all users.
-        ----------
-        actual : a list of lists
-            Actual items to be predicted
-            example: [['A', 'B', 'X'], ['A', 'B', 'Y']]
-        predicted : a list of lists
-            Ordered predictions
-            example: [['X', 'Y', 'Z'], ['X', 'Y', 'Z']]
-        Returns:
-        -------
-            precision: int
-        """
+        # This method will calculate for every split true positive, false positive, true negative, false negative items
+        # so that every metric must simply implement the method _calc_metric(...).
+        # Thanks to polymorphism, everything will work without changing this main method
 
         pred = split.pred
         truth = split.truth
@@ -82,18 +73,32 @@ class ClassificationMetric(RankingNeededMetric):
             split_result['from_id'].append(user)
             split_result[str(self)].append(metric_user)
 
-        sys_prec = -1
+        sys_metric = -1
         if self.sys_avg == 'micro':
-            sys_prec = self._calc_metric(tp_sys, fp_sys, tn_sys, fn_sys)
+            sys_metric = self._calc_metric(tp_sys, fp_sys, tn_sys, fn_sys)
         elif self.sys_avg == 'macro':
-            sys_prec = statistics.mean(split_result[str(self)])
+            sys_metric = statistics.mean(split_result[str(self)])
 
         split_result['from_id'].append('sys')
-        split_result[str(self)].append(sys_prec)
+        split_result[str(self)].append(sys_metric)
 
         return pd.DataFrame(split_result)
 
     def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
+        """
+        Private method which will calculate true positive, false positive, true negative, false negative
+        items for a single user.
+
+        If the 'cutoff' parameter is specified, then recommendation list will be reduced to the top-n items where
+        :math:`n = cutoff`
+
+        Args:
+            user_merged (pd.DataFrame): a DataFrame containing recommendation list of the user and its ground truth
+            cutoff (int): if specified the user recommendation list will be reduced to the top-n items
+
+        Returns:
+            true positive, false positive, true negative, false negative for the user
+        """
         if self.relevant_threshold is None:
             relevant_threshold = user_merged['score_truth'].mean()
         else:
@@ -119,10 +124,25 @@ class ClassificationMetric(RankingNeededMetric):
 
     @abstractmethod
     def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
+        """
+        Private method that must be implemented by every metric which must specify how to use the confusion matrix
+        terminology in order to compute the metric
+        """
         raise NotImplementedError
 
     @staticmethod
     def _perform_division(numerator: float, denominator: float):
+        """
+        Simple static method which performs division given the numerator and the denominator
+
+        If the denominator is 0, then the method will return 0
+        Args:
+            numerator (float): upper part of the fraction
+            denominator (float): lower part of the fraction
+
+        Returns:
+            numerator/division if division != 0, 0 otherwise
+        """
         res = 0.0
         if denominator != 0:
             res = numerator / denominator
@@ -131,14 +151,31 @@ class ClassificationMetric(RankingNeededMetric):
 
 
 class Precision(ClassificationMetric):
-    """
-    Precision
+    r"""
+    The Precision metric is calculated as such for the **single user**:
 
-    .. image:: metrics_img/precision.png
-    \n\n
+    .. math:: Precision_u = \frac{tp_u}{tp_u + fp_u}
+
+    |
+    Where:
+
+    - :math:`tp_u` is the number of items which are in the recommendation list of the user and have a
+      rating >= relevant_threshold in its 'ground truth'
+    - :math:`fp_u` is the number of items which are in the recommendation list of the user and have a
+      rating < relevant_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        Precision_sys - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fp_u}
+
+        Precision_sys - macro = \frac{\sum_{u \in U} Precision_u}{|U|}
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __str__(self):
@@ -149,14 +186,32 @@ class Precision(ClassificationMetric):
 
 
 class PrecisionAtK(Precision):
-    """
-    Precision@K
+    r"""
+    The Precision@K metric is calculated as such for the **single user**:
 
-    .. image:: metrics_img/precision.png
-    \n\n
+    .. math:: Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+
+    |
+    Where:
+
+    - :math:`tp@K_u` is the number of items which are in the recommendation list  of the user
+      **cutoff to the first K items** and have a rating >= relevant_threshold in its 'ground truth'
+    - :math:`tp@K_u` is the number of items which are in the recommendation list  of the user
+      **cutoff to the first K items** and have a rating < relevant_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        Precision@K_sys - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+
+        Precision@K_sys - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        k (int): cutoff parameter. Only the first k items of the recommendation list will be considered
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
@@ -177,14 +232,32 @@ class PrecisionAtK(Precision):
 
 
 class RPrecision(Precision):
-    """
-    R-Precision
+    r"""
+    The R-Precision metric is calculated as such for the **single user**:
 
-    .. image:: metrics_img/precision.png
-    \n\n
+    .. math:: R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+
+    |
+    Where:
+
+    - :math:`R` it's the number of relevant items for the user *u*
+    - :math:`tp@R_u` is the number of items which are in the recommendation list  of the user
+      **cutoff to the first R items** and have a rating >= relevant_threshold in its 'ground truth'
+    - :math:`tp@R_u` is the number of items which are in the recommendation list  of the user
+      **cutoff to the first R items** and have a rating < relevant_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        Precision@K_sys - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+
+        Precision@K_sys - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __str__(self):
@@ -201,14 +274,31 @@ class RPrecision(Precision):
 
 
 class Recall(ClassificationMetric):
-    """
-    Recall
+    r"""
+    The Recall metric is calculated as such for the **single user**:
 
-    .. image:: metrics_img/recall.png
-    \n\n
+    .. math:: Recall_u = \frac{tp_u}{tp_u + fn_u}
+
+    |
+    Where:
+
+    - :math:`tp_u` is the number of items which are in the recommendation list of the user and have a
+      rating >= relevant_threshold in its 'ground truth'
+    - :math:`fn_u` is the number of items which are NOT in the recommendation list of the user and have a
+      rating >= relevant_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        Recall_sys - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fn_u}
+
+        Recall_sys - macro = \frac{\sum_{u \in U} Recall_u}{|U|}
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __str__(self):
@@ -219,14 +309,32 @@ class Recall(ClassificationMetric):
 
 
 class RecallAtK(Recall):
-    """
-    Recall@K
+    r"""
+    The Recall@K metric is calculated as such for the **single user**:
 
-    .. image:: metrics_img/precision.png
-    \n\n
+    .. math:: Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+
+    |
+    Where:
+
+    - :math:`tp@K_u` is the number of items which are in the recommendation list  of the user
+      **cutoff to the first K items** and have a rating >= relevant_threshold in its 'ground truth'
+    - :math:`tp@K_u` is the number of items which are NOT in the recommendation list  of the user
+      **cutoff to the first K items** and have a rating >= relevant_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        Recall@K_sys - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+
+        Recall@K_sys - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        k (int): cutoff parameter. Only the first k items of the recommendation list will be considered
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
@@ -247,18 +355,45 @@ class RecallAtK(Recall):
 
 
 class FMeasure(ClassificationMetric):
-    """
-    FnMeasure
+    r"""
+    The FMeasure metric combines Precision and Recall into a single metric. It is calculated as such for the
+    **single user**:
 
-    .. image:: metrics_img/fn.png
-    \n\n
+    .. math:: FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+
+    |
+    Where:
+
+    - :math:`P_u` is the Precision calculated for the user *u*
+    - :math:`R_u` is the Recall calculated for the user *u*
+    - :math:`\beta` is a real factor which could weight differently Recall or Precision based on its value:
+
+        - :math:`\beta = 1`: Equally weight Precision and Recall
+        - :math:`\beta > 1`: Weight Recall more
+        - :math:`\beta < 1`: Weight Precision more
+
+    A famous FMeasure is the F1 Metric, where :math:`\beta = 1`, which basically is the harmonic mean of recall and
+    precision:
+
+    .. math:: F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+    |
+
+    The FMeasure metric is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    .. math::
+        FMeasure_sys - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+
+        FMeasure_sys - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+
     Args:
-        n (int): multiplier
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        beta (float): real factor which could weight differently Recall or Precision based on its value. Default is 1
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
-    def __init__(self, beta: int = 1, relevant_threshold: float = None, sys_average: str = 'macro'):
+    def __init__(self, beta: float = 1, relevant_threshold: float = None, sys_average: str = 'macro'):
         super().__init__(relevant_threshold, sys_average)
         self.__beta = beta
 
@@ -284,15 +419,43 @@ class FMeasure(ClassificationMetric):
 
 
 class FMeasureAtK(FMeasure):
-    """
-    FnMeasure
+    r"""
+    The FMeasure@K metric combines Precision@K and Recall@K into a single metric. It is calculated as such for the
+    **single user**:
 
-    .. image:: metrics_img/fn.png
-    \n\n
+    .. math:: FMeasure_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+
+    |
+    Where:
+
+    - :math:`P@K_u` is the Precision at K calculated for the user *u*
+    - :math:`R@K_u` is the Recall at K calculated for the user *u*
+    - :math:`\beta` is a real factor which could weight differently Recall or Precision based on its value:
+
+        - :math:`\beta = 1`: Equally weight Precision and Recall
+        - :math:`\beta > 1`: Weight Recall more
+        - :math:`\beta < 1`: Weight Precision more
+
+    A famous FMeasure@K is the F1@K Metric, where :math:`\beta = 1`, which basically is the harmonic mean of recall and
+    precision:
+
+    .. math:: F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    |
+
+    The FMeasure@K metric is calculated as such for the **entire system**, depending if 'macro' average or 'micro'
+    average has been chosen:
+
+    .. math::
+        FMeasure@K_sys - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+
+        FMeasure@K_sys - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+
     Args:
-        n (int): multiplier
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        k (int): cutoff parameter. Will be used for the computation of Precision@K and Recall@K
+        beta (float): real factor which could weight differently Recall or Precision based on its value. Default is 1
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
     def __init__(self, k: int, beta: int = 1, relevant_threshold: float = None, sys_average: str = 'macro'):

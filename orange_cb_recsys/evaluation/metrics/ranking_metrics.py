@@ -12,13 +12,22 @@ from orange_cb_recsys.utils.const import logger
 class RankingMetric(RankingNeededMetric):
     """
     Abstract class that generalize ranking metrics.
-    It measures the quality of the given predicted ranking
-
-    Args:
-        relevance_split: specify how to map each truth score
-        to a discrete relevance judgement
+    A ranking metric evaluates the quality of the recommendation list
     """
     def _get_ideal_actual_rank(self, valid: pd.DataFrame):
+        """
+        Private method which calculates two lists, actual_rank list and ideal_rank list.
+
+        actual_rank - given the ranking of the user, for every item 'i' in the ranking it extracts the rating
+        that the user has effectively given to 'i' and adds it to the actual_rank list.
+        If the item is not present in the truth, a 0 is added to the list.
+
+        ideal_rank - it's the actual_rank list ordered from the highest rating to the lowest one. It represents the
+        perfect ranking for the user
+
+        Args:
+            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
+        """
         actual_rank = []
         for item_id, score in zip(valid['to_id'], valid['score_truth']):
             if not pd.isna(score):
@@ -32,18 +41,28 @@ class RankingMetric(RankingNeededMetric):
 
 class NDCG(RankingMetric):
     """
-    Discounted cumulative gain
-    .. image:: metrics_img/dcg.png
-    \n\n
-    This is then normalized as follows:
-    .. image:: metrics_img/ndcg.png
-    \n\n
+    The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the **single user** by using the sklearn
+    implementation, so be sure to check its documentation for more.
+
+    The NDCG of the **entire system** is calculated instead as such:
+
+    .. math:: NDCG_sys = \\frac{\sum_{u} NDCG_u}{|U|}
+    |
+    Where:
+
+    - :math:`NDCG_u` is the NDCG calculated for user :math:`u`
+    - :math:`U` is the set of all users
+
+    The system average excludes NaN values.
     """
 
     def __str__(self):
         return "NDCG"
 
     def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
+        """
+        Private method which calculates the NDCG for a single user using sklearn implementation
+        """
         return ndcg_score(ideal_rank, actual_rank)
 
     def perform(self, split: Split):
@@ -82,6 +101,24 @@ class NDCG(RankingMetric):
 
 
 class NDCGAtK(NDCG):
+    """
+    The NDCG@K (Normalized Discounted Cumulative Gain at K) metric is calculated for the **single user** by using the
+    sklearn implementation, so be sure to check its documentation for more.
+
+    The NDCG@K of the **entire system** is calculated instead as such:
+
+    .. math:: NDCG@K_sys = \\frac{\sum_{u} NDCG@K_u}{|U|}
+    |
+    Where:
+
+    - :math:`NDCG@K_u` is the NDCG@K calculated for user :math:`u`
+    - :math:`U` is the set of all users
+
+    The system average excludes NaN values.
+
+    Args:
+        k (int): the cutoff parameter
+    """
 
     def __init__(self, k: int):
         self.__k = k
@@ -95,13 +132,26 @@ class NDCGAtK(NDCG):
 
 class MRR(RankingMetric):
     """
-    MRR
+    The MRR (Mean Reciprocal Rank) metric is a system wide metric, so only its result it will be returned and not those
+    of every user.
+    MRR is calculated as such
 
-    .. image:: metrics_img/mrr.png
-    \n\n
+    .. math:: MRR_sys = \\frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\\frac{1}{rank(i)}
+
+    |
+    Where:
+
+    - :math:`Q` is the set of recommendation lists
+    - :math:`rank(i)` is the position of the first relevant item in the i-th recommendation list
+
+    The MRR metric needs to discern relevant items from the not relevant ones: in order to do that, one could pass a
+    custom relevant_threshold parameter that will be applied to every user, so that if a rating of an item
+    is >= relevant_threshold, then it's relevant, otherwise it's not.
+    If no relevant_threshold parameter is passed then, for every user, its mean rating score will be used
+
     Args:
-        relevant_threshold: specify the minimum value to consider
-            a truth frame row as relevant
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
     """
     def __init__(self, relevant_threshold: float = None):
         self.__relevant_threshold = relevant_threshold
@@ -114,6 +164,11 @@ class MRR(RankingMetric):
         return "MRR"
 
     def calc_reciprocal_rank(self, valid: pd.DataFrame):
+        """
+        Method which calculates the RR (Reciprocal Rank) for a single user
+        Args:
+            valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
+        """
         if self.relevant_threshold is None:
             relevant_threshold = valid['score_truth'].mean()
         else:
@@ -132,26 +187,6 @@ class MRR(RankingMetric):
         return reciprocal_rank
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Compute the Mean Reciprocal Rank metric
-
-        https://gist.github.com/bwhite/3726239
-
-
-        Where:
-            • Q is the set of recommendation lists
-            • rank(i) is the position of the first relevant item in the i-th recommendation list
-
-        Args:
-              truth (pd.DataFrame): dataframe whose columns are: to_id, rating
-              predictions (pd.DataFrame): dataframe whose columns are: to_id, rating;
-                  it represents the ranking of all the items in the test set,
-                  first n will be considered relevant,
-                  with n equal to the number of relevant items in the test set
-
-        Returns:
-            (float): the mrr value
-        """
         pred = split.pred
         truth = split.truth
 
@@ -181,6 +216,29 @@ class MRR(RankingMetric):
 
 
 class MRRAtK(MRR):
+    r"""
+    The MRR@K (Mean Reciprocal Rank at K) metric is a system wide metric, so only its result will be returned and
+    not those of every user.
+    MRR@K is calculated as such
+
+    .. math:: MRR@K_sys = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+
+    |
+    Where:
+
+    - :math:`K` is the cutoff parameter
+    - :math:`Q` is the set of recommendation lists
+    - :math:`rank(i)` is the position of the first relevant item in the i-th recommendation list
+
+
+    Args:
+        k (int): the cutoff parameter. It must be >= 1, otherwise a KError exception is raised
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+
+    Raises:
+        KError: if an invalid cutoff parameter is passed (0 or negative)
+    """
 
     def __init__(self, k: int, relevant_threshold: float = None):
         if k < 1:
@@ -192,6 +250,11 @@ class MRRAtK(MRR):
         return "MRR@{}".format(self.__k)
 
     def calc_reciprocal_rank(self, valid: pd.DataFrame):
+        """
+        Method which calculates the RR@K (Reciprocal Rank at K) for a single user
+        Args:
+            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
+        """
         if self.relevant_threshold is None:
             relevant_threshold = valid['score_truth'].mean()
         else:
@@ -211,12 +274,54 @@ class MRRAtK(MRR):
 
 
 class Correlation(RankingMetric):
+    """
+    The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+    The currently correlation methods implemented are:
+
+    - pearson
+    - kendall
+    - spearman
+
+    Every correlation method is implemented by the scipy library, so read its documentation for more
+
+    The correlation metric is calculated as such for the **single user**:
+
+    .. math:: Corr_u = Corr(ranking_u, ideal\_ranking_u)
+
+    |
+    Where:
+
+    - :math:`ranking_u` is ranking of the user
+    - :math:`ideal\_ranking_u` is the ideal ranking for the user
+
+    The ideal ranking is calculated based on the rating inside the *ground truth* of the user
+
+    The Correlation metric calculated for the **entire system** is simply the average of every :math:`Corr`:
+
+    .. math:: Corr_sys = \\frac{\sum_{u} Corr_u}{|U|}
+
+    |
+    Where:
+
+    - :math:`Corr_u` is the correlation of the user :math:`u`
+    - :math:`U` is the set of all users
+
+    The system average excludes NaN values.
+
+    It's also possible to specify a cutoff parameter thanks to the 'top_n' parameter: if specified, only the first
+    :math:`n` results of the recommendation list will be used in order to calculate the correlation
+
+    Args:
+        method (str): The correlation method to use. It must be 'pearson', 'kendall' or 'spearman', otherwise a
+            ValueError exception is raised. By default is 'pearson'
+        top_n (int): Cutoff parameter, if specified only the first n items of the recommendation list will be used
+            in order to calculate the correlation
+
+    Raises:
+        ValueError: if an invalid method parameter is passed
+    """
 
     def __init__(self, method: str = 'pearson', top_n: int = None):
-        """
-        Args:
-            method: {'pearson, 'kendall', 'spearman'} or callable
-        """
         valid = {'pearson', 'kendall', 'spearman'}
         self.__method = method.lower()
 
@@ -234,17 +339,6 @@ class Correlation(RankingMetric):
         return name
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Compute the correlation between the two ranks
-
-        Args:
-            truth (pd.DataFrame): dataframe whose columns are: to_id, rating
-            predictions (pd.DataFrame): dataframe whose columns are: to_id, rating;
-                it represents the ranking of all the items in the test set
-
-        Returns:
-            (float): value of the specified correlation metric
-        """
         pred = split.pred
         truth = split.truth
 

@@ -9,15 +9,15 @@ from orange_cb_recsys.evaluation.metrics.metrics import ScoresNeededMetric
 
 
 class ErrorMetric(ScoresNeededMetric):
+    """
+    Abstract class for error metrics.
+    An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
+
+    Obviously the recommender system must be able to do score prediction in order to be evaluated in one of these
+    metrics
+    """
 
     def perform(self, split: Split) -> pd.DataFrame:
-        """
-        Method that execute the prediction metric computation
-
-        Args:
-              truth (pd.DataFrame): dataframe whose columns are: to_id, rating
-              predictions (pd.DataFrame): dataframe whose columns are: to_id, rating
-        """
         pred = split.pred
         truth = split.truth
 
@@ -48,15 +48,63 @@ class ErrorMetric(ScoresNeededMetric):
 
     @abstractmethod
     def _calc_metric(self, truth_scores: pd.Series, pred_scores: pd.Series):
+        """
+        Private method that must be implemented by every error metric specifying how to calculate the metric
+        for a single user given a Series of ratings taken from the ground truth and a Series of ratings predicted by the
+        recommender system.
+
+        Both Series must be in relation 1 to 1 between each other, meaning that if row 1 of the 'truth_scores' parameter
+        contains the rating of the 'iPhone' item, row 1 of the 'pred_scores' parameter must contain the predicted rating
+        of the 'iPhone' item, so both Series must be ordered in the same manner and must be filtered in order to exclude
+        items which are in the ground truth of the user but are not predicted, as well as items which are predicted
+        but aren't present in the ground truth. Debug the unittest cases for examples
+
+        Args:
+            truth_scores (pd.Series): Pandas Series which contains rating of the user taken from its ground truth. Has a
+                1 to 1 relationship with the 'pred_scores' Series
+            pred_scores (pd.Series): Pandas Series which contains rating predicted by the recommender system. Has a
+                1 to 1 relationship with the 'truth_scores' Series
+        """
         raise NotImplementedError
 
 
 class MSE(ErrorMetric):
     """
-    RMSE
-    .. image:: metrics_img/rmse.png
-    \n\n
-    Where T is the test set and r' is the actual score give by user u to item i
+    The MSE (Mean Squared Error) metric is calculated as such for the **single user**:
+
+    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+
+    |
+    Where:
+
+    - :math:`T_u` is the *test set* of the user :math:`u`
+    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
+    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+
+    And it is calculated as such for the **entire system**:
+
+    .. math::
+        MSE_sys = \sum_{u \in T} \\frac{MSE_u}{|T|}
+    |
+    Where:
+
+    - :math:`T` is the *test set*
+    - :math:`MSE_u` is the MSE calculated for user :math:`u`
+
+    There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+    and items were not present locally, a methodology different than *TestRatings* was chosen).
+
+    In those cases the :math:`MSE_u` formula becomes
+
+    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    |
+    Where:
+
+    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+
+    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+
+    .. math:: MSE_u = NaN
     """
 
     def __str__(self):
@@ -68,10 +116,41 @@ class MSE(ErrorMetric):
 
 class RMSE(ErrorMetric):
     """
-    RMSE
-    .. image:: metrics_img/rmse.png
-    \n\n
-    Where T is the test set and r' is the actual score give by user u to item i
+    The RMSE (Root Mean Squared Error) metric is calculated as such for the **single user**:
+
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+
+    |
+    Where:
+
+    - :math:`T_u` is the *test set* of the user :math:`u`
+    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
+    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+
+    And it is calculated as such for the **entire system**:
+
+    .. math::
+        RMSE_sys = \sum_{u \in T} \\frac{RMSE_u}{|T|}
+    |
+    Where:
+
+    - :math:`T` is the *test set*
+    - :math:`RMSE_u` is the RMSE calculated for user :math:`u`
+
+    There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+    and items were not present locally, a methodology different than *TestRatings* was chosen).
+
+    In those cases the :math:`RMSE_u` formula becomes
+
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    |
+    Where:
+
+    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+
+    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+
+    .. math:: RMSE_u = NaN
     """
 
     def __str__(self):
@@ -83,8 +162,41 @@ class RMSE(ErrorMetric):
 
 class MAE(ErrorMetric):
     """
-    MAE
-    .. image:: metrics_img/mae.png
+    The MAE (Mean Absolute Error) metric is calculated as such for the **single user**:
+
+    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+
+    |
+    Where:
+
+    - :math:`T_u` is the *test set* of the user :math:`u`
+    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
+    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+
+    And it is calculated as such for the **entire system**:
+
+    .. math::
+        MAE_sys = \sum_{u \in T} \\frac{MAE_u}{|T|}
+    |
+    Where:
+
+    - :math:`T` is the *test set*
+    - :math:`MAE_u` is the MAE calculated for user :math:`u`
+
+    There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+    and items were not present locally, a methodology different than *TestRatings* was chosen).
+
+    In those cases the :math:`MAE_u` formula becomes
+
+    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    |
+    Where:
+
+    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+
+    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+
+    .. math:: MAE_u = NaN
     """
 
     def __str__(self):

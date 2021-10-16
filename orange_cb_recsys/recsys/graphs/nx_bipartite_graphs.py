@@ -12,7 +12,7 @@ class NXBipartiteGraph(BipartiteGraph):
     Class that implements a Bipartite graph through networkx library.
     It supports 'user' node and 'item' node only.
     It creates a graph from an initial rating frame
-    EXAMPLE:
+    EXAMPLE::
             _| from_id | to_id | score|
             _|   u1    | Tenet | 0.6  |
 
@@ -25,7 +25,7 @@ class NXBipartiteGraph(BipartiteGraph):
     Args:
         source_frame (pd.DataFrame): the initial rating frame needed to create the graph
         default_score_label (str): the default label of the link between two nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_weight (float): the default value with which a link will be weighted
             Default is 0.5
 
@@ -59,10 +59,10 @@ class NXBipartiteGraph(BipartiteGraph):
     def add_user_node(self, node: Union[object, List[object]]):
         """
         Adds a 'user' node to the graph.
-        If the node is not-existent then it is created and then added to the graph.
+        If a list is passed, then every element of the list will be added as a 'user' node
 
         Args:
-            node (object): node that needs to be added to the graph as a from node
+            node: node(s) that needs to be added to the graph as 'user' node(s)
         """
         if not isinstance(node, list):
             node = [node]
@@ -72,11 +72,11 @@ class NXBipartiteGraph(BipartiteGraph):
 
     def add_item_node(self, node: Union[object, List[object]]):
         """
-        Creates a 'item' node and adds it to the graph
-        If the node is not-existent then it is created and then added to the graph.
+        Adds a 'item' node to the graph.
+        If a list is passed, then every element of the list will be added as a 'item' node
 
         Args:
-            node (object): node that needs to be added to the graph as a 'to' node
+            node: node(s) that needs to be added to the graph as 'item' node(s)
         """
         if not isinstance(node, list):
             node = [node]
@@ -84,7 +84,8 @@ class NXBipartiteGraph(BipartiteGraph):
         for n in node:
             self._graph.add_node(ItemNode(n))
 
-    def add_link(self, start_node: object, final_node: Union[object, List[object]], weight: float = None, label: str = None):
+    def add_link(self, start_node: object, final_node: Union[object, List[object]], weight: float = None,
+                 label: str = None):
         """
         Creates a weighted link connecting the 'start_node' to the 'final_node'
         Both nodes must be present in the graph before calling this method
@@ -124,6 +125,14 @@ class NXBipartiteGraph(BipartiteGraph):
                                "calling this method.")
 
     def remove_link(self, start_node: object, final_node: object):
+        """
+        Removes the link connecting the 'start_node' to the 'final_node'.
+        If there's no link between the two nodes, than a warning is printed
+
+        Args:
+            start_node (object): starting node of the link to remove
+            final_node (object): ending node of the link to remove
+        """
         try:
             self._graph.remove_edge(start_node, final_node)
         except nx.NetworkXError:
@@ -222,12 +231,21 @@ class NXBipartiteGraph(BipartiteGraph):
         return node in self.item_nodes
 
     def degree_centrality(self):
+        """
+        Calculate the degreee centrality for every node in the graph
+        """
         return nx.degree_centrality(self._graph)
 
     def closeness_centrality(self):
+        """
+        Calculate the closeness centrality for every node in the graph
+        """
         return nx.closeness_centrality(self._graph)
 
     def dispersion(self):
+        """
+        Calculate the dispersion for every node in the graph
+        """
         return nx.dispersion(self._graph)
 
     @property

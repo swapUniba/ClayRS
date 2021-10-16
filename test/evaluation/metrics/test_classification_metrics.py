@@ -553,9 +553,10 @@ class TestFMeasure(TestCase):
         cls.metric_mean = FMeasure(sys_average='macro')
 
         cls.metric_f2 = FMeasure(beta=2, relevant_threshold=3)
+        cls.metric_f3_2 = FMeasure(beta=3.2, relevant_threshold=3)
 
     @staticmethod
-    def fscore(beta: int, prec: float, reca: float):
+    def fscore(beta: float, prec: float, reca: float):
         beta_2 = beta ** 2
         num = prec * reca
         den = (beta_2 * prec) + reca
@@ -746,6 +747,30 @@ class TestFMeasure(TestCase):
         prec_u2 = 3/4
         reca_u2 = 3/3
         expected_u2 = self.fscore(2, prec_u2, reca_u2)
+        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        self.assertAlmostEqual(expected_u2, result_macro_u2)
+
+        expected_macro_sys = (expected_u1 + expected_u2) / 2
+        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
+
+        # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
+        # u1 = [0, 1, 0, 0, 0, 1, 0, 0], u2 = [1, 0, 1, 1]
+
+    def test_perform_f_real_value(self):
+        metric_macro = self.metric_f3_2
+
+        result_macro = metric_macro.perform(split_w_new_items)
+
+        prec_u1 = 2/8
+        reca_u1 = 2/2
+        expected_u1 = self.fscore(3.2, prec_u1, reca_u1)
+        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        self.assertAlmostEqual(expected_u1, result_macro_u1)
+
+        prec_u2 = 3/4
+        reca_u2 = 3/3
+        expected_u2 = self.fscore(3.2, prec_u2, reca_u2)
         result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 

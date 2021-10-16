@@ -5,7 +5,7 @@ import numpy as np
 
 class Similarity(ABC):
     """
-    Class for the various types of similarity
+    Abstract Class for the various types of similarity
     """
     def __init__(self):
         pass

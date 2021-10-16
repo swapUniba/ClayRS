@@ -11,16 +11,43 @@ from orange_cb_recsys.utils.const import recsys_logger
 
 class IndexQuery(ContentBasedAlgorithm):
     """
-    Class for the search engine recommender
+    Class for the search engine recommender using an index.
+    It firsts builds a query using the representation(s) specified of the positive items, then uses the mentioned query
+    to do an actual search inside the index: every items will have a score of "closeness" in relation to the
+    query, we use this score to rank every item.
+
+    Just be sure to use textual representation(s) to build a significant query and to make a significant search!
+
+        USAGE:
+        > # Interested in only a field representation, classic tfidf similarity,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = IndexQuery({"Plot": 0}, threshold=3)
+
+        > # Interested in multiple field representations of the items, BM25 similarity,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = IndexQuery(
+        >                  item_field={"Plot": [0, "original_text"],
+        >                              "Genre": [0, 1],
+        >                              "Director": "preprocessed_text"},
+        >                  classic_similarity=False,
+        >                  threshold=3)
+
+        > # After instantiating the IndexQuery algorithm, pass it in the initialization of
+        > # a CBRS and the use its method to calculate ranking for single user or multiple users:
+        > cbrs = ContentBasedRS(algorithm=alg, ...)
+        > cbrs.fit_rank(...)
+        > ...
+        > # Check the corresponding method documentation for more
+
     Args:
-       item_field (dict): dict where the key is the name of the field
-            that contains the content to use, value is the representation(s) that will be
-            used for the said item. The value of a field can be a string or a list,
-            use a list if you want to use multiple representations for a particular field.
-            Check the example above for more.
+        item_field (dict): dict where the key is the name of the field
+            that contains the content to use, value is the representation(s) id(s) that will be
+            used for the said item, just BE SURE to use textual representation(s). The value of a field can be a string
+            or a list, use a list if you want to use multiple representations for a particular field.
         classic_similarity (bool): True if you want to use the classic implementation of tfidf in Whoosh,
             False if you want BM25F
-        threshold (float): ratings bigger than threshold will be considered as positive
+        threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+            as positive
     """
 
     def __init__(self, item_field: dict, classic_similarity: bool = True, threshold: float = None):
@@ -31,6 +58,13 @@ class IndexQuery(ContentBasedAlgorithm):
         self.__classic_similarity: bool = classic_similarity
 
     def __get_representations(self, index_representations: dict):
+        """
+        Private method which extracts representation(s) chosen from all representations codified for the items
+        extracted from the index
+
+        Args:
+            index_representations (dict): representations for an item extracted from the index
+        """
         def find_valid(pattern: str):
             field_index_retrieved = [field_index for field_index in index_representations
                                      if re.match(pattern, field_index)]
@@ -47,6 +81,7 @@ class IndexQuery(ContentBasedAlgorithm):
         representations_valid = {}
         for k in self.item_field:
             for id in self.item_field[k]:
+                # every representation for an item is codified like this: plot#0#tfidf
                 if isinstance(id, str):
                     pattern = "^{}#.+#{}$".format(k, id)
                 else:
@@ -67,7 +102,7 @@ class IndexQuery(ContentBasedAlgorithm):
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            index_directory (str): path of the index folder
         """
         threshold = self.threshold
         if threshold is None:
@@ -96,8 +131,8 @@ class IndexQuery(ContentBasedAlgorithm):
 
     def fit(self):
         """
-        The fit process for the IndexQuery consists in building a query using the features of the items
-        that the user liked. The terms relative to these 'positive' items are boosted by the
+        The fit process for the IndexQuery consists in building a query using the features of the positive items ONLY
+        (items that the user liked). The terms relative to these 'positive' items are boosted by the
         rating he/she gave.
 
         This method uses extracted features of the positive items stored in a private attribute, so
@@ -162,19 +197,19 @@ class IndexQuery(ContentBasedAlgorithm):
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        All unrated items will be ranked (or only items in the filter list, if specified).
 
         One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be used to calculate the rank.
+        in this case ONLY items in the filter_list parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be used to calculate the rank.
+        Otherwise, ALL unrated items will be ranked.
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            index_directory (str): path of the index folder
+            recs_number (int): number of the top items that will be present in the ranking, if None
+                all unrated items will be ranked
+            filter_list (list): list of the items to rank, if None all unrated items will be ranked
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column

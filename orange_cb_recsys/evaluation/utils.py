@@ -9,6 +9,7 @@ def popular_items(score_frame: pd.DataFrame, pop_percentage: float = 0.2) -> Set
 
     Args:
         score_frame (pd.DataFrame): each row contains index(the rank position), label, value predicted
+        pop_percentage (float): percentage of how many 'most popular items' must be returned
 
     Returns:
         Set<str>: set of most popular labels

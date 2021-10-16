@@ -17,14 +17,35 @@ from orange_cb_recsys.utils.load_content import get_unrated_items, get_rated_ite
 class CentroidVector(ContentBasedAlgorithm):
     """
     Class that implements a centroid-like recommender. It first gets the centroid of the items that the user liked.
-    Then computes the similarity between the centroid and the item of which the rating must be predicted.
+    Then computes the similarity between the centroid and the item of which the ranking score must be predicted.
+    It's a ranking algorithm, so it can't do score prediction
+
+    USAGE:
+        > # Interested in only a field representation, CosineSimilarity as similarity,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = CentroidVector({"Plot": 0}, CosineSimilarity(), 3)
+
+        > # Interested in multiple field representations of the items, CosineSimilarity as similarity,
+        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
+        > alg = CentroidVector(
+        >                      item_field={"Plot": [0, "tfidf"],
+        >                                  "Genre": [0, 1],
+        >                                  "Director": "doc2vec"},
+        >                      similarity=CosineSimilarity(),
+        >                      threshold=3)
+
+        > # After instantiating the CentroidVector algorithm, pass it in the initialization of
+        > # a CBRS and the use its method to calculate ranking for single user or multiple users:
+        > cbrs = ContentBasedRS(algorithm=alg, ...)
+        > cbrs.fit_rank(...)
+        > ...
+        > # Check the corresponding method documentation for more
 
     Args:
         item_field (dict): dict where the key is the name of the field
-            that contains the content to use, value is the representation(s) that will be
+            that contains the content to use, value is the representation(s) id(s) that will be
             used for the said item. The value of a field can be a string or a list,
             use a list if you want to use multiple representations for a particular field.
-            Check the example above for more.
         similarity (Similarity): Kind of similarity to use
         threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
             as positive
@@ -41,9 +62,9 @@ class CentroidVector(ContentBasedAlgorithm):
     def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
         """
         Function that extracts features from positive rated items ONLY!
-        The extracted features will be used to fit the algorithm (build the query).
+        The extracted features will be used to fit the algorithm (build the centroid).
 
-        Features extracted will be stored in private attributes of the class.
+        Features extracted will be stored in a private attributes of the class.
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
@@ -80,7 +101,7 @@ class CentroidVector(ContentBasedAlgorithm):
 
     def fit(self):
         """
-        The fit process for the Centroid Vector consists in calculating the centroid of the features
+        The fit process for the CentroidVector consists in calculating the centroid of the features
         of the positive items ONLY.
 
         This method uses extracted features of the positive items stored in a private attribute, so
@@ -99,20 +120,10 @@ class CentroidVector(ContentBasedAlgorithm):
     def predict(self, user_ratings: pd.DataFrame, items_directory: str,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Predicts how much a user will like unrated items.
-
-        One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list will be predicted.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be predicted.
-
-        Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
-        Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted
+        CentroidVector is not a score prediction algorithm, calling this method will raise
+        the 'NotPredictionAlg' exception!
+        Raises:
+            NotPredictionAlg
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
@@ -120,19 +131,19 @@ class CentroidVector(ContentBasedAlgorithm):
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        All unrated items will be ranked (or only items in the filter list, if specified).
 
         One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be used to calculate the rank.
+        in this case ONLY items in the filter_list parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be used to calculate the rank.
+        Otherwise, ALL unrated items will be ranked.
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            recs_number (int): number of the top items that will be present in the ranking, if None
+                all unrated items will be ranked
+            filter_list (list): list of the items to rank, if None all unrated items will be ranked
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column

@@ -27,11 +27,13 @@ class Classifier(ABC):
         then the actual fitting is done.
 
         Training data (X) is in the form:
-            X = [ [representation1, representation2], [representation1, representation2], ...]
-        where every sublist contains the representation chosen of the chosen fields for a item.
+            X = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+        where every item is a representation for an item (can be a merged one in case multiple representations
+        are chosen)
 
         Target data (Y) is in the form:
             Y = [0, 1, ... ]
+        where 0 represent a negative item, 1 represent a positive item
 
         Args:
             X (list): list containing Training data.
@@ -42,12 +44,12 @@ class Classifier(ABC):
     def predict_proba(self, X_pred: list):
         """
         Predicts the probability for every item in X_pred.
-        First we transform the data, then the actual prediction is done.
         It uses the method predict_proba() from sklearn of the instantiated classifier
 
         It's in the form:
-            X_pred = [ [representation1, representation2], [representation1, representation2], ...]
-        where every sublist contains the representation chosen of the chosen fields for a item.
+            X_pred = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+        where every item is a representation for an item (can be a merged one in case multiple representations
+        are chosen)
 
         Args:
             X_pred (list): list containing data to predict.
@@ -59,15 +61,16 @@ class SkSVC(Classifier):
     """
     Class that implements the SVC Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
-    the classifier SVC directly from sklearn, except for the 'probability' parameter:
-    it is set at True and cannot be changed
+    the classifier SVC directly from sklearn.
+    The only parameter from sklearn that cannot be passed is the 'probability' parameter:
+    it is set to True and cannot be changed
     """
     def __init__(self, *args, **kwargs):
         # parameters_passed = locals().copy()
         # del parameters_passed['self']
         # del parameters_passed['__class__']
 
-        # Force the probability parameter at True, otherwise SVC wont' predict_proba
+        # Force the probability parameter at True, otherwise SVC won't predict_proba
         kwargs['probability'] = True
         clf = SVC(*args, **kwargs)
 
@@ -79,12 +82,11 @@ class SkSVC(Classifier):
 
 class SkKNN(Classifier):
     """
-    Instantiate the sklearn classifier.
+    Class that implements the KNN Classifier from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the classifier KNN directly from sklearn.
 
-    If parameters were passed in the constructor of this class, then
-    thery are passed to sklearn.
-
-    Since KNN has n_neighbors = 5 as default, it can throw an exception if less sample in
+    Since KNN implementation of sklearn has n_neighbors = 5 as default, it can throw an exception if less sample in
     the training data are provided, so we change dynamically the n_neighbors parameter
     according to the number of samples
 
@@ -98,11 +100,6 @@ class SkKNN(Classifier):
         super().__init__(clf)
 
     def fit(self, X: list, Y: list = None):
-        """
-        Since KNN has n_neighbors = 5 as default, it can throw an exception if less sample in
-        the training data are provided, so if the user didn't specify a custom 'n_neighbors' parameter,
-        we change it dynamically according to the number of samples
-        """
         # If the user did not pass a custom n_neighbor the algorithm tries to fix the error
         # if n_samples < n_neighbors
         if self.classifier.n_neighbors == 5 and len(X) < self.classifier.n_neighbors:

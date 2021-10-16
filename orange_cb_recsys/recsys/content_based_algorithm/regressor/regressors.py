@@ -10,10 +10,7 @@ from sklearn.linear_model import LinearRegression, BayesianRidge, Ridge, SGDRegr
 
 class Regressor(ABC):
     """
-    Abstract class for Classifiers
-
-    The only concrete method is transform(). It has an abstract fit() method and an abstract
-    predict_proba() method.
+    Abstract class for Regressors
     """
 
     def __init__(self, model: Union[SKLinearModel, BaseSGDRegressor]):
@@ -21,16 +18,18 @@ class Regressor(ABC):
 
     def fit(self, X: list, Y: list = None):
         """
-        Fit the classifier.
+        Fit the regressor.
         First the classifier is instantiated, then we transform the Training Data,
         then the actual fitting is done.
 
         Training data (X) is in the form:
-            X = [ [representation1, representation2], [representation1, representation2], ...]
-        where every sublist contains the representation chosen of the chosen fields for a item.
+            X = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+        where every item is a representation for an item (can be a merged one in case multiple representations
+        are chosen)
 
         Target data (Y) is in the form:
             Y = [0, 1, ... ]
+        where 0 represent a negative item, 1 represent a positive item
 
         Args:
             X (list): list containing Training data.
@@ -41,12 +40,12 @@ class Regressor(ABC):
     def predict(self, X_pred: list):
         """
         Predicts the probability for every item in X_pred.
-        First we transform the data, then the actual prediction is done.
-        It uses the method predict_proba() from sklearn of the instantiated classifier
+        It uses the method predict() from sklearn of the instantiated regressor
 
         It's in the form:
-            X_pred = [ [representation1, representation2], [representation1, representation2], ...]
-        where every sublist contains the representation chosen of the chosen fields for a item.
+            X_pred = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+        where every item is a representation for an item (can be a merged one in case multiple representations
+        are chosen)
 
         Args:
             X_pred (list): list containing data to predict.
@@ -55,6 +54,11 @@ class Regressor(ABC):
 
 
 class SkLinearRegression(Regressor):
+    """
+    Class that implements the LinearRegression regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor LinearRegression directly from sklearn.
+    """
 
     def __init__(self, *args, **kwargs):
         model = LinearRegression(*args, **kwargs)
@@ -66,6 +70,11 @@ class SkLinearRegression(Regressor):
 
 
 class SkRidge(Regressor):
+    """
+    Class that implements the Ridge regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor Ridge directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
         model = Ridge(*args, **kwargs)
 
@@ -76,6 +85,11 @@ class SkRidge(Regressor):
 
 
 class SkBayesianRidge(Regressor):
+    """
+    Class that implements the BayesianRidge regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor BayesianRidge directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
         model = BayesianRidge(*args, **kwargs)
 
@@ -86,6 +100,11 @@ class SkBayesianRidge(Regressor):
 
 
 class SkSGDRegressor(Regressor):
+    """
+    Class that implements the SGD regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor SGD directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
         model = SGDRegressor(*args, **kwargs)
         super().__init__(model)
@@ -95,6 +114,11 @@ class SkSGDRegressor(Regressor):
 
 
 class SkARDRegression(Regressor):
+    """
+    Class that implements the ARD regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor ARD directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
 
         model = ARDRegression(*args, **kwargs)
@@ -105,6 +129,11 @@ class SkARDRegression(Regressor):
 
 
 class SkHuberRegressor(Regressor):
+    """
+    Class that implements the Huber regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor Huber directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
 
         model = HuberRegressor(*args, **kwargs)
@@ -115,6 +144,11 @@ class SkHuberRegressor(Regressor):
 
 
 class SkPassiveAggressiveRegressor(Regressor):
+    """
+    Class that implements the PassiveAggressive regressor from sklearn.
+    The parameters one could pass are the same ones you would pass instantiating
+    the regressor PassiveAggressive directly from sklearn.
+    """
     def __init__(self, *args, **kwargs):
 
         model = PassiveAggressiveRegressor(*args, **kwargs)

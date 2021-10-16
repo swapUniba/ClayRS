@@ -13,13 +13,9 @@ class GraphBasedAlgorithm(Algorithm):
     """
     Abstract class for the graph-based algorithms
 
-    Like every subclass of Algorithm, it must implements the 'initialize(...)' method where one must pass
-    important parameters for the usage of this specific type of Algorithm
-
-    Said method must be called right after the instantiation of the Algorithm
-
     Args:
-    feature_selection (FeatureSelectionAlgorithm): a FeatureSelectionAlgorithm algorithm if the graph needs to be reduced
+    feature_selection (FeatureSelectionAlgorithm): a FeatureSelectionAlgorithm algorithm if the graph needs to be
+        reduced
     """
     def __init__(self, feature_selection: FeatureSelectionAlgorithm = None):
         self.__feature_selection: FeatureSelectionAlgorithm = feature_selection
@@ -44,8 +40,10 @@ class GraphBasedAlgorithm(Algorithm):
         * item nodes rated by the user (remove_profile),
         * property nodes (remove_properties).
 
-        This produces a cleaned result with only the desired nodes inside of it.
+        This produces a cleaned result with only the desired nodes inside it.
         Args:
+            graph (FullGraph): graph from which the profile of the user will be extracted if it needs to be removed
+                from the result
             result (dict): dictionary representing the result (keys are nodes and values are their score prediction)
             user_id (str): id of the user used to extract his profile
             remove_users (bool): boolean value, set to true if 'User' nodes need to be removed from the result dict
@@ -90,8 +88,8 @@ class GraphBasedAlgorithm(Algorithm):
         """
         Extracts the user profile (the items that the user rated, or in general the nodes with a link to the user).
 
-        Returns a dictionary containing the successor nodes as keys and the weights in the graph for the edges between the user node
-        and his successors as values
+        Returns a dictionary containing the successor nodes as keys and the weights in the graph for the edges between
+        the user node and his successors as values
 
         EXAMPLE::
              graph: i1 <---0.2--- u1 ---0.4---> i2
@@ -100,6 +98,7 @@ class GraphBasedAlgorithm(Algorithm):
             > {'i1': 0.2, 'i2': 0.4}
 
         Args:
+            graph (FullGraph): graph from which the profile of the user will be extracted
             user_id (str): id for the user for which the profile will be extracted
         Returns:
             profile (dict): dictionary with item successor nodes to the user as keys and weights of the edge
@@ -113,20 +112,22 @@ class GraphBasedAlgorithm(Algorithm):
     @abc.abstractmethod
     def predict(self, user_id: str, graph: FullGraph, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Abstract method that predicts how much a user will like unrated items.
+        |  Abstract method that predicts the rating which a user would give to items
+        |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
+
+        def predict():
+            raise NotPredictionAlg
 
         One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list which are present in the graph will be predicted.
+        in this case ONLY items in the filter_list will be predicted.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items which are present in the graph will be predicted.
-
-        If a feature selection algorithm is passed in the constructor, it is performed before calculating
-        any prediction
+        Otherwise, ALL unrated items will be predicted.
 
         Args:
             user_id (str): id of the user of which predictions will be calculated
-            graph (FullGraph): a FullGraph containing users, items and eventually other categories of nodes
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            graph (FullGraph): graph containing interactions between users and items (and optionally other types of
+                nodes)
+            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted
@@ -136,28 +137,25 @@ class GraphBasedAlgorithm(Algorithm):
     @abc.abstractmethod
     def rank(self, user_id: str, graph: FullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        |  all items will be ranked.
+        |  If the algorithm is not a Ranking Algorithm, implement this method like this:
+
+        def rank():
+            raise NotRankingAlg
 
         One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list which are present in the graph will be ranked.
+        in this case ONLY items in the filter_list will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items which are present in the graph will be used to calculate the rank.
-
-        If a feature selection algorithm is passed in the constructor, it is performed before calculating
-        any prediction
-
-        Most of the time the rank is calculated by calling the predict() method and sorting the ratings
-        predicted, but it's abstract since some algorithm may implement some optimizations to calculate
-        the rank.
+        Otherwise, ALL unrated items will be ranked.
 
         Args:
             user_id (str): id of the user of which predictions will be calculated
-            graph (FullGraph): a FullGraph containing users, items and eventually other categories of nodes
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            graph (FullGraph): graph containing interactions between users and items (and optionally other types of
+                nodes)
+            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted, sorted in descending order by the 'rating' column
+                one column with the rating predicted, sorted in descending order by the 'rating' column
         """
         raise NotImplementedError

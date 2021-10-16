@@ -216,11 +216,11 @@ class TestPopRecsCorrelation(TestCase):
 
         split_no_zero_present = Split(recs, truth)
 
-        metric = PopRecsCorrelation('test_pop_recs/both_no', mode='both')
+        metric = PopRecsCorrelation('test_pop_recs/both_identical', mode='both')
         metric.perform(split_no_zero_present)
-        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/both_no', 'pop_recs_correlation.png')))
-        # If The 'no-zeros' graph was created, its file_name would be: file_name = file_name + '_no_zeros'
-        self.assertFalse(os.path.isfile(os.path.join('test_pop_recs/both_no', 'pop_recs_correlation_no_zeros.png')))
+        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/both_identical', 'pop_recs_correlation.png')))
+        # If The 'no-zeros' is created, its file_name will be: file_name = file_name + '_no_zeros'
+        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/both_identical', 'pop_recs_correlation_no_zeros.png')))
 
     def test_perform_w_zeros(self):
         # Save only 'w-zeros' graph

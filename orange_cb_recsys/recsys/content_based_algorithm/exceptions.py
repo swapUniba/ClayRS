@@ -14,7 +14,7 @@ class OnlyPositiveItems(Exception):
 
 class OnlyNegativeItems(Exception):
     """
-    Exception to raise when there's only positive items available locally for the user
+    Exception to raise when there's only negative items available locally for the user
     """
     pass
 

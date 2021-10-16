@@ -15,12 +15,12 @@ from orange_cb_recsys.utils.const import logger
 class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
     """
     Class that implements a Tripartite graph through networkx library.
-    It supports 'from' node, 'to' and 'property' node, but the latter ones are available only for
-    'to' nodes.
+    It supports 'user' node, 'item' and 'property' node, but the latter ones are available only for
+    are only allowed to be linked to 'item' nodes.
 
     It creates a graph from an initial rating frame and if the 'item_contents_dir' is specified,
-    tries to add properties for every 'to' node.
-    EXAMPLE:
+    tries to add properties for every 'item' node.
+    EXAMPLE::
             _| from_id | to_id | score|
             _|   u1    | Tenet | 0.6  |
 
@@ -38,7 +38,7 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
         item_exo_representation (str): the exogenous representation we want to extract properties from
         item_exo_properties (list): the properties we want to extract from the exogenous representation
         default_score_label (str): the label of the link between 'from' and 'to' nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_not_rated_value (float): the default value with which the link will be weighted
             Default is 0.5
 
@@ -61,11 +61,11 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteGraph):
 
     def add_property_node(self, node: Union[object, List[object]]):
         """
-        Creates a 'property' node and adds it to the graph
-        If the node is not-existent then it is created and then added to the graph.
+        Adds a 'property' node to the graph.
+        If a list is passed, then every element of the list will be added as a 'property' node
 
         Args:
-            node (object): node that needs to be added to the graph as a 'property' node
+            node: node(s) that needs to be added to the graph as 'property' node(s)
         """
         if not isinstance(node, list):
             node = [node]

@@ -13,11 +13,11 @@ from orange_cb_recsys.utils.const import logger
 class NXFullGraph(NXTripartiteGraph, FullGraph):
     """
     Class that implements a Full graph through networkx library.
-    It supports 'from' node, 'to' and 'property' node
+    It supports every node implemented in the framework with no restriction in linking
 
     It creates a graph from an initial rating frame and if the 'item_contents_dir' or 'user_contents_dir'
     are specified, tries to add properties for every 'to' or 'from' node respectively.
-    EXAMPLE:
+    EXAMPLE::
             _| from_id | to_id | score|
             _|   u1    | Tenet | 0.6  |
 
@@ -38,7 +38,7 @@ class NXFullGraph(NXTripartiteGraph, FullGraph):
         item_exo_representation (str): the exogenous representation we want to extract properties from
         item_exo_properties (list): the properties we want to extract from the exogenous representation
         default_score_label (str): the label of the link between 'from' and 'to' nodes.
-            Default is 'score_label'
+            Default is 'score'
         default_not_rated_value (float): the default value with which the link will be weighted
             Default is 0.5
 
