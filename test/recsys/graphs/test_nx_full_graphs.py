@@ -8,14 +8,11 @@ import numpy as np
 
 from orange_cb_recsys.recsys.graphs.graph import Node
 from test.recsys.graphs.test_nx_tripartite_graphs import TestNXTripartiteGraph
+from test import dir_test_files
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-
-contents_path = os.path.join(THIS_DIR, '../../../contents')
-
-ratings_filename = os.path.join(contents_path, 'exo_prop/new_ratings_small.csv')
-movies_dir = os.path.join(contents_path, 'movies_codified/')
-user_dir = os.path.join(contents_path, 'users_codified/')
+ratings_filename = os.path.join(dir_test_files, 'new_ratings_small.csv')
+movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+user_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
 
 
 class TestNXFullGraph(TestNXTripartiteGraph):

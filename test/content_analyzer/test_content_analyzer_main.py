@@ -18,13 +18,16 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_id
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from test import dir_test_files
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-movies_info_reduced = os.path.join(THIS_DIR, "../../datasets/movies_info_reduced.json")
-decode_string = os.path.join(THIS_DIR, "../../datasets/test_decode/movies_title_string.json")
-decode_tfidf = os.path.join(THIS_DIR, "../../datasets/test_decode/movies_title_tfidf.json")
-decode_embedding = os.path.join(THIS_DIR, "../../datasets/test_decode/movies_title_embedding.json")
-decode_path = os.path.join(THIS_DIR, '../../datasets/test_decode/')
+movies_info_reduced = os.path.join(dir_test_files, "movies_info_reduced.json")
+
+decode_path = os.path.join(dir_test_files, "test_decode/")
+decode_string = os.path.join(decode_path, "movies_title_string.json")
+decode_tfidf = os.path.join(decode_path, "movies_title_tfidf.json")
+decode_embedding = os.path.join(decode_path, "movies_title_embedding.json")
+
 
 
 class TestContentsProducer(TestCase):

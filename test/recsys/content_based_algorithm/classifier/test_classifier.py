@@ -8,9 +8,7 @@ from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers impo
     SkGaussianProcess, SkRandomForest, SkLogisticRegression, SkKNN, SkSVC, SkDecisionTree
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import OnlyNegativeItems, NoRatedItems, \
     OnlyPositiveItems, NotPredictionAlg
-from orange_cb_recsys.utils.const import root_path
-
-contents_path = os.path.join(root_path, 'contents')
+from test import dir_test_files
 
 
 def for_each_classifier(test_func):
@@ -40,7 +38,7 @@ class TestClassifierRecommender(TestCase):
         # tt0112281 is rated for A000 but let's suppose we want to know its rank
         self.filter_list = ['tt0112281', 'tt0112760', 'tt0112896']
 
-        self.movies_dir = os.path.join(contents_path, 'movies_codified/')
+        self.movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
         # IMPORTANT! If a new classifier is added, just add it to this list to test it
         self.classifiers_list = [

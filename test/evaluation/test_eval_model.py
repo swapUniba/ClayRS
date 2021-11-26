@@ -31,11 +31,12 @@ import pandas as pd
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
 from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
 contents_path = os.path.join(root_path, 'contents')
-items_dir = os.path.join(contents_path, 'movies_codified/')
+items_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
-ratings_filename = os.path.join(root_path, 'datasets', 'examples', 'new_ratings.csv')
+ratings_filename = os.path.join(dir_test_files, 'new_ratings.csv')
 ratings = pd.read_csv(ratings_filename)
 ratings.columns = ['from_id', 'to_id', 'score', 'timestamp']
 ratings = ratings.head(1000)
@@ -261,7 +262,7 @@ class TestEvalModelManyRatings(TestCase):
     def test_graph(self):
         catalog = set(ratings.to_id)
 
-        users_dir = os.path.join(contents_path, 'users_codified/')
+        users_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
 
         graph = NXFullGraph(
             ratings,

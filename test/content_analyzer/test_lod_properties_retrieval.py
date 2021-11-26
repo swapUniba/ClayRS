@@ -4,9 +4,9 @@ from unittest import TestCase
 from orange_cb_recsys.content_analyzer import JSONFile
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
     PropertiesFromDataset, BabelPyEntityLinking
-from orange_cb_recsys.utils.const import datasets_path
+from test import dir_test_files
 
-source_path = os.path.join(datasets_path, 'test_dbpedia', 'movies_info_reduced.json')
+source_path = os.path.join(dir_test_files, 'test_dbpedia', 'movies_info_reduced.json')
 
 
 class TestDBPediaMappingTechnique(TestCase):

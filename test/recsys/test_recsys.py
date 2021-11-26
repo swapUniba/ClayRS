@@ -14,6 +14,7 @@ from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import
 from orange_cb_recsys.recsys.graphs import NXFullGraph
 
 from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
 contents_path = os.path.join(root_path, 'contents')
 
@@ -31,7 +32,7 @@ ratings = pd.DataFrame.from_records([
 class TestContentBasedRS(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.movies_multiple = os.path.join(contents_path, 'movies_codified/')
+        cls.movies_multiple = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
         cls.filter_list = ['tt0114319', 'tt0114388']
 
     def test_empty_frame(self):

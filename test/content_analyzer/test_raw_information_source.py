@@ -2,7 +2,12 @@ import os
 from unittest import TestCase
 
 from orange_cb_recsys.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile, DATFile
-from orange_cb_recsys.utils.const import datasets_path
+from test import dir_test_files
+
+json_file = os.path.join(dir_test_files, "movies_info_reduced.json")
+csv_w_header = os.path.join(dir_test_files, 'movies_info_reduced.csv')
+csv_no_header = os.path.join(dir_test_files, 'test_ratings', 'ratings_1591277020.csv')
+dat_file = os.path.join(dir_test_files, 'users_70.dat')
 
 
 class TestSQLDatabase(TestCase):
@@ -21,13 +26,8 @@ class TestSQLDatabase(TestCase):
 
 class TestCSVFile(TestCase):
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.filepath_no_header = os.path.join(datasets_path, 'test_ratings', 'ratings_1591277020.csv')
-        cls.filepath_w_header = os.path.join(datasets_path, 'movies_info_reduced.csv')
-
     def test_iter(self):
-        csv = CSVFile(self.filepath_w_header)
+        csv = CSVFile(csv_w_header)
         my_iter = iter(csv)
         d1 = {"Title": "Jumanji", "Year": "1995", "Rated": "PG", "Released": "15 Dec 1995", "Runtime": "104 min",
               "Genre": "Adventure, Family, Fantasy", "Director": "Joe Johnston",
@@ -68,7 +68,7 @@ class TestCSVFile(TestCase):
         self.assertDictEqual(next(my_iter), d3)
 
     def test_iter_no_header(self):
-        csv = CSVFile(self.filepath_no_header, has_header=False)
+        csv = CSVFile(csv_no_header, has_header=False)
 
         expected_row_1 = {'0': '01', '1': 'a', '2': '0.2333333333333333', '3': '1234567', '4': 'not so good',
                           '5': 'I expected more from this product', '6': '2.0'}
@@ -106,15 +106,9 @@ class TestCSVFile(TestCase):
 class TestJSONFile(TestCase):
 
     def test_iter(self):
-        filepath = '../../datasets/movies_info_reduced.json'
-        try:
-            with open(filepath):
-                pass
-        except FileNotFoundError:
-            filepath = 'datasets/movies_info_reduced.json'
 
-        csv = JSONFile(filepath)
-        my_iter = iter(csv)
+        js = JSONFile(json_file)
+        my_iter = iter(js)
         d1 = {"Title": "Jumanji", "Year": "1995", "Rated": "PG", "Released": "15 Dec 1995", "Runtime": "104 min",
               "Genre": "Adventure, Family, Fantasy", "Director": "Joe Johnston",
               "Writer": "Jonathan Hensleigh (screenplay by), Greg Taylor (screenplay by), Jim Strain (screenplay by), Greg Taylor (screen story by), Jim Strain (screen story by), Chris Van Allsburg (screen story by), Chris Van Allsburg (based on the book by)",
@@ -162,14 +156,8 @@ class TestJSONFile(TestCase):
 
 class TestDATFile(TestCase):
     def test_iter(self):
-        filepath = '../../datasets/examples/users_70.dat'
-        try:
-            with open(filepath):
-                pass
-        except FileNotFoundError:
-            filepath = 'datasets/examples/users_70.dat'
 
-        dat = DATFile(filepath)
+        dat = DATFile(dat_file)
         my_iter = iter(dat)
 
         expected = [

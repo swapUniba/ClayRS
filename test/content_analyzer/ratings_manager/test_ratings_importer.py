@@ -5,13 +5,13 @@ from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import N
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsImporter
 from orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis import TextBlobSentimentAnalysis
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
-from orange_cb_recsys.utils.const import datasets_path
+from test import dir_test_files
 
 
 class TestRatingsImporter(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        file_path = os.path.join(datasets_path, 'test_import_ratings.json')
+        file_path = os.path.join(dir_test_files, 'test_import_ratings.json')
 
         cls.raw_source = JSONFile(file_path)
 

@@ -5,11 +5,10 @@ from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor 
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
     SkSGDRegressor, SkARDRegression, SkHuberRegressor, SkPassiveAggressiveRegressor, SkBayesianRidge, SkRidge, \
     Regressor
-from orange_cb_recsys.utils.const import root_path
 import os
 import pandas as pd
 
-contents_path = os.path.join(root_path, 'contents')
+from test import dir_test_files
 
 
 def for_each_model(test_func):
@@ -39,7 +38,7 @@ class TestRegression(TestCase):
 
         cls.filter_list = ['tt0112641', 'tt0112760', 'tt0112896', 'tt0113497']
 
-        cls.movies_dir = os.path.join(contents_path, 'movies_codified/')
+        cls.movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
         # IMPORTANT! All models to test. If another model is implemented, append it to this list
         cls.models_list = [SkLinearRegression(), SkRidge(), SkBayesianRidge(),

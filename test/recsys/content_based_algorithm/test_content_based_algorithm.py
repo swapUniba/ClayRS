@@ -5,9 +5,7 @@ from orange_cb_recsys.utils.load_content import load_content_instance
 
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
-from orange_cb_recsys.utils.const import root_path
-
-contents_path = os.path.join(root_path, 'contents')
+from test import dir_test_files
 
 
 class TestContentBasedAlgorithm(TestCase):
@@ -36,7 +34,7 @@ class TestContentBasedAlgorithm(TestCase):
         self.assertEqual(item_field_bracketed, result)
 
     def test_extract_features_item(self):
-        movies_dir = os.path.join(contents_path, 'movies_codified/')
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
         content = load_content_instance(movies_dir, 'tt0112281')
 
