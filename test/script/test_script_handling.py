@@ -15,11 +15,12 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_le
 from orange_cb_recsys.content_analyzer import NumberNormalizer, NLTK, JSONFile
 from orange_cb_recsys.recsys import GraphBasedRS, ContentBasedRS
 from orange_cb_recsys.evaluation import TestRatingsMethodology, PartitionModule, MetricCalculator
+from test import dir_test_files
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-movies_info_reduced = os.path.join(root_path, "datasets/movies_info_reduced.json")
-user_info = os.path.join(root_path, "datasets/users_info.json")
-raw_ratings = os.path.join(root_path, "datasets/examples/new_ratings.csv")
+movies_info_reduced = os.path.join(dir_test_files, "movies_info_reduced.json")
+user_info = os.path.join(dir_test_files, "users_info.json")
+raw_ratings = os.path.join(dir_test_files, "new_ratings.csv")
 ranking_path = os.path.join(THIS_DIR, "ranking")
 prediction_path = os.path.join(THIS_DIR, "prediction")
 eval_path = os.path.join(THIS_DIR, "eval")
@@ -121,7 +122,7 @@ class TestRun(TestCase):
                                      "regressor": {"class": "sklinearregression"}}},
             "partitioning": {"class": "KFoldPartitioning"},
             "metric_list": [{"class": "Precision"},
-                            {"class": "PredictionCoverage", "catalog": os.path.join(root_path, 'datasets/test_script/catalog.json')},
+                            {"class": "PredictionCoverage", "catalog": os.path.join(dir_test_files, 'test_script', 'catalog.json')},
                             {"class": "NDCG"}],
             "methodology": {"class": "TestRatingsMethodology"},
             "output_directory": run_dir,
@@ -226,8 +227,8 @@ class TestRun(TestCase):
             recsys_config_dict_multiple_params = {
                 "run_class": ContentBasedRS,
                 "config_dict": {
-                    "users_directory": os.path.join(root_path, 'contents/users_codified'),
-                    "items_directory": os.path.join(root_path, 'contents/movies_codified'),
+                    "users_directory": os.path.join(dir_test_files, 'complex_contents', 'users_codified/'),
+                    "items_directory": os.path.join(dir_test_files, 'complex_contents', 'movies_codified/'),
                     "rating_frame": ratings_path,
                     "algorithm": {
                         "class": "LinearPredictor", "item_field": {"Plot": [0]}, "regressor": {"class": "sklinearregression"}},
@@ -425,8 +426,8 @@ class TestRun(TestCase):
             Run.dict_detector(dictionary)
 
     def test_config_file_loading(self):
-        json_path = os.path.join(root_path, 'datasets/test_script/empty_list.json')
-        yml_path = os.path.join(root_path, 'datasets/test_script/empty_list.yml')
+        json_path = os.path.join(dir_test_files, 'test_script', 'empty_list.json')
+        yml_path = os.path.join(dir_test_files, 'test_script', 'empty_list.yml')
         # there are no asserts because the files loaded by the script run only contain an empty list
         # therefore nothing will be done
         # this test is used to make sure that nothing happens
@@ -435,7 +436,7 @@ class TestRun(TestCase):
 
         # tests for loading a script file witt a non supported format (csv)
         with self.assertRaises(ScriptConfigurationError):
-            script_run(os.path.join(root_path, 'datasets/movies_info_reduced.csv'))
+            script_run(os.path.join(dir_test_files, 'movies_info_reduced.csv'))
 
     def test_check(self):
         correct_config_run = {
@@ -514,8 +515,8 @@ class TestRun(TestCase):
             NeedsSerializationRun.check_and_setup(wrong_output_dir_config_ns_run, 'metriccalculator')
 
     def test_check_file(self):
-        json_path = os.path.join(root_path, 'datasets/test_script/wrong_parameter.json')
-        yml_path = os.path.join(root_path, 'datasets/test_script/wrong_parameter.yml')
+        json_path = os.path.join(dir_test_files, 'test_script', 'wrong_parameter.json')
+        yml_path = os.path.join(dir_test_files, 'test_script', 'wrong_parameter.yml')
 
         with self.assertRaises(ScriptConfigurationError):
             script_run(json_path)

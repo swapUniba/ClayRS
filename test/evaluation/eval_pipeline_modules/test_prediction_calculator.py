@@ -14,11 +14,9 @@ from orange_cb_recsys.evaluation.eval_pipeline_modules.prediction_calculator imp
 from orange_cb_recsys.recsys.content_based_algorithm import ClassifierRecommender
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.recsys import ContentBasedRS, GraphBasedRS
-from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
-contents_path = os.path.join(root_path, 'contents')
-
-movies_dir = os.path.join(contents_path, 'movies_codified/')
+movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
 
 class TestPredictionCalculator(TestCase):

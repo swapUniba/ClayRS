@@ -7,14 +7,11 @@ import os
 import pandas as pd
 import numpy as np
 
+from test import dir_test_files
 from test.recsys.graphs.test_nx_bipartite_graphs import TestNXBipartiteGraph
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-
-contents_path = os.path.join(THIS_DIR, '../../../contents')
-
-ratings_filename = os.path.join(contents_path, 'exo_prop/new_ratings_small.csv')
-movies_dir = os.path.join(contents_path, 'movies_codified/')
+ratings_filename = os.path.join(dir_test_files, 'new_ratings_small.csv')
+movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
 
 class TestNXTripartiteGraph(TestNXBipartiteGraph):

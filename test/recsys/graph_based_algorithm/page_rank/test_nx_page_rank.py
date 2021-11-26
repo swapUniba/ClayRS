@@ -7,7 +7,7 @@ from orange_cb_recsys.recsys import NXTopKPageRank
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
-from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
 
 class TestNXPageRank(TestCase):
@@ -90,9 +90,8 @@ class TestNXPageRank(TestCase):
         # since the Feature Selection is already tested in the dedicated test file
         # this test only checks that the PageRank run works while defining a Feature Selection algorithm
 
-        contents_path = os.path.join(root_path, 'contents')
-        movies_dir = os.path.join(contents_path, 'movies_codified/')
-        user_dir = os.path.join(contents_path, 'users_codified/')
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+        user_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
 
         df = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3", "4", "4"],
                                      'to_id': ["tt0113228", "tt0113041", "tt0113228", "tt0112346",

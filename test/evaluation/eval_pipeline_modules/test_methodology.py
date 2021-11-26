@@ -7,6 +7,7 @@ from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import S
 from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import TestRatingsMethodology, TestItemsMethodology, \
     TrainingItemsMethodology, AllItemsMethodology
 from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
 contents_dir = os.path.join(root_path, 'contents')
 
@@ -270,7 +271,7 @@ class TestAllItemsMethodology(TestCase):
 
     def test_get_item_to_predict(self):
 
-        movies_dir = os.path.join(contents_dir, 'movies_multiple_repr')
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified')
 
         all_items = [os.path.splitext(f)[0] for f in os.listdir(movies_dir)
                      if os.path.isfile(os.path.join(movies_dir, f)) and f.endswith('xz')]

@@ -4,9 +4,9 @@ import os
 from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import PyWSDSynsetDocumentFrequency
+from test import dir_test_files
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(THIS_DIR, "../../../datasets/movies_info_reduced.json")
+file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
 
 
 class TestSynsetDocumentFrequency(TestCase):

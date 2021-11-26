@@ -8,7 +8,7 @@ from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_sel
     FeatureSelectionHandler
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
-from orange_cb_recsys.utils.const import root_path
+from test import dir_test_files
 
 
 class TestFeatureSelectionHandler(TestCase):
@@ -29,9 +29,8 @@ class TestFeatureSelectionHandler(TestCase):
             raise AssertionError("Expected %s properties but %s found" % (expected_prop_number, len(actual_prop)))
 
     def setUp(self) -> None:
-        contents_path = os.path.join(root_path, 'contents')
-        movies_dir = os.path.join(contents_path, 'movies_codified/')
-        user_dir = os.path.join(contents_path, 'users_codified/')
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+        user_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
 
         self.df = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3", "4", "4"],
                                           'to_id': ["tt0113228", "tt0113041", "tt0113228", "tt0112346",

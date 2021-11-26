@@ -4,9 +4,7 @@ import pandas as pd
 
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query import IndexQuery
-from orange_cb_recsys.utils.const import root_path
-
-contents_path = os.path.join(root_path, 'contents')
+from test import dir_test_files
 
 
 class TestIndexQuery(TestCase):
@@ -25,7 +23,7 @@ class TestIndexQuery(TestCase):
 
         self.filter_list = ['tt0112641', 'tt0112760', 'tt0112896']
 
-        self.index_path = os.path.join(contents_path, 'index/')
+        self.index_path = os.path.join(dir_test_files, 'complex_contents', 'index')
 
     def test_predict(self):
 

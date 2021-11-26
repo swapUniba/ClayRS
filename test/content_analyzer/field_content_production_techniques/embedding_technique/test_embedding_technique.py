@@ -12,9 +12,9 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert import Sbert
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from test import dir_test_files
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(THIS_DIR, "../../../../datasets/movies_info_reduced.json")
+file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
 
 
 class TestEmbeddingTechnique(TestCase):
