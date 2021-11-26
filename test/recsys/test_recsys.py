@@ -135,7 +135,7 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(len(result_rank_numbered), recs_number)
 
     def test_index_query(self):
-        movies_index = os.path.join(contents_path, 'index/')
+        movies_index = os.path.join(dir_test_files, 'complex_contents', 'index/')
         filter_list = ['tt0114319', 'tt0114388']
         recs_number = 3
 
