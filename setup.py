@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(name='orange_cb_recsys',
       version='0.3.9',
-      author='Roberto Barile, Francesco Benedetti, Carlo Parisi, Mattia Patruno',
+      author='Antonio Silletti, Elio Musacchio, Roberta Sallustio',
       install_requires=requirements,
       description='Python Framework for Content-Based Recommeder Systems',
       long_description=long_description,
