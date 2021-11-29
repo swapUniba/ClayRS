@@ -1,14 +1,20 @@
 import abc
 
+from typing import Set
+
 import pandas as pd
 from typing import List
 from abc import ABC
 
+from orange_cb_recsys.evaluation.exceptions import PartitionError
+from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import Partitioning
+from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import Handler_EmptyFrame
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.utils.const import eval_logger, progbar
 
 
 class RecSys(ABC):
@@ -154,14 +160,14 @@ class ContentBasedRS(RecSys):
     Args:
         algorithm (ContentBasedAlgorithm): the content based algorithm that will be used in order to
             rank or make score prediction
-        rating_frame (pd.DataFrame): a DataFrame containing interactions between users and items
+        train_set (pd.DataFrame): a DataFrame containing interactions between users and items
         items_directory (str): the path of the items serialized by the Content Analyzer
         users_directory (str): the path of the users serialized by the Content Analyzer
     """
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
-                 rating_frame: pd.DataFrame,
+                 train_set: pd.DataFrame,
                  items_directory: str,
                  users_directory: str = None):
 
@@ -172,7 +178,7 @@ class ContentBasedRS(RecSys):
         #     frame_to_concat.append(valid_user_frame)
         #
         # valid_rating_frame = pd.concat(frame_to_concat)
-        super().__init__(rating_frame)
+        super().__init__(train_set)
 
         self.__algorithm = algorithm
         self.__items_directory = items_directory
@@ -413,3 +419,65 @@ class GraphBasedRS(RecSys):
         score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
 
         return score_frame
+
+class PartitionModule:
+    """
+    Module of the Evaluation pipeline which has the task of splitting the original interactions in 'train set' and 'test
+    set'.
+
+    Different kinds of partitioning technique may be used, check the correspondent documentation for more
+
+    Args:
+        partition_technique (Partitioning): The technique that will be used to split original interactions in
+            'train set' and 'test set'.
+    """
+
+    def __init__(self, partition_technique: Partitioning):
+        self._partition_technique = partition_technique
+
+    def _split_single(self, user_ratings: pd.DataFrame):
+        """
+        Private method that splits the ratings of a single user into 'train set' and 'test set'
+
+        Args:
+            user_ratings (pd.DataFrame): DataFrame containing the ratings of a single user that will be splitted into
+                'train set' and 'test set'
+        """
+
+        self._partition_technique.set_dataframe(user_ratings)  # May raise exception
+
+        user_splits = [Split(train_set, test_set) for train_set, test_set in self._partition_technique]
+        return user_splits
+
+    def split_all(self, ratings: pd.DataFrame, user_id_list: Set[str]):
+        """
+        Method that effectively splits the 'ratings' parameter into 'train set' and 'test set'.
+        It must be specified a 'user_id_list' parameter so that the method will do the splitting only for the users
+        specified inside the list.
+
+        Args:
+            ratings (pd.DataFrame): The DataFrame which contains the interactions of the users that must be splitted
+                into 'train set' and 'test set'
+            user_id_list (Set[str]): The set of users for which splitting will be done
+        """
+
+        split_list = []
+
+        eval_logger.info("Performing {} on ratings of every user".format(str(self._partition_technique)))
+        for user_id in progbar(user_id_list, prefix="Current user - {}:", substitute_with_current=True):
+            user_ratings = ratings[ratings['from_id'] == user_id]
+            try:
+                user_splits_list = self._split_single(user_ratings)
+            except PartitionError as e:
+                eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                continue
+
+            if len(split_list) != 0:
+                for user_split, total_split in zip(user_splits_list, split_list):
+                    total_split.train = pd.concat([total_split.train, user_split.train])
+                    total_split.test = pd.concat([total_split.test, user_split.test])
+            else:
+                for user_split in user_splits_list:
+                    split_list.append(user_split)  # Only executed once
+
+        return split_list
