@@ -22,7 +22,7 @@ from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
 from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, RPrecision, PrecisionAtK, \
     RecallAtK, FMeasure, FMeasureAtK
 from orange_cb_recsys.evaluation.eval_model import EvalModel
-from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import KFoldPartitioning
+from orange_cb_recsys.recsys.partitioning import KFoldPartitioning
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
 
@@ -31,6 +31,8 @@ import pandas as pd
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
 from orange_cb_recsys.utils.const import root_path
+from orange_cb_recsys.recsys.partitioning import PartitionError
+
 from test import dir_test_files
 
 contents_path = os.path.join(root_path, 'contents')

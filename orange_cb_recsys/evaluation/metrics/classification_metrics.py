@@ -2,7 +2,7 @@ import statistics
 from abc import abstractmethod
 
 from orange_cb_recsys.evaluation.exceptions import StringNotSupported, KError
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
 
 import pandas as pd

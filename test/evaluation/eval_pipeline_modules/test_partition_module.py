@@ -2,7 +2,7 @@ from unittest import TestCase
 import pandas as pd
 
 from orange_cb_recsys.evaluation.eval_model import PartitionModule
-from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import HoldOutPartitioning, KFoldPartitioning
+from orange_cb_recsys.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning
 
 
 class TestPartitionModule(TestCase):

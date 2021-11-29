@@ -4,7 +4,7 @@ from typing import List
 from orange_cb_recsys.evaluation.exceptions import AlreadyFittedRecSys
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.recsys import RecSys
 from orange_cb_recsys.utils.const import eval_logger, recsys_logger, utils_logger

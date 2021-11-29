@@ -4,14 +4,6 @@ class AlreadyFittedRecSys(Exception):
     """
     pass
 
-
-class PartitionError(Exception):
-    """
-    Exception to raise when ratings of a user can't be split, e.g. (n_splits > n_user_ratings)
-    """
-    pass
-
-
 class KError(Exception):
     """
     Exception to raise when k passed is not valid

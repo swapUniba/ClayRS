@@ -1,11 +1,11 @@
 from typing import List
 
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import PartitionModule
+from orange_cb_recsys.recsys.partitioning import PartitionModule
 from orange_cb_recsys.evaluation.eval_pipeline_modules.prediction_calculator import PredictionCalculator
 from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology, TestRatingsMethodology
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import Partitioning
+from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.recsys.recsys import RecSys
 
 

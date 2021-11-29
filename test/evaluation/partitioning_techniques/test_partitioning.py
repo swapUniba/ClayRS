@@ -2,7 +2,7 @@ from unittest import TestCase
 import pandas as pd
 
 from orange_cb_recsys.evaluation.exceptions import PartitionError
-from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import HoldOutPartitioning, KFoldPartitioning
+from orange_cb_recsys.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning
 
 original_frame = pd.DataFrame.from_dict(
     {'from_id': ["001", "001", "002", "002", "002", "003", "004", "004"],

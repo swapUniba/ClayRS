@@ -3,7 +3,7 @@ from collections import Counter
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
 
 

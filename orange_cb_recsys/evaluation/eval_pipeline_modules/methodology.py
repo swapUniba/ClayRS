@@ -3,7 +3,7 @@ from abc import ABC
 from typing import List, Set
 import pandas as pd
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.utils.const import eval_logger
 
 

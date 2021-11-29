@@ -3,7 +3,7 @@ from typing import List
 
 import pandas as pd
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 
 from orange_cb_recsys.evaluation.exceptions import AlreadyFittedRecSys
 from orange_cb_recsys.recsys.recsys import RecSys

@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.utils.const import progbar, eval_logger
 
