@@ -7,7 +7,6 @@ from typing import Tuple
 
 from sklearn.model_selection import KFold, train_test_split
 
-#from orange_cb_recsys.recsys.partitioning import PartitionError
 from orange_cb_recsys.utils.const import eval_logger, progbar
 
 
@@ -220,7 +219,6 @@ class PartitionModule:
                     split_list.append(user_split)  # Only executed once
 
         return split_list
-
 
 
 class PartitionError(Exception):

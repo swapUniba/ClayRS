@@ -6,7 +6,6 @@ import pandas as pd
 from typing import List
 from abc import ABC
 
-#from orange_cb_recsys.evaluation.exceptions import PartitionError
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
