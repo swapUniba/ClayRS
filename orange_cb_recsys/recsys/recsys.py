@@ -135,11 +135,11 @@ class RecSys(ABC):
     #     """
     #     score_preds_list = []
     #     for user_id in user_id_list:
-    #         score_preds = self.fit_predict(user_id, filter_list)
-    #
-    #         score_preds_list.append(score_preds)
-    #
-    #     concat_score_preds = pd.concat(score_preds_list)
+    #     #         score_preds = self.fit_predict(user_id, filter_list)
+    #     #
+    #     #         score_preds_list.append(score_preds)
+    #     #
+    #     #     concat_score_preds = pd.concat(score_preds_list)
     #     return concat_score_preds
     #
     # @abc.abstractmethod
@@ -162,6 +162,8 @@ class RecSys(ABC):
 
 
 class ContentBasedRS(RecSys):
+
+
     """
     Class for recommender systems which use the items' content in order to make predictions,
     some algorithms may also use users' content
@@ -175,6 +177,7 @@ class ContentBasedRS(RecSys):
         items_directory (str): the path of the items serialized by the Content Analyzer
         users_directory (str): the path of the users serialized by the Content Analyzer
     """
+    user_fit_dic = {}
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
@@ -196,12 +199,12 @@ class ContentBasedRS(RecSys):
         return self.__algorithm
 
     @property
-    def rating_frame(self):
+    def train_set(self):
         return self.__train_set
 
     @property
     def users(self):
-        return set(self.rating_frame['from_id'])
+        return set(self.train_set['from_id'])
 
     @property
     def items_directory(self):
@@ -218,19 +221,122 @@ class ContentBasedRS(RecSys):
         return self.__users_directory
 
     def fit(self):
+        """
+        Method that divides the train set into as many parts as
+        there are different users. then it proceeds with the fit
+        for each user and saves the result in the dictionary "user_fit_dic"
+
+        """
+        for user_id in set(self.train_set['from_id']):
+            user_id=str(user_id)
+            user_fit = self.algorithm
+            user_fit.process_rated(self.train_set.query('from_id == @user_id'), self.items_directory)
+            user_fit.fit()
+            self.user_fit_dic[user_id]=user_fit
         pass
 
     def rank(self, test_set: pd.DataFrame, n_recs: int = None):
-        pass
+        """
+        Method used to calculate ranking for the user in test set
+
+        If the recs_number is specified, then the rank will contain the top-n items for the users.
+        Otherwise the rank will contain all unrated items of the particular users
+
+        if the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
+
+        Args:
+            test_set: set of users for which to calculate the rank
+            n_recs: number of the top items that will be present in the ranking
+
+        Returns:
+            concat_rank: list of the items ranked for each user
+
+        """
+        rank_list = []
+        if 'to_id' in test_set.columns:
+            for user_id in set(test_set['from_id']):
+                filter_list = test_set.query('from_id == @user_id')
+                filter_list = list(filter_list['to_id'].values)
+                user_id = str(user_id)
+                rank = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'), self.items_directory,
+                                                       n_recs, filter_list)
+                rank_list.append(rank)
+        else:
+            for user_id in set(test_set['from_id']):
+                user_id = str(user_id)
+                rank = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'), self.items_directory,
+                                                       n_recs)
+                rank_list.append(rank)
+        concat_rank = pd.concat(rank_list)
+        return concat_rank
 
     def predict(self, test_set: pd.DataFrame):
-        pass
+        """
+        Method to call when score prediction must be done for the users in test set
+
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
+
+        Args:
+            test_set: set of users for which to calculate the predictions
+
+        Returns:
+            concat_score_preds: prediction for each user
+
+        """
+        prediction_list = []
+        if 'to_id' in test_set.columns:
+            for user_id in set(test_set['from_id']):
+                filter_list = test_set.query('from_id == @user_id')
+                filter_list = list(filter_list['to_id'].values)
+                user_id = str(user_id)
+                prediction = self.user_fit_dic[user_id].predict(test_set.query('from_id == @user_id'),
+                                                                self.items_directory,
+                                                                filter_list)
+                prediction_list.append(prediction)
+
+        else:
+            for user_id in set(test_set['from_id']):
+                user_id = str(user_id)
+                prediction = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'),
+                                                             self.items_directory)
+                prediction_list.append(prediction)
+        concat_score_preds = pd.concat(prediction_list)
+        return concat_score_preds
+
+    def fit_predict(self, test_set: pd.DataFrame):
+        """
+        The method fits the algorithm and then calculates the prediction for each user
+
+        Args:
+            test_set: set of users for which to calculate the prediction
+
+        Returns:
+            prediction: prediction for each user
+
+        """
+        self.fit()
+        prediction = self.predict(test_set)
+        return prediction
 
     def fit_rank(self, test_set: pd.DataFrame, n_recs: int = None):
-        pass
+        """
+        The method fits the algorithm and then calculates the rank for each user
 
-    def fit_predict(self, test_set: pd.DataFrame, n_recs: int = None):
-        pass
+        Args:
+            test_set: set of users for which to calculate the rank
+            n_recs: number of the top items that will be present in the ranking
+
+        Returns:
+            rank: ranked items for each user
+
+        """
+        self.fit()
+        rank = self.rank(test_set, n_recs)
+        return rank
 
     # @Handler_EmptyFrame
     # def fit_predict(self, user_id: str, filter_list: List[str] = None):
@@ -353,10 +459,76 @@ class GraphBasedRS(RecSys):
         return self.__graph
 
     def predict(self, test_set: pd.DataFrame):
-        pass
+        """
+        Method used to predict the rating of the users
+
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
+
+        Args:
+            test_set: set of users for which to calculate the predictions
+
+        Returns:
+            concate_score_preds: list of predictions for each user
+
+        """
+        prediction_list=[]
+        if 'to_id' in test_set.columns:
+            for user_id in set(test_set['from_id']):
+                filter_list = test_set.query('from_id == @user_id')
+                filter_list = list(filter_list['to_id'].values)
+                user_id = str(user_id)
+                user_alg = self.algorithm
+                prediction = user_alg.predict(test_set.query('from_id == @user_id'), self.graph,
+                                                             filter_list)
+                prediction_list.append(prediction)
+
+        else:
+            for user_id in set(test_set['from_id']):
+                user_id = str(user_id)
+                user_alg = self.algorithm
+                prediction = user_alg.rank(test_set.query('from_id == @user_id'), self.items_directory)
+                prediction_list.append(prediction)
+        concat_score_preds = pd.concat(prediction_list)
+        return concat_score_preds
 
     def rank(self, test_set: pd.DataFrame, n_recs: int = None):
-        pass
+        """
+        Method used to rank the rating of the users
+
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
+
+        Args:
+            test_set:  set of users for which to calculate the rank
+            n_recs:  number of the top items that will be present in the ranking
+
+        Returns:
+            concate_rank: list of the items ranked for each user
+
+        """
+        rank_list = []
+        if 'to_id' in test_set.columns:
+            for user_id in set(test_set['from_id']):
+                filter_list = test_set.query('from_id == @user_id')
+                filter_list = list(filter_list['to_id'].values)
+                user_id = str(user_id)
+                user_alg = self.algorithm
+                rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
+                                                       n_recs, filter_list)
+                rank_list.append(rank)
+        else:
+            for user_id in set(test_set['from_id']):
+                user_id = str(user_id)
+                user_alg = self.algorithm
+                rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
+                                                       n_recs)
+                rank_list.append(rank)
+        concat_rank = pd.concat(rank_list)
+        return concat_rank
+
 
     # def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
     #     """
@@ -437,4 +609,3 @@ class GraphBasedRS(RecSys):
     #     score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
     #
     #     return score_frame
-
