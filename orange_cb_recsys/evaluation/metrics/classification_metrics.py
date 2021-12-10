@@ -1,6 +1,8 @@
 import statistics
 from abc import abstractmethod
 
+import numpy as np
+
 from orange_cb_recsys.evaluation.exceptions import StringNotSupported, KError
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
@@ -47,35 +49,23 @@ class ClassificationMetric(RankingNeededMetric):
         truth = split.truth
 
         split_result = {'from_id': [], str(self): []}
-        tp_sys = 0
-        fp_sys = 0
-        tn_sys = 0
-        fn_sys = 0
+        sys_confusion_matrix = np.array([[0, 0],
+                                         [0, 0]], dtype=np.int32)
+
         for user in set(truth['from_id']):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+            user_predictions = pred.loc[pred['from_id'] == user]
+            user_truth = truth.loc[truth['from_id'] == user]
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
+            metric_user, user_confusion_matrix = self._perform_single_user(user_predictions, user_truth)
 
-            user_merged = user_predictions.merge(user_truth, on='to_id', how='outer',
-                                                 suffixes=('_pred', '_truth'))
-
-            tp_user, fp_user, tn_user, fn_user = self._calc_confusion_matrix_terminology(user_merged)
-
-            metric_user = self._calc_metric(tp_user, fp_user, tn_user, fn_user)
-
-            tp_sys += tp_user
-            fp_sys += fp_user
-            tn_sys += tn_user
-            fn_sys += fn_user
+            sys_confusion_matrix += user_confusion_matrix
 
             split_result['from_id'].append(user)
             split_result[str(self)].append(metric_user)
 
         sys_metric = -1
         if self.sys_avg == 'micro':
-            sys_metric = self._calc_metric(tp_sys, fp_sys, tn_sys, fn_sys)
+            sys_metric = self._calc_metric(sys_confusion_matrix)
         elif self.sys_avg == 'macro':
             sys_metric = statistics.mean(split_result[str(self)])
 
@@ -84,70 +74,17 @@ class ClassificationMetric(RankingNeededMetric):
 
         return pd.DataFrame(split_result)
 
-    def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
-        """
-        Private method which will calculate true positive, false positive, true negative, false negative
-        items for a single user.
-
-        If the 'cutoff' parameter is specified, then recommendation list will be reduced to the top-n items where
-        :math:`n = cutoff`
-
-        Args:
-            user_merged (pd.DataFrame): a DataFrame containing recommendation list of the user and its ground truth
-            cutoff (int): if specified the user recommendation list will be reduced to the top-n items
-
-        Returns:
-            true positive, false positive, true negative, false negative for the user
-        """
-        if self.relevant_threshold is None:
-            relevant_threshold = user_merged['score_truth'].mean()
-        else:
-            relevant_threshold = self.relevant_threshold
-
-        if cutoff:
-            # We consider as 'not_predicted' also those excluded from cutoff other than those
-            # not effectively retrieved (score_pred is nan)
-            actually_predicted = user_merged.query('score_pred.notna()', engine='python')[:cutoff]
-            not_predicted = user_merged.query('score_pred.notna()', engine='python')[cutoff:]
-            if not user_merged.query('score_pred.isna()', engine='python').empty:
-                not_predicted = pd.concat([not_predicted, user_merged.query('score_pred.isna()', engine='python')])
-        else:
-            actually_predicted = user_merged.query('score_pred.notna()', engine='python')
-            not_predicted = user_merged.query('score_pred.isna()', engine='python')
-
-        tp = len(actually_predicted.query('score_truth >= @relevant_threshold'))
-        fp = len(actually_predicted.query('(score_truth < @relevant_threshold) or (score_truth.isna())', engine='python'))
-        tn = len(not_predicted.query('score_truth < @relevant_threshold'))
-        fn = len(not_predicted.query('score_truth >= @relevant_threshold'))
-
-        return tp, fp, tn, fn
-
     @abstractmethod
-    def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
+    def _calc_metric(self, confusion_matrix: np.ndarray):
         """
         Private method that must be implemented by every metric which must specify how to use the confusion matrix
         terminology in order to compute the metric
         """
         raise NotImplementedError
 
-    @staticmethod
-    def _perform_division(numerator: float, denominator: float):
-        """
-        Simple static method which performs division given the numerator and the denominator
-
-        If the denominator is 0, then the method will return 0
-        Args:
-            numerator (float): upper part of the fraction
-            denominator (float): lower part of the fraction
-
-        Returns:
-            numerator/division if division != 0, 0 otherwise
-        """
-        res = 0.0
-        if denominator != 0:
-            res = numerator / denominator
-
-        return res
+    @abstractmethod
+    def _perform_single_user(self, user_prediction_items: list, user_truth_items: list):
+        raise NotImplementedError
 
 
 class Precision(ClassificationMetric):
@@ -181,8 +118,28 @@ class Precision(ClassificationMetric):
     def __str__(self):
         return "Precision - {}".format(self.sys_avg)
 
-    def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
-        return self._perform_division(true_positive, (true_positive + false_positive))
+    def _calc_metric(self, confusion_matrix: np.ndarray):
+        tp = confusion_matrix[0, 0]
+        fp = confusion_matrix[0, 1]
+        return np.float32((tp + fp) and tp / (tp + fp) or 0)  # safediv between tp and (tp + fp)
+
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fp = len(user_prediction_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, fp],
+                                                 [0, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class PrecisionAtK(Precision):
@@ -227,8 +184,23 @@ class PrecisionAtK(Precision):
     def __str__(self):
         return "Precision@{} - {}".format(self.k, self.sys_avg)
 
-    def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
-        return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.k)
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values[:self.k]
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fp = len(user_prediction_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, fp],
+                                                 [0, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class RPrecision(Precision):
@@ -263,14 +235,24 @@ class RPrecision(Precision):
     def __str__(self):
         return "R-Precision - {}".format(self.sys_avg)
 
-    def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
         if self.relevant_threshold is None:
-            relevant_threshold = user_merged['score_truth'].mean()
+            relevant_threshold = user_truth['score'].mean()
         else:
             relevant_threshold = self.relevant_threshold
 
-        truth_relevant = len(user_merged.query('score_truth >= @relevant_threshold'))
-        return super()._calc_confusion_matrix_terminology(user_merged, cutoff=truth_relevant)
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        r = len(user_truth_relevant_items)
+        user_prediction_items = user_prediction['to_id'].values[:r]
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fp = len(user_prediction_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, fp],
+                                                 [0, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class Recall(ClassificationMetric):
@@ -304,8 +286,28 @@ class Recall(ClassificationMetric):
     def __str__(self):
         return "Recall - {}".format(self.sys_avg)
 
-    def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
-        return self._perform_division(true_positive, (true_positive + false_negative))
+    def _calc_metric(self, confusion_matrix: np.ndarray):
+        tp = confusion_matrix[0, 0]
+        fn = confusion_matrix[1, 0]
+        return np.float32((tp + fn) and tp / (tp + fn) or 0)  # safediv between tp and (tp + fn)
+
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fn = len(user_truth_relevant_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, 0],
+                                                 [fn, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class RecallAtK(Recall):
@@ -350,8 +352,23 @@ class RecallAtK(Recall):
     def __str__(self):
         return "Recall@{} - {}".format(self.k, self.sys_avg)
 
-    def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
-        return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.__k)
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values[:self.k]
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fn = len(user_truth_relevant_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, 0],
+                                                 [fn, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class FMeasure(ClassificationMetric):
@@ -404,18 +421,37 @@ class FMeasure(ClassificationMetric):
     def __str__(self):
         return "F{} - {}".format(self.beta, self.sys_avg)
 
-    def _calc_metric(self, true_positive: int, false_positive: int, true_negative: int, false_negative: int):
-        prec = Precision()._calc_metric(true_positive, false_positive, true_negative, false_negative)
-        reca = Recall()._calc_metric(true_positive, false_positive, true_negative, false_negative)
+    def _calc_metric(self, confusion_matrix: np.ndarray):
+        prec = Precision()._calc_metric(confusion_matrix)
+        reca = Recall()._calc_metric(confusion_matrix)
 
         beta_2 = self.beta ** 2
 
         num = prec * reca
         den = (beta_2 * prec) + reca
 
-        fbeta = (1 + beta_2) * self._perform_division(num, den)
+        fbeta = (1 + beta_2) * (den and num/den or 0)  # safediv between num and den
 
         return fbeta
+
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fp = len(user_prediction_items) - tp
+        fn = len(user_truth_relevant_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, fp],
+                                                 [fn, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user
 
 
 class FMeasureAtK(FMeasure):
@@ -471,5 +507,21 @@ class FMeasureAtK(FMeasure):
     def __str__(self):
         return "F{}@{} - {}".format(self.beta, self.k, self.sys_avg)
 
-    def _calc_confusion_matrix_terminology(self, user_merged: pd.DataFrame, cutoff: int = None):
-        return super()._calc_confusion_matrix_terminology(user_merged, cutoff=self.k)
+    def _perform_single_user(self, user_prediction: pd.DataFrame, user_truth: pd.DataFrame):
+        if self.relevant_threshold is None:
+            relevant_threshold = user_truth['score'].mean()
+        else:
+            relevant_threshold = self.relevant_threshold
+
+        user_truth_relevant_items = user_truth[user_truth['score'] >= relevant_threshold]['to_id'].values
+        user_prediction_items = user_prediction['to_id'].values[:self.k]
+
+        tp = len([value for value in user_prediction_items
+                  if value in user_truth_relevant_items])
+        fp = len(user_prediction_items) - tp
+        fn = len(user_truth_relevant_items) - tp
+
+        useful_confusion_matrix_user = np.array([[tp, fp],
+                                                 [fn, 0]], dtype=np.int32)
+
+        return self._calc_metric(useful_confusion_matrix_user), useful_confusion_matrix_user

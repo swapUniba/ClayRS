@@ -24,17 +24,17 @@ class ErrorMetric(ScoresNeededMetric):
         split_result = {'from_id': [], str(self): []}
 
         for user in set(truth.from_id):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+            user_predictions = pred[pred['from_id'] == user]
+            user_truth = truth[truth['from_id'] == user]
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
+            zipped_score_list = [(float(pred_score), float(user_truth[user_truth['to_id'] == item_id]['score'].values))
+                                 for item_id, pred_score in zip(user_predictions['to_id'], user_predictions['score'])
+                                 if not user_truth[user_truth['to_id'] == item_id].empty]
 
-            valid = user_predictions.merge(user_truth, on='to_id',
-                                           suffixes=('_pred', '_truth'))
-
-            if not valid.empty:
-                result = self._calc_metric(valid['score_pred'], valid['score_truth'])
+            if len(zipped_score_list) != 0:
+                pred_score_list = [a_tuple[0] for a_tuple in zipped_score_list]
+                truth_score_list = [a_tuple[1] for a_tuple in zipped_score_list]
+                result = self._calc_metric(pred_score_list, truth_score_list)
             else:
                 result = np.nan
 

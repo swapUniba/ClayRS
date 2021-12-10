@@ -6,7 +6,6 @@ from sklearn.metrics import ndcg_score
 from orange_cb_recsys.evaluation.exceptions import KError
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
-from orange_cb_recsys.utils.const import logger
 
 
 class RankingMetric(RankingNeededMetric):
@@ -14,29 +13,7 @@ class RankingMetric(RankingNeededMetric):
     Abstract class that generalize ranking metrics.
     A ranking metric evaluates the quality of the recommendation list
     """
-    def _get_ideal_actual_rank(self, valid: pd.DataFrame):
-        """
-        Private method which calculates two lists, actual_rank list and ideal_rank list.
-
-        actual_rank - given the ranking of the user, for every item 'i' in the ranking it extracts the rating
-        that the user has effectively given to 'i' and adds it to the actual_rank list.
-        If the item is not present in the truth, a 0 is added to the list.
-
-        ideal_rank - it's the actual_rank list ordered from the highest rating to the lowest one. It represents the
-        perfect ranking for the user
-
-        Args:
-            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
-        """
-        actual_rank = []
-        for item_id, score in zip(valid['to_id'], valid['score_truth']):
-            if not pd.isna(score):
-                actual_rank.append(float(score))
-            else:
-                actual_rank.append(0)
-
-        ideal_rank = sorted(actual_rank, reverse=True)
-        return ideal_rank, actual_rank
+    pass
 
 
 class NDCG(RankingMetric):
@@ -65,6 +42,30 @@ class NDCG(RankingMetric):
         """
         return ndcg_score(ideal_rank, actual_rank)
 
+    def _get_ideal_actual_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
+        """
+        Private method which calculates two lists, actual_rank list and ideal_rank list.
+
+        actual_rank - given the ranking of the user, for every item 'i' in the ranking it extracts the rating
+        that the user has effectively given to 'i' and adds it to the actual_rank list.
+        If the item is not present in the truth, a 0 is added to the list.
+
+        ideal_rank - it's the actual_rank list ordered from the highest rating to the lowest one. It represents the
+        perfect ranking for the user
+
+        Args:
+            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
+        """
+        predicted_items = user_predictions['to_id'].values
+
+        actual_rank = [float(user_truth[user_truth['to_id'] == item_id]['score'].values)
+                       if not user_truth[user_truth['to_id'] == item_id].empty
+                       else 0
+                       for item_id in predicted_items]
+
+        ideal_rank = sorted(actual_rank, reverse=True)
+        return ideal_rank, actual_rank
+
     def perform(self, split: Split):
 
         pred = split.pred
@@ -73,16 +74,10 @@ class NDCG(RankingMetric):
         split_result = {'from_id': [], str(self): []}
 
         for user in set(truth.from_id):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+            user_predictions = pred[pred['from_id'] == user]
+            user_truth = truth[truth['from_id'] == user]
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
-
-            valid = user_predictions.merge(user_truth, on='to_id', how='left',
-                                           suffixes=('_pred', '_truth'))
-
-            ideal, actual = self._get_ideal_actual_rank(valid)
+            ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
 
             if len(ideal) == 1:
                 user_ndcg = 1
@@ -163,23 +158,24 @@ class MRR(RankingMetric):
     def __str__(self):
         return "MRR"
 
-    def calc_reciprocal_rank(self, valid: pd.DataFrame):
+    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
             valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
         if self.relevant_threshold is None:
-            relevant_threshold = valid['score_truth'].mean()
+            relevant_threshold = user_truth['score'].mean()
         else:
             relevant_threshold = self.relevant_threshold
 
-        actually_predicted = valid.query('score_pred.notna()', engine='python')
+        user_pred_items = user_predictions['to_id'].values
         reciprocal_rank = 0
         i = 1
-        for item_id, score in zip(actually_predicted['to_id'], actually_predicted['score_truth']):
-            if score >= relevant_threshold:
-                reciprocal_rank = 1 / i  # index starts ad 0
+        for item_id in user_pred_items:
+            res = user_truth[user_truth['to_id'] == item_id]
+            if (not res.empty) and (float(res['score']) >= relevant_threshold):
+                reciprocal_rank = 1 / i
                 break  # We only need the first relevant item position in the rank
 
             i += 1
@@ -194,16 +190,10 @@ class MRR(RankingMetric):
 
         rr_list = []
         for user in set(truth['from_id']):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+            user_predictions = pred[pred['from_id'] == user]
+            user_truth = truth[truth['from_id'] == user]
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
-
-            valid = user_predictions.merge(user_truth, on='to_id', how='outer',
-                                           suffixes=('_pred', '_truth'))
-
-            user_reciprocal_rank = self.calc_reciprocal_rank(valid)
+            user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth)
 
             rr_list.append(user_reciprocal_rank)
 
@@ -246,26 +236,31 @@ class MRRAtK(MRR):
         self.__k = k
         super().__init__(relevant_threshold)
 
-    def __str__(self):
-        return "MRR@{}".format(self.__k)
+    @property
+    def k(self):
+        return self.__k
 
-    def calc_reciprocal_rank(self, valid: pd.DataFrame):
+    def __str__(self):
+        return "MRR@{}".format(self.k)
+
+    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
         """
-        Method which calculates the RR@K (Reciprocal Rank at K) for a single user
+        Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
-            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
+            valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
         if self.relevant_threshold is None:
-            relevant_threshold = valid['score_truth'].mean()
+            relevant_threshold = user_truth['score'].mean()
         else:
             relevant_threshold = self.relevant_threshold
 
-        actually_predicted = valid.query('score_pred.notna()', engine='python').head(self.__k)
+        user_pred_items = user_predictions['to_id'].values[:self.k]
         reciprocal_rank = 0
         i = 1
-        for item_id, score in zip(actually_predicted['to_id'], actually_predicted['score_truth']):
-            if score >= relevant_threshold:
-                reciprocal_rank = 1 / i  # index starts ad 0
+        for item_id in user_pred_items:
+            res = user_truth[user_truth['to_id'] == item_id]
+            if (not res.empty) and (float(res['score']) >= relevant_threshold):
+                reciprocal_rank = 1 / i
                 break  # We only need the first relevant item position in the rank
 
             i += 1
@@ -344,22 +339,15 @@ class Correlation(RankingMetric):
 
         split_result = {'from_id': [], str(self): []}
         for user in set(truth.from_id):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+            user_predictions = pred[pred['from_id'] == user]
+            user_truth = truth[truth['from_id'] == user]
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
-
-            valid = user_predictions.merge(user_truth, on='to_id', how='left',
-                                           suffixes=('_pred', '_truth'))
-
-            ideal, actual = self._get_ideal_actual_rank(valid)
+            ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
 
             if len(actual) < 2:
                 coef = np.nan
             else:
                 ideal_ranking = pd.Series(ideal)
-
                 actual_ranking = pd.Series(actual)
                 coef = actual_ranking.corr(ideal_ranking, method=self.__method)
 
@@ -371,15 +359,16 @@ class Correlation(RankingMetric):
 
         return pd.DataFrame(split_result)
 
-    def _get_ideal_actual_rank(self, valid: pd.DataFrame):
-        items_ideal = list(valid.sort_values(by=['score_truth'], ascending=False).dropna()['to_id'])
-
-        actual_rank = [list(valid['to_id']).index(item) for item in items_ideal]
-
-        ideal_rank = [items_ideal.index(item) for item in items_ideal]
+    def _get_ideal_actual_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
 
         if self.__top_n is not None:
-            actual_rank = actual_rank[:self.__top_n]
-            ideal_rank = ideal_rank
+            user_predictions = user_predictions[:self.__top_n]
 
-        return ideal_rank, actual_rank
+        user_predictions = user_predictions.reset_index()
+        ideal_rank = user_truth.sort_values(by=['score'], ascending=False).reset_index()
+
+        actual_rank = [int(user_predictions[user_predictions['to_id'] == el].index.values)
+                       for el in ideal_rank['to_id'].values
+                       if not user_predictions[user_predictions['to_id'] == el].empty]
+
+        return ideal_rank.index.values, actual_rank
