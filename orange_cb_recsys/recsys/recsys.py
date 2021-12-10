@@ -3,12 +3,15 @@ import pandas as pd
 from typing import List
 from abc import ABC
 
+from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
 from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import Handler_EmptyFrame
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.recsys.methodology import Methodology
+from orange_cb_recsys.utils.const import logger
 
 
 class RecSys(ABC):
@@ -42,7 +45,6 @@ class RecSys(ABC):
 
     @abc.abstractmethod
     def rank(self, test_set: pd.DataFrame, n_recs: int = None):
-
         # test_set has columns = from_id, to_id, score
         # from_id should only values that are only present in self.users, otherwise exception is thrown.
         # It's not necessary that all users are present in 'from_id' column of the test_set, but if a user is in
@@ -56,7 +58,6 @@ class RecSys(ABC):
 
     @abc.abstractmethod
     def predict(self, test_set: pd.DataFrame):
-
         # test_set has columns = from_id, to_id, score
         raise NotImplementedError
 
@@ -162,8 +163,6 @@ class RecSys(ABC):
 
 
 class ContentBasedRS(RecSys):
-
-
     """
     Class for recommender systems which use the items' content in order to make predictions,
     some algorithms may also use users' content
@@ -228,14 +227,19 @@ class ContentBasedRS(RecSys):
 
         """
         for user_id in set(self.train_set['from_id']):
-            user_id=str(user_id)
-            user_fit = self.algorithm
-            user_fit.process_rated(self.train_set.query('from_id == @user_id'), self.items_directory)
-            user_fit.fit()
-            self.user_fit_dic[user_id]=user_fit
-        pass
+            user_train = self.train_set[self.train_set['from_id'] == user_id]
 
-    def rank(self, test_set: pd.DataFrame, n_recs: int = None):
+            try:
+                user_alg = self.algorithm.copy()
+                user_alg.process_rated(user_train, self.items_directory)
+                user_alg.fit()
+                self.user_fit_dic[user_id] = user_alg
+            except UserSkipAlgFit as e:
+                warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
+                logger.warning(warning_message)
+                self.user_fit_dic[user_id] = None
+
+    def rank(self, test_set: pd.DataFrame, n_recs: int = None, methodology: Methodology = TestRatingsMethodology()):
         """
         Method used to calculate ranking for the user in test set
 
