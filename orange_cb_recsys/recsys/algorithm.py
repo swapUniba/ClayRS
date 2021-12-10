@@ -1,5 +1,6 @@
 import abc
 from abc import ABC
+from copy import deepcopy
 
 
 class Algorithm(ABC):
@@ -29,3 +30,14 @@ class Algorithm(ABC):
         If the Algorithm can't rank, implement this method and raise the NotRankingAlg exception
         """
         raise NotImplementedError
+
+    def copy(self):
+        """
+        Make a deep copy the algorithm
+        """
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo = {id(self): result}
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
