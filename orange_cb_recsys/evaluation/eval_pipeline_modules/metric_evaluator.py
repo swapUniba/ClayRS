@@ -38,8 +38,11 @@ class MetricEvaluator:
     """
 
     # [ (total_pred, total_truth), (total_pred, total_truth) ...]
-    def __init__(self, predictions_truths: List[Split] = None):
-        self._split_list = predictions_truths
+    def __init__(self, pred_list: List[pd.DataFrame], truth_list: List[pd.DataFrame]):
+        if len(pred_list) != len(truth_list):
+            raise ValueError("Number of prediction frames and truth frames must be equal")
+        self._pred_list = pred_list
+        self._truth_list = truth_list
 
     def eval_metrics(self, metric_list: List[Metric]) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
@@ -64,33 +67,35 @@ class MetricEvaluator:
 
             metric_result_list = []
 
-            if self._split_list is None:
-                split_list = metric._get_pred_truth_list()
-            else:
-                split_list = self._split_list
+            for pred, truth in zip(self._pred_list, self._truth_list):
+                if not pred.empty and not truth.empty:
+                    from_id_valid = pred['from_id']
+                    # Remove from truth users of which we do not have predictions
+                    truth = truth[truth['from_id'].isin(from_id_valid)]
 
-            for split in split_list:
-                if not split.pred.empty and not split.truth.empty:
-                    from_id_valid = split.pred['from_id']
-                    # Remove from truth item of which we do not have predictions
-                    split.truth = split.truth.query('from_id in @from_id_valid')
-                    metric_result = metric.perform(split)
+                    metric_result = metric.perform(Split(pred, truth))
                     metric_result_list.append(metric_result)
 
             total_results_metric = pd.concat(metric_result_list)
 
-            if not total_results_metric.empty:
-                total_results_metric = total_results_metric.groupby('from_id').mean()
-
-                total_results_metric.index.name = 'from_id'
-
-                frames_to_concat.append(total_results_metric)
+            total_results_metric = total_results_metric.set_index('from_id')
+            frames_to_concat.append(total_results_metric)
 
         final_result = pd.concat(frames_to_concat, axis=1)
 
         system_results = final_result.loc[['sys']]
         each_user_result = final_result.drop(['sys'])
 
+        each_user_result = each_user_result.groupby('from_id').mean()
         each_user_result = each_user_result.dropna(axis=1, how='all')
+
+        # replace index
+        new_index = [f'sys - fold{i + 1}' for i in range(len(system_results))]
+        system_results['from_id'] = new_index
+        system_results = system_results.set_index('from_id')
+
+        # add mean results as a row
+        system_means = list(system_results.mean().values)
+        system_results.loc['sys - mean'] = system_means
 
         return system_results, each_user_result
