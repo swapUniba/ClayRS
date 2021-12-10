@@ -4,24 +4,34 @@ import pandas as pd
 from functools import wraps
 
 
+class UserSkipAlgFit(Exception):
+    pass
 
-class OnlyPositiveItems(Exception):
+
+class OnlyPositiveItems(UserSkipAlgFit):
     """
     Exception to raise when there's only positive items available locally for the user
     """
     pass
 
 
-class OnlyNegativeItems(Exception):
+class OnlyNegativeItems(UserSkipAlgFit):
     """
     Exception to raise when there's only negative items available locally for the user
     """
     pass
 
 
-class NoRatedItems(Exception):
+class NoRatedItems(UserSkipAlgFit):
     """
     Exception to raise when there's no item available locally for the user
+    """
+    pass
+
+
+class EmptyUserRatings(UserSkipAlgFit):
+    """
+    Exception to raise when the user ratings is empty
     """
     pass
 
@@ -36,13 +46,6 @@ class NotRankingAlg(Exception):
 class NotPredictionAlg(Exception):
     """
     Exception to raise when the algorithm is not a prediction algorithm, but it is asked to predict
-    """
-    pass
-
-
-class EmptyUserRatings(Exception):
-    """
-    Exception to raise when the user ratings is empty
     """
     pass
 
