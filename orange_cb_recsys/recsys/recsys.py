@@ -333,7 +333,7 @@ class ContentBasedRS(RecSys):
         prediction = self.predict(test_set)
         return prediction
 
-    def fit_rank(self, test_set: pd.DataFrame, n_recs: int = None):
+    def fit_rank(self, test_set: pd.DataFrame, n_recs: int = None, methodology: Methodology = TestRatingsMethodology()):
         """
         The method fits the algorithm and then calculates the rank for each user
 
@@ -346,7 +346,7 @@ class ContentBasedRS(RecSys):
 
         """
         self.fit()
-        rank = self.rank(test_set, n_recs)
+        rank = self.rank(test_set, n_recs, methodology)
         return rank
 
     # @Handler_EmptyFrame
