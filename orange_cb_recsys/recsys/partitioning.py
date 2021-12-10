@@ -1,9 +1,10 @@
+from collections import defaultdict
+
 import pandas as pd
 from typing import Set
 
 import abc
 from abc import ABC
-from typing import Tuple
 
 from sklearn.model_selection import KFold, train_test_split
 
@@ -64,130 +65,22 @@ class Partitioning(ABC):
     """
     Abstract Class for partitioning technique
     """
-
-    def __init__(self):
-        self._dataframe: pd.DataFrame = None
+    def __init__(self, skip_user_error: bool = True):
+        self.__skip_user_error = skip_user_error
 
     @property
-    def dataframe(self):
-        return self._dataframe
-
-    @abc.abstractmethod
-    def __iter__(self) -> Tuple[pd.DataFrame]:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def set_dataframe(self, dataframe: pd.DataFrame):
-        raise NotImplementedError
+    def skip_user_error(self):
+        return self.__skip_user_error
 
     @abc.abstractmethod
     def __str__(self):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def split_single(self, user_ratings: pd.DataFrame):
+        raise NotImplementedError
 
-class KFoldPartitioning(Partitioning):
-    """
-    Class that perform K-Fold partitioning
-
-    Args:
-        n_splits (int): number of splits
-        random_state (int): random state
-    """
-
-    def __init__(self, n_splits: int = 2, random_state: int = 42):
-        self.__n_splits = n_splits
-        self.__random_state = random_state
-
-        super().__init__()
-
-    def set_dataframe(self, dataframe: pd.DataFrame):
-        if len(dataframe) < self.__n_splits:
-            raise PartitionError("Number of splits larger than number of frame rows")
-        else:
-            self._dataframe = dataframe
-
-    def __iter__(self) -> Tuple[pd.DataFrame]:
-        kf = KFold(n_splits=self.__n_splits, shuffle=True, random_state=self.__random_state)
-        split_result = kf.split(self.dataframe)
-
-        # iloc because split_result are list of ints
-        for train_index, test_index in split_result:
-            yield self.dataframe.iloc[train_index], self.dataframe.iloc[test_index]
-
-    def __str__(self):
-        return "KFoldPartitioningTechnique"
-
-
-class HoldOutPartitioning(Partitioning):
-    """
-    Class that perform Hold-Out partitioning
-
-    Args:
-        train_set_size (float): percentage of how much big in percentage the train set must be
-            EXAMPLE: train_set_size = 0.8, train_set_size = 0.65, train_set_size = 0.2
-        random_state (int): random state
-    """
-
-    def __init__(self, train_set_size: float = 0.8, random_state: int = 42):
-        self._check_percentage(train_set_size)
-        self.__train_set_size = train_set_size
-        self.__test_set_size = (1 - train_set_size)
-        self.__random_state = random_state
-
-        super().__init__()
-
-    @staticmethod
-    def _check_percentage(percentage: float):
-        if (percentage <= 0) or (percentage >= 1):
-            raise ValueError("The train set size must be a float in the (0, 1) interval")
-
-    def set_dataframe(self, dataframe: pd.DataFrame):
-        self._dataframe = dataframe
-
-    def __iter__(self) -> Tuple[pd.DataFrame]:
-        train_index, test_index = train_test_split(self.dataframe.index,
-                                                   train_size=self.__train_set_size,
-                                                   test_size=self.__test_set_size,
-                                                   shuffle=True,
-                                                   random_state=self.__random_state)
-
-        # loc because split_result are Indexes so we must search by labels
-        yield self.dataframe.loc[train_index], self.dataframe.loc[test_index]
-
-    def __str__(self):
-        return "HoldOutPartitioningTechnique"
-
-
-class PartitionModule:
-    """
-    Module of the Evaluation pipeline which has the task of splitting the original interactions in 'train set' and 'test
-    set'.
-
-    Different kinds of partitioning technique may be used, check the correspondent documentation for more
-
-    Args:
-        partition_technique (Partitioning): The technique that will be used to split original interactions in
-            'train set' and 'test set'.
-    """
-
-    def __init__(self, partition_technique: Partitioning):
-        self._partition_technique = partition_technique
-
-    def _split_single(self, user_ratings: pd.DataFrame):
-        """
-        Private method that splits the ratings of a single user into 'train set' and 'test set'
-
-        Args:
-            user_ratings (pd.DataFrame): DataFrame containing the ratings of a single user that will be splitted into
-                'train set' and 'test set'
-        """
-
-        self._partition_technique.set_dataframe(user_ratings)  # May raise exception
-
-        user_splits = [Split(train_set, test_set) for train_set, test_set in self._partition_technique]
-        return user_splits
-
-    def split_all(self, ratings: pd.DataFrame, user_id_list: Set[str]):
+    def split_all(self, ratings: pd.DataFrame, user_id_list: Set[str] = None):
         """
         Method that effectively splits the 'ratings' parameter into 'train set' and 'test set'.
         It must be specified a 'user_id_list' parameter so that the method will do the splitting only for the users
@@ -199,30 +92,110 @@ class PartitionModule:
             user_id_list (Set[str]): The set of users for which splitting will be done
         """
 
-        split_list = []
+        if user_id_list is None:
+            user_id_list = set(ratings['from_id'])
 
-        eval_logger.info("Performing {} on ratings of every user".format(str(self._partition_technique)))
+        # {0: {'train': [train1_u1, train1_u2], 'test': [test1_u1, test1_u2]},
+        #  1: {'train': [train2_u1, train2_u2], 'test': [test2_u1, test2_u2]}}
+        train_test_dict = defaultdict(lambda: defaultdict(list))
+
+        eval_logger.info("Performing {}".format(str(self)))
         for user_id in progbar(user_id_list, prefix="Current user - {}:", substitute_with_current=True):
             user_ratings = ratings[ratings['from_id'] == user_id]
             try:
-                user_splits_list = self._split_single(user_ratings)
-            except PartitionError as e:
-                eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
-                continue
+                user_train_list, user_test_list = self.split_single(user_ratings)
+                for i, (single_train, single_test) in enumerate(zip(user_train_list, user_test_list)):
+                    train_test_dict[i]['train'].append(single_train)
+                    train_test_dict[i]['test'].append(single_test)
 
-            if len(split_list) != 0:
-                for user_split, total_split in zip(user_splits_list, split_list):
-                    total_split.train = pd.concat([total_split.train, user_split.train])
-                    total_split.test = pd.concat([total_split.test, user_split.test])
-            else:
-                for user_split in user_splits_list:
-                    split_list.append(user_split)  # Only executed once
+            except ValueError as e:
+                if self.skip_user_error:
+                    eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                    continue
+                else:
+                    raise e
 
-        return split_list
+        train_list = [pd.concat(train_test_dict[split]['train']) for split in train_test_dict]
+        test_list = [pd.concat(train_test_dict[split]['test']) for split in train_test_dict]
+
+        return train_list, test_list
 
 
-class PartitionError(Exception):
+class KFoldPartitioning(Partitioning):
     """
-    Exception to raise when ratings of a user can't be split, e.g. (n_splits > n_user_ratings)
+    Class that perform K-Fold partitioning
+
+    Args:
+        n_splits (int): Number of splits. Must be at least 2
+        random_state (int): random state
     """
-    pass
+
+    def __init__(self, n_splits: int = 2, shuffle: bool = True, random_state: int = None,
+                 skip_user_error: bool = True):
+        self.__kf = KFold(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
+
+        super(KFoldPartitioning, self).__init__(skip_user_error)
+
+    def split_single(self, user_ratings: pd.DataFrame):
+
+        index_dataframe = user_ratings.index.to_numpy()
+
+        split_result = self.__kf.split(index_dataframe)
+
+        user_train_list = []
+        user_test_list = []
+
+        for train_index, test_index in split_result:
+
+            # loc since we are accessing by position
+            user_train_list.append(user_ratings.iloc[train_index])
+            user_test_list.append(user_ratings.iloc[test_index])
+
+        return user_train_list, user_test_list
+
+    def __str__(self):
+        return "KFoldPartitioningTechnique"
+
+
+class HoldOutPartitioning(Partitioning):
+    """
+    Class that perform Hold-Out partitioning
+
+    Args:
+        train_set_size (float): percentage of how much big in percentage the train set of each user must be
+            EXAMPLE: train_set_size = 0.8, train_set_size = 0.65, train_set_size = 0.2
+        random_state (int): random state
+    """
+
+    def __init__(self, train_set_size: float = 0.8, shuffle: bool = True, random_state: int = None,
+                 skip_user_error: bool = True):
+        self._check_percentage(train_set_size)
+        self.__train_set_size = train_set_size
+        self.__test_set_size = (1 - train_set_size)
+        self.__random_state = random_state
+        self.__shuffle = shuffle
+
+        super().__init__(skip_user_error)
+
+    @staticmethod
+    def _check_percentage(percentage: float):
+        if (percentage <= 0) or (percentage >= 1):
+            raise ValueError("The train set size must be a float in the (0, 1) interval")
+
+    def split_single(self, user_ratings: pd.DataFrame):
+        index_to_split = user_ratings.index.to_numpy()
+
+        train_index, test_index = train_test_split(index_to_split,
+                                                   train_size=self.__train_set_size,
+                                                   test_size=self.__test_set_size,
+                                                   shuffle=self.__shuffle,
+                                                   random_state=self.__random_state)
+
+        user_train_list = [user_ratings.loc[train_index]]
+        user_test_list = [user_ratings.loc[test_index]]
+
+        # loc since we are accessing by label
+        return user_train_list, user_test_list
+
+    def __str__(self):
+        return "HoldOutPartitioningTechnique"
