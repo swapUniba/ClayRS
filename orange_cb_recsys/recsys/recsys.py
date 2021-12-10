@@ -259,20 +259,25 @@ class ContentBasedRS(RecSys):
 
         """
         rank_list = []
-        if 'to_id' in test_set.columns:
-            for user_id in set(test_set['from_id']):
-                filter_list = test_set.query('from_id == @user_id')
-                filter_list = list(filter_list['to_id'].values)
-                user_id = str(user_id)
-                rank = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'), self.items_directory,
-                                                       n_recs, filter_list)
-                rank_list.append(rank)
-        else:
-            for user_id in set(test_set['from_id']):
-                user_id = str(user_id)
-                rank = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'), self.items_directory,
-                                                       n_recs)
-                rank_list.append(rank)
+
+        for user_id in set(test_set['from_id']):
+            user_train = self.train_set[self.train_set['from_id'] == user_id]
+
+            filter_list = None
+            if 'to_id' in test_set.columns:
+                filter_list = methodology.filter_single(user_id, self.train_set, test_set)['to_id'].values
+
+            user_fitted_alg = self.user_fit_dic.get(user_id)
+            if user_fitted_alg is not None:
+                rank = user_fitted_alg.rank(user_train, self.items_directory,
+                                            n_recs, filter_list=filter_list)
+                rank.insert(0, 'from_id', user_id)
+            else:
+                rank = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
+                logger.warning(f"No algoritm fitted for user {user_id}! It will be skipped")
+
+            rank_list.append(rank)
+
         concat_rank = pd.concat(rank_list)
         return concat_rank
 
