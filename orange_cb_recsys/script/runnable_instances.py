@@ -27,7 +27,7 @@ from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similaritie
 from orange_cb_recsys.recsys.recsys import RecSys
 
 from orange_cb_recsys.evaluation.eval_model import EvalModel
-from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology
+from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator

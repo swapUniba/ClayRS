@@ -13,7 +13,7 @@ from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnaly
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
 from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.evaluation.eval_model import EvalModel
-from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology
+from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import PartitionModule
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
 from orange_cb_recsys.script.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
