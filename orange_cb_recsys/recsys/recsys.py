@@ -297,24 +297,26 @@ class ContentBasedRS(RecSys):
 
         """
         prediction_list = []
-        if 'to_id' in test_set.columns:
-            for user_id in set(test_set['from_id']):
-                filter_list = test_set.query('from_id == @user_id')
-                filter_list = list(filter_list['to_id'].values)
-                user_id = str(user_id)
-                prediction = self.user_fit_dic[user_id].predict(test_set.query('from_id == @user_id'),
-                                                                self.items_directory,
-                                                                filter_list)
-                prediction_list.append(prediction)
+        for user_id in set(test_set['from_id']):
+            user_train = self.train_set[self.train_set['from_id'] == user_id]
 
-        else:
-            for user_id in set(test_set['from_id']):
-                user_id = str(user_id)
-                prediction = self.user_fit_dic[user_id].rank(test_set.query('from_id == @user_id'),
-                                                             self.items_directory)
-                prediction_list.append(prediction)
-        concat_score_preds = pd.concat(prediction_list)
-        return concat_score_preds
+            filter_list = None
+            if 'to_id' in test_set.columns:
+                filter_list = test_set[test_set['from_id'] == user_id].values
+
+            user_fitted_alg = self.user_fit_dic.get(user_id)
+            if user_fitted_alg is not None:
+                prediction = user_fitted_alg(user_train, self.items_directory,
+                                             filter_list=filter_list)
+                prediction.insert(0, 'from_id', user_id)
+            else:
+                prediction = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
+                logger.warning(f"No algoritm fitted for user {user_id}! It will be skipped")
+
+            prediction_list.append(prediction)
+
+        concat_pred = pd.concat(prediction_list)
+        return concat_pred
 
     def fit_predict(self, test_set: pd.DataFrame):
         """
