@@ -16,8 +16,9 @@ class TestRepresentationContainer(TestCase):
 
         # tests to check that the representation related to the internal_id or external_id passed to rep_container
         # is the appropriate representation
-        self.assertEqual('rep1', rep_container[0])
-        self.assertEqual('rep3', rep_container['test3'])
+        for _ in range(15000):
+            self.assertEqual('rep1', rep_container[0])
+            self.assertEqual('rep3', rep_container['test3'])
 
         # tests to check the correct functionality of the append and remove method
         rep_container.append('rep4', 'test4')
@@ -25,6 +26,7 @@ class TestRepresentationContainer(TestCase):
 
         value_removed = rep_container.pop('test4')
         self.assertEqual('rep4', value_removed)
+        self.assertFalse('rep4' in rep_container.get_representations())
 
         # test for empty representation container
         empty_rep_container = RepresentationContainer()
@@ -34,13 +36,21 @@ class TestRepresentationContainer(TestCase):
         single_rep_container = RepresentationContainer('rep', 'test')
         self.assertEqual('rep', single_rep_container['test'])
 
-        # tests for exceptions (different length of external_id and representation lists when passed to the
-        # constructor or to the append method)
+        # tests for exception: different length of external_id representation lists when passed to
+        # the constructor or to the append method
         with self.assertRaises(ValueError):
             RepresentationContainer(['rep1', 'rep2'], ['test1'])
 
         with self.assertRaises(ValueError):
             rep_container.append(['rep1', 'rep2'], ['test1'])
+
+        # test for exception when there are duplicate custom ids in the constructor
+        with self.assertRaises(ValueError):
+            RepresentationContainer(['rep1', 'rep2'], ['duplicate', 'duplicate'])
+
+        # test for exception when there are duplicate custom ids in the append method
+        with self.assertRaises(ValueError):
+            rep_container.append(['rep1', 'rep2'], ['duplicate', 'duplicate'])
 
     def test_iter(self):
         rep_container = RepresentationContainer(['rep1', 'rep2', 'rep3'], ['test1', None, 'test3'])

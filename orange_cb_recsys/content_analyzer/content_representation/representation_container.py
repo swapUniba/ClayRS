@@ -58,9 +58,12 @@ class RepresentationContainer:
 
         if len(representation_list) != len(external_id_list):
             raise ValueError("Representation and external_id lists must have the same length")
+        if len(external_id_list) != len(set(external_id_list)):
+            raise ValueError("Custom IDs must be unique!")
 
         self.__dataframe = pd.DataFrame({'external_id': external_id_list, 'representation': representation_list})
         self.__dataframe['internal_id'] = self.__dataframe.index
+        self.__alias_dict = {k: v for k, v in zip(external_id_list, self.__dataframe.index.values) if k is not None}
         self.__dataframe.set_index(['internal_id', 'external_id'], inplace=True)
 
     def get_internal_index(self) -> List[int]:
@@ -105,6 +108,8 @@ class RepresentationContainer:
 
         if len(representation) != len(external_id):
             raise ValueError("Representation and external_id lists must have the same length")
+        if len(external_id) != len(set(external_id)):
+            raise ValueError("Custom IDs must be unique!")
 
         if len(self.get_internal_index()) == 0:
             next_internal_id = 0
@@ -112,8 +117,9 @@ class RepresentationContainer:
             next_internal_id = self.__dataframe.index.get_level_values('internal_id')[-1] + 1
         new_dataframe = pd.DataFrame({'external_id': external_id, 'representation': representation})
         new_dataframe['internal_id'] = list(range(next_internal_id, len(representation) + next_internal_id))
+        self.__alias_dict.update({k: v for k, v in zip(external_id, new_dataframe['internal_id'].values)
+                                  if k is not None})
         new_dataframe.set_index(['internal_id', 'external_id'], inplace=True)
-
         self.__dataframe = self.__dataframe.append(new_dataframe)
 
     def pop(self, id: Union[str, int]):
@@ -129,9 +135,12 @@ class RepresentationContainer:
             removed_representation (Any): representation corresponding to the removed row
         """
         removed_representation = self[id]
-        if isinstance(id, int):
+        try:
+            # id is int
             self.__dataframe = self.__dataframe.drop(id, level=0)
-        elif isinstance(id, str):
+        except KeyError:
+            # id is string
+            del self.__alias_dict[id]
             self.__dataframe = self.__dataframe.drop(id, level=1)
         return removed_representation
 
@@ -144,10 +153,13 @@ class RepresentationContainer:
         Args:
             item (Union[str, int]): value used to refer to a specific representation by accessing the index columns
         """
-        if isinstance(item, int):
+        try:
+            # the index is an integer
             return self.__dataframe.iloc[item]['representation']
-        elif isinstance(item, str):
-            return self.__dataframe.loc(axis=0)[pd.IndexSlice[:, item]]['representation'].item()
+        except TypeError as e:
+            # the index is a string
+            integer_ind = self.__alias_dict[item]
+            return self.__dataframe.iloc[integer_ind]['representation']
 
     def __iter__(self) -> Iterator[Dict]:
         for internal_index, external_index, representation in \
