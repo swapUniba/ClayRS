@@ -11,6 +11,7 @@ from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm imp
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.recsys.methodology import Methodology
+from orange_cb_recsys.utils import load_content_instance
 from orange_cb_recsys.utils.const import logger
 
 
@@ -226,12 +227,15 @@ class ContentBasedRS(RecSys):
         for each user and saves the result in the dictionary "user_fit_dic"
 
         """
+        items_to_load = set(self.train_set['to_id'].values)
+        loaded_items_dict = self.algorithm.load_local_dataset(self.items_directory, items_to_load)
+
         for user_id in set(self.train_set['from_id']):
             user_train = self.train_set[self.train_set['from_id'] == user_id]
 
             try:
                 user_alg = self.algorithm.copy()
-                user_alg.process_rated(user_train, self.items_directory)
+                user_alg.process_rated(user_train, loaded_items_dict)
                 user_alg.fit()
                 self.user_fit_dic[user_id] = user_alg
             except UserSkipAlgFit as e:
@@ -258,6 +262,9 @@ class ContentBasedRS(RecSys):
             concat_rank: list of the items ranked for each user
 
         """
+        items_to_load = set(test_set['to_id'].values)
+        loaded_items_dict = {item_id: load_content_instance(self.items_directory, item_id) for item_id in items_to_load}
+
         rank_list = []
 
         for user_id in set(test_set['from_id']):
@@ -269,7 +276,7 @@ class ContentBasedRS(RecSys):
 
             user_fitted_alg = self.user_fit_dic.get(user_id)
             if user_fitted_alg is not None:
-                rank = user_fitted_alg.rank(user_train, self.items_directory,
+                rank = user_fitted_alg.rank(set(user_train['to_id']), loaded_items_dict,
                                             n_recs, filter_list=filter_list)
                 rank.insert(0, 'from_id', user_id)
             else:
@@ -484,7 +491,7 @@ class GraphBasedRS(RecSys):
             concate_score_preds: list of predictions for each user
 
         """
-        prediction_list=[]
+        prediction_list = []
         if 'to_id' in test_set.columns:
             for user_id in set(test_set['from_id']):
                 filter_list = test_set.query('from_id == @user_id')
@@ -492,7 +499,7 @@ class GraphBasedRS(RecSys):
                 user_id = str(user_id)
                 user_alg = self.algorithm
                 prediction = user_alg.predict(test_set.query('from_id == @user_id'), self.graph,
-                                                             filter_list)
+                                              filter_list)
                 prediction_list.append(prediction)
 
         else:
@@ -528,18 +535,17 @@ class GraphBasedRS(RecSys):
                 user_id = str(user_id)
                 user_alg = self.algorithm
                 rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
-                                                       n_recs, filter_list)
+                                     n_recs, filter_list)
                 rank_list.append(rank)
         else:
             for user_id in set(test_set['from_id']):
                 user_id = str(user_id)
                 user_alg = self.algorithm
                 rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
-                                                       n_recs)
+                                     n_recs)
                 rank_list.append(rank)
         concat_rank = pd.concat(rank_list)
         return concat_rank
-
 
     # def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
     #     """
