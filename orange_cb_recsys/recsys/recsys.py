@@ -228,7 +228,7 @@ class ContentBasedRS(RecSys):
 
         """
         items_to_load = set(self.train_set['to_id'].values)
-        loaded_items_dict = self.algorithm.load_local_dataset(self.items_directory, items_to_load)
+        loaded_items_dict = {item_id: load_content_instance(self.items_directory, item_id) for item_id in items_to_load}
 
         for user_id in set(self.train_set['from_id']):
             user_train = self.train_set[self.train_set['from_id'] == user_id]
