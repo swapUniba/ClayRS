@@ -62,7 +62,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self.__labels: list = None
         self.__rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: dict):
         """
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
@@ -84,7 +84,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 for the user (Items that the user disliked)
         """
         # Load rated items from the path
-        rated_items = get_rated_items(items_directory, user_ratings)
+        # rated_items = get_rated_items(items_directory, user_ratings)
+
+        rated_items = [available_loaded_items[item_id] for item_id in user_ratings['to_id'].values]
 
         threshold = self.threshold
         if threshold is None:
@@ -148,7 +150,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: dict, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -171,9 +173,10 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         # Load items to predict
         if filter_list is None:
-            items_to_predict = get_unrated_items(items_directory, user_ratings)
+            items_to_predict = [available_loaded_items[item_id]
+                                for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = get_chosen_items(items_directory, filter_list)
+            items_to_predict = [available_loaded_items[item_id] for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []

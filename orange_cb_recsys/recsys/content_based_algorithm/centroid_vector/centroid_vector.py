@@ -59,7 +59,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self.__centroid: np.array = None
         self.__positive_rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: dict):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the centroid).
@@ -71,7 +71,7 @@ class CentroidVector(ContentBasedAlgorithm):
             items_directory (str): path of the directory where the items are stored
         """
         # Load rated items from the path
-        rated_items = get_rated_items(items_directory, user_ratings)
+        rated_items = [available_loaded_items[item_id] for item_id in user_ratings['to_id'].values]
 
         recsys_logger.info("Processing rated items")
         # If threshold wasn't passed in the constructor, then we take the mean rating
@@ -127,7 +127,7 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: dict, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -150,9 +150,10 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         # Load items to predict
         if filter_list is None:
-            items_to_predict = get_unrated_items(items_directory, user_ratings)
+            items_to_predict = [available_loaded_items[item_id]
+                                for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = get_chosen_items(items_directory, filter_list)
+            items_to_predict = [available_loaded_items[item_id] for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []
