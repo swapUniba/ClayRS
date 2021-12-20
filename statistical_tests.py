@@ -4,7 +4,8 @@ import pandas as pd
 
 
 class pairedtTest:
-    def t_test(score_list1, score_list2):
+    @staticmethod
+    def t_test(sample_list1, sample_list2):
         """
                 T-student
 
@@ -15,30 +16,16 @@ class pairedtTest:
 
                 This test assumes that the populations have identical variances.
                 """
-        t, p = ttest_ind(score_list1, score_list2)
+        t, p = ttest_ind(sample_list1, sample_list2)
         print("=== T- Student Analysis ===")
         print("The calculated t-statistic: " + str(t))
         print("The two-tailed p-value: " + str(p) + "\n")
 
-    #@staticmethod
-    def get_score(first_prediction: pd.DataFrame, second_prediction: pd.DataFrame):
-        """
-        The get_score method takes two dataframes from two different recommender systems
-        and creates two lists of predictions to compare with the paired t-test
-        """
-        score_list1 = []
-        score_list2 = []
-
-        score_list1 = list(first_prediction["score"])
-        score_list2 = list(second_prediction["score"])
-        print(score_list1)
-        print(score_list2)
-
-        pairedtTest.t_test(score_list1, score_list2)
 
 
 class wilcoxonTest:
-    def wilcoxon(score_list1, score_list2):
+    @staticmethod
+    def wilcoxon(sample_list1, sample_list2):
         """
                 Wilcoxon
 
@@ -47,19 +34,9 @@ class wilcoxonTest:
                 is symmetric about zero. It is a non-parametric version of the paired T-test.
                 """
 
-        t, p = ranksums(score_list1, score_list2)
+        t, p = ranksums(sample_list1, sample_list2)
         print("=== Wilcoxon Analysis ===")
         print("The calculated t-statistic: " + str(t))
         print("The two-tailed p-value: " + str(p) + "\n")
 
-    @staticmethod
-    def get_score(first_prediction: pd.DataFrame, second_prediction: pd.DataFrame):
-        """
-              The get_score method takes two dataframes from two different recommender systems
-              and creates two lists of predictions to compare with the Wilcoxon test
-              """
-        score_list1 = list(first_prediction["score"])
-        score_list2 = list(second_prediction["score"])
-        print(score_list1)
-        print(score_list2)
-        wilcoxonTest.wilcoxon(score_list1, score_list2)
+
