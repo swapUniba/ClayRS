@@ -50,9 +50,3 @@ def progbar(it, prefix='', max_value: int = None, file=sys.stderr, substitute_wi
 
 
 logger = getCustomLogger('custom_logger')
-
-recsys_logger = getCustomLogger('recsys_logger')
-
-eval_logger = getCustomLogger('eval_logger')
-
-utils_logger = getCustomLogger('utils_logger')
