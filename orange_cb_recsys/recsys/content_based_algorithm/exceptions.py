@@ -1,10 +1,8 @@
-from orange_cb_recsys.utils.const import recsys_logger
-import pandas as pd
-
-from functools import wraps
-
-
 class UserSkipAlgFit(Exception):
+    """
+    Super class for exception related to the fit of a single user. If one of the exception happens, the algorithm
+    can't be fitted for the user, therefore will be skipped
+    """
     pass
 
 
@@ -50,22 +48,8 @@ class NotPredictionAlg(Exception):
     pass
 
 
-def Handler_EmptyFrame(func):
+class NotFittedAlg(Exception):
     """
-    Handler that catches the above exceptions.
-
-    Tries to run the functions normally, if one of the above exceptions is caught then it must return
-    an empty frame for the user since predictions can't be calculated for it.
+    Exception to raise when the algorithm has not been fitted
     """
-    @wraps(func)
-    def Inner_Function(*args, **kwargs):
-        try:
-            frame = func(*args, **kwargs)
-        except (OnlyNegativeItems, OnlyPositiveItems, NoRatedItems, EmptyUserRatings) as e:
-            warning_message = str(e) + "\nThe score frame will be empty for the user"
-            recsys_logger.warning(warning_message)
-            columns = ["to_id", "score"]
-            frame = pd.DataFrame(columns=columns)
-        return frame
-
-    return Inner_Function
+    pass
