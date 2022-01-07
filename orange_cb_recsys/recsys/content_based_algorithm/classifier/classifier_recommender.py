@@ -6,11 +6,9 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.embed
     CombiningTechnique, Centroid
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
     OnlyNegativeItems, NotPredictionAlg, EmptyUserRatings
-from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, \
-    get_chosen_items
-from orange_cb_recsys.utils.const import recsys_logger
 
 
 class ClassifierRecommender(ContentBasedAlgorithm):
@@ -62,7 +60,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self.__labels: list = None
         self.__rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: dict):
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
@@ -86,7 +84,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         # Load rated items from the path
         # rated_items = get_rated_items(items_directory, user_ratings)
 
-        rated_items = [available_loaded_items[item_id] for item_id in user_ratings['to_id'].values]
+        rated_items = [available_loaded_items.get(item_id) for item_id in user_ratings['to_id'].values]
 
         threshold = self.threshold
         if threshold is None:
@@ -96,7 +94,6 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         labels = []
         rated_dict = {}
 
-        recsys_logger.info("Processing rated items")
         for item in rated_items:
             if item is not None:
                 rated_dict[item] = self.extract_features_item(item)
@@ -130,7 +127,6 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        recsys_logger.info("Fitting {} classifier".format(self.__classifier))
         self._set_transformer()
 
         rated_features = list(self.__rated_dict.values())
@@ -140,7 +136,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         self.__classifier.fit(fused_features, self.__labels)
 
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
+    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
         ClassifierRecommender is not a score prediction algorithm, calling this method will raise
@@ -150,7 +146,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
-    def rank(self, user_seen_items: list, available_loaded_items: dict, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsDict, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -173,10 +169,10 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         # Load items to predict
         if filter_list is None:
-            items_to_predict = [available_loaded_items[item_id]
+            items_to_predict = [available_loaded_items.get(item_id)
                                 for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = [available_loaded_items[item_id] for item_id in filter_list]
+            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -186,7 +182,6 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        recsys_logger.info("Calculating rank")
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)

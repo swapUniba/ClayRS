@@ -3,15 +3,12 @@ from typing import List
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface, LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
 import pandas as pd
 import numpy as np
-
-from orange_cb_recsys.utils.const import recsys_logger
-from orange_cb_recsys.utils.load_content import get_unrated_items, get_rated_items, \
-    get_chosen_items
 
 
 class CentroidVector(ContentBasedAlgorithm):
@@ -59,7 +56,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self.__centroid: np.array = None
         self.__positive_rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: dict):
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the centroid).
@@ -71,9 +68,8 @@ class CentroidVector(ContentBasedAlgorithm):
             items_directory (str): path of the directory where the items are stored
         """
         # Load rated items from the path
-        rated_items = [available_loaded_items[item_id] for item_id in user_ratings['to_id'].values]
+        rated_items = [available_loaded_items.get(item_id) for item_id in user_ratings['to_id'].values]
 
-        recsys_logger.info("Processing rated items")
         # If threshold wasn't passed in the constructor, then we take the mean rating
         # given by the user as its threshold
         threshold = self.threshold
@@ -83,16 +79,16 @@ class CentroidVector(ContentBasedAlgorithm):
         # Calculates labels and extract features from the positive rated items
         positive_rated_dict = {}
         for item in rated_items:
-            score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
-            if item is not None and score_assigned >= threshold:
-
-                positive_rated_dict[item] = self.extract_features_item(item)
+            if item is not None:
+                score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
+                if score_assigned >= threshold:
+                    positive_rated_dict[item] = self.extract_features_item(item)
 
         if user_ratings.empty:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         user_id = user_ratings.from_id.iloc[0]
-        if len(rated_items) == 0 or all(rated_items) is None:
+        if len(rated_items) == 0 or (rated_items.count(None) == len(rated_items)):
             raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
         if len(positive_rated_dict) == 0:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!")
@@ -109,7 +105,6 @@ class CentroidVector(ContentBasedAlgorithm):
 
         The built centroid will also be stored in a private attribute.
         """
-        recsys_logger.info("Calculating centroid vector")
         self._set_transformer()
 
         positive_rated_features = list(self.__positive_rated_dict.values())
@@ -117,7 +112,7 @@ class CentroidVector(ContentBasedAlgorithm):
         positive_rated_features_fused = self.fuse_representations(positive_rated_features, self.__embedding_combiner)
         self.__centroid = np.array(positive_rated_features_fused).mean(axis=0)
 
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
+    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
@@ -127,7 +122,7 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank(self, user_seen_items: list, available_loaded_items: dict, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsDict, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -150,10 +145,10 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         # Load items to predict
         if filter_list is None:
-            items_to_predict = [available_loaded_items[item_id]
+            items_to_predict = [available_loaded_items.get(item_id)
                                 for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = [available_loaded_items[item_id] for item_id in filter_list]
+            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -163,7 +158,6 @@ class CentroidVector(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        recsys_logger.info("Calculating rank")
         if len(id_items_to_predict) > 0:
             # Calculate predictions, they are the similarity of the new items with the centroid vector
             features_fused = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)

@@ -12,6 +12,7 @@ from orange_cb_recsys.content_analyzer.field_content_production_techniques.embed
 from orange_cb_recsys.recsys.algorithm import Algorithm
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface, LoadedContentsDict
 
 
 class ContentBasedAlgorithm(Algorithm):
@@ -41,7 +42,7 @@ class ContentBasedAlgorithm(Algorithm):
         """
         Private method that set the transformer later used in order to fuse multiple representations
         """
-        self.__transformer = DictVectorizer(sparse=True, sort=False)
+        self.__transformer = DictVectorizer(sparse=False, sort=False)
 
     @staticmethod
     def _bracket_representation(item_field: dict):
@@ -104,6 +105,80 @@ class ContentBasedAlgorithm(Algorithm):
 
         return item_bag_list
 
+    # def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
+    #     """
+    #     Method which transforms the X passed vectorizing if X contains dicts and merging
+    #     multiple representations in a single one for every item in X.
+    #     So if X = [
+    #                 [dict, np.array, np.array]
+    #                     ...
+    #                 [dict, np.array, np.array]
+    #             ]
+    #     where every sublist contains multiple representation for a single item,
+    #     the function returns:
+    #     X = [
+    #             np.array,
+    #             ...
+    #             np.array
+    #         ]
+    #     Where every row is the fused representation for the item
+    #
+    #     In case np.array have different row size, every array will be transformed in a one dimensional one
+    #     using the parameter embedding combiner. Check all the available combining technique to know how rows of
+    #     a np.array can be merged into one
+    #
+    #     Args:
+    #         X (list): list that contains representations of the items
+    #         embedding_combiner (CombiningTechnique): combining technique in case there are multiple
+    #             vectors with different row size
+    #     Returns:
+    #         X fused and vectorized
+    #     """
+    #     if self.__transformer is None:
+    #         raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
+    #                          " in its fit() method")
+    #
+    #     if any(not isinstance(rep, dict) and not isinstance(rep, np.ndarray) and not isinstance(rep, float) for rep in X[0]):
+    #         raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
+    #
+    #     # We check if there are dicts as representation in the first element of X,
+    #     # since the representations are the same for all elements in X we can check
+    #     # for dicts only in one element
+    #     need_vectorizer = any(isinstance(rep, dict) for rep in X[0])
+    #
+    #     if need_vectorizer:
+    #         # IF the transformer is not fitted then we are training the model
+    #         try:
+    #             check_is_fitted(self.__transformer)
+    #         except NotFittedError:
+    #             X_dicts = [rep for item in X for rep in item if isinstance(rep, dict)]
+    #             self.__transformer.fit(X_dicts)
+    #
+    #     # In every case, we transform the input
+    #     X_vectorized_sparse = []
+    #     for sublist in X:
+    #         single_sparse = sparse.csr_matrix((1, 0))
+    #         for item in sublist:
+    #             if need_vectorizer and isinstance(item, dict):
+    #                 vector = self.__transformer.transform(item)
+    #                 single_sparse = sparse.hstack((single_sparse, vector), format='csr')
+    #             elif isinstance(item, np.ndarray):
+    #                 if item.ndim > 1:
+    #                     item = embedding_combiner.combine(item)
+    #
+    #                 item_sparse = sparse.csr_matrix(item)
+    #                 single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+    #             else:
+    #                 # it's a float
+    #                 item_sparse = sparse.csr_matrix(item)
+    #                 single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+    #
+    #         X_vectorized_sparse.append(single_sparse)
+    #
+    #     X_dense = [x.toarray().flatten() for x in X_vectorized_sparse]
+    #
+    #     return X_dense
+
     def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
         """
         Method which transforms the X passed vectorizing if X contains dicts and merging
@@ -137,7 +212,7 @@ class ContentBasedAlgorithm(Algorithm):
             raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
                              " in its fit() method")
 
-        if any(not isinstance(rep, dict) and not isinstance(rep, np.ndarray) and not isinstance(rep, float) for rep in X[0]):
+        if any(not isinstance(rep, (dict, np.ndarray, (int, float))) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
         # We check if there are dicts as representation in the first element of X,
@@ -154,32 +229,28 @@ class ContentBasedAlgorithm(Algorithm):
                 self.__transformer.fit(X_dicts)
 
         # In every case, we transform the input
-        X_vectorized_sparse = []
-        for sublist in X:
-            single_sparse = sparse.csr_matrix((1, 0))
-            for item in sublist:
-                if need_vectorizer and isinstance(item, dict):
-                    vector = self.__transformer.transform(item)
-                    single_sparse = sparse.hstack((single_sparse, vector), format='csr')
-                elif isinstance(item, np.ndarray):
-                    if item.ndim > 1:
-                        item = embedding_combiner.combine(item)
+        X_vectorized = []
+        for item_repr_list in X:
+            single_arr = []
+            for item_repr in item_repr_list:
+                if need_vectorizer and isinstance(item_repr, dict):
+                    item_repr = self.__transformer.transform(item_repr)
+                    single_arr.append(item_repr.flatten())
+                elif isinstance(item_repr, np.ndarray):
+                    if item_repr.ndim > 1:
+                        item_repr = embedding_combiner.combine(item_repr)
 
-                    item_sparse = sparse.csr_matrix(item)
-                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+                    single_arr.append(item_repr.flatten())
                 else:
                     # it's a float
-                    item_sparse = sparse.csr_matrix(item)
-                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+                    single_arr.append(item_repr)
 
-            X_vectorized_sparse.append(single_sparse)
+            X_vectorized.append(np.hstack(single_arr))
 
-        X_dense = [x.toarray().flatten() for x in X_vectorized_sparse]
-
-        return X_dense
+        return X_vectorized
 
     @abc.abstractmethod
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_train_set: pd.DataFrame, loaded_contents_interface: LoadedContentsInterface):
         """
         Abstract method that processes rated items for the user.
 
@@ -211,7 +282,7 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
+    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsInterface,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
         |  Abstract method that predicts the rating which a user would give to items
@@ -236,7 +307,7 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsInterface, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -262,3 +333,6 @@ class ContentBasedAlgorithm(Algorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
         raise NotImplementedError
+
+    def _load_available_contents(self, contents_path: str, items_to_load: set = None):
+        return LoadedContentsDict(contents_path, items_to_load)

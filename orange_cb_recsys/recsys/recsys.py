@@ -1,6 +1,9 @@
 import abc
+from itertools import chain
+from typing import Union, Iterable, Dict, Optional
+from typing import Set
+
 import pandas as pd
-from typing import List
 from abc import ABC
 
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
@@ -8,11 +11,10 @@ from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.recsys.methodology import Methodology
-from orange_cb_recsys.utils import load_content_instance
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, progbar
 
 
 class RecSys(ABC):
@@ -177,7 +179,6 @@ class ContentBasedRS(RecSys):
         items_directory (str): the path of the items serialized by the Content Analyzer
         users_directory (str): the path of the users serialized by the Content Analyzer
     """
-    user_fit_dic = {}
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
@@ -187,16 +188,17 @@ class ContentBasedRS(RecSys):
 
         super().__init__(algorithm)
         self.__train_set = train_set
-        self.__algorithm = algorithm
         self.__items_directory = items_directory
         self.__users_directory = users_directory
+        self._user_fit_dic = {}
 
     @property
     def algorithm(self):
         """
         The content based algorithm chosen
         """
-        return self.__algorithm
+        alg: ContentBasedAlgorithm = super().algorithm
+        return alg
 
     @property
     def train_set(self):
@@ -228,22 +230,23 @@ class ContentBasedRS(RecSys):
 
         """
         items_to_load = set(self.train_set['to_id'].values)
-        loaded_items_dict = {item_id: load_content_instance(self.items_directory, item_id) for item_id in items_to_load}
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        for user_id in set(self.train_set['from_id']):
+        for user_id in progbar(set(self.train_set['from_id']), prefix="Fitting algorithm:"):
             user_train = self.train_set[self.train_set['from_id'] == user_id]
 
             try:
                 user_alg = self.algorithm.copy()
-                user_alg.process_rated(user_train, loaded_items_dict)
+                user_alg.process_rated(user_train, loaded_items_interface)
                 user_alg.fit()
-                self.user_fit_dic[user_id] = user_alg
+                self._user_fit_dic[user_id] = user_alg
             except UserSkipAlgFit as e:
                 warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
                 logger.warning(warning_message)
-                self.user_fit_dic[user_id] = None
+                self._user_fit_dic[user_id] = None
 
-    def rank(self, test_set: pd.DataFrame, n_recs: int = None, methodology: Methodology = TestRatingsMethodology()):
+    def rank(self, test_set: Union[pd.DataFrame, Iterable], n_recs: int = None,
+             methodology: Methodology = TestRatingsMethodology()) -> pd.DataFrame:
         """
         Method used to calculate ranking for the user in test set
 
@@ -262,33 +265,44 @@ class ContentBasedRS(RecSys):
             concat_rank: list of the items ranked for each user
 
         """
-        items_to_load = set(test_set['to_id'].values)
-        loaded_items_dict = {item_id: load_content_instance(self.items_directory, item_id) for item_id in items_to_load}
+        if len(self._user_fit_dic) == 0:
+            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+
+        all_users = set(test_set)
+        items_to_load = None
+        filter_dict: Optional[Dict] = None
+        if hasattr(test_set, "columns") and 'to_id' in test_set.columns:
+            filter_dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
+            items_to_load = set(chain(*filter_dict.values()))
+            all_users = set(filter_dict.keys())
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
         rank_list = []
 
-        for user_id in set(test_set['from_id']):
+        for user_id in progbar(all_users, prefix="Computing rank for user {}:", substitute_with_current=True):
             user_train = self.train_set[self.train_set['from_id'] == user_id]
+            user_seen_items = set(user_train['to_id'])
 
             filter_list = None
-            if 'to_id' in test_set.columns:
-                filter_list = methodology.filter_single(user_id, self.train_set, test_set)['to_id'].values
+            if filter_dict is not None:
+                filter_list = filter_dict.get(user_id)
 
-            user_fitted_alg = self.user_fit_dic.get(user_id)
+            user_fitted_alg = self._user_fit_dic.get(user_id)
             if user_fitted_alg is not None:
-                rank = user_fitted_alg.rank(set(user_train['to_id']), loaded_items_dict,
+                rank = user_fitted_alg.rank(user_seen_items, loaded_items_interface,
                                             n_recs, filter_list=filter_list)
                 rank.insert(0, 'from_id', user_id)
             else:
                 rank = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
-                logger.warning(f"No algoritm fitted for user {user_id}! It will be skipped")
+                logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
             rank_list.append(rank)
 
         concat_rank = pd.concat(rank_list)
         return concat_rank
 
-    def predict(self, test_set: pd.DataFrame):
+    def predict(self, test_set: Union[pd.DataFrame, Iterable], methodology: Methodology = TestRatingsMethodology()):
         """
         Method to call when score prediction must be done for the users in test set
 
@@ -303,29 +317,46 @@ class ContentBasedRS(RecSys):
             concat_score_preds: prediction for each user
 
         """
-        prediction_list = []
-        for user_id in set(test_set['from_id']):
+        if len(self._user_fit_dic) == 0:
+            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+
+        all_users = set(test_set)
+        items_to_load = None
+        filter_dict: Optional[Dict] = None
+        if hasattr(test_set, "columns") and 'to_id' in test_set.columns:
+            filter_dict: Dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
+            items_to_load = set(chain(*filter_dict.values()))
+            all_users = set(filter_dict.keys())
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
+
+        pred_list = []
+
+        for user_id in progbar(all_users, prefix="Computing score predictions for user {}:",
+                               substitute_with_current=True):
             user_train = self.train_set[self.train_set['from_id'] == user_id]
+            user_seen_items = set(user_train['to_id'])
 
             filter_list = None
-            if 'to_id' in test_set.columns:
-                filter_list = test_set[test_set['from_id'] == user_id].values
+            if filter_dict is not None:
+                filter_list = filter_dict.get(user_id)
 
-            user_fitted_alg = self.user_fit_dic.get(user_id)
+            user_fitted_alg = self._user_fit_dic.get(user_id)
             if user_fitted_alg is not None:
-                prediction = user_fitted_alg(user_train, self.items_directory,
-                                             filter_list=filter_list)
-                prediction.insert(0, 'from_id', user_id)
+                pred = user_fitted_alg.predict(user_seen_items, loaded_items_interface,
+                                               filter_list=filter_list)
+                pred.insert(0, 'from_id', user_id)
             else:
-                prediction = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
-                logger.warning(f"No algoritm fitted for user {user_id}! It will be skipped")
+                pred = pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})
+                logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
-            prediction_list.append(prediction)
+            pred_list.append(pred)
 
-        concat_pred = pd.concat(prediction_list)
+        concat_pred = pd.concat(pred_list)
         return concat_pred
 
-    def fit_predict(self, test_set: pd.DataFrame):
+    def fit_predict(self, test_set: Union[pd.DataFrame, Iterable],
+                    methodology: Methodology = TestRatingsMethodology()):
         """
         The method fits the algorithm and then calculates the prediction for each user
 
@@ -337,10 +368,11 @@ class ContentBasedRS(RecSys):
 
         """
         self.fit()
-        prediction = self.predict(test_set)
+        prediction = self.predict(test_set, methodology)
         return prediction
 
-    def fit_rank(self, test_set: pd.DataFrame, n_recs: int = None, methodology: Methodology = TestRatingsMethodology()):
+    def fit_rank(self, test_set: Union[pd.DataFrame, Iterable], n_recs: int = None,
+                 methodology: Methodology = TestRatingsMethodology()):
         """
         The method fits the algorithm and then calculates the rank for each user
 
@@ -476,7 +508,15 @@ class GraphBasedRS(RecSys):
         """
         return self.__graph
 
-    def predict(self, test_set: pd.DataFrame):
+    @property
+    def algorithm(self):
+        """
+        The content based algorithm chosen
+        """
+        alg: GraphBasedAlgorithm = super().algorithm
+        return alg
+
+    def predict(self, test_set: pd.DataFrame, methodology: Methodology = TestRatingsMethodology()):
         """
         Method used to predict the rating of the users
 
@@ -491,27 +531,31 @@ class GraphBasedRS(RecSys):
             concate_score_preds: list of predictions for each user
 
         """
-        prediction_list = []
-        if 'to_id' in test_set.columns:
-            for user_id in set(test_set['from_id']):
-                filter_list = test_set.query('from_id == @user_id')
-                filter_list = list(filter_list['to_id'].values)
-                user_id = str(user_id)
-                user_alg = self.algorithm
-                prediction = user_alg.predict(test_set.query('from_id == @user_id'), self.graph,
-                                              filter_list)
-                prediction_list.append(prediction)
+        train_set = self.graph.convert_to_dataframe(only_values=True)
 
-        else:
-            for user_id in set(test_set['from_id']):
-                user_id = str(user_id)
-                user_alg = self.algorithm
-                prediction = user_alg.rank(test_set.query('from_id == @user_id'), self.items_directory)
-                prediction_list.append(prediction)
-        concat_score_preds = pd.concat(prediction_list)
-        return concat_score_preds
+        all_users = set(test_set)
+        filter_frame = None
+        if hasattr(test_set, "columns") and 'to_id' in test_set.columns:
+            filter_frame = methodology.filter_all(train_set, test_set)
+            all_users = set(filter_frame['from_id'].values)
 
-    def rank(self, test_set: pd.DataFrame, n_recs: int = None):
+        pred_list = []
+
+        for user_id in progbar(all_users, prefix="Computing rank for user {}:", substitute_with_current=True):
+
+            filter_list = None
+            if filter_frame is not None:
+                filter_list = list(filter_frame[filter_frame['from_id'] == user_id]['to_id'])
+
+            pred = self.algorithm.predict(user_id, self.graph, filter_list=filter_list)
+            pred.insert(0, 'from_id', user_id)
+
+            pred_list.append(pred)
+
+        concat_pred = pd.concat(pred_list)
+        return concat_pred
+
+    def rank(self, test_set: pd.DataFrame, n_recs: int = None, methodology: Methodology = TestRatingsMethodology()):
         """
         Method used to rank the rating of the users
 
@@ -527,23 +571,27 @@ class GraphBasedRS(RecSys):
             concate_rank: list of the items ranked for each user
 
         """
+        train_set = self.graph.convert_to_dataframe(only_values=True)
+
+        all_users = set(test_set)
+        filter_frame = None
+        if hasattr(test_set, "columns") and 'to_id' in test_set.columns:
+            filter_frame = methodology.filter_all(train_set, test_set)
+            all_users = set(filter_frame['from_id'].values)
+
         rank_list = []
-        if 'to_id' in test_set.columns:
-            for user_id in set(test_set['from_id']):
-                filter_list = test_set.query('from_id == @user_id')
-                filter_list = list(filter_list['to_id'].values)
-                user_id = str(user_id)
-                user_alg = self.algorithm
-                rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
-                                     n_recs, filter_list)
-                rank_list.append(rank)
-        else:
-            for user_id in set(test_set['from_id']):
-                user_id = str(user_id)
-                user_alg = self.algorithm
-                rank = user_alg.rank(test_set.query('from_id == @user_id'), self.graph,
-                                     n_recs)
-                rank_list.append(rank)
+
+        for user_id in progbar(all_users, prefix="Computing score prediction for user {}:",
+                               substitute_with_current=True):
+            filter_list = None
+            if filter_frame is not None:
+                filter_list = list(filter_frame[filter_frame['from_id'] == user_id]['to_id'])
+
+            rank = self.algorithm.rank(user_id, self.graph, n_recs, filter_list=filter_list)
+            rank.insert(0, 'from_id', user_id)
+
+            rank_list.append(rank)
+
         concat_rank = pd.concat(rank_list)
         return concat_rank
 
