@@ -1,3 +1,6 @@
+import functools
+from functools import cached_property
+
 import pandas as pd
 from typing import List, Any, Union, Iterator, Dict
 
@@ -56,33 +59,37 @@ class RepresentationContainer:
         if not isinstance(representation_list, list):
             representation_list = [representation_list]
 
-        if len(representation_list) != len(external_id_list):
+        if len(external_id_list) != len(representation_list):
             raise ValueError("Representation and external_id lists must have the same length")
-        if len(external_id_list) != len(set(external_id_list)):
-            raise ValueError("Custom IDs must be unique!")
 
-        self.__dataframe = pd.DataFrame({'external_id': external_id_list, 'representation': representation_list})
-        self.__dataframe['internal_id'] = self.__dataframe.index
-        self.__alias_dict = {k: v for k, v in zip(external_id_list, self.__dataframe.index.values) if k is not None}
-        self.__dataframe.set_index(['internal_id', 'external_id'], inplace=True)
+
+        ids = [(int_id, ext_id) for int_id, ext_id in enumerate(external_id_list)]
+        self.__representation_container = dict(zip(ids, representation_list))
+
+        self.__alias_dict = {ext_id: int_id for int_id, ext_id in ids if ext_id is not None}
+
+        # self.__dataframe = pd.DataFrame({'external_id': external_id_list, 'representation': representation_list})
+        # self.__dataframe['internal_id'] = self.__dataframe.index
+        # self.__alias_dict = {k: v for k, v in zip(external_id_list, self.__dataframe.index.values) if k is not None}
+        # self.__dataframe.set_index(['internal_id', 'external_id'], inplace=True)
 
     def get_internal_index(self) -> List[int]:
         """
         Returns a list containing the values in the 'internal_id' index
         """
-        return list(self.__dataframe.index.get_level_values('internal_id'))
+        return [ids_tuple[0] for ids_tuple in self.__representation_container]
 
     def get_external_index(self) -> List[Union[str, None]]:
         """
         Returns a list containing the values in the 'external_id' index
         """
-        return list(self.__dataframe.index.get_level_values('external_id'))
+        return [ids_tuple[1] for ids_tuple in self.__representation_container]
 
     def get_representations(self) -> List[Any]:
         """
         Returns a list containing the values in the 'representations' column
         """
-        return list(self.__dataframe['representation'])
+        return list(self.__representation_container.values())
 
     def append(self, representation: Union[List[Any], Any],
                external_id: Union[List[Union[str, None]], Union[str, None]]):
@@ -108,19 +115,16 @@ class RepresentationContainer:
 
         if len(representation) != len(external_id):
             raise ValueError("Representation and external_id lists must have the same length")
-        if len(external_id) != len(set(external_id)):
-            raise ValueError("Custom IDs must be unique!")
 
         if len(self.get_internal_index()) == 0:
             next_internal_id = 0
         else:
-            next_internal_id = self.__dataframe.index.get_level_values('internal_id')[-1] + 1
-        new_dataframe = pd.DataFrame({'external_id': external_id, 'representation': representation})
-        new_dataframe['internal_id'] = list(range(next_internal_id, len(representation) + next_internal_id))
-        self.__alias_dict.update({k: v for k, v in zip(external_id, new_dataframe['internal_id'].values)
-                                  if k is not None})
-        new_dataframe.set_index(['internal_id', 'external_id'], inplace=True)
-        self.__dataframe = self.__dataframe.append(new_dataframe)
+            next_internal_id = len(self.get_internal_index())
+
+        id_to_append = [(int_id, ext_id) for int_id, ext_id in enumerate(external_id, start=next_internal_id)]
+        self.__representation_container.update(dict(zip(id_to_append, representation)))
+
+        self.__alias_dict.update({ext_id: int_id for int_id, ext_id in id_to_append if ext_id is not None})
 
     def pop(self, id: Union[str, int]):
         """
@@ -137,11 +141,15 @@ class RepresentationContainer:
         removed_representation = self[id]
         try:
             # id is int
-            self.__dataframe = self.__dataframe.drop(id, level=0)
-        except KeyError:
-            # id is string
+            key = list(self.__representation_container.keys())[id]
+            del self.__representation_container[key]
+        except TypeError:
+            # id is string, so we convert it
+            int_id = self.__alias_dict[id]
+            key = list(self.__representation_container.keys())[int_id]
             del self.__alias_dict[id]
-            self.__dataframe = self.__dataframe.drop(id, level=1)
+            del self.__representation_container[key]
+
         return removed_representation
 
     def __getitem__(self, item: Union[str, int]):
@@ -155,25 +163,32 @@ class RepresentationContainer:
         """
         try:
             # the index is an integer
-            return self.__dataframe.iloc[item]['representation']
-        except TypeError as e:
-            # the index is a string
-            integer_ind = self.__alias_dict[item]
-            return self.__dataframe.iloc[integer_ind]['representation']
+            key = list(self.__representation_container.keys())[item]
+            return self.__representation_container[key]
+        except TypeError:
+            # the index is a string, so we convert it into an int
+            int_ind = self.__alias_dict[item]
+            key = list(self.__representation_container.keys())[int_ind]
+            return self.__representation_container[key]
 
     def __iter__(self) -> Iterator[Dict]:
-        for internal_index, external_index, representation in \
-                zip(self.get_internal_index(), self.get_external_index(), self.get_representations()):
-            yield {'internal_id': internal_index, 'external_id': external_index, 'representation': representation}
+        for ids_tuple, representation in self.__representation_container.items():
+            yield {'internal_id': ids_tuple[0], 'external_id': ids_tuple[1], 'representation': representation}
 
     def __len__(self):
         return len(self.get_internal_index())
 
     def __eq__(self, other):
-        return self.__dataframe.equals(other.__dataframe)
+        return self.__representation_container == other.__representation_container
 
     def __str__(self):
-        return str(self.__dataframe)
+        dataframe = pd.DataFrame({
+            'internal_id': self.get_internal_index(),
+            'external_id': self.get_external_index(),
+            'representation': self.get_representations()
+        })
+        dataframe.set_index(['internal_id', 'external_id'], inplace=True)
+        return str(dataframe)
 
     def __repr__(self):
         return str(self)

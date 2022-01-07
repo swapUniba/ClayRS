@@ -417,7 +417,13 @@ class Content:
         return "%s\n%s\n%s\n##############################" % (content_string, exo_string, field_string)
 
     def __eq__(self, other):
-        return self.__content_id == other.__content_id and self.__field_dict == other.__field_dict
+        result = False
+        try:
+            result = self.__content_id == other.__content_id and self.__field_dict == other.__field_dict
+        except AttributeError:
+            pass
+
+        return result
 
 
 class ContentEncoder(json.JSONEncoder):
