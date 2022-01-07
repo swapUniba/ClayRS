@@ -3,12 +3,11 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import ndcg_score
 
-from orange_cb_recsys.evaluation.exceptions import KError
 from orange_cb_recsys.recsys.partitioning import Split
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 
-class RankingMetric(RankingNeededMetric):
+class RankingMetric(Metric):
     """
     Abstract class that generalize ranking metrics.
     A ranking metric evaluates the quality of the recommendation list
@@ -222,17 +221,17 @@ class MRRAtK(MRR):
 
 
     Args:
-        k (int): the cutoff parameter. It must be >= 1, otherwise a KError exception is raised
+        k (int): the cutoff parameter. It must be >= 1, otherwise a ValueError exception is raised
         relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
             user. If not specified, the mean rating score of every user will be used
 
     Raises:
-        KError: if an invalid cutoff parameter is passed (0 or negative)
+        ValueError: if an invalid cutoff parameter is passed (0 or negative)
     """
 
     def __init__(self, k: int, relevant_threshold: float = None):
         if k < 1:
-            raise KError('k={} not valid! k must be >= 1!'.format(k))
+            raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
         super().__init__(relevant_threshold)
 

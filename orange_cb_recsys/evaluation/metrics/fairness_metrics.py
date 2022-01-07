@@ -5,15 +5,15 @@ from typing import List, Dict
 import pandas as pd
 import numpy as np
 
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.recsys.partitioning import Split
-from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers, PercentageError
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers
 from orange_cb_recsys.evaluation.utils import *
 
 from orange_cb_recsys.utils.const import logger
 
 
-class FairnessMetric(RankingNeededMetric):
+class FairnessMetric(Metric):
     """
     Abstract class that generalize fairness metrics
     """
@@ -116,10 +116,10 @@ class GroupFairnessMetric(FairnessMetric):
 
         for percentage_chosen in groups.values():
             if not 0 < percentage_chosen <= 1:
-                raise PercentageError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
+                raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
         total = sum(groups.values())
         if total > 1:
-            raise PercentageError("Incorrect percentage! Sum of percentage is > than 1")
+            raise ValueError("Incorrect percentage! Sum of percentage is > than 1")
         elif total < 1:
             logger.warning("Sum of percentage is < than 1, "
                            "the {} percentage of users will be inserted into the "
@@ -366,7 +366,7 @@ class DeltaGap(GroupFairnessMetric):
     users with many popular items will be inserted into the first group, users with niche items rated will be inserted
     into one of the last groups
 
-    If the 'top_n' parameter is specified, then the Delta GAP will be calculed considering only the first
+    If the 'top_n' parameter is specified, then the Delta GAP will be calculated considering only the first
     *n* items of every recommendation list of all users
 
 
@@ -382,7 +382,7 @@ class DeltaGap(GroupFairnessMetric):
 
     def __init__(self, user_groups: Dict[str, float], top_n: int = None, pop_percentage: float = 0.2):
         if not 0 < pop_percentage <= 1:
-            raise PercentageError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
+            raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
         self.__pop_percentage = pop_percentage
         self.__top_n = top_n
