@@ -2,13 +2,14 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers, PercentageError
+from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers
 from orange_cb_recsys.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, DeltaGap, \
     GroupFairnessMetric, Counter
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 
 
 # Will be the same for every test
+from orange_cb_recsys.recsys import Split
+
 user_truth = pd.DataFrame({'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
                            'to_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
                            'score': [3, 2, 3, 1, 2, 4, 2, 3]})
@@ -273,7 +274,7 @@ class TestGroupFairnessMetric(unittest.TestCase):
                                                      pop_items=popular_items)
 
         # Check error raised a percentage is not valid
-        with self.assertRaises(PercentageError):
+        with self.assertRaises(ValueError):
             GroupFairnessMetric.split_user_in_groups(user_pred_only_u1,
                                                      groups={'a': 1.9},
                                                      pop_items=popular_items)
@@ -385,7 +386,7 @@ class TestDeltaGap(unittest.TestCase):
         self.assertAlmostEqual(expected, result)
 
     def test_invalid_percentage(self):
-        with self.assertRaises(PercentageError):
+        with self.assertRaises(ValueError):
             DeltaGap(user_groups={'a': 0.5}, pop_percentage=-0.5)
             DeltaGap(user_groups={'a': 0.5}, pop_percentage=0)
             DeltaGap(user_groups={'a': 0.5}, pop_percentage=1.5)

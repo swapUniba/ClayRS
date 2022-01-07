@@ -1,10 +1,11 @@
+import unittest
 from unittest import TestCase
 import pandas as pd
 import numpy as np
 
 from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, RPrecision, \
     RecallAtK, FMeasureAtK
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.recsys.partitioning import Split
 
 user_pred_only_new_items = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u2', 'u2'],
@@ -561,7 +562,7 @@ class TestFMeasure(TestCase):
         num = prec * reca
         den = (beta_2 * prec) + reca
 
-        fbeta = (1 + beta_2) * (num/den)
+        fbeta = (1 + beta_2) * (den and num/den or 0)
 
         fbeta = fbeta
 
@@ -885,3 +886,5 @@ class TestFMeasureAtK(TestCase):
         # u1_total = [0, 0, 0, 1, 0, 0], u2_total = [0, 1, 1]
         # u1@k = [0, 0, 0], u2@k = [0, 1, 1]
 
+if __name__ == "__main__":
+     unittest.main()

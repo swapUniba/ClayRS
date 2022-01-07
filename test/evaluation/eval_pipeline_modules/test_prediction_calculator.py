@@ -8,9 +8,6 @@ from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers impo
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric, ScoresNeededMetric
-
-from orange_cb_recsys.evaluation.eval_pipeline_modules.prediction_calculator import PredictionCalculator, Split
 from orange_cb_recsys.recsys.content_based_algorithm import ClassifierRecommender
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.recsys import ContentBasedRS, GraphBasedRS

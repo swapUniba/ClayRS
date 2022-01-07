@@ -3,9 +3,9 @@ import pandas as pd
 from sklearn.metrics import ndcg_score
 import numpy as np
 
-from orange_cb_recsys.evaluation.exceptions import KError
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.evaluation.exceptions import ValueError
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
+from orange_cb_recsys.recsys import Split
 
 user_pred_only_new_items = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u2', 'u2'],
@@ -284,7 +284,7 @@ class TestMRRAtK(unittest.TestCase):
         # u1@k = [0, 1], u2@k = [0, 0]
 
     def test_k_not_valid(self):
-        with self.assertRaises(KError):
+        with self.assertRaises(ValueError):
             MRRAtK(k=-2)
             MRRAtK(k=0)
 
@@ -316,7 +316,7 @@ class TestCorrelation(unittest.TestCase):
         self.assertTrue(all(pd.isna(pearsons_predicted)))
 
     @for_each_method
-    def test_perform_w_new_items(self, method: str):
+    def test_perform_w_new_items(self, method):
         metric = Correlation(method)
 
         result_w_new_items = metric.perform(split_w_new_items)
@@ -329,7 +329,7 @@ class TestCorrelation(unittest.TestCase):
 
         self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
 
-        u2_actual = pd.Series([2, 0, 3])
+        u2_actual = pd.Series([2, 3, 0])
         u2_ideal = pd.Series([0, 1, 2])
 
         u2_expected_pearson = u2_actual.corr(u2_ideal, method)
@@ -348,7 +348,7 @@ class TestCorrelation(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = pd.Series([1, 5])
+        u1_actual = pd.Series([1, 0])
         u1_ideal = pd.Series([0, 1, 2, 3, 4])
 
         u1_expected_pearson = u1_actual.corr(u1_ideal, method)
@@ -356,15 +356,16 @@ class TestCorrelation(unittest.TestCase):
 
         self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
 
-        u2_actual = pd.Series([2, 0])
+        u2_actual = pd.Series([0])
         u2_ideal = pd.Series([0, 1, 2])
 
         u2_expected_pearson = u2_actual.corr(u2_ideal, method)
         u2_result_pearson = float(result_w_new_items.query('from_id == "u2"')[str(metric)])
 
-        self.assertAlmostEqual(u2_expected_pearson, u2_result_pearson)
+        self.assertTrue(np.isnan(u2_expected_pearson))
+        self.assertTrue(np.isnan(u2_result_pearson))
 
-        sys_expected_pearson = (u1_expected_pearson + u2_expected_pearson) / 2
+        sys_expected_pearson = u1_expected_pearson  # the mean doesn't consider nan values
         sys_result_pearson = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_pearson, sys_result_pearson)
