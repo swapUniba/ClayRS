@@ -3,9 +3,8 @@ from unittest import TestCase
 
 import pandas as pd
 
-from orange_cb_recsys.evaluation.exceptions import ValueError
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopProfileVsRecs, PopRecsCorrelation
+from orange_cb_recsys.recsys import Split
 
 truth = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2',

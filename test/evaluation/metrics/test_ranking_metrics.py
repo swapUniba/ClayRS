@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.metrics import ndcg_score
 import numpy as np
 
-from orange_cb_recsys.evaluation.exceptions import ValueError
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
 from orange_cb_recsys.recsys import Split
 
