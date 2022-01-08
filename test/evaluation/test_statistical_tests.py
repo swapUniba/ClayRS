@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+import numpy as np
 from scipy.stats import ttest_ind, ranksums
 
 from orange_cb_recsys.evaluation.statistical_test import StatisticalTest, Ttest, Wilcoxon, PairedTest
@@ -201,11 +202,10 @@ class TestPairedTest(unittest.TestCase):
         result_ndcg = result_df['NDCG'].values[0]
         result_precision = result_df['Precision - micro'].values[0]
 
-        expected_ndcg = external_function([], [])
-        expected_precision = external_function([], [])
-
-        self.assertEqual(expected_ndcg, result_ndcg)
-        self.assertEqual(expected_precision, result_precision)
+        self.assertTrue(np.isnan(result_ndcg.statistic))
+        self.assertTrue(np.isnan(result_ndcg.pvalue))
+        self.assertTrue(np.isnan(result_precision.statistic))
+        self.assertTrue(np.isnan(result_precision.pvalue))
 
         # perform users in common but not columns in common
         users_metrics_result1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
