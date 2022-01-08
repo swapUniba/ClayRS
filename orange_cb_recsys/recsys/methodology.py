@@ -1,7 +1,9 @@
 import abc
 from abc import ABC
-from typing import Set
+from typing import Set, Union, Dict
 import pandas as pd
+
+from orange_cb_recsys.utils.const import logger
 
 
 class Methodology(ABC):
@@ -13,7 +15,8 @@ class Methodology(ABC):
     Comparison' paper, check it for more
     """
 
-    def filter_all(self, train_set: pd.DataFrame, test_set: pd.DataFrame) -> pd.DataFrame:
+    def filter_all(self, train_set: pd.DataFrame, test_set: pd.DataFrame,
+                   result_as_dict: bool = False) -> Union[pd.DataFrame, Dict]:
         """
         Method which effectively calculates which items must be used in order to generate a recommendation list
 
@@ -23,21 +26,29 @@ class Methodology(ABC):
         Args:
             train_set (pd.DataFrame): Pandas dataframe which contains the train set of every user
             test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
-
+            result_as_dict (bool): If True the output of the method will be a dict containing users as a key and
+                list of item that must be predicted as a value.
+                EXAMPLE:
+                    {'u1': ['i1', 'i2', 'i3'], 'u2': ['i1', 'i4'], ...}
         Returns:
             A DataFrame which contains all items which must be recommended to every user based on the methodology
             chosen.
         """
+        logger.info("Filtering items based on methodology chosen...")
 
         user_list = set(test_set.from_id)
 
         filtered_frames_to_concat = [self.filter_single(user, train_set, test_set)
                                      for user in user_list]
 
-        return pd.concat(filtered_frames_to_concat)[['from_id', 'to_id']]
+        filter_frame = pd.concat(filtered_frames_to_concat)[['from_id', 'to_id']]
+        if result_as_dict:
+            filter_frame = dict(filter_frame.groupby('from_id')['to_id'].apply(list))
+
+        return filter_frame
 
     @abc.abstractmethod
-    def filter_single(self, user_id: str, train_set: pd.DataFrame, test_test: pd.DataFrame) -> pd.DataFrame:
+    def filter_single(self, user_id: str, train_set: pd.DataFrame, test_set: pd.DataFrame) -> pd.DataFrame:
         """
         Abstract method in which must be specified how to calculate which items must be part of the recommendation list
         of a single user
@@ -86,7 +97,6 @@ class TestRatingsMethodology(Methodology):
             train_set (pd.DataFrame): Pandas Dataframe which contains the train set of every user
             test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
         """
-
         user_test = test_set[test_set['from_id'] == user_id]
 
         if self.__threshold is not None:

@@ -6,7 +6,6 @@ from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_sel
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler import \
     FeatureSelectionHandler
 from orange_cb_recsys.recsys.graphs import NXFullGraph
-from orange_cb_recsys.utils.const import recsys_logger
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank import PageRankAlg
 
@@ -29,7 +28,8 @@ class NXPageRank(PageRankAlg):
     def __init__(self, personalized: bool = False, feature_selection: FeatureSelectionAlgorithm = None):
         super().__init__(personalized, feature_selection)
 
-    def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None,
+             filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -55,8 +55,6 @@ class NXPageRank(PageRankAlg):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
-        recsys_logger.info("Calculating rank")
-
         columns = ["to_id", "score"]
         score_frame = pd.DataFrame(columns=columns)
 

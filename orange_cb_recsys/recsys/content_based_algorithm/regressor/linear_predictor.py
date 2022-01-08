@@ -1,17 +1,13 @@
-import logging
 from typing import List
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex, LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
-from orange_cb_recsys.utils.load_content import get_rated_items, get_unrated_items, \
-    get_chosen_items
 import pandas as pd
 
-
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.utils.const import recsys_logger
 
 
 class LinearPredictor(ContentBasedAlgorithm):
@@ -65,7 +61,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         self.__rated_dict: dict = None
         self.__embedding_combiner = embedding_combiner
 
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
@@ -79,13 +75,12 @@ class LinearPredictor(ContentBasedAlgorithm):
             items_directory (str): path of the directory where the items are stored
         """
         # Load rated items from the path
-        rated_items = get_rated_items(items_directory, user_ratings)
+        rated_items = [available_loaded_items.get(item_id) for item_id in user_ratings['to_id'].values]
 
         # Assign label and extract features from the rated items
         labels = []
         rated_dict = {}
 
-        recsys_logger.info("Processing rated items")
         for item in rated_items:
             if item is not None:
                 # This conversion raises Exception when there are multiple equals 'to_id' for the user
@@ -116,7 +111,6 @@ class LinearPredictor(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        recsys_logger.info("Fitting {} regressor".format(self.__regressor))
         self._set_transformer()
 
         rated_features = list(self.__rated_dict.values())
@@ -126,7 +120,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         self.__regressor.fit(fused_features, self.__labels)
 
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
+    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
         Predicts how much a user will like unrated items.
@@ -146,9 +140,10 @@ class LinearPredictor(ContentBasedAlgorithm):
         """
         # Load items to predict
         if filter_list is None:
-            items_to_predict = get_unrated_items(items_directory, user_ratings)
+            items_to_predict = [available_loaded_items.get(item_id)
+                                for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = get_chosen_items(items_directory, filter_list)
+            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -159,10 +154,10 @@ class LinearPredictor(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        recsys_logger.info("Calculating score predictions")
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
-            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
+            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict,
+                                                                     self.__embedding_combiner)
 
             score_labels = self.__regressor.predict(fused_features_items_to_pred)
         else:
@@ -177,7 +172,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         return score_frame
 
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsDict, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -198,17 +193,12 @@ class LinearPredictor(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
-        recsys_logger.info("Calculating rank")
-        # we get the precedent level of the logger, so we will re-enable it at that level
-        precedent_level_recsys_logger = recsys_logger.getEffectiveLevel()
-        recsys_logger.setLevel(logging.WARNING)
 
         # Predict the rating for the items and sort them in descending order
-        result = self.predict(user_ratings, items_directory, filter_list)
+        result = self.predict(user_seen_items, available_loaded_items, filter_list)
 
         result.sort_values(by=['score'], ascending=False, inplace=True)
 
         rank = result.head(recs_number)
 
-        recsys_logger.setLevel(precedent_level_recsys_logger)
         return rank

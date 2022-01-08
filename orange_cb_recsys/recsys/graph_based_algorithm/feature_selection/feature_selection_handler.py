@@ -3,7 +3,7 @@ from typing import List, Iterable
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions import FeatureSelectionException
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 from orange_cb_recsys.recsys.graphs.graph import FullGraph, UserNode, ItemNode
-from orange_cb_recsys.utils.const import recsys_logger
+from orange_cb_recsys.utils.const import logger
 
 
 class FeatureSelectionHandler:
@@ -71,25 +71,25 @@ class FeatureSelectionHandler:
         user_fs_failed = False
         item_fs_failed = False
 
-        recsys_logger.info("Performing Feature Selection on users")
+        logger.info("Performing Feature Selection on users")
         try:
             properties_to_keep.extend(self.__feature_selection_algorithm.perform(graph, user_target_nodes))
         except FeatureSelectionException as e:
-            recsys_logger.warning(str(e) + "! Users original properties will be kept")
+            logger.warning(str(e) + "! Users original properties will be kept")
             user_fs_failed = True
 
-        recsys_logger.info("Performing Feature Selection on items")
+        logger.info("Performing Feature Selection on items")
         try:
             properties_to_keep.extend(self.__feature_selection_algorithm.perform(graph, item_target_nodes))
         except FeatureSelectionException as e:
-            recsys_logger.warning(str(e) + "! Items original properties will be kept")
+            logger.warning(str(e) + "! Items original properties will be kept")
             item_fs_failed = True
 
         # in case user feature selection or item feature selection failed
         # if both failed the original graph is returned
         # if only one of them failed, the original properties (either for items or users) are retrieved
         if user_fs_failed and item_fs_failed:
-            recsys_logger.warning("Since items and users original properties will be kept, "
+            logger.warning("Since items and users original properties will be kept, "
                                   "the original graph will be returned")
             return graph
         elif user_fs_failed and not item_fs_failed:

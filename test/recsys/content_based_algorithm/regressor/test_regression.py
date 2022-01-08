@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
@@ -38,7 +39,9 @@ class TestRegression(TestCase):
 
         cls.filter_list = ['tt0112641', 'tt0112760', 'tt0112896', 'tt0113497']
 
-        cls.movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+
+        cls.available_loaded_items = LoadedContentsDict(movies_dir)
 
         # IMPORTANT! All models to test. If another model is implemented, append it to this list
         cls.models_list = [SkLinearRegression(), SkRidge(), SkBayesianRidge(),
@@ -54,17 +57,18 @@ class TestRegression(TestCase):
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
-        alg.process_rated(user_ratings, self.movies_dir)
+        alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
+        already_seen_items = list(user_ratings['to_id'])
         # predict with filter_list
-        res_filtered = alg.predict(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.predict(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
         item_scored_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.predict(user_ratings, self.movies_dir)
+        res_all_unrated = alg.predict(already_seen_items, self.available_loaded_items)
         item_rated_set = set(user_ratings['to_id'])
         item_scored_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -82,17 +86,18 @@ class TestRegression(TestCase):
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
-        alg.process_rated(user_ratings, self.movies_dir)
+        alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
+        already_seen_items = list(user_ratings['to_id'])
         # predict with filter_list
-        res_filtered = alg.predict(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.predict(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
         item_scored_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.predict(user_ratings, self.movies_dir)
+        res_all_unrated = alg.predict(already_seen_items, self.available_loaded_items)
         item_rated_set = set(user_ratings['to_id'])
         item_scored_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -108,17 +113,18 @@ class TestRegression(TestCase):
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
-        alg.process_rated(user_ratings, self.movies_dir)
+        alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
+        already_seen_items = list(user_ratings['to_id'])
         # rank with filter_list
-        res_filtered = alg.rank(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.rank(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
         item_ranked_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_ranked_set), len(self.filter_list))
         self.assertCountEqual(item_ranked_set, self.filter_list)
 
         # rank without filter_list
-        res_all_unrated = alg.rank(user_ratings, self.movies_dir)
+        res_all_unrated = alg.rank(already_seen_items, self.available_loaded_items)
         item_rated_set = set(user_ratings['to_id'])
         item_ranked_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -127,7 +133,7 @@ class TestRegression(TestCase):
 
         # rank with n_recs specified
         n_recs = 5
-        res_n_recs = alg.rank(user_ratings, self.movies_dir, n_recs)
+        res_n_recs = alg.rank(already_seen_items, self.available_loaded_items, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
         item_rated_set = set(user_ratings['to_id'])
         item_ranked_set = set(res_n_recs['to_id'])
@@ -146,17 +152,18 @@ class TestRegression(TestCase):
 
         user_ratings = self.ratings.query('from_id == "A000"')
 
-        alg.process_rated(user_ratings, self.movies_dir)
+        alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
+        already_seen_items = list(user_ratings['to_id'])
         # rank with filter_list
-        res_filtered = alg.rank(user_ratings, self.movies_dir, filter_list=self.filter_list)
+        res_filtered = alg.rank(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
         item_ranked_set = set(res_filtered['to_id'])
         self.assertEqual(len(item_ranked_set), len(self.filter_list))
         self.assertCountEqual(item_ranked_set, self.filter_list)
 
         # rank without filter_list
-        res_all_unrated = alg.rank(user_ratings, self.movies_dir)
+        res_all_unrated = alg.rank(already_seen_items, self.available_loaded_items)
         item_rated_set = set(user_ratings['to_id'])
         item_ranked_set = set(res_all_unrated['to_id'])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -165,7 +172,7 @@ class TestRegression(TestCase):
 
         # rank with n_recs specified
         n_recs = 5
-        res_n_recs = alg.rank(user_ratings, self.movies_dir, n_recs)
+        res_n_recs = alg.rank(already_seen_items, self.available_loaded_items, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
         item_rated_set = set(user_ratings['to_id'])
         item_ranked_set = set(res_n_recs['to_id'])

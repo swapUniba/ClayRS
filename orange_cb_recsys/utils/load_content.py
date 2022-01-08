@@ -6,7 +6,7 @@ from typing import List
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.utils.const import utils_logger
+from orange_cb_recsys.utils.const import logger
 
 
 def load_content_instance(directory: str, content_id: str) -> Content:
@@ -56,7 +56,7 @@ def get_unrated_items(items_directory: str, ratings: pd.DataFrame) -> List[Conte
     intersection = [x for x in filename_list if x in directory_filename_list]
     filename_list = intersection
 
-    utils_logger.info("Loading {} unrated items".format(len(filename_list)))
+    logger.info("Loading {} unrated items".format(len(filename_list)))
     unrated_items = [
         load_content_instance(items_directory, item_id)
         for item_id in filename_list]
@@ -92,7 +92,7 @@ def get_rated_items(items_directory: str, ratings: pd.DataFrame) -> List[Content
     filename_list = intersection
 
     filename_list.sort()
-    utils_logger.info("Loading {} rated items".format(len(filename_list)))
+    logger.info("Loading {} rated items".format(len(filename_list)))
     rated_items = [
         load_content_instance(items_directory, item_id)
         for item_id in filename_list]
@@ -101,7 +101,7 @@ def get_rated_items(items_directory: str, ratings: pd.DataFrame) -> List[Content
 
 
 def get_chosen_items(items_directory: str, items_chosen: List[str]):
-    utils_logger.info("Loading {} chosen items".format(len(items_chosen)))
+    logger.info("Loading {} chosen items".format(len(items_chosen)))
     items_loaded = [load_content_instance(items_directory, item_id)
                     for item_id in items_chosen]
     return items_loaded

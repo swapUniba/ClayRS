@@ -3,14 +3,13 @@ from abc import abstractmethod
 
 import numpy as np
 
-from orange_cb_recsys.evaluation.exceptions import StringNotSupported, KError
 from orange_cb_recsys.recsys.partitioning import Split
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 import pandas as pd
 
 
-class ClassificationMetric(RankingNeededMetric):
+class ClassificationMetric(Metric):
     """
     Abstract class that generalize classification metrics.
     A classification metric uses confusion matrix terminology (true positive, false positive, etc.) to classify each
@@ -27,7 +26,7 @@ class ClassificationMetric(RankingNeededMetric):
         self.__avg = sys_average.lower()
 
         if self.__avg not in valid_avg:
-            raise StringNotSupported("Average {} is not supported! Average methods available for {} are:\n"
+            raise ValueError("Average {} is not supported! Average methods available for {} are:\n"
                                      "{}".format(sys_average, str(self), valid_avg))
 
         self.__relevant_threshold = relevant_threshold
@@ -174,7 +173,7 @@ class PrecisionAtK(Precision):
     def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
         super().__init__(relevant_threshold, sys_average)
         if k < 1:
-            raise KError('k={} not valid! k must be >= 1!'.format(k))
+            raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
 
     @property
@@ -342,7 +341,7 @@ class RecallAtK(Recall):
     def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
         super().__init__(relevant_threshold, sys_average)
         if k < 1:
-            raise KError('k={} not valid! k must be >= 1!'.format(k))
+            raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
 
     @property
@@ -497,7 +496,7 @@ class FMeasureAtK(FMeasure):
     def __init__(self, k: int, beta: int = 1, relevant_threshold: float = None, sys_average: str = 'macro'):
         super().__init__(beta, relevant_threshold, sys_average)
         if k < 1:
-            raise KError('k={} not valid! k must be >= 1!'.format(k))
+            raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
 
     @property

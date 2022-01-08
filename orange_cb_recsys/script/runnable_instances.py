@@ -30,8 +30,7 @@ from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.recsys.partitioning import Split, PartitionModule
+from orange_cb_recsys.recsys.partitioning import Split
 
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes
 
@@ -45,7 +44,7 @@ base_classes: List[Type] = [
 
     RecSys, Algorithm, Graph, Similarity, Classifier, Regressor, GraphMetrics, FeatureSelectionAlgorithm,
 
-    EvalModel, Metric, MetricCalculator, Partitioning, Methodology, Split, PartitionModule
+    EvalModel, Metric, Partitioning, Methodology, Split
 ]
 
 
