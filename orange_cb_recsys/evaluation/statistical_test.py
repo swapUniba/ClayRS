@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
+from collections import defaultdict
+from typing import Dict
+
 import pandas as pd
 from scipy.stats import ttest_ind, ranksums
+
 
 class StatisticalTest(ABC):
     """
@@ -11,117 +15,72 @@ class StatisticalTest(ABC):
         differently for each statistical test you decide to do.
 
     """
-
-    def _common_users(value_1, value_2, columns1, columns2):
+    @staticmethod
+    def _common_users(df1, df2, column_list) -> Dict:
         """
         Method called by the statistical test in case of use of df.
         Common users are searched for meaningful comparison.
-
-        Args:
-
-            value_1 value_2: dataframe on which to identify common users
-
-        Returns: List of value's metric for common users
-
         """
-        dict_user1 = dict(zip(value_1['from_id'], value_1[columns1]))
-        dict_user2 = dict(zip(value_2['from_id'], value_2[columns2]))
-        common_users = list(set(dict_user1.keys()) & set(dict_user2.keys()))
-        common_value_list1 = list(map(dict_user1.get, common_users))
-        common_value_list2 = list(map(dict_user2.get, common_users))
-        return common_value_list1, common_value_list2
+        # we need to also extract the user_id column, that's why we append 'from_id'
+        column_list.append('from_id')
+
+        df1 = df1[column_list]
+        df2 = df2[column_list]
+
+        common_rows = pd.merge(df1, df2, how="inner", on=['from_id'])
+
+        return common_rows.drop(columns=['from_id']).to_dict('list')
 
     @abstractmethod
-
-    def stat_test_results(user_score_list:list):
+    def perform(self, users_metric_results: list):
         """
-                Abstract method in which must be specified how to calculate Statistical test
+        Abstract method in which must be specified how to calculate Statistical test
         """
         pass
 
-class PairedTtest(StatisticalTest):
+
+class PairedTest(StatisticalTest):
+
+    def perform(self, users_metric_results: list):
+
+        final_result = defaultdict(list)
+
+        n_system_evaluated = 1
+        while len(users_metric_results) != 0:
+            df1 = users_metric_results.pop(0)
+            for i, other_df in enumerate(users_metric_results, start=n_system_evaluated + 1):
+                common_metrics = [column for column in df1.columns
+                                  if column != 'from_id' and column in other_df.columns]
+
+                score_common_dict = self._common_users(df1, other_df, list(common_metrics))
+
+                final_result["Systems evaluated"].append((f"system_{n_system_evaluated}", f"system_{i}"))
+                for metric in common_metrics:
+                    score_system1 = score_common_dict[f"{metric}_x"]
+                    score_system2 = score_common_dict[f"{metric}_y"]
+
+                    single_metric_result = self._perform_test(score_system1, score_system2)
+                    final_result[metric].append(single_metric_result)
+
+            n_system_evaluated += 1
+
+        return pd.DataFrame(final_result).set_index("Systems evaluated")
 
     @abstractmethod
-    def stat_test_results(user_score_list:list):
+    def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
         """
-                  Abstract method in which must be specified how to calculate Statistical test
+        Abstract method in which must be specified how to calculate the paired statistical test
         """
-        pass
-
-class Ttest(PairedTtest):
-
-    def stat_test_results(user_score_list:list):
-        """
-        The method performs the Ttest on every possible pair of df or lists.
-        In the case of dataframe, it identifies the pairs of dataframe that have the same
-        metrics selected, and carries out the tests for each equal metric.
-
-        Args:
-
-            user_score_list: list of numbers or list of dataframe on which to permorm statistical tests
-
-        """
-        findSameMetrics=False
-        if (isinstance(user_score_list[0], pd.DataFrame)):
-            for value_1 in range(0, len(user_score_list)):
-                for value_2 in range(value_1 + 1, len(user_score_list)):
-                    for columns1 in user_score_list[value_1].columns:
-                        for columns2 in user_score_list[value_2].columns:
-                            if (columns1 == columns2) and (columns1 != 'from_id') and (columns2 != 'from_id'):
-                                findSameMetrics=True
-                                first_values, second_values = StatisticalTest._common_users(user_score_list[value_1],
-                                                                                            user_score_list[value_2], columns1, columns2)
-                                print(
-                                    "System:" + repr(value_1+1) + "   System:" + repr(value_2+1) + "  Metric: " + columns1)
-                                print(ttest_ind(first_values, second_values))
-            if findSameMetrics==False:
-                raise TypeError("Method requires same metric to compare")
-
-        elif (isinstance(user_score_list[0], list)):
-            for value_1 in range (0, len(user_score_list)):
-                for value_2 in range (value_1+1, len(user_score_list)):
-                    print("Lista:" + repr(value_1+1) + "   Lista:" + repr(value_2+1) + "  " + repr(
-                        ttest_ind(user_score_list[value_2], user_score_list[value_1])))
-        else:
-            raise TypeError("Method requires list of numbers or dataframe")
+        raise NotImplementedError
 
 
-class WilconxonTest(PairedTtest):
+class Ttest(PairedTest):
 
-    def stat_test_results(user_score_list):
-        """
-            The method performs the Wilcoxon test on every possible pair of df or lists.
-            In the case of dataframe, it identifies the pairs of dataframe that have the same
-            metrics selected, and carries out the tests for each equal metric.
+    def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
+        return ttest_ind(score_metric_system1, score_metric_system2)
 
-         Args:
 
-        user_score_list: list of numbers or list of dataframe on which to permorm statistical tests
+class Wilcoxon(PairedTest):
 
-        """
-        findSameMetrics = False
-        if (isinstance(user_score_list[0], pd.DataFrame)):
-            for value_1 in range(0, len(user_score_list)):
-                for value_2 in range(value_1 + 1, len(user_score_list)):
-                    for columns1 in user_score_list[value_1].columns:
-                        for columns2 in user_score_list[value_2].columns:
-                            if (columns1 == columns2) and (columns1 != 'from_id') and (columns2 != 'from_id'):
-                                findSameMetrics = True
-                                first_values, second_values = StatisticalTest._common_users(user_score_list[value_1],
-                                                                                            user_score_list[value_2],
-                                                                                            columns1, columns2)
-                                print(
-                                    "System:" + repr(value_1 + 1) + "   System:" + repr(
-                                        value_2 + 1) + "  Metric: " + columns1)
-                                print(ttest_ind(first_values, second_values))
-            if findSameMetrics == False:
-                raise TypeError("Method requires same metric to compare")
-
-        elif (isinstance(user_score_list[0], list)):
-            for value_1 in range(0, len(user_score_list)):
-                for value_2 in range(value_1 + 1, len(user_score_list)):
-                    print("Lista:" + repr(value_1 + 1) + "   Lista:" + repr(value_2 + 1) + "  " + repr(
-                    WilconxonTest(user_score_list[value_2], user_score_list[value_1])))
-
-        else:
-            raise TypeError("Method requires list of numbers or dataframe")
+    def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
+        return ranksums(score_metric_system1, score_metric_system2)
