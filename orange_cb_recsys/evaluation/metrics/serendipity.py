@@ -1,11 +1,11 @@
 import pandas as pd
 
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.utils import popular_items
 
 
-class Serendipity(RankingNeededMetric):
+class Serendipity(Metric):
     """
     Serendipity
 

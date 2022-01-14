@@ -5,8 +5,8 @@ import pandas as pd
 
 from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from orange_cb_recsys.utils.const import recsys_logger
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NoRatedItems, OnlyNegativeItems
 
 
 class IndexQuery(ContentBasedAlgorithm):
@@ -93,7 +93,10 @@ class IndexQuery(ContentBasedAlgorithm):
 
         return representations_valid
 
-    def process_rated(self, user_ratings: pd.DataFrame, index_directory: str):
+    def _load_available_contents(self, index_path: str, items_to_load: set = None):
+        return LoadedContentsIndex(index_path)
+
+    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsIndex):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the query).
@@ -115,16 +118,26 @@ class IndexQuery(ContentBasedAlgorithm):
         scores = []
         positive_user_docs = {}
 
-        recsys_logger.info("Processing rated items")
-        ix = SearchIndex(index_directory)
+        ix = available_loaded_items.get_contents_interface()
+        # Simple variable for better error visualization.
+        # If no item is available locally, this should remain at False
+        at_least_one = False
+
         for item_id, score in zip(user_ratings.to_id, user_ratings.score):
             if score >= threshold:
                 # {item_id: {"item": item_dictionary, "score": item_score}}
                 item_query = ix.query(item_id, 1, classic_similarity=self.__classic_similarity)
                 if len(item_query) != 0:
+                    at_least_one = True
                     item = item_query.pop(item_id).get('item')
                     scores.append(score)
                     positive_user_docs[item_id] = self.__get_representations(item)
+
+        user_id = user_ratings.from_id.iloc[0]
+        if not at_least_one:
+            raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
+        if len(positive_user_docs) == 0:
+            raise OnlyNegativeItems("User {} - There are only negative items available locally!")
 
         self.__positive_user_docs = positive_user_docs
         self.__scores = scores
@@ -140,7 +153,6 @@ class IndexQuery(ContentBasedAlgorithm):
 
         The built query will also be stored in a private attribute.
         """
-        recsys_logger.info("Building query")
         # For each field of each document one string (containing the name of the field and the data in it)
         # is created and added to the query.
         # Also each part of the query that refers to a document
@@ -161,7 +173,7 @@ class IndexQuery(ContentBasedAlgorithm):
 
         self.__string_query = string_query
 
-    def _build_mask_list(self, user_ratings: pd.DataFrame, filter_list: List[str] = None):
+    def _build_mask_list(self, user_seen_items: list, filter_list: List[str] = None):
         """
         Private function that calculate the mask query and the filter query for whoosh to use:
 
@@ -175,14 +187,13 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             filter_list (list): list of the items to predict, if None all unrated items will be predicted
         """
+        masked_list = list(user_seen_items)
         if filter_list is not None:
-            masked_list = list(user_ratings.query('to_id not in @filter_list')['to_id'])
-        else:
-            masked_list = list(user_ratings['to_id'])
+            masked_list = [item for item in user_seen_items if item not in filter_list]
 
         return masked_list
 
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
+    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsIndex,
                 filter_list: List[str] = None) -> pd.DataFrame:
         """
         IndexQuery is not a Prediction Score Algorithm, so if this method is called,
@@ -193,7 +204,7 @@ class IndexQuery(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: pd.DataFrame, index_directory: str, recs_number: int = None,
+    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsIndex, recs_number: int = None,
              filter_list: List[str] = None) -> pd.DataFrame:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
@@ -214,11 +225,9 @@ class IndexQuery(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
-        recsys_logger.info("Calculating rank")
+        mask_list = self._build_mask_list(user_seen_items, filter_list)
 
-        mask_list = self._build_mask_list(user_ratings, filter_list)
-
-        ix = SearchIndex(index_directory)
+        ix = available_loaded_items.get_contents_interface()
         score_docs = ix.query(self.__string_query, recs_number, mask_list, filter_list, self.__classic_similarity)
 
         results = {'to_id': [], 'score': []}

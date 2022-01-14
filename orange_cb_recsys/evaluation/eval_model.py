@@ -33,9 +33,22 @@ class EvalModel:
                  truth_list: List[pd.DataFrame],
                  metric_list: List[Metric]):
 
-        self.__pred_list = pred_list
-        self.__truth_list = truth_list
+        if len(pred_list) != len(truth_list):
+            raise ValueError("List containing predictions and list containing ground truth must have the same length!")
+
+        self.__pred_list = self._convert_correct_type_columns(pred_list)
+        self.__truth_list = self._convert_correct_type_columns(truth_list)
         self.__metric_list = metric_list
+
+    def _convert_correct_type_columns(self, df_list: List[pd.DataFrame]):
+        # convert columns to correct type
+
+        for df in df_list:
+            df['from_id'] = df['from_id'].astype(str)
+            df['to_id'] = df['to_id'].astype(str)
+            df['score'] = df['score'].astype(float)
+
+        return df_list
 
     @property
     def pred_list(self):
@@ -87,8 +100,10 @@ class EvalModel:
         truth_list = self.truth_list
 
         if user_id_list is not None:
-            pred_list = [pred[pred['from_id'].isin(set(user_id_list))] for pred in pred_list]
-            truth_list = [truth[truth['from_id'].isin(set(user_id_list))] for truth in truth_list]
+            user_id_list_set = set([str(user_id) for user_id in user_id_list])
+
+            pred_list = [pred[pred['from_id'].isin(user_id_list_set)] for pred in pred_list]
+            truth_list = [truth[truth['from_id'].isin(user_id_list_set)] for truth in truth_list]
 
         result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
 

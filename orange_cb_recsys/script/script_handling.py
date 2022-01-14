@@ -14,8 +14,7 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_le
 from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
 from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.recsys.methodology import Methodology
-from orange_cb_recsys.recsys.partitioning import PartitionModule
-from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
+from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.script.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
     InvalidFilePath
 from orange_cb_recsys.recsys.recsys import RecSys, FullGraph
@@ -781,40 +780,40 @@ class EvalRun(NeedsSerializationRun):
             cls.eval_number += 1
 
 
-class MetricCalculatorRun(NeedsSerializationRun):
-    """
-    Run associated with the MetricCalculator
-
-    The output will be serialized in the following form:
-
-        mc_sys_results_0_0
-        mc_user_results_0_0
-
-    where the first number is used to identify the MetricCalculator in the script file (in case multiple
-    MetricCalculator objects with the same output directory are defined in the script file, this identifies each output)
-    The second number instead, identifies the method call (in case multiple parameters for the 'eval_metrics' method are
-    defined)
-    """
-
-    metric_calculator_number = 0
-
-    @classmethod
-    def get_associated_class(cls) -> Type:
-        return MetricCalculator
-
-    @classmethod
-    def serialize_results(cls, executed_methods_results: Dict[str, list], output_directory: str):
-        try:
-            if 'eval_metrics' in executed_methods_results.keys():
-                for i, results in enumerate(executed_methods_results['eval_metrics']):
-                    cls.save_to_csv(
-                        results[0],
-                        os.path.join(output_directory, "mc_sys_results_{}_{}".format(str(cls.metric_calculator_number), str(i))))
-                    cls.save_to_csv(
-                        results[1],
-                        os.path.join(output_directory, "mc_user_results_{}_{}".format(str(cls.metric_calculator_number), str(i))))
-        finally:
-            cls.metric_calculator_number += 1
+# class MetricCalculatorRun(NeedsSerializationRun):
+#     """
+#     Run associated with the MetricCalculator
+#
+#     The output will be serialized in the following form:
+#
+#         mc_sys_results_0_0
+#         mc_user_results_0_0
+#
+#     where the first number is used to identify the MetricCalculator in the script file (in case multiple
+#     MetricCalculator objects with the same output directory are defined in the script file, this identifies each output)
+#     The second number instead, identifies the method call (in case multiple parameters for the 'eval_metrics' method are
+#     defined)
+#     """
+#
+#     metric_calculator_number = 0
+#
+#     @classmethod
+#     def get_associated_class(cls) -> Type:
+#         return MetricCalculator
+#
+#     @classmethod
+#     def serialize_results(cls, executed_methods_results: Dict[str, list], output_directory: str):
+#         try:
+#             if 'eval_metrics' in executed_methods_results.keys():
+#                 for i, results in enumerate(executed_methods_results['eval_metrics']):
+#                     cls.save_to_csv(
+#                         results[0],
+#                         os.path.join(output_directory, "mc_sys_results_{}_{}".format(str(cls.metric_calculator_number), str(i))))
+#                     cls.save_to_csv(
+#                         results[1],
+#                         os.path.join(output_directory, "mc_user_results_{}_{}".format(str(cls.metric_calculator_number), str(i))))
+#         finally:
+#             cls.metric_calculator_number += 1
 
 
 class MethodologyRun(NeedsSerializationRun):
@@ -877,7 +876,7 @@ class PartitioningRun(NeedsSerializationRun):
 
     @classmethod
     def get_associated_class(cls) -> Type:
-        return PartitionModule
+        return Partitioning
 
     @classmethod
     def serialize_results(cls, executed_methods_results: Dict[str, list], output_directory: str):

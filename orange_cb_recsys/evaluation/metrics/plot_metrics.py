@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-from orange_cb_recsys.evaluation.exceptions import StringNotSupported, PercentageError
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, popular_items, pop_ratio_by_user
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, popular_items,\
+    pop_ratio_by_user
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.utils.const import logger
 
 
-class PlotMetric(RankingNeededMetric):
+class PlotMetric(Metric):
     """
     A plot metric is a metric which generates a plot and saves it to the directory specified
 
@@ -122,7 +122,7 @@ class LongTailDistr(PlotMetric):
             ('file_name.format'). Default is False
 
     Raises:
-        StringNotSupported: exception raised when a invalid value for the 'on' parameter is specified
+        ValueError: exception raised when a invalid value for the 'on' parameter is specified
     """
 
     def __init__(self, out_dir: str = '.', file_name: str = 'long_tail_distr', on='truth', format: str = 'png',
@@ -131,7 +131,7 @@ class LongTailDistr(PlotMetric):
         self.__on = on.lower()
 
         if self.__on not in valid:
-            raise StringNotSupported("on={} is not supported! Long Tail can be calculated only on:\n"
+            raise ValueError("on={} is not supported! Long Tail can be calculated only on:\n"
                                      "{}".format(on, valid))
         super().__init__(out_dir, file_name, format, overwrite)
 
@@ -170,7 +170,7 @@ class LongTailDistr(PlotMetric):
 
         self.save_figure(fig, file_name=file_name)
 
-        return pd.DataFrame()
+        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])
 
 
 class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
@@ -227,7 +227,7 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         GroupFairnessMetric.__init__(self, user_groups)
 
         if not 0 < pop_percentage <= 1:
-            raise PercentageError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
+            raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
         self.__pop_percentage = pop_percentage
         self.__user_groups = user_groups
@@ -329,7 +329,7 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
             file_name = self.get_valid_filename(file_name, 'csv')
             score_frame.to_csv(os.path.join(self.output_directory, file_name), index=False)
 
-        return pd.DataFrame()
+        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])
 
 
 class PopRecsCorrelation(PlotMetric):
@@ -376,7 +376,7 @@ class PopRecsCorrelation(PlotMetric):
         self.__mode = mode.lower()
 
         if self.__mode not in valid:
-            raise StringNotSupported("Mode {} is not supported! Modes available:\n"
+            raise ValueError("Mode {} is not supported! Modes available:\n"
                                      "{}".format(mode, valid))
 
         super().__init__(out_dir, file_name, format, overwrite)
@@ -486,4 +486,4 @@ class PopRecsCorrelation(PlotMetric):
         elif self.__mode == 'no_zeros':
             self.build_no_zeros_plot(popularities_no_zeros, recommendations_no_zeros)
 
-        return pd.DataFrame()
+        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])

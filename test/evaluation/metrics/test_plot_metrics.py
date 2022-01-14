@@ -3,9 +3,8 @@ from unittest import TestCase
 
 import pandas as pd
 
-from orange_cb_recsys.evaluation.exceptions import StringNotSupported
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
 from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopProfileVsRecs, PopRecsCorrelation
+from orange_cb_recsys.recsys import Split
 
 truth = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2',
@@ -29,7 +28,7 @@ split_i21_missing_in_recs = Split(recs, truth)
 class TestLongTail(TestCase):
     def test_string_error(self):
         # Test invalid string passed
-        with self.assertRaises(StringNotSupported):
+        with self.assertRaises(ValueError):
             LongTailDistr('.', on='invalid')
 
     def test_perform(self):

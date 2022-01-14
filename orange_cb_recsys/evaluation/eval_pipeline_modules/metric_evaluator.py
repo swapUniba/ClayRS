@@ -1,8 +1,9 @@
+from functools import reduce
 from typing import List, Tuple
 
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.utils.const import progbar, eval_logger
+from orange_cb_recsys.utils.const import progbar, logger
 
 import pandas as pd
 
@@ -39,8 +40,7 @@ class MetricEvaluator:
 
     # [ (total_pred, total_truth), (total_pred, total_truth) ...]
     def __init__(self, pred_list: List[pd.DataFrame], truth_list: List[pd.DataFrame]):
-        if len(pred_list) != len(truth_list):
-            raise ValueError("Number of prediction frames and truth frames must be equal")
+
         self._pred_list = pred_list
         self._truth_list = truth_list
 
@@ -59,9 +59,10 @@ class MetricEvaluator:
             list, the second one will contain every user results for every metric eligible
         """
 
-        frames_to_concat = []
+        frames_to_concat_users = []
+        frames_to_concat_system = []
 
-        eval_logger.info('Performing metrics chosen')
+        logger.info('Performing metrics chosen')
 
         for metric in progbar(metric_list, prefix='Performing {}:', substitute_with_current=True):
 
@@ -74,28 +75,41 @@ class MetricEvaluator:
                     truth = truth[truth['from_id'].isin(from_id_valid)]
 
                     metric_result = metric.perform(Split(pred, truth))
+
                     metric_result_list.append(metric_result)
 
+            # if in future results for each fold for each user
+            # set index as from_id and concat axis = 1
             total_results_metric = pd.concat(metric_result_list)
 
-            total_results_metric = total_results_metric.set_index('from_id')
-            frames_to_concat.append(total_results_metric)
+            if not total_results_metric.empty:
+                total_results_metric = total_results_metric.set_index('from_id')
+                system_results = total_results_metric.loc[['sys']]
+                each_user_result = total_results_metric.drop(['sys'])
+                each_user_result = each_user_result.dropna(axis=1, how='all')
 
-        final_result = pd.concat(frames_to_concat, axis=1)
+                frames_to_concat_users.append(each_user_result)
+                frames_to_concat_system.append(system_results)
 
-        system_results = final_result.loc[['sys']]
-        each_user_result = final_result.drop(['sys'])
+        # concat horizontally results of each metric both for users and system
+        final_result_users = pd.DataFrame(columns=['from_id', 'to_id', 'score'])
+        if len(frames_to_concat_users) != 0:
+            final_result_users = pd.concat(frames_to_concat_users, axis=1)
 
-        each_user_result = each_user_result.groupby('from_id').mean()
-        each_user_result = each_user_result.dropna(axis=1, how='all')
+            # for users calculate the mean
+            final_result_users = final_result_users.groupby('from_id').mean()
 
-        # replace index
-        new_index = [f'sys - fold{i + 1}' for i in range(len(system_results))]
-        system_results['from_id'] = new_index
-        system_results = system_results.set_index('from_id')
+        final_result_system = pd.DataFrame(columns=['from_id', 'to_id', 'score'])
+        if len(frames_to_concat_system) != 0:
+            final_result_system = pd.concat(frames_to_concat_system, axis=1)
 
-        # add mean results as a row
-        system_means = list(system_results.mean().values)
-        system_results.loc['sys - mean'] = system_means
+            # replace index of system results in order to better identify results of each fold
+            new_index = [f'sys - fold{i + 1}' for i in range(len(final_result_system))]
+            final_result_system['from_id'] = new_index
+            final_result_system = final_result_system.set_index('from_id')
 
-        return system_results, each_user_result
+            # add mean results as a row
+            system_means = list(final_result_system.mean().values)
+            final_result_system.loc['sys - mean'] = system_means
+
+        return final_result_system, final_result_users

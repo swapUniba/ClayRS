@@ -5,10 +5,10 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from orange_cb_recsys.recsys.partitioning import Split
-from orange_cb_recsys.evaluation.metrics.metrics import ScoresNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 
-class ErrorMetric(ScoresNeededMetric):
+class ErrorMetric(Metric):
     """
     Abstract class for error metrics.
     An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
@@ -32,8 +32,8 @@ class ErrorMetric(ScoresNeededMetric):
                                  if not user_truth[user_truth['to_id'] == item_id].empty]
 
             if len(zipped_score_list) != 0:
-                pred_score_list = [a_tuple[0] for a_tuple in zipped_score_list]
-                truth_score_list = [a_tuple[1] for a_tuple in zipped_score_list]
+                pred_score_list = pd.Series([a_tuple[0] for a_tuple in zipped_score_list])
+                truth_score_list = pd.Series([a_tuple[1] for a_tuple in zipped_score_list])
                 result = self._calc_metric(pred_score_list, truth_score_list)
             else:
                 result = np.nan

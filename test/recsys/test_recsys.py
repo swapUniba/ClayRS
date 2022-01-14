@@ -2,246 +2,230 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression
+from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
 from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
-from orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query import IndexQuery
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NotFittedAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from orange_cb_recsys.recsys.graphs import NXFullGraph
 
-from orange_cb_recsys.utils.const import root_path
 from test import dir_test_files
 
-contents_path = os.path.join(root_path, 'contents')
-
-ratings = pd.DataFrame.from_records([
+train_ratings = pd.DataFrame.from_records([
     ("A000", "tt0114576", 5, "54654675"),
     ("A001", "tt0114576", 3, "54654675"),
     ("A001", "tt0112896", 1, "54654675"),
     ("A000", "tt0113041", 1, "54654675"),
     ("A002", "tt0112453", 2, "54654675"),
     ("A002", "tt0113497", 4, "54654675"),
-    ("A003", "tt0112453", 1, "54654675")],
+    ("A003", "tt0112453", 1, "54654675"),
+    ("A003", "tt0113497", 4, "54654675")],
     columns=["from_id", "to_id", "score", "timestamp"])
 
+# No locally available items for A000
+train_ratings_some_missing = pd.DataFrame.from_records([
+    ("A000", "not_existent1", 5, "54654675"),
+    ("A001", "tt0114576", 3, "54654675"),
+    ("A001", "tt0112896", 1, "54654675"),
+    ("A000", "not_existent2", 5, "54654675")],
+    columns=["from_id", "to_id", "score", "timestamp"])
 
+test_ratings = pd.DataFrame.from_records([
+    ("A000", "tt0114388"),
+    ("A000", "tt0112302"),
+    ("A001", "tt0113189"),
+    ("A001", "tt0113228"),
+    ("A002", "tt0114319"),
+    ("A002", "tt0114709"),
+    ("A003", "tt0114885")],
+    columns=["from_id", "to_id"])
+
+
+# Each of the cbrs algorithm has its own class tests, so we just take
+# one cbrs alg as example. The behaviour is the same for all cbrs alg
 class TestContentBasedRS(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.movies_multiple = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
-        cls.filter_list = ['tt0114319', 'tt0114388']
 
-    def test_empty_frame(self):
-        ratings_only_positive = pd.DataFrame.from_records([
-            ("A000", "tt0114576", 5, "54654675")],
-            columns=["from_id", "to_id", "score", "timestamp"])
+    def test_fit(self):
+        # Test fit with cbrs algorithm
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        ratings_only_negative = pd.DataFrame.from_records([
-            ("A000", "tt0114576", 1, "54654675")],
-            columns=["from_id", "to_id", "score", "timestamp"])
+        cbrs.fit()
 
-        ratings_item_inexistent = pd.DataFrame.from_records([
-            ("A000", "not exists", 1, "54654675")],
-            columns=["from_id", "to_id", "score", "timestamp"])
+        # For the following user the algorithm could be fit
+        self.assertIsNotNone(cbrs._user_fit_dic.get("A000"))
+        self.assertIsNotNone(cbrs._user_fit_dic.get("A001"))
+        self.assertIsNotNone(cbrs._user_fit_dic.get("A002"))
+        self.assertIsNotNone(cbrs._user_fit_dic.get("A003"))
 
-        # ClassifierRecommender returns an empty frame
-        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
-        rs = ContentBasedRS(alg, ratings_only_positive, self.movies_multiple)
-        result = rs.fit_rank('A000')
-        self.assertTrue(result.empty)
+        # Test fit with the cbrs algorithm
+        # For user A000 no items available locally, so the alg will not be fit for it
+        cbrs_missing = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
 
-        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
-        rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
-        result = rs.fit_rank('A000')
-        self.assertTrue(result.empty)
+        cbrs_missing.fit()
 
-        alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC(), threshold=3)
-        rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
-        result = rs.fit_rank('A000')
-        self.assertTrue(result.empty)
+        # For user A000 the alg could not be fit, but it could for A001
+        self.assertIsNone(cbrs_missing._user_fit_dic.get("A000"))
+        self.assertIsNotNone(cbrs_missing._user_fit_dic.get("A001"))
 
-        # CentroidVector returns an empty frame
-        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
-        rs = ContentBasedRS(alg, ratings_only_negative, self.movies_multiple)
-        result = rs.fit_rank('A000')
-        self.assertTrue(result.empty)
+    def test_raise_error_without_fit(self):
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity(), threshold=3)
-        rs = ContentBasedRS(alg, ratings_item_inexistent, self.movies_multiple)
-        result = rs.fit_rank('A000')
-        self.assertTrue(result.empty)
+        with self.assertRaises(NotFittedAlg):
+            cbrs.rank(train_ratings)
 
-    # More tests in content_based_algorithm/test_classifier
-    def test_classifier_recommender(self):
-        recs_number = 3
+        with self.assertRaises(NotFittedAlg):
+            cbrs.predict(train_ratings)
 
-        # Test prediction and ranking with the Classifier Recommender algorithm
+    def test_rank(self):
+        # Test fit with the cbrs algorithm
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
+
+        # we must fit the algorithm in order to rank
+        cbrs.fit()
+
+        # Test ranking with the cbrs algorithm on specified items
+        result_rank_filtered = cbrs.rank(test_ratings)
+        self.assertEqual(len(result_rank_filtered), len(test_ratings))
+
+        # Test ranking with the cbrs algorithm on all available unseen items
+        result_rank_all = cbrs.rank(test_ratings['from_id'])
+        self.assertTrue(len(result_rank_all) != 0)
+
+        # Test top-n ranking with the cbrs algorithm
+        result_rank_numbered = cbrs.rank(test_ratings['from_id'], n_recs=2)
+        for user in set(test_ratings['from_id']):
+            result_single = result_rank_numbered[result_rank_numbered['from_id'] == user]
+            self.assertTrue(len(result_single) == 2)
+
+        # Test ranking with alternative methodology
+        result_different_meth = cbrs.rank(test_ratings, methodology=TrainingItemsMethodology())
+        for user in set(test_ratings['from_id']):
+            result_single = result_different_meth[result_different_meth['from_id'] == user]
+            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
+            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
+
+            self.assertEqual(set(items_expected_rank['to_id']), set(result_single['to_id']))
+
+        # Test algorithm not fitted
+        result_empty = cbrs.rank(['not_existent_user'])
+        self.assertTrue(result_empty.empty)
+
+    def test_predict(self):
+        # Test fit with the cbrs algorithm
+        alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
+
+        # we must fit the algorithm in order to predict
+        cbrs.fit()
+
+        # Test predict with the cbrs algorithm on specified items
+        result_predict_filtered = cbrs.predict(test_ratings)
+        self.assertEqual(len(result_predict_filtered), len(test_ratings))
+
+        # Test predict with the cbrs algorithm on all available unseen items
+        result_predict_all = cbrs.predict(test_ratings['from_id'])
+        self.assertTrue(len(result_predict_all) != 0)
+
+        # Test predict with alternative methodology
+        result_different_meth = cbrs.predict(test_ratings, methodology=TrainingItemsMethodology())
+        for user in set(test_ratings['from_id']):
+            result_single = result_different_meth[result_different_meth['from_id'] == user]
+            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
+            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
+
+            self.assertEqual(set(items_expected_rank['to_id']), set(result_single['to_id']))
+
+        # Test algorithm not fitted
+        result_empty = cbrs.predict(['not_existent_user'])
+        self.assertTrue(result_empty.empty)
+
+    def test_predict_raise_error(self):
         alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC())
-        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        # Prediction should raise error since it's not a ScorePredictionAlg
+        # You must fit first in order to predict
+        cbrs.fit()
+
+        # This will raise error since page rank is not a prediction algorithm
         with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000')
+            cbrs.predict(test_ratings)
 
-        # Test ranking with the Classifier Recommender algorithm on specified items
-        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
-        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
-
-        # Test top-n ranking with the Classifier Recommender algorithm
-        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
-        self.assertEqual(len(result_rank_numbered), recs_number)
-
-    # More tests in content_based_algorithm/test_linear_predictor
-    def test_linear_predictor(self):
-        recs_number = 3
-
-        # Test prediction and ranking with the Classifier Recommender algorithm
+    def test_fit_rank(self):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
-        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        # Prediction
-        result_pred_filtered = rs.fit_predict('A000', filter_list=self.filter_list)
-        self.assertEqual(len(result_pred_filtered), len(self.filter_list))
+        result = cbrs.fit_rank(test_ratings)
 
-        # Test ranking with the Classifier Recommender algorithm on specified items
-        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
-        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
+        # No further test since the fit_rank() method just calls the fit() method and rank() method
+        self.assertTrue(len(result) != 0)
 
-        # Test top-n ranking with the Classifier Recommender algorithm
-        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
-        self.assertEqual(len(result_rank_numbered), recs_number)
-
-    def test_centroid_vector(self):
-        recs_number = 3
-
-        # Test prediction and ranking with the Centroid Vector algorithm
-        alg = CentroidVector({'Plot': ['tfidf', 'embedding']}, CosineSimilarity())
-        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
-
-        # Prediction should raise error since it's not a ScorePredictionAlg
-        with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000')
-
-        # Test ranking with the Centroid Vector algorithm on specified items
-        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
-        self.assertEqual(len(result_rank_filtered), len(self.filter_list))
-
-        # Test top-n ranking with the Centroid Vector algorithm
-        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
-        self.assertEqual(len(result_rank_numbered), recs_number)
-
-    def test_index_query(self):
-        movies_index = os.path.join(dir_test_files, 'complex_contents', 'index/')
-        filter_list = ['tt0114319', 'tt0114388']
-        recs_number = 3
-
-        # Test prediction and ranking with the Index Query algorithm
-        alg = IndexQuery({'Plot': ['index_original', 'index_preprocessed']})
-        rs = ContentBasedRS(alg, ratings, movies_index)
-
-        # Prediction should raise error since it's not a ScorePredictionAlg
-        with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000')
-
-        result_rank = rs.fit_rank('A000')
-        self.assertGreater(len(result_rank), 0)
-
-        # Test prediction and ranking with the IndexQuery algorithm on specified items, prediction will raise exception
-        # since it's not a PredictionAlgorithm
-        with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000', filter_list=filter_list)
-
-        result_rank_filtered = rs.fit_rank('A000', filter_list=filter_list)
-        self.assertGreater(len(result_rank_filtered), 0)
-
-        # Test top-n ranking with the IndexQuery algorithm
-        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
-        self.assertEqual(len(result_rank_numbered), recs_number)
-
-    def test_multiple(self):
-        recs_number = 3
-        user_id_list = ['A000', 'A001']
-
+    def test_fit_predict(self):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
-        rs = ContentBasedRS(alg, ratings, self.movies_multiple)
+        cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        # Prediction
-        result_pred_filtered = rs.multiple_fit_predict(user_id_list, filter_list=self.filter_list)
-        self.assertEqual(set(user_id_list), set(result_pred_filtered['from_id']))
-        for user in user_id_list:
-            self.assertEqual(len(result_pred_filtered.query('from_id == @user')), len(self.filter_list))
+        result = cbrs.fit_predict(test_ratings)
 
-        # Test ranking with the Classifier Recommender algorithm on specified items
-        result_rank_filtered = rs.multiple_fit_rank(user_id_list, filter_list=self.filter_list)
-        self.assertEqual(set(user_id_list), set(result_rank_filtered['from_id']))
-        for user in user_id_list:
-            self.assertEqual(len(result_rank_filtered.query('from_id == @user')), len(self.filter_list))
-
-        # Test top-n ranking with the Classifier Recommender algorithm
-        result_rank_numbered = rs.multiple_fit_rank(user_id_list, recs_number=recs_number)
-        self.assertEqual(set(user_id_list), set(result_rank_numbered['from_id']))
-        for user in user_id_list:
-            self.assertEqual(len(result_rank_numbered.query('from_id == @user')), recs_number)
+        # No further test since the fit_predict() method just calls the fit() method and rank() method
+        self.assertTrue(len(result) != 0)
 
 
 class TestGraphBasedRS(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.filter_list = ['tt0112896', 'tt0113497']
+        # different test ratings from the cbrs since a graph based algorithm
+        # can give predictions only to items that are in the graph
+        cls.test_ratings = pd.DataFrame.from_records([
+            ("A000", "tt0112896"),
+            ("A000", "tt0112453"),
+            ("A001", "tt0114576"),
+            ("A001", "tt0113497"),
+            ("A002", "tt0114576"),
+            ("A002", "tt0113041"),
+            ("A003", "tt0114576")],
+            columns=["from_id", "to_id"])
 
-    def test_nx_page_rank(self):
-        # Because graph based recommendation needs to have all items to predict in the ratings dataframe
-        recs_number = 1
+        cls.graph = NXFullGraph(train_ratings)
 
-        graph = NXFullGraph(ratings)
+    def test_rank(self):
+        # Test rank with the graph based algorithm
         alg = NXPageRank()
-        rs = GraphBasedRS(alg, graph)
+        gbrs = GraphBasedRS(alg, self.graph)
 
-        # Test prediction and ranking with the Page Rank algorithm, prediction will raise exception
-        # since it's not a PredictionAlgorithm
-        with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000')
+        # Test ranking with the graph based algorithm on specified items
+        result_rank_filtered = gbrs.rank(self.test_ratings)
+        self.assertEqual(len(result_rank_filtered), len(self.test_ratings))
 
-        result_rank = rs.fit_rank('A000')
-        self.assertEqual(len(result_rank), 3)
+        # Test ranking with the gbrs algorithm on all unseen items that are in the graph
+        result_rank_all = gbrs.rank(test_ratings['from_id'])
+        self.assertTrue(len(result_rank_all) != 0)
 
-        # Test prediction and ranking with the Page Rank algorithm on specified items, prediction will raise exception
-        # since it's not a PredictionAlgorithm
-        with self.assertRaises(NotPredictionAlg):
-            rs.fit_predict('A000', filter_list=self.filter_list)
+        # Test top-n ranking with the gbrs algorithm
+        result_rank_numbered = gbrs.rank(test_ratings['from_id'], n_recs=2)
+        for user in set(test_ratings['from_id']):
+            result_single = result_rank_numbered[result_rank_numbered['from_id'] == user]
+            self.assertTrue(len(result_single) == 2)
 
-        result_rank_filtered = rs.fit_rank('A000', filter_list=self.filter_list)
-        self.assertEqual(len(result_rank_filtered), 2)
+        # Test ranking with alternative methodology
+        result_different_meth = gbrs.rank(test_ratings, methodology=TrainingItemsMethodology())
+        for user in set(test_ratings['from_id']):
+            result_single = result_different_meth[result_different_meth['from_id'] == user]
+            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
+            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
 
-        # Test top-n ranking with the Page Rank algorithm
-        result_rank_numbered = rs.fit_rank('A000', recs_number=recs_number)
-        self.assertEqual(len(result_rank_numbered), recs_number)
+            self.assertTrue(set(items_expected_rank['to_id']), set(result_single['to_id']))
 
-    def test_multiple(self):
-        recs_number = 3
-        user_id_list = ['A000', 'A001']
-        # Test prediction and ranking with the Classifier Recommender algorithm
-        graph = NXFullGraph(ratings)
+    def test_predict_raise_error(self):
         alg = NXPageRank()
-        rs = GraphBasedRS(alg, graph)
+        gbrs = GraphBasedRS(alg, self.graph)
 
-        # Prediction
+        # This will raise error since page rank is not a prediction algorithm
         with self.assertRaises(NotPredictionAlg):
-            rs.multiple_fit_predict(user_id_list, filter_list=self.filter_list)
-
-        # Test ranking with the Classifier Recommender algorithm on specified items
-        result_rank_filtered = rs.multiple_fit_rank(user_id_list, filter_list=self.filter_list)
-        self.assertEqual(set(user_id_list), set(result_rank_filtered['from_id']))
-        for user in user_id_list:
-            self.assertEqual(len(result_rank_filtered.query('from_id == @user')), len(self.filter_list))
-
-        # Test top-n ranking with the Classifier Recommender algorithm
-        result_rank_numbered = rs.multiple_fit_rank(user_id_list, recs_number=recs_number)
-        self.assertEqual(set(user_id_list), set(result_rank_numbered['from_id']))
-        for user in user_id_list:
-            self.assertEqual(len(result_rank_numbered.query('from_id == @user')), recs_number)
+            gbrs.predict(self.test_ratings)

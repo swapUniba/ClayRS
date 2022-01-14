@@ -8,7 +8,7 @@ from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
 
-from orange_cb_recsys.utils.const import eval_logger, progbar
+from orange_cb_recsys.utils.const import logger, progbar
 
 
 class Split:
@@ -99,7 +99,7 @@ class Partitioning(ABC):
         #  1: {'train': [train2_u1, train2_u2], 'test': [test2_u1, test2_u2]}}
         train_test_dict = defaultdict(lambda: defaultdict(list))
 
-        eval_logger.info("Performing {}".format(str(self)))
+        logger.info("Performing {}".format(str(self)))
         for user_id in progbar(user_id_list, prefix="Current user - {}:", substitute_with_current=True):
             user_ratings = ratings[ratings['from_id'] == user_id]
             try:
@@ -110,7 +110,7 @@ class Partitioning(ABC):
 
             except ValueError as e:
                 if self.skip_user_error:
-                    eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                    logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
                     continue
                 else:
                     raise e
