@@ -1,15 +1,10 @@
-from spacy.tests.conftest import tokenizer
-
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import NLP
 
 from typing import List
 
 import spacy
 
-from spacy import tokens
-
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
-
 
 
 class Spacy(NLP):
@@ -31,7 +26,6 @@ class Spacy(NLP):
                  url_tagging: bool = False,
                  ):
 
-
         if isinstance(stopwords_removal, str):
             stopwords_removal = stopwords_removal.lower() == 'true'
 
@@ -51,7 +45,6 @@ class Spacy(NLP):
                          stemming, lemmatization,
                          strip_multiple_whitespaces, url_tagging)
 
-
         self.__full_lang_code = lang
 
     def __str__(self):
@@ -59,17 +52,17 @@ class Spacy(NLP):
 
     def __repr__(self):
         return "< Spacy: " + "" \
-                "stopwords_removal = " + \
+                             "stopwords_removal = " + \
                str(self.stopwords_removal) + ";" + \
-                 "stemming = " + \
+               "stemming = " + \
                str(self.stemming) + ";" + \
-                 "lemmatization = " + \
+               "lemmatization = " + \
                str(self.lemmatization) + ";" + \
-                 "named_entity_recognition = " + \
+               "named_entity_recognition = " + \
                str(self.named_entity_recognition) + ";" + \
-                 "strip_multiple_whitespaces = " + \
+               "strip_multiple_whitespaces = " + \
                str(self.strip_multiple_whitespaces) + ";" + \
-                 "url_tagging = " + \
+               "url_tagging = " + \
                str(self.url_tagging) + " >"
 
     def set_lang(self, lang: str):
@@ -98,13 +91,12 @@ class Spacy(NLP):
         Returns:
             filtered_sentence (List<str>): list of words from the text, without the stopwords
         """
-        stringText = self.__listTostring(text)
+        string_text = self.__list_to_string(text)
         filtered_sentence = []
-        for token in nlp(stringText):
-            if not (token.is_stop):
+        for token in nlp(string_text):
+            if not token.is_stop:
                 filtered_sentence.append(token.text)
         return filtered_sentence
-
 
     def __stemming_operation(self, text, nlp) -> List[str]:
         pass
@@ -120,18 +112,28 @@ class Spacy(NLP):
             lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
         """
 
-        stringText = self.__listTostring(text)
+        string_text = self.__list_to_string(text)
         lemmatized_text = []
-        for word in nlp(stringText):
+        for word in nlp(string_text):
             lemmatized_text.append(word.lemma_)
         return lemmatized_text
 
+    def __named_entity_recognition_operation(self, text, nlp):
+        """
+                Execute NER on input text with spacy
 
-    def named_entity_recognition_operation(self, text):
-        nlp=spacy.load(self.__full_lang_code)
-        for token in nlp(text):
-            print(token.tag_)
-            #continue...
+                Args:
+                    text str: Text containing the entities
+
+                Returns:
+                    word_entity: list of entity
+
+        """
+        word_entity=[]
+        string_text = self.__list_to_string(text)
+        for token in nlp(string_text):
+            word_entity.append(token.tag_)
+        return word_entity
 
     @staticmethod
     def __strip_multiple_whitespaces_operation(text) -> str:
@@ -147,29 +149,28 @@ class Spacy(NLP):
         import re
         return re.sub(' +', ' ', text)
 
-
-    def __url_tagging_operation(self,text, nlp) -> List[str]:
+    def __url_tagging_operation(self, text, nlp) -> List[str]:
         """
                 Replaces urls with <URL> string on input text with spacy
 
                 Args:
-                    text (str):
+                    text (list[str):
 
                 Returns:
                     text (list<str>): input text, <URL> instead of full urls
                 """
-        textURL=[]
-        stringText = self.__listTostring(text)
-        for i, token in enumerate(nlp(stringText)):
+        text_url = []
+        string_text = self.__list_to_string(text)
+        for i, token in enumerate(nlp(string_text)):
             if token.like_url:
                 token.tag_ = "<URL>"
-                textURL.append(token.tag_)
+                text_url.append(token.tag_)
             else:
-                textURL.append(token)
-        return textURL
+                text_url.append(token)
+        return text_url
 
     @staticmethod
-    def __listTostring(text: List[str])->str:
+    def __list_to_string(text: List[str]) -> str:
         """
         Covert list of str in str
         Args:
@@ -178,40 +179,39 @@ class Spacy(NLP):
         Returns: str sentence
 
         """
-        stringText = ' '.join([str(elem) for elem in text])
-        return stringText
+        string_text = ' '.join([str(elem) for elem in text])
+        return string_text
 
     @staticmethod
-    def __tokenToString(tokenField, nlp) -> str:
+    def __token_to_string(token_field, nlp) -> List[str]:
         """
         After preprocessing with spacy the output was given as a list of str
 
         Args:
-            tokenField: List of tokens
+            token_field: List of tokens
         Returns:
             list of string
         """
-        stringList=[]
-        for token in tokenField:
-            stringList.append(str(token))
-        return stringList
+        string_list = []
+        for token in token_field:
+            string_list.append(str(token))
+        return string_list
 
     def process(self, field_data) -> List[str]:
         field_data = check_not_tokenized(field_data)
-        nlp=spacy.load(self.__full_lang_code)
+        nlp = spacy.load(self.__full_lang_code)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
-        field_data=self.__tokenization_operation(field_data, nlp)
+        field_data = self.__tokenization_operation(field_data, nlp)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data, nlp)
         if self.lemmatization:
-            field_data = self.__lemmatization_operation(field_data,nlp)
+            field_data = self.__lemmatization_operation(field_data, nlp)
         if self.url_tagging:
             field_data = self.__url_tagging_operation(field_data, nlp)
         if self.stemming:
-            field_data = self.__stemming_operation(field_data,nlp)
+            field_data = self.__stemming_operation(field_data, nlp)
         if self.named_entity_recognition:
-            field_data = self.__named_entity_recognition_operation(field_data)
-        field_data=self.__tokenToString(field_data, nlp)
-
+            field_data = self.__named_entity_recognition_operation(field_data, nlp)
+        field_data = self.__token_to_string(field_data, nlp)
         return field_data
