@@ -2,9 +2,9 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 
 from typing import List
 
-import spacy
-
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
+
+import spacy
 
 
 class Spacy(NLP):
@@ -18,7 +18,7 @@ class Spacy(NLP):
         url_tagging (bool): Whether you want to tag the urls in the text and to replace with "<URL>"
     """
 
-    def __init__(self, lang='en_core_web_lg',
+    def __init__(self, lang='en_core_web_sm',
                  stopwords_removal: bool = False,
                  stemming: bool = False,
                  lemmatization: bool = False,
@@ -65,7 +65,7 @@ class Spacy(NLP):
                "url_tagging = " + \
                str(self.url_tagging) + " >"
 
-    def set_lang(self, lang: str):
+    def set_lang(self):
         self.lang = self.__full_lang_code
 
     def __tokenization_operation(self, text, nlp) -> List[str]:
@@ -123,16 +123,16 @@ class Spacy(NLP):
                 Execute NER on input text with spacy
 
                 Args:
-                    text str: Text containing the entities
+                    text List[str]: Text containing the entities
 
                 Returns:
-                    word_entity: list of entity
+                    word_entity: Dict of entity
 
         """
-        word_entity=[]
+        word_entity = {}
         string_text = self.__list_to_string(text)
-        for token in nlp(string_text):
-            word_entity.append(token.tag_)
+        for value, token in enumerate(nlp(string_text)):
+            word_entity[value] = [token, token.tag_]
         return word_entity
 
     @staticmethod
@@ -163,7 +163,7 @@ class Spacy(NLP):
         string_text = self.__list_to_string(text)
         for i, token in enumerate(nlp(string_text)):
             if token.like_url:
-                token.tag_ = "<URL>"
+                token.tag_ = "<url>"
                 text_url.append(token.tag_)
             else:
                 text_url.append(token)
@@ -183,7 +183,7 @@ class Spacy(NLP):
         return string_text
 
     @staticmethod
-    def __token_to_string(token_field, nlp) -> List[str]:
+    def __token_to_string(token_field) -> List[str]:
         """
         After preprocessing with spacy the output was given as a list of str
 
@@ -197,9 +197,31 @@ class Spacy(NLP):
             string_list.append(str(token))
         return string_list
 
-    def process(self, field_data) -> List[str]:
-        field_data = check_not_tokenized(field_data)
+    def __check_if_download(self):
+        """
+        check if the model already exists to load it.
+        If it doesn't exist, download it
+
+        Returns: nlp
+
+        """
+        if self.__full_lang_code not in spacy.cli.info()['pipelines']:
+            spacy.cli.download(self.__full_lang_code)
         nlp = spacy.load(self.__full_lang_code)
+        return nlp
+
+    def process(self, field_data) -> List[str]:
+        """
+
+        Args:
+            field_data: content to be processed
+
+        Returns:
+            field_data: list of str or dict in case of named entity recognition
+
+        """
+        nlp = self.__check_if_download()
+        field_data = check_not_tokenized(field_data)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         field_data = self.__tokenization_operation(field_data, nlp)
@@ -213,5 +235,6 @@ class Spacy(NLP):
             field_data = self.__stemming_operation(field_data, nlp)
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data, nlp)
-        field_data = self.__token_to_string(field_data, nlp)
-        return field_data
+            return field_data
+        else:
+            return self.__token_to_string(field_data)
