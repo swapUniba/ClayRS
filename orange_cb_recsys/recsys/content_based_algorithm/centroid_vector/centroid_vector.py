@@ -1,9 +1,11 @@
-from typing import List
+from typing import List, Union
 
+from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface, LoadedContentsDict
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
@@ -56,7 +58,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self.__centroid: np.array = None
         self.__positive_rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the centroid).
@@ -67,8 +69,11 @@ class CentroidVector(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             items_directory (str): path of the directory where the items are stored
         """
+        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+
         # Load rated items from the path
-        rated_items = [available_loaded_items.get(item_id) for item_id in user_ratings['to_id'].values]
+        loaded_rated_items: List[Union[Content, None]] = [available_loaded_items.get(item_id)
+                                                          for item_id in set(items_scores_dict.keys())]
 
         # If threshold wasn't passed in the constructor, then we take the mean rating
         # given by the user as its threshold
@@ -78,17 +83,17 @@ class CentroidVector(ContentBasedAlgorithm):
 
         # Calculates labels and extract features from the positive rated items
         positive_rated_dict = {}
-        for item in rated_items:
+        for item in loaded_rated_items:
             if item is not None:
-                score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
+                score_assigned = float(items_scores_dict[item.content_id])
                 if score_assigned >= threshold:
                     positive_rated_dict[item] = self.extract_features_item(item)
 
-        if user_ratings.empty:
+        if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings.from_id.iloc[0]
-        if len(rated_items) == 0 or (rated_items.count(None) == len(rated_items)):
+        user_id = user_ratings[0].user_id
+        if len(loaded_rated_items) == 0 or (loaded_rated_items.count(None) == len(loaded_rated_items)):
             raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
         if len(positive_rated_dict) == 0:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!")

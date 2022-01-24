@@ -6,6 +6,10 @@ from typing import Set
 import pandas as pd
 from abc import ABC
 
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
+
+from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
 from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
@@ -31,20 +35,12 @@ class RecSys(ABC):
         rating_frame (pd.DataFrame): a dataframe containing interactions between users and items
     """
 
-    def __init__(self, algorithm: Algorithm):
+    def __init__(self, algorithm: Union[ContentBasedAlgorithm, GraphBasedAlgorithm]):
         self.__alg = algorithm
 
     @property
     def algorithm(self):
         return self.__alg
-
-    @property
-    @abc.abstractmethod
-    def users(self):
-        """
-        Users of the recommender systems (users that have at least one interaction in the rating_frame)
-        """
-        raise NotImplementedError
 
     @abc.abstractmethod
     def rank(self, test_set: pd.DataFrame, n_recs: int = None):
@@ -182,7 +178,7 @@ class ContentBasedRS(RecSys):
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
-                 train_set: pd.DataFrame,
+                 train_set: Ratings,
                  items_directory: str,
                  users_directory: str = None):
 
@@ -205,10 +201,6 @@ class ContentBasedRS(RecSys):
         return self.__train_set
 
     @property
-    def users(self):
-        return set(self.train_set['from_id'])
-
-    @property
     def items_directory(self):
         """
         Path of the serialized items
@@ -229,21 +221,24 @@ class ContentBasedRS(RecSys):
         for each user and saves the result in the dictionary "user_fit_dic"
 
         """
-        items_to_load = set(self.train_set['to_id'].values)
+        items_to_load = set(self.train_set.item_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        for user_id in progbar(set(self.train_set['from_id']), prefix="Fitting algorithm:"):
-            user_train = self.train_set[self.train_set['from_id'] == user_id]
+        with logging_redirect_tqdm():
+            pbar = tqdm(set(self.train_set.user_id_column))
+            pbar.set_description("Fitting algorithm")
+            for user_id in pbar:
+                user_train = self.train_set.get_user_interactions(user_id)
 
-            try:
-                user_alg = self.algorithm.copy()
-                user_alg.process_rated(user_train, loaded_items_interface)
-                user_alg.fit()
-                self._user_fit_dic[user_id] = user_alg
-            except UserSkipAlgFit as e:
-                warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
-                logger.warning(warning_message)
-                self._user_fit_dic[user_id] = None
+                try:
+                    user_alg = self.algorithm.copy()
+                    user_alg.process_rated(user_train, loaded_items_interface)
+                    user_alg.fit()
+                    self._user_fit_dic[user_id] = user_alg
+                except UserSkipAlgFit as e:
+                    warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
+                    logger.warning(warning_message)
+                    self._user_fit_dic[user_id] = None
 
     def rank(self, test_set: Union[pd.DataFrame, Iterable], n_recs: int = None,
              methodology: Methodology = TestRatingsMethodology()) -> pd.DataFrame:
