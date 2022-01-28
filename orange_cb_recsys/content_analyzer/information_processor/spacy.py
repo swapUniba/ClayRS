@@ -2,12 +2,9 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 
 from typing import List
 
-import spacy
-
-from spacy import tokens
-
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
+import spacy
 
 
 class Spacy(NLP):
@@ -21,16 +18,13 @@ class Spacy(NLP):
         url_tagging (bool): Whether you want to tag the urls in the text and to replace with "<URL>"
     """
 
-    def __init__(self, lang='en_core_web_lg',
+    def __init__(self, lang='en_core_web_sm',
                  stopwords_removal: bool = False,
                  stemming: bool = False,
                  lemmatization: bool = False,
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
-                 named_entity_recognition: bool = False,
-                 remove_punctuation: bool = False
                  ):
-
 
         if isinstance(stopwords_removal, str):
             stopwords_removal = stopwords_removal.lower() == 'true'
@@ -47,19 +41,9 @@ class Spacy(NLP):
         if isinstance(url_tagging, str):
             url_tagging = url_tagging.lower() == 'true'
 
-        if isinstance(named_entity_recognition,str):
-            named_entity_recognition = named_entity_recognition() == 'true'
-
-        if isinstance(remove_punctuation, str):
-            remove_punctuation = remove_punctuation.lower() == 'true'
-
-
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
-                         strip_multiple_whitespaces, url_tagging,
-                         #named_entity_recognition,
-                         remove_punctuation)
-
+                         strip_multiple_whitespaces, url_tagging)
 
         self.__full_lang_code = lang
 
@@ -68,20 +52,20 @@ class Spacy(NLP):
 
     def __repr__(self):
         return "< Spacy: " + "" \
-                "stopwords_removal = " + \
+                             "stopwords_removal = " + \
                str(self.stopwords_removal) + ";" + \
-                 "stemming = " + \
+               "stemming = " + \
                str(self.stemming) + ";" + \
-                 "lemmatization = " + \
+               "lemmatization = " + \
                str(self.lemmatization) + ";" + \
-                 "named_entity_recognition = " + \
+               "named_entity_recognition = " + \
                str(self.named_entity_recognition) + ";" + \
-                 "strip_multiple_whitespaces = " + \
+               "strip_multiple_whitespaces = " + \
                str(self.strip_multiple_whitespaces) + ";" + \
-                 "url_tagging = " + \
+               "url_tagging = " + \
                str(self.url_tagging) + " >"
 
-    def set_lang(self, lang: str):
+    def set_lang(self):
         self.lang = self.__full_lang_code
 
     def __tokenization_operation(self, text, nlp) -> List[str]:
@@ -107,13 +91,12 @@ class Spacy(NLP):
         Returns:
             filtered_sentence (List<str>): list of words from the text, without the stopwords
         """
-        stringText = self.__listTostring(text)
+        string_text = self.__list_to_string(text)
         filtered_sentence = []
-        for token in nlp(stringText):
-            if not (token.is_stop):
+        for token in nlp(string_text):
+            if not token.is_stop:
                 filtered_sentence.append(token.text)
         return filtered_sentence
-
 
     def __stemming_operation(self, text, nlp) -> List[str]:
         pass
@@ -129,28 +112,28 @@ class Spacy(NLP):
             lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
         """
 
-        stringText = self.__listTostring(text)
+        string_text = self.__list_to_string(text)
         lemmatized_text = []
-        for word in nlp(stringText):
+        for word in nlp(string_text):
             lemmatized_text.append(word.lemma_)
         return lemmatized_text
 
-    @staticmethod
     def __named_entity_recognition_operation(self, text, nlp):
         """
                 Execute NER on input text with spacy
+
                 Args:
                     text List[str]: Text containing the entities
+
                 Returns:
                     word_entity: Dict of entity
+
         """
         word_entity = {}
         string_text = self.__list_to_string(text)
         for value, token in enumerate(nlp(string_text)):
             word_entity[value] = [token, token.tag_]
         return word_entity
-
-
 
     @staticmethod
     def __strip_multiple_whitespaces_operation(text) -> str:
@@ -166,63 +149,47 @@ class Spacy(NLP):
         import re
         return re.sub(' +', ' ', text)
 
-
-    def __url_tagging_operation(self,text, nlp) -> List[str]:
+    def __url_tagging_operation(self, text, nlp) -> List[str]:
         """
                 Replaces urls with <URL> string on input text with spacy
 
                 Args:
-                    text (str):
+                    text (list[str):
 
                 Returns:
                     text (list<str>): input text, <URL> instead of full urls
                 """
-        textURL=[]
-        stringText = self.__listTostring(text)
-        for i, token in enumerate(nlp(stringText)):
+        text_url = []
+        string_text = self.__list_to_string(text)
+        for i, token in enumerate(nlp(string_text)):
             if token.like_url:
-                token.tag_ = "<URL>"
-                textURL.append(token.tag_)
+                token.tag_ = "url"
+                text_url.append(token.tag_)
             else:
-                textURL.append(token)
-        return textURL
+                text_url.append(token)
+        return text_url
 
-    @staticmethod
-    def __listTostring(text: List[str])->str:
+    def __remove_punctuation(self, text, nlp) -> List[str]:
         """
-        Covert list of str in str
+        Punctuation removal in spacy
         Args:
-            text: list of str
-
-        Returns: str sentence
-
-        """
-        stringText = ' '.join([str(elem) for elem in text])
-        return stringText
-
-    @staticmethod
-    def __tokenToString(tokenField, nlp) -> str:
-        """
-        After preprocessing with spacy the output was given as a list of str
-
-        Args:
-            tokenField: List of tokens
+            text (list[str):
         Returns:
-            list of string
+            string without punctuation
         """
-        stringList=[]
-        for token in tokenField:
-            stringList.append(str(token))
-        return stringList
-
+        text = self.__list_to_string(text)
+        cleaned_text = []
+        for token in nlp(text):
+            if not token.is_punct:
+                cleaned_text.append(token.text)
+        return cleaned_text
 
     @staticmethod
     def __list_to_string(text: List[str]) -> str:
         """
-        Covert list of str in str
-        Args:
-            text: list of str
-        Returns: str sentence
+            Convert list of str in str
+            Args: text (str): list of str
+            Returns: str sentence
         """
         string_text = ' '.join([str(elem) for elem in text])
         return string_text
@@ -231,6 +198,7 @@ class Spacy(NLP):
     def __token_to_string(token_field) -> List[str]:
         """
         After preprocessing with spacy the output was given as a list of str
+
         Args:
             token_field: List of tokens
         Returns:
@@ -245,44 +213,44 @@ class Spacy(NLP):
         """
         check if the model already exists to load it.
         If it doesn't exist, download it
+
         Returns: nlp
+
         """
         if self.__full_lang_code not in spacy.cli.info()['pipelines']:
             spacy.cli.download(self.__full_lang_code)
         nlp = spacy.load(self.__full_lang_code)
         return nlp
 
-
-    def __remove_punctuation(self, text, nlp) -> str:
+    def __check_if_string(self, text) -> str:
         """
-        Punctuation removal in spacy
-        Args:
-            text (str):
-        Returns:
-            string without punctuation
-        """
-        text = self.__list_to_string(text)
-        cleaned_text = []
-        for token in nlp(text):
-            if not (token.is_punct):
-                cleaned_text.append(token.text)
-        cleaned_text = self.__listTostring(cleaned_text)
-        return cleaned_text
-
-
+                Check if text is list of str or str
+                Args:
+                    text
+                Returns:
+                    text (str): str sentence
+                """
+        if isinstance(text, List):
+            text = self.__list_to_string(text)
+        return text
 
     def process(self, field_data) -> List[str]:
         """
+
         Args:
             field_data: content to be processed
+
         Returns:
             field_data: list of str or dict in case of named entity recognition
+
         """
         nlp = self.__check_if_download()
+        field_data = self.__check_if_string(field_data)
         field_data = check_not_tokenized(field_data)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         field_data = self.__tokenization_operation(field_data, nlp)
+        field_data=self.__remove_punctuation(field_data, nlp)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data, nlp)
         if self.lemmatization:
@@ -293,8 +261,6 @@ class Spacy(NLP):
             field_data = self.__stemming_operation(field_data, nlp)
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data, nlp)
-        if self.__remove_punctuation:
-            field_data = self.__remove_punctuation(field_data, nlp)
             return field_data
         else:
             return self.__token_to_string(field_data)

@@ -1,6 +1,7 @@
 from typing import List
 
 import nltk
+nltk.download("punkt")
 
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -204,6 +205,29 @@ class NLTK(NLP):
         import re
         return re.sub(' +', ' ', text)
 
+    def __remove_punctuation(self, text) -> str:
+        """
+        Punctuation removal in spacy
+        Args:
+            text (list[str):
+        Returns:
+            string without punctuation
+        """
+        text = self.__list_to_string(text)
+        tokenizer = nltk.RegexpTokenizer(r"\w+")
+        cleaned_text = tokenizer.tokenize(text)
+        return cleaned_text
+
+    @staticmethod
+    def __list_to_string(text: List[str]) -> str:
+        """
+            Convert list of str in str
+            Args: text (str): list of str
+            Returns: str sentence
+        """
+        string_text = ' '.join([str(elem) for elem in text])
+        return string_text
+
     @staticmethod
     def __url_tagging_operation(text) -> List[str]:
         """
@@ -247,13 +271,27 @@ class NLTK(NLP):
                 del text[j]
         return text
 
+    def __check_if_string(self, text) -> str:
+        """
+                Check if text is list of str or str
+                Args:
+                    text
+                Returns:
+                    text (str): str sentence
+                """
+        if isinstance(text, List):
+            text = self.__list_to_string(text)
+        return text
+
     def process(self, field_data) -> List[str]:
+        field_data = self.__check_if_string(field_data)
         field_data = check_not_tokenized(field_data)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         if self.url_tagging:
             field_data = self.__url_tagging_operation(field_data)
         field_data = self.__tokenization_operation(field_data)
+        field_data = self.__remove_punctuation(field_data)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data)
         if self.lemmatization:
