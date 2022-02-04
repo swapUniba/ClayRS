@@ -24,7 +24,15 @@ class Spacy(NLP):
                  lemmatization: bool = False,
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
+                 remove_punctuation: bool = False,
+                 new_stopwords: List[str] = None,
+                 not_stopwords: List[str] = None
                  ):
+
+        self.remove_punctuation = remove_punctuation
+        self.new_stopwords = new_stopwords
+        self.not_stopwords = not_stopwords
+        
 
         if isinstance(stopwords_removal, str):
             stopwords_removal = stopwords_removal.lower() == 'true'
@@ -40,6 +48,9 @@ class Spacy(NLP):
 
         if isinstance(url_tagging, str):
             url_tagging = url_tagging.lower() == 'true'
+
+        if isinstance(remove_punctuation, str):
+            remove_punctuation = remove_punctuation.lower() == 'true'
 
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
@@ -91,8 +102,19 @@ class Spacy(NLP):
         Returns:
             filtered_sentence (List<str>): list of words from the text, without the stopwords
         """
+
         string_text = self.__list_to_string(text)
         filtered_sentence = []
+
+        new_stopwords = self.new_stopwords
+        not_stopwords = self.not_stopwords
+
+        for stopword in new_stopwords:
+            nlp.vocab[stopword].is_stop = True
+
+        for stopword in not_stopwords:
+            nlp.vocab[stopword].is_stop = False
+
         for token in nlp(string_text):
             if not token.is_stop:
                 filtered_sentence.append(token.text)
@@ -163,7 +185,7 @@ class Spacy(NLP):
         string_text = self.__list_to_string(text)
         for i, token in enumerate(nlp(string_text)):
             if token.like_url:
-                token.tag_ = "url"
+                token.tag_ = "<URL>"
                 text_url.append(token.tag_)
             else:
                 text_url.append(token)
@@ -250,7 +272,8 @@ class Spacy(NLP):
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         field_data = self.__tokenization_operation(field_data, nlp)
-        field_data=self.__remove_punctuation(field_data, nlp)
+        if self.remove_punctuation:
+            field_data=self.__remove_punctuation(field_data, nlp)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data, nlp)
         if self.lemmatization:
@@ -259,8 +282,8 @@ class Spacy(NLP):
             field_data = self.__url_tagging_operation(field_data, nlp)
         if self.stemming:
             field_data = self.__stemming_operation(field_data, nlp)
-        if self.named_entity_recognition:
-            field_data = self.__named_entity_recognition_operation(field_data, nlp)
+        #if self.named_entity_recognition:
+        #    field_data = self.__named_entity_recognition_operation(field_data, nlp)
             return field_data
         else:
             return self.__token_to_string(field_data)
