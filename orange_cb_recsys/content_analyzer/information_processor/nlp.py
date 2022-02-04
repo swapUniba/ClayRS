@@ -53,7 +53,11 @@ class NLTK(NLP):
                  lemmatization: bool = False,
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
+                 remove_punctuation: bool = False,
                  lang='english'):
+
+        self.remove_punctuation = remove_punctuation
+
 
         if isinstance(stopwords_removal, str):
             stopwords_removal = stopwords_removal.lower() == 'true'
@@ -69,6 +73,9 @@ class NLTK(NLP):
 
         if isinstance(url_tagging, str):
             url_tagging = url_tagging.lower() == 'true'
+
+        if isinstance(remove_punctuation, str):
+            remove_punctuation = remove_punctuation.lower == 'true'
 
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
@@ -205,7 +212,7 @@ class NLTK(NLP):
         import re
         return re.sub(' +', ' ', text)
 
-    def __remove_punctuation(self, text) -> str:
+    def __remove_punctuation(self, text) -> List[str]:
         """
         Punctuation removal in spacy
         Args:
@@ -214,8 +221,9 @@ class NLTK(NLP):
             string without punctuation
         """
         text = self.__list_to_string(text)
-        tokenizer = nltk.RegexpTokenizer(r"\w+")
-        cleaned_text = tokenizer.tokenize(text)
+        tokens = word_tokenize(text)
+        # remove all tokens that are not alphabetic
+        cleaned_text = [word for word in tokens if (word.isalnum() or word == "<" or word == ">")]
         return cleaned_text
 
     @staticmethod
