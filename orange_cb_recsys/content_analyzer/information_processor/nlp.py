@@ -1,9 +1,10 @@
+import re
 from typing import List
-
+import string
 import nltk
 nltk.download("punkt")
 
-from nltk import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -11,6 +12,11 @@ from nltk.stem.snowball import SnowballStemmer
 
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import NLP
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
+
+from nltk.metrics.distance import jaccard_distance
+from nltk.util import ngrams
+
+from nltk.corpus import words
 
 
 class NLTK(NLP):
@@ -54,8 +60,10 @@ class NLTK(NLP):
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
                  remove_punctuation: bool = False,
+                 spell_check: bool=False,
                  lang='english'):
 
+        self.spell_check=spell_check
         self.remove_punctuation = remove_punctuation
 
 
@@ -76,6 +84,9 @@ class NLTK(NLP):
 
         if isinstance(remove_punctuation, str):
             remove_punctuation = remove_punctuation.lower == 'true'
+
+        if isinstance(spell_check, str):
+            spell_check = spell_check.lower == 'true'
 
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
@@ -114,6 +125,7 @@ class NLTK(NLP):
         Returns:
              List<str>: a list of words
         """
+
         return [word for sent in nltk.sent_tokenize(text) for word in word_tokenize(sent)]
 
     def __stopwords_removal_operation(self, text) -> List[str]:
@@ -214,17 +226,57 @@ class NLTK(NLP):
 
     def __remove_punctuation(self, text) -> List[str]:
         """
-        Punctuation removal in spacy
+        Punctuation removal
         Args:
-            text (list[str):
+            text(str) : text with punct
         Returns:
-            string without punctuation
+            text_without_punct (str): text without punct
         """
-        text = self.__list_to_string(text)
-        tokens = word_tokenize(text)
-        # remove all tokens that are not alphabetic
-        cleaned_text = [word for word in tokens if (word.isalnum() or word == "<" or word == ">")]
-        return cleaned_text
+        if isinstance(text, List):
+            text=self.__list_to_string(text)
+        text = re.sub(r"[^\w\d<>\s]+", '', text)
+        text = self.__string_to_list(text)
+        text = self.__remove_whitespace(text)
+        return text
+
+    @staticmethod
+    def __remove_whitespace(text: List[str]):
+        """
+
+        Args:
+            text: List to remove whitespace after removal punctuation
+
+        Returns: List  of word without whitespace
+
+        """
+        text = [word for word in text if word.strip()]
+        return text
+
+    @staticmethod
+    def __string_to_list(text) -> List[str]:
+        """
+                Covert str in list of str
+                Args:
+                    text (str): str sentence
+
+                Returns List <str>: List of words
+
+        """
+        list_text = list(text.split(" "))
+        return list_text
+
+    @staticmethod
+    def __string_to_list(text) -> List[str]:
+        """
+                Covert str in list of str
+                Args:
+                    text (str): str sentence
+
+                Returns List <str>: List of words
+
+        """
+        list_text = list(text.split(" "))
+        return list_text
 
     @staticmethod
     def __list_to_string(text: List[str]) -> str:
@@ -247,12 +299,11 @@ class NLTK(NLP):
         Returns:
             text (list<str>): input text, <URL> instead of full urls
         """
-        import re
         urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]| '
                           '[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
                           text)
         for url in urls:
-            text = text.replace(url, "<URL>")
+            text = text.replace(url, "<url>")
         return text
 
     @staticmethod
@@ -291,6 +342,24 @@ class NLTK(NLP):
             text = self.__list_to_string(text)
         return text
 
+    @staticmethod
+    def __spell_check(field_data):
+        correct_sencente=[]
+        correct_words = words.words()
+        for word in field_data:
+            if word in string.punctuation or word == 'url' or word[0] == '#' or word.isdigit() or len(word) == 1:
+                correct_sencente.append(word)
+            else:
+                temp = [(jaccard_distance(set(ngrams(word, 2)),
+                                          set(ngrams(w, 2))), w)
+                        for w in correct_words if w[0] == word[0]]
+                try:
+                    correct=sorted(temp, key=lambda val: val[0])[0][1]
+                    correct_sencente.append(correct)
+                except:
+                    correct_sencente.append(word)
+        return correct_sencente
+
     def process(self, field_data) -> List[str]:
         field_data = self.__check_if_string(field_data)
         field_data = check_not_tokenized(field_data)
@@ -299,7 +368,10 @@ class NLTK(NLP):
         if self.url_tagging:
             field_data = self.__url_tagging_operation(field_data)
         field_data = self.__tokenization_operation(field_data)
-        field_data = self.__remove_punctuation(field_data)
+        if self.remove_punctuation:
+            field_data = self.__remove_punctuation(field_data)
+        if self.spell_check:
+            field_data = self.__spell_check(field_data)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data)
         if self.lemmatization:
@@ -309,3 +381,5 @@ class NLTK(NLP):
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data)
         return self.__compact_tokens(field_data)
+
+
