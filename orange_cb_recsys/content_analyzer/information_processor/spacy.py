@@ -6,6 +6,10 @@ from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 import spacy
 
+from hunspell import Hunspell
+
+import string
+
 
 class Spacy(NLP):
     """
@@ -26,13 +30,14 @@ class Spacy(NLP):
                  url_tagging: bool = False,
                  remove_punctuation: bool = False,
                  new_stopwords: List[str] = None,
-                 not_stopwords: List[str] = None
+                 not_stopwords: List[str] = None,
+                 spell_check: bool = False,
                  ):
 
+        self.spell_check = spell_check
         self.remove_punctuation = remove_punctuation
         self.new_stopwords = new_stopwords
         self.not_stopwords = not_stopwords
-        
 
         if isinstance(stopwords_removal, str):
             stopwords_removal = stopwords_removal.lower() == 'true'
@@ -51,6 +56,9 @@ class Spacy(NLP):
 
         if isinstance(remove_punctuation, str):
             remove_punctuation = remove_punctuation.lower() == 'true'
+
+        if isinstance(spell_check, str):
+            spell_check = spell_check.lower == 'true'
 
         super().__init__(stopwords_removal,
                          stemming, lemmatization,
@@ -206,6 +214,16 @@ class Spacy(NLP):
                 cleaned_text.append(token.text)
         return cleaned_text
 
+    def __spell_check(self, field_data):
+        hunspell = Hunspell()
+        correct_words = []
+        for word in field_data:
+            if word.isdigit() or word in string.punctuation or hunspell.spell(word) or len(hunspell.suggest(word)) == 0:
+                correct_words.append(word)
+            else:
+                correct_words.append(hunspell.suggest(word)[0])
+        return correct_words
+
     @staticmethod
     def __list_to_string(text: List[str]) -> str:
         """
@@ -273,17 +291,19 @@ class Spacy(NLP):
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         field_data = self.__tokenization_operation(field_data, nlp)
         if self.remove_punctuation:
-            field_data=self.__remove_punctuation(field_data, nlp)
+            field_data = self.__remove_punctuation(field_data, nlp)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data, nlp)
         if self.lemmatization:
             field_data = self.__lemmatization_operation(field_data, nlp)
-        if self.url_tagging:
-            field_data = self.__url_tagging_operation(field_data, nlp)
         if self.stemming:
             field_data = self.__stemming_operation(field_data, nlp)
-        #if self.named_entity_recognition:
-        #    field_data = self.__named_entity_recognition_operation(field_data, nlp)
+        if self.spell_check:
+            field_data = self.__spell_check(field_data)
+        if self.url_tagging:
+            field_data = self.__url_tagging_operation(field_data, nlp)
+        if self.named_entity_recognition:
+            field_data = self.__named_entity_recognition_operation(field_data, nlp)
             return field_data
         else:
             return self.__token_to_string(field_data)
