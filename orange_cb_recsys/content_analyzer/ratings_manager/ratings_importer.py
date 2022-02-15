@@ -1,19 +1,16 @@
 import itertools
 import os
-from abc import ABC
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Union, Tuple, List
+from typing import Dict, Union, List, Iterable
 
-import numpy as np
 import pandas as pd
-from cached_property import cached_property_with_ttl, cached_property
-from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer.exceptions import Handler_ScoreNotFloat
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
+from orange_cb_recsys.utils.const import get_pbar
 from orange_cb_recsys.utils.save_content import get_valid_filename
 
 
@@ -70,14 +67,14 @@ class Ratings:
     """
 
     def __init__(self, source: RawInformationSource,
-                 from_id_column: Union[str, int] = 0,
-                 to_id_column: Union[str, int] = 1,
+                 user_id_column: Union[str, int] = 0,
+                 item_id_column: Union[str, int] = 1,
                  score_column: Union[str, int] = 2,
                  timestamp_column: Union[str, int] = None,
                  score_processor: RatingProcessor = None):
 
         self._ratings_dict, self._user_id_column, self._item_id_column, self._score_column, self._timestamp_column = \
-            self._import_ratings(source, from_id_column, to_id_column, score_column, timestamp_column, score_processor)
+            self._import_ratings(source, user_id_column, item_id_column, score_column, timestamp_column, score_processor)
 
     @property
     def user_id_column(self) -> list:
@@ -108,13 +105,13 @@ class Ratings:
         Returns:
             ratings_frame: pd.DataFrame
         """
-        ratings_dict = {}
+        ratings_dict = defaultdict(list)
         ratings_user_score = defaultdict(list)
         ratings_user_item = defaultdict(list)
         ratings_user_timestamp = defaultdict(list)
 
         with logging_redirect_tqdm():
-            pbar = tqdm(list(source))
+            pbar = get_pbar(list(source))
             pbar.set_description(desc="Importing ratings")
             for row in pbar:
 
@@ -166,8 +163,20 @@ class Ratings:
 
         return ratings_dict, user_id_column_final, item_id_column_final, score_column_final, timestamp_column_final
 
-    def get_user_interactions(self, user_id: str):
-        return self._ratings_dict[user_id]
+    def get_user_interactions(self, user_id: str, head: int = None):
+        return self._ratings_dict[user_id][:head]
+
+    def filter_ratings(self, user_list: Iterable[str]):
+        filtered_ratings_dict = {user: self._ratings_dict[user] for user in user_list}
+
+        return self.from_dict(filtered_ratings_dict)
+
+    def take_head_all(self, head: int):
+
+        ratings_dict_cut = {user_id: user_ratings[:head]
+                            for user_id, user_ratings in zip(self._ratings_dict.keys(), self._ratings_dict.values())}
+
+        return self.from_dict(ratings_dict_cut)
 
     # @Handler_ScoreNotFloat
     # def add_score_column(self, score_column: Union[str, int], column_name: str,
@@ -244,7 +253,10 @@ class Ratings:
                 else:
                     column_values = list(interaction_frame.iloc[:, column].values.astype(dtype))
             except (KeyError, IndexError) as e:
-                raise e("Column {} not found in interaction frame!")
+                if isinstance(e, KeyError):
+                    raise KeyError(f"Column {column} not found in interaction frame!")
+                else:
+                    raise IndexError(f"Column {column} not found in interaction frame!")
 
             return column_values
 
@@ -252,20 +264,25 @@ class Ratings:
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
         ratings_dict = defaultdict(list)
+        obj._user_id_column = []
+        obj._item_id_column = []
+        obj._score_column = []
+        obj._timestamp_column = []
 
-        obj._user_id_column = get_column_df(user_column, str)
-        obj._item_id_column = get_column_df(item_column, str)
-        obj._score_column = get_column_df(score_column, float)
-        obj._timestamp_column = [None for _ in range(len(obj._user_id_column))]
-        if timestamp_column is not None:
-            obj._timestamp_column = get_column_df(timestamp_column, str)
+        if not interaction_frame.empty:
+            obj._user_id_column = get_column_df(user_column, str)
+            obj._item_id_column = get_column_df(item_column, str)
+            obj._score_column = get_column_df(score_column, float)
+            obj._timestamp_column = [None for _ in range(len(obj._user_id_column))]
+            if timestamp_column is not None:
+                obj._timestamp_column = get_column_df(timestamp_column, str)
 
-        for user_id, item_id, score, timestamp in zip(obj._user_id_column, obj._item_id_column,
-                                                      obj._score_column, obj._timestamp_column):
-            ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+            for user_id, item_id, score, timestamp in zip(obj._user_id_column, obj._item_id_column,
+                                                          obj._score_column, obj._timestamp_column):
+                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
 
-        if timestamp_column is None:
-            obj._timestamp_column = []
+            if timestamp_column is None:
+                obj._timestamp_column = []
 
         obj._ratings_dict = dict(ratings_dict)
         return obj
@@ -289,13 +306,44 @@ class Ratings:
         obj._ratings_dict = dict(ratings_dict)
         return obj
 
+    @classmethod
+    def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
+        obj = cls.__new__(cls)  # Does not call __init__
+        super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
+
+        obj._user_id_column = [interaction.user_id
+                               for interaction in itertools.chain.from_iterable(interaction_dict.values())]
+        obj._item_id_column = [interaction.item_id
+                               for interaction in itertools.chain.from_iterable(interaction_dict.values())]
+        obj._score_column = [interaction.score
+                             for interaction in itertools.chain.from_iterable(interaction_dict.values())]
+        obj._timestamp_column = [interaction.timestamp
+                                 for interaction in itertools.chain.from_iterable(interaction_dict.values())
+                                 if interaction.timestamp is not None]
+
+        obj._ratings_dict = dict(interaction_dict)
+        return obj
+
+    def __len__(self):
+        # all columns have same length, so only one is needed in order
+        # to check what is the length
+        return len(self.user_id_column)
+
     def __str__(self):
         return str(self.to_dataframe())
 
     def __repr__(self):
-        return str(self)
+        return repr(self._ratings_dict)
 
     def __iter__(self):
-        for user_id in self._ratings_dict:
-            for interaction in self._ratings_dict[user_id]:
-                yield interaction
+        yield from itertools.chain.from_iterable(self._ratings_dict.values())
+
+
+# Aliases for the Ratings class
+
+class Prediction(Ratings):
+    pass
+
+
+class Rank(Ratings):
+    pass

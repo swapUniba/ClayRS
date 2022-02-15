@@ -9,7 +9,7 @@ import numpy as np
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Prediction, Rank
 from orange_cb_recsys.recsys.algorithm import Algorithm
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
@@ -177,7 +177,7 @@ class ContentBasedAlgorithm(Algorithm):
         return X_vectorized
 
     @abc.abstractmethod
-    def process_rated(self, user_train_set: pd.DataFrame, loaded_contents_interface: LoadedContentsInterface):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Abstract method that processes rated items for the user.
 
@@ -209,8 +209,8 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsInterface,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                filter_list: List[str] = None) -> Prediction:
         """
         |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -234,8 +234,8 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsInterface, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
+             recs_number: int = None, filter_list: List[str] = None) -> Rank:
         """
         |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         |  all items will be ranked.

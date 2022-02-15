@@ -3,7 +3,7 @@ from typing import List, Union
 from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings, Prediction, Rank
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
@@ -117,8 +117,8 @@ class CentroidVector(ContentBasedAlgorithm):
         positive_rated_features_fused = self.fuse_representations(positive_rated_features, self.__embedding_combiner)
         self.__centroid = np.array(positive_rated_features_fused).mean(axis=0)
 
-    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                filter_list: List[str] = None) -> List[Interaction]:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
         the 'NotPredictionAlg' exception!
@@ -127,8 +127,8 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsDict, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -148,6 +148,13 @@ class CentroidVector(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        try:
+            user_id = user_ratings[0].user_id
+        except IndexError:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+
         # Load items to predict
         if filter_list is None:
             items_to_predict = [available_loaded_items.get(item_id)
@@ -170,14 +177,17 @@ class CentroidVector(ContentBasedAlgorithm):
         else:
             similarities = []
 
-        # Build the score frame
-        result = {'to_id': id_items_to_predict, 'score': similarities}
+        # Build the item_score dict (key is item_id, value is rank score predicted)
+        # and order the keys in descending order
+        item_score_dict = dict(zip(id_items_to_predict, similarities))
+        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
 
-        result = pd.DataFrame(result, columns=['to_id', 'score'])
+        # we only save the top-n items_ids corresponding to top-n recommendations
+        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
+        ordered_item_ids = ordered_item_ids[:recs_number]
 
-        # Sort them in descending order
-        result.sort_values(by=['score'], ascending=False, inplace=True)
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
+                                 for item_id in ordered_item_ids]
 
-        rank = result[:recs_number]
-
-        return rank
+        return rank_interaction_list

@@ -12,7 +12,7 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.utils.const import logger, progbar, get_pbar
 
 
 class Split:
@@ -43,8 +43,8 @@ class Split:
     """
 
     def __init__(self,
-                 first_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []}),
-                 second_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})):
+                 first_set: Ratings,
+                 second_set: Ratings):
 
         self.__dict__['first'] = first_set
         self.__dict__['second'] = second_set
@@ -110,7 +110,7 @@ class Partitioning(ABC):
         train_test_dict = defaultdict(lambda: defaultdict(list))
 
         with logging_redirect_tqdm():
-            pbar = tqdm(user_id_list)
+            pbar = get_pbar(user_id_list)
             pbar.set_description("Performing {}".format(str(self)))
             for user_id in pbar:
                 user_ratings = ratings_to_split.get_user_interactions(user_id)
