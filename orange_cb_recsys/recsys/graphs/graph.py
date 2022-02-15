@@ -6,6 +6,7 @@ from copy import deepcopy
 from typing import List, Set, Union, Iterable
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings
 from orange_cb_recsys.recsys.graphs.graph_metrics import GraphMetrics
 from orange_cb_recsys.utils.load_content import load_content_instance
 
@@ -342,6 +343,16 @@ class Graph(ABC):
                     result['label'].append(link_data['label'])
 
         return pd.DataFrame(result)
+
+    def to_ratings(self):
+
+        node_list = list(self.user_nodes) + list(self.item_nodes)
+
+        interaction_list = [Interaction(str(node.value), str(succ.value), float(self.get_link_data(node, succ)['weight']))
+                            for node in node_list
+                            for succ in self.get_successors(node)]
+
+        return Ratings.from_list(interaction_list)
 
     def copy(self):
         """

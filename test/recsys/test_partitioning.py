@@ -1,6 +1,7 @@
 from unittest import TestCase
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import UserInteractions, Ratings
 from orange_cb_recsys.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning
 
 original_frame = pd.DataFrame.from_dict(
@@ -8,10 +9,14 @@ original_frame = pd.DataFrame.from_dict(
      'to_id': ["aaa", "bbb", "aaa", "ddd", "ccc", "ccc", "aaa", "ddd", "ccc"],
      'rating': [0.8, 0.7, -0.4, 1.0, 0.4, 0.1, -0.3, 0.5, 0.7]})
 
+original_ratings = Ratings.from_dict({"001": UserInteractions("001", [("aaa", 0.8), ("bbb", 0.7)]),
+                                      "002": UserInteractions("002", [("aaa", -0.4), ("ddd", 1.0), ("ccc", 0.1)]),
+                                      "003": UserInteractions("003", [("ccc", -0.3), ("aaa", 0.5)]),
+                                      "004": UserInteractions("004", [("ddd", 0.5), ("ccc", 0.7)])})
+
 
 class TestPartitioning(TestCase):
     def check_partition_correct(self, train, test, original):
-
         original_list = [list(row) for row in original.itertuples(index=False)]
         train_list = [list(row) for row in train.itertuples(index=False)]
         test_list = [list(row) for row in test.itertuples(index=False)]
@@ -33,12 +38,12 @@ class TestKFoldPartitioning(TestPartitioning):
 
         kf = KFoldPartitioning(n_splits=2)
 
-        result_train, result_test = kf.split_all(original_frame)
+        result_train, result_test = kf.split_all(original_ratings)
 
         for train, test in zip(result_train, result_test):
             self.check_partition_correct(train, test, original_frame)
 
-        result_train, result_test = kf.split_all(original_frame, user_id_list={'001'})
+        result_train, result_test = kf.split_all(original_ratings, user_id_list={'001'})
 
         for train, test in zip(result_train, result_test):
             # It's the only user for which is possible to perform 3 split
@@ -92,7 +97,6 @@ class TestHoldOutPartitioning(TestPartitioning):
         result_train, result_test = ho.split_all(original_frame)
 
         for train, test in zip(result_train, result_test):
-
             self.check_partition_correct(train, test, original_frame)
 
             train_percentage = (len(train) / len(original_frame))

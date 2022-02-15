@@ -1,9 +1,11 @@
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Prediction, Rank
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
@@ -60,7 +62,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self.__labels: list = None
         self.__rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
@@ -82,9 +84,11 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 for the user (Items that the user disliked)
         """
         # Load rated items from the path
-        # rated_items = get_rated_items(items_directory, user_ratings)
+        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
-        rated_items = [available_loaded_items.get(item_id) for item_id in user_ratings['to_id'].values]
+        # Load rated items from the path
+        loaded_rated_items: List[Union[Content, None]] = [available_loaded_items.get(item_id)
+                                                          for item_id in set(items_scores_dict.keys())]
 
         threshold = self.threshold
         if threshold is None:
@@ -94,21 +98,21 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         labels = []
         rated_dict = {}
 
-        for item in rated_items:
+        for item in loaded_rated_items:
             if item is not None:
                 rated_dict[item] = self.extract_features_item(item)
 
                 # This conversion raises Exception when there are multiple same to_id for the user
-                score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
+                score_assigned = float(items_scores_dict[item.content_id])
                 if score_assigned >= threshold:
                     labels.append(1)
                 else:
                     labels.append(0)
 
-        if user_ratings.empty:
+        if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings.from_id.iloc[0]
+        user_id = user_ratings[0].user_id
         if len(rated_dict) == 0:
             raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
         if 0 not in labels:
@@ -136,8 +140,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         self.__classifier.fit(fused_features, self.__labels)
 
-    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                filter_list: List[str] = None) -> List[Interaction]:
         """
         ClassifierRecommender is not a score prediction algorithm, calling this method will raise
         the 'NotPredictionAlg' exception!
@@ -146,8 +150,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
-    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsDict, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -167,6 +171,13 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        try:
+            user_id = user_ratings[0].user_id
+        except IndexError:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+
         # Load items to predict
         if filter_list is None:
             items_to_predict = [available_loaded_items.get(item_id)
@@ -186,20 +197,24 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
 
-            score_labels = self.__classifier.predict_proba(fused_features_items_to_pred)
+            class_prob = self.__classifier.predict_proba(fused_features_items_to_pred)
         else:
-            score_labels = []
+            class_prob = []
 
-        result = {'to_id': [], 'score': []}
+        # for each item we extract the probability that the item is liked (class 1)
+        score_labels = [prob[1] for prob in class_prob]
 
-        for item_id, score in zip(id_items_to_predict, score_labels):
-            result['to_id'].append(item_id)
-            result['score'].append(score[1])
+        # Build the item_score dict (key is item_id, value is rank score predicted)
+        # and order the keys in descending order
+        item_score_dict = dict(zip(id_items_to_predict, score_labels))
+        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
 
-        result = pd.DataFrame(result, columns=['to_id', 'score'])
+        # we only save the top-n items_ids corresponding to top-n recommendations
+        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
+        ordered_item_ids = ordered_item_ids[:recs_number]
 
-        result.sort_values(by=['score'], ascending=False, inplace=True)
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
+                                 for item_id in ordered_item_ids]
 
-        rank = result[:recs_number]
-
-        return rank
+        return rank_interaction_list

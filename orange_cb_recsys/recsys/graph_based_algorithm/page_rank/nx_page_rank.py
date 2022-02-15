@@ -2,6 +2,7 @@ from typing import List
 import pandas as pd
 import networkx as nx
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler import \
     FeatureSelectionHandler
@@ -55,11 +56,6 @@ class NXPageRank(PageRankAlg):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
-        columns = ["to_id", "score"]
-        score_frame = pd.DataFrame(columns=columns)
-
-        if graph is None:
-            return score_frame
         if self.feature_selection is not None:
             user_target_nodes = list(graph.user_nodes)
             # only items recommendable to the user will be considered in the feature selection process
@@ -95,11 +91,17 @@ class NXPageRank(PageRankAlg):
         else:
             scores = self.clean_result(graph, scores, user_id)
 
-        score_frame.to_id = [node.value for node in scores.keys()]
-        score_frame.score = scores.values()
+        # Build the item_score dict (key is item_id, value is rank score predicted)
+        # and order the keys in descending order
+        item_score_dict = dict(zip([node.value for node in scores.keys()], scores.values()))
+        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
 
-        score_frame.sort_values(by=["score"], ascending=False, inplace=True)
+        # we only save the top-n items_ids corresponding to top-n recommendations
+        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
+        ordered_item_ids = ordered_item_ids[:recs_number]
 
-        rank = score_frame[:recs_number]
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
+                                 for item_id in ordered_item_ids]
 
-        return rank
+        return rank_interaction_list

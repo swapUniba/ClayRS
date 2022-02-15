@@ -1,6 +1,9 @@
+import unittest
 from unittest import TestCase
 
+from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
@@ -25,7 +28,7 @@ class TestRegression(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.ratings = pd.DataFrame.from_records([
+        ratings = pd.DataFrame.from_records([
             ("A000", "tt0112281", 3.5, "54654675"),
             ("A000", "tt0112302", 3.5, "54654675"),
             ("A001", "tt0114576", 4, "54654675"),
@@ -35,7 +38,8 @@ class TestRegression(TestCase):
             ("A002", "tt0112453", 1, "54654675"),
             ("A002", "tt0113497", 3.5, "54654675"),
             ("A003", "tt0112453", 1, "54654675")],
-            columns=["from_id", "to_id", "score", "timestamp"])
+            columns=["user_id", "item_id", "score", "timestamp"])
+        cls.ratings = Ratings.from_dataframe(ratings)
 
         cls.filter_list = ['tt0112641', 'tt0112760', 'tt0112896', 'tt0113497']
 
@@ -55,22 +59,21 @@ class TestRegression(TestCase):
         # Single representation
         alg = LinearPredictor({'Plot': ['tfidf']}, lm)
 
-        user_ratings = self.ratings.query('from_id == "A000"')
+        user_ratings = self.ratings.get_user_interactions("A000")
 
         alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
-        already_seen_items = list(user_ratings['to_id'])
         # predict with filter_list
-        res_filtered = alg.predict(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
-        item_scored_set = set(res_filtered['to_id'])
+        res_filtered = alg.predict(user_ratings, self.available_loaded_items, filter_list=self.filter_list)
+        item_scored_set = set([interaction_filtered.item_id for interaction_filtered in res_filtered])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.predict(already_seen_items, self.available_loaded_items)
-        item_rated_set = set(user_ratings['to_id'])
-        item_scored_set = set(res_all_unrated['to_id'])
+        res_all_unrated = alg.predict(user_ratings, self.available_loaded_items)
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_scored_set = set([interaction_all.item_id for interaction_all in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_scored = item_scored_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_scored), 0)
@@ -84,22 +87,21 @@ class TestRegression(TestCase):
                                'Genre': ['tfidf', 'embedding'],
                                'imdbRating': [0]}, lm, only_greater_eq=2)
 
-        user_ratings = self.ratings.query('from_id == "A000"')
+        user_ratings = self.ratings.get_user_interactions("A000")
 
         alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
-        already_seen_items = list(user_ratings['to_id'])
         # predict with filter_list
-        res_filtered = alg.predict(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
-        item_scored_set = set(res_filtered['to_id'])
+        res_filtered = alg.predict(user_ratings, self.available_loaded_items, filter_list=self.filter_list)
+        item_scored_set = set([interaction_filtered.item_id for interaction_filtered in res_filtered])
         self.assertEqual(len(item_scored_set), len(self.filter_list))
         self.assertCountEqual(item_scored_set, self.filter_list)
 
         # predict without filter_list
-        res_all_unrated = alg.predict(already_seen_items, self.available_loaded_items)
-        item_rated_set = set(user_ratings['to_id'])
-        item_scored_set = set(res_all_unrated['to_id'])
+        res_all_unrated = alg.predict(user_ratings, self.available_loaded_items)
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_scored_set = set([interaction_all.item_id for interaction_all in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_scored = item_scored_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_scored), 0)
@@ -111,32 +113,31 @@ class TestRegression(TestCase):
         # Single representation
         alg = LinearPredictor({'Plot': ['tfidf']}, lm)
 
-        user_ratings = self.ratings.query('from_id == "A000"')
+        user_ratings = self.ratings.get_user_interactions("A000")
 
         alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
-        already_seen_items = list(user_ratings['to_id'])
         # rank with filter_list
-        res_filtered = alg.rank(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
-        item_ranked_set = set(res_filtered['to_id'])
+        res_filtered = alg.rank(user_ratings, self.available_loaded_items, filter_list=self.filter_list)
+        item_ranked_set = set([interaction_filtered.item_id for interaction_filtered in res_filtered])
         self.assertEqual(len(item_ranked_set), len(self.filter_list))
         self.assertCountEqual(item_ranked_set, self.filter_list)
 
         # rank without filter_list
-        res_all_unrated = alg.rank(already_seen_items, self.available_loaded_items)
-        item_rated_set = set(user_ratings['to_id'])
-        item_ranked_set = set(res_all_unrated['to_id'])
+        res_all_unrated = alg.rank(user_ratings, self.available_loaded_items)
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_ranked_set = set([interaction_all.item_id for interaction_all in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
 
         # rank with n_recs specified
         n_recs = 5
-        res_n_recs = alg.rank(already_seen_items, self.available_loaded_items, n_recs)
+        res_n_recs = alg.rank(user_ratings, self.available_loaded_items, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
-        item_rated_set = set(user_ratings['to_id'])
-        item_ranked_set = set(res_n_recs['to_id'])
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_ranked_set = set([interaction_nrecs.item_id for interaction_nrecs in res_n_recs])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
@@ -150,32 +151,59 @@ class TestRegression(TestCase):
                                'Genre': ['tfidf', 'embedding'],
                                'imdbRating': [0]}, lm, only_greater_eq=2)
 
-        user_ratings = self.ratings.query('from_id == "A000"')
+        user_ratings = self.ratings.get_user_interactions("A000")
 
         alg.process_rated(user_ratings, self.available_loaded_items)
         alg.fit()
 
-        already_seen_items = list(user_ratings['to_id'])
         # rank with filter_list
-        res_filtered = alg.rank(already_seen_items, self.available_loaded_items, filter_list=self.filter_list)
-        item_ranked_set = set(res_filtered['to_id'])
+        res_filtered = alg.rank(user_ratings, self.available_loaded_items, filter_list=self.filter_list)
+        item_ranked_set = set([interaction_filtered.item_id for interaction_filtered in res_filtered])
         self.assertEqual(len(item_ranked_set), len(self.filter_list))
         self.assertCountEqual(item_ranked_set, self.filter_list)
 
         # rank without filter_list
-        res_all_unrated = alg.rank(already_seen_items, self.available_loaded_items)
-        item_rated_set = set(user_ratings['to_id'])
-        item_ranked_set = set(res_all_unrated['to_id'])
+        res_all_unrated = alg.rank(user_ratings, self.available_loaded_items)
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_ranked_set = set([interaction_all.item_id for interaction_all in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
 
         # rank with n_recs specified
         n_recs = 5
-        res_n_recs = alg.rank(already_seen_items, self.available_loaded_items, n_recs)
+        res_n_recs = alg.rank(user_ratings, self.available_loaded_items, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
-        item_rated_set = set(user_ratings['to_id'])
-        item_ranked_set = set(res_n_recs['to_id'])
+        item_rated_set = set([interaction.item_id for interaction in user_ratings])
+        item_ranked_set = set([interaction_nrecs.item_id for interaction_nrecs in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
+
+    def test_raise_errors(self):
+        # No Item available locally
+        ratings = pd.DataFrame.from_records([
+            ("A000", "non existent", 1, "54654675")],
+            columns=["user_id", "item_id", "score", "timestamp"])
+        ratings = Ratings.from_dataframe(ratings)
+
+        alg = LinearPredictor({'Plot': ['tfidf']}, SkLinearRegression())
+        user_ratings = ratings.get_user_interactions('A000')
+
+        with self.assertRaises(NoRatedItems):
+            alg.process_rated(user_ratings, self.available_loaded_items)
+
+        # User has no ratings
+        user_ratings = []
+
+        alg = LinearPredictor({'Plot': ['tfidf']}, SkLinearRegression())
+
+        with self.assertRaises(EmptyUserRatings):
+            alg.process_rated(user_ratings, self.available_loaded_items)
+
+        with self.assertRaises(EmptyUserRatings):
+            alg.rank(user_ratings, self.available_loaded_items)
+
+
+if __name__ == '__main__':
+    unittest.main()

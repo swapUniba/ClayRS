@@ -3,10 +3,13 @@ from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import os
 
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, popular_items,\
+from orange_cb_recsys.utils.save_content import get_valid_filename
+
+from orange_cb_recsys.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, popular_items, \
     pop_ratio_by_user
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.recsys.partitioning import Split
@@ -54,30 +57,6 @@ class PlotMetric(Metric):
     def overwrite(self):
         return self.__overwrite
 
-    def get_valid_filename(self, filename: str, format: str) -> str:
-        """
-        Concrete method which gets a valid *filename.format* based on the overwrite parameter
-
-        If overwrite=False and there are existent file named as *filename.format* in the output directory, the method
-        checks if there are also files named as *filename (1).format*, *filename (2).format*, *filename (3).format*.
-        It stops at the first non existent *filename (x).format* in the output directory specified in the constructor.
-        Args:
-            filename (str): Name of the file to save
-            format (str): Format of the file to save
-
-        Returns:
-            A valid 'filename.format' string based on the overwrite parameter
-        """
-        filename_try = f"{filename}.{format}"
-
-        if self.overwrite is False:
-            i = 0
-            while os.path.isfile(os.path.join(self.output_directory, filename_try)):
-                i += 1
-                filename_try = "{} ({}).{}".format(filename, i, format)
-
-        return filename_try
-
     def save_figure(self, fig, file_name: str):
         """
         Concrete method which given the figure to save and its file name, it saves the figure in the output directory
@@ -89,7 +68,7 @@ class PlotMetric(Metric):
         """
         Path(self.output_directory).mkdir(parents=True, exist_ok=True)
 
-        file_name = self.get_valid_filename(file_name, self.format)
+        file_name = get_valid_filename(self.output_directory, file_name, self.format, self.overwrite)
         fig.savefig(os.path.join(self.output_directory, file_name))
         fig.clf()
         plt.close(fig)
@@ -125,14 +104,14 @@ class LongTailDistr(PlotMetric):
         ValueError: exception raised when a invalid value for the 'on' parameter is specified
     """
 
-    def __init__(self, out_dir: str = '.', file_name: str = 'long_tail_distr', on='truth', format: str = 'png',
+    def __init__(self, out_dir: str = '.', file_name: str = 'long_tail_distr', on: str = 'truth', format: str = 'png',
                  overwrite: bool = False):
         valid = {'truth', 'pred'}
         self.__on = on.lower()
 
         if self.__on not in valid:
             raise ValueError("on={} is not supported! Long Tail can be calculated only on:\n"
-                                     "{}".format(on, valid))
+                             "{}".format(on, valid))
         super().__init__(out_dir, file_name, format, overwrite)
 
     def __str__(self):
@@ -144,7 +123,7 @@ class LongTailDistr(PlotMetric):
         else:
             frame = split.pred
 
-        counts_by_item = Counter(list(frame['to_id']))
+        counts_by_item = Counter(frame.item_id_column)
         ordered_item_count_pairs = counts_by_item.most_common()
 
         ordered_counts = []
@@ -159,18 +138,22 @@ class LongTailDistr(PlotMetric):
         fig = plt.figure()
         ax = fig.add_subplot()
 
-        ax.set(xlabel='Recommended items', ylabel='Num of recommendations',
-               title='Long Tail Distribution - {}'.format(self.__on))
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels, rotation='vertical')
+        if self.__on == 'truth':
+            ax.set(xlabel='Item ID', ylabel='# of item ratings',
+                   title='Long Tail Distribution - {}'.format(self.__on))
+        else:
+            ax.set(xlabel='Item ID', ylabel='# of item recommendations',
+                   title='Long Tail Distribution - {}'.format(self.__on))
 
+        ax.fill_between(x, y, color="orange", alpha=0.2)
+        ax.set_xticks([])
         ax.plot(x, y)
 
         file_name = self.file_name + '_{}'.format(self.__on)
 
         self.save_figure(fig, file_name=file_name)
 
-        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])
+        return pd.DataFrame(columns=['user_id', 'item_id', 'score'])
 
 
 class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
@@ -248,14 +231,14 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         data_to_plot = []
         labels = []
         for group_name in user_groups:
-            truth_group = truth.query('from_id in @user_groups[@group_name]', engine='python')
-            pred_group = predictions.query('from_id in @user_groups[@group_name]', engine='python')
+            truth_group = truth.filter_ratings(user_list=user_groups[group_name])
+            pred_group = predictions.filter_ratings(user_list=user_groups[group_name])
 
             profile_pop_ratios_frame = pop_ratio_by_user(truth_group, most_popular_items)
             recs_pop_ratios_frame = pop_ratio_by_user(pred_group, most_popular_items)
 
-            profile_pop_ratios = list(profile_pop_ratios_frame['popularity_ratio'])
-            recs_pop_ratios = list(recs_pop_ratios_frame['popularity_ratio'])
+            profile_pop_ratios = list(profile_pop_ratios_frame.values())
+            recs_pop_ratios = list(recs_pop_ratios_frame.values())
 
             split_result['user_group'].append(group_name)
             split_result['profile_pop_ratio'].append(profile_pop_ratios)
@@ -281,7 +264,7 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
         # add patch_artist=True option to ax.boxplot()
         # to get fill color
-        bp = ax.boxplot(data_to_plot, patch_artist=True)
+        bp = ax.boxplot(np.array(data_to_plot, dtype=object), patch_artist=True)
 
         first_color = '#7570b3'
         second_color = '#b2df8a'
@@ -326,10 +309,10 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
         score_frame = pd.DataFrame(split_result)
         if self.__store_frame:
-            file_name = self.get_valid_filename(file_name, 'csv')
+            file_name = get_valid_filename(self.output_directory, file_name, 'csv', self.overwrite)
             score_frame.to_csv(os.path.join(self.output_directory, file_name), index=False)
 
-        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])
+        return pd.DataFrame(columns=['user_id', 'item_id', 'score'])
 
 
 class PopRecsCorrelation(PlotMetric):
@@ -377,7 +360,7 @@ class PopRecsCorrelation(PlotMetric):
 
         if self.__mode not in valid:
             raise ValueError("Mode {} is not supported! Modes available:\n"
-                                     "{}".format(mode, valid))
+                             "{}".format(mode, valid))
 
         super().__init__(out_dir, file_name, format, overwrite)
 
@@ -446,12 +429,12 @@ class PopRecsCorrelation(PlotMetric):
         truth = split.truth
 
         # Calculating popularity by item
-        items = truth[['to_id']].values.flatten()
+        items = truth.item_id_column
         pop_by_items = Counter(items)
 
         # Calculating num of recommendations by item
         pop_by_items = pop_by_items.most_common()
-        recs_by_item = Counter(predictions[['to_id']].values.flatten())
+        recs_by_item = Counter(predictions.item_id_column)
         popularities = list()
         recommendations = list()
         popularities_no_zeros = list()
@@ -486,4 +469,4 @@ class PopRecsCorrelation(PlotMetric):
         elif self.__mode == 'no_zeros':
             self.build_no_zeros_plot(popularities_no_zeros, recommendations_no_zeros)
 
-        return pd.DataFrame(columns=['from_id', 'to_id', 'score'])
+        return pd.DataFrame(columns=['user_id', 'item_id', 'score'])

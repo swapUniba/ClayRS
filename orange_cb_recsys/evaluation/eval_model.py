@@ -1,10 +1,12 @@
-from typing import List
+from typing import List, Union
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
 import pandas as pd
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.recsys.recsys import RecSys
+from orange_cb_recsys.utils.const import logger
 
 
 class EvalModel:
@@ -29,41 +31,31 @@ class EvalModel:
             warnings. Else, the logger will be disabled for the Recommender module. This parameter is False by default
     """
     def __init__(self,
-                 pred_list: List[pd.DataFrame],
-                 truth_list: List[pd.DataFrame],
+                 pred_list: Union[List[Prediction], List[Rank]],
+                 truth_list: List[Ratings],
                  metric_list: List[Metric]):
 
         if len(pred_list) != len(truth_list):
             raise ValueError("List containing predictions and list containing ground truth must have the same length!")
 
-        self.__pred_list = self._convert_correct_type_columns(pred_list)
-        self.__truth_list = self._convert_correct_type_columns(truth_list)
-        self.__metric_list = metric_list
-
-    def _convert_correct_type_columns(self, df_list: List[pd.DataFrame]):
-        # convert columns to correct type
-
-        for df in df_list:
-            df['from_id'] = df['from_id'].astype(str)
-            df['to_id'] = df['to_id'].astype(str)
-            df['score'] = df['score'].astype(float)
-
-        return df_list
+        self._pred_list = pred_list
+        self._truth_list = truth_list
+        self._metric_list = metric_list
 
     @property
     def pred_list(self):
-        return self.__pred_list
+        return self._pred_list
 
     @property
     def truth_list(self):
-        return self.__truth_list
+        return self._truth_list
 
     @property
     def metric_list(self):
         """
         List of metrics that eval model will compute for the recsys
         """
-        return self.__metric_list
+        return self._metric_list
 
     def append_metric(self, metric: Metric):
         """
@@ -72,7 +64,7 @@ class EvalModel:
         Args:
             metric (Metric): Metric to append to the metric list
         """
-        self.__metric_list.append(metric)
+        self._metric_list.append(metric)
 
     def fit(self, user_id_list: list = None):
         """
@@ -95,15 +87,16 @@ class EvalModel:
             Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
             list, the second one will contain every user results for every metric eligible
         """
+        logger.info('Performing evaluation on metrics chosen')
 
-        pred_list = self.pred_list
-        truth_list = self.truth_list
+        pred_list = self._pred_list
+        truth_list = self._truth_list
 
         if user_id_list is not None:
             user_id_list_set = set([str(user_id) for user_id in user_id_list])
 
-            pred_list = [pred[pred['from_id'].isin(user_id_list_set)] for pred in pred_list]
-            truth_list = [truth[truth['from_id'].isin(user_id_list_set)] for truth in truth_list]
+            pred_list = [pred.filter_ratings(user_id_list_set) for pred in self._pred_list]
+            truth_list = [truth.filter_ratings(user_id_list_set) for truth in self._truth_list]
 
         result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
 

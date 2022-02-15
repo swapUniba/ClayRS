@@ -3,39 +3,45 @@ from unittest import TestCase
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, RPrecision, \
+from orange_cb_recsys.content_analyzer import Ratings
+from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
+    RPrecision, \
     RecallAtK, FMeasureAtK
 from orange_cb_recsys.recsys.partitioning import Split
 
-user_pred_only_new_items = pd.DataFrame(
-    {'from_id': ['u1', 'u1', 'u2', 'u2'],
-     'to_id': ['inew1', 'inew2', 'inew3', 'inew4'],
+pred_only_new_items = pd.DataFrame(
+    {'user_id': ['u1', 'u1', 'u2', 'u2'],
+     'item_id': ['inew1', 'inew2', 'inew3', 'inew4'],
      'score': [650, 600, 500, 650]})
+pred_only_new_items = Ratings.from_dataframe(pred_only_new_items)
 
-user_pred_w_new_items = pd.DataFrame(
-    {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
-     'to_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8'],
+pred_w_new_items = pd.DataFrame(
+    {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
+     'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8'],
      'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50]})
+pred_w_new_items = Ratings.from_dataframe(pred_w_new_items)
 
-user_pred_only_one_item = pd.DataFrame(
-    {'from_id': ['u1', 'u2'],
-     'to_id': ['i4', 'i8'],
+pred_only_one_item = pd.DataFrame(
+    {'user_id': ['u1', 'u2'],
+     'item_id': ['i4', 'i8'],
      'score': [650, 600]})
+pred_only_one_item = Ratings.from_dataframe(pred_only_one_item)
 
-user_pred_i1_i4_missing = pd.DataFrame(
-    {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
-     'to_id': ['i2', 'i5', 'i6', 'i3', 'i8', 'i9', 'i6', 'i1', 'i8'],
+pred_i1_i4_missing = pd.DataFrame(
+    {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
+     'item_id': ['i2', 'i5', 'i6', 'i3', 'i8', 'i9', 'i6', 'i1', 'i8'],
      'score': [600, 400, 300, 220, 100, 50, 200, 100, 50]})
+pred_i1_i4_missing = Ratings.from_dataframe(pred_i1_i4_missing)
 
-user_truth = pd.DataFrame({'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
-                           'to_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
-                           'score': [3, 2, 3, 1, 2, 4, 3, 3]})
+truth = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
+                      'item_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
+                      'score': [3, 2, 3, 1, 2, 4, 3, 3]})
+truth = Ratings.from_dataframe(truth)
 
-
-split_only_new = Split(user_pred_only_new_items, user_truth)
-split_w_new_items = Split(user_pred_w_new_items, user_truth)
-split_only_one = Split(user_pred_only_one_item, user_truth)
-split_missing = Split(user_pred_i1_i4_missing, user_truth)
+split_only_new = Split(pred_only_new_items, truth)
+split_w_new_items = Split(pred_w_new_items, truth)
+split_only_one = Split(pred_only_one_item, truth)
+split_missing = Split(pred_i1_i4_missing, truth)
 
 
 class TestPrecision(TestCase):
@@ -67,16 +73,16 @@ class TestPrecision(TestCase):
 
         result_macro = metric_macro.perform(split_w_new_items)
 
-        expected_u1 = 2/8
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        expected_u1 = 2 / 8
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 3/4
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        expected_u2 = 3 / 4
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1 = [0, 1, 0, 0, 0, 1, 0, 0], u2 = [1, 0, 1, 1]
@@ -86,16 +92,16 @@ class TestPrecision(TestCase):
 
         result_micro = metric_micro.perform(split_w_new_items)
 
-        expected_u1 = 2/8
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        expected_u1 = 2 / 8
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        expected_u2 = 3/4
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        expected_u2 = 3 / 4
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         expected_micro_sys = (2 + 3) / ((2 + 3) + (6 + 1))
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # u1 = [0, 1, 0, 0, 0, 1, 0, 0], u2 = [1, 0, 1, 1]
@@ -105,16 +111,16 @@ class TestPrecision(TestCase):
 
         result_mean = metric_mean.perform(split_w_new_items)
 
-        expected_u1 = 2/8
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        expected_u1 = 2 / 8
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 1/4
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        expected_u2 = 1 / 4
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # u1 = [0, 1, 0, 0, 0, 1, 0, 0], u2 = [0, 0, 1, 0]
@@ -125,16 +131,16 @@ class TestPrecision(TestCase):
 
         result_macro = metric_macro.perform(split_only_one)
 
-        expected_u1 = 0/1
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        expected_u1 = 0 / 1
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 1/1
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        expected_u2 = 1 / 1
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1 = [0], u2 = [1]
@@ -144,16 +150,16 @@ class TestPrecision(TestCase):
 
         result_micro = metric_micro.perform(split_only_one)
 
-        expected_u1 = 0/1
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        expected_u1 = 0 / 1
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        expected_u2 = 1/1
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        expected_u2 = 1 / 1
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         expected_micro_sys = (0 + 1) / ((0 + 1) + (1 + 0))
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # u1 = [0], u2 = [1]
@@ -163,16 +169,16 @@ class TestPrecision(TestCase):
 
         result_mean = metric_mean.perform(split_only_one)
 
-        expected_u1 = 0/1
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        expected_u1 = 0 / 1
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 0/1
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        expected_u2 = 0 / 1
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # u1 = [0], u2 = [0]
@@ -186,16 +192,16 @@ class TestPrecisionAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/3
-        result_macro_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 3
+        result_macro_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 2/3
-        result_macro_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 2 / 3
+        result_macro_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1_total = [0, 1, 0, 0, 0, 1, 0, 0], u2_total = [1, 0, 1, 1]
@@ -218,16 +224,16 @@ class TestPrecisionAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/3
-        result_mean_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 3
+        result_mean_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 1/3
-        result_mean_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 1 / 3
+        result_mean_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_mean_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # u1_total = [0, 1, 0, 0, 0, 1, 0, 0], u2_total = [0, 0, 1, 0]
@@ -240,15 +246,15 @@ class TestPrecisionAtK(TestCase):
         result_macro = metric.perform(split_missing)
 
         expected_u1 = 0 / 3
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
         expected_u2 = 2 / 3
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1_total = [0, 0, 0, 1, 0, 0], u2_total = [0, 1, 1]
@@ -262,16 +268,16 @@ class TestRPrecision(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/2
-        result_macro_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 2
+        result_macro_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 2/3
-        result_macro_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 2 / 3
+        result_macro_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1_total = [0, 1, 0, 0, 0, 1, 0, 0], u2_total = [1, 0, 1, 1]
@@ -282,16 +288,16 @@ class TestRPrecision(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/2
-        result_mean_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 2
+        result_mean_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 0/1
-        result_mean_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 0 / 1
+        result_mean_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_mean_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # u1_total = [0, 1, 0, 0, 0, 1, 0, 0], u2_total = [0, 0, 1, 0]
@@ -304,15 +310,15 @@ class TestRPrecision(TestCase):
         result_macro = metric.perform(split_missing)
 
         expected_u1 = 0 / 2
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
         expected_u2 = 2 / 3
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # u1_total = [0, 0, 0, 0, 1, 0, 0], u2_total = [0, 0, 1, 1]
@@ -348,16 +354,16 @@ class TestRecall(TestCase):
 
         result_macro = metric_macro.perform(split_w_new_items)
 
-        expected_u1 = 2/2
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        expected_u1 = 2 / 2
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 3/3
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        expected_u2 = 3 / 3
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -368,16 +374,16 @@ class TestRecall(TestCase):
 
         result_micro = metric_micro.perform(split_w_new_items)
 
-        expected_u1 = 2/2
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        expected_u1 = 2 / 2
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        expected_u2 = 3/3
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        expected_u2 = 3 / 3
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         expected_micro_sys = (2 + 3) / ((2 + 3) + (0 + 0))
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -388,16 +394,16 @@ class TestRecall(TestCase):
 
         result_mean = metric_mean.perform(split_w_new_items)
 
-        expected_u1 = 2/2
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        expected_u1 = 2 / 2
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 1/1
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        expected_u2 = 1 / 1
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 1
@@ -409,16 +415,16 @@ class TestRecall(TestCase):
 
         result_macro = metric_macro.perform(split_only_one)
 
-        expected_u1 = 0/2
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        expected_u1 = 0 / 2
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 1/3
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        expected_u2 = 1 / 3
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -429,16 +435,16 @@ class TestRecall(TestCase):
 
         result_micro = metric_micro.perform(split_only_one)
 
-        expected_u1 = 0/2
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        expected_u1 = 0 / 2
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        expected_u2 = 1/3
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        expected_u2 = 1 / 3
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         expected_micro_sys = (0 + 1) / ((0 + 1) + (2 + 2))
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -449,16 +455,16 @@ class TestRecall(TestCase):
 
         result_mean = metric_mean.perform(split_only_one)
 
-        expected_u1 = 0/2
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        expected_u1 = 0 / 2
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 0/1
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        expected_u2 = 0 / 1
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 1
@@ -473,16 +479,16 @@ class TestRecallAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/2
-        result_macro_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 2
+        result_macro_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        expected_u2 = 2/3
-        result_macro_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 2 / 3
+        result_macro_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -506,16 +512,16 @@ class TestRecallAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        expected_u1 = 1/2
-        result_mean_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        expected_u1 = 1 / 2
+        result_mean_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        expected_u2 = 1/1
-        result_mean_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        expected_u2 = 1 / 1
+        result_mean_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_mean_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 1
@@ -529,15 +535,15 @@ class TestRecallAtK(TestCase):
         result_macro = metric.perform(split_missing)
 
         expected_u1 = 0 / 2
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
         expected_u2 = 2 / 3
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -562,7 +568,7 @@ class TestFMeasure(TestCase):
         num = prec * reca
         den = (beta_2 * prec) + reca
 
-        fbeta = (1 + beta_2) * (den and num/den or 0)
+        fbeta = (1 + beta_2) * (den and num / den or 0)
 
         fbeta = fbeta
 
@@ -589,20 +595,20 @@ class TestFMeasure(TestCase):
 
         result_macro = metric_macro.perform(split_w_new_items)
 
-        prec_u1 = 2/8
-        reca_u1 = 2/2
+        prec_u1 = 2 / 8
+        reca_u1 = 2 / 2
         expected_u1 = self.fscore(1, prec_u1, reca_u1)
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        prec_u2 = 3/4
-        reca_u2 = 3/3
+        prec_u2 = 3 / 4
+        reca_u2 = 3 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -613,22 +619,22 @@ class TestFMeasure(TestCase):
 
         result_micro = metric_micro.perform(split_w_new_items)
 
-        prec_u1 = 2/8
-        reca_u1 = 2/2
+        prec_u1 = 2 / 8
+        reca_u1 = 2 / 2
         expected_u1 = self.fscore(1, prec_u1, reca_u1)
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        prec_u2 = 3/4
-        reca_u2 = 3/3
+        prec_u2 = 3 / 4
+        reca_u2 = 3 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         prec_sys = (2 + 3) / ((2 + 3) + (6 + 1))
         reca_sys = (2 + 3) / ((2 + 3) + (0 + 0))
         expected_micro_sys = self.fscore(1, prec_sys, reca_sys)
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -639,20 +645,20 @@ class TestFMeasure(TestCase):
 
         result_mean = metric_mean.perform(split_w_new_items)
 
-        prec_u1 = 2/8
-        reca_u1 = 2/2
+        prec_u1 = 2 / 8
+        reca_u1 = 2 / 2
         expected_u1 = self.fscore(1, prec_u1, reca_u1)
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        prec_u2 = 1/4
-        reca_u2 = 1/1
+        prec_u2 = 1 / 4
+        reca_u2 = 1 / 1
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -664,20 +670,20 @@ class TestFMeasure(TestCase):
 
         result_macro = metric_macro.perform(split_only_one)
 
-        prec_u1 = 0/1
-        reca_u1 = 0/2
+        prec_u1 = 0 / 1
+        reca_u1 = 0 / 2
         expected_u1 = 0
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        prec_u2 = 1/1
-        reca_u2 = 1/3
+        prec_u2 = 1 / 1
+        reca_u2 = 1 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -688,22 +694,22 @@ class TestFMeasure(TestCase):
 
         result_micro = metric_micro.perform(split_only_one)
 
-        prec_u1 = 0/1
-        reca_u1 = 0/2
+        prec_u1 = 0 / 1
+        reca_u1 = 0 / 2
         expected_u1 = 0
-        result_micro_u1 = float(result_micro.query('from_id == "u1"')[str(metric_micro)])
+        result_micro_u1 = float(result_micro.query('user_id == "u1"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u1, result_micro_u1)
 
-        prec_u2 = 1/1
-        reca_u2 = 1/3
+        prec_u2 = 1 / 1
+        reca_u2 = 1 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_micro_u2 = float(result_micro.query('from_id == "u2"')[str(metric_micro)])
+        result_micro_u2 = float(result_micro.query('user_id == "u2"')[str(metric_micro)])
         self.assertAlmostEqual(expected_u2, result_micro_u2)
 
         prec_sys = (0 + 1) / ((0 + 1) + (1 + 0))
         reca_sys = (0 + 1) / ((0 + 1) + (2 + 2))
         expected_micro_sys = self.fscore(1, prec_sys, reca_sys)
-        result_micro_sys = float(result_micro.query('from_id == "sys"')[str(metric_micro)])
+        result_micro_sys = float(result_micro.query('user_id == "sys"')[str(metric_micro)])
         self.assertAlmostEqual(expected_micro_sys, result_micro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -714,20 +720,20 @@ class TestFMeasure(TestCase):
 
         result_mean = metric_mean.perform(split_only_one)
 
-        prec_u1 = 0/1
-        reca_u1 = 0/2
+        prec_u1 = 0 / 1
+        reca_u1 = 0 / 2
         expected_u1 = 0
-        result_mean_u1 = float(result_mean.query('from_id == "u1"')[str(metric_mean)])
+        result_mean_u1 = float(result_mean.query('user_id == "u1"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        prec_u2 = 0/1
-        reca_u2 = 0/1
+        prec_u2 = 0 / 1
+        reca_u2 = 0 / 1
         expected_u2 = 0
-        result_mean_u2 = float(result_mean.query('from_id == "u2"')[str(metric_mean)])
+        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_mean)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result_mean.query('from_id == "sys"')[str(metric_mean)])
+        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_mean)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 1
@@ -739,20 +745,20 @@ class TestFMeasure(TestCase):
 
         result_macro = metric_macro.perform(split_w_new_items)
 
-        prec_u1 = 2/8
-        reca_u1 = 2/2
+        prec_u1 = 2 / 8
+        reca_u1 = 2 / 2
         expected_u1 = self.fscore(2, prec_u1, reca_u1)
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        prec_u2 = 3/4
-        reca_u2 = 3/3
+        prec_u2 = 3 / 4
+        reca_u2 = 3 / 3
         expected_u2 = self.fscore(2, prec_u2, reca_u2)
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -763,20 +769,20 @@ class TestFMeasure(TestCase):
 
         result_macro = metric_macro.perform(split_w_new_items)
 
-        prec_u1 = 2/8
-        reca_u1 = 2/2
+        prec_u1 = 2 / 8
+        reca_u1 = 2 / 2
         expected_u1 = self.fscore(3.2, prec_u1, reca_u1)
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric_macro)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        prec_u2 = 3/4
-        reca_u2 = 3/3
+        prec_u2 = 3 / 4
+        reca_u2 = 3 / 3
         expected_u2 = self.fscore(3.2, prec_u2, reca_u2)
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric_macro)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric_macro)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric_macro)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric_macro)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -792,7 +798,7 @@ class TestFMeasureAtK(TestCase):
         num = prec * reca
         den = (beta_2 * prec) + reca
 
-        fbeta = (1 + beta_2) * (num/den)
+        fbeta = (1 + beta_2) * (num / den)
 
         fbeta = fbeta
 
@@ -803,20 +809,20 @@ class TestFMeasureAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        prec_u1 = 1/3
-        reca_u1 = 1/2
+        prec_u1 = 1 / 3
+        reca_u1 = 1 / 2
         expected_u1 = self.fscore(1, prec_u1, reca_u1)
-        result_macro_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        result_macro_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
-        prec_u2 = 2/3
-        reca_u2 = 2/3
+        prec_u2 = 2 / 3
+        reca_u2 = 2 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_macro_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        result_macro_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
@@ -840,20 +846,20 @@ class TestFMeasureAtK(TestCase):
 
         result = metric.perform(split_w_new_items)
 
-        prec_u1 = 1/3
-        reca_u1 = 1/2
+        prec_u1 = 1 / 3
+        reca_u1 = 1 / 2
         expected_u1 = self.fscore(1, prec_u1, reca_u1)
-        result_mean_u1 = float(result.query('from_id == "u1"')[str(metric)])
+        result_mean_u1 = float(result.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_mean_u1)
 
-        prec_u2 = 1/3
+        prec_u2 = 1 / 3
         reca_u2 = 1
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_mean_u2 = float(result.query('from_id == "u2"')[str(metric)])
+        result_mean_u2 = float(result.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_mean_u2)
 
         expected_mean_sys = (expected_u1 + expected_u2) / 2
-        result_mean_sys = float(result.query('from_id == "sys"')[str(metric)])
+        result_mean_sys = float(result.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 1
@@ -869,22 +875,23 @@ class TestFMeasureAtK(TestCase):
         prec_u1 = 0 / 3
         reca_u1 = 0 / 2
         expected_u1 = 0
-        result_macro_u1 = float(result_macro.query('from_id == "u1"')[str(metric)])
+        result_macro_u1 = float(result_macro.query('user_id == "u1"')[str(metric)])
         self.assertAlmostEqual(expected_u1, result_macro_u1)
 
         prec_u2 = 2 / 3
         reca_u2 = 2 / 3
         expected_u2 = self.fscore(1, prec_u2, reca_u2)
-        result_macro_u2 = float(result_macro.query('from_id == "u2"')[str(metric)])
+        result_macro_u2 = float(result_macro.query('user_id == "u2"')[str(metric)])
         self.assertAlmostEqual(expected_u2, result_macro_u2)
 
         expected_macro_sys = (expected_u1 + expected_u2) / 2
-        result_macro_sys = float(result_macro.query('from_id == "sys"')[str(metric)])
+        result_macro_sys = float(result_macro.query('user_id == "sys"')[str(metric)])
         self.assertAlmostEqual(expected_macro_sys, result_macro_sys)
 
         # n_real_relevant_u1 = 2, n_real_relevant_u2 = 3
         # u1_total = [0, 0, 0, 1, 0, 0], u2_total = [0, 1, 1]
         # u1@k = [0, 0, 0], u2@k = [0, 1, 1]
 
+
 if __name__ == "__main__":
-     unittest.main()
+    unittest.main()

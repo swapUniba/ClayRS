@@ -17,3 +17,4 @@ networkx==2.5
 whoosh==2.7.4
 sentence-transformers==1.2.0
 colorama~=0.4.4
+tqdm==4.62.2

@@ -1,8 +1,12 @@
 import os
+import shutil
+import unittest
 from unittest import TestCase
 
+import numpy as np
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopProfileVsRecs, PopRecsCorrelation
 from orange_cb_recsys.recsys import Split
 
@@ -13,6 +17,7 @@ truth = pd.DataFrame(
                'i2', 'i4', 'i3', 'i20', 'i3', 'i1', 'i21', 'i3', 'i5', 'i1'],
      'score': [5, 3, 3.6, 4, 2.2, 1, 1.5, 3.2, 3.6, 4, 5, 3.5,
                2.2, 2.8, 4, 5, 4.5, 3.5, 5, 4, 4.5, 3.3]})
+truth = Ratings.from_dataframe(truth)
 
 recs = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2', 'u2',
@@ -21,6 +26,7 @@ recs = pd.DataFrame(
                'i2', 'i4', 'i3', 'i20', 'i3', 'i1', 'i3', 'i5', 'i1', 'i9', 'i36', 'i6'],
      'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50, 25,
                500, 400, 300, 200, 350, 100, 50, 800, 600, 500, 400, 300]})
+recs = Ratings.from_dataframe(recs)
 
 split_i21_missing_in_recs = Split(recs, truth)
 
@@ -94,6 +100,12 @@ class TestLongTail(TestCase):
         self.assertTrue(os.path.isfile(os.path.join('test_long/overwrite', 'long_tail_custom_name_pred.png')))
         self.assertFalse(os.path.isfile(os.path.join('test_long/overwrite', 'long_tail_custom_name_pred (3).png')))
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.remove('./long_tail_distr_truth.png')
+        os.remove('./long_tail_distr_truth.svg')
+        shutil.rmtree('test_long')
+
 
 class TestPopProfileVsRecs(TestCase):
     def test_perform(self):
@@ -163,6 +175,12 @@ class TestPopProfileVsRecs(TestCase):
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).png')))
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).csv')))
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.remove('pop_ratio_profile_vs_recs.png')
+        os.remove('pop_ratio_profile_vs_recs.svg')
+        shutil.rmtree('test_prof_recs')
+
 
 class TestPopRecsCorrelation(TestCase):
     def test_perform(self):
@@ -205,12 +223,14 @@ class TestPopRecsCorrelation(TestCase):
             'to_id': ['i2', 'i1', 'i3', 'i5', 'i4'],
             'score': [5, 3, 3.6, 4, 2.2]}
         )
+        truth = Ratings.from_dataframe(truth)
 
         recs = pd.DataFrame({
             'from_id': ['u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
             'to_id': ['i1', 'i2', 'inew1', 'inew2', 'i5', 'i4', 'i3'],
             'score': [300, 250, 200, 400, 350, 300, 100]}
         )
+        recs = Ratings.from_dataframe(recs)
         # All items in the truth set have been recommended, so there's no 'zero' recommendation
 
         split_no_zero_present = Split(recs, truth)
@@ -267,3 +287,15 @@ class TestPopRecsCorrelation(TestCase):
         self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation_no_zeros.png')))
         self.assertFalse(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (3).png')))
         self.assertFalse(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (3).png')))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.remove('./pop_recs_correlation.png')
+        os.remove('./pop_recs_correlation.svg')
+        os.remove('./pop_recs_correlation_no_zeros.png')
+        os.remove('pop_recs_correlation_no_zeros.svg')
+        shutil.rmtree('test_pop_recs')
+
+
+if __name__ == '__main__':
+    unittest.main()

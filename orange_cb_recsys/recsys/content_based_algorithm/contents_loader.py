@@ -25,6 +25,9 @@ class LoadedContentsDict(LoadedContentsInterface):
         logger.info("Loading contents from disk...")
         self._contents_dict = {item_id: load_content_instance(contents_path, item_id) for item_id in contents_to_load}
 
+        if not any(self._contents_dict.values()):
+            raise FileNotFoundError(f"No contents found in {contents_path}! Maybe you have misspelled the path folder?")
+
     def get_contents_interface(self):
         return self._contents_dict
 

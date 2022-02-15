@@ -1,7 +1,8 @@
 import os
+import unittest
 from unittest import TestCase
 
-
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
 from orange_cb_recsys.evaluation.metrics.error_metrics import MAE
 from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
 from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr
@@ -19,8 +20,8 @@ rank_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'rank_split
 truth_split_1 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_1.csv'))
 truth_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_2.csv'))
 
-pred_list = [rank_split_1, rank_split_2]
-truth_list = [truth_split_1, truth_split_2]
+pred_list = [Ratings.from_dataframe(rank_split_1), Ratings.from_dataframe(rank_split_2)]
+truth_list = [Ratings.from_dataframe(truth_split_1), Ratings.from_dataframe(truth_split_2)]
 
 
 class TestEvalModel(TestCase):
@@ -56,7 +57,7 @@ class TestEvalModel(TestCase):
         self.assertIsInstance(user_results, pd.DataFrame)
 
         # we take as reference one split only since same users must be present in both split
-        self.assertEqual(set(rank_split_1['from_id']), set(user_results.index))
+        self.assertEqual(set(rank_split_1['from_id'].map(str)), set(user_results.index.map(str)))
 
         # the user result frame must contain results for each user of the Precision, NDCG, MAE (the first 3 of the
         # metric list). The other metrics do not compute result for each metric so they will not be present as columns
@@ -103,7 +104,11 @@ class TestEvalModel(TestCase):
     def test_fit_error(self):
         # should raise error since pred_list and truth_list must be of equal length
         with self.assertRaises(ValueError):
-            pred_list_smaller = [pd.DataFrame()]
-            pred_list_bigger = [pd.DataFrame(), pd.DataFrame()]
+            pred_list_smaller = [Ratings.from_dataframe(pd.DataFrame())]
+            pred_list_bigger = [Ratings.from_dataframe(pd.DataFrame()), Ratings.from_dataframe(pd.DataFrame())]
 
             EvalModel(pred_list_smaller, pred_list_bigger, self.metric_list)
+
+
+if __name__ == '__main__':
+    unittest.main()

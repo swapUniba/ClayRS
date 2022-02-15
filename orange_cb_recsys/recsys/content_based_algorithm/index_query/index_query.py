@@ -3,10 +3,11 @@ import re
 
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NoRatedItems, OnlyNegativeItems
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NoRatedItems, \
+    OnlyNegativeItems, EmptyUserRatings
 
 
 class IndexQuery(ContentBasedAlgorithm):
@@ -96,7 +97,7 @@ class IndexQuery(ContentBasedAlgorithm):
     def _load_available_contents(self, index_path: str, items_to_load: set = None):
         return LoadedContentsIndex(index_path)
 
-    def process_rated(self, user_ratings: pd.DataFrame, available_loaded_items: LoadedContentsIndex):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the query).
@@ -107,6 +108,8 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             index_directory (str): path of the index folder
         """
+        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+
         threshold = self.threshold
         if threshold is None:
             threshold = self._calc_mean_user_threshold(user_ratings)
@@ -119,25 +122,23 @@ class IndexQuery(ContentBasedAlgorithm):
         positive_user_docs = {}
 
         ix = available_loaded_items.get_contents_interface()
-        # Simple variable for better error visualization.
-        # If no item is available locally, this should remain at False
-        at_least_one = False
 
-        for item_id, score in zip(user_ratings.to_id, user_ratings.score):
+        for item_id, score in zip(items_scores_dict.keys(), items_scores_dict.values()):
             if score >= threshold:
                 # {item_id: {"item": item_dictionary, "score": item_score}}
                 item_query = ix.query(item_id, 1, classic_similarity=self.__classic_similarity)
                 if len(item_query) != 0:
-                    at_least_one = True
                     item = item_query.pop(item_id).get('item')
                     scores.append(score)
                     positive_user_docs[item_id] = self.__get_representations(item)
 
-        user_id = user_ratings.from_id.iloc[0]
-        if not at_least_one:
-            raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
+        if len(user_ratings) == 0:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_id = user_ratings[0].user_id
         if len(positive_user_docs) == 0:
-            raise OnlyNegativeItems("User {} - There are only negative items available locally!")
+            raise OnlyNegativeItems(f"User {user_id} - There are no rated items available locally or there are only "
+                                    f"negative items available locally!")
 
         self.__positive_user_docs = positive_user_docs
         self.__scores = scores
@@ -173,7 +174,7 @@ class IndexQuery(ContentBasedAlgorithm):
 
         self.__string_query = string_query
 
-    def _build_mask_list(self, user_seen_items: list, filter_list: List[str] = None):
+    def _build_mask_list(self, user_seen_items: set, filter_list: List[str] = None):
         """
         Private function that calculate the mask query and the filter query for whoosh to use:
 
@@ -193,8 +194,8 @@ class IndexQuery(ContentBasedAlgorithm):
 
         return masked_list
 
-    def predict(self, user_seen_items: list, available_loaded_items: LoadedContentsIndex,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
+                filter_list: List[str] = None) -> List[Interaction]:
         """
         IndexQuery is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
@@ -204,8 +205,8 @@ class IndexQuery(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
-    def rank(self, user_seen_items: list, available_loaded_items: LoadedContentsIndex, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
+             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -225,16 +226,20 @@ class IndexQuery(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        try:
+            user_id = user_ratings[0].user_id
+        except IndexError:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+
         mask_list = self._build_mask_list(user_seen_items, filter_list)
 
         ix = available_loaded_items.get_contents_interface()
         score_docs = ix.query(self.__string_query, recs_number, mask_list, filter_list, self.__classic_similarity)
 
-        results = {'to_id': [], 'score': []}
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, score_docs[item_id]['score'])
+                                 for item_id in score_docs]
 
-        for result in score_docs:
-
-            results['to_id'].append(result)
-            results['score'].append(score_docs[result]['score'])
-
-        return pd.DataFrame(results)
+        return rank_interaction_list

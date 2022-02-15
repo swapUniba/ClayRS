@@ -2,6 +2,7 @@ import os
 from unittest import TestCase
 import pandas as pd
 
+from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
 from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
@@ -22,6 +23,7 @@ train_ratings = pd.DataFrame.from_records([
     ("A003", "tt0112453", 1, "54654675"),
     ("A003", "tt0113497", 4, "54654675")],
     columns=["from_id", "to_id", "score", "timestamp"])
+train_ratings = Ratings.from_dataframe(train_ratings)
 
 # No locally available items for A000
 train_ratings_some_missing = pd.DataFrame.from_records([
@@ -30,16 +32,18 @@ train_ratings_some_missing = pd.DataFrame.from_records([
     ("A001", "tt0112896", 1, "54654675"),
     ("A000", "not_existent2", 5, "54654675")],
     columns=["from_id", "to_id", "score", "timestamp"])
+train_ratings_some_missing = Ratings.from_dataframe(train_ratings_some_missing)
 
 test_ratings = pd.DataFrame.from_records([
-    ("A000", "tt0114388"),
-    ("A000", "tt0112302"),
-    ("A001", "tt0113189"),
-    ("A001", "tt0113228"),
-    ("A002", "tt0114319"),
-    ("A002", "tt0114709"),
-    ("A003", "tt0114885")],
-    columns=["from_id", "to_id"])
+    ("A000", "tt0114388", None),
+    ("A000", "tt0112302", None),
+    ("A001", "tt0113189", None),
+    ("A001", "tt0113228", None),
+    ("A002", "tt0114319", None),
+    ("A002", "tt0114709", None),
+    ("A003", "tt0114885", None)],
+    columns=["from_id", "to_id", "score"])
+test_ratings = Ratings.from_dataframe(test_ratings)
 
 
 # Each of the cbrs algorithm has its own class tests, so we just take
@@ -95,27 +99,34 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(len(result_rank_filtered), len(test_ratings))
 
         # Test ranking with the cbrs algorithm on all available unseen items
-        result_rank_all = cbrs.rank(test_ratings['from_id'])
+        result_rank_all = cbrs.rank(test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
         # Test top-n ranking with the cbrs algorithm
-        result_rank_numbered = cbrs.rank(test_ratings['from_id'], n_recs=2)
-        for user in set(test_ratings['from_id']):
-            result_single = result_rank_numbered[result_rank_numbered['from_id'] == user]
+        result_rank_numbered = cbrs.rank(test_ratings, n_recs=2, methodology=None)
+        for user in set(test_ratings.user_id_column):
+            result_single = result_rank_numbered.get_user_interactions(user)
             self.assertTrue(len(result_single) == 2)
 
         # Test ranking with alternative methodology
         result_different_meth = cbrs.rank(test_ratings, methodology=TrainingItemsMethodology())
-        for user in set(test_ratings['from_id']):
-            result_single = result_different_meth[result_different_meth['from_id'] == user]
-            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
-            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
+        for user in set(test_ratings.user_id_column):
+            result_single = result_different_meth.get_user_interactions(user)
+            result_single_items = set([result_interaction.item_id for result_interaction in result_single])
+            items_already_seen_user = set([train_interaction.item_id
+                                           for train_interaction in train_ratings.get_user_interactions(user)])
+            items_expected_rank = set([train_interaction.item_id
+                                       for train_interaction in train_ratings
+                                       if train_interaction.item_id not in items_already_seen_user])
 
-            self.assertEqual(set(items_expected_rank['to_id']), set(result_single['to_id']))
+            self.assertEqual(items_expected_rank, result_single_items)
 
         # Test algorithm not fitted
-        result_empty = cbrs.rank(['not_existent_user'])
-        self.assertTrue(result_empty.empty)
+        cbrs = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
+
+        cbrs.fit()
+        result_empty = cbrs.rank(test_ratings, user_id_list=['A000'])
+        self.assertTrue(len(result_empty) == 0)
 
     def test_predict(self):
         # Test fit with the cbrs algorithm
@@ -130,21 +141,28 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(len(result_predict_filtered), len(test_ratings))
 
         # Test predict with the cbrs algorithm on all available unseen items
-        result_predict_all = cbrs.predict(test_ratings['from_id'])
+        result_predict_all = cbrs.predict(test_ratings, methodology=None)
         self.assertTrue(len(result_predict_all) != 0)
 
         # Test predict with alternative methodology
         result_different_meth = cbrs.predict(test_ratings, methodology=TrainingItemsMethodology())
-        for user in set(test_ratings['from_id']):
-            result_single = result_different_meth[result_different_meth['from_id'] == user]
-            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
-            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
+        for user in set(test_ratings.user_id_column):
+            result_single = result_different_meth.get_user_interactions(user)
+            result_single_items = set([result_interaction.item_id for result_interaction in result_single])
+            items_already_seen_user = set([train_interaction.item_id
+                                           for train_interaction in train_ratings.get_user_interactions(user)])
+            items_expected_rank = set([train_interaction.item_id
+                                       for train_interaction in train_ratings
+                                       if train_interaction.item_id not in items_already_seen_user])
 
-            self.assertEqual(set(items_expected_rank['to_id']), set(result_single['to_id']))
+            self.assertEqual(items_expected_rank, result_single_items)
 
         # Test algorithm not fitted
-        result_empty = cbrs.predict(['not_existent_user'])
-        self.assertTrue(result_empty.empty)
+        cbrs = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
+
+        cbrs.fit()
+        result_empty = cbrs.rank(test_ratings, user_id_list=['A000'])
+        self.assertTrue(len(result_empty) == 0)
 
     def test_predict_raise_error(self):
         alg = ClassifierRecommender({'Plot': ['tfidf', 'embedding']}, SkSVC())
