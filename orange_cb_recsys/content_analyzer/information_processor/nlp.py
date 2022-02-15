@@ -53,32 +53,37 @@ class NLTK(NLP):
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
                  remove_punctuation: bool = False,
+                 named_entity_recognition: bool = False,
                  lang='english'):
 
+        self.stopwords_removal = stopwords_removal
+        self.stemming = stemming
+        self.lemmatization = lemmatization
+        self.strip_multiple_whitespaces = strip_multiple_whitespaces
+        self.url_tagging = url_tagging
         self.remove_punctuation = remove_punctuation
-
+        self.named_entity_recognition = named_entity_recognition
 
         if isinstance(stopwords_removal, str):
-            stopwords_removal = stopwords_removal.lower() == 'true'
+            self.stopwords_removal = stopwords_removal.lower() == 'true'
 
         if isinstance(stemming, str):
-            stemming = stemming.lower() == 'true'
+            self.stemming = stemming.lower() == 'true'
 
         if isinstance(lemmatization, str):
-            lemmatization = lemmatization.lower() == 'true'
+            self.lemmatization = lemmatization.lower() == 'true'
 
         if isinstance(strip_multiple_whitespaces, str):
-            strip_multiple_whitespaces = strip_multiple_whitespaces.lower() == 'true'
+            self.strip_multiple_whitespaces = strip_multiple_whitespaces.lower() == 'true'
 
         if isinstance(url_tagging, str):
-            url_tagging = url_tagging.lower() == 'true'
+            self.url_tagging = url_tagging.lower() == 'true'
 
         if isinstance(remove_punctuation, str):
-            remove_punctuation = remove_punctuation.lower == 'true'
+            self.remove_punctuation = remove_punctuation.lower == 'true'
 
-        super().__init__(stopwords_removal,
-                         stemming, lemmatization,
-                         strip_multiple_whitespaces, url_tagging)
+        if isinstance(named_entity_recognition, str):
+            self.named_entity_recognition = named_entity_recognition == 'true'
 
         self.__full_lang_code = lang
 
@@ -126,7 +131,6 @@ class NLTK(NLP):
             filtered_sentence (List<str>): list of words from the text, without the stopwords
         """
         stop_words = set(stopwords.words(self.__full_lang_code))
-
         filtered_sentence = []
         for word_token in text:
             if word_token.lower() not in stop_words:
@@ -219,21 +223,11 @@ class NLTK(NLP):
         Returns:
             string without punctuation
         """
-        text = self.__list_to_string(text)
+        text = self.list_to_string(text)
         tokens = word_tokenize(text)
         # remove all tokens that are not alphabetic
         cleaned_text = [word for word in tokens if (word.isalnum() or word == "<" or word == ">")]
         return cleaned_text
-
-    @staticmethod
-    def __list_to_string(text: List[str]) -> str:
-        """
-            Convert list of str in str
-            Args: text (str): list of str
-            Returns: str sentence
-        """
-        string_text = ' '.join([str(elem) for elem in text])
-        return string_text
 
     @staticmethod
     def __url_tagging_operation(text) -> List[str]:
@@ -287,7 +281,7 @@ class NLTK(NLP):
                     text (str): str sentence
                 """
         if isinstance(text, List):
-            text = self.__list_to_string(text)
+            text = self.list_to_string(text)
         return text
 
     def process(self, field_data) -> List[str]:
@@ -298,7 +292,8 @@ class NLTK(NLP):
         if self.url_tagging:
             field_data = self.__url_tagging_operation(field_data)
         field_data = self.__tokenization_operation(field_data)
-        field_data = self.__remove_punctuation(field_data)
+        if self.remove_punctuation:
+            field_data = self.__remove_punctuation(field_data)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data)
         if self.lemmatization:

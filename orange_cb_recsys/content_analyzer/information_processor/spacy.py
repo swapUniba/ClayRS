@@ -24,45 +24,45 @@ class Spacy(NLP):
 
     def __init__(self, lang='en_core_web_sm',
                  stopwords_removal: bool = False,
-                 stemming: bool = False,
                  lemmatization: bool = False,
                  strip_multiple_whitespaces: bool = True,
                  url_tagging: bool = False,
                  remove_punctuation: bool = False,
                  new_stopwords: List[str] = None,
                  not_stopwords: List[str] = None,
+                 named_entity_recognition : bool = False,
                  spell_check: bool = False,
                  ):
-
-        self.spell_check = spell_check
+        self.stopwords_removal = stopwords_removal
+        self.lemmatization = lemmatization
+        self.strip_multiple_whitespaces = strip_multiple_whitespaces
+        self.url_tagging = url_tagging
         self.remove_punctuation = remove_punctuation
         self.new_stopwords = new_stopwords
         self.not_stopwords = not_stopwords
+        self.named_entity_recognition = named_entity_recognition
+        self.spell_check = spell_check
 
         if isinstance(stopwords_removal, str):
-            stopwords_removal = stopwords_removal.lower() == 'true'
-
-        if isinstance(stemming, str):
-            stemming = stemming.lower() == 'true'
+            self.stopwords_removal = stopwords_removal.lower() == 'true'
 
         if isinstance(lemmatization, str):
-            lemmatization = lemmatization.lower() == 'true'
+            self.lemmatization = lemmatization.lower() == 'true'
 
         if isinstance(strip_multiple_whitespaces, str):
-            strip_multiple_whitespaces = strip_multiple_whitespaces.lower() == 'true'
+            self.strip_multiple_whitespaces = strip_multiple_whitespaces.lower() == 'true'
 
         if isinstance(url_tagging, str):
-            url_tagging = url_tagging.lower() == 'true'
+            self.url_tagging = url_tagging.lower() == 'true'
 
         if isinstance(remove_punctuation, str):
-            remove_punctuation = remove_punctuation.lower() == 'true'
+            self.remove_punctuation = remove_punctuation.lower() == 'true'
 
         if isinstance(spell_check, str):
-            spell_check = spell_check.lower == 'true'
+            self.named_entity_recognition = named_entity_recognition == 'true'
 
-        super().__init__(stopwords_removal,
-                         stemming, lemmatization,
-                         strip_multiple_whitespaces, url_tagging)
+        if isinstance(spell_check, str):
+            self.spell_check = spell_check.lower == 'true'
 
         self.__full_lang_code = lang
 
@@ -72,8 +72,6 @@ class Spacy(NLP):
     def __repr__(self):
         return "< Spacy: " + "" \
                              "stopwords_removal = " + \
-               str(self.stopwords_removal) + ";" + \
-               "stemming = " + \
                str(self.stemming) + ";" + \
                "lemmatization = " + \
                str(self.lemmatization) + ";" + \
@@ -82,6 +80,8 @@ class Spacy(NLP):
                "strip_multiple_whitespaces = " + \
                str(self.strip_multiple_whitespaces) + ";" + \
                "url_tagging = " + \
+               str(self.spell_check) + ";" + \
+               "spell_check = " + \
                str(self.url_tagging) + " >"
 
     def set_lang(self):
@@ -111,7 +111,7 @@ class Spacy(NLP):
             filtered_sentence (List<str>): list of words from the text, without the stopwords
         """
 
-        string_text = self.__list_to_string(text)
+        string_text = self.list_to_string(text)
         filtered_sentence = []
 
         new_stopwords = self.new_stopwords
@@ -128,9 +128,6 @@ class Spacy(NLP):
                 filtered_sentence.append(token.text)
         return filtered_sentence
 
-    def __stemming_operation(self, text, nlp) -> List[str]:
-        pass
-
     def __lemmatization_operation(self, text, nlp) -> List[str]:
         """
         Execute lemmatization on input text with spacy
@@ -142,7 +139,7 @@ class Spacy(NLP):
             lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
         """
 
-        string_text = self.__list_to_string(text)
+        string_text = self.list_to_string(text)
         lemmatized_text = []
         for word in nlp(string_text):
             lemmatized_text.append(word.lemma_)
@@ -160,7 +157,7 @@ class Spacy(NLP):
 
         """
         word_entity = {}
-        string_text = self.__list_to_string(text)
+        string_text = self.list_to_string(text)
         for value, token in enumerate(nlp(string_text)):
             word_entity[value] = [token, token.tag_]
         return word_entity
@@ -190,7 +187,7 @@ class Spacy(NLP):
                     text (list<str>): input text, <URL> instead of full urls
                 """
         text_url = []
-        string_text = self.__list_to_string(text)
+        string_text = self.list_to_string(text)
         for i, token in enumerate(nlp(string_text)):
             if token.like_url:
                 token.tag_ = "<URL>"
@@ -207,7 +204,7 @@ class Spacy(NLP):
         Returns:
             string without punctuation
         """
-        text = self.__list_to_string(text)
+        text = self.list_to_string(text)
         cleaned_text = []
         for token in nlp(text):
             if not token.is_punct:
@@ -223,16 +220,6 @@ class Spacy(NLP):
             else:
                 correct_words.append(hunspell.suggest(word)[0])
         return correct_words
-
-    @staticmethod
-    def __list_to_string(text: List[str]) -> str:
-        """
-            Convert list of str in str
-            Args: text (str): list of str
-            Returns: str sentence
-        """
-        string_text = ' '.join([str(elem) for elem in text])
-        return string_text
 
     @staticmethod
     def __token_to_string(token_field) -> List[str]:
@@ -271,7 +258,7 @@ class Spacy(NLP):
                     text (str): str sentence
                 """
         if isinstance(text, List):
-            text = self.__list_to_string(text)
+            text = self.list_to_string(text)
         return text
 
     def process(self, field_data) -> List[str]:
@@ -296,8 +283,6 @@ class Spacy(NLP):
             field_data = self.__stopwords_removal_operation(field_data, nlp)
         if self.lemmatization:
             field_data = self.__lemmatization_operation(field_data, nlp)
-        if self.stemming:
-            field_data = self.__stemming_operation(field_data, nlp)
         if self.spell_check:
             field_data = self.__spell_check(field_data)
         if self.url_tagging:
