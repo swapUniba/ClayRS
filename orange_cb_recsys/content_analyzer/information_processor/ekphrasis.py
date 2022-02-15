@@ -1,3 +1,5 @@
+from orange_cb_recsys.content_analyzer.information_processor.information_processor import NLP
+
 import string
 from typing import List
 
@@ -10,7 +12,7 @@ from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
 
-class Ekphrasis:
+class Ekphrasis(NLP):
     """
     Class to manage text to locate dates, currencies, etc.,
     unpack hashtags and correct spelling.
@@ -37,45 +39,20 @@ class Ekphrasis:
         self.remove_punctuation = remove_punctuation
 
         if isinstance(unpack_contractions, str):
-            unpack_contractions = unpack_contractions.lower() == 'true'
+            self.unpack_contractions = unpack_contractions.lower() == 'true'
         if isinstance(spell_check, str):
-            spell_check = spell_check.lower() == 'true'
+            self.spell_check = spell_check.lower() == 'true'
         if isinstance(unpack_hashtag, str):
-            unpack_hashtag = unpack_hashtag.lower() == 'true'
+            self.unpack_hashtag = unpack_hashtag.lower() == 'true'
         if isinstance(annotate_emoji, str):
-            annotate_emoji = annotate_emoji.lower() == 'true'
+            self.annotate_emoji = annotate_emoji.lower() == 'true'
         if isinstance(word_segmenter, str):
-            word_segmenter = word_segmenter.lower() == 'true'
+            self.word_segmenter = word_segmenter.lower() == 'true'
         if isinstance(remove_punctuation, str):
-            remove_punctuation = remove_punctuation.lower() == 'true'
+            self.remove_punctuation = remove_punctuation.lower() == 'true'
 
     @staticmethod
-    def __list_to_string(text: List[str]) -> str:
-        """
-        Covert list of str in str
-        Args:
-            text (str): list of str
-
-        Returns: str sentence
-
-        """
-        string_text = ' '.join([str(elem) for elem in text])
-        return string_text
-
-    @staticmethod
-    def __string_to_list(text) -> List[str]:
-        """
-                Covert str in list of str
-                Args:
-                    text (str): str sentence
-
-                Returns List <str>: List of words
-
-        """
-        list_text = list(text.split(" "))
-        return list_text
-
-    def __spell_check(self, field_data):
+    def __spell_check(field_data):
         """
         Correct any spelling errors
         Args:
@@ -106,8 +83,9 @@ class Ekphrasis:
             text_without_punct (str): text without punct
         """
         if isinstance(text, List):
-            text=self.__list_to_string(text)
+            text=self.list_to_string(text)
         text = re.sub(r"[^\w\d<>\s]+", '', text)
+        text = self.string_to_list(text)
         return text
 
     def __check_if_string(self, text) -> str:
@@ -120,7 +98,7 @@ class Ekphrasis:
             text (str): str sentence
         """
         if isinstance(text, List):
-            text = self.__list_to_string(text)
+            text = self.list_to_string(text)
         return text
 
     def __annotate_emoji(self):
@@ -145,11 +123,10 @@ class Ekphrasis:
         seg_eng = Segmenter(corpus="english")
         for w in field_data:
             word_seg_list.append((seg_eng.segment(w)))
-        word_seg_list = self.__list_to_string(word_seg_list)
+        word_seg_list = self.list_to_string(word_seg_list)
         return word_seg_list
 
-    @staticmethod
-    def __strip_multiple_whitespaces_operation(text) -> str:
+    def __strip_multiple_whitespaces_operation(self, text:List[str]) -> str:
         """
         Remove multiple whitespaces and '<repeated> marker on input text
 
@@ -159,9 +136,12 @@ class Ekphrasis:
         Returns:
             str: input text, multiple whitespaces removed
         """
+        text= self.list_to_string(text)
         text = re.sub('<repeated>', ' ', text)
         text = re.sub(' +', ' ', text)
+        text = self.string_to_list(text)
         return text
+
     def process(self, field_data) -> List[str]:
 
         """
@@ -182,13 +162,13 @@ class Ekphrasis:
         field_data = text_processor.pre_process_doc(field_data)
         if self.remove_punctuation:
             field_data = self.__remove_punctuation(field_data)
-            field_data=self.__strip_multiple_whitespaces_operation(field_data)
         if self.spell_check:
             field_data = self.__spell_check(field_data)
         if self.word_segmenter:
             field_data = self.__word_segmenter(field_data)
         if isinstance(field_data, str):
-            field_data = self.__string_to_list(field_data)
+            field_data = self.string_to_list(field_data)
+        field_data = self.__strip_multiple_whitespaces_operation(field_data)
         return field_data
 
 
