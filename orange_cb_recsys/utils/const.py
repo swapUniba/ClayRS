@@ -2,7 +2,10 @@ import inspect
 import re
 import os
 import sys
+from collections import Iterable
+
 from orange_cb_recsys.utils.custom_logger import getCustomLogger
+from tqdm import tqdm
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.join(THIS_DIR, '../../')
@@ -47,6 +50,12 @@ def progbar(it, prefix='', max_value: int = None, file=sys.stderr, substitute_wi
         yield item
 
     file.write("\n")
+
+
+def get_pbar(iterator: Iterable):
+    pbar = tqdm(iterator)
+    pbar.bar_format = "{desc} {percentage:.0f}%|{bar}| {n:}/{total_fmt} [{elapsed}<{remaining}]"
+    return pbar
 
 
 logger = getCustomLogger('custom_logger')
