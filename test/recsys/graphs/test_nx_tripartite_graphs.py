@@ -160,15 +160,15 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
         # Test multiple graph creation possibilities
 
         # Import ratings as DataFrame
-        ratings_import = RatingsImporter(
+        ratings = Ratings(
             source=CSVFile(ratings_filename),
-            from_id_column='user_id',
-            to_id_column='item_id',
+            user_id_column='user_id',
+            item_id_column='item_id',
             score_column='points',
             timestamp_column='timestamp',
             score_processor=NumberNormalizer()
         )
-        ratings_frame = ratings_import.import_ratings()
+        ratings_frame = ratings.to_dataframe()
 
         # Create graph using the property 'starring' from representation '0' ('dbpedia')
         g = NXTripartiteGraph(ratings_frame, movies_dir,

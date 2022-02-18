@@ -30,7 +30,7 @@ class NXPageRank(PageRankAlg):
         super().__init__(personalized, feature_selection)
 
     def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+             filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).

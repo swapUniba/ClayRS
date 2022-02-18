@@ -200,15 +200,27 @@ class TestGraphBasedRS(TestCase):
     def setUpClass(cls) -> None:
         # different test ratings from the cbrs since a graph based algorithm
         # can give predictions only to items that are in the graph
-        cls.test_ratings = pd.DataFrame.from_records([
-            ("A000", "tt0112896"),
-            ("A000", "tt0112453"),
-            ("A001", "tt0114576"),
-            ("A001", "tt0113497"),
-            ("A002", "tt0114576"),
-            ("A002", "tt0113041"),
-            ("A003", "tt0114576")],
-            columns=["from_id", "to_id"])
+        test_ratings = pd.DataFrame.from_records([
+            ("A000", "tt0112896", None),
+            ("A000", "tt0112453", None),
+            ("A001", "tt0114576", None),
+            ("A001", "tt0113497", None),
+            ("A002", "tt0114576", None),
+            ("A002", "tt0113041", None),
+            ("A003", "tt0114576", None)],
+            columns=["from_id", "to_id", "score"])
+        cls.test_ratings = Ratings.from_dataframe(test_ratings)
+
+        train_ratings = pd.DataFrame.from_records([
+            ("A000", "tt0114576", 5, "54654675"),
+            ("A001", "tt0114576", 3, "54654675"),
+            ("A001", "tt0112896", 1, "54654675"),
+            ("A000", "tt0113041", 1, "54654675"),
+            ("A002", "tt0112453", 2, "54654675"),
+            ("A002", "tt0113497", 4, "54654675"),
+            ("A003", "tt0112453", 1, "54654675"),
+            ("A003", "tt0113497", 4, "54654675")],
+            columns=["from_id", "to_id", "score", "timestamp"])
 
         cls.graph = NXFullGraph(train_ratings)
 
@@ -222,23 +234,26 @@ class TestGraphBasedRS(TestCase):
         self.assertEqual(len(result_rank_filtered), len(self.test_ratings))
 
         # Test ranking with the gbrs algorithm on all unseen items that are in the graph
-        result_rank_all = gbrs.rank(test_ratings['from_id'])
+        result_rank_all = gbrs.rank(self.test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
         # Test top-n ranking with the gbrs algorithm
-        result_rank_numbered = gbrs.rank(test_ratings['from_id'], n_recs=2)
-        for user in set(test_ratings['from_id']):
-            result_single = result_rank_numbered[result_rank_numbered['from_id'] == user]
+        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None)
+        for user in set(test_ratings.user_id_column):
+            result_single = [pred_rank for pred_rank in result_rank_numbered if pred_rank.user_id == user]
             self.assertTrue(len(result_single) == 2)
 
         # Test ranking with alternative methodology
-        result_different_meth = gbrs.rank(test_ratings, methodology=TrainingItemsMethodology())
-        for user in set(test_ratings['from_id']):
-            result_single = result_different_meth[result_different_meth['from_id'] == user]
-            items_already_seen_user = set(train_ratings[train_ratings['from_id'] == user]['to_id'])
-            items_expected_rank = train_ratings[(~train_ratings['to_id'].isin(items_already_seen_user))]
+        result_different_meth = gbrs.rank(self.test_ratings, methodology=TrainingItemsMethodology())
+        for user in set(self.test_ratings.user_id_column):
+            result_single = set([pred_rank.item_id for pred_rank in result_different_meth if pred_rank.user_id == user])
+            items_already_seen_user = set([original_interaction.item_id
+                                           for original_interaction in train_ratings.get_user_interactions(user)])
+            items_expected_rank = set([train_interaction.item_id
+                                       for train_interaction in train_ratings
+                                       if train_interaction.item_id not in items_already_seen_user])
 
-            self.assertTrue(set(items_expected_rank['to_id']), set(result_single['to_id']))
+            self.assertEqual(items_expected_rank, result_single)
 
     def test_predict_raise_error(self):
         alg = NXPageRank()

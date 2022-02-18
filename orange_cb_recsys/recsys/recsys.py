@@ -355,13 +355,13 @@ class GraphBasedRS(RecSys):
                 user_id = str(user_id)
                 pbar.set_description(f"Computing predictions for {user_id}")
 
-            filter_list = None
-            if filter_dict is not None:
-                filter_list = filter_dict.get(user_id)
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
 
-            pred = self.algorithm.predict(user_id, self.graph, filter_list=filter_list)
+                pred = self.algorithm.predict(user_id, self.graph, filter_list=filter_list)
 
-            pred_list.extend(pred)
+                pred_list.extend(pred)
 
         concat_pred = Prediction.from_list(pred_list)
         return concat_pred
@@ -401,13 +401,13 @@ class GraphBasedRS(RecSys):
                 user_id = str(user_id)
                 pbar.set_description(f"Computing predictions for {user_id}")
 
-            filter_list = None
-            if filter_dict is not None:
-                filter_list = filter_dict.get(user_id)
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
 
-            rank = self.algorithm.rank(user_id, self.graph, n_recs, filter_list=filter_list)
+                rank = self.algorithm.rank(user_id, self.graph, n_recs, filter_list=filter_list)
 
-            rank_list.extend(rank)
+                rank_list.extend(rank)
 
         concat_pred = Prediction.from_list(rank_list)
         return concat_pred

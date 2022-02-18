@@ -42,14 +42,14 @@ class TestNXPageRank(TestCase):
 
         # rank with filter_list
         res_filtered = alg.rank('A000', self.graph, filter_list=self.filter_list)
-        item_ranked_set = set(res_filtered['to_id'])
+        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_filtered])
         self.assertEqual(len(item_ranked_set), len(self.filter_list))
         self.assertCountEqual(item_ranked_set, self.filter_list)
 
         # rank without filter_list
         res_all_unrated = alg.rank('A000', self.graph)
         item_rated_set = set(self.ratings.query('from_id == "A000"')['to_id'])
-        item_ranked_set = set(res_all_unrated['to_id'])
+        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
@@ -59,7 +59,7 @@ class TestNXPageRank(TestCase):
         res_n_recs = alg.rank('A000', self.graph, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
         item_rated_set = set(self.ratings.query('from_id == "A000"')['to_id'])
-        item_ranked_set = set(res_n_recs['to_id'])
+        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_n_recs])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
         rated_in_ranked = item_ranked_set.intersection(item_rated_set)
         self.assertEqual(len(rated_in_ranked), 0)
@@ -71,13 +71,7 @@ class TestNXPageRank(TestCase):
         alg = NXPageRank()
         result_not_personalized = alg.rank('A000', self.graph)
 
-        result_personalized = np.array(result_personalized)
-        result_not_personalized = np.array(result_not_personalized)
-
-        result_personalized.sort(axis=0)
-        result_not_personalized.sort(axis=0)
-
-        self.assertFalse(np.array_equal(result_personalized, result_not_personalized))
+        self.assertNotEqual(result_personalized, result_not_personalized)
 
         # alg = NXPageRank(graph=graph)
         # rank_fs = alg.predict('A001', ratings, 1, feature_selection_algorithm=NXFSPageRank())
