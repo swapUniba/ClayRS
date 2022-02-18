@@ -4,6 +4,7 @@ on:
     branches:
       - master
   pull_request:
+  workflow_dispatch:
 
 env:
     IMAGE_NAME: framework_dependencies
