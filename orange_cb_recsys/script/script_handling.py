@@ -11,7 +11,7 @@ from inspect import signature, isclass, isfunction, getmembers, Parameter
 
 from orange_cb_recsys.content_analyzer.content_analyzer_main import ContentAnalyzer
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
-from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
+from orange_cb_recsys.content_analyzer.ratings_manager import Ratings
 from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import Partitioning
