@@ -49,6 +49,13 @@ class Interaction:
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        if isinstance(other, Interaction):
+            return self.user_id == other.user_id and self.item_id == other.item_id and \
+                   self.score == other.score and self.timestamp == other.timestamp
+        else:
+            return False
+
 
 class Ratings:
     """
