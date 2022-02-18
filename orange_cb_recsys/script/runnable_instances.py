@@ -40,7 +40,7 @@ List containing all the base classes in the framework
 base_classes: List[Type] = [
     FieldConfig, ExogenousConfig, ContentAnalyzerConfig, FieldContentProductionTechnique, InformationProcessor,
     InformationInterface, EmbeddingSource, CombiningTechnique, RatingProcessor, RawInformationSource,
-    ExogenousPropertiesRetrieval, RatingsImporter, ContentAnalyzer,
+    ExogenousPropertiesRetrieval, Ratings, ContentAnalyzer,
 
     RecSys, Algorithm, Graph, Similarity, Classifier, Regressor, GraphMetrics, FeatureSelectionAlgorithm,
 

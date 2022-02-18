@@ -1,4 +1,4 @@
-from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
+from orange_cb_recsys.content_analyzer.ratings_manager import Ratings
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
 from orange_cb_recsys.recsys.graphs.graph import Node
