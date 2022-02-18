@@ -22,34 +22,28 @@ class Ekphrasis(NLP):
     def __init__(self,
                  spell_check: bool = False,
                  unpack_hashtag: bool = False,
-                 convert_words: List = [],
-                 annotate_words: List = [],
+                 convert_words: List = None,
+                 annotate_words: List = None,
                  unpack_contractions: bool = False,
                  annotate_emoji: bool = False,
                  word_segmenter: bool = False,
                  remove_punctuation: bool = False,
                  ):
-        self.unpack_contractions = unpack_contractions
-        self.spell_check = spell_check
-        self.unpack_hashtag = unpack_hashtag
-        self.convert_words = convert_words
-        self.annotate_words = annotate_words
+        if convert_words is None:
+            convert_words = []
+
+        if annotate_words is None:
+            annotate_words = []
+
+        self.text_processor = TextPreProcessor(tokenizer=SocialTokenizer(lowercase=False).tokenize,
+                                               normalize=convert_words,
+                                               unpack_hashtags=unpack_hashtag, annotate=annotate_words,
+                                               unpack_contractions=unpack_contractions, dicts=self.__annotate_emoji())
+
         self.annotate_emoji = annotate_emoji
         self.word_segmenter = word_segmenter
         self.remove_punctuation = remove_punctuation
-
-        if isinstance(unpack_contractions, str):
-            self.unpack_contractions = unpack_contractions.lower() == 'true'
-        if isinstance(spell_check, str):
-            self.spell_check = spell_check.lower() == 'true'
-        if isinstance(unpack_hashtag, str):
-            self.unpack_hashtag = unpack_hashtag.lower() == 'true'
-        if isinstance(annotate_emoji, str):
-            self.annotate_emoji = annotate_emoji.lower() == 'true'
-        if isinstance(word_segmenter, str):
-            self.word_segmenter = word_segmenter.lower() == 'true'
-        if isinstance(remove_punctuation, str):
-            self.remove_punctuation = remove_punctuation.lower() == 'true'
+        self.spell_check = spell_check
 
     @staticmethod
     def __spell_check(field_data):
@@ -83,22 +77,9 @@ class Ekphrasis(NLP):
             text_without_punct (str): text without punct
         """
         if isinstance(text, List):
-            text=self.list_to_string(text)
+            text = self.list_to_string(text)
         text = re.sub(r"[^\w\d<>\s]+", '', text)
         text = self.string_to_list(text)
-        return text
-
-    def __check_if_string(self, text) -> str:
-        """
-        Check if text is list of str or str
-        Args:
-            text
-
-        Returns:
-            text (str): str sentence
-        """
-        if isinstance(text, List):
-            text = self.list_to_string(text)
         return text
 
     def __annotate_emoji(self):
@@ -126,7 +107,7 @@ class Ekphrasis(NLP):
         word_seg_list = self.list_to_string(word_seg_list)
         return word_seg_list
 
-    def __strip_multiple_whitespaces_operation(self, text:List[str]) -> str:
+    def __strip_multiple_whitespaces_operation(self, text: List[str]) -> str:
         """
         Remove multiple whitespaces and '<repeated> marker on input text
 
@@ -136,7 +117,7 @@ class Ekphrasis(NLP):
         Returns:
             str: input text, multiple whitespaces removed
         """
-        text= self.list_to_string(text)
+        text = self.list_to_string(text)
         text = re.sub('<repeated>', ' ', text)
         text = re.sub(' +', ' ', text)
         text = self.string_to_list(text)
@@ -153,13 +134,8 @@ class Ekphrasis(NLP):
             field_data (List<str>): list of str or dict in case of named entity recognition
 
         """
-        field_data = self.__check_if_string(field_data)
 
-        text_processor = TextPreProcessor(tokenizer=SocialTokenizer(lowercase=False).tokenize,
-                                          normalize=self.convert_words,
-                                          unpack_hashtags=self.unpack_hashtag, annotate=self.annotate_words,
-                                          unpack_contractions=self.unpack_contractions, dicts=self.__annotate_emoji())
-        field_data = text_processor.pre_process_doc(field_data)
+        field_data = self.text_processor.pre_process_doc(field_data)
         if self.remove_punctuation:
             field_data = self.__remove_punctuation(field_data)
         if self.spell_check:
@@ -170,5 +146,3 @@ class Ekphrasis(NLP):
             field_data = self.string_to_list(field_data)
         field_data = self.__strip_multiple_whitespaces_operation(field_data)
         return field_data
-
-
