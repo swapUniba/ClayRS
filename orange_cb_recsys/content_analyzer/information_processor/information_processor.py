@@ -6,16 +6,6 @@ class InformationProcessor(ABC):
     """
     Abstract class that generalizes data processing.
     """
-    def __init__(self):
-        self.__lang = "EN"
-
-    @property
-    def lang(self):
-        return self.__lang
-
-    @lang.setter
-    def lang(self, lang: str):
-        self.__lang = lang
 
     @abstractmethod
     def process(self, field_data):
@@ -48,9 +38,9 @@ class TextProcessor(InformationProcessor):
     @staticmethod
     def list_to_string(text: List[str]) -> str:
         """
-            Convert list of str in str
-            Args: text (str): list of str
-            Returns: str sentence
+        Convert list of str in str
+        Args: text (str): list of str
+        Returns: str sentence
         """
         string_text = ' '.join([str(elem) for elem in text])
         return string_text
@@ -58,12 +48,11 @@ class TextProcessor(InformationProcessor):
     @staticmethod
     def string_to_list(text) -> List[str]:
         """
-                Covert str in list of str
-                Args:
-                    text (str): str sentence
+        Covert str in list of str
+        Args:
+            text (str): str sentence
 
-                Returns List <str>: List of words
-
+        Returns List <str>: List of words
         """
         list_text = list(text.split(" "))
         return list_text
@@ -71,6 +60,7 @@ class TextProcessor(InformationProcessor):
     @abstractmethod
     def process(self, field_data):
         raise NotImplementedError
+
 
 class NLP(TextProcessor):
     """
