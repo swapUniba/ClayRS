@@ -1,8 +1,12 @@
+import itertools
+import string
 from typing import List
+import re
 
 import nltk
 
-from nltk import word_tokenize
+from nltk import sent_tokenize
+from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -47,14 +51,16 @@ class NLTK(NLP):
         strip_multiple_whitespaces (bool): Whether you want to remove multiple whitespaces
         url_tagging (bool): Whether you want to tag the urls in the text and to replace with "<URL>"
     """
-    def __init__(self, stopwords_removal: bool = False,
-                 stemming: bool = False,
-                 lemmatization: bool = False,
+
+    def __init__(self, *,
                  strip_multiple_whitespaces: bool = True,
-                 url_tagging: bool = False,
                  remove_punctuation: bool = False,
+                 stopwords_removal: bool = False,
+                 url_tagging: bool = False,
+                 lemmatization: bool = False,
+                 stemming: bool = False,
                  named_entity_recognition: bool = False,
-                 lang='english'):
+                 lang: str = 'english'):
 
         self.stopwords_removal = stopwords_removal
         self.stemming = stemming
@@ -63,50 +69,28 @@ class NLTK(NLP):
         self.url_tagging = url_tagging
         self.remove_punctuation = remove_punctuation
         self.named_entity_recognition = named_entity_recognition
-
-        if isinstance(stopwords_removal, str):
-            self.stopwords_removal = stopwords_removal.lower() == 'true'
-
-        if isinstance(stemming, str):
-            self.stemming = stemming.lower() == 'true'
-
-        if isinstance(lemmatization, str):
-            self.lemmatization = lemmatization.lower() == 'true'
-
-        if isinstance(strip_multiple_whitespaces, str):
-            self.strip_multiple_whitespaces = strip_multiple_whitespaces.lower() == 'true'
-
-        if isinstance(url_tagging, str):
-            self.url_tagging = url_tagging.lower() == 'true'
-
-        if isinstance(remove_punctuation, str):
-            self.remove_punctuation = remove_punctuation.lower == 'true'
-
-        if isinstance(named_entity_recognition, str):
-            self.named_entity_recognition = named_entity_recognition == 'true'
-
         self.__full_lang_code = lang
 
     def __str__(self):
         return "NLTK"
 
     def __repr__(self):
-        return "< NLTK: " + "" \
-                "stopwords_removal = " + \
+        return "< NLTK: " \
+               "stopwords_removal = " + \
                str(self.stopwords_removal) + ";" + \
-                 "stemming = " + \
+               "stemming = " + \
                str(self.stemming) + ";" + \
-                 "lemmatization = " + \
+               "lemmatization = " + \
                str(self.lemmatization) + ";" + \
-                 "named_entity_recognition = " + \
+               "named_entity_recognition = " + \
                str(self.named_entity_recognition) + ";" + \
-                 "strip_multiple_whitespaces = " + \
+               "strip_multiple_whitespaces = " + \
                str(self.strip_multiple_whitespaces) + ";" + \
-                 "url_tagging = " + \
-               str(self.url_tagging) + " >"
-
-    def set_lang(self, lang: str):
-        self.lang = self.__full_lang_code
+               "url_tagging = " + \
+               str(self.url_tagging) + \
+               "punctuation_removal = " + \
+               str(self.remove_punctuation) + \
+               ">"
 
     def __tokenization_operation(self, text) -> List[str]:
         """
@@ -118,7 +102,12 @@ class NLTK(NLP):
         Returns:
              List<str>: a list of words
         """
-        return [word for sent in nltk.sent_tokenize(text) for word in word_tokenize(sent)]
+        # EXTREMELY useful tokenizer, it tokenizes by mantaining urls as a single token
+        # as well as optional <url>, <hashtag>, etc.
+        # It works for sentences so we first sentence tokenize
+        sentences = sent_tokenize(text, self.__full_lang_code)
+        sentences_tokenized = ToktokTokenizer().tokenize_sents(sentences)
+        return list(itertools.chain.from_iterable(sentences_tokenized))
 
     def __stopwords_removal_operation(self, text) -> List[str]:
         """
@@ -150,9 +139,7 @@ class NLTK(NLP):
         """
         stemmer = SnowballStemmer(language=self.__full_lang_code)
 
-        stemmed_text = []
-        for word in text:
-            stemmed_text.append(stemmer.stem(word))
+        stemmed_text = [stemmer.stem(word) for word in text]
 
         return stemmed_text
 
@@ -167,6 +154,7 @@ class NLTK(NLP):
         Returns:
             lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
         """
+
         def get_wordnet_pos(word):
             """
             Map POS tag to first character lemmatize() accepts
@@ -185,7 +173,8 @@ class NLTK(NLP):
             lemmatized_text.append(lemmatizer.lemmatize(word, get_wordnet_pos(word)))
         return lemmatized_text
 
-    def __named_entity_recognition_operation(self, text) -> nltk.tree.Tree:
+    @staticmethod
+    def __named_entity_recognition_operation(text) -> nltk.tree.Tree:
         """
         Execute NER on input text
 
@@ -195,8 +184,6 @@ class NLTK(NLP):
         Returns:
             namedEnt (nltk.tree.Tree): A tree containing the bonds between the entities
         """
-        if type(text) == 'str':
-            text = self.__tokenization_operation(text)
         text = nltk.pos_tag(text)
         named_ent = nltk.ne_chunk(text)
         return named_ent
@@ -212,21 +199,19 @@ class NLTK(NLP):
         Returns:
             str: input text, multiple whitespaces removed
         """
-        import re
         return re.sub(' +', ' ', text)
 
-    def __remove_punctuation(self, text) -> List[str]:
+    @staticmethod
+    def __remove_punctuation(text) -> List[str]:
         """
         Punctuation removal in spacy
         Args:
-            text (list[str):
+            text (List[str]):
         Returns:
             string without punctuation
         """
-        text = self.list_to_string(text)
-        tokens = word_tokenize(text)
         # remove all tokens that are not alphabetic
-        cleaned_text = [word for word in tokens if (word.isalnum() or word == "<" or word == ">")]
+        cleaned_text = [word for word in text if word not in string.punctuation]
         return cleaned_text
 
     @staticmethod
@@ -235,71 +220,37 @@ class NLTK(NLP):
         Replaces urls with <URL> string on input text
 
         Args:
-            text (str):
+            text (List[str]):
 
         Returns:
             text (list<str>): input text, <URL> instead of full urls
         """
-        import re
-        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]| '
-                          '[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
-                          text)
-        for url in urls:
-            text = text.replace(url, "<URL>")
-        return text
+        tagged_token = []
+        for token in text:
+            if re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]| '
+                        '[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
+                        token):
+                tagged_token.append("<URL>")
+            else:
+                tagged_token.append(token)
 
-    @staticmethod
-    def __compact_tokens(text: List[str]) -> List[str]:
-        """
-        This method is useful because the tokenization operation separates the tokens that start with the '<'
-        symbol. For example, the '<URL>' token is seen as three different tokens. This method brings together
-        this kind of tokens, treating them as a unique one.
-
-        Args:
-            text (List<str>): List of tokens containing the tokens to compact
-
-        Returns:
-            text (List<str>): List of tokens in which the '<', 'URL', '>' tokens are compacted
-                in an unique token
-        """
-        for i in range(0, len(text)):
-            if i < len(text) and text[i] == '<':
-                j = i + 1
-                while text[j] != '>':
-                    text[i] = text[i] + text[j]
-                    del text[j]
-                text[i] = text[i] + text[j]
-                del text[j]
-        return text
-
-    def __check_if_string(self, text) -> str:
-        """
-                Check if text is list of str or str
-                Args:
-                    text
-                Returns:
-                    text (str): str sentence
-                """
-        if isinstance(text, List):
-            text = self.list_to_string(text)
-        return text
+        return tagged_token
 
     def process(self, field_data) -> List[str]:
-        field_data = self.__check_if_string(field_data)
         field_data = check_not_tokenized(field_data)
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
-        if self.url_tagging:
-            field_data = self.__url_tagging_operation(field_data)
         field_data = self.__tokenization_operation(field_data)
         if self.remove_punctuation:
             field_data = self.__remove_punctuation(field_data)
         if self.stopwords_removal:
             field_data = self.__stopwords_removal_operation(field_data)
+        if self.url_tagging:
+            field_data = self.__url_tagging_operation(field_data)
         if self.lemmatization:
             field_data = self.__lemmatization_operation(field_data)
         if self.stemming:
             field_data = self.__stemming_operation(field_data)
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data)
-        return self.__compact_tokens(field_data)
+        return field_data
