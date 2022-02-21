@@ -5,7 +5,6 @@ from typing import List, Dict
 
 from ekphrasis.classes.tokenizer import SocialTokenizer, Tokenizer
 from ekphrasis.dicts.emoticons import emoticons
-import re
 from ekphrasis.classes.segmenter import Segmenter
 
 from ekphrasis.classes.preprocessor import TextPreProcessor
@@ -33,7 +32,7 @@ class Ekphrasis(NLP):
                  additional_substitution: List[Dict] = None
                  ):
 
-        self.text_processor = TextPreProcessor(tokenizer=SocialTokenizer(lowercase=True).tokenize,
+        self.text_processor = TextPreProcessor(tokenizer=tokenizer,
                                                corrector=corrector, omit=omit,
                                                normalize=normalize, segmenter=segmenter,
                                                unpack_hashtags=unpack_hashtags,
@@ -41,8 +40,7 @@ class Ekphrasis(NLP):
                                                all_caps_tag=all_caps_tag, unpack_contractions=unpack_contractions,
                                                spell_correct_elong=spell_correct_elong,
                                                fix_text=fix_text,
-                                               dicts=additional_substitution
-                                               )
+                                               dicts=additional_substitution)
         if corrector is not None:
             self.spell_check = SpellCorrector(corpus=corrector)
 
