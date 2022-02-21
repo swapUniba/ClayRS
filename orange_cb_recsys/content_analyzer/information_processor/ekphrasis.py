@@ -33,7 +33,7 @@ class Ekphrasis(NLP):
                  additional_substitution: List[Dict] = None
                  ):
 
-        self.text_processor = TextPreProcessor(tokenizer=tokenizer,
+        self.text_processor = TextPreProcessor(tokenizer=SocialTokenizer(lowercase=True).tokenize,
                                                corrector=corrector, omit=omit,
                                                normalize=normalize, segmenter=segmenter,
                                                unpack_hashtags=unpack_hashtags,
@@ -69,6 +69,23 @@ class Ekphrasis(NLP):
                 correct_sentence.append(word)
         return correct_sentence
 
+    @staticmethod
+    def __word_split(field_data) -> List[str]:
+        """
+        Split words joined in list
+        Args:
+            field_data: Text to be processed
+        Returns (List[str): Text with splitted words
+        """
+        word_split = []
+        for word in field_data:
+            if ' ' in word:
+                for part in word.split(' '):
+                    word_split.append(part)
+            else:
+                word_split.append(word)
+        return word_split
+
     def __word_segmenter(self, field_data) -> List[str]:
         """
         Split words together
@@ -94,4 +111,5 @@ class Ekphrasis(NLP):
             field_data=self.__spell_check(field_data)
         if self.word_segmenter:
             field_data = self.__word_segmenter(field_data)
+            field_data = self.__word_split(field_data)
         return field_data
