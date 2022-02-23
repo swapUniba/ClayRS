@@ -1,4 +1,4 @@
-from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
+from orange_cb_recsys.content_analyzer.ratings_manager import Ratings
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
 from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
@@ -130,15 +130,15 @@ class TestNXFullGraph(TestNXTripartiteGraph):
         # Test multiple graph creation possibilities
 
         # Import ratings as DataFrame
-        ratings_import = RatingsImporter(
+        ratings = Ratings(
             source=CSVFile(ratings_filename),
-            from_id_column='user_id',
-            to_id_column='item_id',
+            user_id_column='user_id',
+            item_id_column='item_id',
             score_column='points',
             timestamp_column='timestamp',
             score_processor=NumberNormalizer()
         )
-        ratings_frame = ratings_import.import_ratings()
+        ratings_frame = ratings.to_dataframe()
 
         # Create graph without setting the representation
         # EX. Create graph with properties 'producer' and 'starring' from
@@ -184,15 +184,15 @@ class TestNXFullGraph(TestNXTripartiteGraph):
         # Test multiple graph creation possibilities with not existent exo_representations/exo_properties
 
         # Import ratings as DataFrame
-        ratings_import = RatingsImporter(
+        ratings = Ratings(
             source=CSVFile(ratings_filename),
-            from_id_column='user_id',
-            to_id_column='item_id',
+            user_id_column='user_id',
+            item_id_column='item_id',
             score_column='points',
             timestamp_column='timestamp',
             score_processor=NumberNormalizer()
         )
-        ratings_frame = ratings_import.import_ratings()
+        ratings_frame = ratings.to_dataframe()
 
         # Create graph with non-existent exo_properties
         g = NXFullGraph(

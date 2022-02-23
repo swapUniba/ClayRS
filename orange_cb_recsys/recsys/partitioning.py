@@ -1,14 +1,18 @@
 from collections import defaultdict
 
 import pandas as pd
-from typing import Set
+from typing import Set, List, Tuple
 
 import abc
 from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
 
-from orange_cb_recsys.utils.const import eval_logger, progbar
+from orange_cb_recsys.content_analyzer import Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.utils.const import logger, progbar, get_pbar
 
 
 class Split:
@@ -39,8 +43,8 @@ class Split:
     """
 
     def __init__(self,
-                 first_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []}),
-                 second_set=pd.DataFrame({'from_id': [], 'to_id': [], 'score': []})):
+                 first_set: Ratings,
+                 second_set: Ratings):
 
         self.__dict__['first'] = first_set
         self.__dict__['second'] = second_set
@@ -65,6 +69,7 @@ class Partitioning(ABC):
     """
     Abstract Class for partitioning technique
     """
+
     def __init__(self, skip_user_error: bool = True):
         self.__skip_user_error = skip_user_error
 
@@ -80,43 +85,59 @@ class Partitioning(ABC):
     def split_single(self, user_ratings: pd.DataFrame):
         raise NotImplementedError
 
-    def split_all(self, ratings: pd.DataFrame, user_id_list: Set[str] = None):
+    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None):
         """
         Method that effectively splits the 'ratings' parameter into 'train set' and 'test set'.
         It must be specified a 'user_id_list' parameter so that the method will do the splitting only for the users
         specified inside the list.
 
         Args:
-            ratings (pd.DataFrame): The DataFrame which contains the interactions of the users that must be splitted
+            ratings_to_split (pd.DataFrame): The DataFrame which contains the interactions of the users that must be splitted
                 into 'train set' and 'test set'
             user_id_list (Set[str]): The set of users for which splitting will be done
         """
 
         if user_id_list is None:
-            user_id_list = set(ratings['from_id'])
+            user_id_list = set(ratings_to_split.user_id_column)
 
-        # {0: {'train': [train1_u1, train1_u2], 'test': [test1_u1, test1_u2]},
-        #  1: {'train': [train2_u1, train2_u2], 'test': [test2_u1, test2_u2]}}
+        # {
+        #   0: {'train': {'u1': u1_interactions_train0, 'u2': u2_interactions_train0}},
+        #       'test': {'u1': u1_interactions_test0, 'u2': u2_interactions_test0}},
+        #
+        #   1: {'train': {'u1': u1_interactions_train1, 'u2': u2_interactions_train1}},
+        #       'test': {'u1': u1_interactions_test1, 'u2': u2_interactions_test1}
+        #  }
         train_test_dict = defaultdict(lambda: defaultdict(list))
 
-        eval_logger.info("Performing {}".format(str(self)))
-        for user_id in progbar(user_id_list, prefix="Current user - {}:", substitute_with_current=True):
-            user_ratings = ratings[ratings['from_id'] == user_id]
-            try:
-                user_train_list, user_test_list = self.split_single(user_ratings)
-                for i, (single_train, single_test) in enumerate(zip(user_train_list, user_test_list)):
-                    train_test_dict[i]['train'].append(single_train)
-                    train_test_dict[i]['test'].append(single_test)
+        with logging_redirect_tqdm():
+            pbar = get_pbar(user_id_list)
+            pbar.set_description("Performing {}".format(str(self)))
+            for user_id in pbar:
+                user_ratings = ratings_to_split.get_user_interactions(user_id)
+                try:
+                    user_train_list, user_test_list = self.split_single(user_ratings)
+                    for split_number, (single_train, single_test) in enumerate(zip(user_train_list, user_test_list)):
+                        # we set for each split the train_set and test_set of every user u1
+                        # eg.
+                        #     train_test_dict[0]['train']['u1'] = u1_interactions_train0
+                        #     train_test_dict[0]['test']['u1'] = u1_interactions_test0
+                        # train_test_dict[split_number]['train'][user_id] = single_train
+                        # train_test_dict[split_number]['test'][user_id] = single_test
+                        train_test_dict[split_number]['train'].extend(single_train)
+                        train_test_dict[split_number]['test'].extend(single_test)
 
-            except ValueError as e:
-                if self.skip_user_error:
-                    eval_logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
-                    continue
-                else:
-                    raise e
+                except ValueError as e:
+                    if self.skip_user_error:
+                        logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                        continue
+                    else:
+                        raise e
 
-        train_list = [pd.concat(train_test_dict[split]['train']) for split in train_test_dict]
-        test_list = [pd.concat(train_test_dict[split]['test']) for split in train_test_dict]
+        train_list = [Ratings.from_list(train_test_dict[split]['train'])
+                      for split in train_test_dict]
+
+        test_list = [Ratings.from_list(train_test_dict[split]['test'])
+                     for split in train_test_dict]
 
         return train_list, test_list
 
@@ -136,20 +157,19 @@ class KFoldPartitioning(Partitioning):
 
         super(KFoldPartitioning, self).__init__(skip_user_error)
 
-    def split_single(self, user_ratings: pd.DataFrame):
-
-        index_dataframe = user_ratings.index.to_numpy()
-
-        split_result = self.__kf.split(index_dataframe)
+    def split_single(self, user_ratings: List[Interaction]):
+        split_result = self.__kf.split(user_ratings)
 
         user_train_list = []
         user_test_list = []
+        # split_result contains index of the ratings which must constitutes train set and test set
+        for train_set_indexes, test_set_indexes in split_result:
+            user_interactions_train = [user_ratings[index] for index in train_set_indexes]
 
-        for train_index, test_index in split_result:
+            user_interactions_test = [user_ratings[index] for index in test_set_indexes]
 
-            # loc since we are accessing by position
-            user_train_list.append(user_ratings.iloc[train_index])
-            user_test_list.append(user_ratings.iloc[test_index])
+            user_train_list.append(user_interactions_train)
+            user_test_list.append(user_interactions_test)
 
         return user_train_list, user_test_list
 
@@ -182,19 +202,16 @@ class HoldOutPartitioning(Partitioning):
         if (percentage <= 0) or (percentage >= 1):
             raise ValueError("The train set size must be a float in the (0, 1) interval")
 
-    def split_single(self, user_ratings: pd.DataFrame):
-        index_to_split = user_ratings.index.to_numpy()
+    def split_single(self, user_ratings: List[Interaction]):
+        interactions_train, interactions_test = train_test_split(user_ratings,
+                                                                 train_size=self.__train_set_size,
+                                                                 test_size=self.__test_set_size,
+                                                                 shuffle=self.__shuffle,
+                                                                 random_state=self.__random_state)
 
-        train_index, test_index = train_test_split(index_to_split,
-                                                   train_size=self.__train_set_size,
-                                                   test_size=self.__test_set_size,
-                                                   shuffle=self.__shuffle,
-                                                   random_state=self.__random_state)
+        user_train_list = [interactions_train]
+        user_test_list = [interactions_test]
 
-        user_train_list = [user_ratings.loc[train_index]]
-        user_test_list = [user_ratings.loc[test_index]]
-
-        # loc since we are accessing by label
         return user_train_list, user_test_list
 
     def __str__(self):

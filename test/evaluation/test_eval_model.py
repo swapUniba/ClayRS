@@ -2,308 +2,113 @@ import os
 import unittest
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
+from orange_cb_recsys.evaluation.metrics.error_metrics import MAE
+from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
+from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr
+from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG
 
-from orange_cb_recsys.content_analyzer.ratings_manager import RatingsImporter
-
-from orange_cb_recsys.evaluation.metrics.error_metrics import MAE, MSE, RMSE
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, GiniIndex, DeltaGap, \
-    PredictionCoverage
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric, ScoresNeededMetric
-from orange_cb_recsys.evaluation.metrics.plot_metrics import PopProfileVsRecs, PopRecsCorrelation, LongTailDistr
-from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, MRR, MRRAtK, NDCGAtK, Correlation
-from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
-from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression
-
-from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import TestItemsMethodology, AllItemsMethodology, \
-    TrainingItemsMethodology
-from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
-
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, RPrecision, PrecisionAtK, \
-    RecallAtK, FMeasure, FMeasureAtK
+from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision
 from orange_cb_recsys.evaluation.eval_model import EvalModel
-from orange_cb_recsys.recsys.partitioning import KFoldPartitioning
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
 
 import pandas as pd
 
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
-from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
-from orange_cb_recsys.utils.const import root_path
-from orange_cb_recsys.recsys.partitioning import PartitionError
-
 from test import dir_test_files
 
-contents_path = os.path.join(root_path, 'contents')
-items_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+rank_split_1 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'rank_split_1.csv'))
+rank_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'rank_split_2.csv'))
+truth_split_1 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_1.csv'))
+truth_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_2.csv'))
 
-ratings_filename = os.path.join(dir_test_files, 'new_ratings.csv')
-ratings = pd.read_csv(ratings_filename)
-ratings.columns = ['from_id', 'to_id', 'score', 'timestamp']
-ratings = ratings.head(1000)
+pred_list = [Ratings.from_dataframe(rank_split_1), Ratings.from_dataframe(rank_split_2)]
+truth_list = [Ratings.from_dataframe(truth_split_1), Ratings.from_dataframe(truth_split_2)]
 
 
 class TestEvalModel(TestCase):
 
-    def test_fit_cb_w_testrating_methodology(self):
-        rs = ContentBasedRS(
-            CentroidVector(
-                {"Plot": "tfidf"},
-                CosineSimilarity(),
-            ),
-            ratings,
-            items_dir
-        )
+    @classmethod
+    def setUpClass(cls) -> None:
+        catalog = set(truth_split_1['to_id']).union(set(truth_split_2['to_id']))
 
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()])
+        cls.metric_list = [
+            # one classification metric
+            Precision(sys_average='micro'),
 
-        sys_result, users_result = em.fit()
+            # one ranking metric
+            NDCG(),
 
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
+            # one error metric
+            MAE(),
 
-    def test_fit_cb_w_testitems_methodology(self):
-        rs = ContentBasedRS(
-            CentroidVector(
-                {"Plot": "tfidf"},
-                CosineSimilarity(),
-            ),
-            ratings,
-            items_dir
-        )
+            # two fairness metrics
+            CatalogCoverage(catalog),
+            DeltaGap({'first': 0.5, 'second': 0.5}),
 
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=TestItemsMethodology())
+            # one metric which returns a plot
+            LongTailDistr()
+        ]
 
-        sys_result, users_result = em.fit()
+    def test_fit(self):
+
+        em = EvalModel(pred_list, truth_list, self.metric_list)
+        sys_result, user_results = em.fit()
 
         self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
+        self.assertIsInstance(user_results, pd.DataFrame)
 
-    def test_fit_cb_w_trainingitems_methodology(self):
-        rs = ContentBasedRS(
-            CentroidVector(
-                {"Plot": "tfidf"},
-                CosineSimilarity(),
-            ),
-            ratings,
-            items_dir
-        )
+        # we take as reference one split only since same users must be present in both split
+        self.assertEqual(set(rank_split_1['from_id'].map(str)), set(user_results.index.map(str)))
 
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=TrainingItemsMethodology())
+        # the user result frame must contain results for each user of the Precision, NDCG, MAE (the first 3 of the
+        # metric list). The other metrics do not compute result for each metric so they will not be present as columns
+        # in the user_results frame
+        self.assertEqual(list(user_results.columns), ['Precision - micro', 'NDCG', 'MAE'])
 
-        sys_result, users_result = em.fit()
+        # the sys_result frame must contain result of the system for each fold (2 in this case) + the mean result
+        self.assertTrue(len(sys_result) == 3)
+        self.assertEqual({'sys - fold1', 'sys - fold2', 'sys - mean'}, set(sys_result.index))
 
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
+        # the sys result frame must contain results for the whole sys of the Precision, NDCG, MAE,
+        # Catalog Coverage and Delta Gap
+        self.assertEqual(list(sys_result.columns), ['Precision - micro', 'NDCG', 'MAE',
+                                                    'CatalogCoverage (PredictionCov)', 'DeltaGap | first',
+                                                    'DeltaGap | second'])
 
-    def test_fit_cb_w_allitems_methodology(self):
-        rs = ContentBasedRS(
-            CentroidVector(
-                {"Plot": "tfidf"},
-                CosineSimilarity(),
-            ),
-            ratings,
-            items_dir
-        )
+    def test_fit_user_list(self):
 
-        items = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
-                     if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
-
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=AllItemsMethodology(items))
-
-        sys_result, users_result = em.fit()
+        # we compute evaluation only for a certain users
+        em = EvalModel(pred_list, truth_list, self.metric_list)
+        sys_result, user_results = em.fit(['1', '2', '3'])
 
         self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
+        self.assertIsInstance(user_results, pd.DataFrame)
 
-    def test_fit_graph_w_testrating_methodology(self):
-        graph = NXFullGraph(ratings)
+        self.assertTrue(len(user_results) == len(set(rank_split_1)))
+        self.assertEqual({'1', '2', '3'}, set(user_results.index))
 
-        rs = GraphBasedRS(
-            NXPageRank(),
-            graph
-        )
+        # the user result frame must contain results for each user of the Precision, NDCG, MAE (the first 3 of the
+        # metric list). The other metrics do not compute result for each metric so they will not be present as columns
+        # in the user_results frame
+        self.assertEqual(list(user_results.columns), ['Precision - micro', 'NDCG', 'MAE'])
 
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()])
+        # the sys_result frame must contain result of the system for each fold (2 in this case) + the mean result
+        self.assertTrue(len(sys_result) == 3)
+        self.assertEqual({'sys - fold1', 'sys - fold2', 'sys - mean'}, set(sys_result.index))
 
-        sys_result, users_result = em.fit()
+        # the sys result frame must contain results for the whole sys of the Precision, NDCG, MAE,
+        # Catalog Coverage and Delta Gap
+        self.assertEqual(list(sys_result.columns), ['Precision - micro', 'NDCG', 'MAE',
+                                                    'CatalogCoverage (PredictionCov)', 'DeltaGap | first',
+                                                    'DeltaGap | second'])
 
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
+    def test_fit_error(self):
+        # should raise error since pred_list and truth_list must be of equal length
+        with self.assertRaises(ValueError):
+            pred_list_smaller = [Ratings.from_dataframe(pd.DataFrame())]
+            pred_list_bigger = [Ratings.from_dataframe(pd.DataFrame()), Ratings.from_dataframe(pd.DataFrame())]
 
-    def test_fit_graph_w_testitems_methodology(self):
-        graph = NXFullGraph(ratings)
-
-        rs = GraphBasedRS(
-            NXPageRank(),
-            graph
-        )
-
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=TestItemsMethodology())
-
-        sys_result, users_result = em.fit()
-
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
-
-    def test_fit_graph_w_trainitems_methodology(self):
-        graph = NXFullGraph(ratings)
-
-        rs = GraphBasedRS(
-            NXPageRank(),
-            graph
-        )
-
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=TrainingItemsMethodology())
-
-        sys_result, users_result = em.fit()
-
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
-
-    def test_fit_graph_w_allitems_methodology(self):
-        graph = NXFullGraph(ratings)
-
-        rs = GraphBasedRS(
-            NXPageRank(),
-            graph
-        )
-
-        items = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
-                     if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
-
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[Precision()],
-                       methodology=AllItemsMethodology(items))
-
-        sys_result, users_result = em.fit()
-
-        self.assertIsInstance(sys_result, pd.DataFrame)
-        self.assertIsInstance(users_result, pd.DataFrame)
-
-    def doCleanups(self) -> None:
-        RankingNeededMetric._clean_pred_truth_list()
-        ScoresNeededMetric._clean_pred_truth_list()
+            EvalModel(pred_list_smaller, pred_list_bigger, self.metric_list)
 
 
-@unittest.skip("Slow")
-class TestEvalModelManyRatings(TestCase):
-    def test_all(self):
-        ratings_filename = os.path.join(contents_path, '..', 'datasets', 'examples', 'new_ratings.csv')
-
-        ratings_frame = RatingsImporter(CSVFile(ratings_filename)).import_ratings()
-
-        rs = ContentBasedRS(
-            LinearPredictor(
-                {"Plot": ['tfidf', 'embedding']},
-                SkLinearRegression(),
-            ),
-            ratings_frame,
-            items_dir
-        )
-
-        catalog = set([os.path.splitext(f)[0] for f in os.listdir(items_dir)
-                       if os.path.isfile(os.path.join(items_dir, f)) and f.endswith('xz')])
-
-        em = EvalModel(rs,
-                       KFoldPartitioning(),
-                       metric_list=[
-                           Precision(sys_average='micro'),
-                           PrecisionAtK(1, sys_average='micro'),
-                           RPrecision(),
-                           Recall(),
-                           RecallAtK(3, ),
-                           FMeasure(1, sys_average='macro'),
-                           FMeasureAtK(2, beta=1, sys_average='micro'),
-
-                           NDCG(),
-                           NDCGAtK(3),
-                           MRR(),
-                           MRRAtK(5, ),
-                           Correlation('pearson', top_n=5),
-                           Correlation('kendall', top_n=3),
-                           Correlation('spearman', top_n=4),
-
-                           MAE(),
-                           MSE(),
-                           RMSE(),
-
-                           CatalogCoverage(catalog),
-                           CatalogCoverage(catalog, k=2),
-                           CatalogCoverage(catalog, top_n=3),
-                           GiniIndex(),
-                           GiniIndex(top_n=3),
-                           DeltaGap({'primo': 0.5, 'secondo': 0.5})
-                       ],
-                       methodology=TestItemsMethodology()
-                       )
-
-        result = em.fit()
-
-    def test_graph(self):
-        catalog = set(ratings.to_id)
-
-        users_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
-
-        graph = NXFullGraph(
-            ratings,
-            user_contents_dir=users_dir,
-            item_contents_dir=items_dir,
-            item_exo_representation="dbpedia",
-            user_exo_representation='local',
-            item_exo_properties=['starring'],
-            user_exo_properties=['1']  # It's the column in the users .DAT which
-            # identifies the gender
-        )
-
-        graph_rs = GraphBasedRS(
-            NXPageRank(),
-            graph
-        )
-
-        em = EvalModel(
-            graph_rs,
-            KFoldPartitioning(),
-            metric_list=[
-                Precision(relevant_threshold=3),
-                Recall(),
-                FMeasure(beta=1),
-                FMeasure(beta=2, sys_average='micro'),
-
-                MRR(),
-
-                Correlation('pearson'),
-                GiniIndex(),
-                DeltaGap({'popular': 0.5, 'niche': 0.5}),
-                PredictionCoverage(catalog),
-
-                PopProfileVsRecs(user_groups={'popular': 0.5, 'niche': 0.5}, out_dir='plots/'),
-                LongTailDistr('plots/', format='svg'),
-                PopRecsCorrelation('plots/')
-            ],
-            verbose_predictions=True,
-            methodology=TestItemsMethodology()
-        )
-
-        em.fit()
+if __name__ == '__main__':
+    unittest.main()

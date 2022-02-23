@@ -1,17 +1,16 @@
-from typing import List
+from typing import List, Union
 
+from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings, Prediction, Rank
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
 import pandas as pd
 import numpy as np
-
-from orange_cb_recsys.utils.const import recsys_logger
-from orange_cb_recsys.utils.load_content import get_unrated_items, get_rated_items, \
-    get_chosen_items
 
 
 class CentroidVector(ContentBasedAlgorithm):
@@ -59,7 +58,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self.__centroid: np.array = None
         self.__positive_rated_dict: dict = None
 
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the centroid).
@@ -70,10 +69,12 @@ class CentroidVector(ContentBasedAlgorithm):
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
             items_directory (str): path of the directory where the items are stored
         """
-        # Load rated items from the path
-        rated_items = get_rated_items(items_directory, user_ratings)
+        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
-        recsys_logger.info("Processing rated items")
+        # Load rated items from the path
+        loaded_rated_items: List[Union[Content, None]] = [available_loaded_items.get(item_id)
+                                                          for item_id in set(items_scores_dict.keys())]
+
         # If threshold wasn't passed in the constructor, then we take the mean rating
         # given by the user as its threshold
         threshold = self.threshold
@@ -82,17 +83,17 @@ class CentroidVector(ContentBasedAlgorithm):
 
         # Calculates labels and extract features from the positive rated items
         positive_rated_dict = {}
-        for item in rated_items:
-            score_assigned = float(user_ratings[user_ratings['to_id'] == item.content_id].score)
-            if item is not None and score_assigned >= threshold:
+        for item in loaded_rated_items:
+            if item is not None:
+                score_assigned = float(items_scores_dict[item.content_id])
+                if score_assigned >= threshold:
+                    positive_rated_dict[item] = self.extract_features_item(item)
 
-                positive_rated_dict[item] = self.extract_features_item(item)
-
-        if user_ratings.empty:
+        if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings.from_id.iloc[0]
-        if len(rated_items) == 0 or all(rated_items) is None:
+        user_id = user_ratings[0].user_id
+        if len(loaded_rated_items) == 0 or (loaded_rated_items.count(None) == len(loaded_rated_items)):
             raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
         if len(positive_rated_dict) == 0:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!")
@@ -109,7 +110,6 @@ class CentroidVector(ContentBasedAlgorithm):
 
         The built centroid will also be stored in a private attribute.
         """
-        recsys_logger.info("Calculating centroid vector")
         self._set_transformer()
 
         positive_rated_features = list(self.__positive_rated_dict.values())
@@ -117,8 +117,8 @@ class CentroidVector(ContentBasedAlgorithm):
         positive_rated_features_fused = self.fuse_representations(positive_rated_features, self.__embedding_combiner)
         self.__centroid = np.array(positive_rated_features_fused).mean(axis=0)
 
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                filter_list: List[str] = None) -> List[Interaction]:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
         the 'NotPredictionAlg' exception!
@@ -127,8 +127,8 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -148,11 +148,19 @@ class CentroidVector(ContentBasedAlgorithm):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
+        try:
+            user_id = user_ratings[0].user_id
+        except IndexError:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
+
+        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+
         # Load items to predict
         if filter_list is None:
-            items_to_predict = get_unrated_items(items_directory, user_ratings)
+            items_to_predict = [available_loaded_items.get(item_id)
+                                for item_id in available_loaded_items if item_id not in user_seen_items]
         else:
-            items_to_predict = get_chosen_items(items_directory, filter_list)
+            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -162,7 +170,6 @@ class CentroidVector(ContentBasedAlgorithm):
                 id_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        recsys_logger.info("Calculating rank")
         if len(id_items_to_predict) > 0:
             # Calculate predictions, they are the similarity of the new items with the centroid vector
             features_fused = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
@@ -170,14 +177,17 @@ class CentroidVector(ContentBasedAlgorithm):
         else:
             similarities = []
 
-        # Build the score frame
-        result = {'to_id': id_items_to_predict, 'score': similarities}
+        # Build the item_score dict (key is item_id, value is rank score predicted)
+        # and order the keys in descending order
+        item_score_dict = dict(zip(id_items_to_predict, similarities))
+        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
 
-        result = pd.DataFrame(result, columns=['to_id', 'score'])
+        # we only save the top-n items_ids corresponding to top-n recommendations
+        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
+        ordered_item_ids = ordered_item_ids[:recs_number]
 
-        # Sort them in descending order
-        result.sort_values(by=['score'], ascending=False, inplace=True)
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
+                                 for item_id in ordered_item_ids]
 
-        rank = result[:recs_number]
-
-        return rank
+        return rank_interaction_list

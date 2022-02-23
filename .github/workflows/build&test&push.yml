@@ -4,7 +4,8 @@ on:
     branches:
       - master
   pull_request:
-    
+  workflow_dispatch:
+
 env:
     IMAGE_NAME: framework_dependencies
     COVERALLS_REPO_TOKEN: m7F9CNmqoMWrzUv0lcmojwOCqk7PGjDG8

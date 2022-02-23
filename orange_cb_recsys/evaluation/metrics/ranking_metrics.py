@@ -1,14 +1,16 @@
 import statistics
+from typing import List
+
 import pandas as pd
 import numpy as np
 from sklearn.metrics import ndcg_score
 
-from orange_cb_recsys.evaluation.exceptions import KError
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings
 from orange_cb_recsys.recsys.partitioning import Split
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 
-class RankingMetric(RankingNeededMetric):
+class RankingMetric(Metric):
     """
     Abstract class that generalize ranking metrics.
     A ranking metric evaluates the quality of the recommendation list
@@ -42,7 +44,7 @@ class NDCG(RankingMetric):
         """
         return ndcg_score(ideal_rank, actual_rank)
 
-    def _get_ideal_actual_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
+    def _get_ideal_actual_rank(self, user_predictions: List[Interaction], user_truth: List[Interaction]):
         """
         Private method which calculates two lists, actual_rank list and ideal_rank list.
 
@@ -56,10 +58,12 @@ class NDCG(RankingMetric):
         Args:
             valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
         """
-        predicted_items = user_predictions['to_id'].values
+        # important that predicted items is a list, we must maintain the order
+        predicted_items = [interaction.item_id for interaction in user_predictions]
+        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
 
-        actual_rank = [float(user_truth[user_truth['to_id'] == item_id]['score'].values)
-                       if not user_truth[user_truth['to_id'] == item_id].empty
+        actual_rank = [item_score_truth.get(item_id)
+                       if item_score_truth.get(item_id) is not None
                        else 0
                        for item_id in predicted_items]
 
@@ -71,11 +75,11 @@ class NDCG(RankingMetric):
         pred = split.pred
         truth = split.truth
 
-        split_result = {'from_id': [], str(self): []}
+        split_result = {'user_id': [], str(self): []}
 
-        for user in set(truth.from_id):
-            user_predictions = pred[pred['from_id'] == user]
-            user_truth = truth[truth['from_id'] == user]
+        for user in set(truth.user_id_column):
+            user_predictions = pred.get_user_interactions(user)
+            user_truth = truth.get_user_interactions(user)
 
             ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
 
@@ -86,10 +90,10 @@ class NDCG(RankingMetric):
                 actual_rank = np.array([actual])
                 user_ndcg = self._calc_ndcg(ideal_rank, actual_rank)
 
-            split_result['from_id'].append(user)
+            split_result['user_id'].append(user)
             split_result[str(self)].append(user_ndcg)
 
-        split_result['from_id'].append('sys')
+        split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
 
         return pd.DataFrame(split_result)
@@ -158,23 +162,19 @@ class MRR(RankingMetric):
     def __str__(self):
         return "MRR"
 
-    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
+    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
             valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
-        if self.relevant_threshold is None:
-            relevant_threshold = user_truth['score'].mean()
-        else:
-            relevant_threshold = self.relevant_threshold
+        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
 
-        user_pred_items = user_predictions['to_id'].values
         reciprocal_rank = 0
         i = 1
-        for item_id in user_pred_items:
-            res = user_truth[user_truth['to_id'] == item_id]
-            if (not res.empty) and (float(res['score']) >= relevant_threshold):
+        for interaction_pred in user_predictions:
+            truth_score = item_score_truth.get(interaction_pred.item_id)
+            if (truth_score is not None) and (truth_score >= relevant_threshold):
                 reciprocal_rank = 1 / i
                 break  # We only need the first relevant item position in the rank
 
@@ -186,20 +186,24 @@ class MRR(RankingMetric):
         pred = split.pred
         truth = split.truth
 
-        split_result = {'from_id': [], str(self): []}
+        split_result = {'user_id': [], str(self): []}
 
         rr_list = []
-        for user in set(truth['from_id']):
-            user_predictions = pred[pred['from_id'] == user]
-            user_truth = truth[truth['from_id'] == user]
+        for user in set(truth.user_id_column):
+            user_predictions = pred.get_user_interactions(user)
+            user_truth = truth.get_user_interactions(user)
 
-            user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth)
+            relevant_threshold = self.relevant_threshold
+            if relevant_threshold is None:
+                relevant_threshold = statistics.mean([interaction.score for interaction in user_truth])
+
+            user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth, relevant_threshold)
 
             rr_list.append(user_reciprocal_rank)
 
         mrr = statistics.mean(rr_list)
 
-        split_result['from_id'].append('sys')
+        split_result['user_id'].append('sys')
         split_result[str(self)].append(mrr)
 
         return pd.DataFrame(split_result)
@@ -222,17 +226,17 @@ class MRRAtK(MRR):
 
 
     Args:
-        k (int): the cutoff parameter. It must be >= 1, otherwise a KError exception is raised
+        k (int): the cutoff parameter. It must be >= 1, otherwise a ValueError exception is raised
         relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
             user. If not specified, the mean rating score of every user will be used
 
     Raises:
-        KError: if an invalid cutoff parameter is passed (0 or negative)
+        ValueError: if an invalid cutoff parameter is passed (0 or negative)
     """
 
     def __init__(self, k: int, relevant_threshold: float = None):
         if k < 1:
-            raise KError('k={} not valid! k must be >= 1!'.format(k))
+            raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
         super().__init__(relevant_threshold)
 
@@ -243,23 +247,21 @@ class MRRAtK(MRR):
     def __str__(self):
         return "MRR@{}".format(self.k)
 
-    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
+    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
             valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
-        if self.relevant_threshold is None:
-            relevant_threshold = user_truth['score'].mean()
-        else:
-            relevant_threshold = self.relevant_threshold
 
-        user_pred_items = user_predictions['to_id'].values[:self.k]
+        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
+
+        user_predictions_cut = user_predictions[:self.k]
         reciprocal_rank = 0
         i = 1
-        for item_id in user_pred_items:
-            res = user_truth[user_truth['to_id'] == item_id]
-            if (not res.empty) and (float(res['score']) >= relevant_threshold):
+        for interaction_pred in user_predictions_cut:
+            truth_score = item_score_truth.get(interaction_pred.item_id)
+            if (truth_score is not None) and (truth_score >= relevant_threshold):
                 reciprocal_rank = 1 / i
                 break  # We only need the first relevant item position in the rank
 
@@ -337,10 +339,10 @@ class Correlation(RankingMetric):
         pred = split.pred
         truth = split.truth
 
-        split_result = {'from_id': [], str(self): []}
-        for user in set(truth.from_id):
-            user_predictions = pred[pred['from_id'] == user]
-            user_truth = truth[truth['from_id'] == user]
+        split_result = {'user_id': [], str(self): []}
+        for user in set(truth.user_id_column):
+            user_predictions = pred.get_user_interactions(user)
+            user_truth = truth.get_user_interactions(user)
 
             ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
 
@@ -351,24 +353,28 @@ class Correlation(RankingMetric):
                 actual_ranking = pd.Series(actual)
                 coef = actual_ranking.corr(ideal_ranking, method=self.__method)
 
-            split_result['from_id'].append(user)
+            split_result['user_id'].append(user)
             split_result[str(self)].append(coef)
 
-        split_result['from_id'].append('sys')
+        split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
 
         return pd.DataFrame(split_result)
 
-    def _get_ideal_actual_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame):
+    def _get_ideal_actual_rank(self, user_predictions: List[Interaction], user_truth: List[Interaction]):
 
         if self.__top_n is not None:
             user_predictions = user_predictions[:self.__top_n]
 
-        user_predictions = user_predictions.reset_index()
-        ideal_rank = user_truth.sort_values(by=['score'], ascending=False).reset_index()
+        # sorting truth on score values
+        user_truth_ordered = sorted(user_truth, key=lambda interaction: interaction.score, reverse=True)
+        ideal_rank = [interaction.item_id for interaction in user_truth_ordered]
 
-        actual_rank = [int(user_predictions[user_predictions['to_id'] == el].index.values)
-                       for el in ideal_rank['to_id'].values
-                       if not user_predictions[user_predictions['to_id'] == el].empty]
+        predicted_items = [interaction.item_id for interaction in user_predictions]
 
-        return ideal_rank.index.values, actual_rank
+        actual_rank = [predicted_items.index(item)
+                       for item in ideal_rank
+                       if item in set(predicted_items)]
+
+        # the ideal rank is basically 0, 1, 2, 3 etc.
+        return [i for i in range(len(ideal_rank))], actual_rank

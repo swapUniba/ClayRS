@@ -1,9 +1,11 @@
-from typing import Set
+from typing import Set, Dict, List
 import pandas as pd
 from collections import Counter
 
+from orange_cb_recsys.content_analyzer import Ratings
 
-def popular_items(score_frame: pd.DataFrame, pop_percentage: float = 0.2) -> Set[str]:
+
+def popular_items(score_frame: Ratings, pop_percentage: float = 0.2) -> Set[str]:
     """
     Find a set of most popular items ('to_id's)
 
@@ -14,7 +16,7 @@ def popular_items(score_frame: pd.DataFrame, pop_percentage: float = 0.2) -> Set
     Returns:
         Set<str>: set of most popular labels
     """
-    items = score_frame[['to_id']].values.flatten()
+    items = score_frame.item_id_column
 
     ratings_counter = Counter(items)
 
@@ -28,7 +30,7 @@ def popular_items(score_frame: pd.DataFrame, pop_percentage: float = 0.2) -> Set
     return set(map(lambda x: x[0], most_common))
 
 
-def pop_ratio_by_user(score_frame: pd.DataFrame, most_pop_items: Set[str]) -> pd.DataFrame:
+def pop_ratio_by_user(score_frame: Ratings, most_pop_items: Set[str]) -> Dict:
     """
     Perform the popularity ratio for each user
     Args:
@@ -39,23 +41,24 @@ def pop_ratio_by_user(score_frame: pd.DataFrame, most_pop_items: Set[str]) -> pd
         (pd.DataFrame): contains the 'popularity_ratio' for each 'from_id' (user)
     """
     # Splitting users by popularity
-    users = set(score_frame[['from_id']].values.flatten())
+    users = set(score_frame.user_id_column)
 
     popularity_ratio_by_user = {}
 
     for user in users:
         # filters by the current user and returns all the items he has rated
-        rated_items = set(score_frame.query('from_id == @user')[['to_id']].values.flatten())
+        user_ratings = score_frame.get_user_interactions(user)
+        rated_items = set([user_interaction.item_id for user_interaction in user_ratings])
         # intersects rated_items with popular_items
         popular_rated_items = rated_items.intersection(most_pop_items)
         popularity_ratio = len(popular_rated_items) / len(rated_items)
 
         popularity_ratio_by_user[user] = popularity_ratio
-    return pd.DataFrame.from_dict({'from_id': list(popularity_ratio_by_user.keys()),
-                                   'popularity_ratio': list(popularity_ratio_by_user.values())})
+
+    return popularity_ratio_by_user
 
 
-def get_avg_pop(items: pd.Series, pop_by_items: Counter) -> float:
+def get_avg_pop(items: List, pop_by_items: Counter) -> float:
     """
     Get the average popularity of the given items Series
 

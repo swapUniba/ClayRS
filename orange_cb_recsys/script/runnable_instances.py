@@ -15,7 +15,7 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import RatingsImporter
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
 
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor
@@ -30,8 +30,7 @@ from orange_cb_recsys.evaluation.eval_model import EvalModel
 from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.recsys.partitioning import Split, PartitionModule
+from orange_cb_recsys.recsys.partitioning import Split
 
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes
 
@@ -41,11 +40,11 @@ List containing all the base classes in the framework
 base_classes: List[Type] = [
     FieldConfig, ExogenousConfig, ContentAnalyzerConfig, FieldContentProductionTechnique, InformationProcessor,
     InformationInterface, EmbeddingSource, CombiningTechnique, RatingProcessor, RawInformationSource,
-    ExogenousPropertiesRetrieval, RatingsImporter, ContentAnalyzer,
+    ExogenousPropertiesRetrieval, Ratings, ContentAnalyzer,
 
     RecSys, Algorithm, Graph, Similarity, Classifier, Regressor, GraphMetrics, FeatureSelectionAlgorithm,
 
-    EvalModel, Metric, MetricCalculator, Partitioning, Methodology, Split, PartitionModule
+    EvalModel, Metric, Partitioning, Methodology, Split
 ]
 
 
