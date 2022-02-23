@@ -101,3 +101,7 @@ class EvalModel:
         result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
 
         return result
+
+    def __repr(self):
+        return f'EvalModel(pred_list={self._pred_list}, truth_list={self._truth_list},' \
+               f' metric_list={self._metric_list}'
