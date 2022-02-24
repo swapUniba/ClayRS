@@ -10,6 +10,11 @@ from ekphrasis.classes.segmenter import Segmenter
 from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter(action='ignore', category=FutureWarning)
+    social_tokenizer_ekphrasis = SocialTokenizer(lowercase=True).tokenize
+
 
 class Ekphrasis(NLP):
     """
@@ -24,7 +29,7 @@ class Ekphrasis(NLP):
                  unpack_hashtags: bool = False,
                  annotate: List = None,
                  corrector: str = None,
-                 tokenizer: Callable = SocialTokenizer(lowercase=True).tokenize,
+                 tokenizer: Callable = social_tokenizer_ekphrasis,
                  segmenter: str = None,
                  all_caps_tag: str = None,
                  spell_correction: bool = False,
@@ -89,6 +94,8 @@ class Ekphrasis(NLP):
             spell correction to the text
             * significantly affects performance (speed)
         """
+        if tokenizer == 'default':
+            tokenizer = SocialTokenizer().tokenize
 
         # ekphrasis has default values for arguments not passed. So if they are not evaluated in our class,
         # we simply don't pass them to ekphrasis
