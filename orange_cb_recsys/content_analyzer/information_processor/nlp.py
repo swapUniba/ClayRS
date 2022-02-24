@@ -41,6 +41,10 @@ class NLTK(NLP):
         nltk.data.find('words')
     except LookupError:
         nltk.download('words')
+    try:
+        nltk.data.find('omw-1.4')
+    except LookupError:
+        nltk.download('omw-1.4')
     """
     Interface to the NLTK library for natural language processing features
 
