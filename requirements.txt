@@ -6,7 +6,6 @@ nltk~=3.5
 babelpy~=1.0.1
 mysql~=0.0.3
 mysql-connector-python~=8.0.20
-wikipedia2vec==1.0.5
 scikit-learn==1.0.2
 SPARQLWrapper~=1.8.5
 textblob~=0.15.3
