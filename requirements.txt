@@ -19,4 +19,4 @@ sentence-transformers~=1.2.0
 colorama~=0.4.4
 tqdm~=4.62.2
 spacy~=3.2.1
-ekphrasis~=0.5.1
+ekphrasis==0.5.1
