@@ -88,6 +88,13 @@ class Spacy(NLP):
         Returns:
              List<str>: a list of words
         """
+        pipe_to_disable = ['tagger', 'parser', 'textcat']
+
+        if not self.lemmatization:
+            pipe_to_disable.append('lemmatizer')
+        if not self.named_entity_recognition:
+            pipe_to_disable.append('ner')
+
         return list(self._nlp(text))
 
     def __stopwords_removal_operation(self, text) -> List[Token]:
