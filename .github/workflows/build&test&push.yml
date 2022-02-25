@@ -87,14 +87,14 @@ jobs:
       -
         name: Test
         run: |
-          pytest --cov=./codecov.xml --cov-report=xml
+          pytest --cov-report xml:codecoverage.xml --cov=./ test/
           ls
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with: # no token required for public repos
               fail_ci_if_error: true
-              files: ./codecov.xml
+              files: ./codecoverage.xml
 
 #      -
 #        name: Push image to docker hub
