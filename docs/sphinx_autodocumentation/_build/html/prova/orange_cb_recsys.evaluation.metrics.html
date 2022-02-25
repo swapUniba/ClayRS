@@ -1,0 +1,1426 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.evaluation.metrics package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-evaluation-metrics-package">
+<h1>orange_cb_recsys.evaluation.metrics package<a class="headerlink" href="#orange-cb-recsys-evaluation-metrics-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.classification_metrics">
+<span id="orange-cb-recsys-evaluation-metrics-classification-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.classification_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.classification_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">ClassificationMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize classification metrics.
+A classification metric uses confusion matrix terminology (true positive, false positive, etc.) to classify each
+item predicted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.relevant_threshold">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relevant_threshold</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.relevant_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.sys_avg">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_avg</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric.sys_avg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">FMeasure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric</span></code></a></p>
+<p>The FMeasure metric combines Precision and Recall into a single metric. It is calculated as such for the
+<strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(P_u\)</span> is the Precision calculated for the user <em>u</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(R_u\)</span> is the Recall calculated for the user <em>u</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span> is a real factor which could weight differently Recall or Precision based on its value:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta = 1\)</span>: Equally weight Precision and Recall</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta &gt; 1\)</span>: Weight Recall more</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta &lt; 1\)</span>: Weight Precision more</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>A famous FMeasure is the F1 Metric, where <span class="math notranslate nohighlight">\(\beta = 1\)</span>, which basically is the harmonic mean of recall and
+precision:</p>
+<div class="math notranslate nohighlight">
+\[F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The FMeasure metric is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}FMeasure_sys - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}\\FMeasure_sys - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beta</strong> (<em>float</em>) – real factor which could weight differently Recall or Precision based on its value. Default is 1</p></li>
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure.beta">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure.beta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasureAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">FMeasureAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasureAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure" title="orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasure</span></code></a></p>
+<p>The FMeasure&#64;K metric combines Precision&#64;K and Recall&#64;K into a single metric. It is calculated as such for the
+<strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[FMeasure_u = (1 + \beta^2) \cdot \frac{P&#64;K_u \cdot R&#64;K_u}{(\beta^2 \cdot P&#64;K_u) + R&#64;K_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(P&#64;K_u\)</span> is the Precision at K calculated for the user <em>u</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(R&#64;K_u\)</span> is the Recall at K calculated for the user <em>u</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span> is a real factor which could weight differently Recall or Precision based on its value:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta = 1\)</span>: Equally weight Precision and Recall</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta &gt; 1\)</span>: Weight Recall more</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta &lt; 1\)</span>: Weight Precision more</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>A famous FMeasure&#64;K is the F1&#64;K Metric, where <span class="math notranslate nohighlight">\(\beta = 1\)</span>, which basically is the harmonic mean of recall and
+precision:</p>
+<div class="math notranslate nohighlight">
+\[F1&#64;K_u = \frac{2 \cdot P&#64;K_u \cdot R&#64;K_u}{P&#64;K_u + R&#64;K_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The FMeasure&#64;K metric is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’
+average has been chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}FMeasure&#64;K_sys - micro = (1 + \beta^2) \cdot \frac{P&#64;K_u \cdot R&#64;K_u}{(\beta^2 \cdot P&#64;K_u) + R&#64;K_u}\\FMeasure&#64;K_sys - macro = \frac{\sum_{u \in U} FMeasure&#64;K_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – cutoff parameter. Will be used for the computation of Precision&#64;K and Recall&#64;K</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – real factor which could weight differently Recall or Precision based on its value. Default is 1</p></li>
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasureAtK.k">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">k</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.FMeasureAtK.k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.Precision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">Precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.Precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric</span></code></a></p>
+<p>The Precision metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Precision_u = \frac{tp_u}{tp_u + fp_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(tp_u\)</span> is the number of items which are in the recommendation list of the user and have a
+rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+<li><p><span class="math notranslate nohighlight">\(fp_u\)</span> is the number of items which are in the recommendation list of the user and have a
+rating &lt; relevant_threshold in its ‘ground truth’</p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}Precision_sys - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fp_u}\\Precision_sys - macro = \frac{\sum_{u \in U} Precision_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.PrecisionAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">PrecisionAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.PrecisionAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.Precision" title="orange_cb_recsys.evaluation.metrics.classification_metrics.Precision"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.Precision</span></code></a></p>
+<p>The Precision&#64;K metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Precision&#64;K_u = \frac{tp&#64;K_u}{tp&#64;K_u + fp&#64;K_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(tp&#64;K_u\)</span> is the number of items which are in the recommendation list  of the user
+<strong>cutoff to the first K items</strong> and have a rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+<li><p><span class="math notranslate nohighlight">\(tp&#64;K_u\)</span> is the number of items which are in the recommendation list  of the user
+<strong>cutoff to the first K items</strong> and have a rating &lt; relevant_threshold in its ‘ground truth’</p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}Precision&#64;K_sys - micro = \frac{\sum_{u \in U} tp&#64;K_u}{\sum_{u \in U} tp&#64;K_u + \sum_{u \in U} fp&#64;K_u}\\Precision&#64;K_sys - macro = \frac{\sum_{u \in U} Precision&#64;K_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – cutoff parameter. Only the first k items of the recommendation list will be considered</p></li>
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.PrecisionAtK.k">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">k</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.PrecisionAtK.k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.RPrecision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">RPrecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.RPrecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.Precision" title="orange_cb_recsys.evaluation.metrics.classification_metrics.Precision"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.Precision</span></code></a></p>
+<p>The R-Precision metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[R-Precision_u = \frac{tp&#64;R_u}{tp&#64;R_u + fp&#64;R_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R\)</span> it’s the number of relevant items for the user <em>u</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(tp&#64;R_u\)</span> is the number of items which are in the recommendation list  of the user
+<strong>cutoff to the first R items</strong> and have a rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+<li><p><span class="math notranslate nohighlight">\(tp&#64;R_u\)</span> is the number of items which are in the recommendation list  of the user
+<strong>cutoff to the first R items</strong> and have a rating &lt; relevant_threshold in its ‘ground truth’</p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}Precision&#64;K_sys - micro = \frac{\sum_{u \in U} tp&#64;R_u}{\sum_{u \in U} tp&#64;R_u + \sum_{u \in U} fp&#64;R_u}\\Precision&#64;K_sys - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.Recall">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">Recall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.Recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric" title="orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.ClassificationMetric</span></code></a></p>
+<p>The Recall metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Recall_u = \frac{tp_u}{tp_u + fn_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(tp_u\)</span> is the number of items which are in the recommendation list of the user and have a
+rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+<li><p><span class="math notranslate nohighlight">\(fn_u\)</span> is the number of items which are NOT in the recommendation list of the user and have a
+rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}Recall_sys - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fn_u}\\Recall_sys - macro = \frac{\sum_{u \in U} Recall_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.RecallAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.</span></span><span class="sig-name descname"><span class="pre">RecallAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.RecallAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.Recall" title="orange_cb_recsys.evaluation.metrics.classification_metrics.Recall"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.classification_metrics.Recall</span></code></a></p>
+<p>The Recall&#64;K metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Recall&#64;K_u = \frac{tp&#64;K_u}{tp&#64;K_u + fn&#64;K_u}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(tp&#64;K_u\)</span> is the number of items which are in the recommendation list  of the user
+<strong>cutoff to the first K items</strong> and have a rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+<li><p><span class="math notranslate nohighlight">\(tp&#64;K_u\)</span> is the number of items which are NOT in the recommendation list  of the user
+<strong>cutoff to the first K items</strong> and have a rating &gt;= relevant_threshold in its ‘ground truth’</p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>, depending if ‘macro’ average or ‘micro’ average has been
+chosen:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}Recall&#64;K_sys - micro = \frac{\sum_{u \in U} tp&#64;K_u}{\sum_{u \in U} tp&#64;K_u + \sum_{u \in U} fn&#64;K_u}\\Recall&#64;K_sys - macro = \frac{\sum_{u \in U} Recall&#64;K_u}{|U|}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – cutoff parameter. Only the first k items of the recommendation list will be considered</p></li>
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+<li><p><strong>sys_average</strong> (<em>str</em>) – specify how the system average must be computed. Default is ‘macro’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.classification_metrics.RecallAtK.k">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">k</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.classification_metrics.RecallAtK.k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.error_metrics">
+<span id="orange-cb-recsys-evaluation-metrics-error-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.error_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.error_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.</span></span><span class="sig-name descname"><span class="pre">ErrorMetric</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<p>Abstract class for error metrics.
+An Error Metric evaluates ‘how wrong’ the recommender system was in predicting a rating</p>
+<p>Obviously the recommender system must be able to do score prediction in order to be evaluated in one of these
+metrics</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.error_metrics.MAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.</span></span><span class="sig-name descname"><span class="pre">MAE</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.error_metrics.MAE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric" title="orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric</span></code></a></p>
+<p>The MAE (Mean Absolute Error) metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T_u\)</span> is the <em>test set</em> of the user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(r_{u, i}\)</span> is the actual score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_{u, i}\)</span> is the predicted score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>:</p>
+<div class="math notranslate nohighlight">
+\[MAE_sys = \sum_{u \in T} \frac{MAE_u}{|T|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the <em>test set</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(MAE_u\)</span> is the MAE calculated for user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+</ul>
+<p>There may be cases in which some items of the <em>test set</em> of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally, a methodology different than <em>TestRatings</em> was chosen).</p>
+<p>In those cases the <span class="math notranslate nohighlight">\(MAE_u\)</span> formula becomes</p>
+<div class="math notranslate nohighlight">
+\[MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><strong>unk</strong> (<em>unknown</em>) is the number of items of the <em>user test set</em> that could not be predicted</p></li>
+</ul>
+<p>If no items of the user test set has been predicted (<span class="math notranslate nohighlight">\(|T_u| - unk = 0\)</span>), then:</p>
+<div class="math notranslate nohighlight">
+\[MAE_u = NaN\]</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.error_metrics.MSE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.</span></span><span class="sig-name descname"><span class="pre">MSE</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.error_metrics.MSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric" title="orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric</span></code></a></p>
+<p>The MSE (Mean Squared Error) metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}\end{split}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T_u\)</span> is the <em>test set</em> of the user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(r_{u, i}\)</span> is the actual score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_{u, i}\)</span> is the predicted score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>:</p>
+<div class="math notranslate nohighlight">
+\[MSE_sys = \sum_{u \in T} \frac{MSE_u}{|T|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the <em>test set</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(MSE_u\)</span> is the MSE calculated for user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+</ul>
+<p>There may be cases in which some items of the <em>test set</em> of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally, a methodology different than <em>TestRatings</em> was chosen).</p>
+<p>In those cases the <span class="math notranslate nohighlight">\(MSE_u\)</span> formula becomes</p>
+<div class="math notranslate nohighlight">
+\[MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><strong>unk</strong> (<em>unknown</em>) is the number of items of the <em>user test set</em> that could not be predicted</p></li>
+</ul>
+<p>If no items of the user test set has been predicted (<span class="math notranslate nohighlight">\(|T_u| - unk = 0\)</span>), then:</p>
+<div class="math notranslate nohighlight">
+\[MSE_u = NaN\]</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.error_metrics.RMSE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.</span></span><span class="sig-name descname"><span class="pre">RMSE</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.error_metrics.RMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric" title="orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.error_metrics.ErrorMetric</span></code></a></p>
+<p>The RMSE (Root Mean Squared Error) metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T_u\)</span> is the <em>test set</em> of the user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(r_{u, i}\)</span> is the actual score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{r}_{u, i}\)</span> is the predicted score give by user <span class="math notranslate nohighlight">\(u\)</span> to item <span class="math notranslate nohighlight">\(i\)</span></p></li>
+</ul>
+<p>And it is calculated as such for the <strong>entire system</strong>:</p>
+<div class="math notranslate nohighlight">
+\[RMSE_sys = \sum_{u \in T} \frac{RMSE_u}{|T|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the <em>test set</em></p></li>
+<li><p><span class="math notranslate nohighlight">\(RMSE_u\)</span> is the RMSE calculated for user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+</ul>
+<p>There may be cases in which some items of the <em>test set</em> of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally, a methodology different than <em>TestRatings</em> was chosen).</p>
+<p>In those cases the <span class="math notranslate nohighlight">\(RMSE_u\)</span> formula becomes</p>
+<div class="math notranslate nohighlight">
+\[RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><strong>unk</strong> (<em>unknown</em>) is the number of items of the <em>user test set</em> that could not be predicted</p></li>
+</ul>
+<p>If no items of the user test set has been predicted (<span class="math notranslate nohighlight">\(|T_u| - unk = 0\)</span>), then:</p>
+<div class="math notranslate nohighlight">
+\[RMSE_u = NaN\]</div>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.fairness_metrics">
+<span id="orange-cb-recsys-evaluation-metrics-fairness-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.fairness_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.fairness_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.CatalogCoverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">CatalogCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.CatalogCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage</span></code></a></p>
+<p>The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items. It’s a system wide metric, so only its result it will be returned and not those of every
+user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
+parameter is passed then it’s a simple Prediction Coverage.
+The metric is calculated as such:</p>
+<div class="math notranslate nohighlight">
+\[Catalog Coverage_sys = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of users</p></li>
+<li><p><span class="math notranslate nohighlight">\(reclist(u_j)\)</span> is the set of items contained in the recommendation list of user <span class="math notranslate nohighlight">\(j\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(I\)</span> is the set of all available items</p></li>
+</ul>
+<p>The <span class="math notranslate nohighlight">\(I\)</span> must be specified through the ‘catalog’ parameter</p>
+<p>The recommendation list of every user (<span class="math notranslate nohighlight">\(reclist(u_j)\)</span>) can be reduced to the first <em>n</em> parameter with the
+top-n parameter, so that catalog coverage is measured considering only the most highest ranked items.</p>
+<p>With the ‘k’ parameter one could specify the number of users that will be used to calculate catalog coverage:
+k users will be randomly sampled and their recommendation lists will be used. The formula above becomes:</p>
+<div class="math notranslate nohighlight">
+\[Catalog Coverage_sys = (\frac{|\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(k\)</span> is the parameter specified</p></li>
+</ul>
+<p>Obviously ‘k’ &lt; N, else simply recommendation lists of all users will be used</p>
+<p>Check the ‘Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity’ paper and
+page 13 of the ‘Comparison of group recommendation algorithms’ paper for more</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">DeltaGap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric</span></code></a></p>
+<p>The Delta GAP (Group Average popularity) metric lets you compare the average popularity “requested” by one or
+multiple groups of users and the average popularity “obtained” with the recommendation given by the recsys.
+It’s a system wide metric and results of every group will be returned.</p>
+<p>It is calculated as such:</p>
+<div class="math notranslate nohighlight">
+\[\Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}\]</div>
+<p>Users are splitted into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user_groups</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;popular_users&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;medium_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;low_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):
+users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+into one of the last groups</p>
+<p>If the ‘top_n’ parameter is specified, then the Delta GAP will be calculated considering only the first
+<em>n</em> items of every recommendation list of all users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_groups</strong> (<em>Dict&lt;str</em><em>, </em><em>float&gt;</em>) – Dict containing group names as keys and percentage of users as value, used to
+split users in groups. Users with more popular items rated are grouped into the first group, users with
+slightly less popular items rated are grouped into the second one, etc.</p></li>
+<li><p><strong>top_n</strong> (<em>int</em>) – it’s a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+‘n’ items of every recommendation list of all users. Default is None</p></li>
+<li><p><strong>pop_percentage</strong> (<em>float</em>) – How many (in percentage) ‘most popular items’ must be considered. Default is 0.2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.calculate_delta_gap">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_delta_gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recs_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.calculate_delta_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the ratio between the recommendation gap and the user profiles gap</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recs_gap</strong> (<em>float</em>) – recommendation gap</p></li>
+<li><p><strong>profile_gap</strong> – user profiles gap</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>delta gap measure</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.calculate_gap">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_pop_by_users</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.calculate_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the GAP (Group Average Popularity) formula</p>
+<div class="math notranslate nohighlight">
+\[GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p>G is the set of users</p></li>
+<li><p>iu is the set of items rated by user u</p></li>
+<li><p>pop_i is the popularity of item i</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<em>Set&lt;str&gt;</em>) – the set of users (user_id)</p></li>
+<li><p><strong>avg_pop_by_users</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – average popularity by user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>gap score</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.DeltaGap.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">FairnessMetric</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize fairness metrics</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric.perform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GiniIndex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">GiniIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GiniIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric</span></code></a></p>
+<p>The Gini Index metric measures inequality in recommendation lists. It’s a system wide metric, so only its
+result it will be returned and not those of every user.
+The metric is calculated as such:</p>
+<div class="math notranslate nohighlight">
+\[Gini_sys = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of distinct items that are being recommended</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_i\)</span> is the number of times that the item <span class="math notranslate nohighlight">\(i\)</span> has been recommended</p></li>
+</ul>
+<p>A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+index would be equal to 0. The more the recsys is “disegual”, the more the Gini Index is closer to 1</p>
+<p>If the ‘top_n’ parameter is specified, then the Gini index will measure inequality considering only the first
+<em>n</em> items of every recommendation list of all users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>top_n</strong> (<em>int</em>) – it’s a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+‘n’ items of every recommendation list of all users. Default is None</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GiniIndex.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GiniIndex.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">GroupFairnessMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric</span></code></a></p>
+<p>Abstract class for fairness metrics based on user groups</p>
+<p>It has some concrete methods useful for group divisions, since every subclass needs to split users into groups:</p>
+<p>Users are splitted into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user_groups</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;popular_users&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;medium_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;low_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):
+users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+into one of the last groups</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_groups</strong> (<em>Dict&lt;str</em><em>, </em><em>float&gt;</em>) – Dict containing group names as keys and percentage of users as value, used to
+split users in groups. Users with more popular items rated are grouped into the first group, users with
+slightly less popular items rated are grouped into the second one, etc.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.get_avg_pop_by_users">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_avg_pop_by_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_by_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.Counter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.get_avg_pop_by_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average popularity for each user in the DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – a pandas dataframe with columns = [‘user_id’, ‘to_id’, ‘rating’]</p></li>
+<li><p><strong>pop_by_items</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – popularity for each label (‘label’, ‘popularity’)</p></li>
+<li><p><strong>group</strong> (<em>Set&lt;str&gt;</em>) – (optional) the set of users (user_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>average popularity by user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>avg_pop_by_users (Dict&lt;str, float&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.perform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.split_user_in_groups">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">split_user_in_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.split_user_in_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score_frame</strong> (<em>pd.DataFrame</em>) – DataFrame with columns = [‘user_id’, ‘to_id’, ‘rating’]</p></li>
+<li><p><strong>groups</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – each key contains the name of the group and each value contains the</p></li>
+<li><p><strong>collection</strong> (<em>percentage of the specified group. If the groups don't cover the entire user</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param the rest of the users are considered in a ‘default_diverse’ group:
+:param pop_items: set of most popular ‘to_id’ labels
+:type pop_items: Set[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>key = group_name, value = Set of ‘user_id’ labels</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>groups_dict (Dict&lt;str, Set&lt;str&gt;&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.user_groups">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_groups</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric.user_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">PredictionCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.FairnessMetric</span></code></a></p>
+<p>The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items. It’s a system wide metric, so only its result it will be returned and not those of every
+user.
+The metric is calculated as such:</p>
+<div class="math notranslate nohighlight">
+\[Prediction Coverage_sys = (\frac{|I_p|}{|I|})\cdot100\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(I\)</span> is the set of all available items</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_p\)</span> is the set of recommended items</p></li>
+</ul>
+<p>The <span class="math notranslate nohighlight">\(I\)</span> must be specified through the ‘catalog’ parameter</p>
+<p>Check the ‘Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity’ paper for more</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage.catalog">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catalog</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage.catalog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.PredictionCoverage.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.metrics">
+<span id="orange-cb-recsys-evaluation-metrics-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.metrics.Metric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class that generalize metric concept</p>
+<p>Every metric may need different kind of “prediction”: some (eg. NDCG, MRR, etc.) may need recommendation lists in
+which the recsys ranks every unseen item, some (eg. MAE, RMSE, etc.) may need a score prediction where the recsys
+must predict the rating that a user would give to an unseen item.
+So a Metric category (subclass of this class) must implement the “eval_fit_recsys(…)” specifying its needs,
+while every single metric (subclasses of the metric category class) must implement the “perform(…)” method
+specifying how to execute the metric computation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.metrics.Metric.perform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.novelty">
+<span id="orange-cb-recsys-evaluation-metrics-novelty-module"></span><h2>orange_cb_recsys.evaluation.metrics.novelty module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.novelty" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.novelty.Novelty">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.novelty.</span></span><span class="sig-name descname"><span class="pre">Novelty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.novelty.Novelty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<img alt="prova/metrics_img/novelty.png" src="prova/metrics_img/novelty.png" />
+<p>where:
+- hits is a set of predicted items
+- Popularity(i) = % users who rated item i</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_of_recs</strong> – number of recommendation
+produced for each user</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.novelty.Novelty.OLD_perform">
+<span class="sig-name descname"><span class="pre">OLD_perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.novelty.Novelty.OLD_perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the novelty score</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Novelty score</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>novelty (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.novelty.Novelty.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.novelty.Novelty.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.plot_metrics">
+<span id="orange-cb-recsys-evaluation-metrics-plot-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.plot_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.plot_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.LongTailDistr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">LongTailDistr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'long_tail_distr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'truth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.LongTailDistr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric" title="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric</span></code></a></p>
+<p>This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified. The plot can be generated both for the <em>truth set</em> or the <em>predictions set</em> (based on
+the <em>on</em> parameter):</p>
+<ul class="simple">
+<li><p><strong>on = ‘truth’</strong>: in this case the long tail distribution is useful to see which are the most popular items (the
+most rated ones)</p></li>
+<li><p><strong>on = ‘pred’</strong>: in this case the long tail distribution is useful to see which are the most recommended items</p></li>
+</ul>
+<p>The plot file will be saved as <em>out_dir/file_name.format</em></p>
+<p>Since multiple split could be evaluated at once, the <em>overwrite</em> parameter comes into play:
+if is set to False, file with the same name will be saved as <em>file_name (1).format</em>, <em>file_name (2).format</em>, etc.
+so that for every split a plot is generated without overwriting any file previously generated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory where the plot will be saved. Default is ‘.’, meaning that the plot will be saved
+in the same directory where the python script it’s being executed</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the plot file. Default is ‘long_tail_distr’</p></li>
+<li><p><strong>on</strong> (<em>str</em>) – Set on which the Long Tail Distribution plot will be generated. Values accepted are ‘truth’ or ‘pred’</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – Format of the plot file. Could be ‘jpg’, ‘svg’, ‘png’. Default is ‘png’</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – parameter which specifies if the plot saved must overwrite any file that as the same name
+(‘file_name.format’). Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – exception raised when a invalid value for the ‘on’ parameter is specified</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.LongTailDistr.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.LongTailDistr.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">PlotMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<p>A plot metric is a metric which generates a plot and saves it to the directory specified</p>
+<p>The plot file will be saved as <em>out_dir/file_name.format</em></p>
+<p>Since multiple split could be evaluated at once, the <em>overwrite</em> parameter comes into play:
+if is set to False, file with the same name will be saved as <em>file_name (1).format</em>, <em>file_name (2).format</em>, etc.
+so that for every split a plot is generated without overwriting any file previously generated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory where the plot will be saved. Default is ‘.’, meaning that the plot will be saved
+in the same directory where the python script it’s being executed</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the plot file. Every plot metric as a default file name</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – Format of the plot file. Could be ‘jpg’, ‘svg’, ‘png’. Default is ‘png’</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – parameter which specifies if the plot saved must overwrite any file that as the same name
+(‘file_name.format’). Default is False</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.file_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_name</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.file_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.format">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.output_directory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_directory</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.output_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.overwrite">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">overwrite</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.save_figure">
+<span class="sig-name descname"><span class="pre">save_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric.save_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concrete method which given the figure to save and its file name, it saves the figure in the output directory
+and with the format specified in the constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> – figure to save</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file to save</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopProfileVsRecs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">PopProfileVsRecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pop_ratio_profile_vs_recs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopProfileVsRecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric" title="orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.fairness_metrics.GroupFairnessMetric</span></code></a>, <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric" title="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric</span></code></a></p>
+<p>This metric generates a plot where users are splitted into groups and, for every group, a boxplot comparing
+profile popularity and recommendations popularity is drawn</p>
+<p>Users are splitted into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user_groups</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;popular_users&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;medium_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;low_popular_users&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):
+users with many popular items will be inserted into the first group, users with niche items rated will be inserted
+into one of the last groups</p>
+<p>You could also specify how many <em>most popular items</em> must be considered with the ‘pop_percentage’ parameter. By
+default is set to 0.2 which means that the top 20% items are considered as most popular</p>
+<p>The plot file will be saved as <em>out_dir/file_name.format</em></p>
+<p>Since multiple split could be evaluated at once, the <em>overwrite</em> parameter comes into play:
+if is set to False, file with the same name will be saved as <em>file_name (1).format</em>, <em>file_name (2).format</em>, etc.
+so that for every split a plot is generated without overwriting any file previously generated</p>
+<p>Thanks to the ‘store_frame’ parameter it’s also possible to store a csv containing the calculations done in order
+to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
+with the .csv format):</p>
+<p>The csv will be saved as <em>out_dir/file_name.csv</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_groups</strong> (<em>Dict&lt;str</em><em>, </em><em>float&gt;</em>) – Dict containing group names as keys and percentage of users as value, used to
+split users in groups. Users with more popular items rated are grouped into the first group, users with
+slightly less popular items rated are grouped into the second one, etc.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory where the plot will be saved. Default is ‘.’, meaning that the plot will be saved
+in the same directory where the python script it’s being executed</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the plot file. Default is ‘pop_ratio_profile_vs_recs’</p></li>
+<li><p><strong>pop_percentage</strong> (<em>float</em>) – How many (in percentage) ‘most popular items’ must be considered. Default is 0.2</p></li>
+<li><p><strong>store_frame</strong> (<em>bool</em>) – True if you want to store calculations done in order to build every boxplot in a csv file,
+False otherwise. Default is set to False</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – Format of the plot file. Could be ‘jpg’, ‘svg’, ‘png’. Default is ‘png’</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – parameter which specifies if the plot saved must overwrite any file that as the same name
+(‘file_name.format’). Default is False</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopProfileVsRecs.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopProfileVsRecs.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.</span></span><span class="sig-name descname"><span class="pre">PopRecsCorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pop_recs_correlation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric" title="orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.plot_metrics.PlotMetric</span></code></a></p>
+<p>This metric generates a plot which has as the X-axis the popularity and as Y-axis number of recommendations, so
+that it can be easily seen the correlation between popular (niche) items and how many times are being recommended
+by the recsys</p>
+<p>The plot file will be saved as <em>out_dir/file_name.format</em></p>
+<p>Since multiple split could be evaluated at once, the <em>overwrite</em> parameter comes into play:
+if is set to False, file with the same name will be saved as <em>file_name (1).format</em>, <em>file_name (2).format</em>, etc.
+so that for every split a plot is generated without overwriting any file previously generated</p>
+<p>There exists cases in which some items are not recommended even once, so in the graph could appear
+<strong>zero recommendations</strong>. One could change this behaviour thanks to the ‘mode’ parameter:</p>
+<ul class="simple">
+<li><p><strong>mode=’both’</strong>: two graphs will be created, the first one containing eventual <em>zero recommendations</em>, the
+second one where <em>zero recommendations</em> are excluded. This additional graph will be stored as
+<em>out_dir/file_name_no_zeros.format</em> (the string ‘_no_zeros’ will be added to the file_name chosen automatically)</p></li>
+<li><p><strong>mode=’w_zeros’</strong>: only a graph containing eventual <em>zero recommendations</em> will be created</p></li>
+<li><p><strong>mode=’no_zeros’</strong>: only a graph excluding eventual <em>zero recommendations</em> will be created. The graph will be
+saved as <em>out_dir/file_name_no_zeros.format</em> (the string ‘_no_zeros’ will be added to the file_name chosen
+automatically)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory where the plot will be saved. Default is ‘.’, meaning that the plot will be saved
+in the same directory where the python script it’s being executed</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the plot file. Default is ‘pop_recs_correlation’</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Parameter which dictates which graph must be created. By default is ‘both’, so the graph with
+eventual zero recommendations as well as the graph excluding eventual zero recommendations will be created.
+Check the class documentation for more</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – Format of the plot file. Could be ‘jpg’, ‘svg’, ‘png’. Default is ‘png’</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – parameter which specifies if the plot saved must overwrite any file that as the same name
+(‘file_name.format’). Default is False</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_no_zeros_plot">
+<span class="sig-name descname"><span class="pre">build_no_zeros_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">popularities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recommendations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_no_zeros_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which builds and saves the plot <strong>excluding</strong> eventual <em>zero recommendations</em>
+It saves the plot as <em>out_dir/filename_no_zeros.format</em>, according to their value passed in the constructor.
+Note that the ‘_no_zeros’ string is automatically added to the file_name chosen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>popularities</strong> (<em>list</em>) – x-axis values representing popularity of every item</p></li>
+<li><p><strong>recommendations</strong> (<em>list</em>) – y-axis values representing number of times every item has been recommended</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_plot">
+<span class="sig-name descname"><span class="pre">build_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which builds a matplotlib plot given x-axis values, y-axis values and the title of the plot.
+X-axis label and Y-axis label are hard-coded as ‘Popularity’ and ‘Recommendation frequency’ respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em>) – List containing x-axis values</p></li>
+<li><p><strong>y</strong> (<em>list</em>) – List containing y-axis values</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The matplotlib figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_w_zeros_plot">
+<span class="sig-name descname"><span class="pre">build_w_zeros_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">popularities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recommendations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.build_w_zeros_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which builds and saves the plot containing eventual <em>zero recommendations</em>
+It saves the plot as <em>out_dir/filename.format</em>, according to their value passed in the constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>popularities</strong> (<em>list</em>) – x-axis values representing popularity of every item</p></li>
+<li><p><strong>recommendations</strong> (<em>list</em>) – y-axis values representing number of times every item has been recommended</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.plot_metrics.PopRecsCorrelation.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.ranking_metrics">
+<span id="orange-cb-recsys-evaluation-metrics-ranking-metrics-module"></span><h2>orange_cb_recsys.evaluation.metrics.ranking_metrics module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.ranking_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.Correlation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">Correlation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pearson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.Correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric" title="orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric</span></code></a></p>
+<p>The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The currently correlation methods implemented are:</p>
+<ul class="simple">
+<li><p>pearson</p></li>
+<li><p>kendall</p></li>
+<li><p>spearman</p></li>
+</ul>
+<p>Every correlation method is implemented by the scipy library, so read its documentation for more</p>
+<p>The correlation metric is calculated as such for the <strong>single user</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Corr_u = Corr(ranking_u, ideal\_ranking_u)\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(ranking_u\)</span> is ranking of the user</p></li>
+<li><p><span class="math notranslate nohighlight">\(ideal\_ranking_u\)</span> is the ideal ranking for the user</p></li>
+</ul>
+<p>The ideal ranking is calculated based on the rating inside the <em>ground truth</em> of the user</p>
+<p>The Correlation metric calculated for the <strong>entire system</strong> is simply the average of every <span class="math notranslate nohighlight">\(Corr\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[Corr_sys = \frac{\sum_{u} Corr_u}{|U|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Corr_u\)</span> is the correlation of the user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> is the set of all users</p></li>
+</ul>
+<p>The system average excludes NaN values.</p>
+<p>It’s also possible to specify a cutoff parameter thanks to the ‘top_n’ parameter: if specified, only the first
+<span class="math notranslate nohighlight">\(n\)</span> results of the recommendation list will be used in order to calculate the correlation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – The correlation method to use. It must be ‘pearson’, ‘kendall’ or ‘spearman’, otherwise a
+ValueError exception is raised. By default is ‘pearson’</p></li>
+<li><p><strong>top_n</strong> (<em>int</em>) – Cutoff parameter, if specified only the first n items of the recommendation list will be used
+in order to calculate the correlation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if an invalid method parameter is passed</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.Correlation.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.Correlation.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">MRR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric" title="orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric</span></code></a></p>
+<p>The MRR (Mean Reciprocal Rank) metric is a system wide metric, so only its result it will be returned and not those
+of every user.
+MRR is calculated as such</p>
+<div class="math notranslate nohighlight">
+\[MRR_sys = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Q\)</span> is the set of recommendation lists</p></li>
+<li><p><span class="math notranslate nohighlight">\(rank(i)\)</span> is the position of the first relevant item in the i-th recommendation list</p></li>
+</ul>
+<p>The MRR metric needs to discern relevant items from the not relevant ones: in order to do that, one could pass a
+custom relevant_threshold parameter that will be applied to every user, so that if a rating of an item
+is &gt;= relevant_threshold, then it’s relevant, otherwise it’s not.
+If no relevant_threshold parameter is passed then, for every user, its mean rating score will be used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.calc_reciprocal_rank">
+<span class="sig-name descname"><span class="pre">calc_reciprocal_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_predictions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.calc_reciprocal_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which calculates the RR (Reciprocal Rank) for a single user
+:param valid: a DataFrame containing the recommendation list and the truth of a single user
+:type valid: pd.DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.relevant_threshold">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relevant_threshold</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR.relevant_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">MRRAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR" title="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.MRR</span></code></a></p>
+<p>The MRR&#64;K (Mean Reciprocal Rank at K) metric is a system wide metric, so only its result will be returned and
+not those of every user.
+MRR&#64;K is calculated as such</p>
+<div class="math notranslate nohighlight">
+\[MRR&#64;K_sys = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K\)</span> is the cutoff parameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q\)</span> is the set of recommendation lists</p></li>
+<li><p><span class="math notranslate nohighlight">\(rank(i)\)</span> is the position of the first relevant item in the i-th recommendation list</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – the cutoff parameter. It must be &gt;= 1, otherwise a ValueError exception is raised</p></li>
+<li><p><strong>relevant_threshold</strong> (<em>float</em>) – parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if an invalid cutoff parameter is passed (0 or negative)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK.calc_reciprocal_rank">
+<span class="sig-name descname"><span class="pre">calc_reciprocal_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_predictions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK.calc_reciprocal_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which calculates the RR (Reciprocal Rank) for a single user
+:param valid: a DataFrame containing the recommendation list and the truth of a single user
+:type valid: pd.DataFrame</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK.k">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">k</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.MRRAtK.k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">NDCG</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric" title="orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric</span></code></a></p>
+<p>The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the <strong>single user</strong> by using the sklearn
+implementation, so be sure to check its documentation for more.</p>
+<p>The NDCG of the <strong>entire system</strong> is calculated instead as such:</p>
+<div class="math notranslate nohighlight">
+\[NDCG_sys = \frac{\sum_{u} NDCG_u}{|U|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(NDCG_u\)</span> is the NDCG calculated for user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> is the set of all users</p></li>
+</ul>
+<p>The system average excludes NaN values.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCGAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">NDCGAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCGAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG" title="orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.NDCG</span></code></a></p>
+<p>The NDCG&#64;K (Normalized Discounted Cumulative Gain at K) metric is calculated for the <strong>single user</strong> by using the
+sklearn implementation, so be sure to check its documentation for more.</p>
+<p>The NDCG&#64;K of the <strong>entire system</strong> is calculated instead as such:</p>
+<div class="math notranslate nohighlight">
+\[NDCG&#64;K_sys = \frac{\sum_{u} NDCG&#64;K_u}{|U|}\]</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(NDCG&#64;K_u\)</span> is the NDCG&#64;K calculated for user <span class="math notranslate nohighlight">\(u\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> is the set of all users</p></li>
+</ul>
+<p>The system average excludes NaN values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<em>int</em>) – the cutoff parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">RankingMetric</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.ranking_metrics.RankingMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<p>Abstract class that generalize ranking metrics.
+A ranking metric evaluates the quality of the recommendation list</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics.serendipity">
+<span id="orange-cb-recsys-evaluation-metrics-serendipity-module"></span><h2>orange_cb_recsys.evaluation.metrics.serendipity module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics.serendipity" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.serendipity.Serendipity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.metrics.serendipity.</span></span><span class="sig-name descname"><span class="pre">Serendipity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.serendipity.Serendipity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></code></a></p>
+<img alt="prova/metrics_img/serendipity.png" src="prova/metrics_img/serendipity.png" />
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_of_recs</strong> – number of recommendation
+produced for each user</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.serendipity.Serendipity.OLD_perform">
+<span class="sig-name descname"><span class="pre">OLD_perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.serendipity.Serendipity.OLD_perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the serendipity score: unexpected recommendations, surprisingly and interesting items a user
+might not have otherwise discovered</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>truth</strong> (<em>pd.DataFrame</em>) – original rating frame used for recsys config</p></li>
+<li><p><strong>predictions</strong> (<em>pd.DataFrame</em>) – dataframe with recommendations for multiple users</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The serendipity value</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>serendipity (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.metrics.serendipity.Serendipity.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">splt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><span class="pre">orange_cb_recsys.recsys.partitioning.Split</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.metrics.serendipity.Serendipity.perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.evaluation.metrics" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.evaluation.metrics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -140,12 +140,12 @@ class GroupFairnessMetric(FairnessMetric):
 
 
 class GiniIndex(FairnessMetric):
-    """
+    r"""
     The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
     result it will be returned and not those of every user.
     The metric is calculated as such:
 
-    .. math:: Gini_sys = \\frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    .. math:: Gini_sys = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
     |
     Where:
 
@@ -208,13 +208,13 @@ class GiniIndex(FairnessMetric):
 
 
 class PredictionCoverage(FairnessMetric):
-    """
+    r"""
     The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
     to all available items. It's a system wide metric, so only its result it will be returned and not those of every
     user.
     The metric is calculated as such:
 
-    .. math:: Prediction Coverage_sys = (\\frac{|I_p|}{|I|})\cdot100
+    .. math:: Prediction Coverage_sys = (\frac{|I_p|}{|I|})\cdot100
     |
     Where:
 
@@ -269,14 +269,14 @@ class PredictionCoverage(FairnessMetric):
 
 
 class CatalogCoverage(PredictionCoverage):
-    """
+    r"""
     The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
     to all available items. It's a system wide metric, so only its result it will be returned and not those of every
     user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
     parameter is passed then it's a simple Prediction Coverage.
     The metric is calculated as such:
 
-    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
     |
     Where:
 
@@ -292,7 +292,7 @@ class CatalogCoverage(PredictionCoverage):
     With the 'k' parameter one could specify the number of users that will be used to calculate catalog coverage:
     k users will be randomly sampled and their recommendation lists will be used. The formula above becomes:
 
-    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
+    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
     |
     Where:
 
@@ -347,14 +347,14 @@ class CatalogCoverage(PredictionCoverage):
 
 
 class DeltaGap(GroupFairnessMetric):
-    """
+    r"""
     The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
     multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
     It's a system wide metric and results of every group will be returned.
 
     It is calculated as such:
 
-    .. math:: \Delta GAP = \\frac{recs_GAP - profile_GAP}{profile_GAP}
+    .. math:: \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
 
     Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
     and percentage of how many user must contain a group as values. For example::
@@ -368,8 +368,6 @@ class DeltaGap(GroupFairnessMetric):
 
     If the 'top_n' parameter is specified, then the Delta GAP will be calculated considering only the first
     *n* items of every recommendation list of all users
-
-
 
     Args:
         user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
@@ -396,11 +394,11 @@ class DeltaGap(GroupFairnessMetric):
 
     @staticmethod
     def calculate_gap(group: Set[str], avg_pop_by_users: Dict[str, object]) -> float:
-        """
+        r"""
         Compute the GAP (Group Average Popularity) formula
 
 
-        .. math:: GAP = \\frac{\sum_{u \in U}\cdot \\frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
+        .. math:: GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
 
         Where:
 

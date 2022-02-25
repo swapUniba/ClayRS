@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.graph_based_algorithm.feature_selection package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-graph-based-algorithm-feature-selection-package">
+<h1>orange_cb_recsys.recsys.graph_based_algorithm.feature_selection package<a class="headerlink" href="#orange-cb-recsys-recsys-graph-based-algorithm-feature-selection-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-feature-selection-exceptions-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions.FeatureSelectionException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions.</span></span><span class="sig-name descname"><span class="pre">FeatureSelectionException</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions.FeatureSelectionException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Generic exception used inside of the FeatureSelectionAlgorithm and the FeatureSelectionHandler</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-feature-selection-feature-selection-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">FeatureSelectionAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">additional_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Feature Selection algorithm class. It contains all the methods to use Feature Selection on a Full Graph.
+The main method to do so is the perform method.</p>
+<p>All the Feature Selection algorithms will create a new graph based on the one passed by the user. This new graph
+will contain only the Item or the User nodes from the original graph but the Property nodes will be different.
+Instead of having the property instance (for example: <a class="reference external" href="http://dbpedia.org/resource/Phil_Collins">http://dbpedia.org/resource/Phil_Collins</a>) the Property nodes
+in the new graph will have the property names associated to the property instance (for example: ‘starring’).
+This is retrieved because the label of the edge connecting a User or Item node to a Property node will be the
+Property name. So, for example:</p>
+<blockquote>
+<div><p>Item Node someitem – (label: starring) –&gt; Property Node <a class="reference external" href="http://dbpedia.org/resource/Phil_Collins">http://dbpedia.org/resource/Phil_Collins</a></p>
+<p>will be transformed to</p>
+<p>Item Node someitem —-&gt; Property Node starring</p>
+</div></blockquote>
+<p>This is done so that only the instances related to the most important properties will be kept in the original graph</p>
+<p>After creating the new graph, an algorithm which can compute the ‘importance’ scores for each node in the new graph
+is used (for example, PageRank) and the Property nodes (in this case being the property labels of the original
+graph) with the best scores will be returned</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>additional_arguments</strong> (<em>dict</em>) – it’s possible to pass the parameters one would normally pass to the scores
+computation algorithms (for example, if the PageRank from networkx is used to compute the scores for
+each node, this parameter can contain the additional parameters for said method)</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.additional_arguments">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">additional_arguments</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.additional_arguments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.get_properties_to_keep">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_properties_to_keep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.get_properties_to_keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the strategy that will be used to decide which properties should be kept from the ranking generated
+by the feature selection algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rank</strong> (<em>dict</em>) – dictionary containing the property nodes inside the new graph as keys and the
+‘importance’ score associated with each of them as values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list containing the properties to keep</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main method that handles the entire Feature Selection process. After every step of the process is completed, it
+will return a list containing the most important property labels of the original graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – the original graph to apply Feature Selection on</p></li>
+<li><p><strong>target_nodes</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><em>Node</em></a><em>]</em>) – list of nodes from the original graph to consider for the creation
+of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
+be considered)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of properties to keep of the original graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.perform_feature_selection">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform_feature_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm.perform_feature_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method contains the feature selection process, it will return a dictionary containing the ‘importance’
+scores calculated for each node inside the new graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – the original graph to apply Feature Selection on</p></li>
+<li><p><strong>target_nodes</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><em>Node</em></a><em>]</em>) – list of user or item nodes from the original graph to consider for the creation
+of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
+be considered)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary containing the nodes inside the new graph as keys (so the property labels of the</dt><dd><p>original graph) and the ‘importance’ score associated with each of them as values</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">NXFeatureSelectionAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">additional_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm</span></code></a></p>
+<p>Feature Selection class where the new graph that will be created will be a NetworkX DiGraph()</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.create_new_graph_nx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_new_graph_nx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">networkx.classes.digraph.DiGraph</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.create_new_graph_nx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a NetworkX directed graph from the original graph and the target nodes list passed as argument</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – the original graph to apply Feature Selection on</p></li>
+<li><p><strong>target_nodes</strong> (<em>list</em><em>[</em><em>object</em><em>]</em>) – list of user or item nodes from the original graph to consider for the creation
+of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
+be considered)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>new graph that will be created from the original graph and the list of its nodes to</dt><dd><p>consider</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>mew_graph (DiGraph)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.get_properties_to_keep">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_properties_to_keep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.get_properties_to_keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the strategy that will be used to decide which properties should be kept from the ranking generated
+by the feature selection algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rank</strong> (<em>dict</em>) – dictionary containing the property nodes inside the new graph as keys and the
+‘importance’ score associated with each of them as values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list containing the properties to keep</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.perform_feature_selection">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform_feature_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm.perform_feature_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method contains the feature selection process, it will return a dictionary containing the ‘importance’
+scores calculated for each node inside the new graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – the original graph to apply Feature Selection on</p></li>
+<li><p><strong>target_nodes</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><em>Node</em></a><em>]</em>) – list of user or item nodes from the original graph to consider for the creation
+of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
+be considered)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary containing the nodes inside the new graph as keys (so the property labels of the</dt><dd><p>original graph) and the ‘importance’ score associated with each of them as values</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKDegreeCentrality">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">NXTopKDegreeCentrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKDegreeCentrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection</span></code></a></p>
+<p>Computes the Degree Centrality for the new graph used by Feature Selection passed as argument.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKDegreeCentrality.create_rank">
+<span class="sig-name descname"><span class="pre">create_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.classes.digraph.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKDegreeCentrality.create_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that calculates the rank used for feature selection. The method will return a dictionary where the keys
+will be the nodes in the graph passed as argument and the values will be the ‘importance’ score for each
+node. This rank will be used by the Feature Selection process to select which nodes to keep and which to discard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>DiGraph</em>) – graph from which the rank for the nodes will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>rank in the following form:</p>
+<blockquote>
+<div><p>{Node: rank_score, Node: rank_score, …}</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKEigenVectorCentrality">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">NXTopKEigenVectorCentrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKEigenVectorCentrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection</span></code></a></p>
+<p>Computes the EigenVector Centrality for the new graph used by Feature Selection passed as argument. It’s also
+possible to pass the parameters that one could normally pass to the NetworkX eigenvector_centrality method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKEigenVectorCentrality.create_rank">
+<span class="sig-name descname"><span class="pre">create_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.classes.digraph.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKEigenVectorCentrality.create_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that calculates the rank used for feature selection. The method will return a dictionary where the keys
+will be the nodes in the graph passed as argument and the values will be the ‘importance’ score for each
+node. This rank will be used by the Feature Selection process to select which nodes to keep and which to discard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>DiGraph</em>) – graph from which the rank for the nodes will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>rank in the following form:</p>
+<blockquote>
+<div><p>{Node: rank_score, Node: rank_score, …}</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">NXTopKFeatureSelection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXFeatureSelectionAlgorithm</span></code></a></p>
+<p>Feature Selection class that uses a top k strategy (meaning that the k properties with the highest score in the
+ranking will be considered as the most important properties)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k</strong> (<em>int</em>) – number of properties to keep</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.create_rank">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.classes.digraph.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.create_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that calculates the rank used for feature selection. The method will return a dictionary where the keys
+will be the nodes in the graph passed as argument and the values will be the ‘importance’ score for each
+node. This rank will be used by the Feature Selection process to select which nodes to keep and which to discard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>DiGraph</em>) – graph from which the rank for the nodes will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>rank in the following form:</p>
+<blockquote>
+<div><p>{Node: rank_score, Node: rank_score, …}</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.get_properties_to_keep">
+<span class="sig-name descname"><span class="pre">get_properties_to_keep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.get_properties_to_keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the strategy that will be used to decide which properties should be kept from the ranking generated
+by the feature selection algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rank</strong> (<em>dict</em>) – dictionary containing the property nodes inside the new graph as keys and the
+‘importance’ score associated with each of them as values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list containing the properties to keep</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.perform_feature_selection">
+<span class="sig-name descname"><span class="pre">perform_feature_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection.perform_feature_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method contains the feature selection process, it will return a dictionary containing the ‘importance’
+scores calculated for each node inside the new graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – the original graph to apply Feature Selection on</p></li>
+<li><p><strong>target_nodes</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><em>Node</em></a><em>]</em>) – list of user or item nodes from the original graph to consider for the creation
+of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
+be considered)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary containing the nodes inside the new graph as keys (so the property labels of the</dt><dd><p>original graph) and the ‘importance’ score associated with each of them as values</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKPageRank">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.</span></span><span class="sig-name descname"><span class="pre">NXTopKPageRank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKPageRank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKFeatureSelection</span></code></a></p>
+<p>Computes the PageRank for the new graph used by Feature Selection passed as argument. It’s also possible to pass
+the parameters that one could normally pass to the NetworkX pagerank method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKPageRank.create_rank">
+<span class="sig-name descname"><span class="pre">create_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.classes.digraph.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.NXTopKPageRank.create_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that calculates the rank used for feature selection. The method will return a dictionary where the keys
+will be the nodes in the graph passed as argument and the values will be the ‘importance’ score for each
+node. This rank will be used by the Feature Selection process to select which nodes to keep and which to discard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>DiGraph</em>) – graph from which the rank for the nodes will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>rank in the following form:</p>
+<blockquote>
+<div><p>{Node: rank_score, Node: rank_score, …}</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-feature-selection-feature-selection-handler-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler.FeatureSelectionHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler.</span></span><span class="sig-name descname"><span class="pre">FeatureSelectionHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_selection_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler.FeatureSelectionHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that handles the Feature Selection process. It allows to define a Feature Selection algorithm that will be
+used both for feature selection on user properties and on item properties. The Handler will perform feature
+selection on user properties first and on item properties after that. After obtaining the results from the
+Feature Selection algorithms (which will return the list of properties to keep), the Handler creates a copy of
+the original graph and removes any Property node which edges’ labels are not in the list of properties to keep
+For example:</p>
+<blockquote>
+<div><p>Item some_item_node –label: a_property–&gt; Property some_property_node</p>
+</div></blockquote>
+<p>If a_property is not in the list of properties to keep, the Property node is removed (note that other labels
+referring to that Property node should always be ‘a_property’)</p>
+<p>The goal is to remove the less useful Property Nodes so that
+the ranking and prediction graph based algorithms have to explore less nodes during computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>feature_selection_algorithm</strong> (<a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><em>FeatureSelectionAlgorithm</em></a>) – feature selection algorithm to use on user and item
+properties</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler.FeatureSelectionHandler.process_feature_selection_on_fullgraph">
+<span class="sig-name descname"><span class="pre">process_feature_selection_on_fullgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_target_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler.FeatureSelectionHandler.process_feature_selection_on_fullgraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a FullGraph, this method performs feature selection on said graph. It also allows to define a custom list
+of user and item nodes which properties will be considered during the feature selection process (instead of
+using the whole set of user and item nodes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – original graph on which feature selection will be performed</p></li>
+<li><p><strong>user_target_nodes</strong> (<em>list</em>) – list of user nodes (or values of said nodes) to consider in the feature selection
+process</p></li>
+<li><p><strong>item_target_nodes</strong> (<em>list</em>) – list of item nodes (or values of said nodes) to consider in the feature selection
+process</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Copy of the original graph from which the less important Property nodes (the ones having edges with less
+important property labels) will be removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

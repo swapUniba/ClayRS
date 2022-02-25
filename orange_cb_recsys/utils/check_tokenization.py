@@ -12,7 +12,7 @@ def check_tokenized(text):
     Tokenizes a text
     """
     if type(text) is str:
-        tokenizer = RegexpTokenizer('[\w<>$€]+')
+        tokenizer = RegexpTokenizer('[\\w<>$€]+')
         text = tokenizer.tokenize(text)
 
     return text

@@ -1,0 +1,922 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.script package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-script-package">
+<h1>orange_cb_recsys.script package<a class="headerlink" href="#orange-cb-recsys-script-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.script.exceptions">
+<span id="orange-cb-recsys-script-exceptions-module"></span><h2>orange_cb_recsys.script.exceptions module<a class="headerlink" href="#module-orange_cb_recsys.script.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.exceptions.InvalidFilePath">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidFilePath</span></span><a class="headerlink" href="#orange_cb_recsys.script.exceptions.InvalidFilePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when a file path defined in the script file is not valid</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.exceptions.NoOutputDirectoryDefined">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoOutputDirectoryDefined</span></span><a class="headerlink" href="#orange_cb_recsys.script.exceptions.NoOutputDirectoryDefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when an output directory has to be defined for a module in the script file but no output directory
+is found</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.exceptions.ParametersError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.exceptions.</span></span><span class="sig-name descname"><span class="pre">ParametersError</span></span><a class="headerlink" href="#orange_cb_recsys.script.exceptions.ParametersError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for any error regarding the parameters passed by the user in the script file for a method or class</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.exceptions.ScriptConfigurationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.exceptions.</span></span><span class="sig-name descname"><span class="pre">ScriptConfigurationError</span></span><a class="headerlink" href="#orange_cb_recsys.script.exceptions.ScriptConfigurationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when the basic configuration of the script file encounters an error (for example, if no module
+parameter is defined)</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.script.runnable_instances">
+<span id="orange-cb-recsys-script-runnable-instances-module"></span><h2>orange_cb_recsys.script.runnable_instances module<a class="headerlink" href="#module-orange_cb_recsys.script.runnable_instances" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.runnable_instances.get_classes">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.runnable_instances.</span></span><span class="sig-name descname"><span class="pre">get_classes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.runnable_instances.get_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used to create a dictionary containing the framework’s classes’ names as keys and the classes themselves
+as values</p>
+<p>A dictionary is created from the base_classes list and it will be in the following form:</p>
+<blockquote>
+<div><p>{
+“recsys”: RecSys,
+“algorithm”: Algorithm,
+…
+}</p>
+</div></blockquote>
+<p>So each item in the dictionary will be in this form:</p>
+<blockquote>
+<div><p>Name of the class lowercased: Related class</p>
+</div></blockquote>
+<p>All the implemented classes from the base_class list will be added, meaning that if a class is abstract but has
+any implemented subclass, said subclasses will be added to the dictionary.
+If a class isn’t abstract and has subclasses, both the class itself and the subclasses will be added to the
+dictionary</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.runnable_instances.serialize_classes">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.runnable_instances.</span></span><span class="sig-name descname"><span class="pre">serialize_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.runnable_instances.serialize_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes all the available framework’s base classes (retrieving them using the get_classes() function)</p>
+<p>The dictionary will then be serialized in a file called ‘classes.xz’ and, if the file already exists, it will be
+overwritten</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_directory</strong> (<em>str</em>) – directory where the “classes.xz” file will be saved, if it doesn’t exist it will be
+created</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.script.script_handling">
+<span id="orange-cb-recsys-script-script-handling-module"></span><h2>orange_cb_recsys.script.script_handling module<a class="headerlink" href="#module-orange_cb_recsys.script.script_handling" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.ContentAnalyzerRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">ContentAnalyzerRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.ContentAnalyzerRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.Run" title="orange_cb_recsys.script.script_handling.Run"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.Run</span></code></a></p>
+<p>Run associated with the ContentAnalyzer</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.ContentAnalyzerRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.ContentAnalyzerRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EmbeddingLearnerRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">EmbeddingLearnerRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EmbeddingLearnerRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.Run" title="orange_cb_recsys.script.script_handling.Run"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.Run</span></code></a></p>
+<p>Run associated with the EmbeddingLearner</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EmbeddingLearnerRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EmbeddingLearnerRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EvalRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">EvalRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EvalRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun" title="orange_cb_recsys.script.script_handling.NeedsSerializationRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.NeedsSerializationRun</span></code></a></p>
+<p>Run associated with the EvalModel</p>
+<p>The output will be serialized in the following form:</p>
+<blockquote>
+<div><p>eval_sys_results_0_0
+eval_user_results_0_0</p>
+</div></blockquote>
+<p>where the first number is used to identify the EvalModel in the script file (in case multiple EvalModel objects
+with the same output directory are defined in the script file, this identifies each output) and the second number
+identifies the method (since it is possible to call the same method multiple times) (note that this shouldn’t
+really be the case for the eval model since the fit method doesn’t have any parameters,
+but it was made for consistency)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EvalRun.eval_number">
+<span class="sig-name descname"><span class="pre">eval_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EvalRun.eval_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EvalRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EvalRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.EvalRun.serialize_results">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed_methods_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.EvalRun.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines how the results are serialized and for which methods of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executed_methods_results</strong> (<em>dict</em>) – dictionary containing the methods names as keys and the related results
+as values (stored in a list that contains one result for each method call)</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – directory where the results will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.GraphRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">GraphRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.GraphRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.Run" title="orange_cb_recsys.script.script_handling.Run"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.Run</span></code></a></p>
+<p>Run associated with the Graph</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.GraphRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.GraphRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.MethodologyRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">MethodologyRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.MethodologyRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun" title="orange_cb_recsys.script.script_handling.NeedsSerializationRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.NeedsSerializationRun</span></code></a></p>
+<p>Run associated with the Methodology</p>
+<p>The output will be serialized in the following form:</p>
+<blockquote>
+<div><p>item_to_predict_0_0#0
+item_to_predict_0_0#1
+item_to_predict_0_1#0
+…</p>
+</div></blockquote>
+<p>where the first number is used to identify the Methodology in the script file (in case multiple Methodology
+objects with the same output directory are defined in the script file, this identifies each output), the
+second one is used to identify each method call (since it’s possible to call methods multiple times with different
+parameters) and the last one identifies each Dataframe in the list returned by the get_item_to_predict method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.MethodologyRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.MethodologyRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.MethodologyRun.methodology_number">
+<span class="sig-name descname"><span class="pre">methodology_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#orange_cb_recsys.script.script_handling.MethodologyRun.methodology_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.MethodologyRun.serialize_results">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed_methods_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.MethodologyRun.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines how the results are serialized and for which methods of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executed_methods_results</strong> (<em>dict</em>) – dictionary containing the methods names as keys and the related results
+as values (stored in a list that contains one result for each method call)</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – directory where the results will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">NeedsSerializationRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.Run" title="orange_cb_recsys.script.script_handling.Run"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.Run</span></code></a></p>
+<p>Abstract class that inherits from the Run class and allows the configuration of modules in the framework that need
+serialization of the results obtained using some of their methods</p>
+<p>To do so, an extra parameter has to be defined in the configuration dictionary associated with the module, that
+parameter is called ‘output_directory’ and in said directory the results will be serialized</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.check_and_setup">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_and_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.check_and_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as the Run case, but this time an additional parameter is added to the config_dict, which is the
+‘output_directory’ necessary for the serialization of the results generated by the methods of the
+object generated during run execution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.get_associated_class">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works as the run method defined in the Run class but also considers the output directory</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.save_to_csv">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.save_to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a dataframe passed as argument in the path passed as argument (adds the “.csv” extension if it is not
+present in the path)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.serialize_results">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed_methods_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines how the results are serialized and for which methods of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executed_methods_results</strong> (<em>dict</em>) – dictionary containing the methods names as keys and the related results
+as values (stored in a list that contains one result for each method call)</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – directory where the results will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.NeedsSerializationRun.setup_output_directory">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setup_output_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun.setup_output_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method extracts the output_directory from the configuration dictionary and allows for the basic setup of
+said output directory.</p>
+<p>If the directory doesn’t exist it is created.</p>
+<p>If the dictionary passed as argument doesn’t contain the output_directory parameter, a NoOutputDirectoryDefined
+exception is thrown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_dict</strong> (<em>dict</em>) – dictionary representing the parameters for a class constructor</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>output_directory extracted from the config_dict</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>output_directory(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.PartitioningRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">PartitioningRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.PartitioningRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun" title="orange_cb_recsys.script.script_handling.NeedsSerializationRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.NeedsSerializationRun</span></code></a></p>
+<p>Run associated with the PartioningModule</p>
+<p>The output will be serialized in the following form:</p>
+<blockquote>
+<div><p>training_0_0#0
+training_0_0#1
+…
+testing_0_0#0
+testing_0_0#1</p>
+</div></blockquote>
+<p>where the first number is used to identify the Partitioning in the script file (in case multiple PartitionModule
+objects with the same output directory are defined in the script file, this identifies each output) and the
+second one is used to identify each method call (since it’s possible to call methods multiple times with
+different parameters). The last number after the # symbol is used to
+identify each partition (so training_0_0#0 matches testing_0_0#0)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.PartitioningRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.PartitioningRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.PartitioningRun.partitioning_number">
+<span class="sig-name descname"><span class="pre">partitioning_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#orange_cb_recsys.script.script_handling.PartitioningRun.partitioning_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.PartitioningRun.serialize_results">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed_methods_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.PartitioningRun.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines how the results are serialized and for which methods of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executed_methods_results</strong> (<em>dict</em>) – dictionary containing the methods names as keys and the related results
+as values (stored in a list that contains one result for each method call)</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – directory where the results will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RatingsRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">RatingsRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RatingsRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.Run" title="orange_cb_recsys.script.script_handling.Run"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.Run</span></code></a></p>
+<p>Run associated with the RatingsImporter</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RatingsRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RatingsRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RecSysRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">RecSysRun</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RecSysRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.script.script_handling.NeedsSerializationRun" title="orange_cb_recsys.script.script_handling.NeedsSerializationRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.script.script_handling.NeedsSerializationRun</span></code></a></p>
+<p>Run associated with the RecSys</p>
+<p>The output files will be in the following form:</p>
+<blockquote>
+<div><p>predict_0_0
+predict_0_1
+…
+rank_0_0
+rank_0_1</p>
+<p>or</p>
+<p>multiple_predict_0_0
+multiple_predict_0_1
+…
+multiple_rank_0_0
+multiple_rank_0_1</p>
+</div></blockquote>
+<p>where the first number identifies the RecSysRun (if multiple RecSys with the same output directory are defined in
+the script file, this allows identification of the files created by each RecSys) and the second number identifies
+the parameters used (it’s possible to call fit_rank and fit_predict multiple times with the same RecSys, the
+number identifies the fit_rank and fit_predict run)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RecSysRun.get_associated_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RecSysRun.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RecSysRun.recsys_number">
+<span class="sig-name descname"><span class="pre">recsys_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RecSysRun.recsys_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.RecSysRun.serialize_results">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serialize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed_methods_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.RecSysRun.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines how the results are serialized and for which methods of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executed_methods_results</strong> (<em>dict</em>) – dictionary containing the methods names as keys and the related results
+as values (stored in a list that contains one result for each method call)</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – directory where the results will be serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">Run</span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class that enables all classes in the framework that can be instantiated like a stand alone module to
+configure the behavior of the dictionary related to it in the script file</p>
+<p>This class is mainly used by the script_run method to recognise the run configuration related to a main module of
+the framework (for example, the Run class related to RecSys is RecSysRun)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.check_and_setup">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_and_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.check_and_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to check that the parameters defined in a configuration dictionary are correct (
+both for the class constructor and the methods’ arguments). It also initializes a new dictionary that
+will contain all relevant infos in a structured manner (said dictionary can be passed to the run method).</p>
+<p>Notice: objects are not instantiated in this phase because of particular cases that may cause problems.
+For example, if the user defined a Graph and said graph was instantiated during the check process, the
+code inside the Graph’s constructor would be executed (this is unwanted behavior because when using
+several Run classes and executing the check phase for each one of them, if a different Run class
+raises an exception the whole process will be stopped and the resulting graph wouldn’t be used, which
+is even worse if, like in this case, the code related to the class constructor takes a lot of time to be
+executed)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_dict</strong> (<em>dict</em>) – <p>dictionary containing all relevant information for the configuration in the following
+way</p>
+<dl class="simple">
+<dt>{</dt><dd><p>“constructor_parameter_name_1”: value,
+“constructor_parameter_name_2”: value,
+…
+“method_name_1”: dictionary containing parameters (or list of dictionaries eventually),
+“method_name_2”: dictionary containing parameters (or list of dictionaries eventually),
+…</p>
+</dd>
+</dl>
+<p>}</p>
+</p></li>
+<li><p><strong>module</strong> (<em>str</em>) – name of the class instantiated from the script run</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>dictionary containing the relevant information in a more structured manner, in particular,</dt><dd><p>the dictionary is now organized under 3 main keys:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“run_class”: Class to instantiate.
+“methods”: dictionary containing methods’ names as keys and their parameters as values,
+“config_dict”: dictionary containing the constructor parameters only</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>info_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.check_correct_parameters">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_correct_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.check_correct_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the correct parameters are defined in the config_dict for the given class or function.
+If some error is encountered a ParametersError exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_dict</strong> (<em>dict</em>) – dictionary containing the parameters defined by the user for a function call or
+class constructor</p></li>
+<li><p><strong>reference</strong> (<em>Union</em><em>[</em><em>Type</em><em>, </em><em>Callable</em><em>]</em>) – Class or function for which the parameters will be checked (in case
+of a class, constructor’s parameters will be checked)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.check_for_methods">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_for_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.check_for_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that searches for the public methods implemented in the class passed as argument. If the
+configuration dict passed as argument contains one of them, it is removed from the configuration
+dictionary and added to a dictionary that will keep all the results</p>
+<p>The final dictionary will be in the following form:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“fit”: {dictionary containing the parameters in the config_dict for the fit method},
+method_name: {same dictionary as above but for the method_name method},
+…</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>Note that it is also possible to pass lists of parameters, for example:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>method_name: [dictionary containing the parameters for method_name,</dt><dd><p>dictionary containing the parameters for method_name]</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>In that case, the execute_methods method will use the method with every dictionary containing the parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_dict</strong> (<em>dict</em>) – configuration dictionary for a specific module in the script file</p></li>
+<li><p><strong>cl</strong> (<em>Type</em>) – class from which the methods will be retrieved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary containing the methods to execute, the keys will be the methods’ names and</dt><dd><p>the values will be the parameters for said methods</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>found_methods (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.dict_detector">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dict_detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.dict_detector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects a class constructor (defined by a dictionary with a class parameter that stores the alias for the class)
+and replaces it with the object instance.
+{“class”: ‘test_class’} will be transformed into TestClass()
+where TestClass is the class associated to the alias ‘test_class’ in the runnable_instances file</p>
+<p>This method is also useful in case there are class constructors inside another class constructor
+{“class”: ‘test_class’, “parameter”: {“class”: ‘test_class’}} will be transformed into
+TestClass(parameter=TestClass())</p>
+<p>If a list of objects is specified such as: [{“class”: ‘class1’}, {“class”: ‘class2’}]
+this method will call itself recursively so that
+each dictionary will be transformed into the corresponding object</p>
+<p>If the technique is a standard dictionary (and not one representing an object instance),
+for example: {“parameter”: value, “parameter2”: value2}, the values will be checked in order to transform
+any possible object representation
+So for example, {“parameter”: {“class”: ‘test_class’}} will be transformed into {“parameter”: TestClass()}</p>
+<p>If the technique doesn’t match any of these cases, no operation is done and it is returned as it is</p>
+<p>If the wrong parameters are defined for an object, a ParametersException is thrown</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>technique</strong> (<em>Union</em><em>[</em><em>list</em><em>,</em><em>dict</em><em>]</em>) – dictionary or list to check in order to transform any class constructors into
+actual objects</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed and transformed dictionary or list of dictionaries or object instance</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>technique</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.execute_methods">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execute_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.execute_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the methods passed in the methods_dict parameter related to the object passed as argument.
+The methods dictionary is in the following form:</p>
+<blockquote>
+<div><p>{
+“name”: {“parameter1”: “somevalue”, “parameter2”: 0, “parameter3”: {“class”: “someclass”},
+method_name: dictionary containing the parameters for the method,
+other_method_name: [dictionary containing the parameters for the method,</p>
+<blockquote>
+<div><p>dictionary containing the parameters for the method]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>It’s also possible to pass a list of parameters instead of a single one (like other_method_name in the example),
+in which case the method will be executed as many times as many parameters are defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>methods_dict</strong> (<em>dict</em>) – dictionary containing the method name as key and the parameters as value</p></li>
+<li><p><strong>obj</strong> (<em>object</em>) – object to which the methods refer to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>dictionary containing the method name as key and the results obtained from the method</dt><dd><p>as values. The results values will be stored in a list, so for example</p>
+<blockquote>
+<div><p>{
+method_name: [result],
+other_method_name: [result_1, result_2]
+}</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>results (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.extract_parameters">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_or_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.extract_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to extract the parameters for the main modules of the framework or their most important methods.
+In order to instantiate a content_analyzer (for example), the content_analyzer_config has to be created first.
+To do so, this method checks every line of the dictionary containing the parameters for the
+content_analyzer_config and runs different operations according to the value for the parameter.
+If the value is a dictionary or a list it is passed to the dict_detector, in any other cases the value is simply
+kept as it is.
+If during the checking operation it finds any parameter that doesn’t match the class or method signature, it
+raises a ParametersError exception.</p>
+<p class="rubric">Example</p>
+<p>{“parameter_list_value”: [“value1”, “value2”], “parameter_dict_value”: {“class”: “class_alias_value”},
+“parameter_str_value”: “VALUE_str”, “parameter_int_value”: int_value}</p>
+<p>for parameter_list_value and parameter_dict_value the framework will pass their values to the
+dict_detector method. For explanation on how it works check its relative documentation.
+To sum it up, it replaces the dictionaries representing an object with the actual object instance.
+So for example, in this case, parameter_list_value wouldn’t be subject to any modification, instead
+the dictionary in parameter_dict_value will be transformed into the object matching the
+alias name (this is so because there is a class parameter).</p>
+<p>for parameter_str_value and parameter_int_value no modifications are done.</p>
+<p>the final output will be:</p>
+<p>{“parameter_list_value”: [“value1”, “value2”], “parameter_dict_value”: Class_from_alias(),
+“parameter_str_value”: “VALUE_str”, “parameter_int_value”: int_value}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_dict</strong> (<em>dict</em>) – dictionary representing the parameters for a method or class constructor</p></li>
+<li><p><strong>class_or_function</strong> (<em>Type</em><em> or </em><em>Callable</em>) – the class or function to refer to when retrieving the parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary with the modified parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>parameters (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.get_associated_class">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_associated_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.get_associated_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that defines which class is associated to the Run class (for example, for the class that defines what
+to do for the RecSys, the RecSys class will be returned by this method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Framework’s class associated to the Run subclass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main method of the class that defines what happens as a result of using the run configuration</p>
+<dl>
+<dt>In particular, there is a pipeline of operations:</dt><dd><ul class="simple">
+<li><p>An object of the class associated with the module is instantiated and the parameters defined in the</p></li>
+</ul>
+<blockquote>
+<div><p>info dictionary as argument are passed to the constructor</p>
+</div></blockquote>
+<ul>
+<li><p>The methods that are defined in the info dictionary are executed</p>
+<blockquote>
+<div><p>EXAMPLE:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{“constructor_parameter”: value,</dt><dd><p>“method_name”: {“method_parameter”: value}
+}</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>method_name will be extracted with the associated value (which is a dictionary containing the parameters
+associated to the method or a list of said dictionary) and saved in a new dictionary containing all
+these methods ( {“method_name”: {“method_parameter”: value} )</p>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info_dict</strong> (<em>dict</em>) – dictionary extracted from the script file which contains the parameters for the
+constructor (and methods eventually) for the framework’s class associated to the Run subclass</p></li>
+<li><p><strong>form</strong> (<em>the dictionary will be in the following</em>) – <dl>
+<dt>{</dt><dd><p>“run_class”: Callable,
+“config_dict”: Dictionary containing the parameters for the constructor (Example:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“parameter1”: value1,
+“parameter2”: value2</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>)
+“methods”: Dictionary containing the methods to call and their parameters (Example:</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“method1”: dictionary containing parameters,
+“method2”: list of dictionary containing parameters (in this case the method will be</p>
+<blockquote>
+<div><p>executed as many times as the number of dictionaries in the list)</p>
+</div></blockquote>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>)</p>
+</dd>
+</dl>
+<p>}</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.Run.set_runnable_instances">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_runnable_instances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classes_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.Run.set_runnable_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to set the dictionary that will be used by the Run to retrieve the Class related to a given name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>classes_dict</strong> (<em>dict</em>) – dictionary containing the names of the classes as keys and the classes as values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.handle_script_contents">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">handle_script_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_list_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.handle_script_contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that controls the entire process of script running. It checks that the loaded contents from a
+script match the required prerequisites. The data must contain dictionaries and each dictionary must have a “module”
+key that is used to understand what kind of operation it is supposed to perform (if it’s meant for a Recommender
+System, a Content Analyzer, …). If any of these prerequisites aren’t matched a ScriptConfigurationError exception
+is thrown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_list_dict</strong> – single dictionary or list of dictionaries extracted from the config file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.script.script_handling.script_run">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.script.script_handling.</span></span><span class="sig-name descname"><span class="pre">script_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.script.script_handling.script_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to elaborate a script file (either in .yml or .json) which will then execute the instructions
+declared in the script file. This allows to use a configuration file containing the instructions on what to do
+rather than using the API directly.</p>
+<p>The file should contain a list of dictionaries where each dictionary will be in the following form:</p>
+<p>{
+“module”: “ContentAnalyzer”,
+“parameter1”: value,
+“parameter2”: value,
+…
+“function_to_execute_1”: dictionary containing the parameters for said function (empty dictionary if 0 parameters),
+“function_to_execute_2”: OR list of dictionaries containing the parameters (in case the function has to be executed multiple times),
+…
+}</p>
+<p>module is the most important key and it defines which module of the framework should be used (possible values are
+strings referring to the most important classes in the framework, for example ContentAnalyzer or ContentBasedRS).</p>
+<p>Other keys in the dictionary are strings referring to the parameters of the module or the methods to execute
+related to said module. If a parameter is an object the following notation should be used:</p>
+<p>{“class”: “FieldConfig”, “parameter_for_class”: value, …}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_path</strong> (<em>str</em>) – path where the configuration file is stored</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.script">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.script" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.script.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

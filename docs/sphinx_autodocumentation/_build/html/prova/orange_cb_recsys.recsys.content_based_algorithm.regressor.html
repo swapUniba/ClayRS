@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.content_based_algorithm.regressor package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-content-based-algorithm-regressor-package">
+<h1>orange_cb_recsys.recsys.content_based_algorithm.regressor package<a class="headerlink" href="#orange-cb-recsys-recsys-content-based-algorithm-regressor-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor">
+<span id="orange-cb-recsys-recsys-content-based-algorithm-regressor-linear-predictor-module"></span><h2>orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor module<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.</span></span><span class="sig-name descname"><span class="pre">LinearPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_field:</span> <span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor:</span> <span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_greater_eq:</span> <span class="pre">typing.Optional[float]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_combiner:</span> <span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span> <span class="pre">=</span> <span class="pre">&lt;</span> <span class="pre">Centroid</span> <span class="pre">&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm</span></code></a></p>
+<p>Class that implements recommendation through a specified linear predictor.
+It’s a score prediction algorithm, so it can predict what rating a user would give to an unseen item.
+As such, it’s also a ranking algorithm (it simply ranks in descending order unseen items by the predicted rating)</p>
+<dl>
+<dt>USAGE:</dt><dd><blockquote>
+<div><p>&gt; # Interested in only a field representation, LinearRegression regressor from sklearn,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = LinearPredictor({“Plot”: 0}, SkLinearRegression(), 3)</p>
+<p>&gt; # Interested in only a field representation, Ridge regressor from sklearn with custom parameters,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = LinearPredictor({“Plot”: 0}, SkRidge(alpha=0.8), 0)</p>
+<p>&gt; # Interested in multiple field representations of the items, Ridge regressor from sklearn with custom
+&gt; # parameters, threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = LinearPredictor(
+&gt;                       item_field={“Plot”: [0, “tfidf”],
+&gt;                                   “Genre”: [0, 1],
+&gt;                                   “Director”: “doc2vec”},
+&gt;                       regressor=SkRidge(alpha=0.8),
+&gt;                       threshold=3)</p>
+<p>&gt; # After instantiating the LinearPredictor algorithm, pass it in the initialization of
+&gt; # a CBRS and the use its method to predict ratings or calculate ranking for a single user or multiple users:
+&gt; cbrs = ContentBasedRS(algorithm=alg, …)
+&gt; cbrs.fit_predict(…)
+&gt; cbrs.fit_rank(…)
+&gt; …
+&gt; # Check the corresponding method documentation for more</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>item_field (dict): dict where the key is the name of the field</dt><dd><p>that contains the content to use, value is the representation(s) id(s) that will be
+used for the said item. The value of a field can be a string or a list,
+use a list if you want to use multiple representations for a particular field.</p>
+</dd>
+<dt>regressor (Regressor): classifier that will be used.</dt><dd><p>Can be one object of the Classifier class.</p>
+</dd>
+<dt>only_greater_eq (float): Threshold for the ratings. Only ratings which are greater or equal than the</dt><dd><p>threshold will be considered, ratings which are less than the threshold will be discarded</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the regressor specified in the constructor with the features and labels
+extracted with the process_rated() method.</p>
+<p>It uses private attributes to fit the classifier, so process_rated() must be called
+before this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts how much a user will like unrated items.</p>
+<p>One can specify which items must be predicted with the filter_list parameter,
+in this case ONLY items in the filter_list will be predicted.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be predicted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – path of the directory where the items are stored</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to predict, if None all unrated items will be predicted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the score predicted</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.process_rated">
+<span class="sig-name descname"><span class="pre">process_rated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.process_rated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that extracts features from rated item and labels them.
+The extracted features will be later used to fit the classifier.</p>
+<p>Features and labels will be stored in private attributes of the class.</p>
+<p>IF there are no rated_items available locally, an exception is thrown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – path of the directory where the items are stored</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recs_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor.LinearPredictor.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rank the top-n recommended items for the user. If the recs_number parameter isn’t specified,
+All items will be ranked.</p>
+<p>One can specify which items must be ranked with the filter_list parameter,
+in this case ONLY items in the filter_list will be used to calculate the rank.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be used to calculate the rank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – path of the directory where the items are stored</p></li>
+<li><p><strong>recs_number</strong> (<em>int</em>) – number of the top items that will be present in the ranking</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to rank, if None all unrated items will be used to
+calculate the rank</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the rating predicted, sorted in descending order by the ‘rating’ column</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors">
+<span id="orange-cb-recsys-recsys-content-based-algorithm-regressor-regressors-module"></span><h2>orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors module<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">Regressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">sklearn.linear_model._base.LinearModel</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">sklearn.linear_model._stochastic_gradient.BaseSGDRegressor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class for Regressors</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the regressor.
+First the classifier is instantiated, then we transform the Training Data,
+then the actual fitting is done.</p>
+<dl class="simple">
+<dt>Training data (X) is in the form:</dt><dd><p>X = [ (merged) representation for item 1, (merged) representation for item 2, …]</p>
+</dd>
+</dl>
+<p>where every item is a representation for an item (can be a merged one in case multiple representations
+are chosen)</p>
+<dl class="simple">
+<dt>Target data (Y) is in the form:</dt><dd><p>Y = [0, 1, … ]</p>
+</dd>
+</dl>
+<p>where 0 represent a negative item, 1 represent a positive item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>list</em>) – list containing Training data.</p></li>
+<li><p><strong>Y</strong> (<em>list</em>) – list containing Training targets.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the probability for every item in X_pred.
+It uses the method predict() from sklearn of the instantiated regressor</p>
+<dl class="simple">
+<dt>It’s in the form:</dt><dd><p>X_pred = [ (merged) representation for item 1, (merged) representation for item 2, …]</p>
+</dd>
+</dl>
+<p>where every item is a representation for an item (can be a merged one in case multiple representations
+are chosen)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X_pred</strong> (<em>list</em>) – list containing data to predict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkARDRegression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkARDRegression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkARDRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the ARD regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor ARD directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkBayesianRidge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkBayesianRidge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkBayesianRidge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the BayesianRidge regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor BayesianRidge directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkHuberRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkHuberRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkHuberRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the Huber regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor Huber directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkLinearRegression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkLinearRegression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkLinearRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the LinearRegression regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor LinearRegression directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkPassiveAggressiveRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkPassiveAggressiveRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkPassiveAggressiveRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the PassiveAggressive regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor PassiveAggressive directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkRidge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkRidge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkRidge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the Ridge regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor Ridge directly from sklearn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkSGDRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.</span></span><span class="sig-name descname"><span class="pre">SkSGDRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.SkSGDRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor" title="orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors.Regressor</span></code></a></p>
+<p>Class that implements the SGD regressor from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the regressor SGD directly from sklearn.</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.regressor">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.regressor" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.content_based_algorithm.regressor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

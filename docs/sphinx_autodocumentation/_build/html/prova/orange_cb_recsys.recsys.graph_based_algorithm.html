@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.graph_based_algorithm package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-graph-based-algorithm-package">
+<h1>orange_cb_recsys.recsys.graph_based_algorithm package<a class="headerlink" href="#orange-cb-recsys-recsys-graph-based-algorithm-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html">orange_cb_recsys.recsys.graph_based_algorithm.page_rank package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-graph-based-algorithm-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.</span></span><span class="sig-name descname"><span class="pre">GraphBasedAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.algorithm.Algorithm" title="orange_cb_recsys.recsys.algorithm.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.algorithm.Algorithm</span></code></a></p>
+<p>Abstract class for the graph-based algorithms</p>
+<p>Args:
+feature_selection (FeatureSelectionAlgorithm): a FeatureSelectionAlgorithm algorithm if the graph needs to be</p>
+<blockquote>
+<div><p>reduced</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.clean_result">
+<span class="sig-name descname"><span class="pre">clean_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_users</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.clean_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans the result from all the nodes that are not requested.</p>
+<p>It’s possible to remove:
+* user nodes (remove_users),
+* item nodes rated by the user (remove_profile),
+* property nodes (remove_properties).</p>
+<p>This produces a cleaned result with only the desired nodes inside it.
+:param graph: graph from which the profile of the user will be extracted if it needs to be removed</p>
+<blockquote>
+<div><p>from the result</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<em>dict</em>) – dictionary representing the result (keys are nodes and values are their score prediction)</p></li>
+<li><p><strong>user_id</strong> (<em>str</em>) – id of the user used to extract his profile</p></li>
+<li><p><strong>remove_users</strong> (<em>bool</em>) – boolean value, set to true if ‘User’ nodes need to be removed from the result dict</p></li>
+<li><p><strong>remove_profile</strong> (<em>bool</em>) – boolean value, set to true if ‘Item’ nodes rated by the user
+need to be removed from the result dict</p></li>
+<li><p><strong>remove_properties</strong> (<em>bool</em>) – boolean value, set to true if ‘Property’ nodes need to be removed from the
+result dict</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary representing the cleaned result</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>new_result (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.extract_profile">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.extract_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the user profile (the items that the user rated, or in general the nodes with a link to the user).</p>
+<p>Returns a dictionary containing the successor nodes as keys and the weights in the graph for the edges between
+the user node and his successors as values</p>
+<dl>
+<dt>EXAMPLE::</dt><dd><blockquote>
+<div><p>graph: i1 &lt;—0.2— u1 —0.4—&gt; i2</p>
+</div></blockquote>
+<p>&gt; print(extract_profile(‘u1’))
+&gt; {‘i1’: 0.2, ‘i2’: 0.4}</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – graph from which the profile of the user will be extracted</p></li>
+<li><p><strong>user_id</strong> (<em>str</em>) – id for the user for which the profile will be extracted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary with item successor nodes to the user as keys and weights of the edge</dt><dd><p>connecting them in the graph as values</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>profile (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.feature_selection">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_selection</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.feature_selection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.filter_result">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.filter_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which filters the result dict returning only items that are also in the filter_list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<em>dict</em>) – dictionary representing the result (keys are nodes and values are their score prediction)</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to predict, if None all unrated items will be predicted</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.predict" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Abstract method that predicts the rating which a user would give to items</div>
+<div class="line">If the algorithm is not a PredictionScore Algorithm, implement this method like this:</div>
+</div>
+<dl class="simple">
+<dt>def predict():</dt><dd><p>raise NotPredictionAlg</p>
+</dd>
+</dl>
+<p>One can specify which items must be predicted with the filter_list parameter,
+in this case ONLY items in the filter_list will be predicted.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be predicted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – id of the user of which predictions will be calculated</p></li>
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – graph containing interactions between users and items (and optionally other types of
+nodes)</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to predict, if None all unrated items will be score predicted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the score predicted</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.rank">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recs_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm.rank" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Rank the top-n recommended items for the user. If the recs_number parameter isn’t specified,</div>
+<div class="line">all items will be ranked.</div>
+<div class="line">If the algorithm is not a Ranking Algorithm, implement this method like this:</div>
+</div>
+<dl class="simple">
+<dt>def rank():</dt><dd><p>raise NotRankingAlg</p>
+</dd>
+</dl>
+<p>One can specify which items must be ranked with the filter_list parameter,
+in this case ONLY items in the filter_list will be ranked.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be ranked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – id of the user of which predictions will be calculated</p></li>
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – graph containing interactions between users and items (and optionally other types of
+nodes)</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to predict, if None all unrated items will be score predicted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the rating predicted, sorted in descending order by the ‘rating’ column</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.graph_based_algorithm.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

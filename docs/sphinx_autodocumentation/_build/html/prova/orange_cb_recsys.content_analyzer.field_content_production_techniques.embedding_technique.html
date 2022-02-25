@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-content-analyzer-field-content-production-techniques-embedding-technique-package">
+<h1>orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique package<a class="headerlink" href="#orange-cb-recsys-content-analyzer-field-content-production-techniques-embedding-technique-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique">
+<span id="orange-cb-recsys-content-analyzer-field-content-production-techniques-embedding-technique-combining-technique-module"></span><h2>orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Centroid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.</span></span><span class="sig-name descname"><span class="pre">Centroid</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></code></a></p>
+<p>”
+Class that implements the Abstract Class CombiningTechnique,
+this class implements the centroid vector of a matrix.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Centroid.combine">
+<span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Centroid.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+Calculates the centroid of the input matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding_matrix</strong> (<em>np.ndarray</em>) – np bi-dimensional array whose centroid will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>centroid vector of the input matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.</span></span><span class="sig-name descname"><span class="pre">CombiningTechnique</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Class that generalizes the modality in which loaded embeddings will be
+combined to produce a semantic representation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique.combine">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine, in a way specified in the implementations,
+the row of the input matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding_matrix</strong> – matrix whose rows will be combined</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Sum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.</span></span><span class="sig-name descname"><span class="pre">Sum</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></code></a></p>
+<p>”
+Class that implements the Abstract Class CombiningTechnique,
+this class implements the sum vector of a matrix.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Sum.combine">
+<span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.Sum.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+Calculates the centroid of the input matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding_matrix</strong> (<em>np.ndarray</em>) – np bi-dimensional array whose sum will be calculated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sum vector of the input matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique">
+<span id="orange-cb-recsys-content-analyzer-field-content-production-techniques-embedding-technique-embedding-technique-module"></span><h2>orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">CombiningDocumentEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique</span></code></a></p>
+<p>Class that generalizes the combining embedding techniques with document granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique.process_data_granularity">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique.produce_single_repr">
+<span class="sig-name descname"><span class="pre">produce_single_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique.produce_single_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a single representation with document granularity by combining the embedding vectors in order to
+create an embedding matrix that represents the document</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">CombiningEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique</span></code></a></p>
+<p>Class that generalizes the embedding techniques working with a combining technique
+CombiningEmbeddingTechnique can be extended to consider different types of granularity (word, sentence, …)
+and each technique should be further extended in order to consider the different embedding sources that
+can be combined into the defined granularity.
+For example, with the document granularity, it is possible to combine the embedding matrix of any granularity with a
+lower scope, so word or sentence. With the sentence granularity, it is possible to combine the word embeddings but
+not the document ones (because document’s scope is bigger than sentence’s scope).</p>
+<p>To sum it up, this class contains the techniques that make use of an EmbeddingSource with different granularity from
+theirs and apply a combining technique to create their embedding matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>combining_technique</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><em>CombiningTechnique</em></a>) – technique that will be used to combine the embeddings retrieved from</p></li>
+<li><p><strong>source</strong> (<em>the</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.combining_technique">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combining_technique</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.combining_technique" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.process_data_granularity">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.produce_single_repr">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce_single_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique.produce_single_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that builds the semantic content starting from the embeddings contained in field_data which can
+be either a list of tokens or the entire text in string form (each technique will then have to apply
+processing operations to the data, in order to obtain it in the desired form)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_data</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em>) – Data contained in the field, it can be either a list of tokens or the
+original data in string form</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex representation created using the field data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField">EmbeddingField</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">CombiningSentenceEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningEmbeddingTechnique</span></code></a></p>
+<p>Class that generalizes the combining embedding techniques with sentence granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique.process_data_granularity">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique.produce_single_repr">
+<span class="sig-name descname"><span class="pre">produce_single_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique.produce_single_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a single representation with sentence granularity by combining the embedding vectors in order to
+create an embedding matrix that represents the document</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.DocumentEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">DocumentEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.DocumentEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.DocumentEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.DocumentEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.DocumentEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.DocumentEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.DocumentEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.DocumentEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique</span></code></a></p>
+<p>Class that creates the embedding field with document granularity.
+The embedding source must have document granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.DocumentEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.DocumentEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">EmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SingleContentTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SingleContentTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.SingleContentTechnique</span></code></a></p>
+<p>Abstract class that generalizes the techniques that create embedding vectors. The EmbeddingTechniques can be split
+into different categories depending on the type of granularity the technique has. For example, a word granularity
+embedding will have a resulting matrix where each row refers to a specific word in the text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding_source</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><em>EmbeddingSource</em></a>) – Source where the embeddings vectors for the words in field_data
+are stored.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.embedding_source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_source</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.embedding_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.from_str_to_embedding_source">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_str_to_embedding_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.EmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.EmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.EmbeddingLoader</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.from_str_to_embedding_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to convert a string (which represents a model name) to a corresponding Embedding Source that can
+use the defined model
+Given the loader class (which is a class inheriting from EmbeddingSourceLoader), the method checks each
+implemented class inheriting from loader_class and returns the one that is able to load the model</p>
+<p>The method raises FileNotFoundError if no embedding loader is able to load the model</p>
+<p>Be careful when passing a string, because the first Loader able to load the model will be kept. So if there are
+multiple loaders capable of loading a model, the first one found will be used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding_source_str</strong> (<em>str</em>) – string representing the model name (‘twitter-glove-25’ for example)</p></li>
+<li><p><strong>loader_class</strong> (<em>Type</em>) – class that inherits from EmbeddingSourceLoader, each subclass of this class will be
+tested with the model name (stored in embedding_source_str)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>embedding source which can load the model</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding_source (<a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource">EmbeddingSource</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.produce_content">
+<span class="sig-name descname"><span class="pre">produce_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessor_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><span class="pre">orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.html#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.FieldRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content.FieldRepresentation"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.FieldRepresentation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.produce_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates a list of FieldRepresentation objects, where each object is associated to a content
+and a specific field from the ones in said content. In order to do so, a simple preprocessing operation
+is done on the original data of the field (for each content) followed by the creation of the complex
+representation using the processed data. The complex representations are stored in a list and returned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.produce_single_repr">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce_single_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique.produce_single_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that builds the semantic content starting from the embeddings contained in field_data which can
+be either a list of tokens or the entire text in string form (each technique will then have to apply
+processing operations to the data, in order to obtain it in the desired form)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_data</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em>) – Data contained in the field, it can be either a list of tokens or the
+original data in string form</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex representation created using the field data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField">EmbeddingField</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromSentencesDocumentEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">FromSentencesDocumentEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromSentencesDocumentEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique</span></code></a></p>
+<p>Class that makes use of a sentence granularity embedding source to produce an embedding matrix with
+document granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromSentencesDocumentEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromSentencesDocumentEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsDocumentEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">FromWordsDocumentEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsDocumentEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningDocumentEmbeddingTechnique</span></code></a></p>
+<p>Class that makes use of a word granularity embedding source to produce an embedding matrix with document granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsDocumentEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsDocumentEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsSentenceEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">FromWordsSentenceEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combining_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsSentenceEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.CombiningSentenceEmbeddingTechnique</span></code></a></p>
+<p>Class that makes use of a word granularity embedding source to produce an embedding matrix with sentence granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsSentenceEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.FromWordsSentenceEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.SentenceEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">SentenceEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.SentenceEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.SentenceEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.SentenceEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique</span></code></a></p>
+<p>Class that creates the embedding field with sentence granularity.
+The embedding source must have sentence granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.SentenceEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.SentenceEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">StandardEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource" title="orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_source.EmbeddingSource</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.EmbeddingTechnique</span></code></a></p>
+<p>Class that generalizes the embedding techniques working with the corresponding EmbeddingSource
+StandardEmbeddingTechnique can be extended to consider different types of granularity (word, sentence, …)
+and each technique should refer to the corresponding EmbeddingSource, so, for example, the
+WordEmbeddingTechnique should refer to the WordEmbeddingSource.</p>
+<p>To sum it up, this class contains the techniques that don’t apply any kind of additional operation other
+than loading the embedding from the source</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique.process_data_granularity">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique.produce_single_repr">
+<span class="sig-name descname"><span class="pre">produce_single_repr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique.produce_single_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that builds the semantic content starting from the embeddings contained in field_data which can
+be either a list of tokens or the entire text in string form (each technique will then have to apply
+processing operations to the data, in order to obtain it in the desired form)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_data</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em>) – Data contained in the field, it can be either a list of tokens or the
+original data in string form</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>complex representation created using the field data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField" title="orange_cb_recsys.content_analyzer.content_representation.content.EmbeddingField">EmbeddingField</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.WordEmbeddingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.</span></span><span class="sig-name descname"><span class="pre">WordEmbeddingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader" title="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader.WordEmbeddingLoader</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner" title="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner"><span class="pre">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner.WordEmbeddingLearner</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.WordEmbeddingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.StandardEmbeddingTechnique</span></code></a></p>
+<p>Class that creates the embedding field with word granularity. The embedding source must have word granularity</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.WordEmbeddingTechnique.process_data_granularity">
+<span class="sig-name descname"><span class="pre">process_data_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique.WordEmbeddingTechnique.process_data_granularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

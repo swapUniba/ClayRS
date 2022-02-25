@@ -2,7 +2,7 @@ import inspect
 import re
 import os
 import sys
-from collections import Iterable
+from collections.abc import Iterable
 
 from orange_cb_recsys.utils.custom_logger import getCustomLogger
 from tqdm import tqdm

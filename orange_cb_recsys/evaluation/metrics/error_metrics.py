@@ -73,10 +73,10 @@ class ErrorMetric(Metric):
 
 
 class MSE(ErrorMetric):
-    """
+    r"""
     The MSE (Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
 
     |
     Where:
@@ -88,7 +88,7 @@ class MSE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        MSE_sys = \sum_{u \in T} \\frac{MSE_u}{|T|}
+        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
     |
     Where:
 
@@ -100,7 +100,7 @@ class MSE(ErrorMetric):
 
     In those cases the :math:`MSE_u` formula becomes
 
-    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
     |
     Where:
 
@@ -119,10 +119,10 @@ class MSE(ErrorMetric):
 
 
 class RMSE(ErrorMetric):
-    """
+    r"""
     The RMSE (Root Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
 
     |
     Where:
@@ -134,7 +134,7 @@ class RMSE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        RMSE_sys = \sum_{u \in T} \\frac{RMSE_u}{|T|}
+        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
     |
     Where:
 
@@ -146,7 +146,7 @@ class RMSE(ErrorMetric):
 
     In those cases the :math:`RMSE_u` formula becomes
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
     |
     Where:
 
@@ -165,10 +165,10 @@ class RMSE(ErrorMetric):
 
 
 class MAE(ErrorMetric):
-    """
+    r"""
     The MAE (Mean Absolute Error) metric is calculated as such for the **single user**:
 
-    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
 
     |
     Where:
@@ -180,7 +180,7 @@ class MAE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        MAE_sys = \sum_{u \in T} \\frac{MAE_u}{|T|}
+        MAE_sys = \sum_{u \in T} \frac{MAE_u}{|T|}
     |
     Where:
 
@@ -192,7 +192,7 @@ class MAE(ErrorMetric):
 
     In those cases the :math:`MAE_u` formula becomes
 
-    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
     |
     Where:
 
