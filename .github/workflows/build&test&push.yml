@@ -24,7 +24,7 @@ jobs:
         name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7 #install the python needed
+          python-version: 3.8 #install the python needed
 #      -
 #        name: Login to DockerHub
 #        uses: docker/login-action@v1
