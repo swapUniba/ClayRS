@@ -82,19 +82,19 @@ jobs:
       -
         name: Setup installation requirements
         run: |
-          pip install wheel
-          pip install pytest pytest-cov
+          pip install wheel pytest pytest-cov
           pip install -r requirements.txt
       -
         name: Test
         run: |
-          pytest --cov=./ --cov-report=xml
+          pytest --cov=./codecov.xml --cov-report=xml
           ls
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with: # no token required for public repos
               fail_ci_if_error: true
+              files: ./codecov.xml
 
 #      -
 #        name: Push image to docker hub
