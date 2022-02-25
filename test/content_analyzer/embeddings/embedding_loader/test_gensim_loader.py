@@ -24,8 +24,8 @@ def similar_by_vector(vector, n_to_find):
 
 mocked_model = MagicMock()
 mocked_model.__getitem__.side_effect = get_item
-mocked_model.wv = MagicMock()
-mocked_model.wv.similar_by_vector.side_effect = similar_by_vector
+#mocked_model = MagicMock()
+mocked_model.similar_by_vector.side_effect = similar_by_vector
 mocked_model.vector_size = 25
 
 
