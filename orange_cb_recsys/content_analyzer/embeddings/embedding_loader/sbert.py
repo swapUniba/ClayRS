@@ -13,6 +13,9 @@ class Sbert(SentenceEmbeddingLoader):
             locally
     """
 
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        raise NotImplementedError
+
     def __init__(self, model_name_or_file_path: str = 'paraphrase-distilroberta-base-v1'):
         super().__init__(model_name_or_file_path)
 
