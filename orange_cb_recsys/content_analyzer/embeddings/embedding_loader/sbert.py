@@ -13,9 +13,6 @@ class Sbert(SentenceEmbeddingLoader):
             locally
     """
 
-    def get_embedding_token(self, sentence: str) -> np.ndarray:
-        raise NotImplementedError
-
     def __init__(self, model_name_or_file_path: str = 'paraphrase-distilroberta-base-v1'):
         super().__init__(model_name_or_file_path)
 
@@ -30,6 +27,9 @@ class Sbert(SentenceEmbeddingLoader):
 
     def get_embedding(self, sentence: str) -> np.ndarray:
         return self.model.encode(sentence, show_progress_bar=False)
+
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        raise NotImplementedError("The model chosen can't return token embeddings")
 
     def __str__(self):
         return "Sbert"

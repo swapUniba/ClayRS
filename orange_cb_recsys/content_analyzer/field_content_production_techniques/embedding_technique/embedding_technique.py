@@ -1,4 +1,3 @@
-from typing import Union, List, Type
 from abc import abstractmethod
 
 import numpy as np
@@ -36,11 +35,11 @@ class EmbeddingTechnique(SingleContentTechnique):
 
         super().__init__()
 
-        # if isinstance(embedding_source, EmbeddingLoader) and embedding_source.model is None:
-        #     raise FileNotFoundError("The reference %s was not valid for the %s source" %
-        #                             (embedding_source.reference, embedding_source))
+        if isinstance(embedding_source, EmbeddingLoader) and embedding_source.model is None:
+            raise FileNotFoundError("The reference %s was not valid for the %s source" %
+                                    (embedding_source.reference, embedding_source))
 
-        self.__embedding_source: EmbeddingSource = embedding_source
+        self.__embedding_source = embedding_source
 
     @staticmethod
     def from_str_to_embedding_source(embedding_source_str: str, loader_class: Type[EmbeddingLoader]) \
@@ -301,7 +300,7 @@ class CombiningSentenceEmbeddingTechnique(CombiningEmbeddingTechnique):
         raise NotImplementedError
 
 
-class FromWordsSentenceEmbeddingTechnique(CombiningSentenceEmbeddingTechnique):
+class Word2SentenceEmbedding(CombiningSentenceEmbeddingTechnique):
     """
     Class that makes use of a word granularity embedding source to produce an embedding matrix with sentence granularity
     """
@@ -316,10 +315,10 @@ class FromWordsSentenceEmbeddingTechnique(CombiningSentenceEmbeddingTechnique):
         return check_tokenized(field_data)
 
     def __str__(self):
-        return "FromWordsSentenceEmbeddingTechnique"
+        return "Word2SentenceEmbedding"
 
     def __repr__(self):
-        return "< FromWordsSentenceEmbeddingTechnique: embedding source = " + str(self.embedding_source) + \
+        return "< Word2SentenceEmbedding: embedding source = " + str(self.embedding_source) + \
                ", combining technique = " + str(self.combining_technique) + " >"
 
 
@@ -352,7 +351,7 @@ class CombiningDocumentEmbeddingTechnique(CombiningEmbeddingTechnique):
         raise NotImplementedError
 
 
-class FromWordsDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechnique):
+class Word2DocEmbedding(CombiningDocumentEmbeddingTechnique):
     """
     Class that makes use of a word granularity embedding source to produce an embedding matrix with document granularity
     """
@@ -367,14 +366,14 @@ class FromWordsDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechnique):
         return check_tokenized(field_data)
 
     def __str__(self):
-        return "FromWordsDocumentEmbeddingTechnique"
+        return "Word2DocEmbedding"
 
     def __repr__(self):
-        return "< FromWordsDocumentEmbeddingTechnique: embedding source = " + str(self.embedding_source) + \
+        return "< Word2DocEmbedding: embedding source = " + str(self.embedding_source) + \
                ", combining technique = " + str(self.combining_technique) + ">"
 
 
-class FromSentencesDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechnique):
+class Sentence2DocEmbedding(CombiningDocumentEmbeddingTechnique):
     """
     Class that makes use of a sentence granularity embedding source to produce an embedding matrix with
     document granularity
@@ -390,10 +389,10 @@ class FromSentencesDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechniqu
         return tokenize_in_sentences(field_data)
 
     def __str__(self):
-        return "FromSentencesDocumentEmbeddingTechnique"
+        return "Sentence2DocEmbedding"
 
     def __repr__(self):
-        return "< FromSentencesDocumentEmbeddingTechnique: embedding source = " + str(self.embedding_source) + \
+        return "< Sentence2DocEmbedding: embedding source = " + str(self.embedding_source) + \
                ", combining technique = " + str(self.combining_technique) + ">"
 
 
@@ -431,7 +430,7 @@ class DecombiningInWordsEmbeddingTechnique(DecombiningEmbeddingTechnique):
     """
     Class that generalizes the decombining embedding techniques from a coarse granularity to the finest granularity word
     """
-    def __init__(self, embedding_source: Union[SentenceEmbeddingLoader]):
+    def __init__(self, embedding_source: SentenceEmbeddingLoader):
         super().__init__(embedding_source)
 
     @abstractmethod
@@ -447,11 +446,11 @@ class DecombiningInWordsEmbeddingTechnique(DecombiningEmbeddingTechnique):
         raise NotImplementedError
 
 
-class FromSentenceWordsEmbeddingTechnique(DecombiningInWordsEmbeddingTechnique):
+class Sentence2WordEmbedding(DecombiningInWordsEmbeddingTechnique):
     """
     Class that makes use of a sentence granularity embedding source to produce an embedding matrix with word granularity
     """
-    def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str]):
+    def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner]):
         # if isinstance(embedding_source, str):
         #     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
         super().__init__(embedding_source)
@@ -464,11 +463,12 @@ class FromSentenceWordsEmbeddingTechnique(DecombiningInWordsEmbeddingTechnique):
         Returns: matrix embedding for token
 
         """
-        words_embeddings = self.embedding_source.get_embedding_token(field_data)
+        embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner] = self.embedding_source
+        words_embeddings = embedding_source.get_embedding_token(field_data)
         return EmbeddingField(words_embeddings)
 
     def __str__(self):
-        return "FromSentenceWordsEmbeddingTechnique"
+        return "Sentence2WordEmbedding"
 
     def __repr__(self):
-        return "< FromSentenceWordsEmbeddingTechnique: embedding source = " + str(self.embedding_source) + " >"
+        return "< Sentence2WordEmbedding: embedding source = " + str(self.embedding_source) + " >"

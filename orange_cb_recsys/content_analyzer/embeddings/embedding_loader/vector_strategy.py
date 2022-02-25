@@ -14,15 +14,13 @@ class VectorStrategy(ABC):
 
     @abstractmethod
     def build_embedding(self, token_embeddings) -> np.ndarray:
-        pass
+        raise NotImplementedError
 
 
 class SumStrategy(VectorStrategy):
     """
     class that extends VectorStrategy and allows me to sum up the last layers
     """
-    def __init__(self, last_interesting_layers: int):
-        super().__init__(last_interesting_layers)
 
     def build_embedding(self, token_embeddings: torch.Tensor) -> np.ndarray:
         token_vecs_sum = []
@@ -36,8 +34,6 @@ class CatStrategy(VectorStrategy):
     """
     class that extends VectorStrategy and allows me to concatenate the last layers
     """
-    def __init__(self, last_interesting_layers: int):
-        super().__init__(last_interesting_layers)
 
     def build_embedding(self, token_embeddings: torch.Tensor) -> np.ndarray:
         token_vecs_cat = []
@@ -47,5 +43,3 @@ class CatStrategy(VectorStrategy):
                 cat_vec = torch.cat((cat_vec, token[i]), dim=0)
             token_vecs_cat.append(cat_vec)
         return torch.stack(token_vecs_cat).numpy()
-
-

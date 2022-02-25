@@ -117,11 +117,11 @@ class DocumentEmbeddingLoader(EmbeddingLoader):
         raise NotImplementedError
 
     @abstractmethod
-    def get_embedding_token(self, sentence: str) -> np.ndarray:
+    def get_embedding_token(self, document: str) -> np.ndarray:
         raise NotImplementedError
 
     @abstractmethod
-    def get_embedding_sentence(self, sentence: str) -> np.ndarray:
+    def get_embedding_sentence(self, document: str) -> np.ndarray:
         raise NotImplementedError
 
     @abstractmethod

@@ -3,6 +3,8 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loa
 import gensim.downloader as downloader
 import numpy as np
 
+from orange_cb_recsys.utils.const import logger
+
 
 class Gensim(WordEmbeddingLoader):
     """
@@ -19,11 +21,12 @@ class Gensim(WordEmbeddingLoader):
         return self.model.vector_size
 
     def get_embedding(self, word: str) -> np.ndarray:
-        return self.model[word]
+        return self.model.wv[word]
 
     def load_model(self):
         # if the reference isn't in the possible models, FileNotFoundError is raised
         if self.reference in downloader.info()['models']:
+            logger.info("Downloading/Loading gensim model")
             return downloader.load(self.reference)
         else:
             raise FileNotFoundError

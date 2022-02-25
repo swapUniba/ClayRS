@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import transformers
 from transformers import AutoModel, AutoTokenizer
 
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
@@ -18,7 +19,8 @@ class Transformers(SentenceEmbeddingLoader):
         pooling_strategy (CombiningTechnique): strategy with which to combine embeddings for each token
     """
 
-    def __init__(self, model_name: str, vec_strategy: VectorStrategy = CatStrategy(1),
+    def __init__(self, model_name: str = 'bert-base-uncased',
+                 vec_strategy: VectorStrategy = CatStrategy(1),
                  pooling_strategy: CombiningTechnique = Centroid()):
         self.model = None
         self.tokenizer = None
@@ -29,9 +31,14 @@ class Transformers(SentenceEmbeddingLoader):
         super().__init__(model_name)
 
     def load_model(self):
+        # we disable logger info on the load of the model
+        original_verb = transformers.logging.get_verbosity()
+        transformers.logging.set_verbosity_error()
         try:
             self.model = AutoModel.from_pretrained(self.name_model, output_hidden_states=True)
             self.tokenizer = AutoTokenizer.from_pretrained(self.name_model)
+
+            transformers.logging.set_verbosity(original_verb)
             return self.model
         except (OSError, AttributeError):
             raise FileNotFoundError
