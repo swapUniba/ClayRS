@@ -1,3 +1,5 @@
+import unittest
+
 from orange_cb_recsys.content_analyzer.ratings_manager import Ratings
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 from orange_cb_recsys.content_analyzer.raw_information_source import CSVFile
@@ -13,7 +15,7 @@ from test.recsys.graphs.test_nx_bipartite_graphs import TestNXBipartiteGraph
 ratings_filename = os.path.join(dir_test_files, 'new_ratings_small.csv')
 movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
-
+@unittest.skip("Skip temporarily graph tests")
 class TestNXTripartiteGraph(TestNXBipartiteGraph):
 
     def setUp(self) -> None:

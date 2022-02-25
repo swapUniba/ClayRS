@@ -19,13 +19,13 @@ class RankingMetric(Metric):
 
 
 class NDCG(RankingMetric):
-    """
+    r"""
     The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the **single user** by using the sklearn
     implementation, so be sure to check its documentation for more.
 
     The NDCG of the **entire system** is calculated instead as such:
 
-    .. math:: NDCG_sys = \\frac{\sum_{u} NDCG_u}{|U|}
+    .. math:: NDCG_sys = \frac{\sum_{u} NDCG_u}{|U|}
     |
     Where:
 
@@ -100,13 +100,13 @@ class NDCG(RankingMetric):
 
 
 class NDCGAtK(NDCG):
-    """
+    r"""
     The NDCG@K (Normalized Discounted Cumulative Gain at K) metric is calculated for the **single user** by using the
     sklearn implementation, so be sure to check its documentation for more.
 
     The NDCG@K of the **entire system** is calculated instead as such:
 
-    .. math:: NDCG@K_sys = \\frac{\sum_{u} NDCG@K_u}{|U|}
+    .. math:: NDCG@K_sys = \frac{\sum_{u} NDCG@K_u}{|U|}
     |
     Where:
 
@@ -130,12 +130,12 @@ class NDCGAtK(NDCG):
 
 
 class MRR(RankingMetric):
-    """
+    r"""
     The MRR (Mean Reciprocal Rank) metric is a system wide metric, so only its result it will be returned and not those
     of every user.
     MRR is calculated as such
 
-    .. math:: MRR_sys = \\frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\\frac{1}{rank(i)}
+    .. math:: MRR_sys = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
 
     |
     Where:
@@ -271,7 +271,7 @@ class MRRAtK(MRR):
 
 
 class Correlation(RankingMetric):
-    """
+    r"""
     The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
     The currently correlation methods implemented are:
 
@@ -295,7 +295,7 @@ class Correlation(RankingMetric):
 
     The Correlation metric calculated for the **entire system** is simply the average of every :math:`Corr`:
 
-    .. math:: Corr_sys = \\frac{\sum_{u} Corr_u}{|U|}
+    .. math:: Corr_sys = \frac{\sum_{u} Corr_u}{|U|}
 
     |
     Where:

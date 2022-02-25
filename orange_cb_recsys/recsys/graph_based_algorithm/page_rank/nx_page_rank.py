@@ -76,11 +76,9 @@ class NXPageRank(PageRankAlg):
             pers = {node: profile[node] if node in profile else min(set(profile.values()))
                     for node in graph._graph.nodes}
 
-            # pagerank_scipy faster than pagerank or pagerank_numpy
-            scores = nx.pagerank_scipy(graph._graph, personalization=pers)
+            scores = nx.pagerank(graph._graph, personalization=pers)
         else:
-            # pagerank_scipy faster than pagerank or pagerank_numpy
-            scores = nx.pagerank_scipy(graph._graph)
+            scores = nx.pagerank(graph._graph)
 
         # clean the results removing user nodes, selected user profile and eventually properties
         if filter_list is not None:
