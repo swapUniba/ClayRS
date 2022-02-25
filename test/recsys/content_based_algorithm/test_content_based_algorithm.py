@@ -1,6 +1,11 @@
 import os
 from unittest import TestCase
 
+import numpy as np
+
+from orange_cb_recsys.content_analyzer import Centroid
+from orange_cb_recsys.recsys import IndexQuery
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
 from orange_cb_recsys.utils.load_content import load_content_instance
 
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
@@ -13,8 +18,7 @@ class TestContentBasedAlgorithm(TestCase):
     def setUp(self) -> None:
 
         # ContentBasedAlgorithm is an abstract class, so we need to instantiate
-        # a subclass to test its methods. No initialization since we are not testing
-        # methods that need it
+        # a subclass to test its methods.
         self.alg = CentroidVector({'Plot': 'tfidf'}, CosineSimilarity(), 0)
 
     def test__bracket_representation(self):
@@ -42,3 +46,50 @@ class TestContentBasedAlgorithm(TestCase):
 
         self.assertEqual(1, len(result))
         self.assertIsInstance(result[0], dict)
+
+    def test_fuse_representations(self):
+        tfidf_result1 = {'word1': 1.546, 'word2': 1.467, 'word3': 0.55}
+        doc_embedding_result1 = np.array([[0.98347, 1.384038, 7.1023803, 1.09854]])
+        word_embedding_result1 = np.array([[0.123, 0.44561], [1.889, 3.22], [0.283, 0.887]])
+        float_result1 = 8.8
+
+        tfidf_result2 = {'word2': 0.99, 'word4': 1.1}
+        doc_embedding_result2 = np.array([[2.331, 0.887, 1.1123, 0.7765]])
+        word_embedding_result2 = np.array([[0.123, 0.44561], [5.554, 1.1234]])
+        int_result2 = 7
+
+        x = [[tfidf_result1, doc_embedding_result1, word_embedding_result1, float_result1],
+             [tfidf_result2, doc_embedding_result2, word_embedding_result2, int_result2]]
+
+        self.alg._set_transformer()
+        result = self.alg.fuse_representations(x, Centroid())
+
+        centroid_word_embedding_1 = Centroid().combine(word_embedding_result1)
+        centroid_word_embedding_2 = Centroid().combine(word_embedding_result2)
+        expected_1 = np.array([1.546, 1.467, 0.55, 0, 0.98347, 1.384038, 7.1023803, 1.09854])
+        expected_1 = np.hstack([expected_1, centroid_word_embedding_1, float_result1])
+        expected_2 = np.array([0, 0.99, 0, 1.1, 2.331, 0.887, 1.1123, 0.7765])
+        expected_2 = np.hstack([expected_2, centroid_word_embedding_2, int_result2])
+
+        self.assertTrue(all(isinstance(rep, np.ndarray) for rep in result))
+        self.assertTrue(np.array_equal(result[0], expected_1))
+        self.assertTrue(np.array_equal(result[1], expected_2))
+
+    def test__load_available_contents(self):
+        # test load_available_contents for content based algorithm
+        movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
+
+        interface_dict = self.alg._load_available_contents(movies_dir)
+        self.assertIsInstance(interface_dict, LoadedContentsDict)
+
+        interface_dict = self.alg._load_available_contents(movies_dir, {'tt0112281', 'tt0112302'})
+        self.assertTrue(len(interface_dict) == 2)
+        loaded_items_id_list = list(interface_dict)
+        self.assertIn('tt0112281', loaded_items_id_list)
+        self.assertTrue('tt0112302', loaded_items_id_list)
+
+        # test load_available_contents for index
+        index_alg = IndexQuery({'Plot': 'tfidf'})
+        index_dir = os.path.join(dir_test_files, 'complex_contents', 'index')
+        interface_dict = index_alg._load_available_contents(index_dir)
+        self.assertIsInstance(interface_dict, LoadedContentsIndex)

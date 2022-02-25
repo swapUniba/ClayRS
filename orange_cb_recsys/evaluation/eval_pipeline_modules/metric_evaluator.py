@@ -1,14 +1,18 @@
-import logging
-from typing import List, Tuple
+from functools import reduce
+from typing import List, Tuple, Union
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
+
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings
+from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.utils.const import progbar, eval_logger
+from orange_cb_recsys.utils.const import progbar, logger, get_pbar
 
 import pandas as pd
 
 
-class MetricCalculator:
+class MetricEvaluator:
     """
     Module of the Evaluation pipeline which, has the task to evaluate recommendations generated for every user with a
     list of metric specified
@@ -39,8 +43,10 @@ class MetricCalculator:
     """
 
     # [ (total_pred, total_truth), (total_pred, total_truth) ...]
-    def __init__(self, predictions_truths: List[Split] = None):
-        self._split_list = predictions_truths
+    def __init__(self, pred_list: Union[List[Prediction], List[Rank]], truth_list: List[Ratings]):
+
+        self._pred_list = pred_list
+        self._truth_list = truth_list
 
     def eval_metrics(self, metric_list: List[Metric]) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
@@ -57,41 +63,59 @@ class MetricCalculator:
             list, the second one will contain every user results for every metric eligible
         """
 
-        frames_to_concat = []
+        frames_to_concat_users = []
+        frames_to_concat_system = []
 
-        eval_logger.info('Performing metrics chosen')
+        with logging_redirect_tqdm():
+            pbar = get_pbar(metric_list)
 
-        for metric in progbar(metric_list, prefix='Performing {}:', substitute_with_current=True):
+            for metric in pbar:
+                pbar.set_description(desc=f"Performing {metric}")
 
-            metric_result_list = []
+                metric_result_list = []
 
-            if self._split_list is None:
-                split_list = metric._get_pred_truth_list()
-            else:
-                split_list = self._split_list
+                for pred, truth in zip(self._pred_list, self._truth_list):
+                    if len(pred) != 0 and len(truth) != 0:
+                        user_id_valid = set(pred.user_id_column)
+                        # Remove from truth users of which we do not have predictions
+                        truth = truth.filter_ratings(user_id_valid)
 
-            for split in split_list:
-                if not split.pred.empty and not split.truth.empty:
-                    from_id_valid = split.pred['from_id']
-                    # Remove from truth item of which we do not have predictions
-                    split.truth = split.truth.query('from_id in @from_id_valid')
-                    metric_result = metric.perform(split)
-                    metric_result_list.append(metric_result)
+                        metric_result = metric.perform(Split(pred, truth))
 
-            total_results_metric = pd.concat(metric_result_list)
+                        metric_result_list.append(metric_result)
 
-            if not total_results_metric.empty:
-                total_results_metric = total_results_metric.groupby('from_id').mean()
+                # if in future results for each fold for each user
+                # set index as from_id and concat axis = 1
+                total_results_metric = pd.concat(metric_result_list)
 
-                total_results_metric.index.name = 'from_id'
+                if not total_results_metric.empty:
+                    total_results_metric = total_results_metric.set_index('user_id')
+                    system_results = total_results_metric.loc[['sys']]
+                    each_user_result = total_results_metric.drop(['sys'])
+                    each_user_result = each_user_result.dropna(axis=1, how='all')
 
-                frames_to_concat.append(total_results_metric)
+                    frames_to_concat_users.append(each_user_result)
+                    frames_to_concat_system.append(system_results)
 
-        final_result = pd.concat(frames_to_concat, axis=1)
+        # concat horizontally results of each metric both for users and system
+        final_result_users = pd.DataFrame(columns=['user_id'])
+        if len(frames_to_concat_users) != 0:
+            final_result_users = pd.concat(frames_to_concat_users, axis=1)
 
-        system_results = final_result.loc[['sys']]
-        each_user_result = final_result.drop(['sys'])
+            # for users calculate the mean
+            final_result_users = final_result_users.groupby('user_id').mean()
 
-        each_user_result = each_user_result.dropna(axis=1, how='all')
+        final_result_system = pd.DataFrame(columns=['user_id'])
+        if len(frames_to_concat_system) != 0:
+            final_result_system = pd.concat(frames_to_concat_system, axis=1)
 
-        return system_results, each_user_result
+            # replace index of system results in order to better identify results of each fold
+            new_index = [f'sys - fold{i + 1}' for i in range(len(final_result_system))]
+            final_result_system['user_id'] = new_index
+            final_result_system = final_result_system.set_index('user_id')
+
+            # add mean results as a row
+            system_means = list(final_result_system.mean().values)
+            final_result_system.loc['sys - mean'] = system_means
+
+        return final_result_system, final_result_users

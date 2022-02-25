@@ -2,11 +2,11 @@ from typing import List
 import pandas as pd
 import networkx as nx
 
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler import \
     FeatureSelectionHandler
 from orange_cb_recsys.recsys.graphs import NXFullGraph
-from orange_cb_recsys.utils.const import recsys_logger
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank import PageRankAlg
 
@@ -29,7 +29,8 @@ class NXPageRank(PageRankAlg):
     def __init__(self, personalized: bool = False, feature_selection: FeatureSelectionAlgorithm = None):
         super().__init__(personalized, feature_selection)
 
-    def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None,
+             filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items will be ranked (or only items in the filter list, if specified).
@@ -55,13 +56,6 @@ class NXPageRank(PageRankAlg):
             pd.DataFrame: DataFrame containing one column with the items name,
                 one column with the score predicted, sorted in descending order by the 'rating' column
         """
-        recsys_logger.info("Calculating rank")
-
-        columns = ["to_id", "score"]
-        score_frame = pd.DataFrame(columns=columns)
-
-        if graph is None:
-            return score_frame
         if self.feature_selection is not None:
             user_target_nodes = list(graph.user_nodes)
             # only items recommendable to the user will be considered in the feature selection process
@@ -82,11 +76,9 @@ class NXPageRank(PageRankAlg):
             pers = {node: profile[node] if node in profile else min(set(profile.values()))
                     for node in graph._graph.nodes}
 
-            # pagerank_scipy faster than pagerank or pagerank_numpy
-            scores = nx.pagerank_scipy(graph._graph, personalization=pers)
+            scores = nx.pagerank(graph._graph, personalization=pers)
         else:
-            # pagerank_scipy faster than pagerank or pagerank_numpy
-            scores = nx.pagerank_scipy(graph._graph)
+            scores = nx.pagerank(graph._graph)
 
         # clean the results removing user nodes, selected user profile and eventually properties
         if filter_list is not None:
@@ -97,11 +89,17 @@ class NXPageRank(PageRankAlg):
         else:
             scores = self.clean_result(graph, scores, user_id)
 
-        score_frame.to_id = [node.value for node in scores.keys()]
-        score_frame.score = scores.values()
+        # Build the item_score dict (key is item_id, value is rank score predicted)
+        # and order the keys in descending order
+        item_score_dict = dict(zip([node.value for node in scores.keys()], scores.values()))
+        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
 
-        score_frame.sort_values(by=["score"], ascending=False, inplace=True)
+        # we only save the top-n items_ids corresponding to top-n recommendations
+        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
+        ordered_item_ids = ordered_item_ids[:recs_number]
 
-        rank = score_frame[:recs_number]
+        # we construct the output data
+        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
+                                 for item_id in ordered_item_ids]
 
-        return rank
+        return rank_interaction_list

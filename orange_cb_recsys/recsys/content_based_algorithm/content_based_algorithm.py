@@ -1,7 +1,7 @@
 import abc
 from typing import List
 import pandas as pd
-from scipy import sparse
+import statistics
 from sklearn.exceptions import NotFittedError
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
@@ -9,9 +9,11 @@ import numpy as np
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Prediction, Rank
 from orange_cb_recsys.recsys.algorithm import Algorithm
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
+from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface, LoadedContentsDict
 
 
 class ContentBasedAlgorithm(Algorithm):
@@ -41,7 +43,7 @@ class ContentBasedAlgorithm(Algorithm):
         """
         Private method that set the transformer later used in order to fuse multiple representations
         """
-        self.__transformer = DictVectorizer(sparse=True, sort=False)
+        self.__transformer = DictVectorizer(sparse=False, sort=False)
 
     @staticmethod
     def _bracket_representation(item_field: dict):
@@ -68,11 +70,11 @@ class ContentBasedAlgorithm(Algorithm):
         return item_field
 
     @staticmethod
-    def _calc_mean_user_threshold(user_ratings: pd.DataFrame):
+    def _calc_mean_user_threshold(user_ratings: List[Interaction]):
         """
         Private method which simply calculates the average rating by the user given its ratings
         """
-        return user_ratings['score'].mean()
+        return statistics.mean([interaction.score for interaction in user_ratings])
 
     def extract_features_item(self, item: Content):
         """
@@ -137,7 +139,7 @@ class ContentBasedAlgorithm(Algorithm):
             raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
                              " in its fit() method")
 
-        if any(not isinstance(rep, dict) and not isinstance(rep, np.ndarray) and not isinstance(rep, float) for rep in X[0]):
+        if any(not isinstance(rep, (dict, np.ndarray, (int, float))) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
         # We check if there are dicts as representation in the first element of X,
@@ -154,32 +156,28 @@ class ContentBasedAlgorithm(Algorithm):
                 self.__transformer.fit(X_dicts)
 
         # In every case, we transform the input
-        X_vectorized_sparse = []
-        for sublist in X:
-            single_sparse = sparse.csr_matrix((1, 0))
-            for item in sublist:
-                if need_vectorizer and isinstance(item, dict):
-                    vector = self.__transformer.transform(item)
-                    single_sparse = sparse.hstack((single_sparse, vector), format='csr')
-                elif isinstance(item, np.ndarray):
-                    if item.ndim > 1:
-                        item = embedding_combiner.combine(item)
+        X_vectorized = []
+        for item_repr_list in X:
+            single_arr = []
+            for item_repr in item_repr_list:
+                if need_vectorizer and isinstance(item_repr, dict):
+                    item_repr = self.__transformer.transform(item_repr)
+                    single_arr.append(item_repr.flatten())
+                elif isinstance(item_repr, np.ndarray):
+                    if item_repr.ndim > 1:
+                        item_repr = embedding_combiner.combine(item_repr)
 
-                    item_sparse = sparse.csr_matrix(item)
-                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+                    single_arr.append(item_repr.flatten())
                 else:
                     # it's a float
-                    item_sparse = sparse.csr_matrix(item)
-                    single_sparse = sparse.hstack((single_sparse, item_sparse), format='csr')
+                    single_arr.append(item_repr)
 
-            X_vectorized_sparse.append(single_sparse)
+            X_vectorized.append(np.hstack(single_arr))
 
-        X_dense = [x.toarray().flatten() for x in X_vectorized_sparse]
-
-        return X_dense
+        return X_vectorized
 
     @abc.abstractmethod
-    def process_rated(self, user_ratings: pd.DataFrame, items_directory: str):
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Abstract method that processes rated items for the user.
 
@@ -211,8 +209,8 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict(self, user_ratings: pd.DataFrame, items_directory: str,
-                filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                filter_list: List[str] = None) -> Prediction:
         """
         |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -236,8 +234,8 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, user_ratings: pd.DataFrame, items_directory: str, recs_number: int = None,
-             filter_list: List[str] = None) -> pd.DataFrame:
+    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
+             recs_number: int = None, filter_list: List[str] = None) -> Rank:
         """
         |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         |  all items will be ranked.
@@ -262,3 +260,6 @@ class ContentBasedAlgorithm(Algorithm):
                 one column with the rating predicted, sorted in descending order by the 'rating' column
         """
         raise NotImplementedError
+
+    def _load_available_contents(self, contents_path: str, items_to_load: set = None):
+        return LoadedContentsDict(contents_path, items_to_load)

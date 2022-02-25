@@ -4,7 +4,8 @@ on:
     branches:
       - master
   pull_request:
-    
+  workflow_dispatch:
+
 env:
     IMAGE_NAME: framework_dependencies
     COVERALLS_REPO_TOKEN: m7F9CNmqoMWrzUv0lcmojwOCqk7PGjDG8
@@ -15,7 +16,7 @@ jobs:
 
     steps:
       -
-        name: Checkout
+        name: Checkout Repository
         uses: actions/checkout@v2
         with:
             fetch-depth: 0        
@@ -24,62 +25,79 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8 #install the python needed
+#      -
+#        name: Login to DockerHub
+#        uses: docker/login-action@v1
+#        with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+#      -
+#        name: Check File Changed
+#        id: check
+#        run: |
+#             git diff --name-only HEAD^ HEAD > files.txt
+#             echo "::set-output name=must_build::false"
+#             must_build="true"
+#             while IFS= read -r file
+#             do
+#               if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]] || [[ $file == requirements.txt ]]; then
+#                 echo "::set-output name=must_build::true"
+#                 must_build="true"
+#                 echo "Need to build Docker Image"
+#                 break
+#               fi
+#             done < files.txt
+#             rm files.txt
+#             if [ "$must_build" = "false" ];  then
+#               if ! docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest; then
+#                   echo "::set-output name=must_build::true"
+#                   must_build="true"
+#                   echo "Need to build Docker Image"
+#               fi
+#             fi
+#      -
+#        name: Set up Docker Buildx
+#        if: ${{ steps.check.outputs.must_build == 'true' }}
+#        uses: docker/setup-buildx-action@v1.3.0
+#      -
+#        name: Build docker image
+#        id: docker_build
+#        if: ${{ steps.check.outputs.must_build == 'true' }}
+#        uses: docker/build-push-action@v2.5.0
+#        with:
+#         context: ${{ github.WORKSPACE }}
+#         file:  Dockerfile/Dockerfile
+#         load: true
+#         tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+#      -
+#        name: Test
+#        run:
+#              |
+#               container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }})
+#               docker exec -i $container_id pip install coverage coveralls pytest
+#               docker exec -i $container_id coverage run --source=orange_cb_recsys -m pytest test/ -W ignore::DeprecationWarning
+#               docker exec -i $container_id bash -c "COVERALLS_REPO_TOKEN=${{ env.COVERALLS_REPO_TOKEN }} coveralls"
+#               docker stop $container_id
+#               docker container rm $container_id
       -
-        name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-      -
-        name: Check File Changed
-        id: check
+        name: Setup installation requirements
         run: |
-             git diff --name-only HEAD^ HEAD > files.txt
-             echo "::set-output name=must_build::false"
-             must_build="false"
-             while IFS= read -r file
-             do
-               if [[ $file == */Dockerfile ]] || [[ $file == setup.py ]] || [[ $file == requirements.txt ]]; then
-                 echo "::set-output name=must_build::true"
-                 must_build="true"
-                 echo "Need to build Docker Image"
-                 break
-               fi
-             done < files.txt
-             rm files.txt
-             if [ "$must_build" = "false" ];  then
-               if ! docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest; then
-                   echo "::set-output name=must_build::true"
-                   must_build="true"
-                   echo "Need to build Docker Image"
-               fi
-             fi
-      -
-        name: Set up Docker Buildx
-        if: ${{ steps.check.outputs.must_build == 'true' }}
-        uses: docker/setup-buildx-action@v1.3.0
-      -
-        name: Build docker image
-        id: docker_build
-        if: ${{ steps.check.outputs.must_build == 'true' }}
-        uses: docker/build-push-action@v2.5.0
-        with:
-         context: ${{ github.WORKSPACE }}
-         file:  Dockerfile/Dockerfile
-         load: true
-         tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          pip install wheel pytest pytest-cov
+          pip install -r requirements.txt
       -
         name: Test
-        run:
-              |
-               container_id=$(docker run -d -v "$(pwd)":/usr/src -it  ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }})
-               docker exec -i $container_id pip install coverage coveralls pytest
-               docker exec -i $container_id coverage run --source=orange_cb_recsys -m pytest test/ -W ignore::DeprecationWarning
-               docker exec -i $container_id bash -c "COVERALLS_REPO_TOKEN=${{ env.COVERALLS_REPO_TOKEN }} coveralls"
-               docker stop $container_id
-               docker container rm $container_id
+        run: |
+          pytest --cov-report xml:codecoverage.xml --cov=./ test/
+          ls
       -
-        name: Push image to docker hub
-        id: docker_push
-        if: ${{ steps.check.outputs.must_build == 'true' }}
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
+        name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with: # no token required for public repos
+              fail_ci_if_error: true
+              files: ./codecoverage.xml
+
+#      -
+#        name: Push image to docker hub
+#        id: docker_push
+#        if: ${{ steps.check.outputs.must_build == 'true' }}
+#        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}

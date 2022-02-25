@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.graph_based_algorithm.page_rank package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-graph-based-algorithm-page-rank-package">
+<h1>orange_cb_recsys.recsys.graph_based_algorithm.page_rank package<a class="headerlink" href="#orange-cb-recsys-recsys-graph-based-algorithm-page-rank-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-page-rank-nx-page-rank-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank.NXPageRank">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank.</span></span><span class="sig-name descname"><span class="pre">NXPageRank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">personalized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank.NXPageRank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg" title="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg</span></code></a></p>
+<p>Page Rank algorithm based on the networkx implementation</p>
+<p>The PageRank can be ‘personalized’, in this case the PageRank will be calculated with Priors.
+Also, since it’s a graph based algorithm, it can be done feature selection to the graph before calculating
+any prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>personalized</strong> (<em>bool</em>) – boolean value that specifies if the page rank must be calculated with Priors
+considering the user profile as personalization vector. Default is False</p></li>
+<li><p><strong>feature_selection</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><em>FeatureSelectionAlgorithm</em></a>) – a FeatureSelection algorithm if the graph needs to be reduced</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank.NXPageRank.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph" title="orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recs_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank.NXPageRank.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rank the top-n recommended items for the user. If the recs_number parameter isn’t specified,
+All unrated items will be ranked (or only items in the filter list, if specified).</p>
+<p>One can specify which items must be ranked with the filter_list parameter,
+in this case ONLY items in the filter_list parameter will be ranked.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be ranked.</p>
+<p>If a feature selection algorithm is passed in the constructor, it is performed before calculating
+any prediction</p>
+<p>Most of the time the rank is calculated by calling the predict() method and sorting the ratings
+predicted, but it’s abstract since some algorithm may implement some optimizations to calculate
+the rank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – id of the user of which predictions will be calculated</p></li>
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – a FullGraph containing users, items and eventually other categories of nodes</p></li>
+<li><p><strong>recs_number</strong> (<em>int</em>) – number of the top items that will be present in the ranking</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to predict, if None all unrated items will be predicted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the score predicted, sorted in descending order by the ‘rating’ column</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank">
+<span id="orange-cb-recsys-recsys-graph-based-algorithm-page-rank-page-rank-module"></span><h2>orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.</span></span><span class="sig-name descname"><span class="pre">PageRankAlg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">personalized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm</span></code></a></p>
+<p>Abstract class that contains the main methods and attributes for any PageRank algorithm.</p>
+<p>Every PageRank algorithm can be ‘personalized’, in this case the PageRank will be calculated with Priors.
+Also, since it’s a graph based algorithm, it can be done feature selection to the graph before calculating
+any prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>personalized</strong> (<em>bool</em>) – boolean value that specifies if the page rank must be calculated with Priors
+considering the user profile as personalization vector. Default is False</p></li>
+<li><p><strong>feature_selection</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection.FeatureSelectionAlgorithm"><em>FeatureSelectionAlgorithm</em></a>) – a FeatureSelection algorithm if the graph needs to be reduced</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg.personalized">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">personalized</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg.personalized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank.PageRankAlg.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>PageRank is not a Prediction Score Algorithm, so if this method is called,
+a NotPredictionAlg exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.exceptions.NotPredictionAlg" title="orange_cb_recsys.recsys.content_based_algorithm.exceptions.NotPredictionAlg"><strong>NotPredictionAlg</strong></a> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.graph_based_algorithm.page_rank.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

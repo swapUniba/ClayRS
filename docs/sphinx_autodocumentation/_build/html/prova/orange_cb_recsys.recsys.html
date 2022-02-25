@@ -1,0 +1,757 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-package">
+<h1>orange_cb_recsys.recsys package<a class="headerlink" href="#orange-cb-recsys-recsys-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html">orange_cb_recsys.recsys.content_based_algorithm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.html">orange_cb_recsys.recsys.content_based_algorithm.centroid_vector package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.html#module-orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector">orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.html#module-orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities">orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.html#module-orange_cb_recsys.recsys.content_based_algorithm.centroid_vector">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.classifier.html">orange_cb_recsys.recsys.content_based_algorithm.classifier package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.classifier.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.classifier.html#module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.classifier.html#module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.classifier.html#module-orange_cb_recsys.recsys.content_based_algorithm.classifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.index_query.html">orange_cb_recsys.recsys.content_based_algorithm.index_query package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.index_query.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.index_query.html#module-orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query">orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.index_query.html#module-orange_cb_recsys.recsys.content_based_algorithm.index_query">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.regressor.html">orange_cb_recsys.recsys.content_based_algorithm.regressor package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.regressor.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.regressor.html#module-orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor">orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.regressor.html#module-orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors">orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.regressor.html#module-orange_cb_recsys.recsys.content_based_algorithm.regressor">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#module-orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#module-orange_cb_recsys.recsys.content_based_algorithm.contents_loader">orange_cb_recsys.recsys.content_based_algorithm.contents_loader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#module-orange_cb_recsys.recsys.content_based_algorithm.exceptions">orange_cb_recsys.recsys.content_based_algorithm.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#module-orange_cb_recsys.recsys.content_based_algorithm">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html">orange_cb_recsys.recsys.graph_based_algorithm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler">orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.html#module-orange_cb_recsys.recsys.graph_based_algorithm.feature_selection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html">orange_cb_recsys.recsys.graph_based_algorithm.page_rank package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank">orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.page_rank.html#module-orange_cb_recsys.recsys.graph_based_algorithm.page_rank">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#module-orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm">orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#module-orange_cb_recsys.recsys.graph_based_algorithm">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html">orange_cb_recsys.recsys.graphs package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs.graph">orange_cb_recsys.recsys.graphs.graph module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs.graph_metrics">orange_cb_recsys.recsys.graphs.graph_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs.nx_bipartite_graphs">orange_cb_recsys.recsys.graphs.nx_bipartite_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs.nx_full_graphs">orange_cb_recsys.recsys.graphs.nx_full_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs.nx_tripartite_graphs">orange_cb_recsys.recsys.graphs.nx_tripartite_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#module-orange_cb_recsys.recsys.graphs">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.algorithm">
+<span id="orange-cb-recsys-recsys-algorithm-module"></span><h2>orange_cb_recsys.recsys.algorithm module<a class="headerlink" href="#module-orange_cb_recsys.recsys.algorithm" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.algorithm.Algorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.algorithm.</span></span><span class="sig-name descname"><span class="pre">Algorithm</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.algorithm.Algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class for an Algorithm.</p>
+<p>Every algorithm must be able to predict or to rank, or maybe both.
+In case some algorithms can only do one of the two (eg. PageRank), simply implement both
+methods and raise the NotPredictionAlg or NotRankingAlg exception accordingly.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.algorithm.Algorithm.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.algorithm.Algorithm.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a deep copy the algorithm</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.algorithm.Algorithm.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.algorithm.Algorithm.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to call when score prediction must be done.</p>
+<p>If the Algorithm can’t do score prediction, implement this method and raise
+the NotPredictionAlg exception</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.algorithm.Algorithm.rank">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.algorithm.Algorithm.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to call when ranking must be done.</p>
+<p>If the Algorithm can’t rank, implement this method and raise the NotRankingAlg exception</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.methodology">
+<span id="orange-cb-recsys-recsys-methodology-module"></span><h2>orange_cb_recsys.recsys.methodology module<a class="headerlink" href="#module-orange_cb_recsys.recsys.methodology" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.AllItemsMethodology">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.methodology.</span></span><span class="sig-name descname"><span class="pre">AllItemsMethodology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.AllItemsMethodology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.methodology.Methodology" title="orange_cb_recsys.recsys.methodology.Methodology"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.methodology.Methodology</span></code></a></p>
+<p>Module of the Evaluation pipeline which, given a ‘train set’ and a ‘test set’, has the task to calculate
+which items must be used in order to generate a recommendation list</p>
+<p>With AllItemsMethodology, given a user U, items to recommend for U are all items that appear in ‘items_list’
+parameter excluding those items that appear in the ‘train set’ of U</p>
+<p>If the ‘only_greater_eq’ parameter is specified, then only items with rating score &gt;= only_greater_eq will be
+returned</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items_list</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – Items set that must appear in the recommendation list of every user</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.AllItemsMethodology.filter_single">
+<span class="sig-name descname"><span class="pre">filter_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.AllItemsMethodology.filter_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that returns items that needs to be part of the recommendation list of a single user.
+Since it’s the AllItems Methodology, all items that appear in the ‘items_list’ parameter of the constructor
+will be returned, except for those that appear in the ‘train set’ of the user passed as parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – User of which we want to calculate items that must appear in its recommendation list</p></li>
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the train set of every user</p></li>
+<li><p><strong>test_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the test set of every user</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.Methodology">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.methodology.</span></span><span class="sig-name descname"><span class="pre">Methodology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_greater_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.Methodology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Module of the Evaluation pipeline which, given a ‘train set’ and a ‘test set’, has the task to calculate
+which items must be used in order to generate a recommendation list</p>
+<p>The methodologies here implemented follow the ‘Precision-Oriented Evaluation of Recommender Systems: An Algorithmic
+Comparison’ paper, check it for more</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.Methodology.filter_all">
+<span class="sig-name descname"><span class="pre">filter_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_as_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.Methodology.filter_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which effectively calculates which items must be used in order to generate a recommendation list</p>
+<p>It takes in input a ‘train set’ and a ‘test set’ and returns a single DataFrame which contains,
+for every user inside the train set, all items which must be recommended based on the methodology chosen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the train set of every user</p></li>
+<li><p><strong>test_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the test set of every user</p></li>
+<li><p><strong>result_as_dict</strong> (<em>bool</em>) – <p>If True the output of the method will be a dict containing users as a key and
+list of item that must be predicted as a value.
+.. rubric:: Example</p>
+<p>{‘u1’: [‘i1’, ‘i2’, ‘i3’], ‘u2’: [‘i1’, ‘i4’], …}</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame which contains all items which must be recommended to every user based on the methodology
+chosen.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.Methodology.filter_single">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.Methodology.filter_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method in which must be specified how to calculate which items must be part of the recommendation list
+of a single user</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TestItemsMethodology">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.methodology.</span></span><span class="sig-name descname"><span class="pre">TestItemsMethodology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_greater_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TestItemsMethodology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.methodology.Methodology" title="orange_cb_recsys.recsys.methodology.Methodology"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.methodology.Methodology</span></code></a></p>
+<p>Module of the Evaluation pipeline which, given a ‘train set’ and a ‘test set’, has the task to calculate
+which items must be used in order to generate a recommendation list</p>
+<p>With TestItemsMethodology, given a user U, items to recommend for U are all items that appear in the ‘test set’ of
+every user excluding those items that appear in the ‘train set’ of U</p>
+<p>If the ‘only_greater_eq’ parameter is specified, then only items with rating score &gt;= only_greater_eq will be
+returned</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>only_greater_eq</strong> (<em>float</em>) – float which acts as a filter, if specified only items with
+rating score &gt;= only_greater_eq will be returned</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TestItemsMethodology.filter_single">
+<span class="sig-name descname"><span class="pre">filter_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TestItemsMethodology.filter_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that returns items that need to be part of the recommendation list of a single user.
+Since it’s the TestItems Methodology, all items that appear in the ‘test set’ of every user will be returned,
+except for those that appear in the ‘train set’ of the user passed as parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – User of which we want to calculate items that must appear in its recommendation list</p></li>
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the train set of every user</p></li>
+<li><p><strong>test_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the test set of every user</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TestRatingsMethodology">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.methodology.</span></span><span class="sig-name descname"><span class="pre">TestRatingsMethodology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_greater_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TestRatingsMethodology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.methodology.Methodology" title="orange_cb_recsys.recsys.methodology.Methodology"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.methodology.Methodology</span></code></a></p>
+<p>Module of the Evaluation pipeline which, given a ‘train set’ and a ‘test set’, has the task to calculate
+which items must be used in order to generate a recommendation list</p>
+<p>With TestRatingsMethodology, given a user U, items to recommend for U are simply those items that appear in its
+‘test set’</p>
+<p>If the ‘only_greater_eq’ parameter is specified, then only items with rating score &gt;= only_greater_eq will be
+returned</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>only_greater_eq</strong> (<em>float</em>) – float which acts as a filter, if specified only items with
+rating score &gt;= only_greater_eq will be returned</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TestRatingsMethodology.filter_single">
+<span class="sig-name descname"><span class="pre">filter_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TestRatingsMethodology.filter_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that returns items that need to be part of the recommendation list of a single user.
+Since it’s the TestRatings Methodology, only items that appear in the ‘test set’ of the user will be returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – User of which we want to calculate items that must appear in its recommendation list</p></li>
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – Pandas Dataframe which contains the train set of every user</p></li>
+<li><p><strong>test_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the test set of every user</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TrainingItemsMethodology">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.methodology.</span></span><span class="sig-name descname"><span class="pre">TrainingItemsMethodology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_greater_eq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TrainingItemsMethodology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.methodology.Methodology" title="orange_cb_recsys.recsys.methodology.Methodology"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.methodology.Methodology</span></code></a></p>
+<p>Module of the Evaluation pipeline which, given a ‘train set’ and a ‘test set’, has the task to calculate
+which items must be used in order to generate a recommendation list</p>
+<p>With TrainingItemsMethodology, given a user U, items to recommend for U are all items that appear in the ‘train set’
+of every user excluding those items that appear in the ‘train set’ of U</p>
+<p>If the ‘only_greater_eq’ parameter is specified, then only items with rating score &gt;= only_greater_eq will be
+returned</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>only_greater_eq</strong> (<em>float</em>) – float which acts as a filter, if specified only items with
+rating score &gt;= only_greater_eq will be returned</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.methodology.TrainingItemsMethodology.filter_single">
+<span class="sig-name descname"><span class="pre">filter_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.methodology.TrainingItemsMethodology.filter_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that returns items that needs to be part of the recommendation list of a single user.
+Since it’s the TrainingItems Methodology, all items that appear in the ‘train set’ of every user will be
+returned, except for those that appear in the ‘train set’ of the user passed as parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>) – User of which we want to calculate items that must appear in its recommendation list</p></li>
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the train set of every user</p></li>
+<li><p><strong>test_set</strong> (<em>pd.DataFrame</em>) – Pandas dataframe which contains the test set of every user</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.partitioning">
+<span id="orange-cb-recsys-recsys-partitioning-module"></span><h2>orange_cb_recsys.recsys.partitioning module<a class="headerlink" href="#module-orange_cb_recsys.recsys.partitioning" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.HoldOutPartitioning">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.partitioning.</span></span><span class="sig-name descname"><span class="pre">HoldOutPartitioning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_set_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_user_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.HoldOutPartitioning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.partitioning.Partitioning" title="orange_cb_recsys.recsys.partitioning.Partitioning"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.partitioning.Partitioning</span></code></a></p>
+<p>Class that perform Hold-Out partitioning</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_set_size</strong> (<em>float</em>) – percentage of how much big in percentage the train set of each user must be
+EXAMPLE: train_set_size = 0.8, train_set_size = 0.65, train_set_size = 0.2</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – random state</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.HoldOutPartitioning.split_single">
+<span class="sig-name descname"><span class="pre">split_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.HoldOutPartitioning.split_single" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.KFoldPartitioning">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.partitioning.</span></span><span class="sig-name descname"><span class="pre">KFoldPartitioning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_user_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.KFoldPartitioning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.partitioning.Partitioning" title="orange_cb_recsys.recsys.partitioning.Partitioning"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.partitioning.Partitioning</span></code></a></p>
+<p>Class that perform K-Fold partitioning</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_splits</strong> (<em>int</em>) – Number of splits. Must be at least 2</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – random state</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.KFoldPartitioning.split_single">
+<span class="sig-name descname"><span class="pre">split_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.KFoldPartitioning.split_single" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.Partitioning">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.partitioning.</span></span><span class="sig-name descname"><span class="pre">Partitioning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_user_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.Partitioning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract Class for partitioning technique</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.Partitioning.skip_user_error">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">skip_user_error</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.Partitioning.skip_user_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.Partitioning.split_all">
+<span class="sig-name descname"><span class="pre">split_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratings_to_split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.Partitioning.split_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that effectively splits the ‘ratings’ parameter into ‘train set’ and ‘test set’.
+It must be specified a ‘user_id_list’ parameter so that the method will do the splitting only for the users
+specified inside the list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratings_to_split</strong> (<em>pd.DataFrame</em>) – The DataFrame which contains the interactions of the users that must be splitted
+into ‘train set’ and ‘test set’</p></li>
+<li><p><strong>user_id_list</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – The set of users for which splitting will be done</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.Partitioning.split_single">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">split_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.Partitioning.split_single" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.partitioning.Split">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.partitioning.</span></span><span class="sig-name descname"><span class="pre">Split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.partitioning.Split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class container for two pandas DataFrame</p>
+<p>It may represent a split containing ‘train set’ and ‘test set’, or a split containing a ground truth and predictions
+for it, etc.</p>
+<p>Once instantiated, one can access the two dataframes in different ways:</p>
+<div class="line-block">
+<div class="line">&gt; sp = Split()</div>
+<div class="line">&gt; # Various ways of accessing the FIRST DataFrame</div>
+<div class="line">&gt; sp.train</div>
+<div class="line">&gt; sp.pred</div>
+<div class="line">&gt; sp.first</div>
+<div class="line">&gt;</div>
+<div class="line">&gt; # Various ways of accessing the SECOND DataFrame</div>
+<div class="line">&gt; sp.test</div>
+<div class="line">&gt; sp.truth</div>
+<div class="line">&gt; sp.second</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_set</strong> (<em>pd.DatFrame</em>) – the first DataFrame to contain. If not specified, an empty DataFrame with ‘from_id’,
+‘to_id’, and ‘score’ column will be instantiated</p></li>
+<li><p><strong>second_set</strong> (<em>pd.DataFrame</em>) – the second DataFrame to contain. If not specified, an empty DataFrame with ‘from_id’,
+‘to_id’ and ‘score’ column will be instantiated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.recsys">
+<span id="orange-cb-recsys-recsys-recsys-module"></span><h2>orange_cb_recsys.recsys.recsys module<a class="headerlink" href="#module-orange_cb_recsys.recsys.recsys" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.recsys.</span></span><span class="sig-name descname"><span class="pre">ContentBasedRS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">items_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.recsys.RecSys" title="orange_cb_recsys.recsys.recsys.RecSys"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.recsys.RecSys</span></code></a></p>
+<p>Class for recommender systems which use the items’ content in order to make predictions,
+some algorithms may also use users’ content</p>
+<p>Every CBRS differ from each other based the algorithm chosen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algorithm</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><em>ContentBasedAlgorithm</em></a>) – the content based algorithm that will be used in order to
+rank or make score prediction</p></li>
+<li><p><strong>train_set</strong> (<em>pd.DataFrame</em>) – a DataFrame containing interactions between users and items</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – the path of the items serialized by the Content Analyzer</p></li>
+<li><p><strong>users_directory</strong> (<em>str</em>) – the path of the users serialized by the Content Analyzer</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.algorithm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>The content based algorithm chosen</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that divides the train set into as many parts as
+there are different users. then it proceeds with the fit
+for each user and saves the result in the dictionary “user_fit_dic”</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.fit_predict">
+<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.fit_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>The method fits the algorithm and then calculates the prediction for each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>test_set</strong> – set of users for which to calculate the prediction</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>prediction for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>prediction</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.fit_rank">
+<span class="sig-name descname"><span class="pre">fit_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_recs:</span> <span class="pre">typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.fit_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>The method fits the algorithm and then calculates the rank for each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_set</strong> – set of users for which to calculate the rank</p></li>
+<li><p><strong>n_recs</strong> – number of the top items that will be present in the ranking</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ranked items for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>rank</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.items_directory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">items_directory</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.items_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path of the serialized items</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to call when score prediction must be done for the users in test set</p>
+<p>If the items evaluated are present for each user, the filter list is calculated, and
+score prediction is executed only for the items inside the filter list.
+Otherwise, score prediction is executed for all unrated items of the particular user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>test_set</strong> – set of users for which to calculate the predictions</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>prediction for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>concat_score_preds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_recs:</span> <span class="pre">typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to calculate ranking for the user in test set</p>
+<p>If the recs_number is specified, then the rank will contain the top-n items for the users.
+Otherwise the rank will contain all unrated items of the particular users</p>
+<p>if the items evaluated are present for each user, the filter list is calculated, and
+score prediction is executed only for the items inside the filter list.
+Otherwise, score prediction is executed for all unrated items of the particular user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_set</strong> – set of users for which to calculate the rank</p></li>
+<li><p><strong>n_recs</strong> – number of the top items that will be present in the ranking</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of the items ranked for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>concat_rank</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.train_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_set</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.train_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.ContentBasedRS.users_directory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">users_directory</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.ContentBasedRS.users_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path of the serialized users</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.recsys.</span></span><span class="sig-name descname"><span class="pre">GraphBasedRS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.recsys.RecSys" title="orange_cb_recsys.recsys.recsys.RecSys"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.recsys.RecSys</span></code></a></p>
+<p>Class for recommender systems which use a graph in order to make predictions</p>
+<p>Every graph based recommender system differ from each other based the algorithm chosen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algorithm</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm"><em>GraphBasedAlgorithm</em></a>) – the graph based algorithm that will be used in order to
+rank or make score prediction</p></li>
+<li><p><strong>graph</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.graphs.html#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><em>FullGraph</em></a>) – a FullGraph containing interactions</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS.algorithm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS.algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>The content based algorithm chosen</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS.graph">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The graph containing interactions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to predict the rating of the users</p>
+<p>If the items evaluated are present for each user, the filter list is calculated, and
+score prediction is executed only for the items inside the filter list.
+Otherwise, score prediction is executed for all unrated items of the particular user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>test_set</strong> – set of users for which to calculate the predictions</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of predictions for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>concate_score_preds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set:</span> <span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_recs:</span> <span class="pre">typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id_list:</span> <span class="pre">typing.Optional[typing.List]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methodology:</span> <span class="pre">typing.Optional[orange_cb_recsys.recsys.methodology.Methodology]</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.recsys.methodology.TestRatingsMethodology</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to rank the rating of the users</p>
+<p>If the items evaluated are present for each user, the filter list is calculated, and
+score prediction is executed only for the items inside the filter list.
+Otherwise, score prediction is executed for all unrated items of the particular user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_set</strong> – set of users for which to calculate the rank</p></li>
+<li><p><strong>n_recs</strong> – number of the top items that will be present in the ranking</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of the items ranked for each user</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>concate_rank</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.GraphBasedRS.users">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">users</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.GraphBasedRS.users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.RecSys">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.recsys.</span></span><span class="sig-name descname"><span class="pre">RecSys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="orange_cb_recsys.recsys.graph_based_algorithm.html#orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm" title="orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm"><span class="pre">orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm.GraphBasedAlgorithm</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.RecSys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class for a Recommender System</p>
+<p>There exists various type of recommender systems, content-based, graph-based, etc. so extend this class
+if another type must be implemented into the framework.</p>
+<p>Every recommender system do its prediction based on a rating frame, containing interactions between
+users and items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rating_frame</strong> (<em>pd.DataFrame</em>) – a dataframe containing interactions between users and items</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.RecSys.algorithm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.RecSys.algorithm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.RecSys.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.RecSys.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.recsys.RecSys.rank">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_recs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.recsys.RecSys.rank" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,12 +1,12 @@
-from typing import List
+from typing import List, Union
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricCalculator
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import PartitionModule
-from orange_cb_recsys.evaluation.eval_pipeline_modules.prediction_calculator import PredictionCalculator
-from orange_cb_recsys.evaluation.eval_pipeline_modules.methodology import Methodology, TestRatingsMethodology
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings
+from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
+import pandas as pd
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.evaluation.partitioning_techniques.partitioning import Partitioning
+from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.recsys.recsys import RecSys
+from orange_cb_recsys.utils.const import logger
 
 
 class EvalModel:
@@ -30,54 +30,32 @@ class EvalModel:
         verbose_predictions (bool): If True, the logger is enabled for the Recommender module, printing possible
             warnings. Else, the logger will be disabled for the Recommender module. This parameter is False by default
     """
-    def __init__(self, recsys: RecSys,
-                 partitioning: Partitioning,
-                 metric_list: List[Metric],
-                 methodology: Methodology = TestRatingsMethodology(),
-                 verbose_predictions: bool = False):
+    def __init__(self,
+                 pred_list: Union[List[Prediction], List[Rank]],
+                 truth_list: List[Ratings],
+                 metric_list: List[Metric]):
 
-        self.__recsys = recsys
-        self.__partitioning = partitioning
-        self.__metrics = metric_list
-        self.__methodology = methodology
-        self.__verbose_predictions = verbose_predictions
+        if len(pred_list) != len(truth_list):
+            raise ValueError("List containing predictions and list containing ground truth must have the same length!")
 
-    @property
-    def partitioning(self):
-        """
-        Partitioning technique that will be used to split the original dataframe containing interactions between
-        users and items in 'train set' and 'test set'
-        """
-        return self.__partitioning
+        self._pred_list = pred_list
+        self._truth_list = truth_list
+        self._metric_list = metric_list
 
     @property
-    def recsys(self):
-        """
-        Recommender System to evaluate
-        """
-        return self.__recsys
+    def pred_list(self):
+        return self._pred_list
 
     @property
-    def metrics(self):
+    def truth_list(self):
+        return self._truth_list
+
+    @property
+    def metric_list(self):
         """
         List of metrics that eval model will compute for the recsys
         """
-        return self.__metrics
-
-    @property
-    def methodology(self):
-        """
-        Methodology to use for evaluating the recsys, TestRatings methodology is used by default
-        """
-        return self.__methodology
-
-    @property
-    def verbose_predictions(self):
-        """
-        Bool parameter which enables or disables the logger for the recommender module while generating recommendations
-        for every user that will be evaluated
-        """
-        return self.__verbose_predictions
+        return self._metric_list
 
     def append_metric(self, metric: Metric):
         """
@@ -86,7 +64,7 @@ class EvalModel:
         Args:
             metric (Metric): Metric to append to the metric list
         """
-        self.__metrics.append(metric)
+        self._metric_list.append(metric)
 
     def fit(self, user_id_list: list = None):
         """
@@ -109,20 +87,17 @@ class EvalModel:
             Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
             list, the second one will contain every user results for every metric eligible
         """
+        logger.info('Performing evaluation on metrics chosen')
 
-        if user_id_list is None:
-            user_id_list = self.recsys.users
+        pred_list = self._pred_list
+        truth_list = self._truth_list
 
-        splitted_ratings = PartitionModule(self.partitioning).split_all(self.recsys.rating_frame, user_id_list)
+        if user_id_list is not None:
+            user_id_list_set = set([str(user_id) for user_id in user_id_list])
 
-        test_items_list = self.methodology.get_item_to_predict(splitted_ratings)
+            pred_list = [pred.filter_ratings(user_id_list_set) for pred in self._pred_list]
+            truth_list = [truth.filter_ratings(user_id_list_set) for truth in self._truth_list]
 
-        metric_valid = PredictionCalculator(splitted_ratings, self.recsys).calc_predictions(
-            test_items_list, self.metrics, self.verbose_predictions)
-
-        # We pass the parameter at None so that the MetricCalculator will use the predictions
-        # calculated with the PredictionCalculator module. Those predictions are in the class attribute
-        # of every metric
-        result = MetricCalculator(None).eval_metrics(metric_valid)
+        result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
 
         return result

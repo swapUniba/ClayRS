@@ -1,14 +1,24 @@
 import abc
+import itertools
+from itertools import chain
+from typing import Union, Iterable, Dict, Optional, List
+from typing import Set
 
 import pandas as pd
-from typing import List
 from abc import ABC
 
+from tqdm.contrib.logging import logging_redirect_tqdm
+
+from orange_cb_recsys.content_analyzer import Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Rank, Prediction
+from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import Handler_EmptyFrame
+from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from orange_cb_recsys.recsys.methodology import Methodology
+from orange_cb_recsys.utils.const import logger, get_pbar
 
 
 class RecSys(ABC):
@@ -25,122 +35,19 @@ class RecSys(ABC):
         rating_frame (pd.DataFrame): a dataframe containing interactions between users and items
     """
 
-    def __init__(self, rating_frame: pd.DataFrame):
-        self.__rating_frame = rating_frame
+    def __init__(self, algorithm: Union[ContentBasedAlgorithm, GraphBasedAlgorithm]):
+        self.__alg = algorithm
 
     @property
-    def rating_frame(self):
-        """
-        The DataFrame containing interactions between users and items
-        """
-        return self.__rating_frame
+    def algorithm(self):
+        return self.__alg
 
-    @property
     @abc.abstractmethod
-    def users(self):
-        """
-        Users of the recommender systems (users that have at least one interaction in the rating_frame)
-        """
+    def rank(self, test_set: pd.DataFrame, n_recs: int = None) -> Rank:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def fit_predict(self, user_id: str, filter_list: List[str] = None):
-        """
-        Method to call when score prediction must be done for the specified user_id
-
-        By default, score prediction will be done for all unrated items by the user, unless the
-        filter_list parameter is specified.
-
-        If the filter_list parameter is specified, then score_prediction is executed only for the
-        items inside the filter_list
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
-        """
-        Method to call when ranking must be calculated for the specified user_id
-
-        If the recs_number parameter is specified, only the top-n recommendation will be returned.
-        Otherwise ranking of all the unrated items by the user will be returned
-
-        If the filter_list parameter is specified, then the ranking is calculated only for the
-        items inside the filter list
-        """
-        raise NotImplementedError
-
-    def multiple_fit_rank(self, user_id_list: List[str], recs_number: int = None, filter_list: List[str] = None):
-        """
-        Method used to calculate ranking for a list of users
-
-        The method fits the algorithm (when eligible) and then calculates the rank.
-
-        If the recs_number is specified, then the rank will contain the top-n items for the particular user.
-        Otherwise the rank will contain all unrated items of the particular user
-
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        particular user
-
-        Args:
-            user_id_list (List[str]): list of all the users ids of which ranking must be calculated
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items of the particular user
-                will be ranked
-        Returns:
-            pd.DataFrame: DataFrame containing ranking for all users specified
-        """
-        rank_list = []
-        for user_id in user_id_list:
-            rank = self.fit_rank(user_id, recs_number, filter_list)
-
-            rank_list.append(rank)
-
-        concat_rank = pd.concat(rank_list)
-        return concat_rank
-
-    def multiple_fit_predict(self, user_id_list: List[str], filter_list: List[str] = None):
-        """
-        Method used to calculate score prediction for a list of users
-
-        The method fits the algorithm (when eligible) and then calculates the prediction
-
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        particular user
-
-        Args:
-            user_id_list (List[str]): list of all the users ids of which score prediction must be calculated
-            filter_list (list): list of the items to score predict, if None all unrated items of the particular user
-                will be score predicted
-        Returns:
-            pd.DataFrame: DataFrame containing score predictions for all users specified
-        """
-        score_preds_list = []
-        for user_id in user_id_list:
-            score_preds = self.fit_predict(user_id, filter_list)
-
-            score_preds_list.append(score_preds)
-
-        concat_score_preds = pd.concat(score_preds_list)
-        return concat_score_preds
-
-    @abc.abstractmethod
-    def _eval_fit_predict(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
-        """
-        Private method used by the evaluation module
-
-        It calculates score prediction on the test set items based on the train ratings items
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def _eval_fit_rank(self, train_ratings: pd.DataFrame, test_set_items: List[str]):
-        """
-        Private method used by the evaluation module
-
-        It calculates ranking on the test set items based on the train ratings items
-        """
+    def predict(self, test_set: pd.DataFrame) -> Prediction:
         raise NotImplementedError
 
 
@@ -154,40 +61,34 @@ class ContentBasedRS(RecSys):
     Args:
         algorithm (ContentBasedAlgorithm): the content based algorithm that will be used in order to
             rank or make score prediction
-        rating_frame (pd.DataFrame): a DataFrame containing interactions between users and items
+        train_set (pd.DataFrame): a DataFrame containing interactions between users and items
         items_directory (str): the path of the items serialized by the Content Analyzer
         users_directory (str): the path of the users serialized by the Content Analyzer
     """
 
     def __init__(self,
                  algorithm: ContentBasedAlgorithm,
-                 rating_frame: pd.DataFrame,
+                 train_set: Ratings,
                  items_directory: str,
                  users_directory: str = None):
 
-        # frame_to_concat = []
-        # for user in set(rating_frame['from_id']):
-        #     user_frame = rating_frame.query('from_id == @user')
-        #     valid_user_frame = remove_not_existent_items(user_frame, items_directory)
-        #     frame_to_concat.append(valid_user_frame)
-        #
-        # valid_rating_frame = pd.concat(frame_to_concat)
-        super().__init__(rating_frame)
-
-        self.__algorithm = algorithm
+        super().__init__(algorithm)
+        self.__train_set = train_set
         self.__items_directory = items_directory
         self.__users_directory = users_directory
+        self._user_fit_dic = {}
 
     @property
     def algorithm(self):
         """
         The content based algorithm chosen
         """
-        return self.__algorithm
+        alg: ContentBasedAlgorithm = super().algorithm
+        return alg
 
     @property
-    def users(self):
-        return set(self.rating_frame['from_id'])
+    def train_set(self):
+        return self.__train_set
 
     @property
     def items_directory(self):
@@ -203,94 +104,183 @@ class ContentBasedRS(RecSys):
         """
         return self.__users_directory
 
-    @Handler_EmptyFrame
-    def fit_predict(self, user_id: str, filter_list: List[str] = None):
+    def fit(self):
         """
-        Method used to predict the rating of the user specified
+        Method that divides the train set into as many parts as
+        there are different users. then it proceeds with the fit
+        for each user and saves the result in the dictionary "user_fit_dic"
 
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        user
+        """
+        items_to_load = set(self.train_set.item_id_column)
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        The method fits the algorithm and then calculates the prediction
+        with logging_redirect_tqdm():
+            pbar = get_pbar(set(self.train_set.user_id_column))
+            pbar.set_description("Fitting algorithm")
+            for user_id in pbar:
+                user_train = self.train_set.get_user_interactions(user_id)
+
+                try:
+                    user_alg = self.algorithm.copy()
+                    user_alg.process_rated(user_train, loaded_items_interface)
+                    user_alg.fit()
+                    self._user_fit_dic[user_id] = user_alg
+                except UserSkipAlgFit as e:
+                    warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
+                    logger.warning(warning_message)
+                    self._user_fit_dic[user_id] = None
+
+    def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+             methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
+        """
+        Method used to calculate ranking for the user in test set
+
+        If the recs_number is specified, then the rank will contain the top-n items for the users.
+        Otherwise the rank will contain all unrated items of the particular users
+
+        if the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
 
         Args:
-            user_id (str): user_id of the user
-            filter_list (list): list of the items to score predict, if None all unrated items will
-                be score predicted
+            test_set: set of users for which to calculate the rank
+            n_recs: number of the top items that will be present in the ranking
+
         Returns:
-            pd.DataFrame: DataFrame containing score predictions for the user
+            concat_rank: list of the items ranked for each user
+
         """
-        # Extracts ratings of the user
-        user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
+        if len(self._user_fit_dic) == 0:
+            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
 
-        alg = self.algorithm
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
 
-        # Process rated items
-        alg.process_rated(user_ratings, self.items_directory)
+        filter_dict: Union[Dict, None] = None
+        items_to_load = None
+        if methodology is not None:
+            filter_dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
+            items_to_load = set(itertools.chain.from_iterable(filter_dict.values()))
 
-        # Fit
-        alg.fit()
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        # Predict
-        prediction = alg.predict(user_ratings, self.items_directory, filter_list)
+        rank_list = []
 
-        prediction.insert(0, 'from_id', [user_id for _ in range(len(prediction))])
+        with logging_redirect_tqdm():
+            pbar = get_pbar(all_users)
+            for user_id in pbar:
+                user_id = str(user_id)
+                pbar.set_description(f"Computing rank for {user_id}")
+                user_train = self.train_set.get_user_interactions(user_id)
 
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
+
+                user_fitted_alg = self._user_fit_dic.get(user_id)
+                if user_fitted_alg is not None:
+                    rank = user_fitted_alg.rank(user_train, loaded_items_interface,
+                                                n_recs, filter_list=filter_list)
+                else:
+                    rank = []
+                    logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
+
+                rank_list.extend(rank)
+
+        concat_rank = Rank.from_list(rank_list)
+        return concat_rank
+
+    def predict(self, test_set: Ratings, user_id_list: List = None,
+                methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
+        """
+        Method to call when score prediction must be done for the users in test set
+
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
+
+        Args:
+            test_set: set of users for which to calculate the predictions
+
+        Returns:
+            concat_score_preds: prediction for each user
+
+        """
+        if len(self._user_fit_dic) == 0:
+            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
+
+        filter_dict: Union[Dict, None] = None
+        items_to_load = None
+        if methodology is not None:
+            filter_dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
+            items_to_load = set(itertools.chain.from_iterable(filter_dict.values()))
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
+
+        pred_list = []
+
+        with logging_redirect_tqdm():
+            pbar = get_pbar(all_users)
+            for user_id in pbar:
+                user_id = str(user_id)
+                pbar.set_description(f"Computing predictions for {user_id}")
+
+                user_train = self.train_set.get_user_interactions(user_id)
+
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
+
+                user_fitted_alg = self._user_fit_dic.get(user_id)
+                if user_fitted_alg is not None:
+                    pred = user_fitted_alg.predict(user_train, loaded_items_interface,
+                                                   filter_list=filter_list)
+                else:
+                    pred = []
+                    logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
+
+                pred_list.extend(pred)
+
+        concat_pred = Prediction.from_list(pred_list)
+        return concat_pred
+
+    def fit_predict(self, test_set: Ratings, user_id_list: List = None,
+                    methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
+        """
+        The method fits the algorithm and then calculates the prediction for each user
+
+        Args:
+            test_set: set of users for which to calculate the prediction
+
+        Returns:
+            prediction: prediction for each user
+
+        """
+        self.fit()
+        prediction = self.predict(test_set, user_id_list, methodology)
         return prediction
 
-    @Handler_EmptyFrame
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None):
+    def fit_rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+                 methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
         """
-        Method used to calculate ranking for the specified user
-
-        The method fits the algorithm and then calculates the rank.
-
-        If the recs_number is specified, then the rank will contain the top-n items for the user.
-        Otherwise the rank will contain all unrated items of the user
-
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        particular user
+        The method fits the algorithm and then calculates the rank for each user
 
         Args:
-            user_id (str): user_id of the user
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be ranked
+            test_set: set of users for which to calculate the rank
+            n_recs: number of the top items that will be present in the ranking
+
         Returns:
-            pd.DataFrame: DataFrame containing ranking for the user specified
+            rank: ranked items for each user
+
         """
-        # Extracts ratings of the user
-        user_ratings = self.rating_frame[self.rating_frame['from_id'] == user_id]
-
-        alg = self.algorithm
-
-        # Process rated items
-        alg.process_rated(user_ratings, self.items_directory)
-
-        # Fit
-        alg.fit()
-
-        # Rank
-        rank = alg.rank(user_ratings, self.items_directory, recs_number, filter_list)
-
-        rank.insert(0, 'from_id', [user_id for _ in range(len(rank))])
-
+        self.fit()
+        rank = self.rank(test_set, n_recs, user_id_list, methodology)
         return rank
-
-    def _eval_fit_predict(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
-        user_id = user_ratings_train.from_id.iloc[0]
-
-        rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
-        return score_frame
-
-    def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
-        user_id = user_ratings_train.from_id.iloc[0]
-
-        rs_eval = ContentBasedRS(self.algorithm, user_ratings_train, self.items_directory, self.users_directory)
-        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
-        return score_frame
 
 
 class GraphBasedRS(RecSys):
@@ -308,20 +298,9 @@ class GraphBasedRS(RecSys):
     def __init__(self,
                  algorithm: GraphBasedAlgorithm,
                  graph: FullGraph):
-        self.__algorithm = algorithm
+
         self.__graph = graph
-        super().__init__(rating_frame=graph.convert_to_dataframe())
-
-    @property
-    def algorithm(self):
-        """
-        The content based algorithm chosen
-        """
-        return self.__algorithm
-
-    @property
-    def rating_frame(self):
-        return self.__graph.convert_to_dataframe()
+        super().__init__(algorithm)
 
     @property
     def users(self):
@@ -334,82 +313,101 @@ class GraphBasedRS(RecSys):
         """
         return self.__graph
 
-    def fit_predict(self, user_id: str, filter_list: List[str] = None) -> pd.DataFrame:
+    @property
+    def algorithm(self):
         """
-        Method used to predict the rating of the user specified
+        The content based algorithm chosen
+        """
+        alg: GraphBasedAlgorithm = super().algorithm
+        return alg
 
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        user
+    def predict(self, test_set: Ratings, user_id_list: List = None,
+                methodology: Union[Methodology, None] = TestRatingsMethodology()):
+        """
+        Method used to predict the rating of the users
+
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
 
         Args:
-            user_id (str): user_id of the user
-            filter_list (list): list of the items to score predict, if None all unrated items will
-                be score predicted
+            test_set: set of users for which to calculate the predictions
+
         Returns:
-            pd.DataFrame: DataFrame containing score predictions for the user
+            concate_score_preds: list of predictions for each user
+
         """
-        alg = self.algorithm
+        train_set = self.graph.to_ratings()
 
-        prediction = alg.predict(user_id, self.graph, filter_list)
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
 
-        prediction.insert(0, 'from_id', [user_id for i in range(len(prediction))])
+        filter_dict: Union[Dict, None] = None
+        if methodology is not None:
+            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
 
-        return prediction
+        pred_list = []
 
-    def fit_rank(self, user_id: str, recs_number: int = None, filter_list: List[str] = None) -> pd.DataFrame:
+        with logging_redirect_tqdm():
+            pbar = get_pbar(all_users)
+            for user_id in pbar:
+                user_id = str(user_id)
+                pbar.set_description(f"Computing predictions for {user_id}")
+
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
+
+                pred = self.algorithm.predict(user_id, self.graph, filter_list=filter_list)
+
+                pred_list.extend(pred)
+
+        concat_pred = Prediction.from_list(pred_list)
+        return concat_pred
+
+    def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+             methodology: Union[Methodology, None] = TestRatingsMethodology()):
         """
-        Method used to calculate ranking for the specified user
+        Method used to rank the rating of the users
 
-        If the recs_number is specified, then the rank will contain the top-n items for the user.
-        Otherwise the rank will contain all unrated items of the user
-
-        If the filter_list parameter is specified, score prediction is executed only for the items
-        inside the filter list. Otherwise, score prediction is executed for all unrated items of the
-        particular user
+        If the items evaluated are present for each user, the filter list is calculated, and
+        score prediction is executed only for the items inside the filter list.
+        Otherwise, score prediction is executed for all unrated items of the particular user
 
         Args:
-            user_id (str): user_id of the user
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be ranked
+            test_set:  set of users for which to calculate the rank
+            n_recs:  number of the top items that will be present in the ranking
+
         Returns:
-            pd.DataFrame: DataFrame containing ranking for the user specified
+            concate_rank: list of the items ranked for each user
+
         """
-        alg = self.algorithm
+        train_set = self.graph.to_ratings()
 
-        rank = alg.rank(user_id, self.graph, recs_number, filter_list)
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
 
-        rank.insert(0, 'from_id', [user_id for i in range(len(rank))])
+        filter_dict: Union[Dict, None] = None
+        if methodology is not None:
+            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
 
-        return rank
+        rank_list = []
 
-    def _eval_fit_predict(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
-        user_id = user_ratings_train.from_id.iloc[0]
+        with logging_redirect_tqdm():
+            pbar = get_pbar(all_users)
+            for user_id in pbar:
+                user_id = str(user_id)
+                pbar.set_description(f"Computing predictions for {user_id}")
 
-        eval_graph: FullGraph = self.graph.copy()
+                filter_list = None
+                if filter_dict is not None:
+                    filter_list = filter_dict.get(user_id)
 
-        # we remove the interaction between user and items in the training set in order
-        # to make items unknown to the user
-        for idx, row in user_ratings_train.iterrows():
-            eval_graph.remove_link(row['from_id'], row['to_id'])
+                rank = self.algorithm.rank(user_id, self.graph, n_recs, filter_list=filter_list)
 
-        rs_eval = GraphBasedRS(self.algorithm, eval_graph)
-        score_frame = rs_eval.fit_predict(user_id, filter_list=test_items_list)
+                rank_list.extend(rank)
 
-        return score_frame
-
-    def _eval_fit_rank(self, user_ratings_train: pd.DataFrame, test_items_list: List[str]):
-        user_id = user_ratings_train.from_id.iloc[0]
-
-        eval_graph: FullGraph = self.graph.copy()
-
-        # we remove the interaction between user and items in the training set in order
-        # to make items unknown to the user
-        for idx, row in user_ratings_train.iterrows():
-            eval_graph.remove_link(row['from_id'], row['to_id'])
-
-        rs_eval = GraphBasedRS(self.algorithm, eval_graph)
-
-        score_frame = rs_eval.fit_rank(user_id, filter_list=test_items_list)
-
-        return score_frame
+        concat_pred = Prediction.from_list(rank_list)
+        return concat_pred

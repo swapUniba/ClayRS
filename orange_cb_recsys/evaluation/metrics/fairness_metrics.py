@@ -1,3 +1,4 @@
+import itertools
 import random
 from abc import abstractmethod
 from typing import List, Dict
@@ -5,15 +6,16 @@ from typing import List, Dict
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
-from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers, PercentageError
-from orange_cb_recsys.evaluation.metrics.metrics import RankingNeededMetric
+from orange_cb_recsys.content_analyzer import Ratings
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
+from orange_cb_recsys.recsys.partitioning import Split
+from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers
 from orange_cb_recsys.evaluation.utils import *
 
 from orange_cb_recsys.utils.const import logger
 
 
-class FairnessMetric(RankingNeededMetric):
+class FairnessMetric(Metric):
     """
     Abstract class that generalize fairness metrics
     """
@@ -57,76 +59,68 @@ class GroupFairnessMetric(FairnessMetric):
         raise NotImplementedError
 
     @staticmethod
-    def get_avg_pop_by_users(data: pd.DataFrame, pop_by_items: Counter,
+    def get_avg_pop_by_users(data: Ratings, pop_by_items: Counter,
                              group: Set[str] = None) -> Dict[str, float]:
         """
         Get the average popularity for each user in the DataFrame
 
         Args:
-            data (pd.DataFrame): a pandas dataframe with columns = ['from_id', 'to_id', 'rating']
+            data (pd.DataFrame): a pandas dataframe with columns = ['user_id', 'to_id', 'rating']
             pop_by_items (Dict<str, object>): popularity for each label ('label', 'popularity')
-            group (Set<str>): (optional) the set of users (from_id)
+            group (Set<str>): (optional) the set of users (user_id)
 
         Returns:
             avg_pop_by_users (Dict<str, float>): average popularity by user
         """
-
-        # def show_progress(coll, milestones=10):
-        #     processed = 0
-        #     for element in coll:
-        #         yield element
-        #         processed += 1
-        #         if processed % milestones == 0:
-        #             logger.info('Processed %s user in the group', processed)
-
         if group is None:
-            group = set(data['from_id'])
+            group = set(data.user_id_column)
 
-        series_by_user = {
-            user: data[data.from_id == user].to_id.values.flatten()
+        list_by_user = {
+            user: [interaction.item_id for interaction in data.get_user_interactions(user)]
             for user in group
         }
         avg_pop_by_users = {
-            user: get_avg_pop(series_by_user[user], pop_by_items)
+            user: get_avg_pop(list_by_user[user], pop_by_items)
             for user in group
         }
 
         return avg_pop_by_users
 
     @staticmethod
-    def split_user_in_groups(score_frame: pd.DataFrame, groups: Dict[str, float], pop_items: Set[str]
+    def split_user_in_groups(score_frame: Ratings, groups: Dict[str, float], pop_items: Set[str]
                              ) -> Dict[str, Set[str]]:
         """
         Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user
 
         Args:
-            score_frame (pd.DataFrame): DataFrame with columns = ['from_id', 'to_id', 'rating']
+            score_frame (pd.DataFrame): DataFrame with columns = ['user_id', 'to_id', 'rating']
             groups (Dict[str, float]): each key contains the name of the group and each value contains the
             percentage of the specified group. If the groups don't cover the entire user collection,
             the rest of the users are considered in a 'default_diverse' group
             pop_items (Set[str]): set of most popular 'to_id' labels
 
         Returns:
-            groups_dict (Dict<str, Set<str>>): key = group_name, value = Set of 'from_id' labels
+            groups_dict (Dict<str, Set<str>>): key = group_name, value = Set of 'user_id' labels
         """
-        num_of_users = len(set(score_frame['from_id']))
+        num_of_users = len(set(score_frame.user_id_column))
         if num_of_users < len(groups):
             raise NotEnoughUsers("You can't split in {} groups {} users! "
                                  "Try reducing number of groups".format(len(groups), num_of_users))
 
         for percentage_chosen in groups.values():
             if not 0 < percentage_chosen <= 1:
-                raise PercentageError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
+                raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
         total = sum(groups.values())
         if total > 1:
-            raise PercentageError("Incorrect percentage! Sum of percentage is > than 1")
+            raise ValueError("Incorrect percentage! Sum of percentage is > than 1")
         elif total < 1:
+            remaining = round(1 - total, 10)  # rounded at the 10th digit
             logger.warning("Sum of percentage is < than 1, "
-                           "the {} percentage of users will be inserted into the "
-                           "'default_diverse' group".format(1 - total))
+                           f"the {remaining} percentage of users will be inserted into the "
+                           "'default_diverse' group")
 
         pop_ratio_by_users = pop_ratio_by_user(score_frame, most_pop_items=pop_items)
-        pop_ratio_by_users.sort_values(['popularity_ratio'], inplace=True, ascending=False)
+        pop_ratio_by_users = sorted(pop_ratio_by_users, key=pop_ratio_by_users.get, reverse=True)
 
         groups_dict: Dict[str, Set[str]] = {}
         last_index = 0
@@ -137,21 +131,21 @@ class GroupFairnessMetric(FairnessMetric):
             if group_index == 0:
                 logger.warning('Not enough rows for group {}! It will be discarded'.format(group_name))
             else:
-                groups_dict[group_name] = set(pop_ratio_by_users['from_id'][last_index:group_index])
+                groups_dict[group_name] = set(pop_ratio_by_users[last_index:group_index])
                 last_index = group_index
         if percentage < 1:
             group_index = round(num_of_users)
-            groups_dict['default_diverse'] = set(pop_ratio_by_users['from_id'][last_index:group_index])
+            groups_dict['default_diverse'] = set(pop_ratio_by_users[last_index:group_index])
         return groups_dict
 
 
 class GiniIndex(FairnessMetric):
-    """
+    r"""
     The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
     result it will be returned and not those of every user.
     The metric is calculated as such:
 
-    .. math:: Gini_sys = \\frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    .. math:: Gini_sys = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
     |
     Where:
 
@@ -197,29 +191,30 @@ class GiniIndex(FairnessMetric):
 
         predictions = split.pred
 
-        score_dict = {'from_id': [], str(self): []}
+        score_dict = {'user_id': [], str(self): []}
 
         if self.__top_n is not None:
-            predictions = predictions.groupby('from_id').head(self.__top_n)
+            predictions = itertools.chain.from_iterable([predictions.get_user_interactions(user_id, self.__top_n)
+                                                         for user_id in set(predictions.user_id_column)])
 
-        coun = Counter(predictions['to_id'])
+        coun = Counter([prediction.item_id for prediction in predictions])
 
         result = gini(list(coun.values()))
 
-        score_dict['from_id'].append('sys')
+        score_dict['user_id'].append('sys')
         score_dict[str(self)].append(result)
 
         return pd.DataFrame(score_dict)
 
 
 class PredictionCoverage(FairnessMetric):
-    """
+    r"""
     The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
     to all available items. It's a system wide metric, so only its result it will be returned and not those of every
     user.
     The metric is calculated as such:
 
-    .. math:: Prediction Coverage_sys = (\\frac{|I_p|}{|I|})\cdot100
+    .. math:: Prediction Coverage_sys = (\frac{|I_p|}{|I|})\cdot100
     |
     Where:
 
@@ -241,7 +236,7 @@ class PredictionCoverage(FairnessMetric):
     def catalog(self):
         return self.__catalog
 
-    def _get_covered(self, pred: pd.DataFrame):
+    def _get_covered(self, pred: Ratings):
         """
         Private function which calculates all recommended items given a catalog of all available items (specified in
         the constructor)
@@ -253,10 +248,11 @@ class PredictionCoverage(FairnessMetric):
             Set of distinct items that have been recommended that also appear in the catalog
         """
         catalog = self.catalog
-        return set(pred.query('to_id in @catalog')['to_id'])
+        pred_items = set(pred.item_id_column)
+        return pred_items.intersection(catalog)
 
     def perform(self, split: Split) -> pd.DataFrame:
-        prediction = {'from_id': [], str(self): []}
+        prediction = {'user_id': [], str(self): []}
         catalog = self.__catalog
 
         pred = split.pred
@@ -266,21 +262,21 @@ class PredictionCoverage(FairnessMetric):
         percentage = (len(covered_items) / len(catalog)) * 100
         coverage_percentage = np.round(percentage, 2)
 
-        prediction['from_id'].append('sys')
+        prediction['user_id'].append('sys')
         prediction[str(self)].append(coverage_percentage)
 
         return pd.DataFrame(prediction)
 
 
 class CatalogCoverage(PredictionCoverage):
-    """
+    r"""
     The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
     to all available items. It's a system wide metric, so only its result it will be returned and not those of every
     user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
     parameter is passed then it's a simple Prediction Coverage.
     The metric is calculated as such:
 
-    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
     |
     Where:
 
@@ -296,7 +292,7 @@ class CatalogCoverage(PredictionCoverage):
     With the 'k' parameter one could specify the number of users that will be used to calculate catalog coverage:
     k users will be randomly sampled and their recommendation lists will be used. The formula above becomes:
 
-    .. math:: Catalog Coverage_sys = (\\frac{|\\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
+    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
     |
     Where:
 
@@ -326,35 +322,39 @@ class CatalogCoverage(PredictionCoverage):
 
         return name
 
-    def _get_covered(self, pred: pd.DataFrame):
+    def _get_covered(self, pred: Ratings):
         catalog = self.catalog
 
         if self.__top_n is not None:
-            pred = pred.groupby('from_id').head(self.__top_n)
+            pred = list(itertools.chain.from_iterable([pred.get_user_interactions(user_id, self.__top_n)
+                                                       for user_id in set(pred.user_id_column)]))
 
         # IF k is passed, then we choose randomly k users and calc catalog coverage
         # based on their predictions. We check that k is < n_user since if it's the equal
         # or it's greater, then all predictions generated for all user must be used
-        if self.__k is not None and self.__k < len(pred.from_id):
-            user_list = list(set(pred.from_id))
+        if self.__k is not None and self.__k < len(pred):
+            user_list = list(set([interaction_pred.user_id for interaction_pred in pred]))
 
             sampling = random.choices(user_list, k=self.__k)
-            covered_items = set(pred.query('(from_id in @sampling) and (to_id in @catalog)')['to_id'])
+            predicted_items = set([interaction_pred.item_id
+                                   for interaction_pred in pred if interaction_pred.user_id in sampling])
+            covered_items = predicted_items.intersection(catalog)
         else:
-            covered_items = set(pred.query('to_id in @catalog')['to_id'])
+            predicted_items = set([interaction_pred.item_id for interaction_pred in pred])
+            covered_items = predicted_items.intersection(catalog)
 
         return covered_items
 
 
 class DeltaGap(GroupFairnessMetric):
-    """
+    r"""
     The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
     multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
     It's a system wide metric and results of every group will be returned.
 
     It is calculated as such:
 
-    .. math:: \Delta GAP = \\frac{recs_GAP - profile_GAP}{profile_GAP}
+    .. math:: \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
 
     Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
     and percentage of how many user must contain a group as values. For example::
@@ -366,10 +366,8 @@ class DeltaGap(GroupFairnessMetric):
     users with many popular items will be inserted into the first group, users with niche items rated will be inserted
     into one of the last groups
 
-    If the 'top_n' parameter is specified, then the Delta GAP will be calculed considering only the first
+    If the 'top_n' parameter is specified, then the Delta GAP will be calculated considering only the first
     *n* items of every recommendation list of all users
-
-
 
     Args:
         user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
@@ -382,7 +380,7 @@ class DeltaGap(GroupFairnessMetric):
 
     def __init__(self, user_groups: Dict[str, float], top_n: int = None, pop_percentage: float = 0.2):
         if not 0 < pop_percentage <= 1:
-            raise PercentageError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
+            raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
         self.__pop_percentage = pop_percentage
         self.__top_n = top_n
@@ -396,11 +394,11 @@ class DeltaGap(GroupFairnessMetric):
 
     @staticmethod
     def calculate_gap(group: Set[str], avg_pop_by_users: Dict[str, object]) -> float:
-        """
+        r"""
         Compute the GAP (Group Average Popularity) formula
 
 
-        .. math:: GAP = \\frac{\sum_{u \in U}\cdot \\frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
+        .. math:: GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
 
         Where:
 
@@ -409,7 +407,7 @@ class DeltaGap(GroupFairnessMetric):
         - pop_i is the popularity of item i
 
         Args:
-            group (Set<str>): the set of users (from_id)
+            group (Set<str>): the set of users (user_id)
             avg_pop_by_users (Dict<str, object>): average popularity by user
 
         Returns:
@@ -444,7 +442,7 @@ class DeltaGap(GroupFairnessMetric):
         truth = split.truth
 
         if self.__top_n:
-            predictions = predictions.groupby('from_id').head(self.__top_n)
+            predictions = predictions.take_head_all(self.__top_n)
 
         most_popular_items = popular_items(score_frame=truth, pop_percentage=self.__pop_percentage)
         user_groups = self.split_user_in_groups(score_frame=predictions, groups=self.user_groups,
@@ -452,9 +450,9 @@ class DeltaGap(GroupFairnessMetric):
 
         split_result = {"{} | {}".format(str(self), group): []
                         for group in user_groups}
-        split_result['from_id'] = ['sys']
+        split_result['user_id'] = ['sys']
 
-        pop_by_items = Counter(list(truth.to_id))
+        pop_by_items = Counter(list(truth.item_id_column))
 
         for group_name in user_groups:
             # Computing avg pop by users recs for delta gap
