@@ -5,7 +5,7 @@ from orange_cb_recsys.content_analyzer.memory_interfaces import KeywordIndex, Se
 
 class TestIndexInterface(TestCase):
     def test_keyword_serialize(self):
-        index = KeywordIndex("/keyword")
+        index = KeywordIndex("./keyword")
         try:
             index.init_writing()
             index.new_content()
@@ -72,7 +72,7 @@ class TestIndexInterface(TestCase):
             index3.delete()
 
     def test_get_field(self):
-        index = KeywordIndex("/keyword")
+        index = KeywordIndex("./keyword")
 
         try:
             index.init_writing()
@@ -96,7 +96,7 @@ class TestIndexInterface(TestCase):
             index.delete()
 
     def test_get_tfidf(self):
-        index = KeywordIndex("/keyword")
+        index = KeywordIndex("./keyword")
         try:
             index.init_writing()
             index.new_content()
