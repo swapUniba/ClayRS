@@ -87,8 +87,8 @@ jobs:
       -
         name: Test
         run: |
-          pytest --cov-report xml:codecoverage.xml --cov=./ test/
-          ls
+          coverage run --source=orange_cb_recsys -m pytest test/
+          coverage xml -o 'codecoverage.xml'
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
