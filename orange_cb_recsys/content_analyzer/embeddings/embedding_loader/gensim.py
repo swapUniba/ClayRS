@@ -21,7 +21,7 @@ class Gensim(WordEmbeddingLoader):
         return self.model.vector_size
 
     def get_embedding(self, word: str) -> np.ndarray:
-        return self.model.wv[word]
+        return self.model[word]
 
     def load_model(self):
         # if the reference isn't in the possible models, FileNotFoundError is raised

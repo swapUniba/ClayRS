@@ -15,7 +15,7 @@ class GensimWord2Vec(GensimWordEmbeddingLearner):
         super().__init__(reference, auto_save, ".bin", **kwargs)
 
     def fit_model(self, corpus: List):
-        self.model = Word2Vec(sentences=corpus, **self.additional_parameters).wv
+        self.model = Word2Vec(sentences=corpus, **self.additional_parameters)
 
     def load_model(self):
         return KeyedVectors.load_word2vec_format(self.reference, binary=True)
