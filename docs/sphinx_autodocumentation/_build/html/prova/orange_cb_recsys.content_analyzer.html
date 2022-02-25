@@ -1,0 +1,766 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.content_analyzer package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-content-analyzer-package">
+<h1>orange_cb_recsys.content_analyzer package<a class="headerlink" href="#orange-cb-recsys-content-analyzer-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html">orange_cb_recsys.content_analyzer.content_representation package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#module-orange_cb_recsys.content_analyzer.content_representation.content">orange_cb_recsys.content_analyzer.content_representation.content module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#module-orange_cb_recsys.content_analyzer.content_representation.representation_container">orange_cb_recsys.content_analyzer.content_representation.representation_container module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#module-orange_cb_recsys.content_analyzer.content_representation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html">orange_cb_recsys.content_analyzer.embeddings package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html">orange_cb_recsys.content_analyzer.embeddings.embedding_learner package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.doc2vec">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.doc2vec module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.fasttext">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.fasttext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_indexing">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_indexing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner.word2vec">orange_cb_recsys.content_analyzer.embeddings.embedding_learner.word2vec module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_learner.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_learner">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html">orange_cb_recsys.content_analyzer.embeddings.embedding_loader package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_loader.wiki2vec_loader">orange_cb_recsys.content_analyzer.embeddings.embedding_loader.wiki2vec_loader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.embedding_loader.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_loader">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#module-orange_cb_recsys.content_analyzer.embeddings.embedding_source">orange_cb_recsys.content_analyzer.embeddings.embedding_source module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.embeddings.html#module-orange_cb_recsys.content_analyzer.embeddings">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html">orange_cb_recsys.content_analyzer.field_content_production_techniques package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.html">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique">orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency">orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf">orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#module-orange_cb_recsys.content_analyzer.field_content_production_techniques">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html">orange_cb_recsys.content_analyzer.information_processor package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#module-orange_cb_recsys.content_analyzer.information_processor.ekphrasis">orange_cb_recsys.content_analyzer.information_processor.ekphrasis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#module-orange_cb_recsys.content_analyzer.information_processor.information_processor">orange_cb_recsys.content_analyzer.information_processor.information_processor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#module-orange_cb_recsys.content_analyzer.information_processor.nlp">orange_cb_recsys.content_analyzer.information_processor.nlp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#module-orange_cb_recsys.content_analyzer.information_processor.spacy">orange_cb_recsys.content_analyzer.information_processor.spacy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#module-orange_cb_recsys.content_analyzer.information_processor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html">orange_cb_recsys.content_analyzer.memory_interfaces package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html#module-orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces">orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html#module-orange_cb_recsys.content_analyzer.memory_interfaces.text_interface">orange_cb_recsys.content_analyzer.memory_interfaces.text_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html#module-orange_cb_recsys.content_analyzer.memory_interfaces">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html">orange_cb_recsys.content_analyzer.ratings_manager package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#module-orange_cb_recsys.content_analyzer.ratings_manager.rating_processor">orange_cb_recsys.content_analyzer.ratings_manager.rating_processor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#module-orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#module-orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis">orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#module-orange_cb_recsys.content_analyzer.ratings_manager">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.config">
+<span id="orange-cb-recsys-content-analyzer-config-module"></span><h2>orange_cb_recsys.content_analyzer.config module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.config" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.config.</span></span><span class="sig-name descname"><span class="pre">ContentAnalyzerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exogenous_representation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Class that represents the configuration for the content analyzer. The configuration stores the data that
+will be used by the content analyzer main to create contents and process their fields with complex techniques</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><em>RawInformationSource</em></a>) – raw data source to iterate over for extracting the original contents</p></li>
+<li><p><strong>id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – list of the fields names containing the content’s id,
+it’s a list instead of single value for handling complex ids composed of multiple fields</p></li>
+<li><p><strong>output_directory</strong> (<em>str</em>) – path of the results serialized content instance</p></li>
+<li><p><strong>field_dict</strong> (<em>Dict&lt;str</em><em>, </em><em>FieldConfig&gt;</em>) – stores the config for each field_name the user wants to apply said
+configurations on</p></li>
+<li><p><strong>exogenous_representation_list</strong> – list of techniques that are used to retrieve exogenous properties that represent
+the contents</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_multiple_config">
+<span class="sig-name descname"><span class="pre">add_multiple_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_multiple_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds multiple FieldConfig for a specific field</p>
+<p>Useful when multiple representations must be specified at once for a field</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> (<em>str</em>) – field_name for which the configuration list will be set in the field_dict</p></li>
+<li><p><strong>config_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><em>FieldConfig</em></a><em>]</em>) – list of FieldConfigs that will be added for a specific field_name</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_multiple_exogenous">
+<span class="sig-name descname"><span class="pre">add_multiple_exogenous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_multiple_exogenous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds multiple Exogenous Config passed as argument to the exogenous representation list.</p>
+<p>Useful when multiple exogenous techniques must be specified at once</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><em>ExogenousConfig</em></a><em>]</em>) – List of ExogenousConfig that will used to expand the Content</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_single_config">
+<span class="sig-name descname"><span class="pre">add_single_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_single_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a single FieldConfig passed as argument to the FieldConfigs list of the defined field_name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> (<em>str</em>) – field name for which the FieldConfig will be added to its config list in the field_dict</p></li>
+<li><p><strong>field_config</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><em>FieldConfig</em></a>) – FieldConfig instance to append to the config list of the defined field</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_single_exogenous">
+<span class="sig-name descname"><span class="pre">add_single_exogenous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exogenous_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.add_single_exogenous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the Exogenous Config passed as argument to the exogenous representation list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>exogenous_config</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><em>ExogenousConfig</em></a>) – exogenous config instance to append to the exogenous_representation_list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.exogenous_representation_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exogenous_representation_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.exogenous_representation_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the exogenous_representation_list</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.export_json">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">export_json</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.export_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.get_configs_list">
+<span class="sig-name descname"><span class="pre">get_configs_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.get_configs_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter the list of the field configs specified for the input field</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_name</strong> (<em>str</em>) – name of the field for which the list of field configs will be retrieved</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>iterator for the field configs specified for the input field</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig">FieldConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.get_field_name_list">
+<span class="sig-name descname"><span class="pre">get_field_name_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.get_field_name_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of the field names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the field names in the field_dict</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List&lt;str&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the id that represents the ids of the produced contents</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.output_directory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_directory</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.output_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the output directory where the produced contents will be stored</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig.source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the raw information source where the original contents are stored</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ExogenousConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.config.</span></span><span class="sig-name descname"><span class="pre">ExogenousConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exogenous_technique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that represents the configuration for a single exogenous representation. The config allows the user to
+specify an exogenous properties retrieval technique to use (that will be used to retrieve the data that will
+be stored in the content exogenous dictionary) and an id for the configuration (that can be used by the user
+to refer to the representation that the config will generate).
+It’s possible to avoid assigning an id to the Config, in that case the content_analyzer_main will just
+automatically assign a default id to the exogenous representation the config will generate (default ids are
+‘0’, ‘1’, and so on).</p>
+<p class="rubric">Example</p>
+<p>ExogenousConfig(DBPediaMappingTechnique(‘Film’, ‘EN’, ‘Title’), ‘test’)</p>
+<p>will create an exogenous_representation for the content bu retrieving the data regarding it from DBPedia,
+said representation will be named ‘test’ in the content’s exogenous dictionary</p>
+<p>ExogenousConfig(DBPediaMappingTechnique(‘Film’, ‘EN’, ‘Title’))</p>
+<p>same as the example above, but, once in the content analyzer main, the representation generated by the
+exogenous technique will be assigned a default name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exogenous_technique</strong> (<a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval"><em>ExogenousPropertiesRetrieval</em></a>) – technique to use in order to retrieve exogenous data
+regarding the content to store inside of it. An example would be the DBPediaMappingTechnique which allows
+to retrieve properties from DBPedia regarding the item.</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – id to store for the config, this can be used later by the user to refer to the representation
+generated by this config. (the content_analyzer_main will handle cases where a list of ExogenousConfigs
+has non unique ids)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ExogenousConfig.exogenous_technique">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exogenous_technique</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig.exogenous_technique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the exogenous properties retrieval technique</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ExogenousConfig.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the ExogenousConfig id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.config.</span></span><span class="sig-name descname"><span class="pre">FieldConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_technique:</span> <span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.FieldContentProductionTechnique</span> <span class="pre">=</span> <span class="pre">&lt;orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.DefaultTechnique</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing:</span> <span class="pre">typing.Optional[typing.Union[orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typing.List[orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor]]]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_interface:</span> <span class="pre">typing.Optional[orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'EN'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that represents the configuration for a single representation of a field. The configuration of a single
+representation is defined by a FieldContentProductionTechnique that will be applied to the pre-processed data
+of said field (EmbeddingTechnique, for example), a list of InformationProcessor that will pre-process the data
+in the field (NLTK, for example), an id which can be used by the user to refer to a particular representation
+(by doing so the user can freely refer to a representation for a field of a content by using the id).
+There is also a memory_interface attribute which allows to define a data structure where the contents can be
+serialized. If None, the output of the field content production technique in the config will be serialized in the
+content itself, otherwise it will be serialized in a InformationInterface.
+If preprocessing is not defined, no preprocessing operations will be done on the field data.
+If id is not defined, a default id will be assigned to the field representation related to this config once it is
+being processed by the ContentAnalyzer.
+Various configurations are possible depending on the type of field the user wants to create.</p>
+<p class="rubric">Example</p>
+<p>FieldConfig(SkLearnTfIdf(), NLTK(), id=’field_example’)</p>
+<p>this will produce a field representation using the SkLearnTfIdf technique on the field data,
+preprocessed by NLTK, and the name of the produced representation will be ‘field_example’</p>
+<p>FieldConfig(SkLearnTfIdf(), NLTK())</p>
+<p>this will produce the same result as above but the id for the field representation defined by this config will
+be set by the ContentAnalyzer once it is being processed</p>
+<p>FieldConfig(SkLearnTfIdf(), memory_interface=SearchIndex(/somedir))</p>
+<p>this will produce a field representation using the SkLearnTfIdf technique on the field data, but it will not be
+directly stored in the content, instead it will be stored in a index</p>
+<p>FieldConfig(SkLearnTfIdf())</p>
+<p>this time no preprocessing operations will be applied to the field data, only the complex representation will
+be applied</p>
+<p>FieldConfig()</p>
+<p>nothing will be done on the field. The ContentAnalyzer will just decode the data without applying anything else</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content_technique</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.field_content_production_techniques.html#orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.FieldContentProductionTechnique" title="orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique.FieldContentProductionTechnique"><em>FieldContentProductionTechnique</em></a>) – technique that will be applied to the field in order to
+produce a complex representation of said field</p></li>
+<li><p><strong>preprocessing</strong> (<em>Union</em><em>[</em><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a><em>, </em><em>List</em><em>[</em><a class="reference internal" href="orange_cb_recsys.content_analyzer.information_processor.html#orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor" title="orange_cb_recsys.content_analyzer.information_processor.information_processor.InformationProcessor"><em>InformationProcessor</em></a><em>]</em>) – list (or single value) of
+InformationProcessor that will be used to modify the data in the field that will be used
+by the content_technique</p></li>
+<li><p><strong>memory_interface</strong> (<a class="reference internal" href="orange_cb_recsys.content_analyzer.memory_interfaces.html#orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface" title="orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces.InformationInterface"><em>InformationInterface</em></a>) – complex structure where the contents can be serialized (an Index for
+example)</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – id to store for the config, this can be used later by the user to refer to the representation
+generated by this config. (the content analyzer main will handle cases where a list of FieldConfigs for a
+field has non unique ids)</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – string code that represents the language the preprocessors will be set to</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig.content_technique">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">content_technique</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig.content_technique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the field content production technique of the field</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the id of the field config</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig.lang">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lang</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig.lang" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the language of the field config</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig.memory_interface">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">memory_interface</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig.memory_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the index associated to the field config</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.FieldConfig.preprocessing">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">preprocessing</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.FieldConfig.preprocessing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the list of preprocessor of the field config</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.ItemAnalyzerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.config.</span></span><span class="sig-name descname"><span class="pre">ItemAnalyzerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exogenous_representation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.ItemAnalyzerConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig</span></code></a></p>
+<p>Class that represents the configuration for the content analyzer. The configuration stores the data that
+will be used by the content analyzer main to create contents and process their fields with complex techniques.
+In particular this class refers to items as the content.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.config.UserAnalyzerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.config.</span></span><span class="sig-name descname"><span class="pre">UserAnalyzerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.FieldConfig" title="orange_cb_recsys.content_analyzer.config.FieldConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.FieldConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exogenous_representation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ExogenousConfig" title="orange_cb_recsys.content_analyzer.config.ExogenousConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ExogenousConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.config.UserAnalyzerConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig</span></code></a></p>
+<p>Class that represents the configuration for the content analyzer. The configuration stores the data that
+will be used by the content analyzer main to create contents and process their fields with complex techniques.
+In particular this class refers to users as the content.</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.content_analyzer_main">
+<span id="orange-cb-recsys-content-analyzer-content-analyzer-main-module"></span><h2>orange_cb_recsys.content_analyzer.content_analyzer_main module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.content_analyzer_main" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.content_analyzer_main.</span></span><span class="sig-name descname"><span class="pre">ContentAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to whom the control of the content analysis phase is delegated. It uses the data stored in the configuration
+file to create and serialize the contents the user wants to produce. It also checks that the configurations the
+user wants to run on the raw contents have unique ids (otherwise it would be impossible to refer to a particular
+field representation or exogenous representation)
+:param config: configuration for processing the item fields. This parameter provides</p>
+<blockquote>
+<div><p>the possibility of customizing the way in which the input data is processed.</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the creation of the contents and serializes the contents. This method starts the content production
+process and initializes everything that will be used to create said contents, their fields and their
+representations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.set_config">
+<span class="sig-name descname"><span class="pre">set_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentAnalyzer.set_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.content_analyzer_main.</span></span><span class="sig-name descname"><span class="pre">ContentsProducer</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Singleton class which encapsulates the creation process of the items,
+The creation process is specified in the config parameter of ContentAnalyzer and
+is supposed to be the same for each item.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.create_contents">
+<span class="sig-name descname"><span class="pre">create_contents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.Content</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.create_contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the contents based on the information defined in the Content Analyzer’s config
+:returns: list of contents created by the method
+:rtype: contents_list (List[Content])</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.get_instance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the singleton instance
+:returns: instance
+:rtype: ContentsProducer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.set_config">
+<span class="sig-name descname"><span class="pre">set_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig" title="orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig"><span class="pre">orange_cb_recsys.content_analyzer.config.ContentAnalyzerConfig</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.content_analyzer_main.ContentsProducer.set_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.exceptions">
+<span id="orange-cb-recsys-content-analyzer-exceptions-module"></span><h2>orange_cb_recsys.content_analyzer.exceptions module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exceptions.Handler_ScoreNotFloat">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exceptions.</span></span><span class="sig-name descname"><span class="pre">Handler_ScoreNotFloat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exceptions.Handler_ScoreNotFloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler that catches the above exceptions.</p>
+<p>Tries to run the functions normally, if one of the above exceptions is caught then it must return
+an empty frame for the user since predictions can’t be calculated for it.</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.exogenous_properties_retrieval">
+<span id="orange-cb-recsys-content-analyzer-exogenous-properties-retrieval-module"></span><h2>orange_cb_recsys.content_analyzer.exogenous_properties_retrieval module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.exogenous_properties_retrieval" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.BabelPyEntityLinking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.</span></span><span class="sig-name descname"><span class="pre">BabelPyEntityLinking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_to_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EN'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.BabelPyEntityLinking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking</span></code></a></p>
+<p>Interface for the Babelpy library that wraps some feature of Babelfy entity Linking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_key</strong> – string obtained by registering to babelfy website, with None babelpy key only few
+queries can be executed</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.BabelPyEntityLinking.get_properties">
+<span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp" title="orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.BabelPyEntityLinking.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a list of EntitiesProp objects for every raw content in the raw source where .</p>
+<p>An Entity Prop object is basically a dict where the keys are the entity linked (since there can be multiple
+entities in a field) and values are properties retrieved from BabelPy for that entity.
+.. rubric:: Example</p>
+<p>properties_list = [EntityProp(), EntityProp(), …]</p>
+<p>EntityProp.value -&gt; {‘DiCaprio’: {‘babelSynsetID’: …, …},’Nolan’: {‘babelSynsetID: …, …}, …}</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.</span></span><span class="sig-name descname"><span class="pre">DBPediaMappingTechnique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'only_retrieved_evaluated'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_as_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval</span></code></a></p>
+<dl class="simple">
+<dt>Class that creates a list of couples like this:</dt><dd><p>&lt;property: property value URI&gt;</p>
+</dd>
+</dl>
+<p>In this implementation the properties are retrieved from DBPedia</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity_type</strong> (<em>str</em>) – domain of the items that you want to process</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – lang of the descriptions</p></li>
+<li><p><strong>label_field</strong> – field to be used as a filter,
+DBPedia node that has the property rdfs:label equal to specified field value
+will be retrieved</p></li>
+<li><p><strong>mode</strong> – one in: ‘all’, ‘all_retrieved’, ‘only_retrieved_evaluated’, ‘original_retrieved’,</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.get_properties">
+<span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict" title="orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the properties couple retrieval</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – string identifier of the returned properties object</p></li>
+<li><p><strong>raw_content</strong> – represent a row in the dataset that
+is being processed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PropertiesDict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.label_field">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label_field</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.label_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.prop_as_uri">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prop_as_uri</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.DBPediaMappingTechnique.prop_as_uri" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.</span></span><span class="sig-name descname"><span class="pre">EntityLinking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'only_retrieved_evaluated'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval</span></code></a></p>
+<p>Abstract class that generalizes implementations that use entity linking for producing the semantic description</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking.get_properties">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp" title="orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.EntitiesProp</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.EntityLinking.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.</span></span><span class="sig-name descname"><span class="pre">ExogenousPropertiesRetrieval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'only_retrieved_evaluated'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval.get_properties">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation" title="orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.ExogenousPropertiesRepresentation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval.mode">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval.mode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.PropertiesFromDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.</span></span><span class="sig-name descname"><span class="pre">PropertiesFromDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'only_retrieved_evaluated'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_name_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.PropertiesFromDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval" title="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.ExogenousPropertiesRetrieval</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.PropertiesFromDataset.get_properties">
+<span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict" title="orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.PropertiesDict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.exogenous_properties_retrieval.PropertiesFromDataset.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer.raw_information_source">
+<span id="orange-cb-recsys-content-analyzer-raw-information-source-module"></span><h2>orange_cb_recsys.content_analyzer.raw_information_source module<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer.raw_information_source" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.CSVFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.</span></span><span class="sig-name descname"><span class="pre">CSVFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'utf-8-sig'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.CSVFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></code></a></p>
+<p>Abstract class for the data acquisition from a csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.DATFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.</span></span><span class="sig-name descname"><span class="pre">DATFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.DATFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></code></a></p>
+<p>Class for the data acquisition from a DAT file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.JSONFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.</span></span><span class="sig-name descname"><span class="pre">JSONFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.JSONFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></code></a></p>
+<p>Class for the data acquisition from a json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.</span></span><span class="sig-name descname"><span class="pre">RawInformationSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract Class that generalizes the acquisition of raw descriptions of the contents
+from one of the possible acquisition channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<em>str</em>) – define the type of encoding of data stored in the source (example: “utf-8”)</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource.encoding">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource.encoding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.</span></span><span class="sig-name descname"><span class="pre">SQLDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'utf8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource" title="orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.content_analyzer.raw_information_source.RawInformationSource</span></code></a></p>
+<p>Abstract class for the data acquisition from a SQL Database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em>) – host ip of the sql server</p></li>
+<li><p><strong>username</strong> (<em>str</em>) – username for the access</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – password for the access</p></li>
+<li><p><strong>database_name</strong> (<em>str</em>) – name of database</p></li>
+<li><p><strong>table_name</strong> (<em>str</em>) – name of the database table where data is stored</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.conn">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">conn</span></span><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.conn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.database_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">database_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.database_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.host">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">host</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.host" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.password">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.table_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.table_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.username">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#orange_cb_recsys.content_analyzer.raw_information_source.SQLDatabase.username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.content_analyzer">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.content_analyzer" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.content_analyzer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

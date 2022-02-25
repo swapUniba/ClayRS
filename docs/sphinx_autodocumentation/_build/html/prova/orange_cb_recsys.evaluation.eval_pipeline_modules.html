@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.evaluation.eval_pipeline_modules package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-evaluation-eval-pipeline-modules-package">
+<h1>orange_cb_recsys.evaluation.eval_pipeline_modules package<a class="headerlink" href="#orange-cb-recsys-evaluation-eval-pipeline-modules-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator">
+<span id="orange-cb-recsys-evaluation-eval-pipeline-modules-metric-evaluator-module"></span><h2>orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator.MetricEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator.</span></span><span class="sig-name descname"><span class="pre">MetricEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator.MetricEvaluator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Module of the Evaluation pipeline which, has the task to evaluate recommendations generated for every user with a
+list of metric specified</p>
+<p>This module can also be used to evaluate recommendations generated from outside. In this case, the usage is the
+following</p>
+<p>MANUAL USAGE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s say we have outside recommendations for 2 splits, and</span>
+<span class="c1"># we want to evaluate them both</span>
+
+<span class="c1"># First we must wrap our generated recommendations into &#39;Split&#39; objects</span>
+<span class="n">split1</span> <span class="o">=</span> <span class="n">Split</span><span class="p">(</span><span class="n">pred1</span><span class="p">,</span> <span class="n">truth1</span><span class="p">)</span>
+<span class="n">split2</span> <span class="o">=</span> <span class="n">Split</span><span class="p">(</span><span class="n">pred2</span><span class="p">,</span> <span class="n">truth2</span><span class="p">)</span>
+
+<span class="c1"># Then we instantiate the MetricCalculator passing the split list</span>
+<span class="n">mc</span> <span class="o">=</span> <span class="n">MetricCalculator</span><span class="p">([</span><span class="n">split1</span><span class="p">,</span> <span class="n">split2</span><span class="p">])</span>
+
+<span class="c1"># Then simply call the &#39;eval_metrics&#39; method with the list of metrics you&#39;d like to evaluate</span>
+<span class="n">mc</span><span class="o">.</span><span class="n">eval_metrics</span><span class="p">([</span><span class="n">Precision</span><span class="p">(),</span> <span class="n">Recall</span><span class="p">()])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predictions_truths</strong> (<em>List</em><em>[</em><a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Split" title="orange_cb_recsys.recsys.partitioning.Split"><em>Split</em></a><em>]</em>) – List of splits that need to be evaluated. Pass your custom splits here if you
+want to evaluate recommendations generated from the outside.
+This is set to None by default, meaning that splits that will be evaluated are those generated by
+the PredictionCalculator module of the EvalModel pipeline</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator.MetricEvaluator.eval_metrics">
+<span class="sig-name descname"><span class="pre">eval_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator.MetricEvaluator.eval_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which effectively evaluates recommendations generated with the list of metric passed as argument.</p>
+<p>It returns two Pandas DataFrame, the first one containing system results on all metrics specified, the second
+one containing each users results for every metric eligible</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metric_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><em>Metric</em></a><em>]</em>) – List of metric on which recommendations need to be evaluated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
+list, the second one will contain every user results for every metric eligible</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.eval_pipeline_modules">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.evaluation.eval_pipeline_modules" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.evaluation.eval_pipeline_modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

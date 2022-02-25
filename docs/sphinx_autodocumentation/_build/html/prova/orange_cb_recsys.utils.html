@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.utils package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-utils-package">
+<h1>orange_cb_recsys.utils package<a class="headerlink" href="#orange-cb-recsys-utils-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.utils.check_tokenization">
+<span id="orange-cb-recsys-utils-check-tokenization-module"></span><h2>orange_cb_recsys.utils.check_tokenization module<a class="headerlink" href="#module-orange_cb_recsys.utils.check_tokenization" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.check_tokenization.check_not_tokenized">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.check_tokenization.</span></span><span class="sig-name descname"><span class="pre">check_not_tokenized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.check_tokenization.check_not_tokenized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Untokenizes a tokenized text</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.check_tokenization.check_tokenized">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.check_tokenization.</span></span><span class="sig-name descname"><span class="pre">check_tokenized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.check_tokenization.check_tokenized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizes a text</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.check_tokenization.tokenize_in_sentences">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.check_tokenization.</span></span><span class="sig-name descname"><span class="pre">tokenize_in_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.check_tokenization.tokenize_in_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizes a text into sentences</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.class_utils">
+<span id="orange-cb-recsys-utils-class-utils-module"></span><h2>orange_cb_recsys.utils.class_utils module<a class="headerlink" href="#module-orange_cb_recsys.utils.class_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.class_utils.get_all_implemented_classes">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.class_utils.</span></span><span class="sig-name descname"><span class="pre">get_all_implemented_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.class_utils.get_all_implemented_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that retrieves all implemented subclasses of a given class
+(also considering subclasses of a subclass and so on)</p>
+<p>The method calls itself to find the subclasses of each subclass</p>
+<p>If the class passed as argument is not abstract, it is added to the set’s results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cls</strong> (<em>Type</em>) – class from which all implemented subclasses will be extracted</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>set containing all of cls’ implemented subclasses and cls itself if it is not abstract</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.class_utils.get_all_implemented_subclasses">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.class_utils.</span></span><span class="sig-name descname"><span class="pre">get_all_implemented_subclasses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.class_utils.get_all_implemented_subclasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that retrieves all implemented subclasses of a given class
+(also considering subclasses of a subclass and so on)</p>
+<p>The method calls itself to find the subclasses of each subclass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cls</strong> (<em>Type</em>) – class from which all implemented subclasses will be extracted</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>set containing all of cls’ implemented subclasses</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.const">
+<span id="orange-cb-recsys-utils-const-module"></span><h2>orange_cb_recsys.utils.const module<a class="headerlink" href="#module-orange_cb_recsys.utils.const" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.const.get_pbar">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.const.</span></span><span class="sig-name descname"><span class="pre">get_pbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.const.get_pbar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.const.progbar">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.const.</span></span><span class="sig-name descname"><span class="pre">progbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">it</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value:</span> <span class="pre">typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substitute_with_current=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.const.progbar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.custom_logger">
+<span id="orange-cb-recsys-utils-custom-logger-module"></span><h2>orange_cb_recsys.utils.custom_logger module<a class="headerlink" href="#module-orange_cb_recsys.utils.custom_logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.custom_logger.ColoredFormatter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.custom_logger.</span></span><span class="sig-name descname"><span class="pre">ColoredFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.custom_logger.ColoredFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Formatter</span></code></p>
+<p>Colored log formatter.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.custom_logger.ColoredFormatter.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.custom_logger.ColoredFormatter.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format the specified record as text.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.custom_logger.getCustomLogger">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.custom_logger.</span></span><span class="sig-name descname"><span class="pre">getCustomLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.custom_logger.getCustomLogger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.id_merger">
+<span id="orange-cb-recsys-utils-id-merger-module"></span><h2>orange_cb_recsys.utils.id_merger module<a class="headerlink" href="#module-orange_cb_recsys.utils.id_merger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.id_merger.id_merger">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.id_merger.</span></span><span class="sig-name descname"><span class="pre">id_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.id_merger.id_merger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates the list of ids and then calls id_values_merger to create a unique id</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.id_merger.id_values_merger">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.id_merger.</span></span><span class="sig-name descname"><span class="pre">id_values_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.id_merger.id_values_merger" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to compact a list of ids into a unique string. This can be useful when
+there is content whose id is composed by values coming from more than one field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id_values</strong> (<em>List&lt;str&gt;</em>) – List containing one or more ids</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>String in which the values contained in the list given in input are
+merged</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>id_merged (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.load_content">
+<span id="orange-cb-recsys-utils-load-content-module"></span><h2>orange_cb_recsys.utils.load_content module<a class="headerlink" href="#module-orange_cb_recsys.utils.load_content" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.load_content.get_chosen_items">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.load_content.</span></span><span class="sig-name descname"><span class="pre">get_chosen_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items_chosen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.load_content.get_chosen_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.load_content.get_rated_items">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.load_content.</span></span><span class="sig-name descname"><span class="pre">get_rated_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.Content</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.load_content.get_rated_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the items that a user not rated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the items directory</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of the user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of items that the user has rated</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>unrated_items (List&lt;Content&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.load_content.get_unrated_items">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.load_content.</span></span><span class="sig-name descname"><span class="pre">get_unrated_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.Content</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.utils.load_content.get_unrated_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the items that a user has not rated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the items directory</p></li>
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of a user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of items that the user has not rated</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>unrated_items (List&lt;Content&gt;)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.load_content.load_content_instance">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.load_content.</span></span><span class="sig-name descname"><span class="pre">load_content_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="orange_cb_recsys.content_analyzer.content_representation.html#orange_cb_recsys.content_analyzer.content_representation.content.Content" title="orange_cb_recsys.content_analyzer.content_representation.content.Content"><span class="pre">orange_cb_recsys.content_analyzer.content_representation.content.Content</span></a></span></span><a class="headerlink" href="#orange_cb_recsys.utils.load_content.load_content_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a serialized content
+:param directory: Path to the directory in which the content is stored
+:type directory: str
+:param content_id: Id of the content to load
+:type content_id: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>content (Content)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.load_content.remove_not_existent_items">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.load_content.</span></span><span class="sig-name descname"><span class="pre">remove_not_existent_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.load_content.remove_not_existent_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sometimes a dataset can contain ratings about an item which is not in the dataset. This
+function locates these items nd removes them from the ratings frame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratings</strong> (<em>pd.DataFrame</em>) – Ratings of the user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – Path to the directory in which the items are stored</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.save_content">
+<span id="orange-cb-recsys-utils-save-content-module"></span><h2>orange_cb_recsys.utils.save_content module<a class="headerlink" href="#module-orange_cb_recsys.utils.save_content" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.save_content.get_valid_filename">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.save_content.</span></span><span class="sig-name descname"><span class="pre">get_valid_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.save_content.get_valid_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which gets a valid <em>filename.format</em> based on the overwrite parameter</p>
+<p>If overwrite=False and there are existent file named as <em>filename.format</em> in the output directory, the method
+checks if there are also files named as <em>filename (1).format</em>, <em>filename (2).format</em>, <em>filename (3).format</em>.
+It stops at the first non existent <em>filename (x).format</em> in the output directory specified in the constructor.
+:param filename: Name of the file to save
+:type filename: str
+:param format: Format of the file to save
+:type format: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A valid ‘filename.format’ string based on the overwrite parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils.string_cleaner">
+<span id="orange-cb-recsys-utils-string-cleaner-module"></span><h2>orange_cb_recsys.utils.string_cleaner module<a class="headerlink" href="#module-orange_cb_recsys.utils.string_cleaner" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.string_cleaner.clean_no_unders">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.string_cleaner.</span></span><span class="sig-name descname"><span class="pre">clean_no_unders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.string_cleaner.clean_no_unders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a clean string without punctuation and under_scores
+:param text: string
+:type text: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string without described symbols</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.utils.string_cleaner.clean_with_unders">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.utils.string_cleaner.</span></span><span class="sig-name descname"><span class="pre">clean_with_unders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.utils.string_cleaner.clean_with_unders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes . ? - $ ( ) symbols and replaces spaces with under_scores from the text
+:param text: string
+:type text: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string without described symbols</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.utils" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

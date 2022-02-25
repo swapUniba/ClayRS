@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.evaluation package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-evaluation-package">
+<h1>orange_cb_recsys.evaluation package<a class="headerlink" href="#orange-cb-recsys-evaluation-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.evaluation.eval_pipeline_modules.html">orange_cb_recsys.evaluation.eval_pipeline_modules package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.eval_pipeline_modules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.eval_pipeline_modules.html#module-orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator">orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.eval_pipeline_modules.html#module-orange_cb_recsys.evaluation.eval_pipeline_modules">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html">orange_cb_recsys.evaluation.metrics package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.classification_metrics">orange_cb_recsys.evaluation.metrics.classification_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.error_metrics">orange_cb_recsys.evaluation.metrics.error_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.fairness_metrics">orange_cb_recsys.evaluation.metrics.fairness_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.metrics">orange_cb_recsys.evaluation.metrics.metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.novelty">orange_cb_recsys.evaluation.metrics.novelty module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.plot_metrics">orange_cb_recsys.evaluation.metrics.plot_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.ranking_metrics">orange_cb_recsys.evaluation.metrics.ranking_metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics.serendipity">orange_cb_recsys.evaluation.metrics.serendipity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#module-orange_cb_recsys.evaluation.metrics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.evaluation.eval_model">
+<span id="orange-cb-recsys-evaluation-eval-model-module"></span><h2>orange_cb_recsys.evaluation.eval_model module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.eval_model" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.eval_model.</span></span><span class="sig-name descname"><span class="pre">EvalModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Prediction</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Rank</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for evaluating a recommender system.</p>
+<p>It needs to be specified which partitioning technique must be used and which methodology to use (by default
+TestRatings methodology is used, check the Methodology module documentation for more), as well as the recsys to
+evaluate and on which metrics it must be evaluated.</p>
+<p>This class automates the evaluation for a recommender system, but every part of the evaluation pipeline can be used
+manually. Check the documentation of eval pipeline modules for more</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recsys</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.recsys.RecSys" title="orange_cb_recsys.recsys.recsys.RecSys"><em>RecSys</em></a>) – Recommender System to evaluate</p></li>
+<li><p><strong>partitioning</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.partitioning.Partitioning" title="orange_cb_recsys.recsys.partitioning.Partitioning"><em>Partitioning</em></a>) – Partitioning technique that will be used to split the original dataframe containing
+interactions between users and items in ‘train set’ and ‘test set’</p></li>
+<li><p><strong>metric_list</strong> (<em>list</em><em>[</em><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><em>Metric</em></a><em>]</em>) – List of metrics that eval model will compute for the recsys specified</p></li>
+<li><p><strong>methodology</strong> (<a class="reference internal" href="orange_cb_recsys.recsys.html#orange_cb_recsys.recsys.methodology.Methodology" title="orange_cb_recsys.recsys.methodology.Methodology"><em>Methodology</em></a>) – Methodology to use for evaluating the recsys, TestRatings methodology is used by
+default</p></li>
+<li><p><strong>verbose_predictions</strong> (<em>bool</em>) – If True, the logger is enabled for the Recommender module, printing possible
+warnings. Else, the logger will be disabled for the Recommender module. This parameter is False by default</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel.append_metric">
+<span class="sig-name descname"><span class="pre">append_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><span class="pre">orange_cb_recsys.evaluation.metrics.metrics.Metric</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.append_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a metric to the metric list that will be used to evaluate the recommender system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metric</strong> (<a class="reference internal" href="orange_cb_recsys.evaluation.metrics.html#orange_cb_recsys.evaluation.metrics.metrics.Metric" title="orange_cb_recsys.evaluation.metrics.metrics.Metric"><em>Metric</em></a>) – Metric to append to the metric list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs the evaluation for all the users of the recommender system or for the user list specified
+in the ‘user_id_list’ parameter.</p>
+<p>The evaluation is performed by firstly creating a training set and a test set based on the partitioning
+technique specified.
+Then the EvalModel calculates for every user which items must be used to generate recommendations (or to make
+score prediction) based on the methodology chosen, and eventually generate recommendations lists for every users
+and evaluate them based on the metric list specified.</p>
+<p>Note that if a metric needs to calculate score prediction (e.g. MAE, RMSE) and the recsys evaluated doesn’t use
+a score prediction algorithm, then the metric will be popped from the metric list</p>
+<p>The method returns two pandas DataFrame: one containing system results for every metric in the metric list, one
+containing users results for every metric eligible</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
+list, the second one will contain every user results for every metric eligible</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel.metric_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metric_list</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.metric_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of metrics that eval model will compute for the recsys</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel.pred_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pred_list</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.pred_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.eval_model.EvalModel.truth_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truth_list</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.eval_model.EvalModel.truth_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.exceptions">
+<span id="orange-cb-recsys-evaluation-exceptions-module"></span><h2>orange_cb_recsys.evaluation.exceptions module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.exceptions.NotEnoughUsers">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotEnoughUsers</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.exceptions.NotEnoughUsers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception to raise when DeltaGap tries to split n_users in n_groups but n_users &lt; n_groups</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.statistical_test">
+<span id="orange-cb-recsys-evaluation-statistical-test-module"></span><h2>orange_cb_recsys.evaluation.statistical_test module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.statistical_test" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.PairedTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.statistical_test.</span></span><span class="sig-name descname"><span class="pre">PairedTest</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.PairedTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.statistical_test.StatisticalTest" title="orange_cb_recsys.evaluation.statistical_test.StatisticalTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.statistical_test.StatisticalTest</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.PairedTest.perform">
+<span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users_metric_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.PairedTest.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method in which must be specified how to calculate Statistical test</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.StatisticalTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.statistical_test.</span></span><span class="sig-name descname"><span class="pre">StatisticalTest</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.StatisticalTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class for Statistical Test.</p>
+<p>Every statistical test have to identify common users if the user
+chooses to pass us a df. The method stat_test_results is implemented
+differently for each statistical test you decide to do.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.StatisticalTest.perform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users_metric_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.StatisticalTest.perform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method in which must be specified how to calculate Statistical test</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.Ttest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.statistical_test.</span></span><span class="sig-name descname"><span class="pre">Ttest</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.Ttest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.statistical_test.PairedTest" title="orange_cb_recsys.evaluation.statistical_test.PairedTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.statistical_test.PairedTest</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.statistical_test.Wilcoxon">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.statistical_test.</span></span><span class="sig-name descname"><span class="pre">Wilcoxon</span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.statistical_test.Wilcoxon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.evaluation.statistical_test.PairedTest" title="orange_cb_recsys.evaluation.statistical_test.PairedTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.evaluation.statistical_test.PairedTest</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation.utils">
+<span id="orange-cb-recsys-evaluation-utils-module"></span><h2>orange_cb_recsys.evaluation.utils module<a class="headerlink" href="#module-orange_cb_recsys.evaluation.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.utils.get_avg_pop">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.utils.</span></span><span class="sig-name descname"><span class="pre">get_avg_pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_by_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.Counter</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.get_avg_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average popularity of the given items Series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> (<em>pd.Series</em>) – a pandas Series that contains string labels (‘label’)</p></li>
+<li><p><strong>pop_by_items</strong> (<em>Dict&lt;str</em><em>, </em><em>object&gt;</em>) – popularity for each label (‘label’, ‘popularity’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>average popularity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>score (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.utils.pop_ratio_by_user">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.utils.</span></span><span class="sig-name descname"><span class="pre">pop_ratio_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">most_pop_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.pop_ratio_by_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the popularity ratio for each user
+:param score_frame: each row contains index(the rank position), label, value predicted
+:type score_frame: pd.DataFrame
+:param most_pop_items: set of most popular ‘to_id’ labels
+:type most_pop_items: Set[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>contains the ‘popularity_ratio’ for each ‘from_id’ (user)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="orange_cb_recsys.evaluation.utils.popular_items">
+<span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.evaluation.utils.</span></span><span class="sig-name descname"><span class="pre">popular_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Ratings</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.evaluation.utils.popular_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a set of most popular items (‘to_id’s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score_frame</strong> (<em>pd.DataFrame</em>) – each row contains index(the rank position), label, value predicted</p></li>
+<li><p><strong>pop_percentage</strong> (<em>float</em>) – percentage of how many ‘most popular items’ must be returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>set of most popular labels</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Set&lt;str&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.evaluation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.evaluation" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.evaluation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

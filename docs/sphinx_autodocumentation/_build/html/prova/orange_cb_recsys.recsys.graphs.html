@@ -1,0 +1,1125 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.graphs package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-graphs-package">
+<h1>orange_cb_recsys.recsys.graphs package<a class="headerlink" href="#orange-cb-recsys-recsys-graphs-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs.graph">
+<span id="orange-cb-recsys-recsys-graphs-graph-module"></span><h2>orange_cb_recsys.recsys.graphs.graph module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs.graph" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">BipartiteGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Graph" title="orange_cb_recsys.recsys.graphs.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Graph</span></code></a>, <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics" title="orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics</span></code></a></p>
+<p>Abstract class that generalizes the concept of a BipartiteGraph</p>
+<p>A BipartiteGraph is a Graph containing only ‘user’ and ‘item’ nodes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.source_frame">
+<span class="sig-name descname"><span class="pre">source_frame</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.source_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>must contains at least ‘from_id’, ‘to_id’, ‘score’ columns. The graph will be
+generated from this DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.default_score_label">
+<span class="sig-name descname"><span class="pre">default_score_label</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.default_score_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default label of the link between two nodes.
+Default is ‘score’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.default_weight">
+<span class="sig-name descname"><span class="pre">default_weight</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.default_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default value with which a link will be weighted
+Default is 0.5</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.populate_from_dataframe">
+<span class="sig-name descname"><span class="pre">populate_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph.populate_from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate the graph using a DataFrame.
+It must have a ‘from_id’, ‘to_id’ and ‘score’ column.</p>
+<p>This method will iterate for every row, and create a weighted link for every user and item in the rating frame
+based on the score the user gave the item, creating the nodes if they don’t exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the rating frame from where the graph will be populated</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">FullGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph" title="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.TripartiteGraph</span></code></a></p>
+<p>Abstract class that generalize the concept of a FullGraph</p>
+<p>A FullGraph is a Graph containing ‘user’, ‘item’, ‘property’ nodes, and every other type of node that may be
+implemented, with no restrictions in linking.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.source_frame">
+<span class="sig-name descname"><span class="pre">source_frame</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.source_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>must contains at least ‘from_id’, ‘to_id’, ‘score’ columns. The graph will be
+generated from this DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.user_contents_dir">
+<span class="sig-name descname"><span class="pre">user_contents_dir</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.user_contents_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>the path containing users serialized</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.item_contents_dir">
+<span class="sig-name descname"><span class="pre">item_contents_dir</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.item_contents_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>the path containing items serialized</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.user_exo_representation">
+<span class="sig-name descname"><span class="pre">user_exo_representation</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.user_exo_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>the exogenous representation we want to extract properties from for the users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.user_exo_properties">
+<span class="sig-name descname"><span class="pre">user_exo_properties</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.user_exo_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>the properties we want to extract from the exogenous representation for the users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.item_exo_representation">
+<span class="sig-name descname"><span class="pre">item_exo_representation</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.item_exo_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>the exogenous representation we want to extract properties from for the items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.item_exo_properties">
+<span class="sig-name descname"><span class="pre">item_exo_properties</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.item_exo_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>the properties we want to extract from the exogenous representation for the items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.default_score_label">
+<span class="sig-name descname"><span class="pre">default_score_label</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.default_score_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default label of the link between two nodes.
+Default is ‘score’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.default_weight">
+<span class="sig-name descname"><span class="pre">default_weight</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.default_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default value with which a link will be weighted
+Default is 0.5</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.add_user_tree">
+<span class="sig-name descname"><span class="pre">add_user_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.add_user_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a ‘user’ node if is not in the graph and load properties from disk
+if the node has some
+The method will try to load the content from the ‘user_contents_dir’ and extract
+from the loaded content the properties specified in the constructor (user_exo_representation,
+user_exo_properties)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_node</strong> (<em>object</em>) – ‘user’ node to add to the graph with its properties</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_contents_dir">
+<span class="sig-name descname"><span class="pre">get_user_contents_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_contents_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for user_contents_dir</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_exogenous_properties">
+<span class="sig-name descname"><span class="pre">get_user_exogenous_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_exogenous_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for user_exogenous_properties</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_exogenous_representation">
+<span class="sig-name descname"><span class="pre">get_user_exogenous_representation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.get_user_exogenous_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for user_exogenous_representation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.FullGraph.populate_from_dataframe">
+<span class="sig-name descname"><span class="pre">populate_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph.populate_from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate the graph using a DataFrame.
+It must have a ‘from_id’, ‘to_id’ and ‘score’ column.</p>
+<p>The method will iterate for every row, and create a weighted link for every user and item in the rating frame
+based on the score the user gave the item, creating the nodes if they don’t exist.
+We also add properties to ‘item’ nodes if the item_contents_dir is specified,
+and add properties to ‘user’ nodes if the user_contents_dir is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the rating frame from where the graph will be populated</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class that generalizes the concept of a Graph</p>
+<p>Every Graph “is born” from a dataframe which contains</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.add_item_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_item_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.add_item_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a ‘item’ node to the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.add_link">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.add_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an edge between the ‘start_node’ and the ‘final_node’,
+Both nodes must be present in the graph otherwise no link is created</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.add_user_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_user_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.add_user_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a ‘user’ node to the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.convert_to_dataframe">
+<span class="sig-name descname"><span class="pre">convert_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.convert_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the graph into a DataFrame containing all interactions between the nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>only_values</strong> (<em>bool</em>) – if True, the value of the node will be inserted into the dataframe. Otherwise,
+the node itself will be inserted (given the user ‘u1’, only_values = True -&gt; ‘u1’ vs
+only_values = False -&gt; UserNode(‘u1’))</p></li>
+<li><p><strong>with_label</strong> (<em>bool</em>) – if True, the resulting DataFrame will contain the ‘label’ column in which the label of
+every interaction will be inserted</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a deep copy the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.create_graph">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.create_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate the empty graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_default_score_label">
+<span class="sig-name descname"><span class="pre">get_default_score_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_default_score_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for default_score_label</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_default_weight">
+<span class="sig-name descname"><span class="pre">get_default_weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_default_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for default_weight</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_link_data">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_link_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_link_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data of the link between two nodes
+It can be None if does not exist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_predecessors">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_predecessors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all predecessors of a node</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_successors">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_successors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_successors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all successors of a node</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.get_voted_contents">
+<span class="sig-name descname"><span class="pre">get_voted_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.get_voted_contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all voted contents of a specified node</p>
+<p>Given a node, all voted contents of said node are his successors that are
+‘item’ nodes or ‘user’ nodes (In case a user votes another user for example)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – the node from which we want to extract the voted contents</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of nodes representing the voted contents for the node passed as
+parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.is_item_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_item_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.is_item_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if node is a ‘item’ node, false otherwise</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.is_user_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_user_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.is_user_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if node is a ‘user’ node, false otherwise</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.item_nodes">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">item_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.item_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of ‘item’ nodes’</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.node_exists">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">node_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.node_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if node exists in the graph, false otherwise</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.populate_from_dataframe">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.populate_from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate the graph using a DataFrame if it is of the format requested by
+_check_columns()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.remove_link">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.remove_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the edge between the ‘start_node’ and the ‘final_node’,
+If there’s no edge between the nodes, a warning is printed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'graph.xz'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the graph with the pickle.dump() method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_directory</strong> (<em>str</em>) – location where the graph will be serialized</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – name of the file which will contain the graph serialized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.to_ratings">
+<span class="sig-name descname"><span class="pre">to_ratings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.to_ratings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Graph.user_nodes">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Graph.user_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of ‘user’ nodes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.ItemNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">ItemNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></code></a></p>
+<p>Class that represents ‘item’ nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>object</em>) – the value to store in the node</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class that generalizes the concept of a Node</p>
+<p>The Node stores the actual value of the node in the ‘value’ attribute</p>
+<p>If another type of Node must be added to the graph (EX. Context), create a subclass for
+this class and create appropriate methods for the new Node in the Graph class</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.Node.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.Node.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.PropertyNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">PropertyNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.PropertyNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></code></a></p>
+<p>Class that represents ‘property’ nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>object</em>) – the value to store in the node</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">TripartiteGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph" title="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.BipartiteGraph</span></code></a></p>
+<p>Abstract class that generalize the concept of a TripartiteGraph</p>
+<p>A TripartiteGraph is a Graph containing ‘user’, ‘item’ and ‘property’ nodes, but the latter ones
+are only allowed to be linked to ‘item’ nodes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.source_frame">
+<span class="sig-name descname"><span class="pre">source_frame</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.source_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>must contains at least ‘from_id’, ‘to_id’, ‘score’ columns. The graph will be
+generated from this DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_contents_dir">
+<span class="sig-name descname"><span class="pre">item_contents_dir</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_contents_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>the path containing items serialized</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_exo_representation">
+<span class="sig-name descname"><span class="pre">item_exo_representation</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_exo_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>the exogenous representation we want to extract properties from</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_exo_properties">
+<span class="sig-name descname"><span class="pre">item_exo_properties</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.item_exo_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>the properties we want to extract from the exogenous representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.default_score_label">
+<span class="sig-name descname"><span class="pre">default_score_label</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.default_score_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default label of the link between two nodes.
+Default is ‘score’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.default_weight">
+<span class="sig-name descname"><span class="pre">default_weight</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.default_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default value with which a link will be weighted
+Default is 0.5</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.add_item_tree">
+<span class="sig-name descname"><span class="pre">add_item_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.add_item_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a ‘item’ node if is not in the graph and load properties from disk if the node has some.</p>
+<p>The method will try to load the content from the ‘item_contents_dir’ and extract
+from the loaded content the properties specified in the constructor (item_exo_representation,
+item_exo_properties)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item_node</strong> (<em>object</em>) – ‘item’ node to add to the graph with its properties</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.add_property_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_property_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.add_property_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a ‘property’ node to the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_contents_dir">
+<span class="sig-name descname"><span class="pre">get_item_contents_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_contents_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for item_contents_dir</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_exogenous_properties">
+<span class="sig-name descname"><span class="pre">get_item_exogenous_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_exogenous_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for item_exogenous_properties</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_exogenous_representation">
+<span class="sig-name descname"><span class="pre">get_item_exogenous_representation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_item_exogenous_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for item_exogenous_representation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_preference">
+<span class="sig-name descname"><span class="pre">get_preference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferences_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_preference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the score of the label in the preferences_dict.
+Returns the default ‘not_rated_value’ if the label is not present</p>
+<p class="rubric">Example</p>
+<p>preferences_dict:
+{‘from_id’: ‘u1’, ‘to_id’: ‘i1’, ‘score’: 0.6, ‘director’: ‘Nolan’, ‘director_score’: 0.8}</p>
+<p>get_preference(‘director’, preferences_dict) —&gt; 0.8</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>str</em>) – label we want to search in the preferences_dict</p></li>
+<li><p><strong>preferences_dict</strong> (<em>dict</em>) – dict-like parameter containing some information about ‘from’
+and ‘to’ nodes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_properties">
+<span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.get_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all properties of a specified node</p>
+<p>Given a node, all properties of said node are his successors that are
+‘property’ nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – the node from which we want to extract the properties</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of nodes representing the properties for the node passed as
+parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.is_property_node">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_property_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.is_property_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the node is a ‘property’ node, False otherwise</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.populate_from_dataframe">
+<span class="sig-name descname"><span class="pre">populate_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.populate_from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate the graph using a DataFrame.
+It must have a ‘from_id’, ‘to_id’ and ‘score’ column.</p>
+<p>It will iterate for every row, and create a weighted link for every user and item in the rating frame
+based on the score the user gave the item, creating the nodes if they don’t exist.
+We also add properties to ‘item’ nodes if the item_contents_dir is specified</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the rating frame from where the graph will be populated</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.property_nodes">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph.property_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of ‘property’ nodes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph.UserNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph.</span></span><span class="sig-name descname"><span class="pre">UserNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph.UserNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.Node" title="orange_cb_recsys.recsys.graphs.graph.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.Node</span></code></a></p>
+<p>Class that represents ‘user’ nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>object</em>) – the value to store in the node</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs.graph_metrics">
+<span id="orange-cb-recsys-recsys-graphs-graph-metrics-module"></span><h2>orange_cb_recsys.recsys.graphs.graph_metrics module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs.graph_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.graph_metrics.</span></span><span class="sig-name descname"><span class="pre">GraphMetrics</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Interface for graph metrics</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.closeness_centrality">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">closeness_centrality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.degree_centrality">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degree_centrality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.degree_centrality" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.dispersion">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dispersion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.graph_metrics.GraphMetrics.dispersion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs.nx_bipartite_graphs">
+<span id="orange-cb-recsys-recsys-graphs-nx-bipartite-graphs-module"></span><h2>orange_cb_recsys.recsys.graphs.nx_bipartite_graphs module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs.nx_bipartite_graphs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.</span></span><span class="sig-name descname"><span class="pre">NXBipartiteGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.BipartiteGraph" title="orange_cb_recsys.recsys.graphs.graph.BipartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.BipartiteGraph</span></code></a></p>
+<p>Class that implements a Bipartite graph through networkx library.
+It supports ‘user’ node and ‘item’ node only.
+It creates a graph from an initial rating frame
+EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">_</span><span class="o">|</span> <span class="n">from_id</span> <span class="o">|</span> <span class="n">to_id</span> <span class="o">|</span> <span class="n">score</span><span class="o">|</span>
+    <span class="n">_</span><span class="o">|</span>   <span class="n">u1</span>    <span class="o">|</span> <span class="n">Tenet</span> <span class="o">|</span> <span class="mf">0.6</span>  <span class="o">|</span>
+
+<span class="n">Becomes</span><span class="p">:</span>
+        <span class="n">u1</span> <span class="o">-----&gt;</span> <span class="n">Tenet</span>
+<span class="n">where</span> <span class="s1">&#39;u1&#39;</span> <span class="n">becomes</span> <span class="n">a</span> <span class="s1">&#39;user&#39;</span> <span class="n">node</span> <span class="ow">and</span> <span class="s1">&#39;Tenet&#39;</span> <span class="n">becomes</span> <span class="n">a</span> <span class="s1">&#39;item&#39;</span> <span class="n">node</span><span class="p">,</span>
+<span class="k">with</span> <span class="n">the</span> <span class="n">edge</span> <span class="n">weighted</span> <span class="ow">and</span> <span class="n">labelled</span> <span class="n">based</span> <span class="n">on</span> <span class="n">the</span> <span class="n">score</span> <span class="n">column</span> <span class="ow">and</span> <span class="n">on</span> <span class="n">the</span>
+<span class="s1">&#39;default_score_label&#39;</span> <span class="n">parameter</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the initial rating frame needed to create the graph</p></li>
+<li><p><strong>default_score_label</strong> (<em>str</em>) – the default label of the link between two nodes.
+Default is ‘score’</p></li>
+<li><p><strong>default_weight</strong> (<em>float</em>) – the default value with which a link will be weighted
+Default is 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_item_node">
+<span class="sig-name descname"><span class="pre">add_item_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_item_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a ‘item’ node to the graph.
+If a list is passed, then every element of the list will be added as a ‘item’ node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – node(s) that needs to be added to the graph as ‘item’ node(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_link">
+<span class="sig-name descname"><span class="pre">add_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a weighted link connecting the ‘start_node’ to the ‘final_node’
+Both nodes must be present in the graph before calling this method</p>
+<p>‘weight’ and ‘label’ are optional parameters, if not specified default values
+will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_node</strong> (<em>object</em>) – starting node of the link</p></li>
+<li><p><strong>final_node</strong> (<em>object</em>) – ending node of the link</p></li>
+<li><p><strong>weight</strong> (<em>float</em>) – weight of the link, default is 0.5</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – label of the link, default is ‘score_label’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_user_node">
+<span class="sig-name descname"><span class="pre">add_user_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.add_user_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a ‘user’ node to the graph.
+If a list is passed, then every element of the list will be added as a ‘user’ node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – node(s) that needs to be added to the graph as ‘user’ node(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.closeness_centrality">
+<span class="sig-name descname"><span class="pre">closeness_centrality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the closeness centrality for every node in the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.create_graph">
+<span class="sig-name descname"><span class="pre">create_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.create_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates the networkx DiGraph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.degree_centrality">
+<span class="sig-name descname"><span class="pre">degree_centrality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.degree_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the degreee centrality for every node in the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.dispersion">
+<span class="sig-name descname"><span class="pre">dispersion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.dispersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the dispersion for every node in the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_link_data">
+<span class="sig-name descname"><span class="pre">get_link_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_link_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get link data such as weight, label, between the ‘start_node’ and the ‘final_node’.
+Returns None if said link doesn’t exists</p>
+<p>Remember that this is a directed graph so the result differs if ‘start_node’ and ‘final_node’
+are switched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_node</strong> (<em>object</em>) – node where the link starts</p></li>
+<li><p><strong>final_node</strong> (<em>object</em>) – node where the link ends</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_predecessors">
+<span class="sig-name descname"><span class="pre">get_predecessors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list containing the successors of the node passed.
+Returns None if the node doesn’t exists in the graph.</p>
+<p>Taken from networkx library:
+“A predecessor of n is a node m such that there exists a directed
+edge from m to n”</p>
+<p class="rubric">Example</p>
+<p>I1 &lt;– U1
+↑
+U2</p>
+<blockquote>
+<div><p>get_successors(I1) —&gt; [U1, U2]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node of which we want to calculate predecessors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_successors">
+<span class="sig-name descname"><span class="pre">get_successors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.get_successors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list containing the successors of the node passed.
+Returns None if the node doesn’t exists in the graph.</p>
+<p>Taken from networkx library:
+“A successor of n is a node m such that there exists a directed
+edge from n to m”</p>
+<p class="rubric">Example</p>
+<p>U1 –&gt; I2
+↓
+I1</p>
+<blockquote>
+<div><p>get_successors(u1) —&gt; [I1, I2]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node of which we want to calculate successors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.is_item_node">
+<span class="sig-name descname"><span class="pre">is_item_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.is_item_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the node passed is a ‘item’ node, False otherwise</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node to check whether it’s a ‘item’ node or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.is_user_node">
+<span class="sig-name descname"><span class="pre">is_user_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.is_user_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the node passed is a ‘user’ node, False otherwise</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node to check whether it’s a ‘user’ node or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.item_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">item_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.ItemNode" title="orange_cb_recsys.recsys.graphs.graph.ItemNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.ItemNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.item_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of all ‘item’ nodes in the graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.node_exists">
+<span class="sig-name descname"><span class="pre">node_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.node_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the node passed exists in the graph, False otherwise</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node to check whether it’s present in the graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.remove_link">
+<span class="sig-name descname"><span class="pre">remove_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.remove_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the link connecting the ‘start_node’ to the ‘final_node’.
+If there’s no link between the two nodes, than a warning is printed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_node</strong> (<em>object</em>) – starting node of the link to remove</p></li>
+<li><p><strong>final_node</strong> (<em>object</em>) – ending node of the link to remove</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.user_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.UserNode" title="orange_cb_recsys.recsys.graphs.graph.UserNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.UserNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph.user_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of all ‘user’ nodes in the graph</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs.nx_full_graphs">
+<span id="orange-cb-recsys-recsys-graphs-nx-full-graphs-module"></span><h2>orange_cb_recsys.recsys.graphs.nx_full_graphs module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs.nx_full_graphs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.nx_full_graphs.</span></span><span class="sig-name descname"><span class="pre">NXFullGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_not_rated_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph" title="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph</span></code></a>, <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.FullGraph" title="orange_cb_recsys.recsys.graphs.graph.FullGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.FullGraph</span></code></a></p>
+<p>Class that implements a Full graph through networkx library.
+It supports every node implemented in the framework with no restriction in linking</p>
+<p>It creates a graph from an initial rating frame and if the ‘item_contents_dir’ or ‘user_contents_dir’
+are specified, tries to add properties for every ‘to’ or ‘from’ node respectively.
+EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">_</span><span class="o">|</span> <span class="n">from_id</span> <span class="o">|</span> <span class="n">to_id</span> <span class="o">|</span> <span class="n">score</span><span class="o">|</span>
+    <span class="n">_</span><span class="o">|</span>   <span class="n">u1</span>    <span class="o">|</span> <span class="n">Tenet</span> <span class="o">|</span> <span class="mf">0.6</span>  <span class="o">|</span>
+
+<span class="n">Becomes</span><span class="p">:</span>
+        <span class="n">u1</span> <span class="o">-----&gt;</span> <span class="n">Tenet</span>
+<span class="k">with</span> <span class="n">the</span> <span class="n">edge</span> <span class="n">weighted</span> <span class="ow">and</span> <span class="n">labelled</span> <span class="n">based</span> <span class="n">on</span> <span class="n">the</span> <span class="n">score</span> <span class="n">column</span> <span class="ow">and</span> <span class="n">on</span> <span class="n">the</span>
+<span class="s1">&#39;default_score_label&#39;</span> <span class="n">parameter</span>
+<span class="n">Then</span> <span class="n">tries</span> <span class="n">to</span> <span class="n">load</span> <span class="s1">&#39;Tenet&#39;</span> <span class="kn">from</span> <span class="nn">the</span> <span class="s1">&#39;item_contents_dir&#39;</span> <span class="k">if</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">if</span> <span class="n">succeeds</span><span class="p">,</span>
+<span class="n">adds</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">graph</span> <span class="n">its</span> <span class="n">loaded</span> <span class="n">properties</span> <span class="k">as</span> <span class="n">specified</span> <span class="k">with</span> <span class="s1">&#39;item_exo_representation&#39;</span> <span class="ow">and</span>
+<span class="s1">&#39;item_exo_properties&#39;</span><span class="o">.</span>
+<span class="n">Then</span> <span class="n">tries</span> <span class="n">to</span> <span class="n">load</span> <span class="s1">&#39;u1&#39;</span> <span class="kn">from</span> <span class="nn">the</span> <span class="s1">&#39;item_contents_dir&#39;</span> <span class="k">if</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">if</span> <span class="n">succeeds</span><span class="p">,</span>
+<span class="n">adds</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">graph</span> <span class="n">its</span> <span class="n">loaded</span> <span class="n">properties</span> <span class="k">as</span> <span class="n">specified</span> <span class="k">with</span> <span class="s1">&#39;user_exo_representation&#39;</span> <span class="ow">and</span>
+<span class="s1">&#39;user_exo_properties&#39;</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the initial rating frame needed to create the graph</p></li>
+<li><p><strong>item_contents_dir</strong> (<em>str</em>) – the path containing items serialized</p></li>
+<li><p><strong>item_exo_representation</strong> (<em>str</em>) – the exogenous representation we want to extract properties from</p></li>
+<li><p><strong>item_exo_properties</strong> (<em>list</em>) – the properties we want to extract from the exogenous representation</p></li>
+<li><p><strong>default_score_label</strong> (<em>str</em>) – the label of the link between ‘from’ and ‘to’ nodes.
+Default is ‘score’</p></li>
+<li><p><strong>default_not_rated_value</strong> (<em>float</em>) – the default value with which the link will be weighted
+Default is 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph.add_link">
+<span class="sig-name descname"><span class="pre">add_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_full_graphs.NXFullGraph.add_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a weighted link connecting the ‘start_node’ to the ‘final_node’
+Both nodes must be present in the graph before calling this method</p>
+<p>‘weight’ and ‘label’ are optional parameters, if not specified default values
+will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_node</strong> (<em>object</em>) – starting node of the link</p></li>
+<li><p><strong>final_node</strong> (<em>object</em>) – ending node of the link</p></li>
+<li><p><strong>weight</strong> (<em>float</em>) – weight of the link, default is 0.5</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – label of the link, default is ‘score_label’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs.nx_tripartite_graphs">
+<span id="orange-cb-recsys-recsys-graphs-nx-tripartite-graphs-module"></span><h2>orange_cb_recsys.recsys.graphs.nx_tripartite_graphs module<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs.nx_tripartite_graphs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.</span></span><span class="sig-name descname"><span class="pre">NXTripartiteGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_contents_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_representation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_exo_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_score_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_not_rated_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph" title="orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.nx_bipartite_graphs.NXBipartiteGraph</span></code></a>, <a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.TripartiteGraph" title="orange_cb_recsys.recsys.graphs.graph.TripartiteGraph"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.graphs.graph.TripartiteGraph</span></code></a></p>
+<p>Class that implements a Tripartite graph through networkx library.
+It supports ‘user’ node, ‘item’ and ‘property’ node, but the latter ones are available only for
+are only allowed to be linked to ‘item’ nodes.</p>
+<p>It creates a graph from an initial rating frame and if the ‘item_contents_dir’ is specified,
+tries to add properties for every ‘item’ node.
+EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">_</span><span class="o">|</span> <span class="n">from_id</span> <span class="o">|</span> <span class="n">to_id</span> <span class="o">|</span> <span class="n">score</span><span class="o">|</span>
+    <span class="n">_</span><span class="o">|</span>   <span class="n">u1</span>    <span class="o">|</span> <span class="n">Tenet</span> <span class="o">|</span> <span class="mf">0.6</span>  <span class="o">|</span>
+
+<span class="n">Becomes</span><span class="p">:</span>
+        <span class="n">u1</span> <span class="o">-----&gt;</span> <span class="n">Tenet</span>
+<span class="k">with</span> <span class="n">the</span> <span class="n">edge</span> <span class="n">weighted</span> <span class="ow">and</span> <span class="n">labelled</span> <span class="n">based</span> <span class="n">on</span> <span class="n">the</span> <span class="n">score</span> <span class="n">column</span> <span class="ow">and</span> <span class="n">on</span> <span class="n">the</span>
+<span class="s1">&#39;default_score_label&#39;</span> <span class="n">parameter</span><span class="o">.</span>
+<span class="n">Then</span> <span class="n">tries</span> <span class="n">to</span> <span class="n">load</span> <span class="s1">&#39;Tenet&#39;</span> <span class="kn">from</span> <span class="nn">the</span> <span class="s1">&#39;item_contents_dir&#39;</span> <span class="k">if</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">if</span> <span class="n">succeeds</span><span class="p">,</span>
+<span class="n">adds</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">graph</span> <span class="n">its</span> <span class="n">loaded</span> <span class="n">properties</span> <span class="k">as</span> <span class="n">specified</span> <span class="k">with</span> <span class="s1">&#39;item_exo_representation&#39;</span> <span class="ow">and</span>
+<span class="s1">&#39;item_exo_properties&#39;</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_frame</strong> (<em>pd.DataFrame</em>) – the initial rating frame needed to create the graph</p></li>
+<li><p><strong>item_contents_dir</strong> (<em>str</em>) – the path containing items serialized</p></li>
+<li><p><strong>item_exo_representation</strong> (<em>str</em>) – the exogenous representation we want to extract properties from</p></li>
+<li><p><strong>item_exo_properties</strong> (<em>list</em>) – the properties we want to extract from the exogenous representation</p></li>
+<li><p><strong>default_score_label</strong> (<em>str</em>) – the label of the link between ‘from’ and ‘to’ nodes.
+Default is ‘score’</p></li>
+<li><p><strong>default_not_rated_value</strong> (<em>float</em>) – the default value with which the link will be weighted
+Default is 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.add_link">
+<span class="sig-name descname"><span class="pre">add_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.add_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a weighted link connecting the ‘start_node’ to the ‘final_node’
+Both nodes must be present in the graph before calling this method
+‘property’ nodes can be linked only to ‘item’ nodes, otherwise a warning is returned.</p>
+<p>‘weight’ and ‘label’ are optional parameters, if not specified default values
+will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_node</strong> (<em>object</em>) – starting node of the link</p></li>
+<li><p><strong>final_node</strong> (<em>object</em>) – ending node of the link</p></li>
+<li><p><strong>weight</strong> (<em>float</em>) – weight of the link, default is 0.5</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – label of the link, default is ‘score_label’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.add_property_node">
+<span class="sig-name descname"><span class="pre">add_property_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.add_property_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a ‘property’ node to the graph.
+If a list is passed, then every element of the list will be added as a ‘property’ node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – node(s) that needs to be added to the graph as ‘property’ node(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.is_property_node">
+<span class="sig-name descname"><span class="pre">is_property_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.is_property_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the node passed is a ‘item’ node, False otherwise</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>object</em>) – node to check whether it’s a ‘item’ node or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.property_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#orange_cb_recsys.recsys.graphs.graph.PropertyNode" title="orange_cb_recsys.recsys.graphs.graph.PropertyNode"><span class="pre">orange_cb_recsys.recsys.graphs.graph.PropertyNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#orange_cb_recsys.recsys.graphs.nx_tripartite_graphs.NXTripartiteGraph.property_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of all ‘property’ nodes in the graph</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.graphs">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.graphs" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.graphs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
