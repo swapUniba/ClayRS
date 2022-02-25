@@ -53,7 +53,7 @@ class SkLearnTfIdf(TfIdfTechnique):
 
         del self.__corpus
 
-        self.__feature_names = tf_vectorizer.get_feature_names()
+        self.__feature_names = tf_vectorizer.get_feature_names_out()
 
         return self.__tfidf_matrix.shape[0]
 

@@ -206,7 +206,7 @@ class GensimWordEmbeddingLearner(WordEmbeddingLearner):
         return self.model.vector_size
 
     def get_embedding(self, word: str) -> np.ndarray:
-        return self.model.wv[word]
+        return self.model[word]
 
     @abstractmethod
     def load_model(self):

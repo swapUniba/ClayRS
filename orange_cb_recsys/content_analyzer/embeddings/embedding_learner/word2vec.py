@@ -21,7 +21,7 @@ class GensimWord2Vec(GensimWordEmbeddingLearner):
         return KeyedVectors.load_word2vec_format(self.reference, binary=True)
 
     def save(self):
-        self.model.save_word2vec_format(self.reference, binary=True)
+        self.model.wv.save_word2vec_format(self.reference, binary=True)
 
     def __str__(self):
         return "GensimWord2Vec"
