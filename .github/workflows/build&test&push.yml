@@ -80,10 +80,14 @@ jobs:
 #               docker stop $container_id
 #               docker container rm $container_id
       -
+        name: Setup installation requirements
+        run: |
+          pip install wheel
+          pip install pytest pytest-cov
+          pip install -r requirements.txt
+      -
         name: Test
         run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
           pytest --cov=./ --cov-report=xml
           ls
       -
