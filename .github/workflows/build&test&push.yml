@@ -5,10 +5,6 @@ on:
       - master
   pull_request:
   workflow_dispatch:
-
-env:
-    IMAGE_NAME: framework_dependencies
-    COVERALLS_REPO_TOKEN: m7F9CNmqoMWrzUv0lcmojwOCqk7PGjDG8
     
 jobs:
   main:
@@ -86,9 +82,7 @@ jobs:
           pip install -r requirements.txt
       -
         name: Test
-        run: |
-          coverage run --source=orange_cb_recsys -m pytest test/
-          coverage xml -o 'codecoverage.xml'
+        run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
