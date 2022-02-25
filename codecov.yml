@@ -1,0 +1,3 @@
+ignore:
+  - "test"      # ignore test files
+  - "setup.py"  # ignore the setup
