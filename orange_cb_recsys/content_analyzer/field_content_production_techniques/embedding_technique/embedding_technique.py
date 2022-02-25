@@ -18,6 +18,8 @@ from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_
 from orange_cb_recsys.utils.class_utils import get_all_implemented_subclasses
 from orange_cb_recsys.utils.const import logger
 
+from typing import Union, List, Type
+
 
 class EmbeddingTechnique(SingleContentTechnique):
     """
@@ -34,9 +36,9 @@ class EmbeddingTechnique(SingleContentTechnique):
 
         super().__init__()
 
-        if isinstance(embedding_source, EmbeddingLoader) and embedding_source.model is None:
-            raise FileNotFoundError("The reference %s was not valid for the %s source" %
-                                    (embedding_source.reference, embedding_source))
+        # if isinstance(embedding_source, EmbeddingLoader) and embedding_source.model is None:
+        #     raise FileNotFoundError("The reference %s was not valid for the %s source" %
+        #                             (embedding_source.reference, embedding_source))
 
         self.__embedding_source: EmbeddingSource = embedding_source
 
@@ -163,8 +165,8 @@ class WordEmbeddingTechnique(StandardEmbeddingTechnique):
     """
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str]):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
         super().__init__(embedding_source)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -184,8 +186,8 @@ class SentenceEmbeddingTechnique(StandardEmbeddingTechnique):
     """
 
     def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str]):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
         super().__init__(embedding_source)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -205,8 +207,8 @@ class DocumentEmbeddingTechnique(StandardEmbeddingTechnique):
     """
 
     def __init__(self, embedding_source: Union[DocumentEmbeddingLoader, DocumentEmbeddingLearner, str]):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, DocumentEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, DocumentEmbeddingLoader)
         super().__init__(embedding_source)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -306,8 +308,8 @@ class FromWordsSentenceEmbeddingTechnique(CombiningSentenceEmbeddingTechnique):
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str],
                  combining_technique: CombiningTechnique):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
         super().__init__(embedding_source, combining_technique)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -357,8 +359,8 @@ class FromWordsDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechnique):
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str],
                  combining_technique: CombiningTechnique):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)
         super().__init__(embedding_source, combining_technique)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -380,8 +382,8 @@ class FromSentencesDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechniqu
 
     def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str],
                  combining_technique: CombiningTechnique):
-        if isinstance(embedding_source, str):
-            embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
         super().__init__(embedding_source, combining_technique)
 
     def process_data_granularity(self, field_data: Union[List[str], str]) -> List[str]:
@@ -393,3 +395,80 @@ class FromSentencesDocumentEmbeddingTechnique(CombiningDocumentEmbeddingTechniqu
     def __repr__(self):
         return "< FromSentencesDocumentEmbeddingTechnique: embedding source = " + str(self.embedding_source) + \
                ", combining technique = " + str(self.combining_technique) + ">"
+
+
+class DecombiningEmbeddingTechnique(EmbeddingTechnique):
+    """
+    Class generalizing embedding techniques that contain methods for extracting embedding at finer granularity.
+    DecombiningEmbeddingTechnique can be extended to consider Sentence or Document granularity.
+    Each technique should be further extended to consider the different sources of embedding that can be combined into
+    the defined granularity.
+    For example, with Sentence granularity, it is possible, if the model is capable, to extrapolate embedding with word
+    granularity.
+
+    To summarize, this class contains techniques that make use of an EmbeddingSource with a granularity different from
+    their own, and have the ability to extract the embedding matrix with finer granularity
+
+    """
+
+    def __init__(self, embedding_source: EmbeddingSource):
+        super().__init__(embedding_source)
+
+    @abstractmethod
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:  # return array numpy
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class DecombiningInWordsEmbeddingTechnique(DecombiningEmbeddingTechnique):
+    """
+    Class that generalizes the decombining embedding techniques from a coarse granularity to the finest granularity word
+    """
+    def __init__(self, embedding_source: Union[SentenceEmbeddingLoader]):
+        super().__init__(embedding_source)
+
+    @abstractmethod
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class FromSentenceWordsEmbeddingTechnique(DecombiningInWordsEmbeddingTechnique):
+    """
+    Class that makes use of a sentence granularity embedding source to produce an embedding matrix with word granularity
+    """
+    def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str]):
+        # if isinstance(embedding_source, str):
+        #     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)
+        super().__init__(embedding_source)
+
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:
+        """
+        Produces a single representation with Token granularity returning the embedding matrix that
+        represents the tokens
+
+        Returns: matrix embedding for token
+
+        """
+        words_embeddings = self.embedding_source.get_embedding_token(field_data)
+        return EmbeddingField(words_embeddings)
+
+    def __str__(self):
+        return "FromSentenceWordsEmbeddingTechnique"
+
+    def __repr__(self):
+        return "< FromSentenceWordsEmbeddingTechnique: embedding source = " + str(self.embedding_source) + " >"
