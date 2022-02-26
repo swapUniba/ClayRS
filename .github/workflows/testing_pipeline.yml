@@ -29,9 +29,9 @@ jobs:
       -
         name: Test
         run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
-      -
-        name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
-        with: # no token required for public repos
-              fail_ci_if_error: true
-              files: ./codecoverage.xml
+#      -
+#        name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v2.1.0
+#        with: # no token required for public repos
+#              fail_ci_if_error: true
+#              files: ./codecoverage.xml
