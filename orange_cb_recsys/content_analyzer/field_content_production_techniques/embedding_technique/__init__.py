@@ -1,3 +1,3 @@
 from .combining_technique import Centroid, Sum
 from .embedding_technique import WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, \
-    FromWordsSentenceEmbeddingTechnique, FromSentencesDocumentEmbeddingTechnique, FromWordsDocumentEmbeddingTechnique
+    Word2SentenceEmbedding, Sentence2DocEmbedding, Word2DocEmbedding

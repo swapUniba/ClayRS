@@ -2,14 +2,17 @@ from unittest import TestCase
 import os
 
 from orange_cb_recsys.content_analyzer.content_representation.content import EmbeddingField
+from orange_cb_recsys.content_analyzer.embeddings import Transformers
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import GensimFastText
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import \
-    SentenceEmbeddingTechnique, FromWordsSentenceEmbeddingTechnique, FromWordsDocumentEmbeddingTechnique, \
-    FromSentencesDocumentEmbeddingTechnique, WordEmbeddingTechnique, DocumentEmbeddingTechnique
+    SentenceEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, \
+    Sentence2DocEmbedding, WordEmbeddingTechnique, DocumentEmbeddingTechnique
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique \
     import Centroid
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert import Sbert
+from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique import \
+    Sentence2WordEmbedding
 from orange_cb_recsys.content_analyzer.information_processor import NLTK
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
@@ -38,19 +41,19 @@ class TestEmbeddingTechnique(TestCase):
         self.assertEqual(len(embedding_list), 20)
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
-        technique = FromWordsDocumentEmbeddingTechnique('glove-twitter-25', Centroid())
+        technique = Word2DocEmbedding('glove-twitter-25', Centroid())
         self.assertIsInstance(technique.embedding_source, Gensim)
         embedding_list = technique.produce_content("Plot", [], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
-        technique = FromSentencesDocumentEmbeddingTechnique('paraphrase-distilroberta-base-v1', Centroid())
+        technique = Sentence2DocEmbedding('paraphrase-distilroberta-base-v1', Centroid())
         self.assertIsInstance(technique.embedding_source, Sbert)
         embedding_list = technique.produce_content("Plot", [NLTK()], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)
         self.assertIsInstance(embedding_list[0], EmbeddingField)
 
-        technique = FromWordsSentenceEmbeddingTechnique('glove-twitter-25', Centroid())
+        technique = Word2SentenceEmbedding('glove-twitter-25', Centroid())
         self.assertIsInstance(technique.embedding_source, Gensim)
         embedding_list = technique.produce_content("Plot", [], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)
@@ -78,3 +81,25 @@ class TestEmbeddingTechnique(TestCase):
 
         with self.assertRaises(FileNotFoundError):
             WordEmbeddingTechnique(Gensim('not_existing_model'))
+
+
+class TestSentenceEmbeddingTechnique(TestCase):
+
+    def test_produce_single_repr(self):
+        file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
+        fromsentencetowords = SentenceEmbeddingTechnique(Transformers("prajjwal1/bert-tiny"))
+
+        embedding_list = fromsentencetowords.produce_content("Plot", [], JSONFile(file_path))
+        self.assertEqual(len(embedding_list), 20)
+        self.assertIsInstance(embedding_list[0], EmbeddingField)
+
+
+class TestFromSentenceWordsEmbeddingTechnique(TestCase):
+
+    def test_produce_single_repr(self):
+        file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
+        fromsentencetowords = Sentence2WordEmbedding(Transformers("prajjwal1/bert-tiny"))
+
+        embedding_list = fromsentencetowords.produce_content("Plot", [], JSONFile(file_path))
+        self.assertEqual(len(embedding_list), 20)
+        self.assertIsInstance(embedding_list[0], EmbeddingField)

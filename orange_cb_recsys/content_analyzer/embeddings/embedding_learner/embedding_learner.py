@@ -294,6 +294,10 @@ class SentenceEmbeddingLearner(EmbeddingLearner):
         raise NotImplementedError
 
     @abstractmethod
+    def get_embedding_token(self, sentence: str):
+        raise NotImplementedError
+
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
@@ -328,6 +332,14 @@ class DocumentEmbeddingLearner(EmbeddingLearner):
 
     @abstractmethod
     def get_embedding(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_embedding_sentence(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_embedding_token(self, document: str) -> np.ndarray:
         raise NotImplementedError
 
     @abstractmethod

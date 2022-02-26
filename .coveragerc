@@ -1,0 +1,11 @@
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    def __init__
+    raise NotImplementedError
+    pass
+    if __name__ == .__main__.:
+    from
+    import

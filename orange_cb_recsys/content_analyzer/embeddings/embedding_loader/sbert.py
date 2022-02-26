@@ -28,6 +28,9 @@ class Sbert(SentenceEmbeddingLoader):
     def get_embedding(self, sentence: str) -> np.ndarray:
         return self.model.encode(sentence, show_progress_bar=False)
 
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        raise NotImplementedError("The model chosen can't return token embeddings")
+
     def __str__(self):
         return "Sbert"
 
