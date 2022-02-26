@@ -1,13 +1,10 @@
 import abc
-import itertools
 from abc import ABC
 from typing import Set, Union, Dict
 import pandas as pd
-from tqdm import tqdm
-from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.utils.const import logger, get_pbar
+from orange_cb_recsys.utils.const import get_progbar
 
 
 class Methodology(ABC):
@@ -47,8 +44,8 @@ class Methodology(ABC):
         """
         user_list = set(test_set.user_id_column)
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(user_list)
+        with get_progbar(user_list) as pbar:
+
             pbar.set_description(f"Filtering items based on {str(self)}")
 
             filtered = {user_id: self.filter_single(user_id, train_set, test_set)

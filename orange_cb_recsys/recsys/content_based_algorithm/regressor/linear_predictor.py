@@ -3,7 +3,7 @@ from typing import List, Union
 from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex, LoadedContentsDict
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor

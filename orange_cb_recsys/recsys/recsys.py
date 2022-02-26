@@ -1,8 +1,6 @@
 import abc
 import itertools
-from itertools import chain
-from typing import Union, Iterable, Dict, Optional, List
-from typing import Set
+from typing import Union, Dict, List
 
 import pandas as pd
 from abc import ABC
@@ -10,7 +8,7 @@ from abc import ABC
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Rank, Prediction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
 from orange_cb_recsys.recsys.graphs.graph import FullGraph
 
@@ -18,7 +16,7 @@ from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm imp
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.recsys.methodology import Methodology
-from orange_cb_recsys.utils.const import logger, get_pbar
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 
 class RecSys(ABC):
@@ -114,8 +112,8 @@ class ContentBasedRS(RecSys):
         items_to_load = set(self.train_set.item_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(set(self.train_set.user_id_column))
+        with get_progbar(set(self.train_set.user_id_column)) as pbar:
+
             pbar.set_description("Fitting algorithm")
             for user_id in pbar:
                 user_train = self.train_set.get_user_interactions(user_id)
@@ -167,8 +165,8 @@ class ContentBasedRS(RecSys):
 
         rank_list = []
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(all_users)
+        with get_progbar(all_users) as pbar:
+
             for user_id in pbar:
                 user_id = str(user_id)
                 pbar.set_description(f"Computing rank for {user_id}")
@@ -224,8 +222,8 @@ class ContentBasedRS(RecSys):
 
         pred_list = []
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(all_users)
+        with get_progbar(all_users) as pbar:
+
             for user_id in pbar:
                 user_id = str(user_id)
                 pbar.set_description(f"Computing predictions for {user_id}")
@@ -349,8 +347,8 @@ class GraphBasedRS(RecSys):
 
         pred_list = []
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(all_users)
+        with get_progbar(all_users) as pbar:
+
             for user_id in pbar:
                 user_id = str(user_id)
                 pbar.set_description(f"Computing predictions for {user_id}")
@@ -395,8 +393,8 @@ class GraphBasedRS(RecSys):
 
         rank_list = []
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(all_users)
+        with get_progbar(all_users) as pbar:
+
             for user_id in pbar:
                 user_id = str(user_id)
                 pbar.set_description(f"Computing predictions for {user_id}")

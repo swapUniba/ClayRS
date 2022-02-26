@@ -3,7 +3,7 @@ import re
 
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NoRatedItems, \

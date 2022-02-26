@@ -4,7 +4,7 @@ from typing import Union, List, Set
 
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings, Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings, Interaction
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 

@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 import networkx as nx
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection_handler import \
     FeatureSelectionHandler

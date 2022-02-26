@@ -6,7 +6,7 @@ from unittest import TestCase
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings, Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Ratings, Interaction
 from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 

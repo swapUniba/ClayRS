@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Ratings
 from orange_cb_recsys.evaluation.metrics.error_metrics import MAE
 from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
 from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr

@@ -10,9 +10,8 @@ from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, get_progbar
 from orange_cb_recsys.utils.id_merger import id_merger
-from orange_cb_recsys.utils.const import progbar
 
 
 class ContentAnalyzer:
@@ -63,8 +62,11 @@ class ContentAnalyzer:
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
-        for content in progbar(created_contents, prefix="Serializing contents: "):
-            self.__serialize_content(content)
+        with get_progbar(created_contents) as pbar:
+            pbar.set_description("Serializing contents")
+
+            for content in pbar:
+                self.__serialize_content(content)
 
     def __serialize_content(self, content: Content):
         """
