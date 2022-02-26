@@ -7,12 +7,10 @@ import abc
 from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
-from tqdm import tqdm
-from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
-from orange_cb_recsys.utils.const import logger, progbar, get_pbar
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 
 class Split:
@@ -109,8 +107,8 @@ class Partitioning(ABC):
         #  }
         train_test_dict = defaultdict(lambda: defaultdict(list))
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(user_id_list)
+        with get_progbar(user_id_list) as pbar:
+
             pbar.set_description("Performing {}".format(str(self)))
             for user_id in pbar:
                 user_ratings = ratings_to_split.get_user_interactions(user_id)

@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import ndcg_score
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
 

@@ -15,7 +15,7 @@ class TestGensimFastText(TestCase):
         model_path = "./model_test_FastText"
         learner = GensimFastText(model_path, True)
         learner.fit(source=JSONFile(file_path), field_list=["Plot", "Genre"], preprocessor_list=[NLTK()])
-        model_path += ".bin"
+        model_path += ".kv"
 
         self.assertEqual(learner.get_embedding("ace").any(), True)
         self.assertEqual(pl.Path(model_path).resolve().is_file(), True)

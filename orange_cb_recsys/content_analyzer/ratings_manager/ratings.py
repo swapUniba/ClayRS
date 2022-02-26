@@ -5,12 +5,11 @@ from pathlib import Path
 from typing import Dict, Union, List, Iterable
 
 import pandas as pd
-from tqdm.contrib.logging import logging_redirect_tqdm
 
 from orange_cb_recsys.content_analyzer.exceptions import Handler_ScoreNotFloat
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
-from orange_cb_recsys.utils.const import get_pbar
+from orange_cb_recsys.utils.const import get_progbar
 from orange_cb_recsys.utils.save_content import get_valid_filename
 
 
@@ -117,8 +116,8 @@ class Ratings:
         ratings_user_item = defaultdict(list)
         ratings_user_timestamp = defaultdict(list)
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(list(source))
+        with get_progbar(list(source)) as pbar:
+
             pbar.set_description(desc="Importing ratings")
             for row in pbar:
 

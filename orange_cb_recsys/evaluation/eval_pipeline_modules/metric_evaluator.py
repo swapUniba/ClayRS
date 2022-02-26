@@ -1,13 +1,9 @@
-from functools import reduce
 from typing import List, Tuple, Union
 
-from tqdm import tqdm
-from tqdm.contrib.logging import logging_redirect_tqdm
-
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
 from orange_cb_recsys.recsys.partitioning import Split
 from orange_cb_recsys.evaluation.metrics.metrics import Metric
-from orange_cb_recsys.utils.const import progbar, logger, get_pbar
+from orange_cb_recsys.utils.const import get_progbar
 
 import pandas as pd
 
@@ -66,8 +62,7 @@ class MetricEvaluator:
         frames_to_concat_users = []
         frames_to_concat_system = []
 
-        with logging_redirect_tqdm():
-            pbar = get_pbar(metric_list)
+        with get_progbar(metric_list) as pbar:
 
             for metric in pbar:
                 pbar.set_description(desc=f"Performing {metric}")

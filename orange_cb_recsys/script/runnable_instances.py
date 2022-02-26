@@ -15,7 +15,7 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import RatingProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Ratings
 
 from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import Regressor

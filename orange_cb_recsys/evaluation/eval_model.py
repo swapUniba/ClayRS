@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Rank, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
 from orange_cb_recsys.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
 import pandas as pd
 from orange_cb_recsys.evaluation.metrics.metrics import Metric

@@ -1,0 +1,37 @@
+name: Testing pipeline
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+            fetch-depth: 0        
+      -
+        name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8 #install the python needed
+      -
+        name: Setup installation requirements
+        run: |
+          pip install wheel pytest pytest-cov
+          pip install -r requirements.txt
+      -
+        name: Test
+        run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
+      -
+        name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with: # no token required for public repos
+              fail_ci_if_error: true
+              files: ./codecoverage.xml

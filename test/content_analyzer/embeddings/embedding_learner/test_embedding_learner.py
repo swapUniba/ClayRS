@@ -14,10 +14,11 @@ from test import dir_test_files
 
 
 file_path = os.path.join(dir_test_files, 'movies_info_reduced.json')
-doc2vec_file_path = os.path.join(dir_test_files, "test_embedding_models/doc2vec_model.model")
+doc2vec_file_path = os.path.join(dir_test_files, "test_embedding_models/doc2vec_model.kv")
 lsa_file_path = os.path.join(dir_test_files, "test_embedding_models/lsa/lsa_model.model")
 ri_file_path = os.path.join(dir_test_files, "test_embedding_models/ri_model.model")
-word2vec_file_path = os.path.join(dir_test_files, "test_embedding_models/word2vec_model.bin")
+word2vec_file_path = os.path.join(dir_test_files, "test_embedding_models/word2vec_model.kv")
+fasttext_file_path = os.path.join(dir_test_files, "test_embedding_models/fasttext_model.kv")
 
 
 class TestEmbeddingLearner(TestCase):
@@ -54,6 +55,7 @@ class TestEmbeddingLearner(TestCase):
 
 class TestWordEmbeddingSourceGensimLearner(TestEmbeddingSource):
     def test_doc2vec(self):
+        # model created using d2c_test_data.json
         source = GensimDoc2Vec(doc2vec_file_path)
         vector_size = 20
         result = source.load(["machine", "learning", "random_word"])
@@ -67,9 +69,7 @@ class TestWordEmbeddingSourceGensimLearner(TestEmbeddingSource):
         self.assertWordEmbeddingMatches(source, result[1], "learning")
 
     def test_fasttext(self):
-        # note: fasttext is trained because the resulting saved model file was too heavy
-        source = GensimFastText("./test_source_fasttext", auto_save=False, min_count=1)
-        source.fit(source=JSONFile(file_path), field_list=["Plot"], preprocessor_list=[NLTK()])
+        source = GensimFastText(fasttext_file_path)
         vector_size = 100
         result = source.load(["first", "remote"])
 

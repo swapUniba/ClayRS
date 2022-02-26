@@ -9,7 +9,7 @@ import numpy as np
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Prediction, Rank
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
 from orange_cb_recsys.recsys.algorithm import Algorithm
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content

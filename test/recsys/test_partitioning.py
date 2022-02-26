@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Ratings
 from orange_cb_recsys.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning
 
 original_ratings = pd.DataFrame.from_dict(

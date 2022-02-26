@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Rank, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Ratings
 from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall
 
 from orange_cb_recsys.evaluation.eval_model import MetricEvaluator

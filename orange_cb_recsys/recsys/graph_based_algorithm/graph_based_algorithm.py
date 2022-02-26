@@ -1,7 +1,7 @@
 import abc
 from typing import Dict, List
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
 from orange_cb_recsys.recsys.algorithm import Algorithm
 from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
 

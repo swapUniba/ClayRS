@@ -1,6 +1,6 @@
 from typing import List
 
-from gensim.models import Word2Vec, KeyedVectors
+from gensim.models import Word2Vec
 
 from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.embedding_learner import GensimWordEmbeddingLearner
 
@@ -12,16 +12,10 @@ class GensimWord2Vec(GensimWordEmbeddingLearner):
     """
 
     def __init__(self, reference: str = None, auto_save: bool = True, **kwargs):
-        super().__init__(reference, auto_save, ".bin", **kwargs)
+        super().__init__(reference, auto_save, ".kv", **kwargs)
 
     def fit_model(self, corpus: List):
-        self.model = Word2Vec(sentences=corpus, **self.additional_parameters)
-
-    def load_model(self):
-        return KeyedVectors.load_word2vec_format(self.reference, binary=True)
-
-    def save(self):
-        self.model.wv.save_word2vec_format(self.reference, binary=True)
+        self.model = Word2Vec(sentences=corpus, **self.additional_parameters).wv
 
     def __str__(self):
         return "GensimWord2Vec"

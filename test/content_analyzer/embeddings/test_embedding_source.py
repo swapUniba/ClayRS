@@ -1,15 +1,14 @@
+from typing import Callable
+
 import numpy as np
 from unittest import TestCase
 from math import isclose
 
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_source import EmbeddingSource
-
-
 class TestEmbeddingSource(TestCase):
 
     # Will be used by several test involving embeddings
-    def assertWordEmbeddingMatches(self, source: EmbeddingSource, embedding: np.ndarray, word: str):
+    def assertWordEmbeddingMatches(self, source, embedding: np.ndarray, word: str):
         # 'similar_by_vector()' returns a list with top n
         # words similar to the vector given. I'm interested only in the most similar
         # so n = 1

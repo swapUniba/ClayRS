@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import List, Union
 
 import numpy as np
+from gensim.models import KeyedVectors
 
 from orange_cb_recsys.content_analyzer.embeddings.embedding_source import \
     EmbeddingSource
@@ -150,11 +151,12 @@ class EmbeddingLearner(EmbeddingSource):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def save(self):
         """
         Saves the model in the path stored in the file_path attribute
         """
-        self.model.save(self.reference)
+        raise NotImplementedError
 
 
 class WordEmbeddingLearner(EmbeddingLearner):
@@ -208,9 +210,11 @@ class GensimWordEmbeddingLearner(WordEmbeddingLearner):
     def get_embedding(self, word: str) -> np.ndarray:
         return self.model[word]
 
-    @abstractmethod
     def load_model(self):
-        raise NotImplementedError
+        return KeyedVectors.load_word2vec_format(self.reference, binary=True)
+
+    def save(self):
+        self.model.save_word2vec_format(self.reference, binary=True)
 
     @abstractmethod
     def fit_model(self, corpus: List):
@@ -251,6 +255,9 @@ class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
     @abstractmethod
     def load_model(self):
         raise NotImplementedError
+
+    def save(self):
+        self.model.save(self.reference)
 
     @abstractmethod
     def fit_model(self, corpus: List):

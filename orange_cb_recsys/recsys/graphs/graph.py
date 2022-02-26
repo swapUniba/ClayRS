@@ -6,12 +6,12 @@ from copy import deepcopy
 from typing import List, Set, Union, Iterable
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Interaction, Ratings
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from orange_cb_recsys.recsys.graphs.graph_metrics import GraphMetrics
 from orange_cb_recsys.utils.load_content import load_content_instance
 
 from orange_cb_recsys.content_analyzer.content_representation.content import Content
-from orange_cb_recsys.utils.const import logger, progbar
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 
 class Node(ABC):
@@ -416,17 +416,18 @@ class BipartiteGraph(Graph, GraphMetrics):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for row in progbar(source_frame.to_dict('records'),
-                               max_value=source_frame.__len__(),
-                               prefix="Populating Graph:"):
-                self.add_user_node(row['from_id'])
-                self.add_item_node(row['to_id'])
-                if 'label' in source_frame.columns:
-                    label = row['label']
-                else:
-                    label = self.get_default_score_label()
-                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
-                              label=label)
+            with get_progbar(source_frame.to_dict('records')) as pbar:
+                pbar.set_description("Populating graph")
+
+                for row in pbar:
+                    self.add_user_node(row['from_id'])
+                    self.add_item_node(row['to_id'])
+                    if 'label' in source_frame.columns:
+                        label = row['label']
+                    else:
+                        label = self.get_default_score_label()
+                    self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
+                                  label=label)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 
@@ -476,26 +477,27 @@ class TripartiteGraph(BipartiteGraph):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for row in progbar(source_frame.to_dict('records'),
-                               max_value=source_frame.__len__(),
-                               prefix="Populating Graph:"):
-                self.add_user_node(row['from_id'])
+            with get_progbar(source_frame.to_dict('records')) as pbar:
+                pbar.set_description("Populating graph")
 
-                # If the node already exists then we don't add it and more importantly
-                # we don't retrieve its exo prop if specified, since they are already been retireved
-                # previously.
-                if not self.node_exists(ItemNode(row['to_id'])):
-                    self.add_item_node(row['to_id'])
-                    if self.get_item_contents_dir() is not None:
-                        self._add_item_properties(row)
+                for row in pbar:
+                    self.add_user_node(row['from_id'])
 
-                if 'label' in source_frame.columns:
-                    label = row['label']
-                else:
-                    label = self.get_default_score_label()
+                    # If the node already exists then we don't add it and more importantly
+                    # we don't retrieve its exo prop if specified, since they are already been retireved
+                    # previously.
+                    if not self.node_exists(ItemNode(row['to_id'])):
+                        self.add_item_node(row['to_id'])
+                        if self.get_item_contents_dir() is not None:
+                            self._add_item_properties(row)
 
-                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
-                              label=label)
+                    if 'label' in source_frame.columns:
+                        label = row['label']
+                    else:
+                        label = self.get_default_score_label()
+
+                    self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
+                                  label=label)
 
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
@@ -830,33 +832,36 @@ class FullGraph(TripartiteGraph):
             source_frame (pd.DataFrame): the rating frame from where the graph will be populated
         """
         if self._check_columns(source_frame):
-            for row in progbar(source_frame.to_dict('records'),
-                               max_value=source_frame.__len__(),
-                               prefix="Populating Graph:"):
 
-                # If the node already exists then we don't add it and more importantly
-                # we don't retrieve its exo prop if specified, since they are already been retireved
-                # previously.
-                if not self.node_exists(UserNode(row['from_id'])):
-                    self.add_user_node(row['from_id'])
-                    if self.get_user_contents_dir() is not None:
-                        self._add_usr_properties(row)
+            with get_progbar(source_frame.to_dict('records')) as pbar:
 
-                # If the node already exists then we don't add it and more importantly
-                # we don't retrieve its exo prop if specified, since they are already been retireved
-                # previously.
-                if not self.node_exists(ItemNode(row['to_id'])):
-                    self.add_item_node(row['to_id'])
-                    if self.get_item_contents_dir() is not None:
-                        self._add_item_properties(row)
+                pbar.set_description("Populating graph")
 
-                if 'label' in source_frame.columns:
-                    label = row['label']
-                else:
-                    label = self.get_default_score_label()
+                for row in pbar:
 
-                self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
-                              label=label)
+                    # If the node already exists then we don't add it and more importantly
+                    # we don't retrieve its exo prop if specified, since they are already been retireved
+                    # previously.
+                    if not self.node_exists(UserNode(row['from_id'])):
+                        self.add_user_node(row['from_id'])
+                        if self.get_user_contents_dir() is not None:
+                            self._add_usr_properties(row)
+
+                    # If the node already exists then we don't add it and more importantly
+                    # we don't retrieve its exo prop if specified, since they are already been retireved
+                    # previously.
+                    if not self.node_exists(ItemNode(row['to_id'])):
+                        self.add_item_node(row['to_id'])
+                        if self.get_item_contents_dir() is not None:
+                            self._add_item_properties(row)
+
+                    if 'label' in source_frame.columns:
+                        label = row['label']
+                    else:
+                        label = self.get_default_score_label()
+
+                    self.add_link(UserNode(row['from_id']), ItemNode(row['to_id']), row['score'],
+                                  label=label)
         else:
             raise ValueError('The source frame must contains at least \'from_id\', \'to_id\', \'score\' columns')
 
