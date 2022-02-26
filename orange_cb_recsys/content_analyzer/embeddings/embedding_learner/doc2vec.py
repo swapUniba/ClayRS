@@ -12,14 +12,11 @@ class GensimDoc2Vec(GensimWordEmbeddingLearner):
     """
 
     def __init__(self, reference: str = None, auto_save: bool = True, **kwargs):
-        super().__init__(reference, auto_save, ".model", **kwargs)
+        super().__init__(reference, auto_save, ".kv", **kwargs)
 
     def fit_model(self, corpus: List):
         tagged_data = [TaggedDocument(doc, [i]) for i, doc in enumerate(corpus)]
-        self.model = Doc2Vec(tagged_data, **self.additional_parameters)
-
-    def load_model(self):
-        return Doc2Vec.load(self.reference)
+        self.model = Doc2Vec(tagged_data, **self.additional_parameters).wv
 
     def __str__(self):
         return "GensimDoc2Vec"

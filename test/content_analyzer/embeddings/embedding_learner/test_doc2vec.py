@@ -15,7 +15,7 @@ class TestGensimDoc2Vec(TestCase):
         model_path = "./model_test_Doc2Vec"
         learner = GensimDoc2Vec(model_path, True)
         learner.fit(source=JSONFile(file_path), field_list=["Plot", "Genre"], preprocessor_list=[NLTK()])
-        model_path += ".model"
+        model_path += ".kv"
 
         self.assertEqual(learner.get_embedding("ace").any(), True)
         self.assertEqual(pl.Path(model_path).resolve().is_file(), True)

@@ -21,7 +21,7 @@ file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
 
 
 class TestEmbeddingTechnique(TestCase):
-    def test_produce_cotent(self):
+    def test_produce_content(self):
         technique = WordEmbeddingTechnique(GensimFastText())
         embedding_list = technique.produce_content("Plot", [NLTK()], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)
