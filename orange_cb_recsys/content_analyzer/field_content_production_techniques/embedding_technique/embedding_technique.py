@@ -463,6 +463,7 @@ class Sentence2WordEmbedding(DecombiningInWordsEmbeddingTechnique):
         Returns: matrix embedding for token
 
         """
+        field_data = check_not_tokenized(field_data)
         embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner] = self.embedding_source
         words_embeddings = embedding_source.get_embedding_token(field_data)
         return EmbeddingField(words_embeddings)
