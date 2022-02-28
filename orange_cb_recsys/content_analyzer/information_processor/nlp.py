@@ -39,9 +39,9 @@ class NLTK(NLP):
                  named_entity_recognition: bool = False,
                  lang: str = 'english'):
 
-        if not self._corpus_downloaded:
+        if not NLTK._corpus_downloaded:
             self.__download_corpus()
-            self._corpus_downloaded = True
+            NLTK._corpus_downloaded = True
 
         self.stopwords_removal = stopwords_removal
         self.stemming = stemming
