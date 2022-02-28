@@ -17,6 +17,7 @@ from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
 class NLTK(NLP):
+    _corpus_downloaded = False
     """
     Interface to the NLTK library for natural language processing features
 
@@ -71,34 +72,37 @@ class NLTK(NLP):
                ">"
 
     def __download_corpus(self):
-        try:
-            nltk.data.find('corpora/stopwords')
-        except LookupError:
-            nltk.download('stopwords')
-        try:
-            nltk.data.find('punkt')
-        except LookupError:
-            nltk.download('punkt')
-        try:
-            nltk.data.find('averaged_perceptron_tagger')
-        except LookupError:
-            nltk.download('averaged_perceptron_tagger')
-        try:
-            nltk.data.find('wordnet')
-        except LookupError:
-            nltk.download('wordnet')
-        try:
-            nltk.data.find('maxent_ne_chunker')
-        except LookupError:
-            nltk.download('maxent_ne_chunker')
-        try:
-            nltk.data.find('words')
-        except LookupError:
-            nltk.download('words')
-        try:
-            nltk.data.find('omw-1.4')
-        except LookupError:
-            nltk.download('omw-1.4')
+        if not self._corpus_downloaded:
+            try:
+                nltk.data.find('corpora/stopwords')
+            except LookupError:
+                nltk.download('stopwords')
+            try:
+                nltk.data.find('punkt')
+            except LookupError:
+                nltk.download('punkt')
+            try:
+                nltk.data.find('averaged_perceptron_tagger')
+            except LookupError:
+                nltk.download('averaged_perceptron_tagger')
+            try:
+                nltk.data.find('wordnet')
+            except LookupError:
+                nltk.download('wordnet')
+            try:
+                nltk.data.find('maxent_ne_chunker')
+            except LookupError:
+                nltk.download('maxent_ne_chunker')
+            try:
+                nltk.data.find('words')
+            except LookupError:
+                nltk.download('words')
+            try:
+                nltk.data.find('omw-1.4')
+            except LookupError:
+                nltk.download('omw-1.4')
+
+        self._corpus_downloaded = True
 
     def __tokenization_operation(self, text) -> List[str]:
         """
