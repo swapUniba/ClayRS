@@ -89,8 +89,11 @@ class MetricEvaluator:
                     each_user_result = total_results_metric.drop(['sys'])
                     each_user_result = each_user_result.dropna(axis=1, how='all')
 
-                    frames_to_concat_users.append(each_user_result)
-                    frames_to_concat_system.append(system_results)
+                    if not each_user_result.empty:
+                        frames_to_concat_users.append(each_user_result)
+
+                    if not system_results.empty:
+                        frames_to_concat_system.append(system_results)
 
         # concat horizontally results of each metric both for users and system
         final_result_users = pd.DataFrame(columns=['user_id'])
