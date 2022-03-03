@@ -15,7 +15,7 @@ from orange_cb_recsys.content_analyzer.information_processor.information_process
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from orange_cb_recsys.utils.class_utils import get_all_implemented_subclasses
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 from typing import Union, List, Type
 
@@ -97,9 +97,14 @@ class EmbeddingTechnique(SingleContentTechnique):
         # it iterates over all contents contained in the source in order to retrieve the raw data
         # the data contained in the field_name is processed using each information processor in the processor_list
         # the data is passed to the method that will create the single representation
-        for content_data in source:
-            processed_data = self.process_data(content_data[field_name], preprocessor_list)
-            representation_list.append(self.produce_single_repr(processed_data))
+        with get_progbar(list(source)) as pbar:
+
+            for content_data in pbar:
+
+                pbar.set_description(f"Processing and producing contents")
+
+                processed_data = self.process_data(content_data[field_name], preprocessor_list)
+                representation_list.append(self.produce_single_repr(processed_data))
 
         return representation_list
 

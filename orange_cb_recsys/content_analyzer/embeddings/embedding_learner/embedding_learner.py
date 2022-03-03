@@ -1,3 +1,4 @@
+import functools
 from abc import abstractmethod
 from typing import List, Union
 
@@ -9,7 +10,7 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_source import \
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 
 class EmbeddingLearner(EmbeddingSource):
@@ -126,15 +127,17 @@ class EmbeddingLearner(EmbeddingSource):
         """
         corpus = []
         # iter the source
-        for i, doc in enumerate(source):
-            logger.info("Document %d", i)
-            doc_data = ""
-            for field_name in field_list:
-                # apply preprocessing and save the data in the list
-                doc_data += " " + doc[field_name].lower()
-            for preprocessor in preprocessor_list:
-                doc_data = preprocessor.process(doc_data)
-            corpus.append(self.process_data_granularity(doc_data))
+        with get_progbar(list(source)) as pbar:
+
+            for doc in pbar:
+                pbar.set_description(f"Preprocessing {', '.join(field_list)} for all contents")
+                doc_data = ""
+                for field_name in field_list:
+                    # apply preprocessing and save the data in the list
+                    doc_data += " " + doc[field_name].lower()
+                for preprocessor in preprocessor_list:
+                    doc_data = preprocessor.process(doc_data)
+                corpus.append(self.process_data_granularity(doc_data))
         return corpus
 
     @abstractmethod
@@ -237,6 +240,7 @@ class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
     def __init__(self, reference: str, auto_save: bool, extension: str, **kwargs):
         super().__init__(reference, auto_save, extension, **kwargs)
 
+    @functools.lru_cache()
     def get_vector_size(self) -> int:
         return self.model.num_topics
 
@@ -245,12 +249,10 @@ class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
         # the word will be 1). The embedding vector is then created from the bow
         # if the word is not found in the trained model, a key error exception is thrown, which means that the
         # embedding vector will be [0. 0. ... 0.]
-        word = self.model.id2word.doc2idx([word])[0]
-        if word == -1:
+        word = self.model.id2word.doc2bow([word])
+        if len(word) == 0:
             raise KeyError
-        else:
-            word = [(word, 1)]
-            return np.array([value[1] for value in self.model[word]], dtype=np.float64)
+        return np.array([value[1] for value in self.model[word]], dtype=np.float64)
 
     @abstractmethod
     def load_model(self):
