@@ -21,7 +21,8 @@ class GensimRandomIndexing(GensimProjectionsWordEmbeddingLearner):
         The model isn't then returned, but gets stored in the 'model' class attribute.
         """
         dictionary = Dictionary(corpus)
-        self.model = RpModel(corpus, id2word=dictionary, **self.additional_parameters)
+        word_docs_matrix = [dictionary.doc2bow(doc) for doc in corpus]
+        self.model = RpModel(word_docs_matrix, id2word=dictionary, **self.additional_parameters)
 
     def load_model(self):
         return RpModel.load(self.reference)

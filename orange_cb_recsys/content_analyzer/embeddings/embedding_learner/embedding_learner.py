@@ -240,10 +240,11 @@ class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
     def __init__(self, reference: str, auto_save: bool, extension: str, **kwargs):
         super().__init__(reference, auto_save, extension, **kwargs)
 
-    @functools.lru_cache()
+    @functools.lru_cache(maxsize=64)
     def get_vector_size(self) -> int:
         return self.model.num_topics
 
+    @functools.lru_cache(maxsize=64)
     def get_embedding(self, word: str) -> np.ndarray:
         # the word is converted to the id stored in the model and a bow for the word is created (where the value for
         # the word will be 1). The embedding vector is then created from the bow
