@@ -29,6 +29,12 @@ class SumStrategy(VectorStrategy):
             token_vecs_sum.append(sum_vec)
         return torch.stack(token_vecs_sum).numpy()
 
+    def __str__(self):
+        return "SumStrategy_"+str(self.last_interesting_layers)
+
+    def __repr__(self):
+        return "< Sum Strategy >"
+
 
 class CatStrategy(VectorStrategy):
     """
@@ -43,3 +49,9 @@ class CatStrategy(VectorStrategy):
                 cat_vec = torch.cat((cat_vec, token[i]), dim=0)
             token_vecs_cat.append(cat_vec)
         return torch.stack(token_vecs_cat).numpy()
+
+    def __str__(self):
+        return "CatStrategy_"+str(self.last_interesting_layers)
+
+    def __repr__(self):
+        return "< Cat Strategy >"

@@ -68,7 +68,7 @@ class Sum(CombiningTechnique):
         return np.sum(embedding_matrix, axis=0)
 
     def __str__(self):
-        return "Vector sum"
+        return "Sum"
 
     def __repr__(self):
         return "< Vector sum >"
@@ -86,3 +86,9 @@ class SingleToken(CombiningTechnique):
             raise IndexError(f'The embedding matrix has {embedding_matrix.shape[1]} '
                              f'embeddings but you tried to take the {self.token_index+1}th')
         return sentence_embedding
+
+    def __str__(self):
+        return "SingleToken"
+
+    def __repr__(self):
+        return "< Single token >"
