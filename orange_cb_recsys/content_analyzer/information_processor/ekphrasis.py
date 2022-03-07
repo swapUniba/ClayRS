@@ -1,253 +1,174 @@
 import itertools
-import string
-from typing import List
-import re
-
-import nltk
-
-from nltk import sent_tokenize
-from nltk.tokenize.toktok import ToktokTokenizer
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-from nltk.stem.snowball import SnowballStemmer
 
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import NLP
-from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
+
+from typing import List, Dict, Callable
+
+from ekphrasis.classes.tokenizer import SocialTokenizer
+from ekphrasis.classes.segmenter import Segmenter
+
+from ekphrasis.classes.preprocessor import TextPreProcessor
+from ekphrasis.classes.spellcorrect import SpellCorrector
+
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter(action='ignore', category=FutureWarning)
+    social_tokenizer_ekphrasis = SocialTokenizer(lowercase=True).tokenize
 
 
-class NLTK(NLP):
+class Ekphrasis(NLP):
     """
-    Interface to the NLTK library for natural language processing features
-
-    Args:
-        stopwords_removal (bool): Whether you want to remove stop words
-        stemming (bool): Whether you want to perform stemming
-        lemmatization (bool): Whether you want to perform lemmatization
-        strip_multiple_whitespaces (bool): Whether you want to remove multiple whitespaces
-        url_tagging (bool): Whether you want to tag the urls in the text and to replace with "<URL>"
+    Class to manage text to locate dates, currencies, etc.,
+    unpack hashtags and correct spelling.
     """
 
     def __init__(self, *,
-                 strip_multiple_whitespaces: bool = True,
-                 remove_punctuation: bool = False,
-                 stopwords_removal: bool = False,
-                 url_tagging: bool = False,
-                 lemmatization: bool = False,
-                 stemming: bool = False,
-                 named_entity_recognition: bool = False,
-                 lang: str = 'english'):
-
-        self.__download_corpus()
-        self.stopwords_removal = stopwords_removal
-        self.stemming = stemming
-        self.lemmatization = lemmatization
-        self.strip_multiple_whitespaces = strip_multiple_whitespaces
-        self.url_tagging = url_tagging
-        self.remove_punctuation = remove_punctuation
-        self.named_entity_recognition = named_entity_recognition
-        self.__full_lang_code = lang
-
-    def __str__(self):
-        return "NLTK"
-
-    def __repr__(self):
-        return f'NLTK(strip multiple whitespace={self.strip_multiple_whitespaces},' \
-               f' stopwords removal={self.stopwords_removal},' \
-               f'stemming={self.stemming}, lemmatization={self.lemmatization},' \
-               f' url tagging={self.url_tagging}, remove punctuation={self.remove_punctuation},' \
-               f' named entity recognition={self.named_entity_recognition}, ' \
-               f'lang={self.__full_lang_code}'
-
-    def __download_corpus(self):
-        try:
-            nltk.data.find('corpora/stopwords')
-        except LookupError:
-            nltk.download('stopwords')
-        try:
-            nltk.data.find('punkt')
-        except LookupError:
-            nltk.download('punkt')
-        try:
-            nltk.data.find('averaged_perceptron_tagger')
-        except LookupError:
-            nltk.download('averaged_perceptron_tagger')
-        try:
-            nltk.data.find('wordnet')
-        except LookupError:
-            nltk.download('wordnet')
-        try:
-            nltk.data.find('maxent_ne_chunker')
-        except LookupError:
-            nltk.download('maxent_ne_chunker')
-        try:
-            nltk.data.find('words')
-        except LookupError:
-            nltk.download('words')
-        try:
-            nltk.data.find('omw-1.4')
-        except LookupError:
-            nltk.download('omw-1.4')
-
-    def __tokenization_operation(self, text) -> List[str]:
+                 omit: List = None,
+                 normalize: List = None,
+                 unpack_contractions: bool = False,
+                 unpack_hashtags: bool = False,
+                 annotate: List = None,
+                 corrector: str = None,
+                 tokenizer: Callable = social_tokenizer_ekphrasis,
+                 segmenter: str = None,
+                 all_caps_tag: str = None,
+                 spell_correction: bool = False,
+                 segmentation: bool = False,
+                 dicts: List[Dict] = None,
+                 spell_correct_elong: bool = False
+                 ):
         """
-        Splits the text in one-word tokens
+        omit (list): choose what tokens that you want to omit from the text.
+            possible values: ['email', 'percent', 'money', 'phone', 'user',
+                'time', 'url', 'date', 'hashtag']
+            Important Notes:
+                        1 - put url at front, if you plan to use it.
+                            Messes with the regexes!
+                        2 - if you use hashtag then unpack_hashtags will
+                            automatically be set to False
 
-        Args:
-             text (str): Text to split in tokens
+        normalize (list): choose what tokens that you want to normalize
+            from the text.
+            possible values: ['email', 'percent', 'money', 'phone', 'user',
+                'time', 'url', 'date', 'hashtag']
+            for example: myaddress@mysite.com will be transformed to <email>
+            Important Notes:
+                        1 - put url at front, if you plan to use it.
+                            Messes with the regexes!
+                        2 - if you use hashtag then unpack_hashtags will
+                            automatically be set to False
 
-        Returns:
-             List<str>: a list of words
+        unpack_contractions (bool): Replace *English* contractions in
+            ``text`` str with their unshortened forms
+            for example: can't -> can not, wouldn't -> would not, and so on...
+
+        unpack_hashtags (bool): split a hashtag to it's constituent words.
+            for example: #ilikedogs -> i like dogs
+
+        annotate (list): add special tags to special tokens.
+            possible values: ['hashtag', 'allcaps', 'elongated', 'repeated']
+            for example: myaddress@mysite.com -> myaddress@mysite.com <email>
+
+        tokenizer (callable): callable function that accepts a string and
+            returns a list of strings if no tokenizer is provided then
+            the text will be tokenized on whitespace
+
+        segmenter (str): define the statistics of what corpus you would
+            like to use [english, twitter]
+
+        corrector (str): define the statistics of what corpus you would
+            like to use [english, twitter]
+
+        all_caps_tag (str): how to wrap the capitalized words
+            values [single, wrap, every]
+            Note: applicable only when `allcaps` is included in annotate[]
+                - single: add a tag after the last capitalized word
+                - wrap: wrap all words with opening and closing tags
+                - every: add a tag after each word
+
+        spell_correct_elong (bool): choose if you want to perform
+            spell correction after the normalization of elongated words.
+            * significantly affects performance (speed)
+
+        spell_correction (bool): choose if you want to perform
+            spell correction to the text
+            * significantly affects performance (speed)
         """
-        # EXTREMELY useful tokenizer, it tokenizes by mantaining urls as a single token
-        # as well as optional <url>, <hashtag>, etc.
-        # It works for sentences so we first sentence tokenize
-        sentences = sent_tokenize(text, self.__full_lang_code)
-        sentences_tokenized = ToktokTokenizer().tokenize_sents(sentences)
-        return list(itertools.chain.from_iterable(sentences_tokenized))
+        if tokenizer == 'default':
+            tokenizer = SocialTokenizer().tokenize
 
-    def __stopwords_removal_operation(self, text) -> List[str]:
-        """
-        Execute stopwords removal on input text
+        # ekphrasis has default values for arguments not passed. So if they are not evaluated in our class,
+        # we simply don't pass them to ekphrasis
+        kwargs_to_pass = {argument: arg_value for argument, arg_value in zip(locals().keys(), locals().values())
+                          if argument != 'self' and arg_value is not None}
 
-        Args:
-            text (List<str>):
+        self.text_processor = TextPreProcessor(**kwargs_to_pass)
 
-        Returns:
-            filtered_sentence (List<str>): list of words from the text, without the stopwords
-        """
-        stop_words = set(stopwords.words(self.__full_lang_code))
-        filtered_sentence = []
-        for word_token in text:
-            if word_token.lower() not in stop_words:
-                filtered_sentence.append(word_token)
-
-        return filtered_sentence
-
-    def __stemming_operation(self, text) -> List[str]:
-        """
-        Execute stemming on input text
-
-        Args:
-            text (List<str>):
-
-        Returns:
-            stemmed_text (List<str>): List of the fords from the text, reduced to their stem version
-        """
-        stemmer = SnowballStemmer(language=self.__full_lang_code)
-
-        stemmed_text = [stemmer.stem(word) for word in text]
-
-        return stemmed_text
-
-    @staticmethod
-    def __lemmatization_operation(text) -> List[str]:
-        """
-        Execute lemmatization on input text
-
-        Args:
-            text (List<str>):
-
-        Returns:
-            lemmatized_text (List<str>): List of the fords from the text, reduced to their lemmatized version
-        """
-
-        def get_wordnet_pos(word):
-            """
-            Map POS tag to first character lemmatize() accepts
-            """
-            tag = nltk.pos_tag([word])[0][1][0].upper()
-            tag_dict = {"J": wordnet.ADJ,
-                        "N": wordnet.NOUN,
-                        "V": wordnet.VERB,
-                        "R": wordnet.ADV}
-
-            return tag_dict.get(tag, wordnet.NOUN)
-
-        lemmatizer = WordNetLemmatizer()
-        lemmatized_text = []
-        for word in text:
-            lemmatized_text.append(lemmatizer.lemmatize(word, get_wordnet_pos(word)))
-        return lemmatized_text
-
-    @staticmethod
-    def __named_entity_recognition_operation(text) -> nltk.tree.Tree:
-        """
-        Execute NER on input text
-
-        Args:
-            text (List<str>): Text containing the entities
-
-        Returns:
-            namedEnt (nltk.tree.Tree): A tree containing the bonds between the entities
-        """
-        text = nltk.pos_tag(text)
-        named_ent = nltk.ne_chunk(text)
-        return named_ent
-
-    @staticmethod
-    def __strip_multiple_whitespaces_operation(text) -> str:
-        """
-        Remove multiple whitespaces on input text
-
-        Args:
-            text (str):
-
-        Returns:
-            str: input text, multiple whitespaces removed
-        """
-        return re.sub(' +', ' ', text)
-
-    @staticmethod
-    def __remove_punctuation(text) -> List[str]:
-        """
-        Punctuation removal in spacy
-        Args:
-            text (List[str]):
-        Returns:
-            string without punctuation
-        """
-        # remove all tokens that are not alphabetic
-        cleaned_text = [word for word in text if word not in string.punctuation]
-        return cleaned_text
-
-    @staticmethod
-    def __url_tagging_operation(text) -> List[str]:
-        """
-        Replaces urls with <URL> string on input text
-
-        Args:
-            text (List[str]):
-
-        Returns:
-            text (list<str>): input text, <URL> instead of full urls
-        """
-        tagged_token = []
-        for token in text:
-            if re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]| '
-                        '[!*(), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
-                        token):
-                tagged_token.append("<URL>")
+        self.spell_correct_elong = spell_correct_elong
+        self.sc = None
+        if spell_correction is True:
+            if corrector is not None:
+                self.sc = SpellCorrector(corpus=corrector)
             else:
-                tagged_token.append(token)
+                self.sc = SpellCorrector()
 
-        return tagged_token
+        self.ws = None
+        if segmentation is True:
+            if segmenter is not None:
+                self.ws = Segmenter(corpus=segmenter)
+            else:
+                self.ws = Segmenter()
+
+    def __spell_check(self, field_data):
+        """
+        Correct any spelling errors
+        Args:
+            field_data: text to correct
+        Returns:
+            field_data: correct text
+        """
+
+        def correct_word(word):
+            if self.spell_correct_elong:
+                # normalize to at most 2 repeating chars
+                word = self.text_processor.regexes["normalize_elong"].sub(r'\1\1', word)
+
+                normalized = self.sc.normalize_elongated(word)
+                if normalized:
+                    word = normalized
+
+            return self.sc.correct_word(word, fast=True)
+
+        return [correct_word(word) for word in field_data]
+
+    def __word_segmenter(self, field_data) -> List[str]:
+        """
+        Split words together
+        Args:
+            field_data: Text to be processed
+        Returns (List[str): Text with splitted words
+        """
+        word_seg_list = [self.ws.segment(word) for word in field_data]
+
+        word_seg_list = itertools.chain.from_iterable([word.split() for word in word_seg_list])
+
+        return list(word_seg_list)
 
     def process(self, field_data) -> List[str]:
-        field_data = check_not_tokenized(field_data)
-        if self.strip_multiple_whitespaces:
-            field_data = self.__strip_multiple_whitespaces_operation(field_data)
-        field_data = self.__tokenization_operation(field_data)
-        if self.remove_punctuation:
-            field_data = self.__remove_punctuation(field_data)
-        if self.stopwords_removal:
-            field_data = self.__stopwords_removal_operation(field_data)
-        if self.url_tagging:
-            field_data = self.__url_tagging_operation(field_data)
-        if self.lemmatization:
-            field_data = self.__lemmatization_operation(field_data)
-        if self.stemming:
-            field_data = self.__stemming_operation(field_data)
-        if self.named_entity_recognition:
-            field_data = self.__named_entity_recognition_operation(field_data)
+
+        """
+        Args:
+            field_data: content to be processed
+        Returns:
+            field_data (List<str>): list of str or dict in case of named entity recognition
+        """
+        field_data = self.text_processor.pre_process_doc(field_data)
+        if self.sc is not None:
+            field_data = self.__spell_check(field_data)
+        if self.ws is not None:
+            field_data = self.__word_segmenter(field_data)
         return field_data
+
+    def __repr__(self):
+        return f'Ekphrasis(text processor={self.text_processor}, spell corrector={self.sc},' \
+               f' word segmenter={self.ws}, spell correct elong={self.spell_correct_elong}'
