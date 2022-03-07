@@ -44,7 +44,10 @@ class Transformers(SentenceEmbeddingLoader):
             raise FileNotFoundError
 
     def get_vector_size(self) -> int:
-        return self.model.embeddings.token_type_embeddings.embedding_dim * self.last_interesting_layers
+        if isinstance(self.vec_strategy, CatStrategy):
+            return self.model.embeddings.token_type_embeddings.embedding_dim * self.last_interesting_layers
+        else:
+            return self.model.embeddings.token_type_embeddings.embedding_dim
 
     def get_embedding(self, sentence: str) -> np.ndarray:
         token_vecs = self.get_embedding_token(sentence)
