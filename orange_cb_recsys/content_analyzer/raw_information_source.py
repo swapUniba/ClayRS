@@ -31,6 +31,10 @@ class RawInformationSource(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr__(self):
+        return f'RawInformationSource(encoding={self.__encoding})'
+
 
 class DATFile(RawInformationSource):
     """
@@ -43,6 +47,9 @@ class DATFile(RawInformationSource):
     def __init__(self, file_path: str, encoding: str = "utf-8"):
         super().__init__(encoding)
         self.__file_path = file_path
+
+    def __repr__(self):
+        return f'DATFile(encoding={self.__encoding}, file path={self.__file_path})'
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, encoding=self.encoding) as f:
@@ -74,6 +81,9 @@ class JSONFile(RawInformationSource):
             for line in all_lines:
                 yield line
 
+    def __repr__(self):
+        return f'JSONFile(encoding={self.__encoding}, file path={self.__file_path})'
+
 
 class CSVFile(RawInformationSource):
     """
@@ -99,6 +109,9 @@ class CSVFile(RawInformationSource):
 
             for line in reader:
                 yield line
+
+    def __repr__(self):
+        return f'CSVFile(encoding={self.__encoding}, file path={self.__file_path})'
 
 
 class SQLDatabase(RawInformationSource):
@@ -183,6 +196,11 @@ class SQLDatabase(RawInformationSource):
     @conn.setter
     def conn(self, conn):
         self.__conn = conn
+
+    def __repr__(self):
+        return f'SQLDatabase(encoding={self.__encoding}, host={self.__host},' \
+               f'username={self.__username}, password={self.__password}, ' \
+               f'database name={self.__database_name}, table name={self.__table_name})'
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         cursor = self.conn.cursor(dictionary=True)

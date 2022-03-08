@@ -30,4 +30,4 @@ class GensimRandomIndexing(GensimProjectionsWordEmbeddingLearner):
         return "GensimRandomProjections"
 
     def __repr__(self):
-        return "< GensimRandomProjections: model = " + str(self.model) + " >"
+        return f'GensimRandomIndexing(attributes={str(self.model)})'

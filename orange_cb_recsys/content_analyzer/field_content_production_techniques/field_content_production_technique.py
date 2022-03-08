@@ -23,6 +23,10 @@ class FieldContentProductionTechnique(ABC):
     def __init__(self):
         self.__lang = "EN"
 
+    @abstractmethod
+    def __repr__(self):
+        return f'FieldContentProductionTechnique(lang={self.__lang}'
+
     @property
     def lang(self):
         return self.__lang
@@ -139,6 +143,10 @@ class SingleContentTechnique(FieldContentProductionTechnique):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr__(self):
+        return f'SingleContentTechnique(lang={self.lang}'
+
 
 class CollectionBasedTechnique(FieldContentProductionTechnique):
     """
@@ -215,6 +223,10 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr__(self):
+        return f'CollectionBasedTechnique(lang={self.lang}'
+
 
 class OriginalData(FieldContentProductionTechnique):
     """
@@ -243,6 +255,9 @@ class OriginalData(FieldContentProductionTechnique):
             representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
 
         return representation_list
+
+    def __repr__(self):
+        return f'OriginaData(lang={self.lang}'
 
 
 class DefaultTechnique(FieldContentProductionTechnique):
@@ -324,6 +339,9 @@ class DefaultTechnique(FieldContentProductionTechnique):
 
         return decoded
 
+    def __repr__(self):
+        return f'DefaultTechnique(lang={self.lang}'
+
 
 class TfIdfTechnique(CollectionBasedTechnique):
     """
@@ -346,6 +364,9 @@ class TfIdfTechnique(CollectionBasedTechnique):
     def delete_refactored(self):
         raise NotImplementedError
 
+    def __repr__(self):
+        return f'TfIdfTechnique(lang={self.lang}'
+
 
 class SynsetDocumentFrequency(SingleContentTechnique):
     """
@@ -355,3 +376,6 @@ class SynsetDocumentFrequency(SingleContentTechnique):
     @abstractmethod
     def produce_single_repr(self, field_data: Union[List[str], str]) -> FeaturesBagField:
         raise NotImplementedError
+
+    def __repr__(self):
+        return f'SynsetDocumentFrequency(lang={self.lang}'

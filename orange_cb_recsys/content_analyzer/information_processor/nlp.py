@@ -17,30 +17,6 @@ from orange_cb_recsys.utils.check_tokenization import check_not_tokenized
 
 
 class NLTK(NLP):
-    try:
-        nltk.data.find('corpora/stopwords')
-    except LookupError:
-        nltk.download('stopwords')
-    try:
-        nltk.data.find('punkt')
-    except LookupError:
-        nltk.download('punkt')
-    try:
-        nltk.data.find('averaged_perceptron_tagger')
-    except LookupError:
-        nltk.download('averaged_perceptron_tagger')
-    try:
-        nltk.data.find('wordnet')
-    except LookupError:
-        nltk.download('wordnet')
-    try:
-        nltk.data.find('maxent_ne_chunker')
-    except LookupError:
-        nltk.download('maxent_ne_chunker')
-    try:
-        nltk.data.find('words')
-    except LookupError:
-        nltk.download('words')
     """
     Interface to the NLTK library for natural language processing features
 
@@ -62,6 +38,7 @@ class NLTK(NLP):
                  named_entity_recognition: bool = False,
                  lang: str = 'english'):
 
+        self.__download_corpus()
         self.stopwords_removal = stopwords_removal
         self.stemming = stemming
         self.lemmatization = lemmatization
@@ -75,22 +52,42 @@ class NLTK(NLP):
         return "NLTK"
 
     def __repr__(self):
-        return "< NLTK: " \
-               "stopwords_removal = " + \
-               str(self.stopwords_removal) + ";" + \
-               "stemming = " + \
-               str(self.stemming) + ";" + \
-               "lemmatization = " + \
-               str(self.lemmatization) + ";" + \
-               "named_entity_recognition = " + \
-               str(self.named_entity_recognition) + ";" + \
-               "strip_multiple_whitespaces = " + \
-               str(self.strip_multiple_whitespaces) + ";" + \
-               "url_tagging = " + \
-               str(self.url_tagging) + \
-               "punctuation_removal = " + \
-               str(self.remove_punctuation) + \
-               ">"
+        return f'NLTK(strip multiple whitespace={self.strip_multiple_whitespaces},' \
+               f' stopwords removal={self.stopwords_removal},' \
+               f'stemming={self.stemming}, lemmatization={self.lemmatization},' \
+               f' url tagging={self.url_tagging}, remove punctuation={self.remove_punctuation},' \
+               f' named entity recognition={self.named_entity_recognition}, ' \
+               f'lang={self.__full_lang_code}'
+
+    def __download_corpus(self):
+        try:
+            nltk.data.find('corpora/stopwords')
+        except LookupError:
+            nltk.download('stopwords')
+        try:
+            nltk.data.find('punkt')
+        except LookupError:
+            nltk.download('punkt')
+        try:
+            nltk.data.find('averaged_perceptron_tagger')
+        except LookupError:
+            nltk.download('averaged_perceptron_tagger')
+        try:
+            nltk.data.find('wordnet')
+        except LookupError:
+            nltk.download('wordnet')
+        try:
+            nltk.data.find('maxent_ne_chunker')
+        except LookupError:
+            nltk.download('maxent_ne_chunker')
+        try:
+            nltk.data.find('words')
+        except LookupError:
+            nltk.download('words')
+        try:
+            nltk.data.find('omw-1.4')
+        except LookupError:
+            nltk.download('omw-1.4')
 
     def __tokenization_operation(self, text) -> List[str]:
         """
@@ -228,7 +225,7 @@ class NLTK(NLP):
         tagged_token = []
         for token in text:
             if re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]| '
-                        '[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
+                        '[!*(), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
                         token):
                 tagged_token.append("<URL>")
             else:

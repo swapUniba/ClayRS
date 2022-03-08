@@ -233,6 +233,11 @@ class IndexInterface(TextInterface):
                     words_bag[term] = tf*idf
         return words_bag
 
+    @abc.abstractmethod
+    def __repr__(self):
+        return f'IndexInterface(doc={self.__doc}, writer={self.__writer}, ' \
+               f'doc index={self.__doc_index}, schema changed={self.__schema_changed})'
+
 
 class KeywordIndex(IndexInterface):
     """
@@ -252,7 +257,7 @@ class KeywordIndex(IndexInterface):
         return "KeywordIndex"
 
     def __repr__(self):
-        return "< Keyword Index: directory = " + self.directory + " >"
+        return f'KeyWordInterface(directory={self.directory})'
 
 
 class SearchIndex(IndexInterface):
@@ -272,4 +277,4 @@ class SearchIndex(IndexInterface):
         return "SearchIndex"
 
     def __repr__(self):
-        return "< Search Index: directory = " + self.directory + " >"
+        return f'SearchIndex(directory={self.directory})'

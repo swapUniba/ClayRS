@@ -1,8 +1,10 @@
+from abc import abstractmethod
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from typing import List
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.\
+from orange_cb_recsys.content_analyzer.field_content_production_techniques. \
     field_content_production_technique import TfIdfTechnique
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.memory_interfaces.text_interface import KeywordIndex
@@ -14,6 +16,7 @@ class SkLearnTfIdf(TfIdfTechnique):
     """
     Tf-idf computed using the sklearn library
     """
+
     def __init__(self):
         super().__init__()
         self.__corpus = []
@@ -53,7 +56,7 @@ class SkLearnTfIdf(TfIdfTechnique):
 
         del self.__corpus
 
-        self.__feature_names = tf_vectorizer.get_feature_names()
+        self.__feature_names = tf_vectorizer.get_feature_names_out()
 
         return self.__tfidf_matrix.shape[0]
 
@@ -64,8 +67,10 @@ class SkLearnTfIdf(TfIdfTechnique):
     def __str__(self):
         return "SkLearnTfIdf"
 
+    @abstractmethod
     def __repr__(self):
-        return "< SkLearnTfIdf >"
+        return f'SkLearnTfIdf(corpus={self.__corpus}, tfidf matrix={self.__tfidf_matrix},' \
+               f' feature names={self.__feature_names}'
 
 
 class WhooshTfIdf(TfIdfTechnique):
@@ -87,7 +92,7 @@ class WhooshTfIdf(TfIdfTechnique):
     def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
                          preprocessor_list: List[InformationProcessor]):
         """
-        Saves the processed data in a index that will be used for frequency calculation
+        Saves the processed data in an index that will be used for frequency calculation
         """
         self.__field_name = field_name
         self.__index = KeywordIndex('./' + field_name)
@@ -113,4 +118,4 @@ class WhooshTfIdf(TfIdfTechnique):
         return "WhooshTfIdf"
 
     def __repr__(self):
-        return "< WhooshTfIdf >"
+        return f'WhooshTfIdf(index={self.__index}, field name={self.__field_name})'

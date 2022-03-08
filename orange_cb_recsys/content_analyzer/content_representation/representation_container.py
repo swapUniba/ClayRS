@@ -59,7 +59,6 @@ class RepresentationContainer:
         if len(external_id_list) != len(representation_list):
             raise ValueError("Representation and external_id lists must have the same length")
 
-
         ids = [(int_id, ext_id) for int_id, ext_id in enumerate(external_id_list)]
         self.__representation_container = dict(zip(ids, representation_list))
 
@@ -188,4 +187,5 @@ class RepresentationContainer:
         return str(dataframe)
 
     def __repr__(self):
-        return str(self)
+        return f'RepresentationContainer(rapresentation_list={self.__representation_container}, ' \
+               f'external id={self.get_external_index()})'

@@ -12,6 +12,7 @@ class InformationInterface(ABC):
     Args:
         directory (str): directory where to store the serialized content and where to access for deserialization
     """
+
     def __init__(self, directory: str):
         self.__directory: str = directory
 
@@ -86,12 +87,17 @@ class InformationInterface(ABC):
         if isinstance(other, InformationInterface):
             return self.directory == other.directory
 
+    @abstractmethod
+    def __repr__(self):
+        return f'InformationInterface(directory={self.directory})'
+
 
 class ImageInterface(InformationInterface):
     """
     Future feature
     Abstract class to use when the field information is in image format.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError
@@ -115,6 +121,10 @@ class ImageInterface(InformationInterface):
     @abstractmethod
     def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        return f'ImmageInterface(directory={self.directory})'
 
 
 class AudioInterface(InformationInterface):
@@ -122,6 +132,7 @@ class AudioInterface(InformationInterface):
     Future feature
     Abstract class to use when the field information is in audio format.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError
@@ -146,11 +157,16 @@ class AudioInterface(InformationInterface):
     def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr(self):
+        return f'AudioInterface(directory={self.directory})'
+
 
 class TextInterface(InformationInterface):
     """
     Abstract class to use when the field information is textual.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError
@@ -183,3 +199,7 @@ class TextInterface(InformationInterface):
     @abstractmethod
     def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        return f'TextInterface(directory={self.directory})'

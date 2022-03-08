@@ -1,6 +1,7 @@
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
 
 from sentence_transformers import SentenceTransformer
+
 import numpy as np
 
 

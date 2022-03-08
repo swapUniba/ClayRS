@@ -27,6 +27,10 @@ class ExogenousPropertiesRetrieval(ABC):
         """
         self.__mode = self.__check_mode(mode)
 
+    @abstractmethod
+    def __repr__(self):
+        return f'ExogenousPropertiesRetrieval(mode={self.__mode}'
+
     @staticmethod
     def __check_mode(mode):
         modalities = [
@@ -57,6 +61,10 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
     def __init__(self, mode: str = 'only_retrieved_evaluated', field_name_list: List[str] = None):
         super().__init__(mode)
         self.__field_name_list: List[str] = field_name_list
+
+    @abstractmethod
+    def __repr__(self):
+        return f'PropertiesFromDataset(mode={self.__mode}, field name list={self.__field_name_list})'
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
 
@@ -107,6 +115,11 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         self.__sparql.setReturnFormat(JSON)
 
         self.__class_properties = self.__get_properties_class()
+
+    def __repr__(self):
+        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}),' \
+               f'label_field={self.__label_field}, prop aa url={self.__prop_as_uri}, sparql={self.__sparql}, ' \
+               f'class properties={self.__class_properties}'
 
     @property
     def label_field(self):
@@ -558,6 +571,9 @@ class EntityLinking(ExogenousPropertiesRetrieval):
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
         raise NotImplementedError
 
+    def __repr__(self):
+        return f'EntityLinking'
+
 
 class BabelPyEntityLinking(EntityLinking):
     """
@@ -587,29 +603,30 @@ class BabelPyEntityLinking(EntityLinking):
 
         """
         properties_list = []
-        logger.info("Doing Entity Linking with BabelFy")
-        for raw_content in progbar(raw_source, max_value=len(list(raw_source))):
-            data_to_disambiguate = check_not_tokenized(raw_content[self.__field_to_link])
+        logger.info("Performing Entity Linking with BabelFy")
+        with progbar(list(raw_source)) as pbar:
+            for raw_content in pbar:
+                data_to_disambiguate = check_not_tokenized(raw_content[self.__field_to_link])
 
-            self.__babel_client.babelfy(data_to_disambiguate)
+                self.__babel_client.babelfy(data_to_disambiguate)
 
-            properties_content = {}
-            try:
-                if self.__babel_client.merged_entities is not None:
+                properties_content = {}
+                try:
+                    if self.__babel_client.merged_entities is not None:
 
-                    for entity in self.__babel_client.merged_entities:
-                        properties_entity = {'babelSynsetID': '', 'DBPediaURL': '', 'BabelNetURL': '', 'score': '',
-                                             'coherenceScore': '', 'globalScore': '', 'source': ''}
+                        for entity in self.__babel_client.merged_entities:
+                            properties_entity = {'babelSynsetID': '', 'DBPediaURL': '', 'BabelNetURL': '', 'score': '',
+                                                 'coherenceScore': '', 'globalScore': '', 'source': ''}
 
-                        for key in properties_entity:
-                            if entity.get(key) is not None:
-                                properties_entity[key] = entity[key]
+                            for key in properties_entity:
+                                if entity.get(key) is not None:
+                                    properties_entity[key] = entity[key]
 
-                        properties_content[entity['text']] = properties_entity
+                            properties_content[entity['text']] = properties_entity
 
-                properties_list.append(EntitiesProp(properties_content))
-            except AttributeError:
-                raise AttributeError("BabelFy limit reached! Insert an api key or change it if you inserted one!")
+                    properties_list.append(EntitiesProp(properties_content))
+                except AttributeError:
+                    raise AttributeError("BabelFy limit reached! Insert an api key or change it if you inserted one!")
 
         return properties_list
 
@@ -617,4 +634,7 @@ class BabelPyEntityLinking(EntityLinking):
         return "BabelPyEntityLinking"
 
     def __repr__(self):
-        return "< BabelPyEntityLinking: babel client = " + str(self.__babel_client) + " >"
+        return f'BabelPyEntityLinking(field_to_link={self.__field_to_link}, api key={self.__api_key}' \
+               f'babel client={self.__babel_client}'
+
+

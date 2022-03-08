@@ -10,9 +10,8 @@ from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, progbar
 from orange_cb_recsys.utils.id_merger import id_merger
-from orange_cb_recsys.utils.const import progbar
 
 
 class ContentAnalyzer:
@@ -31,6 +30,9 @@ class ContentAnalyzer:
 
     def set_config(self, config: ContentAnalyzerConfig):
         self.__config = config
+
+    def __repr__(self):
+        return f'ContentAnalyzer(config={self.__config})'
 
     def fit(self):
         """
@@ -63,8 +65,11 @@ class ContentAnalyzer:
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
-        for content in progbar(created_contents, prefix="Serializing contents: "):
-            self.__serialize_content(content)
+        with progbar(created_contents) as pbar:
+            pbar.set_description("Serializing contents")
+
+            for content in pbar:
+                self.__serialize_content(content)
 
     def __serialize_content(self, content: Content):
         """
@@ -105,11 +110,6 @@ class ContentAnalyzer:
 
     def __str__(self):
         return "ContentAnalyzer"
-
-    def __repr__(self):
-        msg = "< " + "ContentAnalyzer: " + "" \
-                                           "config = " + str(self.__config) + "; >"
-        return msg
 
 
 class ContentsProducer:
@@ -271,6 +271,4 @@ class ContentsProducer:
         return "ContentsProducer"
 
     def __repr__(self):
-        msg = "< " + "ContentsProducer:" + "" \
-                                           "config = " + str(self.__config) + " >"
-        return msg
+        return f'ContentsProducer(source={self.__config}, memory interface={self.__memory_interfaces})'

@@ -34,4 +34,4 @@ class GensimLatentSemanticAnalysis(GensimProjectionsWordEmbeddingLearner):
         return "GensimLatentSemanticAnalysis"
 
     def __repr__(self):
-        return "< GensimLatentSemanticAnalysis : model = " + str(self.model) + " >"
+        return f'GensimLatentSemanticAnalysis(attributes={str(self.model)})'

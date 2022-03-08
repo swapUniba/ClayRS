@@ -31,16 +31,13 @@ class EmbeddingLoader(EmbeddingSource):
 
     @abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'EmbeddingLoader'
 
 
 class WordEmbeddingLoader(EmbeddingLoader):
     """
     Defines the granularity of a loader which will be 'word'
     """
-
-    def __init__(self, reference: str):
-        super().__init__(reference)
 
     @abstractmethod
     def load_model(self):
@@ -60,16 +57,13 @@ class WordEmbeddingLoader(EmbeddingLoader):
 
     @abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'WordEmbeddingLoader'
 
 
 class SentenceEmbeddingLoader(EmbeddingLoader):
     """
     Defines the granularity of a loader which will be 'sentence'
     """
-
-    def __init__(self, reference: str):
-        super().__init__(reference)
 
     @abstractmethod
     def load_model(self):
@@ -84,21 +78,31 @@ class SentenceEmbeddingLoader(EmbeddingLoader):
         raise NotImplementedError
 
     @abstractmethod
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        """
+        method that allows me to get embedding for tokens even if we are working with 'sentence' granularity.
+        'Attention! not all models can implement this function'
+
+        Args:
+            sentence: sentence to analyze
+
+        Returns: matrix in which each row represents the embedding of a token
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
     @abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'SentenceEmbeddingLoader'
 
 
 class DocumentEmbeddingLoader(EmbeddingLoader):
     """
     Defines the granularity of a loader which will be 'document'
     """
-
-    def __init__(self, reference: str):
-        super().__init__(reference)
 
     @abstractmethod
     def load_model(self):
@@ -113,9 +117,17 @@ class DocumentEmbeddingLoader(EmbeddingLoader):
         raise NotImplementedError
 
     @abstractmethod
+    def get_embedding_token(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_embedding_sentence(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
     @abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'DocumentEmbeddingLoader'

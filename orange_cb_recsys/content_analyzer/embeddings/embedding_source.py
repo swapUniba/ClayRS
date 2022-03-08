@@ -97,4 +97,4 @@ class EmbeddingSource(ABC):
         raise NotImplementedError
 
     def __repr__(self):
-        raise NotImplementedError
+        return f'EmbeddingSource(reference={self.__reference}'
