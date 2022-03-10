@@ -33,6 +33,9 @@ class FeatureSelectionHandler:
         # a single one
         self.__feature_selection_algorithm = feature_selection_algorithm
 
+    def __repr__(self):
+        return f'FeatureSelectionHandler(feature_selection_algorithm={self.__feature_selection_algorithm})'
+
     def process_feature_selection_on_fullgraph(self, graph: FullGraph,
                                                user_target_nodes: List[object],
                                                item_target_nodes: List[object]) -> FullGraph:

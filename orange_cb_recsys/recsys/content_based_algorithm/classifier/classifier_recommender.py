@@ -62,6 +62,10 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self.__labels: list = None
         self.__rated_dict: dict = None
 
+    def __repr__(self):
+        return f'ClassifierRecommender(classifier={self.__classifier}, ' \
+               f'embedding_combiner={self.__embedding_combiner})'
+
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.

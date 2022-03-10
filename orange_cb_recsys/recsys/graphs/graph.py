@@ -27,6 +27,8 @@ class Node(ABC):
     def __init__(self, value: object):
         self.__value = value
 
+
+
     @property
     def value(self):
         return self.__value
@@ -56,7 +58,8 @@ class Node(ABC):
 
     @abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'Node(value={self.__value})'
+
 
 
 class UserNode(Node):
@@ -73,8 +76,12 @@ class UserNode(Node):
     def __str__(self):
         return "User " + str(self.value)
 
+    """OLD REPR
     def __repr__(self):
         return "User " + str(self.value)
+    """
+    def __repr__(self):
+        return f'UserNode(user={self.value})'
 
 
 class ItemNode(Node):
@@ -91,8 +98,13 @@ class ItemNode(Node):
     def __str__(self):
         return "Item " + str(self.value)
 
+    """OLD REPR
     def __repr__(self):
         return "Item " + str(self.value)
+    """
+
+    def __repr__(self):
+        return f'ItemNode(Item={self.value})'
 
 
 class PropertyNode(Node):
@@ -109,8 +121,13 @@ class PropertyNode(Node):
     def __str__(self):
         return "Property " + str(self.value)
 
+    """OLD REPR
     def __repr__(self):
         return "Property " + str(self.value)
+    """
+
+    def __repr__(self):
+        return f'PropertyNode(Item={self.value})'
 
 
 class Graph(ABC):

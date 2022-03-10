@@ -58,6 +58,9 @@ class IndexQuery(ContentBasedAlgorithm):
         self.__positive_user_docs: dict = None
         self.__classic_similarity: bool = classic_similarity
 
+    def __repr__(self):
+        return f'IndexQuery(classic_similarity={self.__classic_similarity})'
+
     def __get_representations(self, index_representations: dict):
         """
         Private method which extracts representation(s) chosen from all representations codified for the items

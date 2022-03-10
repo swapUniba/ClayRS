@@ -187,5 +187,5 @@ class RepresentationContainer:
         return str(dataframe)
 
     def __repr__(self):
-        return f'RepresentationContainer(rapresentation_list={self.__representation_container}, ' \
+        return f'RepresentationContainer(representation_list={self.__representation_container}, ' \
                f'external id={self.get_external_index()})'

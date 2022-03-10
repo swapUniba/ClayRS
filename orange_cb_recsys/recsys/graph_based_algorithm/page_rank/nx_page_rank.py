@@ -10,7 +10,6 @@ from orange_cb_recsys.recsys.graphs import NXFullGraph
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.page_rank import PageRankAlg
 
-
 class NXPageRank(PageRankAlg):
     """
     Page Rank algorithm based on the networkx implementation
@@ -28,6 +27,7 @@ class NXPageRank(PageRankAlg):
 
     def __init__(self, personalized: bool = False, feature_selection: FeatureSelectionAlgorithm = None):
         super().__init__(personalized, feature_selection)
+        
 
     def rank(self, user_id: str, graph: NXFullGraph, recs_number: int = None,
              filter_list: List[str] = None) -> List[Interaction]:

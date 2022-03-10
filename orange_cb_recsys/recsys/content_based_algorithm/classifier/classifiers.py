@@ -8,6 +8,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 
+
 class Classifier(ABC):
     """
     Abstract class for Classifiers
@@ -15,6 +16,9 @@ class Classifier(ABC):
 
     def __init__(self, classifier):
         self.__classifier = classifier
+
+    def __repr__(self):
+        return f'Classifier(classifier={self.__classifier})'
 
     @property
     def classifier(self):

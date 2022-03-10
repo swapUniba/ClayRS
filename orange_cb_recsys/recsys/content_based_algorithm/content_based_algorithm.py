@@ -39,6 +39,9 @@ class ContentBasedAlgorithm(Algorithm):
         self.threshold: float = threshold
         self.__transformer = None
 
+    def __repr__(self):
+        return f'ContentBasedAlgorithm(threshold={self.threshold})'
+
     def _set_transformer(self):
         """
         Private method that set the transformer later used in order to fuse multiple representations

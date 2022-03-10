@@ -203,6 +203,9 @@ class NXTopKFeatureSelection(NXFeatureSelectionAlgorithm):
         super().__init__(additional_arguments)
         self.__k = k
 
+    def __repr__(self):
+        return f'NXTopKFeatureSelection(k={self.__k})'
+
     @abstractmethod
     def create_rank(self, graph: nx.DiGraph) -> dict:
         """

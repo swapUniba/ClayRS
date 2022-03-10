@@ -63,6 +63,10 @@ class LinearPredictor(ContentBasedAlgorithm):
         self.__rated_dict: dict = None
         self.__embedding_combiner = embedding_combiner
 
+    def __repr__(self):
+        return f'LinearPredictor(regressor={self.__regressor}, ' \
+               f'embedding_combiner={self.__embedding_combiner})'
+
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.

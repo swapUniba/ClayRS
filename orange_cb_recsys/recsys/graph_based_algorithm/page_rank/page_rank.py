@@ -25,6 +25,9 @@ class PageRankAlg(GraphBasedAlgorithm):
         self.__personalized = personalized
         super().__init__(feature_selection)
 
+    def __repr__(self):
+        return f'PageRankAlg(personalized={self.__personalized})'
+
     @property
     def personalized(self):
         return self.__personalized

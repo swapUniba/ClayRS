@@ -21,6 +21,9 @@ class GraphBasedAlgorithm(Algorithm):
     def __init__(self, feature_selection: FeatureSelectionAlgorithm = None):
         self.__feature_selection: FeatureSelectionAlgorithm = feature_selection
 
+    def __repr__(self):
+        return f'GraphBasedAlgorithm(feature_selection={self.__feature_selection})'
+
     @property
     def feature_selection(self):
         return self.__feature_selection
