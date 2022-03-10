@@ -171,4 +171,4 @@ class Ekphrasis(NLP):
 
     def __repr__(self):
         return f'Ekphrasis(text processor={self.text_processor}, spell corrector={self.sc},' \
-               f' word segmenter={self.ws}, spell correct elong={self.spell_correct_elong}'
+               f' word segmenter={self.ws}, spell correct elong={self.spell_correct_elong})'

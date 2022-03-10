@@ -57,7 +57,7 @@ class NLTK(NLP):
                f'stemming={self.stemming}, lemmatization={self.lemmatization},' \
                f' url tagging={self.url_tagging}, remove punctuation={self.remove_punctuation},' \
                f' named entity recognition={self.named_entity_recognition}, ' \
-               f'lang={self.__full_lang_code}'
+               f'lang={self.__full_lang_code})'
 
     def __download_corpus(self):
         try:

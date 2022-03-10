@@ -19,6 +19,9 @@ class Serendipity(Metric):
     def __init__(self, top_n: int):
         self.__top_n = top_n
 
+    def __repr__(self):
+        return f'Serendipity(top_n={self.__top_n})'
+
     def perform(self, splt: Split) -> pd.DataFrame:
         raise NotImplementedError("Serendipity not yet implemented!")
 

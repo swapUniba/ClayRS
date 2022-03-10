@@ -51,7 +51,7 @@ class Centroid(CombiningTechnique):
     def __str__(self):
         return "Centroid"
 
-    @abstractmethod
+    #@abstractmethod
     def __repr__(self):
         return f'Centroid'
 

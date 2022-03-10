@@ -125,6 +125,10 @@ class NDCGAtK(NDCG):
     def __str__(self):
         return "NDCG@{}".format(self.__k)
 
+    def __repr__(self):
+        return f'NDCGAtK(k={self.__k})'
+
+
     def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
         return ndcg_score(ideal_rank, actual_rank, k=self.__k)
 
@@ -161,6 +165,9 @@ class MRR(RankingMetric):
 
     def __str__(self):
         return "MRR"
+
+    def __repr__(self):
+        return f'Mrr(relevant_threshold={self.__relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
         """
@@ -246,6 +253,9 @@ class MRRAtK(MRR):
 
     def __str__(self):
         return "MRR@{}".format(self.k)
+
+    def __repr__(self):
+        return f'MRRatK(relevant_threshold={self.__relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
         """
@@ -334,6 +344,9 @@ class Correlation(RankingMetric):
             name += " - Top {}".format(self.__top_n)
 
         return name
+
+    def __repr__(self):
+        return f'Correlation(Method={self.__method})'
 
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred

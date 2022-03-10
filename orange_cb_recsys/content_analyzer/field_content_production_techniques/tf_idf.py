@@ -67,7 +67,7 @@ class SkLearnTfIdf(TfIdfTechnique):
     def __str__(self):
         return "SkLearnTfIdf"
 
-    @abstractmethod
+    #@abstractmethod
     def __repr__(self):
         return f'SkLearnTfIdf(corpus={self.__corpus}, tfidf matrix={self.__tfidf_matrix},' \
                f' feature names={self.__feature_names}'

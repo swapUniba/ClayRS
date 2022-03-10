@@ -41,6 +41,12 @@ class PlotMetric(Metric):
         self.__format = format
         self.__overwrite = overwrite
 
+    def __repr__(self):
+        return f'PlotMetric(out_dir={self.__out_dir}, ' \
+               f'file_name={self.__file_name}, ' \
+               f'format={self.__format},' \
+               f'overwrite={self.__overwrite})'
+
     @property
     def file_name(self):
         return self.__file_name
@@ -116,6 +122,12 @@ class LongTailDistr(PlotMetric):
 
     def __str__(self):
         return "LongTailDistr"
+
+    def __repr__(self):
+        return f'PlotMetric(out_dir={self.__out_dir}, ' \
+               f'file_name={self.__file_name}, ' \
+               f'format={self.__format},' \
+               f'overwrite={self.__overwrite})'
 
     def perform(self, split: Split) -> pd.DataFrame:
         if self.__on == 'truth':
@@ -218,6 +230,11 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
     def __str__(self):
         return "PopProfileVsRecs"
+
+    def __repr__(self):
+        return f'PopProfileVsRecs(pop_percentage={self.__pop_percentage}, ' \
+               f'user_groups={self.__user_groups},' \
+               f'store_frame={self.__store_frame})'
 
     def perform(self, split: Split) -> pd.DataFrame:
         predictions = split.pred
@@ -366,6 +383,12 @@ class PopRecsCorrelation(PlotMetric):
 
     def __str__(self):
         return "PopRecsCorrelation"
+
+    def __repr__(self):
+        return f'PopRecsCorrelation(out_dir={self.__out_dir}, ' \
+               f'file_name={self.__file_name}, ' \
+               f'format={self.__format},' \
+               f'overwrite={self.__overwrite})'
 
     def build_plot(self, x: list, y: list, title: str):
         """

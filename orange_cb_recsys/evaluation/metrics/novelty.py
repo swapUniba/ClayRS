@@ -28,6 +28,9 @@ class Novelty(Metric):
     def __str__(self):
         return "Novelty"
 
+    def __repr__(self):
+        return f'Novelty(top_n={self.__top_n})'
+
     def perform(self, split: Split):
         raise NotImplementedError("Novelty not yet implemented!")
 

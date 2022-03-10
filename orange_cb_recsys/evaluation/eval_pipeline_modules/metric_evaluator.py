@@ -48,6 +48,9 @@ class MetricEvaluator:
         self._pred_list = pred_list
         self._truth_list = truth_list
 
+    def __repr__(self):
+        return f'MetricEvaluator(pred_list={self._pred_list}, truth_list={self._truth_list})'
+
     def eval_metrics(self, metric_list: List[Metric]) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Method which effectively evaluates recommendations generated with the list of metric passed as argument.

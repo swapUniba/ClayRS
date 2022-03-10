@@ -85,11 +85,17 @@ class FieldConfig:
         self.__lang = lang
         self.__content_technique.lang = self.__lang
 
+
+
         if not isinstance(self.__preprocessing, list):
             self.__preprocessing = [self.__preprocessing]
 
         for preprocessor in self.__preprocessing:
             preprocessor.lang = self.__lang
+
+    def __repr__(self):
+        return f'FieldConfig(content technique={self.__content_technique}, preprocessing={self.__preprocessing}),' \
+               f'memory_interface={self.__memory_interface}, id={self.__id}, lang={self.__lang})'
 
     @property
     def memory_interface(self):
@@ -134,11 +140,7 @@ class FieldConfig:
     def __str__(self):
         return "FieldConfig"
 
-    def __repr__(self):
-        return "< " + "FieldConfig: " + "" \
-               "\nId:" + str(self.__id) + \
-               "\nProduction Technique:" + str(self.__content_technique) +\
-               "\nInformation Processors: " + str(self.__preprocessing) + " >"
+
 
 
 class ExogenousConfig:
@@ -201,9 +203,8 @@ class ExogenousConfig:
         return "ExogenousConfig"
 
     def __repr__(self):
-        return "< " + "ExogenousConfig: " + "" \
-               "\nId:" + str(self.__id) + \
-               "\nExogenous Technique: " + str(self.__exogenous_technique) + " >"
+        return f'ExogenousConfig(exogenousbtechnique={self.__exogenous_technique},' \
+               f' id=s{self.__id}'
 
 
 class ContentAnalyzerConfig(ABC):
@@ -361,7 +362,10 @@ class ContentAnalyzerConfig(ABC):
 
     @abc.abstractmethod
     def __repr__(self):
-        raise NotImplementedError
+        return f'ContentAnalyzerConfig(source={self.__source},' \
+               f' id=s{self.__id}, output directory={self.__output_directory},' \
+               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
+               f'export json={self.__export_json}'
 
 
 class UserAnalyzerConfig(ContentAnalyzerConfig):
@@ -374,12 +378,10 @@ class UserAnalyzerConfig(ContentAnalyzerConfig):
         return str(self.__id)
 
     def __repr__(self):
-        msg = "< " + "UserAnalyzerConfig:" +\
-              "\nid = " + str(self.__id) + "; " \
-              "\nsource = " + str(self.__source) + "; " \
-              "\nfield_dict = " + str(self.__field_dict) + "; " \
-              "\nexo_representation_list = " + str(self.__exogenous_representation_list) + " >"
-        return msg
+        return f'UserAnalyzerConfig(source={self.__source},' \
+               f' id=s{self.__id}, output directory={self.__output_directory},' \
+               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
+               f'export json={self.__export_json}'
 
 
 class ItemAnalyzerConfig(ContentAnalyzerConfig):
@@ -392,9 +394,7 @@ class ItemAnalyzerConfig(ContentAnalyzerConfig):
         return str(self.__id)
 
     def __repr__(self):
-        msg = "< " + "ItemAnalyzerConfig:" +\
-              "\nid = " + str(self.__id) + "; " \
-              "\nsource = " + str(self.__source) + "; " \
-              "\nfield_dict = " + str(self.__field_dict) + "; " \
-              "\nexo_representation_list = " + str(self.__exogenous_representation_list) + " >"
-        return msg
+        return f'ItemAnalyzerConfig(source={self.__source},' \
+               f' id=s{self.__id}, output directory={self.__output_directory},' \
+               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
+               f'export json={self.__export_json}'
