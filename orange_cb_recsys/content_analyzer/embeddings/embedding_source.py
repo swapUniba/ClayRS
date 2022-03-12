@@ -57,14 +57,14 @@ class EmbeddingSource(ABC):
                 be the number of words or sentences), embedding_matrix will be N-dimensional.
         """
         if len(text) > 0:
-            embedding_matrix = np.ndarray(shape=(len(text), self.get_vector_size()))
-
+            embedding_list = []
             for i, data in enumerate(text):
                 data = data.lower()
                 try:
-                    embedding_matrix[i, :] = self.get_embedding(data)
+                    embedding_list.append(self.get_embedding(data))
                 except KeyError:
-                    embedding_matrix[i, :] = np.zeros(self.get_vector_size())
+                    embedding_list.append(np.zeros(self.get_vector_size()))
+            embedding_matrix = np.asarray(embedding_list)
         else:
             # If the text is empty (eg. "") then the embedding matrix is a matrix
             # with 1 row filled with zeros
