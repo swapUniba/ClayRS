@@ -7,12 +7,8 @@ Framework for content-based recommender system
 Installation
 =============
 ``
-pip install orange-cb-recsys
+pip install git+https://github.com/Silleellie/orange_cb_recsys.git
 ``
-
-[PyLucene](https://lucene.apache.org/pylucene/) is required and will not be installed like other dependencies, you will need to install it personally.
-
-You also need to manually copy in the installing directory the files runnable_instances.xz e categories.xz that you can find in source directory
 
 Usage
 =====
