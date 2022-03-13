@@ -1,4 +1,5 @@
 import os
+import unittest
 from unittest import TestCase
 import pandas as pd
 
@@ -193,7 +194,7 @@ class TestContentBasedRS(TestCase):
         # No further test since the fit_predict() method just calls the fit() method and rank() method
         self.assertTrue(len(result) != 0)
 
-
+@unittest.skip("Skip temporarily graph tests")
 class TestGraphBasedRS(TestCase):
 
     @classmethod
