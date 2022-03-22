@@ -1,16 +1,15 @@
 import abc
+import gc
 import itertools
 from typing import Union, Dict, List
 
 import pandas as pd
 from abc import ABC
 
-from tqdm.contrib.logging import logging_redirect_tqdm
-
 from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction, Interaction
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
-from orange_cb_recsys.recsys.graphs.graph import FullGraph
+from orange_cb_recsys.recsys.graphs.graph import FullGraph, UserNode, ItemNode
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
@@ -128,6 +127,10 @@ class ContentBasedRS(RecSys):
                     logger.warning(warning_message)
                     self._user_fit_dic[user_id] = None
 
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
         """
@@ -187,6 +190,11 @@ class ContentBasedRS(RecSys):
                 rank_list.extend(rank)
 
         concat_rank = Rank.from_list(rank_list)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
         return concat_rank
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
@@ -245,6 +253,11 @@ class ContentBasedRS(RecSys):
                 pred_list.extend(pred)
 
         concat_pred = Prediction.from_list(pred_list)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
         return concat_pred
 
     def fit_predict(self, test_set: Ratings, user_id_list: List = None,
@@ -281,131 +294,103 @@ class ContentBasedRS(RecSys):
         return rank
 
 
-class GraphBasedRS(RecSys):
-    """
-    Class for recommender systems which use a graph in order to make predictions
-
-    Every graph based recommender system differ from each other based the algorithm chosen
-
-    Args:
-        algorithm (GraphBasedAlgorithm): the graph based algorithm that will be used in order to
-            rank or make score prediction
-        graph (FullGraph): a FullGraph containing interactions
-    """
-
-    def __init__(self,
-                 algorithm: GraphBasedAlgorithm,
-                 graph: FullGraph):
-
-        self.__graph = graph
-        super().__init__(algorithm)
-
-    @property
-    def users(self):
-        return self.__graph.user_nodes
-
-    @property
-    def graph(self):
-        """
-        The graph containing interactions
-        """
-        return self.__graph
-
-    @property
-    def algorithm(self):
-        """
-        The content based algorithm chosen
-        """
-        alg: GraphBasedAlgorithm = super().algorithm
-        return alg
-
-    def predict(self, test_set: Ratings, user_id_list: List = None,
-                methodology: Union[Methodology, None] = TestRatingsMethodology()):
-        """
-        Method used to predict the rating of the users
-
-        If the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
-
-        Args:
-            test_set: set of users for which to calculate the predictions
-
-        Returns:
-            concate_score_preds: list of predictions for each user
-
-        """
-        train_set = self.graph.to_ratings()
-
-        all_users = set(test_set.user_id_column)
-        if user_id_list is not None:
-            all_users = set(user_id_list)
-
-        filter_dict: Union[Dict, None] = None
-        if methodology is not None:
-            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
-
-        pred_list = []
-
-        with get_progbar(all_users) as pbar:
-
-            for user_id in pbar:
-                user_id = str(user_id)
-                pbar.set_description(f"Computing predictions for {user_id}")
-
-                filter_list = None
-                if filter_dict is not None:
-                    filter_list = filter_dict.get(user_id)
-
-                pred = self.algorithm.predict(user_id, self.graph, filter_list=filter_list)
-
-                pred_list.extend(pred)
-
-        concat_pred = Prediction.from_list(pred_list)
-        return concat_pred
-
-    def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
-             methodology: Union[Methodology, None] = TestRatingsMethodology()):
-        """
-        Method used to rank the rating of the users
-
-        If the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
-
-        Args:
-            test_set:  set of users for which to calculate the rank
-            n_recs:  number of the top items that will be present in the ranking
-
-        Returns:
-            concate_rank: list of the items ranked for each user
-
-        """
-        train_set = self.graph.to_ratings()
-
-        all_users = set(test_set.user_id_column)
-        if user_id_list is not None:
-            all_users = set(user_id_list)
-
-        filter_dict: Union[Dict, None] = None
-        if methodology is not None:
-            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
-
-        rank_list = []
-
-        with get_progbar(all_users) as pbar:
-
-            for user_id in pbar:
-                user_id = str(user_id)
-                pbar.set_description(f"Computing predictions for {user_id}")
-
-                filter_list = None
-                if filter_dict is not None:
-                    filter_list = filter_dict.get(user_id)
-
-                rank = self.algorithm.rank(user_id, self.graph, n_recs, filter_list=filter_list)
-
-                rank_list.extend(rank)
-
-        concat_pred = Prediction.from_list(rank_list)
-        return concat_pred
+class GraphBasedRS(RecSys): pass
+#     """
+#     Class for recommender systems which use a graph in order to make predictions
+#
+#     Every graph based recommender system differ from each other based the algorithm chosen
+#
+#     Args:
+#         algorithm (GraphBasedAlgorithm): the graph based algorithm that will be used in order to
+#             rank or make score prediction
+#         graph (FullGraph): a FullGraph containing interactions
+#     """
+#
+#     def __init__(self,
+#                  algorithm: GraphBasedAlgorithm,
+#                  graph: FullDiGraph):
+#
+#         self.__graph = graph
+#         super().__init__(algorithm)
+#
+#     @property
+#     def users(self):
+#         return self.__graph.user_nodes
+#
+#     @property
+#     def graph(self):
+#         """
+#         The graph containing interactions
+#         """
+#         return self.__graph
+#
+#     @property
+#     def algorithm(self):
+#         """
+#         The content based algorithm chosen
+#         """
+#         alg: GraphBasedAlgorithm = super().algorithm
+#         return alg
+#
+#     def predict(self, test_set: Ratings, user_id_list: List = None,
+#                 methodology: Union[Methodology, None] = TestRatingsMethodology()):
+#         """
+#         Method used to predict the rating of the users
+#
+#         If the items evaluated are present for each user, the filter list is calculated, and
+#         score prediction is executed only for the items inside the filter list.
+#         Otherwise, score prediction is executed for all unrated items of the particular user
+#
+#         Args:
+#             test_set: set of users for which to calculate the predictions
+#
+#         Returns:
+#             concate_score_preds: list of predictions for each user
+#
+#         """
+#         all_users = set(test_set.user_id_column)
+#         if user_id_list is not None:
+#             all_users = set(user_id_list)
+#
+#         filter_dict: Union[Dict, None] = None
+#         if methodology is not None:
+#             train_set = self.graph.to_ratings()
+#             filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
+#
+#         total_predict_list = self.algorithm.predict(all_users, self.graph, filter_dict)
+#
+#         total_predict = Prediction.from_list(total_predict_list)
+#
+#         return total_predict
+#
+#     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+#              methodology: Union[Methodology, None] = TestRatingsMethodology()):
+#         """
+#         Method used to rank the rating of the users
+#
+#         If the items evaluated are present for each user, the filter list is calculated, and
+#         score prediction is executed only for the items inside the filter list.
+#         Otherwise, score prediction is executed for all unrated items of the particular user
+#
+#         Args:
+#             test_set:  set of users for which to calculate the rank
+#             n_recs:  number of the top items that will be present in the ranking
+#
+#         Returns:
+#             concate_rank: list of the items ranked for each user
+#
+#         """
+#         all_users = set(test_set.user_id_column)
+#         if user_id_list is not None:
+#             all_users = set(user_id_list)
+#
+#         filter_dict: Union[Dict, None] = None
+#         if methodology is not None:
+#             train_set = self.graph.to_ratings()
+#             filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
+#
+#         total_rank_list = self.algorithm.rank(all_users, self.graph, n_recs, filter_dict)
+#
+#         total_rank = Rank.from_list(total_rank_list)
+#
+#         return total_rank
