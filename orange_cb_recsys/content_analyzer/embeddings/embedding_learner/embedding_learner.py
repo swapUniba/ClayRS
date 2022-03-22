@@ -1,4 +1,3 @@
-import functools
 from abc import abstractmethod
 from typing import List, Union
 
@@ -10,7 +9,7 @@ from orange_cb_recsys.content_analyzer.embeddings.embedding_source import \
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from orange_cb_recsys.utils.const import logger, get_progbar
+from orange_cb_recsys.utils.const import get_progbar, logger
 
 
 class EmbeddingLearner(EmbeddingSource):
@@ -94,7 +93,10 @@ class EmbeddingLearner(EmbeddingSource):
         if not isinstance(preprocessor_list, list):
             preprocessor_list = [preprocessor_list]
 
-        self.fit_model(self.extract_corpus(source, field_list, preprocessor_list))
+        corpus = self.extract_corpus(source, field_list, preprocessor_list)
+
+        logger.info("Fitting model with extracted corpus...")
+        self.fit_model(corpus)
 
         if self.__auto_save and self.reference is not None:
             self.save()
@@ -232,49 +234,6 @@ class GensimWordEmbeddingLearner(WordEmbeddingLearner):
         raise NotImplementedError
 
 
-class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
-    """
-    Class that contains the generic behavior of the Gensim models using projections
-    """
-
-    def __init__(self, reference: str, auto_save: bool, extension: str, **kwargs):
-        super().__init__(reference, auto_save, extension, **kwargs)
-
-    @functools.lru_cache(maxsize=64)
-    def get_vector_size(self) -> int:
-        return self.model.num_topics
-
-    @functools.lru_cache(maxsize=64)
-    def get_embedding(self, word: str) -> np.ndarray:
-        # the word is converted to the id stored in the model and a bow for the word is created (where the value for
-        # the word will be 1). The embedding vector is then created from the bow
-        # if the word is not found in the trained model, a key error exception is thrown, which means that the
-        # embedding vector will be [0. 0. ... 0.]
-        word = self.model.id2word.doc2bow([word])
-        if len(word) == 0:
-            raise KeyError
-        return np.array([value[1] for value in self.model[word]], dtype=np.float64)
-
-    @abstractmethod
-    def load_model(self):
-        raise NotImplementedError
-
-    def save(self):
-        self.model.save(self.reference)
-
-    @abstractmethod
-    def fit_model(self, corpus: List):
-        raise NotImplementedError
-
-    @abstractmethod
-    def __str__(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def __repr__(self):
-        raise NotImplementedError
-
-
 class SentenceEmbeddingLearner(EmbeddingLearner):
     """
     Extends the EmbeddingLearner to define the embedding learners that work with
@@ -359,3 +318,22 @@ class DocumentEmbeddingLearner(EmbeddingLearner):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
+
+
+class GensimDocumentEmbeddingLearner(DocumentEmbeddingLearner):
+    """
+    Class that contains the generic behavior of the Gensim models working at document granularity
+    """
+
+    def process_data_granularity(self, doc_data: str) -> str:
+        # gensim requires document data to be tokenized in a list
+        return check_tokenized(doc_data)
+
+    def get_embedding_sentence(self, document_tokenized: List[str]) -> np.ndarray:
+        raise NotImplementedError
+
+    def get_embedding_token(self, document_tokenized: List[str]) -> np.ndarray:
+        raise NotImplementedError
+
+    def save(self):
+        self.model.save(self.reference)
