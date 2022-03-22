@@ -28,7 +28,7 @@ jobs:
           pip install -r requirements.txt
       -
         name: Test
-        run: pytest -vv --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
+        run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
