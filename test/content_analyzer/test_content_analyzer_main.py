@@ -1,15 +1,13 @@
 import os
-import shutil
 from unittest import TestCase
 import lzma
 import pickle
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
-    BabelPyEntityLinking
+from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
 from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
 from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
-    EmbeddingField, IndexField, EntitiesProp
+    EmbeddingField, IndexField, PropertiesDict
 from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
@@ -29,13 +27,12 @@ decode_tfidf = os.path.join(decode_path, "movies_title_tfidf.json")
 decode_embedding = os.path.join(decode_path, "movies_title_embedding.json")
 
 
-
 class TestContentsProducer(TestCase):
     def test_create_content(self):
-        exogenous_config = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'))
+        exogenous_config = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']))
         content_analyzer_config = ItemAnalyzerConfig(JSONFile(movies_info_reduced), ["imdbID"], "movielens_test")
         content_analyzer_config.add_single_exogenous(exogenous_config)
-        content_analyzer_config.add_single_exogenous(ExogenousConfig(BabelPyEntityLinking('Title')))
+        content_analyzer_config.add_single_exogenous(ExogenousConfig(PropertiesFromDataset(field_name_list=['Title'])))
         content_analyzer = ContentAnalyzer(content_analyzer_config)
         content_analyzer.fit()
 
@@ -46,8 +43,8 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(THIS_DIR, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title")[0], EntitiesProp)
-                    self.assertIsInstance(content.get_field("Title")[0].value, dict)
+                    self.assertIsInstance(content.get_exogenous_representation(0), PropertiesDict)
+                    self.assertIsInstance(content.get_exogenous_representation(0).value, dict)
                     break
 
     def test_field_exceptions(self):
@@ -84,8 +81,8 @@ class TestContentsProducer(TestCase):
         # exogenous_representation_list with duplicate ids as argument for the content_analyzer,
         # and when appending an ExogenousConfig to the list but the config id is already in the list
 
-        config_1 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
-        config_2 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
+        config_1 = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']), "test")
+        config_2 = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']), "test")
         exogenous_representation_list = [config_1, config_2]
 
         with self.assertRaises(ValueError):
