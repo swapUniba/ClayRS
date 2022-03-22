@@ -9,7 +9,7 @@ from abc import ABC
 from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction, Interaction
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
-#from orange_cb_recsys.recsys.graphs.graph import FullDiGraph, UserNode, ItemNode
+from orange_cb_recsys.recsys.graphs.graph import FullGraph, UserNode, ItemNode
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg

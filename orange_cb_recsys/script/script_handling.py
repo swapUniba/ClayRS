@@ -17,8 +17,8 @@ from orange_cb_recsys.recsys.methodology import Methodology
 from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.script.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
     InvalidFilePath
-from orange_cb_recsys.recsys.recsys import RecSys, FullGraph
-from orange_cb_recsys.recsys.graphs.graph import Graph
+from orange_cb_recsys.recsys.recsys import RecSys
+from orange_cb_recsys.recsys.graphs.graph import Graph, FullGraph
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
 
 
