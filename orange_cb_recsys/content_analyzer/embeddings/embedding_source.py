@@ -58,7 +58,7 @@ class EmbeddingSource(ABC):
         """
         if len(text) > 0:
             embedding_list = []
-            for i, data in enumerate(text):
+            for data in text:
                 data = data.lower()
                 try:
                     embedding_list.append(self.get_embedding(data))
