@@ -294,7 +294,7 @@ class ContentBasedRS(RecSys):
         return rank
 
 
-# class GraphBasedRS(RecSys):
+class GraphBasedRS(RecSys): pass
 #     """
 #     Class for recommender systems which use a graph in order to make predictions
 #
