@@ -59,28 +59,23 @@ class RepresentationContainer:
         if len(external_id_list) != len(representation_list):
             raise ValueError("Representation and external_id lists must have the same length")
 
+        self.__int_to_ext = {int_id: ext_id for int_id, ext_id in enumerate(external_id_list)}
+        self.__ext_to_int = {ext_id: int_id for int_id, ext_id in zip(self.__int_to_ext.keys(), self.__int_to_ext.values())
+                             if ext_id is not None}
 
-        ids = [(int_id, ext_id) for int_id, ext_id in enumerate(external_id_list)]
-        self.__representation_container = dict(zip(ids, representation_list))
-
-        self.__alias_dict = {ext_id: int_id for int_id, ext_id in ids if ext_id is not None}
-
-        # self.__dataframe = pd.DataFrame({'external_id': external_id_list, 'representation': representation_list})
-        # self.__dataframe['internal_id'] = self.__dataframe.index
-        # self.__alias_dict = {k: v for k, v in zip(external_id_list, self.__dataframe.index.values) if k is not None}
-        # self.__dataframe.set_index(['internal_id', 'external_id'], inplace=True)
+        self.__representation_container = dict(zip(self.__int_to_ext.keys(), representation_list))
 
     def get_internal_index(self) -> List[int]:
         """
         Returns a list containing the values in the 'internal_id' index
         """
-        return [ids_tuple[0] for ids_tuple in self.__representation_container]
+        return list(self.__int_to_ext.keys())
 
     def get_external_index(self) -> List[Union[str, None]]:
         """
         Returns a list containing the values in the 'external_id' index
         """
-        return [ids_tuple[1] for ids_tuple in self.__representation_container]
+        return list(self.__int_to_ext.values())
 
     def get_representations(self) -> List[Any]:
         """
@@ -118,10 +113,14 @@ class RepresentationContainer:
         else:
             next_internal_id = len(self.get_internal_index())
 
-        id_to_append = [(int_id, ext_id) for int_id, ext_id in enumerate(external_id, start=next_internal_id)]
-        self.__representation_container.update(dict(zip(id_to_append, representation)))
+        new_int_to_ext_dict = {int_id: ext_id for int_id, ext_id in enumerate(external_id, start=next_internal_id)}
 
-        self.__alias_dict.update({ext_id: int_id for int_id, ext_id in id_to_append if ext_id is not None})
+        self.__int_to_ext.update(new_int_to_ext_dict)
+        self.__ext_to_int.update({ext_id: int_id for int_id, ext_id in zip(new_int_to_ext_dict.keys(),
+                                                                           new_int_to_ext_dict.values())
+                                  if ext_id is not None})
+
+        self.__representation_container.update(dict(zip(new_int_to_ext_dict.keys(), representation)))
 
     def pop(self, id: Union[str, int]):
         """
@@ -136,16 +135,17 @@ class RepresentationContainer:
             removed_representation (Any): representation corresponding to the removed row
         """
         removed_representation = self[id]
-        try:
-            # id is int
-            key = list(self.__representation_container.keys())[id]
-            del self.__representation_container[key]
-        except TypeError:
-            # id is string, so we convert it
-            int_id = self.__alias_dict[id]
-            key = list(self.__representation_container.keys())[int_id]
-            del self.__alias_dict[id]
-            del self.__representation_container[key]
+
+        if isinstance(id, str):
+            id_int = self.__ext_to_int[id]
+            del self.__representation_container[id_int]
+            del self.__int_to_ext[id_int]
+            del self.__ext_to_int[id]
+        else:
+            id_str = self.__int_to_ext[id]
+            del self.__representation_container[id]
+            del self.__ext_to_int[id_str]
+            del self.__int_to_ext[id]
 
         return removed_representation
 
@@ -158,19 +158,19 @@ class RepresentationContainer:
         Args:
             item (Union[str, int]): value used to refer to a specific representation by accessing the index columns
         """
+        original_id = item
         try:
-            # the index is an integer
-            key = list(self.__representation_container.keys())[item]
-            return self.__representation_container[key]
-        except TypeError:
-            # the index is a string, so we convert it into an int
-            int_ind = self.__alias_dict[item]
-            key = list(self.__representation_container.keys())[int_ind]
-            return self.__representation_container[key]
+            if isinstance(item, str):
+                item = self.__ext_to_int[item]
+
+            return self.__representation_container[item]
+        except KeyError:
+            raise KeyError(f"Representation with id {original_id} not found!")
 
     def __iter__(self) -> Iterator[Dict]:
-        for ids_tuple, representation in self.__representation_container.items():
-            yield {'internal_id': ids_tuple[0], 'external_id': ids_tuple[1], 'representation': representation}
+        for internal_ind, representation in self.__representation_container.items():
+            yield {'internal_id': internal_ind, 'external_id': self.__int_to_ext[internal_ind],
+                   'representation': representation}
 
     def __len__(self):
         return len(self.get_internal_index())
