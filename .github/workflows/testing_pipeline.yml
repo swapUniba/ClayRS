@@ -24,11 +24,11 @@ jobs:
       -
         name: Setup installation requirements
         run: |
-          pip install wheel pytest==6.2.5 pytest-cov==3.00
+          pip install wheel pytest==7.0.0 pytest-cov==3.00
           pip install -r requirements.txt
       -
         name: Test
-        run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
+        run: pytest -vv --color=yes --cov-report xml:codecoverage.xml --cov=orange_cb_recsys test/
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
