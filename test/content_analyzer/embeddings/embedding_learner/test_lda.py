@@ -2,20 +2,23 @@ from unittest import TestCase
 
 import os
 
-import gensim
 import numpy as np
 from gensim.corpora import Dictionary
-from gensim.models import RpModel
+from gensim.models import LdaModel
 from gensim.test.utils import common_texts
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_indexing import GensimRandomIndexing
+import gensim
 
-num_topics = 10
-model_path = 'test_model_ri'
+from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.lda import GensimLDA
+
+# we fix random_state for reproducibility
+random_state = 42
+num_topics = 100
+model_path = 'test_model_lda'
 
 
-class TestRandomIndexing(TestCase):
+class TestLda(TestCase):
     def test_all(self):
-        my_learner = GensimRandomIndexing(model_path, num_topics=num_topics)
+        my_learner = GensimLDA(model_path, num_topics=num_topics, random_state=random_state)
 
         corpus = common_texts
         my_learner.fit_model(corpus)
@@ -25,38 +28,37 @@ class TestRandomIndexing(TestCase):
 
         common_dictionary = Dictionary(common_texts)
         common_corpus = [common_dictionary.doc2bow(text) for text in common_texts]
-        expected_learner = RpModel(common_corpus, num_topics=num_topics)
+        expected_learner = LdaModel(common_corpus, num_topics=num_topics, random_state=random_state)
 
         # test get_embedding not existent document
         unseen_doc_text = ['this', 'is', 'a', 'new', 'document', 'which', 'doesnt', 'exist']
-
-        # check that the doc is unseen (embedding has len 0)
         unseen_doc = common_dictionary.doc2bow(unseen_doc_text)
         expected = expected_learner[unseen_doc]
-        self.assertTrue(len(expected) == 0)
+        expected_vector: np.ndarray = gensim.matutils.sparse2full(expected, num_topics)
 
-        # in our framework if the doc is unseen KeyError is raised
-        with self.assertRaises(KeyError):
-            my_learner.get_embedding(unseen_doc_text)
+        result_vector = my_learner.get_embedding(unseen_doc_text)
+
+        self.assertTrue(np.array_equal(expected_vector, result_vector))
 
         # test get_embedding existent document
         unseen_doc_text = ['human', 'time', 'trees']
         unseen_doc = common_dictionary.doc2bow(unseen_doc_text)
         expected = expected_learner[unseen_doc]
         expected_vector: np.ndarray = gensim.matutils.sparse2full(expected, num_topics)
+
         result_vector = my_learner.get_embedding(unseen_doc_text)
 
-        # we don't have a way to check if the 2 vectors are the same, because they are build at random.
-        # We just check that they are of the same length
-
-        self.assertEqual(len(expected_vector), len(result_vector))
+        self.assertTrue(np.array_equal(expected_vector, result_vector))
 
         # test save
         my_learner.save()
         self.assertTrue(os.path.isfile(f"{model_path}.model"))
+        self.assertTrue(os.path.isfile(f"{model_path}.model.expElogbeta.npy"))
+        self.assertTrue(os.path.isfile(f"{model_path}.model.id2word"))
+        self.assertTrue(os.path.isfile(f"{model_path}.model.state"))
 
         # test that after load we obtain a valid embedding
-        my_learner_loaded = GensimRandomIndexing(model_path)
+        my_learner_loaded = GensimLDA(model_path)
         my_learner_loaded.load_model()
         unseen_doc_text = ['human', 'time', 'trees']
         result_vector = my_learner.get_embedding(unseen_doc_text)
