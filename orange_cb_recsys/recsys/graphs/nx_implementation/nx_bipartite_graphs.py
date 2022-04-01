@@ -1,13 +1,15 @@
 from typing import List, Set, Iterable, Union
-from orange_cb_recsys.recsys.graphs.graph import BipartiteGraph
+
+from orange_cb_recsys.content_analyzer import Ratings
+from orange_cb_recsys.recsys.graphs.graph import BipartiteDiGraph, Node
 import pandas as pd
 import networkx as nx
 
 from orange_cb_recsys.recsys.graphs.graph import UserNode, ItemNode
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import logger, get_progbar
 
 
-class NXBipartiteGraph(BipartiteGraph):
+class NXBipartiteGraph(BipartiteDiGraph):
     """
     Class that implements a Bipartite graph through networkx library.
     It supports 'user' node and 'item' node only.
@@ -30,33 +32,52 @@ class NXBipartiteGraph(BipartiteGraph):
             Default is 0.5
 
     """
-    def __init__(self, source_frame: pd.DataFrame,
-                 default_score_label: str = 'score', default_weight: float = 0.5):
-        self.__graph: nx.DiGraph = None
-        super().__init__(source_frame,
-                         default_score_label, default_weight)
 
-    def create_graph(self):
-        """
-        Instantiates the networkx DiGraph
-        """
-        self.__graph = nx.DiGraph()
+    def __init__(self, source_frame: Ratings = None, link_label: str = None):
+
+        self._graph = nx.DiGraph()
+
+        if source_frame is not None:
+            not_none_dict = {}
+            if link_label is not None:
+                not_none_dict['label'] = link_label
+
+            with get_progbar(source_frame) as progbar:
+                progbar.set_description("Creating User->Item links list")
+
+                if len(source_frame.timestamp_column) != 0:
+                    edges_with_attributes = [(UserNode(interaction.user_id), ItemNode(interaction.item_id),
+
+                                              # {**x, **y} merges the dicts x and y
+                                              {**not_none_dict, **{'weight': interaction.score,
+                                                                   'timestamp': interaction.timestamp}}
+                                              )
+                                             for interaction in progbar]
+                else:
+                    edges_with_attributes = [(UserNode(interaction.user_id), ItemNode(interaction.item_id),
+
+                                              # {**x, **y} merges the dicts x and y
+                                              {**not_none_dict, **{'weight': interaction.score}})
+                                             for interaction in progbar]
+
+            logger.info("Adding User->Item links list to NetworkX graph...")
+            self._graph.add_edges_from(edges_with_attributes)
 
     @property
     def user_nodes(self) -> Set[UserNode]:
         """
         Returns a set of all 'user' nodes in the graph
         """
-        return set(node for node in self._graph.nodes if isinstance(node, UserNode))
+        return set([node for node in self._graph.nodes if isinstance(node, UserNode)])
 
     @property
     def item_nodes(self) -> Set[ItemNode]:
         """
         Returns a set of all 'item' nodes in the graph
         """
-        return set(node for node in self._graph.nodes if isinstance(node, ItemNode))
+        return set([node for node in self._graph.nodes if isinstance(node, ItemNode)])
 
-    def add_user_node(self, node: Union[object, List[object]]):
+    def add_node(self, node: Union[Node, List[Node]]):
         """
         Adds a 'user' node to the graph.
         If a list is passed, then every element of the list will be added as a 'user' node
@@ -67,25 +88,13 @@ class NXBipartiteGraph(BipartiteGraph):
         if not isinstance(node, list):
             node = [node]
 
-        for n in node:
-            self._graph.add_node(UserNode(n))
+        if any(not isinstance(n, UserNode) and not isinstance(n, ItemNode) for n in node):
+            raise ValueError("You can only add UserNodes or ItemNodes to a bipartite graph!")
 
-    def add_item_node(self, node: Union[object, List[object]]):
-        """
-        Adds a 'item' node to the graph.
-        If a list is passed, then every element of the list will be added as a 'item' node
+        self._graph.add_nodes_from(node)
 
-        Args:
-            node: node(s) that needs to be added to the graph as 'item' node(s)
-        """
-        if not isinstance(node, list):
-            node = [node]
-
-        for n in node:
-            self._graph.add_node(ItemNode(n))
-
-    def add_link(self, start_node: object, final_node: Union[object, List[object]], weight: float = None,
-                 label: str = None):
+    def add_link(self, start_node: Union[Node, List[Node]], final_node: Union[Node, List[Node]],
+                 weight: float = None, label: str = None, timestamp: str = None):
         """
         Creates a weighted link connecting the 'start_node' to the 'final_node'
         Both nodes must be present in the graph before calling this method
@@ -99,32 +108,27 @@ class NXBipartiteGraph(BipartiteGraph):
             weight (float): weight of the link, default is 0.5
             label (str): label of the link, default is 'score_label'
         """
-        if label is None:
-            label = self.get_default_score_label()
-
-        if weight is None:
-            weight = self.get_default_weight()
+        if not isinstance(start_node, list):
+            start_node = [start_node]
 
         if not isinstance(final_node, list):
             final_node = [final_node]
 
-        for final in final_node:
+        self.add_node(start_node)
+        self.add_node(final_node)
 
-            if self.node_exists(start_node) and self.node_exists(final):
+        not_none_dict = {}
+        if label is not None:
+            not_none_dict['label'] = label
+        if weight is not None:
+            not_none_dict['weight'] = weight
+        if timestamp is not None:
+            not_none_dict['timestamp'] = timestamp
 
-                # We must to this so that if the 'final' node passed is 'i1' and in the graph it's a 'ItemNode'
-                # we get its instance and link the start node to the instance, otherwise networkx
-                # links 'start' node to the string 'i1' and not the ItemNode!!
-                nodes_list = list(self._graph.nodes)
-                index_first = nodes_list.index(start_node)
-                index_second = nodes_list.index(final)
+        self._graph.add_edges_from(zip(start_node, final_node),
+                                   **not_none_dict)
 
-                self._graph.add_edge(nodes_list[index_first], nodes_list[index_second], weight=weight, label=label)
-            else:
-                logger.warning("One of the nodes or both don't exist in the graph! Add them before "
-                               "calling this method.")
-
-    def remove_link(self, start_node: object, final_node: object):
+    def remove_link(self, start_node: Node, final_node: Node):
         """
         Removes the link connecting the 'start_node' to the 'final_node'.
         If there's no link between the two nodes, than a warning is printed
@@ -139,7 +143,7 @@ class NXBipartiteGraph(BipartiteGraph):
             logger.warning("No link exists between the start node and the final node!\n"
                            "No link will be removed")
 
-    def get_link_data(self, start_node: object, final_node: object):
+    def get_link_data(self, start_node: Node, final_node: Node):
         """
         Get link data such as weight, label, between the 'start_node' and the 'final_node'.
         Returns None if said link doesn't exists
@@ -153,7 +157,7 @@ class NXBipartiteGraph(BipartiteGraph):
         """
         return self._graph.get_edge_data(start_node, final_node)
 
-    def get_predecessors(self, node: object) -> List[object]:
+    def get_predecessors(self, node: Node) -> List[Node]:
         """
         Returns a list containing the successors of the node passed.
         Returns None if the node doesn't exists in the graph.
@@ -172,12 +176,12 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node(object): node of which we want to calculate predecessors
         """
-        if not self.node_exists(node):
-            logger.warning("The node specified is not in the graph! Return None")
-        else:
+        try:
             return list(self._graph.predecessors(node))
+        except nx.NetworkXError:
+            logger.warning("The node specified is not in the graph! Return None")
 
-    def get_successors(self, node: object) -> List[object]:
+    def get_successors(self, node: Node) -> List[Node]:
         """
         Returns a list containing the successors of the node passed.
         Returns None if the node doesn't exists in the graph.
@@ -197,12 +201,12 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             node(object): node of which we want to calculate successors
         """
-        if not self.node_exists(node):
-            logger.warning("The node specified is not in the graph! Return None")
-        else:
+        try:
             return list(self._graph.successors(node))
+        except nx.NetworkXError:
+            logger.warning("The node specified is not in the graph! Return None")
 
-    def node_exists(self, node: object) -> bool:
+    def node_exists(self, node: Node) -> bool:
         """
         Returns True if the node passed exists in the graph, False otherwise
 
@@ -211,24 +215,6 @@ class NXBipartiteGraph(BipartiteGraph):
         """
         r = self._graph.nodes.get(node)
         return r is not None
-
-    def is_user_node(self, node: object) -> bool:
-        """
-        Returns True if the node passed is a 'user' node, False otherwise
-
-        Args:
-            node(object): node to check whether it's a 'user' node or not
-        """
-        return node in self.user_nodes
-
-    def is_item_node(self, node: object) -> bool:
-        """
-        Returns True if the node passed is a 'item' node, False otherwise
-
-        Args:
-            node(object): node to check whether it's a 'item' node or not
-        """
-        return node in self.item_nodes
 
     def degree_centrality(self):
         """
@@ -248,16 +234,7 @@ class NXBipartiteGraph(BipartiteGraph):
         """
         return nx.dispersion(self._graph)
 
-    @property
-    def _graph(self):
-        """
-        PRIVATE USAGE ONLY!
-
-        In case some metrics needs to be performed on the newtowrkx graph
-        """
-        return self.__graph
-
-    def _remove_nodes_from_graph(self, nodes_to_remove: Iterable):
+    def remove_node(self, node_to_remove: Union[Node, List[Node]]):
         """
         PRIVATE USAGE ONLY
 
@@ -266,12 +243,13 @@ class NXBipartiteGraph(BipartiteGraph):
         Args:
             nodes_to_remove (Iterable): iterable object containing the nodes to remove from the graph
         """
-        self.__graph.remove_nodes_from(nodes_to_remove)
+        if not isinstance(node_to_remove, list):
+            node_to_remove = [node_to_remove]
+
+        self._graph.remove_nodes_from(node_to_remove)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.get_default_score_label() == other.get_default_score_label() and \
-                self.get_default_weight() == other.get_default_weight() and \
-                nx.algorithms.isomorphism.is_isomorphic(self._graph, other._graph)
+            return nx.algorithms.isomorphism.is_isomorphic(self._graph, other._graph)
         else:
             return False

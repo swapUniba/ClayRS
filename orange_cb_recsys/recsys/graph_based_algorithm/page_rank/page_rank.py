@@ -1,14 +1,13 @@
-from typing import List
-import pandas as pd
+from typing import List, Set, Dict
 
-from orange_cb_recsys.recsys.graph_based_algorithm.feature_selection.feature_selection import FeatureSelectionAlgorithm
-from orange_cb_recsys.recsys.graphs.graph import FullGraph
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
+from orange_cb_recsys.recsys.graphs import NXBipartiteGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 
 
-class PageRankAlg(GraphBasedAlgorithm):
+class PageRank(GraphBasedAlgorithm):
     """
     Abstract class that contains the main methods and attributes for any PageRank algorithm.
 
@@ -21,19 +20,14 @@ class PageRankAlg(GraphBasedAlgorithm):
             considering the user profile as personalization vector. Default is False
         feature_selection (FeatureSelectionAlgorithm): a FeatureSelection algorithm if the graph needs to be reduced
     """
-    def __init__(self, personalized: bool = False, feature_selection: FeatureSelectionAlgorithm = None):
-        self.__personalized = personalized
-        super().__init__(feature_selection)
 
-    @property
-    def personalized(self):
-        return self.__personalized
+    def __init__(self, personalized: bool = False):
 
-    @personalized.setter
-    def personalized(self, personalized: bool):
-        self.__personalized = personalized
+        self._personalized = personalized
+        super().__init__()
 
-    def predict(self, user_id: str, graph: FullGraph, filter_list: List[str] = None) -> pd.DataFrame:
+    def predict(self, all_users: Set[str], graph: NXBipartiteGraph,
+                filter_dict: Dict[str, Set] = None) -> List[Interaction]:
         """
         PageRank is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
