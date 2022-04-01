@@ -1,8 +1,9 @@
 from unittest import TestCase
 import pandas as pd
 
+from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode, PropertyNode
-from orange_cb_recsys.recsys.graphs.nx_full_graphs import NXFullGraph
+from orange_cb_recsys.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
 
 from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 
@@ -57,7 +58,7 @@ class TestGraphBasedAlgorithm(TestCase):
         result_page_rank = {ItemNode("i1"): 0.8, ItemNode("i2"): 0.7,
                             UserNode('u1'): 0.2, PropertyNode("p1"): 0.1}
 
-        result = self.alg.filter_result(result_page_rank, ['i1'])
+        result = GraphBasedAlgorithm.filter_result(self.graph, result_page_rank, ['i1'])
         expected = {ItemNode("i1"): 0.8}
         self.assertEqual(expected, result)
 
