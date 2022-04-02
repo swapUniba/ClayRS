@@ -103,9 +103,10 @@ class TestContentBasedRS(TestCase):
         result_rank_all = cbrs.rank(test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
-        # Test top-n ranking with the cbrs algorithm
-        result_rank_numbered = cbrs.rank(test_ratings, n_recs=2, methodology=None)
-        for user in set(test_ratings.user_id_column):
+        # Test top-n ranking with the cbrs algorithm for only some users
+        result_rank_numbered = cbrs.rank(test_ratings, n_recs=2, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_rank_numbered.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
             result_single = result_rank_numbered.get_user_interactions(user)
             self.assertTrue(len(result_single) == 2)
 
@@ -145,6 +146,13 @@ class TestContentBasedRS(TestCase):
         result_predict_all = cbrs.predict(test_ratings, methodology=None)
         self.assertTrue(len(result_predict_all) != 0)
 
+        # Test predict with the cbrs algorithm for only some users
+        result_predict_subset = cbrs.predict(test_ratings, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_predict_subset.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
+            result_single = result_predict_subset.get_user_interactions(user)
+            self.assertTrue(len(result_single) != 0)
+
         # Test predict with alternative methodology
         result_different_meth = cbrs.predict(test_ratings, methodology=TrainingItemsMethodology())
         for user in set(test_ratings.user_id_column):
@@ -162,7 +170,7 @@ class TestContentBasedRS(TestCase):
         cbrs = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
 
         cbrs.fit()
-        result_empty = cbrs.rank(test_ratings, user_id_list=['A000'])
+        result_empty = cbrs.predict(test_ratings, user_id_list=['A000'])
         self.assertTrue(len(result_empty) == 0)
 
     def test_predict_raise_error(self):
@@ -194,7 +202,7 @@ class TestContentBasedRS(TestCase):
         # No further test since the fit_predict() method just calls the fit() method and rank() method
         self.assertTrue(len(result) != 0)
 
-@unittest.skip("Skip temporarily graph tests")
+
 class TestGraphBasedRS(TestCase):
 
     @classmethod
@@ -222,6 +230,7 @@ class TestGraphBasedRS(TestCase):
             ("A003", "tt0112453", 1, "54654675"),
             ("A003", "tt0113497", 4, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
+        train_ratings = Ratings.from_dataframe(train_ratings)
 
         cls.graph = NXFullGraph(train_ratings)
 
@@ -238,10 +247,11 @@ class TestGraphBasedRS(TestCase):
         result_rank_all = gbrs.rank(self.test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
-        # Test top-n ranking with the gbrs algorithm
-        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None)
-        for user in set(test_ratings.user_id_column):
-            result_single = [pred_rank for pred_rank in result_rank_numbered if pred_rank.user_id == user]
+        # Test top-n ranking with the gbrs algorithm only for some users
+        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_rank_numbered.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
+            result_single = result_rank_numbered.get_user_interactions(user)
             self.assertTrue(len(result_single) == 2)
 
         # Test ranking with alternative methodology

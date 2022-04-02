@@ -252,6 +252,25 @@ class TestNXBipartiteGraph(TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_remove_link(self):
+        # test remove link between existent nodes
+        user_new = UserNode('u_new')
+        item_new = ItemNode('i_new')
+        self.g.add_link(user_new, item_new, label='test_link')
+
+        # test that the link is present
+        expected = {'label': 'test_link'}
+        result = self.g.get_link_data(user_new, item_new)
+        self.assertEqual(expected, result)
+
+        # test that the link is removed
+        self.g.remove_link(user_new, item_new)
+        self.assertIsNone(self.g.get_link_data(user_new, item_new))
+
+        # test remove link between non existent nodes
+        result = self.g.remove_link(UserNode('non_existent'), ItemNode('non_existent1'))
+        self.assertIsNone(result)
+
     def test_pred_succ(self):
         # Get predecessors of a node
         self.g.add_link(UserNode('u0'), ItemNode('i0'), 0.5)
@@ -260,12 +279,20 @@ class TestNXBipartiteGraph(TestCase):
         expected = [UserNode('u0'), UserNode('u1')]
         self.assertEqual(expected, result)
 
+        # Get predecessors of a non-existent node
+        result = self.g.get_predecessors(ItemNode('non_existent'))
+        self.assertIsNone(result)
+
         # Get successors of a node
         self.g.add_link(UserNode('u0'), ItemNode('i0'), 0.5)
         self.g.add_link(UserNode('u0'), ItemNode('i1'), 0.5)
         result = self.g.get_successors(UserNode('u0'))
         expected = [ItemNode('i0'), ItemNode('i1')]
         self.assertEqual(expected, result)
+
+        # Get successors of a non-existent node
+        result = self.g.get_successors(UserNode('non_existent'))
+        self.assertIsNone(result)
 
     def test_metrics(self):
         # We calculate some metrics, simple assert to make sure they are
@@ -274,9 +301,9 @@ class TestNXBipartiteGraph(TestCase):
         self.assertGreater(len(self.g.closeness_centrality()), 0)
         self.assertGreater(len(self.g.dispersion()), 0)
 
-    def test__graph(self):
+    def test_to_networkx(self):
         # Simple assert just to test the _graph method
-        self.assertIsInstance(self.g._graph, nx.DiGraph)
+        self.assertIsInstance(self.g.to_networkx(), nx.DiGraph)
 
     def test_remove_node(self):
         # remove a single node
@@ -326,11 +353,11 @@ class TestNXBipartiteGraph(TestCase):
     #
     def test_copy(self):
         copy = self.g.copy()
-        self.assertEqual(copy, self.g)
+        self.assertTrue(copy == self.g)
 
         copy.add_node(UserNode('prova'))
 
-        self.assertNotEqual(copy, self.g)
+        self.assertFalse(copy == self.g)
 
     def test_serialize(self):
 
