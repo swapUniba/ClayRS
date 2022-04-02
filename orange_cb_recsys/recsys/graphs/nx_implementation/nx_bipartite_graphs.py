@@ -216,6 +216,9 @@ class NXBipartiteGraph(BipartiteDiGraph):
         r = self._graph.nodes.get(node)
         return r is not None
 
+    def to_networkx(self):
+        return self._graph
+
     def degree_centrality(self):
         """
         Calculate the degreee centrality for every node in the graph
