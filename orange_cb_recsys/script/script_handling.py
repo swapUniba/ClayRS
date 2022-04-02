@@ -18,7 +18,7 @@ from orange_cb_recsys.recsys.partitioning import Partitioning
 from orange_cb_recsys.script.exceptions import ScriptConfigurationError, NoOutputDirectoryDefined, ParametersError, \
     InvalidFilePath
 from orange_cb_recsys.recsys.recsys import RecSys
-from orange_cb_recsys.recsys.graphs.graph import Graph, FullGraph
+from orange_cb_recsys.recsys.graphs.graph import Graph, FullDiGraph
 from orange_cb_recsys.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
 
 
@@ -299,8 +299,8 @@ class Run(ABC):
                 __check_existing_file_path(parameter_value, parameter_signature.name)
                 parameter_to_return = pd.read_csv(parameter_value, dtype={"from_id": str, "to_id": str, "score": float})
 
-            elif (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == FullGraph) or \
-                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == FullGraph):
+            elif (not parameter_signature.annotation == Parameter.empty and parameter_signature.annotation == FullDiGraph) or \
+                    (parameter_signature.annotation == Parameter.empty and type(parameter_signature.default) == FullDiGraph):
 
                 __check_existing_file_path(parameter_value, parameter_signature.name)
                 with lzma.open(parameter_value, "rb") as graph_file:
@@ -668,7 +668,7 @@ class RatingsRun(Run):
 
     @classmethod
     def get_associated_class(cls) -> Type:
-        return RatingsImporter
+        return Ratings
 
 
 class GraphRun(Run):

@@ -80,7 +80,8 @@ class Ratings:
                  score_processor: RatingProcessor = None):
 
         self._ratings_dict, self._user_id_column, self._item_id_column, self._score_column, self._timestamp_column = \
-            self._import_ratings(source, user_id_column, item_id_column, score_column, timestamp_column, score_processor)
+            self._import_ratings(source, user_id_column, item_id_column, score_column, timestamp_column,
+                                 score_processor)
 
     @property
     def user_id_column(self) -> list:
