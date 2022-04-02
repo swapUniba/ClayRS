@@ -110,10 +110,9 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
         if not isinstance(content_filename, list):
             content_filename = [content_filename]
 
+        loaded_items = LoadedContentsDict(contents_dir, contents_to_load=set(content_filename))
         with get_progbar(node) as progbar:
             progbar.set_description("Creating Node->Properties links list")
-
-            loaded_items = LoadedContentsDict(contents_dir, contents_to_load=set(content_filename))
 
             all_item_prop_edges = []
             for n, id in zip(progbar, content_filename):

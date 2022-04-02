@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Union
 
 from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Interaction
 from orange_cb_recsys.recsys.algorithm import Algorithm
@@ -23,7 +23,7 @@ class GraphBasedAlgorithm(Algorithm):
         # this can be expanded in making the page rank keeping also PropertyNodes, etc.
         self._nodes_to_keep = {ItemNode}
 
-    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: List[Node],
+    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[List[Node], None],
                       user_node: UserNode) -> Dict:
         """
         Method which filters the result dict returning only items that are also in the filter_list
@@ -48,32 +48,6 @@ class GraphBasedAlgorithm(Algorithm):
             filtered_result = {k: result[k] for k in result.keys() if must_keep(k, extracted_profile)}
 
         return filtered_result
-
-    @staticmethod
-    def extract_profile(graph: BipartiteDiGraph, user_id: str) -> Dict:
-        """
-        Extracts the user profile (the items that the user rated, or in general the nodes with a link to the user).
-
-        Returns a dictionary containing the successor nodes as keys and the weights in the graph for the edges between
-        the user node and his successors as values
-
-        EXAMPLE::
-             graph: i1 <---0.2--- u1 ---0.4---> i2
-
-            > print(extract_profile('u1'))
-            > {'i1': 0.2, 'i2': 0.4}
-
-        Args:
-            graph (FullGraph): graph from which the profile of the user will be extracted
-            user_id (str): id for the user for which the profile will be extracted
-        Returns:
-            profile (dict): dictionary with item successor nodes to the user as keys and weights of the edge
-                connecting them in the graph as values
-        """
-        succ = graph.get_successors(UserNode(user_id))
-        profile = {a: graph.get_link_data(UserNode(user_id), a).get('weight') for a in succ}
-
-        return profile  # {t: w for (f, t, w) in adj}
 
     @abc.abstractmethod
     def predict(self, all_users: Set[str], graph: Graph, filter_dict: Dict[str, Set] = None) -> List[Interaction]:

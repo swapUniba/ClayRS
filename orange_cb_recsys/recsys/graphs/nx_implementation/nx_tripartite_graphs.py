@@ -99,10 +99,9 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
         if not isinstance(item_filename, list):
             item_filename = [item_filename]
 
+        loaded_items = LoadedContentsDict(item_contents_dir, contents_to_load=set(item_filename))
         with get_progbar(node) as progbar:
             progbar.set_description("Creating Item->Properties links list")
-
-            loaded_items = LoadedContentsDict(item_contents_dir, contents_to_load=set(item_filename))
 
             all_item_prop_edges = []
             for n, id in zip(progbar, item_filename):
@@ -116,7 +115,6 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
                                           for prop_dict in exo_props for prop in prop_dict]
 
                 all_item_prop_edges.extend(single_item_prop_edges)
-                progbar.update(1)
 
             logger.info("Adding Item->Properties links list to NetworkX graph...")
             self._graph.add_edges_from(all_item_prop_edges)
