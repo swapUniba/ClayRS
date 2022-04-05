@@ -1,6 +1,7 @@
 import abc
 import gc
 import itertools
+from copy import deepcopy
 from typing import Union, Dict, List
 
 import pandas as pd
@@ -118,7 +119,7 @@ class ContentBasedRS(RecSys):
                 user_train = self.train_set.get_user_interactions(user_id)
 
                 try:
-                    user_alg = self.algorithm.copy()
+                    user_alg = deepcopy(self.algorithm)
                     user_alg.process_rated(user_train, loaded_items_interface)
                     user_alg.fit()
                     self._user_fit_dic[user_id] = user_alg
@@ -130,6 +131,8 @@ class ContentBasedRS(RecSys):
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
+
+        return self
 
     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
@@ -177,7 +180,7 @@ class ContentBasedRS(RecSys):
 
                 filter_list = None
                 if filter_dict is not None:
-                    filter_list = filter_dict.get(user_id)
+                    filter_list = filter_dict.pop(user_id, None)
 
                 user_fitted_alg = self._user_fit_dic.get(user_id)
                 if user_fitted_alg is not None:
@@ -240,7 +243,7 @@ class ContentBasedRS(RecSys):
 
                 filter_list = None
                 if filter_dict is not None:
-                    filter_list = filter_dict.get(user_id)
+                    filter_list = filter_dict.pop(user_id)
 
                 user_fitted_alg = self._user_fit_dic.get(user_id)
                 if user_fitted_alg is not None:
