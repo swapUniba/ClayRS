@@ -19,7 +19,6 @@ from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import Load
 
 
 class ContentBasedAlgorithm(Algorithm):
-    _transformer = DictVectorizer(sparse=False, sort=False)
     """
     Abstract class for the content-based algorithms
 
@@ -36,11 +35,12 @@ class ContentBasedAlgorithm(Algorithm):
         separate positive items from the negative ones, others may use only ratings that are >= than this
         threshold. See the documentation of the algorithm used for more
     """
-    __slots__ = ('item_field', 'threshold')
+    __slots__ = ('item_field', 'threshold', '_transformer')
 
     def __init__(self, item_field: dict, threshold: float):
         self.item_field: dict = self._bracket_representation(item_field)
         self.threshold: float = threshold
+        self._transformer = DictVectorizer(sparse=False, sort=False)
 
     @staticmethod
     def _bracket_representation(item_field: dict):

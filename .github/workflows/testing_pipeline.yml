@@ -24,6 +24,7 @@ jobs:
       -
         name: Setup installation requirements
         run: |
+          pip upgrade
           pip install wheel pytest==7.0.0 pytest-cov==3.00
           pip install -r requirements.txt
       -
