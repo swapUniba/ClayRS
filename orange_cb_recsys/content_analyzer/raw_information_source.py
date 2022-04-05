@@ -31,6 +31,10 @@ class RawInformationSource(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __len__(self):
+        raise NotImplementedError
+
 
 class DATFile(RawInformationSource):
     """
@@ -55,6 +59,12 @@ class DATFile(RawInformationSource):
 
                 yield line_dict
 
+    def __len__(self):
+        with open(self.__file_path, newline='', encoding=self.encoding) as dat_file:
+            total_length = sum(1 for _ in dat_file)
+
+            return total_length
+
 
 class JSONFile(RawInformationSource):
     """
@@ -74,6 +84,10 @@ class JSONFile(RawInformationSource):
             for line in all_lines:
                 yield line
 
+    def __len__(self):
+        with open(self.__file_path, encoding=self.encoding) as j:
+            return len(json.load(j))
+
 
 class CSVFile(RawInformationSource):
     """
@@ -83,22 +97,31 @@ class CSVFile(RawInformationSource):
         file_path (str)
     """
 
-    def __init__(self, file_path: str, has_header: bool = True, encoding: str = "utf-8-sig"):
+    def __init__(self, file_path: str, separator=',', has_header: bool = True, encoding: str = "utf-8-sig"):
         super().__init__(encoding)
         self.__file_path = file_path
         self.__has_header = has_header
+        self.__separator = separator
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
             if self.__has_header:
-                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL, delimiter=self.__separator)
             else:
-                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL)
+                reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL, delimiter=self.__separator)
                 reader.fieldnames = [str(i) for i in range(len(reader.fieldnames))]
                 csv_file.seek(0)
 
             for line in reader:
                 yield line
+
+    def __len__(self):
+        with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
+            total_length = sum(1 for _ in csv_file)
+            if self.__has_header:
+                total_length -= 1
+
+            return total_length
 
 
 class SQLDatabase(RawInformationSource):
@@ -190,3 +213,11 @@ class SQLDatabase(RawInformationSource):
         cursor.execute(query)
         for result in cursor:
             yield result
+
+    def __len__(self):
+        cursor = self.conn.cursor()
+        query = """SELECT * FROM """ + self.table_name + """;"""
+        cursor.execute(query)
+        cursor.fetchall()
+
+        return cursor.rowcount
