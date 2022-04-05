@@ -1,4 +1,6 @@
 import abc
+from copy import deepcopy
+from itertools import chain
 from typing import List
 import pandas as pd
 import statistics
@@ -254,3 +256,25 @@ class ContentBasedAlgorithm(Algorithm):
 
     def _load_available_contents(self, contents_path: str, items_to_load: set = None):
         return LoadedContentsDict(contents_path, items_to_load)
+
+    def __deepcopy__(self, memo):
+        # Create a new instance
+        cls = self.__class__
+        result = cls.__new__(cls)
+
+        # Don't copy self reference
+        memo[id(self)] = result
+
+        # Don't copy the cache - if it exists
+        if hasattr(self, "_cache"):
+            memo[id(self._cache)] = self._cache.__new__(dict)
+
+        # Get all __slots__ of the derived class
+        slots = chain.from_iterable(getattr(s, '__slots__', []) for s in self.__class__.__mro__)
+
+        # Deep copy all other attributes
+        for var in slots:
+            setattr(result, var, deepcopy(getattr(self, var), memo))
+
+        # Return updated instance
+        return result

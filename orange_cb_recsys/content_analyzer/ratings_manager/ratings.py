@@ -240,7 +240,7 @@ class Ratings:
                 else:
                     raise IndexError(f"Column {column} not found in interaction frame!")
 
-            return dtype(value)
+            return dtype(value) if value is not None else None
 
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers

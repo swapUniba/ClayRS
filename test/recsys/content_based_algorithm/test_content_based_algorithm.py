@@ -1,11 +1,14 @@
 import os
+from copy import deepcopy
 from unittest import TestCase
 
 import numpy as np
 
 from orange_cb_recsys.content_analyzer import Centroid
-from orange_cb_recsys.recsys import IndexQuery
+from orange_cb_recsys.recsys import IndexQuery, LinearPredictor
+from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
+from orange_cb_recsys.utils.class_utils import get_all_implemented_subclasses
 from orange_cb_recsys.utils.load_content import load_content_instance
 
 from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
@@ -61,7 +64,6 @@ class TestContentBasedAlgorithm(TestCase):
         x = [[tfidf_result1, doc_embedding_result1, word_embedding_result1, float_result1],
              [tfidf_result2, doc_embedding_result2, word_embedding_result2, int_result2]]
 
-        self.alg._set_transformer()
         result = self.alg.fuse_representations(x, Centroid())
 
         centroid_word_embedding_1 = Centroid().combine(word_embedding_result1)
