@@ -3,6 +3,7 @@ from copy import deepcopy
 from unittest import TestCase
 
 import numpy as np
+from sklearn.feature_extraction import DictVectorizer
 
 from orange_cb_recsys.content_analyzer import Centroid
 from orange_cb_recsys.recsys import IndexQuery, LinearPredictor
@@ -51,12 +52,14 @@ class TestContentBasedAlgorithm(TestCase):
         self.assertIsInstance(result[0], dict)
 
     def test_fuse_representations(self):
+        dv = DictVectorizer(sparse=False, sort=False)
+
         tfidf_result1 = {'word1': 1.546, 'word2': 1.467, 'word3': 0.55}
         doc_embedding_result1 = np.array([[0.98347, 1.384038, 7.1023803, 1.09854]])
         word_embedding_result1 = np.array([[0.123, 0.44561], [1.889, 3.22], [0.283, 0.887]])
         float_result1 = 8.8
 
-        tfidf_result2 = {'word2': 0.99, 'word4': 1.1}
+        tfidf_result2 = {'word2': 1.467, 'word4': 1.1}
         doc_embedding_result2 = np.array([[2.331, 0.887, 1.1123, 0.7765]])
         word_embedding_result2 = np.array([[0.123, 0.44561], [5.554, 1.1234]])
         int_result2 = 7
@@ -66,16 +69,19 @@ class TestContentBasedAlgorithm(TestCase):
 
         result = self.alg.fuse_representations(x, Centroid())
 
+        dv.fit([tfidf_result1, tfidf_result2])
         centroid_word_embedding_1 = Centroid().combine(word_embedding_result1)
         centroid_word_embedding_2 = Centroid().combine(word_embedding_result2)
-        expected_1 = np.array([1.546, 1.467, 0.55, 0, 0.98347, 1.384038, 7.1023803, 1.09854])
-        expected_1 = np.hstack([expected_1, centroid_word_embedding_1, float_result1])
-        expected_2 = np.array([0, 0.99, 0, 1.1, 2.331, 0.887, 1.1123, 0.7765])
-        expected_2 = np.hstack([expected_2, centroid_word_embedding_2, int_result2])
+
+        expected_1 = np.hstack([dv.transform(tfidf_result1).flatten(), doc_embedding_result1.flatten(),
+                                centroid_word_embedding_1.flatten(), float_result1])
+
+        expected_2 = np.hstack([dv.transform(tfidf_result2).flatten(), doc_embedding_result2.flatten(),
+                                centroid_word_embedding_2.flatten(), int_result2])
 
         self.assertTrue(all(isinstance(rep, np.ndarray) for rep in result))
-        self.assertTrue(np.array_equal(result[0], expected_1))
-        self.assertTrue(np.array_equal(result[1], expected_2))
+        self.assertTrue(np.allclose(result[0], expected_1))
+        self.assertTrue(np.allclose(result[1], expected_2))
 
     def test__load_available_contents(self):
         # test load_available_contents for content based algorithm
