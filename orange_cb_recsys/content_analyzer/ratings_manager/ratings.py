@@ -229,7 +229,7 @@ class Ratings:
         def get_value_row_df(row, column, dtype):
             try:
                 if isinstance(column, str):
-                    value = dtype(row[column])
+                    value = row[column]
                 else:
                     # it's an int, so we get the column id and then we get the corresponding value in the row
                     key_dict = interaction_frame.columns[column]
@@ -240,7 +240,7 @@ class Ratings:
                 else:
                     raise IndexError(f"Column {column} not found in interaction frame!")
 
-            return value
+            return dtype(value)
 
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
