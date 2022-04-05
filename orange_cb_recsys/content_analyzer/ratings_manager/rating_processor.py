@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Tuple
 import numpy as np
 
 
@@ -16,7 +16,7 @@ class RatingProcessor(ABC):
         return self.__decimal_rounding
 
     @abstractmethod
-    def fit(self, score_column_data: List[object]):
+    def fit(self, score_data: object):
         raise NotImplementedError
 
 
@@ -26,7 +26,7 @@ class SentimentAnalysis(RatingProcessor):
     """
 
     @abstractmethod
-    def fit(self, score_column_data: List[str]):
+    def fit(self, score_data: str):
         raise NotImplementedError
 
 
@@ -38,13 +38,23 @@ class NumberNormalizer(RatingProcessor):
         min_ (float): minimum value of the original scale
         max_ (float): maximum value of the original scale
     """
+    def __init__(self, scale: Tuple[float, float], decimal_rounding: int = None):
+        super().__init__(decimal_rounding)
+
+        if len(scale) != 2:
+            raise ValueError("The voting scale should be a tuple containing exactly two values,"
+                             "the minimum of the scale and the maximum!")
+
+        self._old_min = scale[0]
+        self._old_max = scale[1]
+
     def __str__(self):
         return "NumberNormalizer"
 
     def __repr__(self):
         return "< NumberNormalizer >"
 
-    def fit(self, score_column_data: List[float]):
+    def fit(self, score_data: float):
         """
 
         Args:
@@ -61,9 +71,4 @@ class NumberNormalizer(RatingProcessor):
 
             return new_value
 
-        score_column_data = [float(score) for score in score_column_data]
-
-        old_min = min(score_column_data)
-        old_max = max(score_column_data)
-
-        return [convert_into_range(value, old_min, old_max) for value in score_column_data]
+        return convert_into_range(float(score_data), self._old_min, self._old_max)
