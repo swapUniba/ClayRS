@@ -1,5 +1,0 @@
-- class: ContentAnalyzer
-  config: {}
-  fit:
-    not_existing_parameter:
-      class: FieldConfig
