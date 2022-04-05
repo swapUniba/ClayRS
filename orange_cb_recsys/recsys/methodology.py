@@ -60,7 +60,7 @@ class Methodology(ABC):
         return filtered
 
     @abc.abstractmethod
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> pd.DataFrame:
+    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Set:
         """
         Abstract method in which must be specified how to calculate which items must be part of the recommendation list
         of a single user
