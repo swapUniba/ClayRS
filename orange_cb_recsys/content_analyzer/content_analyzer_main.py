@@ -78,7 +78,7 @@ class ContentAnalyzer:
         file_name = re.sub(r'[^\w\s]', '', content.content_id)
         path = os.path.join(self.__config.output_directory, file_name + '.xz')
         with lzma.open(path, 'wb') as f:
-            pickle.dump(content, f)
+            pickle.dump(content, f, protocol=4)
 
     def __check_field_dict(self):
         """

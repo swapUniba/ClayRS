@@ -50,13 +50,14 @@ class IndexQuery(ContentBasedAlgorithm):
         threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
             as positive
     """
+    __slots__ = ('_string_query', '_scores', '_positive_user_docs', '_classic_similarity')
 
     def __init__(self, item_field: dict, classic_similarity: bool = True, threshold: float = None):
         super().__init__(item_field, threshold)
-        self.__string_query: str = None
-        self.__scores: list = None
-        self.__positive_user_docs: dict = None
-        self.__classic_similarity: bool = classic_similarity
+        self._string_query: str = None
+        self._scores: list = None
+        self._positive_user_docs: dict = None
+        self._classic_similarity: bool = classic_similarity
 
     def __get_representations(self, index_representations: dict):
         """
@@ -126,7 +127,7 @@ class IndexQuery(ContentBasedAlgorithm):
         for item_id, score in zip(items_scores_dict.keys(), items_scores_dict.values()):
             if score >= threshold:
                 # {item_id: {"item": item_dictionary, "score": item_score}}
-                item_query = ix.query(item_id, 1, classic_similarity=self.__classic_similarity)
+                item_query = ix.query(item_id, 1, classic_similarity=self._classic_similarity)
                 if len(item_query) != 0:
                     item = item_query.pop(item_id).get('item')
                     scores.append(score)
@@ -140,8 +141,8 @@ class IndexQuery(ContentBasedAlgorithm):
             raise OnlyNegativeItems(f"User {user_id} - There are no rated items available locally or there are only "
                                     f"negative items available locally!")
 
-        self.__positive_user_docs = positive_user_docs
-        self.__scores = scores
+        self._positive_user_docs = positive_user_docs
+        self._scores = scores
 
     def fit(self):
         """
@@ -159,12 +160,12 @@ class IndexQuery(ContentBasedAlgorithm):
         # Also each part of the query that refers to a document
         # is boosted by the score given by the user to said document
         string_query = "("
-        for doc, score in zip(self.__positive_user_docs.keys(), self.__scores):
+        for doc, score in zip(self._positive_user_docs.keys(), self._scores):
             string_query += "("
-            for field_name in self.__positive_user_docs[doc]:
+            for field_name in self._positive_user_docs[doc]:
                 if field_name == 'content_id':
                     continue
-                word_list = self.__positive_user_docs[doc][field_name].split()
+                word_list = self._positive_user_docs[doc][field_name].split()
                 string_query += field_name + ":("
                 for term in word_list:
                     string_query += term + " "
@@ -172,7 +173,7 @@ class IndexQuery(ContentBasedAlgorithm):
             string_query += ")^" + str(score) + " "
         string_query += ") "
 
-        self.__string_query = string_query
+        self._string_query = string_query
 
     def _build_mask_list(self, user_seen_items: set, filter_list: List[str] = None):
         """
@@ -236,7 +237,7 @@ class IndexQuery(ContentBasedAlgorithm):
         mask_list = self._build_mask_list(user_seen_items, filter_list)
 
         ix = available_loaded_items.get_contents_interface()
-        score_docs = ix.query(self.__string_query, recs_number, mask_list, filter_list, self.__classic_similarity)
+        score_docs = ix.query(self._string_query, recs_number, mask_list, filter_list, self._classic_similarity)
 
         # we construct the output data
         rank_interaction_list = [Interaction(user_id, item_id, score_docs[item_id]['score'])

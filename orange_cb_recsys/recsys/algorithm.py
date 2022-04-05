@@ -1,6 +1,5 @@
 import abc
 from abc import ABC
-from copy import deepcopy
 
 
 class Algorithm(ABC):
@@ -11,6 +10,7 @@ class Algorithm(ABC):
     In case some algorithms can only do one of the two (eg. PageRank), simply implement both
     methods and raise the NotPredictionAlg or NotRankingAlg exception accordingly.
     """
+    __slots__ = ()
 
     @abc.abstractmethod
     def predict(self, **kwargs):
@@ -30,14 +30,3 @@ class Algorithm(ABC):
         If the Algorithm can't rank, implement this method and raise the NotRankingAlg exception
         """
         raise NotImplementedError
-
-    def copy(self):
-        """
-        Make a deep copy the algorithm
-        """
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo = {id(self): result}
-        for k, v in self.__dict__.items():
-            setattr(result, k, deepcopy(v, memo))
-        return result

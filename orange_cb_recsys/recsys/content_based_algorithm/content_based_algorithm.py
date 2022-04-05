@@ -1,4 +1,6 @@
 import abc
+from copy import deepcopy
+from itertools import chain
 from typing import List
 import pandas as pd
 import statistics
@@ -33,17 +35,12 @@ class ContentBasedAlgorithm(Algorithm):
         separate positive items from the negative ones, others may use only ratings that are >= than this
         threshold. See the documentation of the algorithm used for more
     """
+    __slots__ = ('item_field', 'threshold', '_transformer')
 
     def __init__(self, item_field: dict, threshold: float):
         self.item_field: dict = self._bracket_representation(item_field)
         self.threshold: float = threshold
-        self.__transformer = None
-
-    def _set_transformer(self):
-        """
-        Private method that set the transformer later used in order to fuse multiple representations
-        """
-        self.__transformer = DictVectorizer(sparse=False, sort=False)
+        self._transformer = DictVectorizer(sparse=False, sort=False)
 
     @staticmethod
     def _bracket_representation(item_field: dict):
@@ -135,10 +132,6 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
-        if self.__transformer is None:
-            raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
-                             " in its fit() method")
-
         if any(not isinstance(rep, (dict, np.ndarray, (int, float))) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
@@ -150,10 +143,10 @@ class ContentBasedAlgorithm(Algorithm):
         if need_vectorizer:
             # IF the transformer is not fitted then we are training the model
             try:
-                check_is_fitted(self.__transformer)
+                check_is_fitted(self._transformer)
             except NotFittedError:
                 X_dicts = [rep for item in X for rep in item if isinstance(rep, dict)]
-                self.__transformer.fit(X_dicts)
+                self._transformer.fit(X_dicts)
 
         # In every case, we transform the input
         X_vectorized = []
@@ -161,7 +154,7 @@ class ContentBasedAlgorithm(Algorithm):
             single_arr = []
             for item_repr in item_repr_list:
                 if need_vectorizer and isinstance(item_repr, dict):
-                    item_repr = self.__transformer.transform(item_repr)
+                    item_repr = self._transformer.transform(item_repr)
                     single_arr.append(item_repr.flatten())
                 elif isinstance(item_repr, np.ndarray):
                     if item_repr.ndim > 1:
@@ -263,3 +256,25 @@ class ContentBasedAlgorithm(Algorithm):
 
     def _load_available_contents(self, contents_path: str, items_to_load: set = None):
         return LoadedContentsDict(contents_path, items_to_load)
+
+    def __deepcopy__(self, memo):
+        # Create a new instance
+        cls = self.__class__
+        result = cls.__new__(cls)
+
+        # Don't copy self reference
+        memo[id(self)] = result
+
+        # Don't copy the cache - if it exists
+        if hasattr(self, "_cache"):
+            memo[id(self._cache)] = self._cache.__new__(dict)
+
+        # Get all __slots__ of the derived class
+        slots = chain.from_iterable(getattr(s, '__slots__', []) for s in self.__class__.__mro__)
+
+        # Deep copy all other attributes
+        for var in slots:
+            setattr(result, var, deepcopy(getattr(self, var), memo))
+
+        # Return updated instance
+        return result

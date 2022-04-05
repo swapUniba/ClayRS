@@ -17,17 +17,16 @@ class TextBlobSentimentAnalysis(SentimentAnalysis):
     def __repr__(self):
         return "< TextBlobSentimentalAnalysis >"
 
-    def fit(self, score_column_data: List[str]) -> List[float]:
+    def fit(self, score_data: str) -> float:
         """
         This method calculates the sentiment analysis score on textual reviews
 
         Returns:
             sentiment_data: a list of sentiment analysis score
         """
-        if self.decimal_rounding:
-            polarity_scores = [np.round(TextBlob(field_data).sentiment.polarity, self.decimal_rounding)
-                               for field_data in score_column_data]
-        else:
-            polarity_scores = [TextBlob(field_data).sentiment.polarity for field_data in score_column_data]
+        polarity_score = TextBlob(score_data).sentiment.polarity
 
-        return polarity_scores
+        if self.decimal_rounding:
+            polarity_score = round(polarity_score, self.decimal_rounding)
+
+        return polarity_score

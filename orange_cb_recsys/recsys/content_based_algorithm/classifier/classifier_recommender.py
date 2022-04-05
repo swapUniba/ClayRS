@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 import pandas as pd
 
@@ -53,14 +53,15 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
                 as positive
        """
+    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict')
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, threshold)
-        self.__classifier = classifier
-        self.__embedding_combiner = embedding_combiner
-        self.__labels: list = None
-        self.__rated_dict: dict = None
+        self._classifier = classifier
+        self._embedding_combiner = embedding_combiner
+        self._labels: Optional[list] = None
+        self._rated_dict: Optional[dict] = None
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -120,8 +121,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         elif 1 not in labels:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!".format(user_id))
 
-        self.__labels = labels
-        self.__rated_dict = rated_dict
+        self._labels = labels
+        self._rated_dict = rated_dict
 
     def fit(self):
         """
@@ -131,14 +132,16 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        self._set_transformer()
-
-        rated_features = list(self.__rated_dict.values())
+        rated_features = list(self._rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features = self.fuse_representations(rated_features, self.__embedding_combiner)
+        fused_features = self.fuse_representations(rated_features, self._embedding_combiner)
 
-        self.__classifier.fit(fused_features, self.__labels)
+        self._classifier.fit(fused_features, self._labels)
+
+        # we delete variables used to fit since will no longer be used
+        del self._rated_dict
+        del self._labels
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:
@@ -195,9 +198,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
-            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self.__embedding_combiner)
+            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self._embedding_combiner)
 
-            class_prob = self.__classifier.predict_proba(fused_features_items_to_pred)
+            class_prob = self._classifier.predict_proba(fused_features_items_to_pred)
         else:
             class_prob = []
 

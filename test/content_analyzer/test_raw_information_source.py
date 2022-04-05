@@ -8,6 +8,7 @@ json_file = os.path.join(dir_test_files, "movies_info_reduced.json")
 csv_w_header = os.path.join(dir_test_files, 'movies_info_reduced.csv')
 csv_no_header = os.path.join(dir_test_files, 'test_ratings', 'ratings_1591277020.csv')
 dat_file = os.path.join(dir_test_files, 'users_70.dat')
+tsv_file = os.path.join(dir_test_files, 'random_tsv.tsv')
 
 
 class TestSQLDatabase(TestCase):
@@ -67,6 +68,11 @@ class TestCSVFile(TestCase):
         self.assertDictEqual(next(my_iter), d2)
         self.assertDictEqual(next(my_iter), d3)
 
+    def test__len_w_header(self):
+        csv = CSVFile(csv_w_header)
+
+        self.assertEqual(3, len(csv))
+
     def test_iter_no_header(self):
         csv = CSVFile(csv_no_header, has_header=False)
 
@@ -101,6 +107,43 @@ class TestCSVFile(TestCase):
         self.assertDictEqual(expected_row_4, result_row_4)
         self.assertDictEqual(expected_row_5, result_row_5)
         self.assertDictEqual(expected_row_6, result_row_6)
+
+    def test__len_no_header(self):
+        csv = CSVFile(csv_no_header, has_header=False)
+
+        self.assertEqual(6, len(csv))
+
+    def test_iter_tsv(self):
+
+        tsv = CSVFile(tsv_file, has_header=False, separator='\t')
+
+        expected_row_1 = {'0': 'listen', '1': 'improve', '2': 'differ'}
+        expected_row_2 = {'0': 'visitor', '1': 'meant', '2': 'kind'}
+        expected_row_3 = {'0': 'basis', '1': 'climb', '2': 'honor'}
+        expected_row_4 = {'0': 'simple', '1': 'vote', '2': 'closer'}
+        expected_row_5 = {'0': 'blind', '1': 'finger', '2': 'pencil'}
+        expected_row_6 = {'0': 'clock', '1': 'energy', '2': 'shape'}
+
+        tsv_iterator = iter(tsv)
+
+        result_row_1 = next(tsv_iterator)
+        result_row_2 = next(tsv_iterator)
+        result_row_3 = next(tsv_iterator)
+        result_row_4 = next(tsv_iterator)
+        result_row_5 = next(tsv_iterator)
+        result_row_6 = next(tsv_iterator)
+
+        with self.assertRaises(StopIteration):
+            next(tsv_iterator)
+
+        self.assertDictEqual(expected_row_1, result_row_1)
+        self.assertDictEqual(expected_row_2, result_row_2)
+        self.assertDictEqual(expected_row_3, result_row_3)
+        self.assertDictEqual(expected_row_4, result_row_4)
+        self.assertDictEqual(expected_row_5, result_row_5)
+        self.assertDictEqual(expected_row_6, result_row_6)
+
+        self.assertEqual(6, len(tsv))
 
 
 class TestJSONFile(TestCase):
@@ -153,6 +196,11 @@ class TestJSONFile(TestCase):
         self.assertDictEqual(next(my_iter), d2)
         self.assertDictEqual(next(my_iter), d3)
 
+    def test__len(self):
+
+        dat = JSONFile(json_file)
+        self.assertEqual(20, len(dat))
+
 
 class TestDATFile(TestCase):
     def test_iter(self):
@@ -168,3 +216,8 @@ class TestDATFile(TestCase):
         for line in expected:
             dat1 = next(my_iter)
             self.assertEqual(line, dat1)
+
+    def test__len(self):
+
+        dat = DATFile(dat_file)
+        self.assertEqual(70, len(dat))

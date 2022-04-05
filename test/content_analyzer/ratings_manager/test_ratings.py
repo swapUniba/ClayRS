@@ -42,17 +42,23 @@ class TestRatings(TestCase):
         item_id_expected = [str(row['item_id']) for row in raw_source_content]
         score_expected = [float(row['stars']) for row in raw_source_content]
 
+        expected_ratings = [(user, item, score) for user, item, score in zip(user_id_expected,
+                                                                             item_id_expected,
+                                                                             score_expected)]
+
         user_id_result = rat.user_id_column
         item_id_result = rat.item_id_column
         score_result = rat.score_column
+
+        result_ratings = [(user, item, score) for user, item, score in zip(user_id_result,
+                                                                           item_id_result,
+                                                                           score_result)]
 
         self.assertTrue(all(isinstance(user_id, str) for user_id in user_id_result))
         self.assertTrue(all(isinstance(item_id, str) for item_id in item_id_result))
         self.assertTrue(all(isinstance(score, float) for score in score_result))
 
-        self.assertEqual(user_id_expected, user_id_result)
-        self.assertEqual(item_id_expected, item_id_result)
-        self.assertEqual(score_expected, score_result)
+        self.assertCountEqual(expected_ratings, result_ratings)
 
     def test_import_ratings_by_key(self):
         rat = Ratings(
@@ -118,7 +124,7 @@ class TestRatings(TestCase):
             user_id_column=0,
             item_id_column=1,
             score_column=4,
-            score_processor=NumberNormalizer()
+            score_processor=NumberNormalizer(scale=(1, 5))
         )
 
         score_result = rat.score_column

@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
@@ -54,14 +54,15 @@ class LinearPredictor(ContentBasedAlgorithm):
             only_greater_eq (float): Threshold for the ratings. Only ratings which are greater or equal than the
                 threshold will be considered, ratings which are less than the threshold will be discarded
        """
+    __slots__ = ('_regressor', '_labels', '_rated_dict', '_embedding_combiner')
 
     def __init__(self, item_field: dict, regressor: Regressor, only_greater_eq: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, only_greater_eq)
-        self.__regressor = regressor
-        self.__labels: list = None
-        self.__rated_dict: dict = None
-        self.__embedding_combiner = embedding_combiner
+        self._regressor = regressor
+        self._labels: Optional[list] = None
+        self._rated_dict: Optional[dict] = None
+        self._embedding_combiner = embedding_combiner
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -105,8 +106,8 @@ class LinearPredictor(ContentBasedAlgorithm):
         if len(rated_dict) == 0:
             raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
 
-        self.__labels = labels
-        self.__rated_dict = rated_dict
+        self._labels = labels
+        self._rated_dict = rated_dict
 
     def fit(self):
         """
@@ -116,15 +117,16 @@ class LinearPredictor(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        self._set_transformer()
-
-        rated_features = list(self.__rated_dict.values())
+        rated_features = list(self._rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features = self.fuse_representations(rated_features, self.__embedding_combiner)
+        fused_features = self.fuse_representations(rated_features, self._embedding_combiner)
 
-        self.__regressor.fit(fused_features, self.__labels)
+        self._regressor.fit(fused_features, self._labels)
 
+        # we delete variables used to fit since will no longer be used
+        del self._labels
+        del self._rated_dict
 
     def _common_prediction_process(self,user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                                    filter_list: List[str] = None):
@@ -150,9 +152,9 @@ class LinearPredictor(ContentBasedAlgorithm):
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict,
-                                                                     self.__embedding_combiner)
+                                                                     self._embedding_combiner)
 
-            score_labels = self.__regressor.predict(fused_features_items_to_pred)
+            score_labels = self._regressor.predict(fused_features_items_to_pred)
         else:
             score_labels = []
 

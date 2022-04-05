@@ -1,4 +1,4 @@
-from collections import Iterable
+from collections.abc import Iterable
 from typing import List, Set, Union, Dict
 
 from orange_cb_recsys.content_analyzer import Ratings, Content
@@ -7,8 +7,6 @@ from orange_cb_recsys.recsys.graphs.nx_implementation.nx_bipartite_graphs import
 
 from orange_cb_recsys.recsys.graphs.graph import TripartiteDiGraph, ItemNode, Node
 import pandas as pd
-import time
-import networkx as nx
 
 from orange_cb_recsys.recsys.graphs.graph import PropertyNode
 from orange_cb_recsys.utils.const import logger, get_progbar
