@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 import pandas as pd
 
@@ -53,14 +53,16 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
                 as positive
        """
+    __slots__ = ('__classifier', '__embedding_combiner', '__labels', '__rated_dict')
+
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, threshold)
         self.__classifier = classifier
         self.__embedding_combiner = embedding_combiner
-        self.__labels: list = None
-        self.__rated_dict: dict = None
+        self.__labels: Optional[list] = None
+        self.__rated_dict: Optional[dict] = None
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -131,14 +133,16 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        self._set_transformer()
-
         rated_features = list(self.__rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
         fused_features = self.fuse_representations(rated_features, self.__embedding_combiner)
 
         self.__classifier.fit(fused_features, self.__labels)
+
+        # we delete variables used to fit since will no longer be used
+        del self.__rated_dict
+        del self.__labels
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:

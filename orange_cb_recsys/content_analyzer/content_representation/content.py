@@ -237,6 +237,8 @@ class Content:
         exogenous_rep_container (RepresentationContainer): different representations of content obtained
             using ExogenousPropertiesRetrieval
     """
+    __slots__ = ('__content_id', '__field_dict', '__exogenous_rep_container')
+
     def __init__(self, content_id: str,
                  field_dict: Dict[str, RepresentationContainer] = None,
                  exogenous_rep_container: RepresentationContainer = None):

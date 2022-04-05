@@ -1,6 +1,7 @@
 import abc
 from abc import ABC
 from copy import deepcopy
+from itertools import chain
 
 
 class Algorithm(ABC):
@@ -11,6 +12,7 @@ class Algorithm(ABC):
     In case some algorithms can only do one of the two (eg. PageRank), simply implement both
     methods and raise the NotPredictionAlg or NotRankingAlg exception accordingly.
     """
+    __slots__ = ()
 
     @abc.abstractmethod
     def predict(self, **kwargs):
@@ -31,13 +33,24 @@ class Algorithm(ABC):
         """
         raise NotImplementedError
 
-    def copy(self):
-        """
-        Make a deep copy the algorithm
-        """
+    def __deepcopy__(self, memo):
+        # Create a new instance
         cls = self.__class__
         result = cls.__new__(cls)
-        memo = {id(self): result}
-        for k, v in self.__dict__.items():
-            setattr(result, k, deepcopy(v, memo))
+
+        # Don't copy self reference
+        memo[id(self)] = result
+
+        # Don't copy the cache - if it exists
+        if hasattr(self, "_cache"):
+            memo[id(self._cache)] = self._cache.__new__(dict)
+
+        # Get all __slots__ of the derived class
+        slots = chain.from_iterable(getattr(s, '__slots__', []) for s in self.__class__.__mro__)
+
+        # Deep copy all other attributes
+        for var in slots:
+            setattr(result, var, deepcopy(getattr(self, var), memo))
+
+        # Return updated instance
         return result

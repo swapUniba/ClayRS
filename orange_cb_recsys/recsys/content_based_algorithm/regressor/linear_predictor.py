@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 from orange_cb_recsys.content_analyzer import Content
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
@@ -59,8 +59,8 @@ class LinearPredictor(ContentBasedAlgorithm):
                  embedding_combiner: CombiningTechnique = Centroid()):
         super().__init__(item_field, only_greater_eq)
         self.__regressor = regressor
-        self.__labels: list = None
-        self.__rated_dict: dict = None
+        self.__labels: Optional[list] = None
+        self.__rated_dict: Optional[dict] = None
         self.__embedding_combiner = embedding_combiner
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
@@ -116,8 +116,6 @@ class LinearPredictor(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so process_rated() must be called
         before this method.
         """
-        self._set_transformer()
-
         rated_features = list(self.__rated_dict.values())
 
         # Fuse the input if there are dicts, multiple representation, etc.
@@ -125,6 +123,9 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         self.__regressor.fit(fused_features, self.__labels)
 
+        # we delete variables used to fit since will no longer be used
+        del self.__labels
+        del self.__rated_dict
 
     def _common_prediction_process(self,user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                                    filter_list: List[str] = None):

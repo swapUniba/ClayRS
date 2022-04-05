@@ -17,6 +17,7 @@ from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import Load
 
 
 class ContentBasedAlgorithm(Algorithm):
+    _transformer = DictVectorizer(sparse=False, sort=False)
     """
     Abstract class for the content-based algorithms
 
@@ -33,17 +34,11 @@ class ContentBasedAlgorithm(Algorithm):
         separate positive items from the negative ones, others may use only ratings that are >= than this
         threshold. See the documentation of the algorithm used for more
     """
+    __slots__ = ('item_field', 'threshold')
 
     def __init__(self, item_field: dict, threshold: float):
         self.item_field: dict = self._bracket_representation(item_field)
         self.threshold: float = threshold
-        self.__transformer = None
-
-    def _set_transformer(self):
-        """
-        Private method that set the transformer later used in order to fuse multiple representations
-        """
-        self.__transformer = DictVectorizer(sparse=False, sort=False)
 
     @staticmethod
     def _bracket_representation(item_field: dict):
@@ -135,10 +130,6 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
-        if self.__transformer is None:
-            raise ValueError("Transformer not set! Every CB Algorithm must call the method _set_transformer()"
-                             " in its fit() method")
-
         if any(not isinstance(rep, (dict, np.ndarray, (int, float))) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
@@ -150,10 +141,10 @@ class ContentBasedAlgorithm(Algorithm):
         if need_vectorizer:
             # IF the transformer is not fitted then we are training the model
             try:
-                check_is_fitted(self.__transformer)
+                check_is_fitted(self._transformer)
             except NotFittedError:
                 X_dicts = [rep for item in X for rep in item if isinstance(rep, dict)]
-                self.__transformer.fit(X_dicts)
+                self._transformer.fit(X_dicts)
 
         # In every case, we transform the input
         X_vectorized = []
@@ -161,7 +152,7 @@ class ContentBasedAlgorithm(Algorithm):
             single_arr = []
             for item_repr in item_repr_list:
                 if need_vectorizer and isinstance(item_repr, dict):
-                    item_repr = self.__transformer.transform(item_repr)
+                    item_repr = self._transformer.transform(item_repr)
                     single_arr.append(item_repr.flatten())
                 elif isinstance(item_repr, np.ndarray):
                     if item_repr.ndim > 1:

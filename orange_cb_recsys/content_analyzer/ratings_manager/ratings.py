@@ -1,3 +1,5 @@
+import functools
+import gc
 import itertools
 import os
 from collections import defaultdict
@@ -14,6 +16,8 @@ from orange_cb_recsys.utils.save_content import get_valid_filename
 
 
 class Interaction:
+    __slots__ = ('_user_id', '_item_id', '_score', '_timestamp')
+
     def __init__(self, user_id: str, item_id: str, score: float, timestamp: str = None):
         self._user_id = user_id
         self._item_id = item_id
@@ -79,25 +83,28 @@ class Ratings:
                  timestamp_column: Union[str, int] = None,
                  score_processor: RatingProcessor = None):
 
-        self._ratings_dict, self._user_id_column, self._item_id_column, self._score_column, self._timestamp_column = \
-            self._import_ratings(source, user_id_column, item_id_column, score_column, timestamp_column,
-                                 score_processor)
+        self._ratings_dict = self._import_ratings(source, user_id_column, item_id_column, score_column,
+                                                  timestamp_column, score_processor)
 
     @property
+    @functools.lru_cache(maxsize=128)
     def user_id_column(self) -> list:
-        return self._user_id_column
+        return [interaction.user_id for interaction in self]
 
     @property
+    @functools.lru_cache(maxsize=128)
     def item_id_column(self) -> list:
-        return self._item_id_column
+        return [interaction.item_id for interaction in self]
 
     @property
+    @functools.lru_cache(maxsize=128)
     def score_column(self) -> list:
-        return self._score_column
+        return [interaction.score for interaction in self]
 
     @property
+    @functools.lru_cache(maxsize=128)
     def timestamp_column(self) -> list:
-        return self._timestamp_column
+        return [interaction.timestamp for interaction in self if interaction.timestamp is not None]
 
     @Handler_ScoreNotFloat
     def _import_ratings(self, source: RawInformationSource,
@@ -113,11 +120,8 @@ class Ratings:
             ratings_frame: pd.DataFrame
         """
         ratings_dict = defaultdict(list)
-        ratings_user_score = defaultdict(list)
-        ratings_user_item = defaultdict(list)
-        ratings_user_timestamp = defaultdict(list)
 
-        with get_progbar(list(source)) as pbar:
+        with get_progbar(source) as pbar:
 
             pbar.set_description(desc="Importing ratings")
             for row in pbar:
@@ -125,50 +129,19 @@ class Ratings:
                 user_id = self._get_field_data(user_column, row)
                 item_id = self._get_field_data(item_column, row)
                 score = self._get_field_data(score_column, row)
+                timestamp = None
 
-                ratings_user_item[user_id].append(item_id)
-                ratings_user_score[user_id].append(score)
+                if score_processor is not None:
+                    score = score_processor.fit(score)
+                else:
+                    score = float(score)
 
                 if timestamp_column is not None:
                     timestamp = self._get_field_data(timestamp_column, row)
-                    ratings_user_timestamp[user_id].append(timestamp)
 
-        scores_list = list(itertools.chain.from_iterable(ratings_user_score.values()))
-        if score_processor:
-            scores_list = score_processor.fit(scores_list)
-        else:
-            scores_list = [float(score) for score in scores_list]
+                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
 
-        start_index = 0
-        for user_id in ratings_user_score:
-            n_user_ratings = len(ratings_user_score[user_id])
-            second_index = start_index + n_user_ratings
-
-            user_score_processed = scores_list[start_index:second_index]
-
-            if timestamp_column is not None:
-                ratings_dict[user_id] = [Interaction(user_id, item_id, score)
-                                         for item_id, score, timestamp in zip(ratings_user_item[user_id],
-                                                                              user_score_processed,
-                                                                              ratings_user_timestamp[user_id])]
-            else:
-                ratings_dict[user_id] = [Interaction(user_id, item_id, score)
-                                         for item_id, score in zip(ratings_user_item[user_id], user_score_processed)]
-
-            start_index += n_user_ratings
-
-        user_id_column_final = [user_id for user_id in ratings_user_item.keys() for _ in
-                                range(len(ratings_user_item[user_id]))]
-
-        item_id_column_final = list(itertools.chain.from_iterable(ratings_user_item.values()))
-
-        score_column_final = scores_list
-
-        timestamp_column_final = []
-        if timestamp_column is not None:
-            timestamp_column_final = list(itertools.chain.from_iterable(ratings_user_timestamp.values()))
-
-        return ratings_dict, user_id_column_final, item_id_column_final, score_column_final, timestamp_column_final
+        return ratings_dict
 
     def get_user_interactions(self, user_id: str, head: int = None):
         return self._ratings_dict[user_id][:head]
@@ -253,43 +226,35 @@ class Ratings:
                        score_column: Union[str, int] = 2,
                        timestamp_column: Union[str, int] = None):
 
-        def get_column_df(column, dtype):
+        def get_value_row_df(row, column, dtype):
             try:
                 if isinstance(column, str):
-                    column_values = list(interaction_frame[column].values.astype(dtype))
+                    value = dtype(row[column])
                 else:
-                    column_values = list(interaction_frame.iloc[:, column].values.astype(dtype))
+                    # it's an int, so we get the column id and then we get the corresponding value in the row
+                    key_dict = interaction_frame.columns[column]
+                    value = row[key_dict]
             except (KeyError, IndexError) as e:
                 if isinstance(e, KeyError):
                     raise KeyError(f"Column {column} not found in interaction frame!")
                 else:
                     raise IndexError(f"Column {column} not found in interaction frame!")
 
-            return column_values
+            return value
 
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
         ratings_dict = defaultdict(list)
-        obj._user_id_column = []
-        obj._item_id_column = []
-        obj._score_column = []
-        obj._timestamp_column = []
 
         if not interaction_frame.empty:
-            obj._user_id_column = get_column_df(user_column, str)
-            obj._item_id_column = get_column_df(item_column, str)
-            obj._score_column = get_column_df(score_column, float)
-            obj._timestamp_column = [None for _ in range(len(obj._user_id_column))]
-            if timestamp_column is not None:
-                obj._timestamp_column = get_column_df(timestamp_column, str)
+            for row in interaction_frame.to_dict(orient='records'):
+                user_id = get_value_row_df(row, user_column, str)
+                item_id = get_value_row_df(row, item_column, str)
+                score = get_value_row_df(row, score_column, float)
+                timestamp = get_value_row_df(row, timestamp_column, str) if timestamp_column is not None else None
 
-            for user_id, item_id, score, timestamp in zip(obj._user_id_column, obj._item_id_column,
-                                                          obj._score_column, obj._timestamp_column):
                 ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
-
-            if timestamp_column is None:
-                obj._timestamp_column = []
 
         obj._ratings_dict = dict(ratings_dict)
         return obj
@@ -299,12 +264,6 @@ class Ratings:
 
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        obj._user_id_column = [interaction.user_id for interaction in interaction_list]
-        obj._item_id_column = [interaction.item_id for interaction in interaction_list]
-        obj._score_column = [interaction.score for interaction in interaction_list]
-        obj._timestamp_column = [interaction.timestamp
-                                 for interaction in interaction_list if interaction.timestamp is not None]
 
         ratings_dict = defaultdict(list)
         for interaction in interaction_list:
@@ -317,16 +276,6 @@ class Ratings:
     def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        obj._user_id_column = [interaction.user_id
-                               for interaction in itertools.chain.from_iterable(interaction_dict.values())]
-        obj._item_id_column = [interaction.item_id
-                               for interaction in itertools.chain.from_iterable(interaction_dict.values())]
-        obj._score_column = [interaction.score
-                             for interaction in itertools.chain.from_iterable(interaction_dict.values())]
-        obj._timestamp_column = [interaction.timestamp
-                                 for interaction in itertools.chain.from_iterable(interaction_dict.values())
-                                 if interaction.timestamp is not None]
 
         obj._ratings_dict = dict(interaction_dict)
         return obj
