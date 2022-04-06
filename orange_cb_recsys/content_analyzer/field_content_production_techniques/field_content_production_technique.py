@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Optional
 
 import numpy as np
 import json
+
+from scipy.sparse import csr_matrix
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField, \
     EmbeddingField, SimpleField
@@ -167,6 +169,7 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
 
         # produces the representation, retrieving it from the dataset given the content's position in the refactored
         # dataset
+
         for i in range(0, dataset_len):
             representation_list.append(self.produce_single_repr(i))
 
@@ -332,26 +335,57 @@ class TfIdfTechnique(CollectionBasedTechnique):
 
     def __init__(self):
         super().__init__()
+        self._tfidf_matrix: Optional[csr_matrix] = None
+        self._feature_names: Optional[List[str]] = None
 
-    @abstractmethod
-    def produce_single_repr(self, content_id: str):
-        raise NotImplementedError
+    def produce_single_repr(self, content_position: int) -> FeaturesBagField:
+        """
+        Retrieves the tf-idf values, for terms in document in the defined content_position,
+        from the pre-computed word - document matrix.
+        """
+        nonzero_feature_index = self._tfidf_matrix[content_position, :].nonzero()[1]
+
+        tfidf_sparse = self._tfidf_matrix.getrow(content_position).toarray()
+        pos_word_tuple = [(pos, self._feature_names[pos]) for pos in nonzero_feature_index]
+
+        return FeaturesBagField(tfidf_sparse, pos_word_tuple)
 
     @abstractmethod
     def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
                          preprocessor_list: List[InformationProcessor]):
         raise NotImplementedError
 
-    @abstractmethod
     def delete_refactored(self):
-        raise NotImplementedError
+        del self._tfidf_matrix
+        del self._feature_names
 
 
-class SynsetDocumentFrequency(SingleContentTechnique):
+class SynsetDocumentFrequency(CollectionBasedTechnique):
     """
     Abstract class that generalizes implementations that use synsets
     """
+    def __init__(self):
+        super().__init__()
+        self._synset_matrix: Optional[csr_matrix] = None
+        self._synset_names: Optional[List[str]] = None
+
+    def produce_single_repr(self, content_position: int) -> FeaturesBagField:
+        """
+        Retrieves the tf-idf values, for terms in document in the defined content_position,
+        from the pre-computed word - document matrix.
+        """
+        nonzero_feature_index = self._synset_matrix[content_position, :].nonzero()[1]
+
+        count_dense = self._synset_matrix.getrow(content_position).toarray()
+        pos_word_tuple = [(pos, self._synset_names[pos]) for pos in nonzero_feature_index]
+
+        return FeaturesBagField(count_dense, pos_word_tuple)
 
     @abstractmethod
-    def produce_single_repr(self, field_data: Union[List[str], str]) -> FeaturesBagField:
+    def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
+                         preprocessor_list: List[InformationProcessor]):
         raise NotImplementedError
+
+    def delete_refactored(self):
+        del self._synset_matrix
+        del self._synset_names

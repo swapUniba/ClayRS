@@ -2,7 +2,6 @@ import functools
 import gc
 import itertools
 import os
-from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Union, List, Iterable
 
@@ -119,7 +118,7 @@ class Ratings:
         Returns:
             ratings_frame: pd.DataFrame
         """
-        ratings_dict = defaultdict(list)
+        ratings_dict = dict()
 
         with get_progbar(source) as pbar:
 
@@ -139,7 +138,7 @@ class Ratings:
                 if timestamp_column is not None:
                     timestamp = self._get_field_data(timestamp_column, row)
 
-                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+                ratings_dict.setdefault(user_id, []).append(Interaction(user_id, item_id, score, timestamp))
 
         return ratings_dict
 
