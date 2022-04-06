@@ -1,7 +1,7 @@
 import functools
-import gc
 import itertools
 import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Union, List, Iterable
 
@@ -49,7 +49,8 @@ class Interaction:
         return string
 
     def __repr__(self):
-        return str(self)
+        return f"Interaction(user_id={self.user_id}, item_id={self.item_id}, score={self.score}, " \
+               f"timestamp={self.timestamp})"
 
     def __eq__(self, other):
         if isinstance(other, Interaction):
@@ -118,7 +119,7 @@ class Ratings:
         Returns:
             ratings_frame: pd.DataFrame
         """
-        ratings_dict = dict()
+        ratings_dict = defaultdict(list)
 
         with get_progbar(source) as pbar:
 
@@ -138,9 +139,10 @@ class Ratings:
                 if timestamp_column is not None:
                     timestamp = self._get_field_data(timestamp_column, row)
 
-                ratings_dict.setdefault(user_id, []).append(Interaction(user_id, item_id, score, timestamp))
+                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
 
-        return ratings_dict
+        # re-hashing
+        return dict(ratings_dict)
 
     def get_user_interactions(self, user_id: str, head: int = None):
         return self._ratings_dict[user_id][:head]
@@ -292,6 +294,157 @@ class Ratings:
 
     def __iter__(self):
         yield from itertools.chain.from_iterable(self._ratings_dict.values())
+
+
+class RatingsLowMemory:
+
+    def __init__(self, source: RawInformationSource,
+                 user_id_column: Union[str, int] = 0,
+                 item_id_column: Union[str, int] = 1,
+                 score_column: Union[str, int] = 2,
+                 timestamp_column: Union[str, int] = None,
+                 score_processor: RatingProcessor = None):
+
+        rat = pd.DataFrame(source, dtype=str)
+        self._ratings_dict = self._import_ratings(rat, user_id_column, item_id_column, score_column,
+                                                  timestamp_column, score_processor)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def user_id_column(self) -> list:
+        return self._ratings_dict.index.get_level_values('user_id').tolist()
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def item_id_column(self) -> list:
+        return self._ratings_dict.index.get_level_values('item_id').tolist()
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def score_column(self) -> list:
+        return self._ratings_dict['score'].tolist()
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def timestamp_column(self) -> list:
+        timestamp_list = self._ratings_dict['timestamp'].tolist()
+        return timestamp_list if all(timestamp is not None for timestamp in timestamp_list) else []
+
+    @Handler_ScoreNotFloat
+    def _import_ratings(self, rat: pd.DataFrame,
+                        user_column: Union[str, int],
+                        item_column: Union[str, int],
+                        score_column: Union[str, int],
+                        timestamp_column: Union[str, int],
+                        score_processor: RatingProcessor):
+        """
+        Imports the ratings from the source and stores in a dataframe
+
+        Returns:
+            ratings_frame: pd.DataFrame
+        """
+        if isinstance(user_column, int):
+            user_column = rat.columns[user_column]
+        if isinstance(item_column, int):
+            item_column = rat.columns[item_column]
+        if isinstance(score_column, int):
+            score_column = rat.columns[score_column]
+        if isinstance(timestamp_column, int):
+            timestamp_column = rat.columns[timestamp_column]
+        elif timestamp_column is None:
+            rat['timestamp'] = None
+            timestamp_column = 'timestamp'
+
+        index = pd.MultiIndex.from_tuples(zip(rat[user_column].values, rat[item_column].values),
+                                          names=["user_id", "item_id"])
+
+        rat = rat[[score_column, timestamp_column]].set_index(index)
+
+        rat.columns = ['score', 'timestamp']
+
+        rat['score'] = pd.to_numeric(rat['score'])
+
+        return rat
+
+    def get_user_interactions(self, user_id: str, head: int = None):
+        user_rat = self._ratings_dict.loc[user_id][:head]
+
+        user_rat = [Interaction(user_id, index_item, row[0], row[1])
+                    for index_item, row in zip(user_rat.index, user_rat.values)]
+
+        return user_rat
+
+    def filter_ratings(self, user_list: Iterable[str]):
+        filtered_df = self._ratings_dict.loc[(self._ratings_dict.index.get_level_values('user_id').isin(set(user_list)))]
+
+        filtered_df = filtered_df.reset_index(drop=False)
+
+        return self.from_dataframe(filtered_df, user_column='user_id',
+                                   item_column='item_id',
+                                   score_column='score',
+                                   timestamp_column='timestamp')
+
+    def take_head_all(self, head: int):
+
+        filtered_df = self._ratings_dict.groupby(level='user_id').head(head)
+
+        filtered_df = filtered_df.reset_index(drop=False)
+
+        return self.from_dataframe(filtered_df, user_column='user_id',
+                                   item_column='item_id',
+                                   score_column='score',
+                                   timestamp_column='timestamp')
+
+    @classmethod
+    def from_dataframe(cls, interaction_frame: pd.DataFrame,
+                       user_column: Union[str, int] = 0,
+                       item_column: Union[str, int] = 1,
+                       score_column: Union[str, int] = 2,
+                       timestamp_column: Union[str, int] = None):
+
+        obj = cls.__new__(cls)  # Does not call __init__
+        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
+
+        ratings_dict = cls._import_ratings(obj, interaction_frame, user_column, item_column, score_column,
+                                           timestamp_column, None)
+
+        obj._ratings_dict = ratings_dict
+        return obj
+
+    @classmethod
+    def from_list(cls, interaction_list: List[Interaction]):
+
+        obj = cls.__new__(cls)  # Does not call __init__
+        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
+
+        user_column_iterator = (interaction.user_id for interaction in interaction_list)
+        item_column_iterator = (interaction.item_id for interaction in interaction_list)
+
+        index = pd.MultiIndex.from_tuples(zip(user_column_iterator, item_column_iterator),
+                                          names=["user_id", "item_id"])
+
+        score_timestamp_iterator = ({'score': interaction.score, 'timestamp': interaction.timestamp}
+                                    for interaction in interaction_list)
+
+        rat = pd.DataFrame(score_timestamp_iterator, index=index)
+
+        obj._ratings_dict = rat
+        return obj
+
+    @classmethod
+    def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
+        obj = cls.__new__(cls)  # Does not call __init__
+        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
+
+        obj._ratings_dict = dict(interaction_dict)
+        return obj
+
+    def __iter__(self):
+        yield from itertools.chain.from_iterable(self.get_user_interactions(user_id)
+                                                 for user_id in self._ratings_dict.index.get_level_values('user_id').unique())
+
+    def __len__(self):
+        return len(self._ratings_dict)
 
 
 # Aliases for the Ratings class
