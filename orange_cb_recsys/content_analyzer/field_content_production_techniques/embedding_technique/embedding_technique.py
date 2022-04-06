@@ -101,7 +101,7 @@ class EmbeddingTechnique(SingleContentTechnique):
 
             for content_data in pbar:
 
-                pbar.set_description(f"Processing and producing contents")
+                pbar.set_description(f"Processing and producing contents with {self.__embedding_source}")
 
                 processed_data = self.process_data(content_data[field_name], preprocessor_list)
                 representation_list.append(self.produce_single_repr(processed_data))
