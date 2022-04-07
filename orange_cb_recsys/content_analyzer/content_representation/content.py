@@ -67,7 +67,7 @@ class FeaturesBagField(FieldRepresentation):
         return str(self.__scores)
 
     def __eq__(self, other):
-        return self.__scores == other.__scores and self.__pos_feature_tuples == other.__pos_feature_tuples
+        return np.array_equal(self.__scores, other.__scores) and self.__pos_feature_tuples == other.__pos_feature_tuples
 
 
 class SimpleField(FieldRepresentation):
