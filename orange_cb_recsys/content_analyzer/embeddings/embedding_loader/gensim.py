@@ -30,8 +30,7 @@ class Gensim(WordEmbeddingLoader):
         if self.reference in downloader.info()['models']:
             logger.info("Downloading/Loading gensim model")
 
-            path_model = downloader.load(self.reference, return_path=True)
-            return KeyedVectors.load_word2vec_format(path_model)
+            return downloader.load(self.reference)
         else:
             raise FileNotFoundError
 
