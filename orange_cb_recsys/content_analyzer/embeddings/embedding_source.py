@@ -1,3 +1,4 @@
+import gc
 from typing import List
 from abc import ABC, abstractmethod
 import numpy as np
@@ -81,6 +82,10 @@ class EmbeddingSource(ABC):
         Method used to load the model. Each technique should implement this to define how the model is loaded
         """
         raise NotImplementedError
+
+    def unload_model(self):
+        self.__model = None
+        gc.collect()
 
     @abstractmethod
     def get_vector_size(self) -> int:

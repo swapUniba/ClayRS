@@ -106,6 +106,7 @@ class EmbeddingTechnique(SingleContentTechnique):
                 processed_data = self.process_data(content_data[field_name], preprocessor_list)
                 representation_list.append(self.produce_single_repr(processed_data))
 
+        self.embedding_source.unload_model()
         return representation_list
 
     @abstractmethod
