@@ -185,52 +185,54 @@ class TestContentsProducer(TestCase):
                     self.assertIsInstance(content.get_field("Title")[1].value, str)
                     break
 
-    def test_decode_field_data_string(self):
-        movies_ca_config = ItemAnalyzerConfig(
-            source=JSONFile(decode_string),
-            id=['imdbID'],
-            output_directory=decode_path + 'movies_string_'
-        )
-
-        movies_ca_config.add_multiple_config(
-            field_name='Title',
-            config_list=[FieldConfig()]
-        )
-        ContentAnalyzer(config=movies_ca_config).fit()
-
-        for name in os.listdir(decode_path):
-            if os.path.isdir(os.path.join(decode_path, name)) \
-                    and 'movies_string_' in str(name):
-
-                with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
-                    content = pickle.load(file)
-
-                    self.assertIsInstance(content.get_field("Title")[0], SimpleField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, str)
-                    break
-
-    def test_decode_field_data_tfidf(self):
-        movies_ca_config = ItemAnalyzerConfig(
-            source=JSONFile(decode_tfidf),
-            id=['imdbID'],
-            output_directory=decode_path + 'movies_tfidf_'
-        )
-
-        movies_ca_config.add_multiple_config(
-            field_name='Title',
-            config_list=[FieldConfig()]
-        )
-        ContentAnalyzer(config=movies_ca_config).fit()
-
-        for name in os.listdir(decode_path):
-            if os.path.isdir(os.path.join(decode_path, name)) \
-                    and 'movies_tfidf_' in str(name):
-                with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
-                    content = pickle.load(file)
-
-                    self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, dict)
-                    break
+    # Functionality to decode NOT IMPLEMENTED
+    #
+    # def test_decode_field_data_string(self):
+    #     movies_ca_config = ItemAnalyzerConfig(
+    #         source=JSONFile(decode_string),
+    #         id=['imdbID'],
+    #         output_directory=decode_path + 'movies_string_'
+    #     )
+    #
+    #     movies_ca_config.add_multiple_config(
+    #         field_name='Title',
+    #         config_list=[FieldConfig()]
+    #     )
+    #     ContentAnalyzer(config=movies_ca_config).fit()
+    #
+    #     for name in os.listdir(decode_path):
+    #         if os.path.isdir(os.path.join(decode_path, name)) \
+    #                 and 'movies_string_' in str(name):
+    #
+    #             with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
+    #                 content = pickle.load(file)
+    #
+    #                 self.assertIsInstance(content.get_field("Title")[0], SimpleField)
+    #                 self.assertIsInstance(content.get_field("Title")[0].value, str)
+    #                 break
+    #
+    # def test_decode_field_data_tfidf(self):
+    #     movies_ca_config = ItemAnalyzerConfig(
+    #         source=JSONFile(decode_tfidf),
+    #         id=['imdbID'],
+    #         output_directory=decode_path + 'movies_tfidf_'
+    #     )
+    #
+    #     movies_ca_config.add_multiple_config(
+    #         field_name='Title',
+    #         config_list=[FieldConfig()]
+    #     )
+    #     ContentAnalyzer(config=movies_ca_config).fit()
+    #
+    #     for name in os.listdir(decode_path):
+    #         if os.path.isdir(os.path.join(decode_path, name)) \
+    #                 and 'movies_tfidf_' in str(name):
+    #             with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
+    #                 content = pickle.load(file)
+    #
+    #                 self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
+    #                 self.assertIsInstance(content.get_field("Title")[0].value, dict)
+    #                 break
 
     def test_decode_field_data_embedding(self):
         movies_ca_config = ItemAnalyzerConfig(
