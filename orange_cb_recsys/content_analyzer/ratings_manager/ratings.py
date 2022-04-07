@@ -3,7 +3,7 @@ import itertools
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Union, List, Iterable
+from typing import Dict, Union, List, Iterable, Generator
 
 import pandas as pd
 
@@ -148,16 +148,17 @@ class Ratings:
         return self._ratings_dict[user_id][:head]
 
     def filter_ratings(self, user_list: Iterable[str]):
-        filtered_ratings_dict = {user: self._ratings_dict[user] for user in user_list}
+        filtered_ratings_generator = ((user, self._ratings_dict[user]) for user in user_list)
 
-        return self.from_dict(filtered_ratings_dict)
+        return self.from_dict(filtered_ratings_generator)
 
     def take_head_all(self, head: int):
 
-        ratings_dict_cut = {user_id: user_ratings[:head]
-                            for user_id, user_ratings in zip(self._ratings_dict.keys(), self._ratings_dict.values())}
+        ratings_cut_generator = ((user_id, user_ratings[:head])
+                                 for user_id, user_ratings in
+                                 zip(self._ratings_dict.keys(), self._ratings_dict.values()))
 
-        return self.from_dict(ratings_dict_cut)
+        return self.from_dict(ratings_cut_generator)
 
     # @Handler_ScoreNotFloat
     # def add_score_column(self, score_column: Union[str, int], column_name: str,
@@ -261,7 +262,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_list(cls, interaction_list: List[Interaction]):
+    def from_list(cls, interaction_list: Union[List[Interaction], Generator]):
 
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
@@ -274,7 +275,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
+    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Generator]):
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
@@ -375,7 +376,8 @@ class RatingsLowMemory:
         return user_rat
 
     def filter_ratings(self, user_list: Iterable[str]):
-        filtered_df = self._ratings_dict.loc[(self._ratings_dict.index.get_level_values('user_id').isin(set(user_list)))]
+        filtered_df = self._ratings_dict.loc[
+            (self._ratings_dict.index.get_level_values('user_id').isin(set(user_list)))]
 
         filtered_df = filtered_df.reset_index(drop=False)
 
@@ -441,7 +443,8 @@ class RatingsLowMemory:
 
     def __iter__(self):
         yield from itertools.chain.from_iterable(self.get_user_interactions(user_id)
-                                                 for user_id in self._ratings_dict.index.get_level_values('user_id').unique())
+                                                 for user_id in
+                                                 self._ratings_dict.index.get_level_values('user_id').unique())
 
     def __len__(self):
         return len(self._ratings_dict)

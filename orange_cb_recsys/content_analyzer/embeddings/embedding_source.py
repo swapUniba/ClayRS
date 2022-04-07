@@ -1,3 +1,4 @@
+import gc
 from typing import List
 from abc import ABC, abstractmethod
 import numpy as np
@@ -24,13 +25,16 @@ class EmbeddingSource(ABC):
 
     def __init__(self, reference: str):
         self.__reference = reference
-        try:
-            self.__model = self.load_model() if self.__reference is not None else None
-        except FileNotFoundError:
-            self.__model = None
+        self.__model = None
 
+    # this will load/download the model if not already loaded when called
     @property
     def model(self):
+        if self.__model is None:
+            try:
+                self.__model = self.load_model() if self.__reference is not None else None
+            except FileNotFoundError:
+                self.__model = None
         return self.__model
 
     @property
@@ -78,6 +82,10 @@ class EmbeddingSource(ABC):
         Method used to load the model. Each technique should implement this to define how the model is loaded
         """
         raise NotImplementedError
+
+    def unload_model(self):
+        self.__model = None
+        gc.collect()
 
     @abstractmethod
     def get_vector_size(self) -> int:

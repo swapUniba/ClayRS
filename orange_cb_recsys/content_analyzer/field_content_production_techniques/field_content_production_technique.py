@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List, Union, Callable, Optional
 
-import numpy as np
-import json
-
 from scipy.sparse import csr_matrix
 
 from orange_cb_recsys.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField, \
-    EmbeddingField, SimpleField
+    SimpleField
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_not_tokenized

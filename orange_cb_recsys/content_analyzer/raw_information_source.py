@@ -112,8 +112,7 @@ class CSVFile(RawInformationSource):
                 reader.fieldnames = [str(i) for i in range(len(reader.fieldnames))]
                 csv_file.seek(0)
 
-            for line in reader:
-                yield line
+            yield from reader
 
     def __len__(self):
         with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
