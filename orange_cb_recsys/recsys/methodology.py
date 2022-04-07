@@ -1,6 +1,6 @@
 import abc
 from abc import ABC
-from typing import Set, Union, Dict, Optional, List, Generator
+from typing import Set, Union, Dict, Optional, Generator
 import pandas as pd
 
 from orange_cb_recsys.content_analyzer import Ratings
@@ -157,14 +157,14 @@ class TestItemsMethodology(Methodology):
         """
         already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
 
-        filtered_test_set = test_set
+        filtered_test_set_items = test_set.item_id_column
         if self._threshold is not None:
             if self._filtered_test_set_items is None:
                 self._filtered_test_set_items = set(self._filter_only_greater_eq(test_set))
 
-            filtered_test_set = self._filtered_test_set_items
+            filtered_test_set_items = self._filtered_test_set_items
 
-        filtered_items = yield from set(filtered_test_set.item_id_column) - set(already_seen_items_it)
+        filtered_items = yield from set(filtered_test_set_items) - set(already_seen_items_it)
 
         return filtered_items
 
@@ -206,14 +206,14 @@ class TrainingItemsMethodology(Methodology):
         """
         already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
 
-        filtered_train_set = train_set
+        filtered_train_set_items = train_set.item_id_column
         if self._threshold is not None:
             if self._filtered_train_set_items is None:
                 self._filtered_train_set_items = set(self._filter_only_greater_eq(train_set))
 
-            filtered_train_set = self._filtered_train_set_items
+            filtered_train_set_items = self._filtered_train_set_items
 
-        filtered_items = yield from set(filtered_train_set.item_id_column) - set(already_seen_items_it)
+        filtered_items = yield from set(filtered_train_set_items) - set(already_seen_items_it)
 
         return filtered_items
 
