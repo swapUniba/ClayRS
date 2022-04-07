@@ -1,6 +1,5 @@
 import abc
 import gc
-import itertools
 from copy import deepcopy
 from typing import Union, Dict, List
 
@@ -8,9 +7,9 @@ import pandas as pd
 from abc import ABC
 
 from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction, Interaction
+from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Prediction
 from orange_cb_recsys.recsys.methodology import TestRatingsMethodology
-from orange_cb_recsys.recsys.graphs.graph import FullDiGraph, UserNode, ItemNode
+from orange_cb_recsys.recsys.graphs.graph import FullDiGraph
 
 from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from orange_cb_recsys.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
@@ -161,15 +160,9 @@ class ContentBasedRS(RecSys):
         if user_id_list is not None:
             all_users = set(user_id_list)
 
-        filter_dict: Union[Dict, None] = None
-        items_to_load = None
-        if methodology is not None:
-            filter_dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
-            items_to_load = set(itertools.chain.from_iterable(filter_dict.values()))
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
 
-        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
-
-        rank_list = []
+        rank = []
 
         with get_progbar(all_users) as pbar:
 
@@ -179,26 +172,26 @@ class ContentBasedRS(RecSys):
                 user_train = self.train_set.get_user_interactions(user_id)
 
                 filter_list = None
-                if filter_dict is not None:
-                    filter_list = filter_dict.pop(user_id, None)
+                if methodology is not None:
+                    filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
 
                 user_fitted_alg = self._user_fit_dic.get(user_id)
                 if user_fitted_alg is not None:
-                    rank = user_fitted_alg.rank(user_train, loaded_items_interface,
-                                                n_recs, filter_list=filter_list)
+                    user_rank = user_fitted_alg.rank(user_train, loaded_items_interface,
+                                                     n_recs, filter_list=filter_list)
                 else:
-                    rank = []
+                    user_rank = []
                     logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
-                rank_list.extend(rank)
+                rank.extend(user_rank)
 
-        concat_rank = Rank.from_list(rank_list)
+        rank = Rank.from_list(rank)
 
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
 
-        return concat_rank
+        return rank
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
@@ -223,15 +216,9 @@ class ContentBasedRS(RecSys):
         if user_id_list is not None:
             all_users = set(user_id_list)
 
-        filter_dict: Union[Dict, None] = None
-        items_to_load = None
-        if methodology is not None:
-            filter_dict = methodology.filter_all(self.train_set, test_set, result_as_dict=True)
-            items_to_load = set(itertools.chain.from_iterable(filter_dict.values()))
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
 
-        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
-
-        pred_list = []
+        pred = []
 
         with get_progbar(all_users) as pbar:
 
@@ -242,26 +229,26 @@ class ContentBasedRS(RecSys):
                 user_train = self.train_set.get_user_interactions(user_id)
 
                 filter_list = None
-                if filter_dict is not None:
-                    filter_list = filter_dict.pop(user_id)
+                if methodology is not None:
+                    filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
 
                 user_fitted_alg = self._user_fit_dic.get(user_id)
                 if user_fitted_alg is not None:
-                    pred = user_fitted_alg.predict(user_train, loaded_items_interface,
-                                                   filter_list=filter_list)
+                    user_pred = user_fitted_alg.predict(user_train, loaded_items_interface,
+                                                        filter_list=filter_list)
                 else:
-                    pred = []
+                    user_pred = []
                     logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
-                pred_list.extend(pred)
+                pred.extend(user_pred)
 
-        concat_pred = Prediction.from_list(pred_list)
+        pred = Prediction.from_list(pred)
 
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
 
-        return concat_pred
+        return pred
 
     def fit_predict(self, test_set: Ratings, user_id_list: List = None,
                     methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
@@ -276,8 +263,7 @@ class ContentBasedRS(RecSys):
 
         """
         self.fit()
-        prediction = self.predict(test_set, user_id_list, methodology)
-        return prediction
+        return self.predict(test_set, user_id_list, methodology)
 
     def fit_rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
                  methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
@@ -293,8 +279,7 @@ class ContentBasedRS(RecSys):
 
         """
         self.fit()
-        rank = self.rank(test_set, n_recs, user_id_list, methodology)
-        return rank
+        return self.rank(test_set, n_recs, user_id_list, methodology)
 
 
 class GraphBasedRS(RecSys):
@@ -358,7 +343,7 @@ class GraphBasedRS(RecSys):
         filter_dict: Union[Dict, None] = None
         if methodology is not None:
             train_set = self.graph.to_ratings()
-            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
+            filter_dict = methodology.filter_all(train_set, test_set, result_as_iter_dict=True)
 
         total_predict_list = self.algorithm.predict(all_users, self.graph, filter_dict)
 
@@ -390,7 +375,7 @@ class GraphBasedRS(RecSys):
         filter_dict: Union[Dict, None] = None
         if methodology is not None:
             train_set = self.graph.to_ratings()
-            filter_dict = methodology.filter_all(train_set, test_set, result_as_dict=True)
+            filter_dict = methodology.filter_all(train_set, test_set, result_as_iter_dict=True)
 
         total_rank_list = self.algorithm.rank(all_users, self.graph, n_recs, filter_dict)
 
