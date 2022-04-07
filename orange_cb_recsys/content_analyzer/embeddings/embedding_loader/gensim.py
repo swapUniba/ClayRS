@@ -1,3 +1,5 @@
+from gensim.models import KeyedVectors
+
 from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.embedding_loader import WordEmbeddingLoader
 
 import gensim.downloader as downloader
@@ -27,7 +29,9 @@ class Gensim(WordEmbeddingLoader):
         # if the reference isn't in the possible models, FileNotFoundError is raised
         if self.reference in downloader.info()['models']:
             logger.info("Downloading/Loading gensim model")
-            return downloader.load(self.reference)
+
+            path_model = downloader.load(self.reference, return_path=True)
+            return KeyedVectors.load_word2vec_format(path_model)
         else:
             raise FileNotFoundError
 
