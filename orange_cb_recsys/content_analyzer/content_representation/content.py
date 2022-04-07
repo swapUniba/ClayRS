@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Tuple
 import numpy as np
 import json
+
+from scipy import sparse
 
 from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
@@ -12,9 +14,6 @@ class FieldRepresentation(ABC):
     Abstract class that generalizes the concept of "field representation",
     a field representation is a semantic way to represent a field of an item.
     """
-
-    def __init__(self):
-        pass
 
     @abstractmethod
     def __str__(self):
@@ -28,6 +27,13 @@ class FieldRepresentation(ABC):
     def value(self):
         raise NotImplementedError
 
+    def to_json(self):
+        """
+        The Json representation of each complex representation it's just its string representation, but there might be
+        the case in which the representation is more complex than that
+        """
+        return str(self)
+
 
 class FeaturesBagField(FieldRepresentation):
     """
@@ -39,27 +45,29 @@ class FeaturesBagField(FieldRepresentation):
         features (dict<str, object>): the dictionary where features are stored
     """
 
-    def __init__(self, features: Dict[str, object] = None):
-        super().__init__()
-        if features is None:
-            features = {}
-        self.__features: Dict[str, object] = features
+    def __init__(self, dense_scores: np.ndarray, pos_feature_tuples: List[Tuple[int, str]]):
+        self.__scores: np.ndarray = dense_scores
+        self.__pos_feature_tuples = pos_feature_tuples
 
     @property
-    def value(self) -> Dict[str, object]:
+    def value(self) -> np.ndarray:
         """
         Get the features dict
 
         Returns:
             features (dict<str, object>): the features dict
         """
-        return self.__features
+        return self.__scores
+
+    def to_json(self):
+        return dict(sparse_tfidf=str(sparse.csr_matrix(self.__scores)), pos_word_tuples=str(self.__pos_feature_tuples),
+                    len_vocabulary=self.__scores.shape[1])
 
     def __str__(self):
-        return str(self.__features)
+        return str(self.__scores)
 
     def __eq__(self, other):
-        return self.__features == other.__features
+        return np.array_equal(self.__scores, other.__scores) and self.__pos_feature_tuples == other.__pos_feature_tuples
 
 
 class SimpleField(FieldRepresentation):
@@ -71,7 +79,6 @@ class SimpleField(FieldRepresentation):
     """
 
     def __init__(self, value: object = None):
-        super().__init__()
         self.__value: object = value
 
     @property
@@ -104,18 +111,17 @@ class EmbeddingField(FieldRepresentation):
     """
 
     def __init__(self, embedding_array: np.ndarray):
-        super().__init__()
-        self.__embedding_array: np.ndarray = embedding_array
+        self.__dense_array = embedding_array
 
     @property
     def value(self) -> np.ndarray:
-        return self.__embedding_array
+        return self.__dense_array
 
     def __str__(self):
-        return str(self.__embedding_array)
+        return str(self.__dense_array)
 
     def __eq__(self, other):
-        return self.__embedding_array == other.__embedding_array
+        return self.__dense_array == other.__sparse_array
 
 
 class IndexField(FieldRepresentation):
@@ -131,7 +137,6 @@ class IndexField(FieldRepresentation):
     """
 
     def __init__(self, field_name: str, index_id: int, index: InformationInterface):
-        super().__init__()
         self.__field_name = field_name
         self.__index_id = index_id
         self.__index = index
@@ -153,8 +158,6 @@ class ExogenousPropertiesRepresentation(ABC):
     """
     Output of LodPropertiesRetrieval, different representations exist according to different techniques
     """
-    def __init__(self):
-        pass
 
     @abstractmethod
     def __str__(self):
@@ -168,6 +171,13 @@ class ExogenousPropertiesRepresentation(ABC):
     def value(self):
         raise NotImplementedError
 
+    def to_json(self):
+        """
+        The Json representation of each complex representation it's just its string representation, but there might be
+        the case in which the representation is more complex than that
+        """
+        return str(self)
+
 
 class PropertiesDict(ExogenousPropertiesRepresentation):
     """
@@ -178,7 +188,6 @@ class PropertiesDict(ExogenousPropertiesRepresentation):
     """
 
     def __init__(self, features: Dict[str, str] = None):
-        super().__init__()
         if features is None:
             features = {}
 
@@ -204,7 +213,6 @@ class EntitiesProp(ExogenousPropertiesRepresentation):
     """
 
     def __init__(self, features: Dict[str, Dict] = None):
-        super().__init__()
         if features is None:
             features = {}
 
@@ -433,15 +441,17 @@ class ContentEncoder(json.JSONEncoder):
         if isinstance(obj, Content):
             content = {'content_id': obj.content_id}
             for row in obj.exogenous_rep_container:
-                key = 'Exo#{}'.format(row['internal_id'])
-                content[key] = str(row['representation'])
+                key = f"Exo#{row['internal_id']}"
+                # polymorphic call to 'to_json()' function
+                content[key] = row['representation'].to_json()
 
             for field in obj.field_dict:
                 field_container = obj.field_dict[field]
 
                 for row in field_container:
-                    key = '{}#{}'.format(field, row['internal_id'])
-                    content[key] = str(row['representation'])
+                    key = f"{field}#{row['internal_id']}"
+                    # polymorphic call to 'to_json()' function
+                    content[key] = row['representation'].to_json()
 
             return content
         # Let the base class default method raise the TypeError

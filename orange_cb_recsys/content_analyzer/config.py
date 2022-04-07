@@ -4,7 +4,7 @@ from abc import ABC
 from typing import List, Dict, Union, Iterator
 
 from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
-    FieldContentProductionTechnique, DefaultTechnique
+    FieldContentProductionTechnique, OriginalData
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
 from orange_cb_recsys.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
@@ -66,7 +66,7 @@ class FieldConfig:
     """
 
     def __init__(self,
-                 content_technique: FieldContentProductionTechnique = DefaultTechnique(),
+                 content_technique: FieldContentProductionTechnique = OriginalData(),
                  preprocessing: Union[InformationProcessor, List[InformationProcessor]] = None,
                  memory_interface: InformationInterface = None,
                  id: str = None,
