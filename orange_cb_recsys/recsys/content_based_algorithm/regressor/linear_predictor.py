@@ -128,7 +128,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         del self._labels
         del self._rated_dict
 
-    def _common_prediction_process(self,user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+    def _common_prediction_process(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                                    filter_list: List[str] = None):
 
         user_seen_items = set([interaction.item_id for interaction in user_ratings])

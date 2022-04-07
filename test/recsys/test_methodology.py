@@ -45,6 +45,18 @@ train2_rat = Ratings.from_dataframe(train2)
 test2_rat = Ratings.from_dataframe(test2)
 
 
+def _unpack_result_w_iter(result_list_w_iter):
+    result_list = []
+    for result_w_iter in result_list_w_iter:
+        result_unpacked = {}
+        for user, items_iterator in result_w_iter.items():
+            result_unpacked[user] = set(items_iterator)
+
+        result_list.append(result_unpacked)
+
+    return result_list
+
+
 class TestTestRatingsMethodology(TestCase):
 
     def test_filter_all(self):
@@ -100,9 +112,9 @@ class TestTestRatingsMethodology(TestCase):
 
             self.assertTrue(np.array_equal(expected, result))
 
-    def test_result_as_dict(self):
-        result_list = [TestRatingsMethodology().filter_all(train1_rat, test1_rat, result_as_dict=True),
-                       TestRatingsMethodology().filter_all(train2_rat, test2_rat, result_as_dict=True)]
+    def test_result_as_dict_iter(self):
+        result_list_iter = [TestRatingsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                            TestRatingsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
 
         # for every user get the items in its test_set1
         expected_list = [{'001': {"tt0112641", "tt0112760"},
@@ -112,6 +124,8 @@ class TestTestRatingsMethodology(TestCase):
                           '002': {"tt0112346"},
                           '003': {"tt0112453"}}
                          ]
+
+        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
@@ -201,8 +215,8 @@ class TestTestItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list = [TestItemsMethodology().filter_all(train1_rat, test1_rat, result_as_dict=True),
-                       TestItemsMethodology().filter_all(train2_rat, test2_rat, result_as_dict=True)]
+        result_list_iter = [TestItemsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                            TestItemsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
 
         expected_split_1 = {
             '001': ["tt0112641", "tt0112760", "tt0112896", "tt0113041"],
@@ -217,6 +231,7 @@ class TestTestItemsMethodology(TestCase):
         }
 
         expected_list = [expected_split_1, expected_split_2]
+        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
@@ -306,8 +321,8 @@ class TestTrainingItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list = [TrainingItemsMethodology().filter_all(train1_rat, test1_rat, result_as_dict=True),
-                       TrainingItemsMethodology().filter_all(train2_rat, test2_rat, result_as_dict=True)]
+        result_list_iter = [TrainingItemsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                            TrainingItemsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
 
         expected_split_1 = {
             '001': ["tt0112346", "tt0112453"],
@@ -322,6 +337,7 @@ class TestTrainingItemsMethodology(TestCase):
         }
 
         expected_list = [expected_split_1, expected_split_2]
+        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
@@ -378,8 +394,10 @@ class TestAllItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list = [AllItemsMethodology(set(self.all_items)).filter_all(train1_rat, test1_rat, result_as_dict=True),
-                       AllItemsMethodology(set(self.all_items)).filter_all(train2_rat, test2_rat, result_as_dict=True)]
+        result_list_iter = [AllItemsMethodology(set(self.all_items)).filter_all(train1_rat, test1_rat,
+                                                                                result_as_iter_dict=True),
+                            AllItemsMethodology(set(self.all_items)).filter_all(train2_rat, test2_rat,
+                                                                                result_as_iter_dict=True)]
 
         expected_split_1 = {
             '001': ["tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4"],
@@ -388,12 +406,13 @@ class TestAllItemsMethodology(TestCase):
         }
 
         expected_split_2 = {
-            '001': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4",],
-            '002': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4",],
+            '001': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4", ],
+            '002': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4", ],
             '003': ["tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4"]
         }
 
         expected_list = [expected_split_1, expected_split_2]
+        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 

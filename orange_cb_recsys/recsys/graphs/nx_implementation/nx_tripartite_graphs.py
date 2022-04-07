@@ -82,6 +82,19 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
                            item_contents_dir: str,
                            item_filename: Union[str, List[str]] = None):
 
+        def node_prop_link_generator():
+            for n, id in zip(progbar, item_filename):
+                item: Content = loaded_items.get(id)
+
+                exo_props = self._get_exo_props(item_exo_properties, item)
+
+                single_item_prop_edges = [(n,
+                                           PropertyNode(prop_dict[prop]),
+                                           {'label': prop})
+                                          for prop_dict in exo_props for prop in prop_dict]
+
+                yield from single_item_prop_edges
+
         if not isinstance(node, list):
             node = [node]
 
@@ -99,23 +112,9 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
 
         loaded_items = LoadedContentsDict(item_contents_dir, contents_to_load=set(item_filename))
         with get_progbar(node) as progbar:
-            progbar.set_description("Creating Item->Properties links list")
 
-            all_item_prop_edges = []
-            for n, id in zip(progbar, item_filename):
-                item: Content = loaded_items.get(id)
-
-                exo_props = self._get_exo_props(item_exo_properties, item)
-
-                single_item_prop_edges = [(n,
-                                           PropertyNode(prop_dict[prop]),
-                                           {'label': prop})
-                                          for prop_dict in exo_props for prop in prop_dict]
-
-                all_item_prop_edges.extend(single_item_prop_edges)
-
-            logger.info("Adding Item->Properties links list to NetworkX graph...")
-            self._graph.add_edges_from(all_item_prop_edges)
+            progbar.set_description("Creating Item->Properties links")
+            self._graph.add_edges_from((tuple_to_add for tuple_to_add in node_prop_link_generator()))
 
     def _get_exo_props(self, desired_exo_dict: Dict, item: Content):
         extracted_prop = []

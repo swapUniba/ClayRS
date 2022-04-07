@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pandas as pd
 from unittest import TestCase
 
@@ -21,14 +23,8 @@ ratings = Ratings.from_dataframe(ratings, timestamp_column="timestamp")
 
 class TestNXPageRank(TestCase):
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.graph = NXFullGraph(ratings)
-
-        cls.filter_dict = {"A000": {'tt0114576', 'tt0112453', 'tt0113497'},
-                           "A001": {'tt0114576', 'tt0112453', 'tt0113497'},
-                           "A002": {'tt0114576', 'tt0112453', 'tt0113497'},
-                           "A003": {'tt0114576', 'tt0112453', 'tt0113497'}}
+    def setUp(self) -> None:
+        self.graph = NXFullGraph(ratings)
 
     def test_predict(self):
         alg = NXPageRank()
@@ -40,12 +36,6 @@ class TestNXPageRank(TestCase):
     def test_rank(self):
         # test not personalized
         alg = NXPageRank()
-
-        # rank with filter_list
-        res_filtered = alg.rank({'A000'}, self.graph, filter_dict=self.filter_dict)
-        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_filtered])
-        self.assertEqual(len(item_ranked_set), len(self.filter_dict["A000"]))
-        self.assertCountEqual(item_ranked_set, self.filter_dict["A000"])
 
         # rank without filter_list
         res_all_unrated = alg.rank({'A000'}, self.graph)
@@ -82,3 +72,22 @@ class TestNXPageRank(TestCase):
         result_not_custom = alg.rank({'A000'}, self.graph)
 
         self.assertNotEqual(result_custom, result_not_custom)
+
+    def test_rank_w_filter_list(self):
+        filter_dict = {"A000": {'tt0114576', 'tt0112453', 'tt0113497'},
+                       "A001": {'tt0114576', 'tt0112453', 'tt0113497'},
+                       "A002": {'tt0114576', 'tt0112453', 'tt0113497'},
+                       "A003": {'tt0114576', 'tt0112453', 'tt0113497'}}
+
+        filter_dict_persistent = deepcopy(filter_dict)
+
+        alg = NXPageRank()
+
+        # rank with filter_list
+        res_filtered = alg.rank({'A000'}, self.graph, filter_dict=filter_dict)
+        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_filtered])
+        self.assertEqual(len(item_ranked_set), len(filter_dict_persistent["A000"]))
+        self.assertCountEqual(item_ranked_set, filter_dict_persistent["A000"])
+
+        # check that user A000 has been popped from original dict
+        self.assertIsNone(filter_dict.get("A000"))

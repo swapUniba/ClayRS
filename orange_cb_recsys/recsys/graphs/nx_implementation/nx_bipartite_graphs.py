@@ -43,25 +43,24 @@ class NXBipartiteGraph(BipartiteDiGraph):
                 not_none_dict['label'] = link_label
 
             with get_progbar(source_frame) as progbar:
-                progbar.set_description("Creating User->Item links list")
+                progbar.set_description("Creating User->Item links")
 
                 if len(source_frame.timestamp_column) != 0:
-                    edges_with_attributes = [(UserNode(interaction.user_id), ItemNode(interaction.item_id),
+                    edges_with_attributes_gen = ((UserNode(interaction.user_id), ItemNode(interaction.item_id),
 
-                                              # {**x, **y} merges the dicts x and y
-                                              {**not_none_dict, **{'weight': interaction.score,
-                                                                   'timestamp': interaction.timestamp}}
-                                              )
-                                             for interaction in progbar]
+                                                  # {**x, **y} merges the dicts x and y
+                                                  {**not_none_dict, **{'weight': interaction.score,
+                                                                       'timestamp': interaction.timestamp}}
+                                                  )
+                                                 for interaction in progbar)
                 else:
-                    edges_with_attributes = [(UserNode(interaction.user_id), ItemNode(interaction.item_id),
+                    edges_with_attributes_gen = ((UserNode(interaction.user_id), ItemNode(interaction.item_id),
 
-                                              # {**x, **y} merges the dicts x and y
-                                              {**not_none_dict, **{'weight': interaction.score}})
-                                             for interaction in progbar]
+                                                  # {**x, **y} merges the dicts x and y
+                                                  {**not_none_dict, **{'weight': interaction.score}})
+                                                 for interaction in progbar)
 
-            logger.info("Adding User->Item links list to NetworkX graph...")
-            self._graph.add_edges_from(edges_with_attributes)
+            self._graph.add_edges_from(edges_with_attributes_gen)
 
     @property
     def user_nodes(self) -> Set[UserNode]:
