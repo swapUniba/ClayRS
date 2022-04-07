@@ -35,10 +35,6 @@ class EmbeddingTechnique(SingleContentTechnique):
 
         super().__init__()
 
-        if isinstance(embedding_source, EmbeddingLoader) and embedding_source.model is None:
-            raise FileNotFoundError("The reference %s was not valid for the %s source" %
-                                    (embedding_source.reference, embedding_source))
-
         self.__embedding_source = embedding_source
 
     @staticmethod
@@ -84,6 +80,10 @@ class EmbeddingTechnique(SingleContentTechnique):
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         representation_list: List[FieldRepresentation] = []
+
+        if isinstance(self.__embedding_source, EmbeddingLoader) and self.__embedding_source.model is None:
+            raise FileNotFoundError("The reference %s was not valid for the %s source" %
+                                    (self.__embedding_source.reference, self.__embedding_source))
 
         # if the embedding source is an EmbeddingLearner (meaning it can be trained) and the source has no model
         # the source is trained
