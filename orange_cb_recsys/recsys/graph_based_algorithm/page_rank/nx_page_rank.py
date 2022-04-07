@@ -47,7 +47,7 @@ class NXPageRank(PageRank):
 
                 filter_list = None
                 if filter_dict is not None:
-                    filter_list = [ItemNode(item_to_rank) for item_to_rank in filter_dict.get(user_id)]
+                    filter_list = [ItemNode(item_to_rank) for item_to_rank in filter_dict.pop(user_id)]
 
                 user_node = UserNode(user_id)
 
