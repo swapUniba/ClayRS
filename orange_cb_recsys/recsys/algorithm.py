@@ -10,6 +10,7 @@ class Algorithm(ABC):
     In case some algorithms can only do one of the two (eg. PageRank), simply implement both
     methods and raise the NotPredictionAlg or NotRankingAlg exception accordingly.
     """
+    __slots__ = ()
 
     @abc.abstractmethod
     def predict(self, **kwargs):

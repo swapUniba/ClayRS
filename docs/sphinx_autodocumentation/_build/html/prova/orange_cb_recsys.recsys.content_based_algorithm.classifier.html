@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.content_based_algorithm.classifier package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-content-based-algorithm-classifier-package">
+<h1>orange_cb_recsys.recsys.content_based_algorithm.classifier package<a class="headerlink" href="#orange-cb-recsys-recsys-content-based-algorithm-classifier-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender">
+<span id="orange-cb-recsys-recsys-content-based-algorithm-classifier-classifier-recommender-module"></span><h2>orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender module<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.</span></span><span class="sig-name descname"><span class="pre">ClassifierRecommender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_field:</span> <span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier:</span> <span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold:</span> <span class="pre">typing.Optional[float]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_combiner:</span> <span class="pre">orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique</span> <span class="pre">=</span> <span class="pre">&lt;</span> <span class="pre">Centroid</span> <span class="pre">&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm</span></code></a></p>
+<p>Class that implements recommendation through a specified Classifier.
+It’s a ranking algorithm so it can’t do score prediction.</p>
+<dl>
+<dt>USAGE:</dt><dd><blockquote>
+<div><p>&gt; # Interested in only a field representation, DecisionTree classifier from sklearn,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = ClassifierRecommender({“Plot”: 0}, SkDecisionTree(), 3)</p>
+<p>&gt; # Interested in only a field representation, KNN classifier with custom parameters from sklearn,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = ClassifierRecommender({“Plot”: 0}, SkKNN(n_neighbors=3), 0)</p>
+<p>&gt; # Interested in multiple field representations of the items, KNN classifier with custom parameters from
+&gt; # sklearn, threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = ClassifierRecommender(
+&gt;                             item_field={“Plot”: [0, “tfidf”],
+&gt;                                         “Genre”: [0, 1],
+&gt;                                         “Director”: “doc2vec”},
+&gt;                             classifier=SkKNN(n_neighbors=3),
+&gt;                             threshold=3)</p>
+<p>&gt; # After instantiating the ClassifierRecommender algorithm, pass it in the initialization of
+&gt; # a CBRS and the use its method to calculate ranking for single user or multiple users:
+&gt; cbrs = ContentBasedRS(algorithm=alg, …)
+&gt; cbrs.fit_rank(…)
+&gt; …
+&gt; # Check the corresponding method documentation for more</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>item_field (dict): dict where the key is the name of the field</dt><dd><p>that contains the content to use, value is the representation(s) id(s) that will be
+used for the said item. The value of a field can be a string or a list,
+use a list if you want to use multiple representations for a particular field.</p>
+</dd>
+<dt>classifier (Classifier): classifier that will be used.</dt><dd><p>Can be one object of the Classifier class.</p>
+</dd>
+<dt>threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered</dt><dd><p>as positive</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the classifier specified in the constructor with the features and labels
+extracted with the process_rated() method.</p>
+<p>It uses private attributes to fit the classifier, so process_rated() must be called
+before this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>ClassifierRecommender is not a score prediction algorithm, calling this method will raise
+the ‘NotPredictionAlg’ exception!
+:raises NotPredictionAlg:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.process_rated">
+<span class="sig-name descname"><span class="pre">process_rated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.process_rated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that extracts features from rated item and labels them.
+The extracted features will be later used to fit the classifier.</p>
+<p>Features and labels will be stored in private attributes of the class.</p>
+<p>IF there are no rated_items available locally or if there are only positive/negative
+items, an exception is thrown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – path of the directory where the items are stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.exceptions.NoRatedItems" title="orange_cb_recsys.recsys.content_based_algorithm.exceptions.NoRatedItems"><strong>NoRatedItems</strong></a> – exception raised when there isn’t any item available locally
+    rated by the user</p></li>
+<li><p><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.exceptions.OnlyPositiveItems" title="orange_cb_recsys.recsys.content_based_algorithm.exceptions.OnlyPositiveItems"><strong>OnlyPositiveItems</strong></a> – exception raised when there are only positive items available locally
+    for the user (Items that the user liked)</p></li>
+<li><p><strong>OnlyNegativeitems</strong> – exception raised when there are only negative items available locally
+    for the user (Items that the user disliked)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsDict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recs_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender.ClassifierRecommender.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rank the top-n recommended items for the user. If the recs_number parameter isn’t specified,
+All unrated items will be ranked (or only items in the filter list, if specified).</p>
+<p>One can specify which items must be ranked with the filter_list parameter,
+in this case ONLY items in the filter_list parameter will be ranked.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be ranked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>items_directory</strong> (<em>str</em>) – path of the directory where the items are stored</p></li>
+<li><p><strong>recs_number</strong> (<em>int</em>) – number of the top items that will be present in the ranking, if None
+all unrated items will be ranked</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to rank, if None all unrated items will be ranked</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the rating predicted, sorted in descending order by the ‘rating’ column</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers">
+<span id="orange-cb-recsys-recsys-content-based-algorithm-classifier-classifiers-module"></span><h2>orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers module<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract class for Classifiers</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.classifier">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">classifier</span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.classifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the classifier.
+First the classifier is instantiated, then we transform the Training Data,
+then the actual fitting is done.</p>
+<dl class="simple">
+<dt>Training data (X) is in the form:</dt><dd><p>X = [ (merged) representation for item 1, (merged) representation for item 2, …]</p>
+</dd>
+</dl>
+<p>where every item is a representation for an item (can be a merged one in case multiple representations
+are chosen)</p>
+<dl class="simple">
+<dt>Target data (Y) is in the form:</dt><dd><p>Y = [0, 1, … ]</p>
+</dd>
+</dl>
+<p>where 0 represent a negative item, 1 represent a positive item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>list</em>) – list containing Training data.</p></li>
+<li><p><strong>Y</strong> (<em>list</em>) – list containing Training targets.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.predict_proba">
+<span class="sig-name descname"><span class="pre">predict_proba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the probability for every item in X_pred.
+It uses the method predict_proba() from sklearn of the instantiated classifier</p>
+<dl class="simple">
+<dt>It’s in the form:</dt><dd><p>X_pred = [ (merged) representation for item 1, (merged) representation for item 2, …]</p>
+</dd>
+</dl>
+<p>where every item is a representation for an item (can be a merged one in case multiple representations
+are chosen)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X_pred</strong> (<em>list</em>) – list containing data to predict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkDecisionTree">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkDecisionTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkDecisionTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the Decision Tree Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier directly from sklearn</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkGaussianProcess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkGaussianProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkGaussianProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the Gaussian Process Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier directly from sklearn</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkKNN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkKNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkKNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the KNN Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier KNN directly from sklearn.</p>
+<p>Since KNN implementation of sklearn has n_neighbors = 5 as default, it can throw an exception if less sample in
+the training data are provided, so we change dynamically the n_neighbors parameter
+according to the number of samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>list</em>) – Training data</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkKNN.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkKNN.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the classifier.
+First the classifier is instantiated, then we transform the Training Data,
+then the actual fitting is done.</p>
+<dl class="simple">
+<dt>Training data (X) is in the form:</dt><dd><p>X = [ (merged) representation for item 1, (merged) representation for item 2, …]</p>
+</dd>
+</dl>
+<p>where every item is a representation for an item (can be a merged one in case multiple representations
+are chosen)</p>
+<dl class="simple">
+<dt>Target data (Y) is in the form:</dt><dd><p>Y = [0, 1, … ]</p>
+</dd>
+</dl>
+<p>where 0 represent a negative item, 1 represent a positive item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>list</em>) – list containing Training data.</p></li>
+<li><p><strong>Y</strong> (<em>list</em>) – list containing Training targets.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkLogisticRegression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkLogisticRegression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkLogisticRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the Logistic Regression Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier directly from sklearn</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkRandomForest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkRandomForest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkRandomForest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the Random Forest Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier directly from sklearn</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkSVC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.</span></span><span class="sig-name descname"><span class="pre">SkSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.SkSVC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier" title="orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers.Classifier</span></code></a></p>
+<p>Class that implements the SVC Classifier from sklearn.
+The parameters one could pass are the same ones you would pass instantiating
+the classifier SVC directly from sklearn.
+The only parameter from sklearn that cannot be passed is the ‘probability’ parameter:
+it is set to True and cannot be changed</p>
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.classifier">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.classifier" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.content_based_algorithm.classifier.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

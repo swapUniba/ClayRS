@@ -3,32 +3,36 @@ import pandas as pd
 from sklearn.metrics import ndcg_score
 import numpy as np
 
-from orange_cb_recsys.evaluation.exceptions import KError
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
+from orange_cb_recsys.content_analyzer import Ratings
 from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
+from orange_cb_recsys.recsys import Split
 
-user_pred_only_new_items = pd.DataFrame(
-    {'from_id': ['u1', 'u1', 'u2', 'u2'],
-     'to_id': ['inew1', 'inew2', 'inew3', 'inew4'],
+pred_only_new_items = pd.DataFrame(
+    {'user_id': ['u1', 'u1', 'u2', 'u2'],
+     'item_id': ['inew1', 'inew2', 'inew3', 'inew4'],
      'score': [650, 600, 500, 650]})
+pred_only_new_items = Ratings.from_dataframe(pred_only_new_items)
 
-user_pred_w_new_items = pd.DataFrame(
-    {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
-     'to_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8'],
+pred_w_new_items = pd.DataFrame(
+    {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
+     'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8'],
      'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50]})
+pred_w_new_items = Ratings.from_dataframe(pred_w_new_items)
 
-user_pred_only_one_item = pd.DataFrame(
-    {'from_id': ['u1', 'u2'],
-     'to_id': ['i4', 'i8'],
+pred_only_one_item = pd.DataFrame(
+    {'user_id': ['u1', 'u2'],
+     'item_id': ['i4', 'i8'],
      'score': [650, 600]})
+pred_only_one_item = Ratings.from_dataframe(pred_only_one_item)
 
-user_truth = pd.DataFrame({'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
-                           'to_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
-                           'score': [3, 2, 3, 1, 2, 4, 3, 3]})
+truth = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
+                      'item_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
+                      'score': [3, 2, 3, 1, 2, 4, 3, 3]})
+truth = Ratings.from_dataframe(truth)
 
-split_only_new = Split(user_pred_only_new_items, user_truth)
-split_w_new_items = Split(user_pred_w_new_items, user_truth)
-split_only_one = Split(user_pred_only_one_item, user_truth)
+split_only_new = Split(pred_only_new_items, truth)
+split_w_new_items = Split(pred_w_new_items, truth)
+split_only_one = Split(pred_only_one_item, truth)
 
 
 def for_each_method(test_func):
@@ -64,7 +68,7 @@ class TestNDCG(unittest.TestCase):
         u1_ideal = [[3, 3, 2, 2, 1, 0, 0, 0]]
 
         u1_expected_ndcg = ndcg_score(u1_ideal, u1_actual)
-        u1_result_ndcg = float(result_w_new_items.query('from_id == "u1"')[str(metric)])
+        u1_result_ndcg = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_ndcg, u1_result_ndcg)
 
@@ -72,12 +76,12 @@ class TestNDCG(unittest.TestCase):
         u2_ideal = [[4, 3, 3, 0]]
 
         u2_expected_ndcg = ndcg_score(u2_ideal, u2_actual)
-        u2_result_ndcg = float(result_w_new_items.query('from_id == "u2"')[str(metric)])
+        u2_result_ndcg = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
         self.assertAlmostEqual(u2_expected_ndcg, u2_result_ndcg)
 
         sys_expected_ndcg = (u1_expected_ndcg + u2_expected_ndcg) / 2
-        sys_result_ndcg = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_ndcg = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_ndcg, sys_result_ndcg)
 
@@ -104,7 +108,7 @@ class TestNDCGAtK(unittest.TestCase):
         u1_ideal = [[3, 3, 2, 2, 1, 0, 0, 0]]
 
         u1_expected_ndcg = ndcg_score(u1_ideal, u1_actual, k=k)
-        u1_result_ndcg = float(result_w_new_items.query('from_id == "u1"')[str(metric)])
+        u1_result_ndcg = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_ndcg, u1_result_ndcg)
 
@@ -112,12 +116,12 @@ class TestNDCGAtK(unittest.TestCase):
         u2_ideal = [[4, 3, 3, 0]]
 
         u2_expected_ndcg = ndcg_score(u2_ideal, u2_actual, k=k)
-        u2_result_ndcg = float(result_w_new_items.query('from_id == "u2"')[str(metric)])
+        u2_result_ndcg = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
         self.assertAlmostEqual(u2_expected_ndcg, u2_result_ndcg)
 
         sys_expected_ndcg = (u1_expected_ndcg + u2_expected_ndcg) / 2
-        sys_result_ndcg = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_ndcg = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_ndcg, sys_result_ndcg)
 
@@ -172,12 +176,12 @@ class TestMRR(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_expected_rr = 1/2
+        u1_expected_rr = 1 / 2
         u2_expected_rr = 1
 
         sys_expected_mrr = (u1_expected_rr + u2_expected_rr) / 2
 
-        sys_result_mrr = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_mrr = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_mrr, sys_result_mrr)
 
@@ -188,12 +192,12 @@ class TestMRR(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_expected_rr = 1/2
-        u2_expected_rr = 1/3
+        u1_expected_rr = 1 / 2
+        u2_expected_rr = 1 / 3
 
         sys_expected_mrr = (u1_expected_rr + u2_expected_rr) / 2
 
-        sys_result_mrr = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_mrr = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_mrr, sys_result_mrr)
 
@@ -205,7 +209,7 @@ class TestMRR(unittest.TestCase):
         result_only_one = metric.perform(split_only_one)
 
         u1_expected_rr = 0
-        u2_expected_rr = 1/1
+        u2_expected_rr = 1 / 1
 
         sys_expected_mrr = (u1_expected_rr + u2_expected_rr) / 2
         sys_result_mrr = float(result_only_one[str(metric)])
@@ -242,12 +246,12 @@ class TestMRRAtK(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_expected_rr = 1/2
+        u1_expected_rr = 1 / 2
         u2_expected_rr = 1
 
         sys_expected_mrr = (u1_expected_rr + u2_expected_rr) / 2
 
-        sys_result_mrr = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_mrr = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_mrr, sys_result_mrr)
 
@@ -270,12 +274,12 @@ class TestMRRAtK(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_expected_rr = 1/2
+        u1_expected_rr = 1 / 2
         u2_expected_rr = 0
 
         sys_expected_mrr = (u1_expected_rr + u2_expected_rr) / 2
 
-        sys_result_mrr = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_mrr = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_mrr, sys_result_mrr)
 
@@ -284,7 +288,7 @@ class TestMRRAtK(unittest.TestCase):
         # u1@k = [0, 1], u2@k = [0, 0]
 
     def test_k_not_valid(self):
-        with self.assertRaises(KError):
+        with self.assertRaises(ValueError):
             MRRAtK(k=-2)
             MRRAtK(k=0)
 
@@ -316,7 +320,7 @@ class TestCorrelation(unittest.TestCase):
         self.assertTrue(all(pd.isna(pearsons_predicted)))
 
     @for_each_method
-    def test_perform_w_new_items(self, method: str):
+    def test_perform_w_new_items(self, method):
         metric = Correlation(method)
 
         result_w_new_items = metric.perform(split_w_new_items)
@@ -325,20 +329,20 @@ class TestCorrelation(unittest.TestCase):
         u1_ideal = pd.Series([0, 1, 2, 3, 4])
 
         u1_expected_pearson = u1_actual.corr(u1_ideal, method)
-        u1_result_pearson = float(result_w_new_items.query('from_id == "u1"')[str(metric)])
+        u1_result_pearson = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
 
-        u2_actual = pd.Series([2, 0, 3])
+        u2_actual = pd.Series([2, 3, 0])
         u2_ideal = pd.Series([0, 1, 2])
 
         u2_expected_pearson = u2_actual.corr(u2_ideal, method)
-        u2_result_pearson = float(result_w_new_items.query('from_id == "u2"')[str(metric)])
+        u2_result_pearson = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
         self.assertAlmostEqual(u2_expected_pearson, u2_result_pearson)
 
         sys_expected_pearson = (u1_expected_pearson + u2_expected_pearson) / 2
-        sys_result_pearson = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_result_pearson = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_pearson, sys_result_pearson)
 
@@ -348,24 +352,25 @@ class TestCorrelation(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = pd.Series([1, 5])
+        u1_actual = pd.Series([1, 0])
         u1_ideal = pd.Series([0, 1, 2, 3, 4])
 
         u1_expected_pearson = u1_actual.corr(u1_ideal, method)
-        u1_result_pearson = float(result_w_new_items.query('from_id == "u1"')[str(metric)])
+        u1_result_pearson = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
 
-        u2_actual = pd.Series([2, 0])
+        u2_actual = pd.Series([0])
         u2_ideal = pd.Series([0, 1, 2])
 
         u2_expected_pearson = u2_actual.corr(u2_ideal, method)
-        u2_result_pearson = float(result_w_new_items.query('from_id == "u2"')[str(metric)])
+        u2_result_pearson = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
-        self.assertAlmostEqual(u2_expected_pearson, u2_result_pearson)
+        self.assertTrue(np.isnan(u2_expected_pearson))
+        self.assertTrue(np.isnan(u2_result_pearson))
 
-        sys_expected_pearson = (u1_expected_pearson + u2_expected_pearson) / 2
-        sys_result_pearson = float(result_w_new_items.query('from_id == "sys"')[str(metric)])
+        sys_expected_pearson = u1_expected_pearson  # the mean doesn't consider nan values
+        sys_result_pearson = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_pearson, sys_result_pearson)
 

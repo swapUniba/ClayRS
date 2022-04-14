@@ -1,3 +1,4 @@
+import gc
 from typing import List
 from abc import ABC, abstractmethod
 import numpy as np
@@ -24,13 +25,16 @@ class EmbeddingSource(ABC):
 
     def __init__(self, reference: str):
         self.__reference = reference
-        try:
-            self.__model = self.load_model() if self.__reference is not None else None
-        except FileNotFoundError:
-            self.__model = None
+        self.__model = None
 
+    # this will load/download the model if not already loaded when called
     @property
     def model(self):
+        if self.__model is None:
+            try:
+                self.__model = self.load_model() if self.__reference is not None else None
+            except FileNotFoundError:
+                self.__model = None
         return self.__model
 
     @property
@@ -57,14 +61,14 @@ class EmbeddingSource(ABC):
                 be the number of words or sentences), embedding_matrix will be N-dimensional.
         """
         if len(text) > 0:
-            embedding_matrix = np.ndarray(shape=(len(text), self.get_vector_size()))
-
-            for i, data in enumerate(text):
+            embedding_list = []
+            for data in text:
                 data = data.lower()
                 try:
-                    embedding_matrix[i, :] = self.get_embedding(data)
+                    embedding_list.append(self.get_embedding(data))
                 except KeyError:
-                    embedding_matrix[i, :] = np.zeros(self.get_vector_size())
+                    embedding_list.append(np.zeros(self.get_vector_size()))
+            embedding_matrix = np.asarray(embedding_list)
         else:
             # If the text is empty (eg. "") then the embedding matrix is a matrix
             # with 1 row filled with zeros
@@ -78,6 +82,10 @@ class EmbeddingSource(ABC):
         Method used to load the model. Each technique should implement this to define how the model is loaded
         """
         raise NotImplementedError
+
+    def unload_model(self):
+        self.__model = None
+        gc.collect()
 
     @abstractmethod
     def get_vector_size(self) -> int:

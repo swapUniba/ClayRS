@@ -1,5 +1,5 @@
 from unittest import TestCase
-from orange_cb_recsys.utils.check_tokenization import check_not_tokenized, check_tokenized
+from orange_cb_recsys.utils.check_tokenization import check_not_tokenized, check_tokenized, tokenize_in_sentences
 
 
 class Test(TestCase):
@@ -10,3 +10,10 @@ class Test(TestCase):
         check_tokenized(list_)
         check_not_tokenized(str_)
         check_not_tokenized(list_)
+
+    def test_tokenize_sentence(self):
+
+        phrases = "Ciao, questa è una prova. Anche questa. And this is the third"
+        result = tokenize_in_sentences(phrases)
+
+        self.assertTrue(len(result) == 3)

@@ -2,13 +2,14 @@ from abc import abstractmethod
 from typing import List, Union
 
 import numpy as np
+from gensim.models import KeyedVectors
 
 from orange_cb_recsys.content_analyzer.embeddings.embedding_source import \
     EmbeddingSource
 from orange_cb_recsys.content_analyzer.information_processor.information_processor import InformationProcessor
 from orange_cb_recsys.content_analyzer.raw_information_source import RawInformationSource
 from orange_cb_recsys.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from orange_cb_recsys.utils.const import logger
+from orange_cb_recsys.utils.const import get_progbar, logger
 
 
 class EmbeddingLearner(EmbeddingSource):
@@ -92,7 +93,10 @@ class EmbeddingLearner(EmbeddingSource):
         if not isinstance(preprocessor_list, list):
             preprocessor_list = [preprocessor_list]
 
-        self.fit_model(self.extract_corpus(source, field_list, preprocessor_list))
+        corpus = self.extract_corpus(source, field_list, preprocessor_list)
+
+        logger.info("Fitting model with extracted corpus...")
+        self.fit_model(corpus)
 
         if self.__auto_save and self.reference is not None:
             self.save()
@@ -125,15 +129,17 @@ class EmbeddingLearner(EmbeddingSource):
         """
         corpus = []
         # iter the source
-        for i, doc in enumerate(source):
-            logger.info("Document %d", i)
-            doc_data = ""
-            for field_name in field_list:
-                # apply preprocessing and save the data in the list
-                doc_data += " " + doc[field_name].lower()
-            for preprocessor in preprocessor_list:
-                doc_data = preprocessor.process(doc_data)
-            corpus.append(self.process_data_granularity(doc_data))
+        with get_progbar(list(source)) as pbar:
+
+            for doc in pbar:
+                pbar.set_description(f"Preprocessing {', '.join(field_list)} for all contents")
+                doc_data = ""
+                for field_name in field_list:
+                    # apply preprocessing and save the data in the list
+                    doc_data += " " + doc[field_name].lower()
+                for preprocessor in preprocessor_list:
+                    doc_data = preprocessor.process(doc_data)
+                corpus.append(self.process_data_granularity(doc_data))
         return corpus
 
     @abstractmethod
@@ -150,11 +156,12 @@ class EmbeddingLearner(EmbeddingSource):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def save(self):
         """
         Saves the model in the path stored in the file_path attribute
         """
-        self.model.save(self.reference)
+        raise NotImplementedError
 
 
 class WordEmbeddingLearner(EmbeddingLearner):
@@ -208,49 +215,11 @@ class GensimWordEmbeddingLearner(WordEmbeddingLearner):
     def get_embedding(self, word: str) -> np.ndarray:
         return self.model[word]
 
-    @abstractmethod
     def load_model(self):
-        raise NotImplementedError
+        return KeyedVectors.load_word2vec_format(self.reference, binary=True)
 
-    @abstractmethod
-    def fit_model(self, corpus: List):
-        raise NotImplementedError
-
-    @abstractmethod
-    def __str__(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def __repr__(self):
-        raise NotImplementedError
-
-
-class GensimProjectionsWordEmbeddingLearner(WordEmbeddingLearner):
-    """
-    Class that contains the generic behavior of the Gensim models using projections
-    """
-
-    def __init__(self, reference: str, auto_save: bool, extension: str, **kwargs):
-        super().__init__(reference, auto_save, extension, **kwargs)
-
-    def get_vector_size(self) -> int:
-        return self.model.num_topics
-
-    def get_embedding(self, word: str) -> np.ndarray:
-        # the word is converted to the id stored in the model and a bow for the word is created (where the value for
-        # the word will be 1). The embedding vector is then created from the bow
-        # if the word is not found in the trained model, a key error exception is thrown, which means that the
-        # embedding vector will be [0. 0. ... 0.]
-        word = self.model.id2word.doc2idx([word])[0]
-        if word == -1:
-            raise KeyError
-        else:
-            word = [(word, 1)]
-            return np.array([value[1] for value in self.model[word]], dtype=np.float64)
-
-    @abstractmethod
-    def load_model(self):
-        raise NotImplementedError
+    def save(self):
+        self.model.save_word2vec_format(self.reference, binary=True)
 
     @abstractmethod
     def fit_model(self, corpus: List):
@@ -294,6 +263,10 @@ class SentenceEmbeddingLearner(EmbeddingLearner):
         raise NotImplementedError
 
     @abstractmethod
+    def get_embedding_token(self, sentence: str):
+        raise NotImplementedError
+
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
@@ -331,9 +304,36 @@ class DocumentEmbeddingLearner(EmbeddingLearner):
         raise NotImplementedError
 
     @abstractmethod
+    def get_embedding_sentence(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_embedding_token(self, document: str) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
+
+
+class GensimDocumentEmbeddingLearner(DocumentEmbeddingLearner):
+    """
+    Class that contains the generic behavior of the Gensim models working at document granularity
+    """
+
+    def process_data_granularity(self, doc_data: str) -> str:
+        # gensim requires document data to be tokenized in a list
+        return check_tokenized(doc_data)
+
+    def get_embedding_sentence(self, document_tokenized: List[str]) -> np.ndarray:
+        raise NotImplementedError
+
+    def get_embedding_token(self, document_tokenized: List[str]) -> np.ndarray:
+        raise NotImplementedError
+
+    def save(self):
+        self.model.save(self.reference)

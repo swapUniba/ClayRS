@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-from orange_cb_recsys.evaluation.eval_pipeline_modules.partition_module import Split
-from orange_cb_recsys.evaluation.metrics.metrics import ScoresNeededMetric
+from orange_cb_recsys.recsys.partitioning import Split
+from orange_cb_recsys.evaluation.metrics.metrics import Metric
 
 
-class ErrorMetric(ScoresNeededMetric):
+class ErrorMetric(Metric):
     """
     Abstract class for error metrics.
     An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
@@ -21,33 +21,37 @@ class ErrorMetric(ScoresNeededMetric):
         pred = split.pred
         truth = split.truth
 
-        split_result = {'from_id': [], str(self): []}
+        split_result = {'user_id': [], str(self): []}
 
-        for user in set(truth.from_id):
-            user_predictions = pred.loc[split.pred['from_id'] == user]
-            user_truth = truth.loc[split.truth['from_id'] == user]
+        for user in set(truth.user_id_column):
+            user_predictions = pred.get_user_interactions(user)
+            user_truth = truth.get_user_interactions(user)
 
-            user_predictions = user_predictions[['to_id', 'score']]
-            user_truth = user_truth[['to_id', 'score']]
+            # this will contain as key item id and as value the score in the truth of the user
+            items_scores_truth = {truth_interaction.item_id: truth_interaction.score for truth_interaction in user_truth}
 
-            valid = user_predictions.merge(user_truth, on='to_id',
-                                           suffixes=('_pred', '_truth'))
+            # [(pred_score, truth_score), (pred_score, truth_score), ...]
+            zipped_score_list = [(pred_interaction.score, items_scores_truth.get(pred_interaction.item_id))
+                                 for pred_interaction in user_predictions
+                                 if items_scores_truth.get(pred_interaction.item_id) is not None]
 
-            if not valid.empty:
-                result = self._calc_metric(valid['score_pred'], valid['score_truth'])
+            if len(zipped_score_list) != 0:
+                pred_score_list = [zipped_tuple[0] for zipped_tuple in zipped_score_list]
+                truth_score_list = [zipped_tuple[1] for zipped_tuple in zipped_score_list]
+                result = self._calc_metric(pred_score_list, truth_score_list)
             else:
                 result = np.nan
 
-            split_result['from_id'].append(user)
+            split_result['user_id'].append(user)
             split_result[str(self)].append(result)
 
-        split_result['from_id'].append('sys')
+        split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
 
         return pd.DataFrame(split_result)
 
     @abstractmethod
-    def _calc_metric(self, truth_scores: pd.Series, pred_scores: pd.Series):
+    def _calc_metric(self, truth_scores: list, pred_scores: list):
         """
         Private method that must be implemented by every error metric specifying how to calculate the metric
         for a single user given a Series of ratings taken from the ground truth and a Series of ratings predicted by the
@@ -69,10 +73,10 @@ class ErrorMetric(ScoresNeededMetric):
 
 
 class MSE(ErrorMetric):
-    """
+    r"""
     The MSE (Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
 
     |
     Where:
@@ -84,7 +88,7 @@ class MSE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        MSE_sys = \sum_{u \in T} \\frac{MSE_u}{|T|}
+        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
     |
     Where:
 
@@ -96,7 +100,7 @@ class MSE(ErrorMetric):
 
     In those cases the :math:`MSE_u` formula becomes
 
-    .. math:: MSE_u = \sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
     |
     Where:
 
@@ -110,15 +114,15 @@ class MSE(ErrorMetric):
     def __str__(self):
         return "MSE"
 
-    def _calc_metric(self, truth_scores: pd.Series, pred_scores: pd.Series):
+    def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_squared_error(truth_scores, pred_scores)
 
 
 class RMSE(ErrorMetric):
-    """
+    r"""
     The RMSE (Root Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
 
     |
     Where:
@@ -130,7 +134,7 @@ class RMSE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        RMSE_sys = \sum_{u \in T} \\frac{RMSE_u}{|T|}
+        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
     |
     Where:
 
@@ -142,7 +146,7 @@ class RMSE(ErrorMetric):
 
     In those cases the :math:`RMSE_u` formula becomes
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \\frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
     |
     Where:
 
@@ -156,15 +160,15 @@ class RMSE(ErrorMetric):
     def __str__(self):
         return "RMSE"
 
-    def _calc_metric(self, truth_scores: pd.Series, pred_scores: pd.Series):
+    def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_squared_error(truth_scores, pred_scores, squared=False)
 
 
 class MAE(ErrorMetric):
-    """
+    r"""
     The MAE (Mean Absolute Error) metric is calculated as such for the **single user**:
 
-    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
 
     |
     Where:
@@ -176,7 +180,7 @@ class MAE(ErrorMetric):
     And it is calculated as such for the **entire system**:
 
     .. math::
-        MAE_sys = \sum_{u \in T} \\frac{MAE_u}{|T|}
+        MAE_sys = \sum_{u \in T} \frac{MAE_u}{|T|}
     |
     Where:
 
@@ -188,7 +192,7 @@ class MAE(ErrorMetric):
 
     In those cases the :math:`MAE_u` formula becomes
 
-    .. math:: MAE_u = \sum_{i \in T_u} \\frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
     |
     Where:
 
@@ -202,5 +206,5 @@ class MAE(ErrorMetric):
     def __str__(self):
         return "MAE"
 
-    def _calc_metric(self, truth_scores: pd.Series, pred_scores: pd.Series):
+    def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_absolute_error(truth_scores, pred_scores)

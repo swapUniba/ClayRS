@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>orange_cb_recsys.recsys.content_based_algorithm.index_query package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="orange-cb-recsys-recsys-content-based-algorithm-index-query-package">
+<h1>orange_cb_recsys.recsys.content_based_algorithm.index_query package<a class="headerlink" href="#orange-cb-recsys-recsys-content-based-algorithm-index-query-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query">
+<span id="orange-cb-recsys-recsys-content-based-algorithm-index-query-index-query-module"></span><h2>orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query module<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.</span></span><span class="sig-name descname"><span class="pre">IndexQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classic_similarity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm" title="orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm</span></code></a></p>
+<p>Class for the search engine recommender using an index.
+It firsts builds a query using the representation(s) specified of the positive items, then uses the mentioned query
+to do an actual search inside the index: every items will have a score of “closeness” in relation to the
+query, we use this score to rank every item.</p>
+<p>Just be sure to use textual representation(s) to build a significant query and to make a significant search!</p>
+<blockquote>
+<div><p>USAGE:
+&gt; # Interested in only a field representation, classic tfidf similarity,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = IndexQuery({“Plot”: 0}, threshold=3)</p>
+<p>&gt; # Interested in multiple field representations of the items, BM25 similarity,
+&gt; # threshold = 3 (Every item with rating &gt;= 3 will be considered as positive)
+&gt; alg = IndexQuery(
+&gt;                  item_field={“Plot”: [0, “original_text”],
+&gt;                              “Genre”: [0, 1],
+&gt;                              “Director”: “preprocessed_text”},
+&gt;                  classic_similarity=False,
+&gt;                  threshold=3)</p>
+<p>&gt; # After instantiating the IndexQuery algorithm, pass it in the initialization of
+&gt; # a CBRS and the use its method to calculate ranking for single user or multiple users:
+&gt; cbrs = ContentBasedRS(algorithm=alg, …)
+&gt; cbrs.fit_rank(…)
+&gt; …
+&gt; # Check the corresponding method documentation for more</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_field</strong> (<em>dict</em>) – dict where the key is the name of the field
+that contains the content to use, value is the representation(s) id(s) that will be
+used for the said item, just BE SURE to use textual representation(s). The value of a field can be a string
+or a list, use a list if you want to use multiple representations for a particular field.</p></li>
+<li><p><strong>classic_similarity</strong> (<em>bool</em>) – True if you want to use the classic implementation of tfidf in Whoosh,
+False if you want BM25F</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+as positive</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The fit process for the IndexQuery consists in building a query using the features of the positive items ONLY
+(items that the user liked). The terms relative to these ‘positive’ items are boosted by the
+rating he/she gave.</p>
+<p>This method uses extracted features of the positive items stored in a private attribute, so
+process_rated() must be called before this method.</p>
+<p>The built query will also be stored in a private attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>IndexQuery is not a Prediction Score Algorithm, so if this method is called,
+a NotPredictionAlg exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.exceptions.NotPredictionAlg" title="orange_cb_recsys.recsys.content_based_algorithm.exceptions.NotPredictionAlg"><strong>NotPredictionAlg</strong></a> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.process_rated">
+<span class="sig-name descname"><span class="pre">process_rated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.process_rated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that extracts features from positive rated items ONLY!
+The extracted features will be used to fit the algorithm (build the query).</p>
+<p>Features extracted will be stored in private attributes of the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>index_directory</strong> (<em>str</em>) – path of the index folder</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.rank">
+<span class="sig-name descname"><span class="pre">rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ratings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_loaded_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="orange_cb_recsys.recsys.content_based_algorithm.html#orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex" title="orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex"><span class="pre">orange_cb_recsys.recsys.content_based_algorithm.contents_loader.LoadedContentsIndex</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recs_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="orange_cb_recsys.content_analyzer.ratings_manager.html#orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction" title="orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction"><span class="pre">orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer.Interaction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query.IndexQuery.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rank the top-n recommended items for the user. If the recs_number parameter isn’t specified,
+All unrated items will be ranked (or only items in the filter list, if specified).</p>
+<p>One can specify which items must be ranked with the filter_list parameter,
+in this case ONLY items in the filter_list parameter will be ranked.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, ALL unrated items will be ranked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_ratings</strong> (<em>pd.DataFrame</em>) – DataFrame containing ratings of a single user</p></li>
+<li><p><strong>index_directory</strong> (<em>str</em>) – path of the index folder</p></li>
+<li><p><strong>recs_number</strong> (<em>int</em>) – number of the top items that will be present in the ranking, if None
+all unrated items will be ranked</p></li>
+<li><p><strong>filter_list</strong> (<em>list</em>) – list of the items to rank, if None all unrated items will be ranked</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame containing one column with the items name,</dt><dd><p>one column with the rating predicted, sorted in descending order by the ‘rating’ column</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-orange_cb_recsys.recsys.content_based_algorithm.index_query">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-orange_cb_recsys.recsys.content_based_algorithm.index_query" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/orange_cb_recsys.recsys.content_based_algorithm.index_query.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

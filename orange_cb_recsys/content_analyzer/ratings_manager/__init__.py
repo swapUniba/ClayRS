@@ -1,3 +1,3 @@
 from .rating_processor import NumberNormalizer
-from .ratings_importer import RatingsImporter
+from .ratings import Ratings, Rank, Prediction
 from .sentiment_analysis import TextBlobSentimentAnalysis

@@ -1,12 +1,12 @@
 from . import content_representation
-from .embeddings import embedding_learner
+from . import embeddings
 from . import field_content_production_techniques
 from . import information_processor
 from . import memory_interfaces
 from . import ratings_manager
 
 from .content_representation import *
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import *
+from .embeddings import *
 from .field_content_production_techniques import *
 from .information_processor import *
 from .memory_interfaces import *

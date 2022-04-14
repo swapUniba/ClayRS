@@ -41,7 +41,7 @@ class Centroid(CombiningTechnique):
         Returns:
             np.ndarray: centroid vector of the input matrix
         """
-        return np.average(embedding_matrix, axis=0)
+        return np.mean(embedding_matrix, axis=0)
 
     def __str__(self):
         return "Centroid"
@@ -68,9 +68,27 @@ class Sum(CombiningTechnique):
         return np.sum(embedding_matrix, axis=0)
 
     def __str__(self):
-        return "Vector sum"
+        return "Sum"
 
     def __repr__(self):
         return "< Vector sum >"
 
-# your combining technique
+
+class SingleToken(CombiningTechnique):
+    def __init__(self, token_index: int):
+        self.token_index = token_index
+        super().__init__()
+
+    def combine(self, embedding_matrix: np.ndarray) -> np.ndarray:
+        try:
+            sentence_embedding = embedding_matrix[self.token_index]
+        except IndexError:
+            raise IndexError(f'The embedding matrix has {embedding_matrix.shape[1]} '
+                             f'embeddings but you tried to take the {self.token_index+1}th')
+        return sentence_embedding
+
+    def __str__(self):
+        return "SingleToken"
+
+    def __repr__(self):
+        return "< Single token >"
