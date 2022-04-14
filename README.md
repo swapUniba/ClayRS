@@ -1,13 +1,13 @@
-![Build Status](https://github.com/Silleellie/orange_cb_recsys/workflows/Build%20&%20Test%20&%20Push/badge.svg)&nbsp;&nbsp;[![Coverage Status](https://img.shields.io/coveralls/github/m3ttiw/orange_cb_recsys/master?logo=coveralls)](https://coveralls.io/github/m3ttiw/orange_cb_recsys?branch=master)&nbsp;&nbsp;[![Docker hub repo](https://img.shields.io/badge/docker-pull-blue.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/silleellie/framework_dependencies)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
+![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
 
-# Orange_cb_recsys
+# ClayRS
 
 Framework for content-based recommender system
 
 Installation
 =============
 ``
-pip install git+https://github.com/Silleellie/orange_cb_recsys.git
+pip install git+https://github.com/SwapUniba/clayrs.git
 ``
 
 Usage
