@@ -1,99 +1,60 @@
-![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
-
 # ClayRS
 
-Framework for content-based recommender system
+![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
+
+
+***ClayRS*** is a python framework for (mainly) content-based recommender systems which allows you to perform several operations, starting from a raw representation of users and items to building and evaluating a recommender system. It also supports graph-based recommendation with feature selection algorithms and graph manipulation methods.
+
+The framework has three main modules, which you can also use individually:
+
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/26851363/163631209-2a83da81-9975-4194-9964-0c32a2982434.png" alt="drawing" style="width:75%;"/>
+</p>
+
+Given a raw source, the ***Content Analyzer***:
+* Creates and serializes contents,
+* Using the chosen configuration
+
+The ***RecSys*** module allows to:
+* Instantiate a recommender system
+    * *Using items and users serialized by the Content Analyzer*
+* Make score *prediction* or *recommend* items for the active user(s)
+
+The ***EvalModel*** has the task of evaluating a recommender system, using several state-of-the-art metrics
+
+Code examples for all three modules will follow in the *Usage* section
 
 Installation
 =============
+*ClayRS* requires Python **3.8** or later, while package dependencies are in `requirements.txt` and are all installable via `pip`, as *ClayRS* itself.
+
+To install it execute the following command:
+
 ``
 pip install git+https://github.com/SwapUniba/clayrs.git
 ``
 
 Usage
 =====
-There are two types of use for this framework
-It can be used through API or through the use of a config file
 
-API Usage
----------
-The use through API is the classic use of a library, classes and methods are used by invoking them.
+### Content Analyzer
+```python
 
-Example: 
+import clayrs.content_analyzer as ca
 
-![Example](img/run.PNG)
+raw_source = ca.JSONFile('items_info.json')
 
+# Configuration of item representation
+movies_ca_config = ca.ItemAnalyzerConfig(
+    source=raw_source,
+    id='movielens_id',
+    output_directory='movies_codified/',
+)
 
-Config Usage
-------------
-The use through the config file is an automated use.
-
-Just indicate which algorithms you want to use and change variables where necessary without having to call classes or methods
-This use is intended for users who want to use many framework features.
-
-[Config File](https://github.com/m3ttiw/orange_cb_recsys/blob/master/orange_cb_recsys/content_analyzer/config.json)
-
-We can see in the Config File an example of using the framework with this methodology.
-
-As mentioned above, you need to change certain variables in order to allow the framework to work properly, here are some examples of these variables:
-
-    "content_type": "ITEM"
-This can be ITEM, USER or RATING depending on what you are using
-
-    "output_directory": "movielens_test"
-You can change this value in any output directory you want to get
-    
-    "raw_source_path": "../../datasets/movies_info_reduced.json" 
-This is the source of the ITEM, USER or RATING file that you are using
-    
-    "source_type": "json"
-Here you can specify the source_type, this can be JSON, CSV or SQL
-    
-    "id_field_name": ["imdbID", "Title"]
-Specify the field name of the ID
-    
-    "search_index": "True"
-True if you want to use the text indexing technique, otherwise False
-    
-    "fields": [
-    {
-      "field_name": "Plot",
-      "lang": "EN",
-      "memory_interface": "None",
-      "memory_interface_path": "None",
-In the "field" field you can specify the name of the field on which to use the technique, its language and the memory interface
-
-The language will be specified for each field, so it will be possible to insert a single file to index ITEM or USER in many languages
-    
-    "pipeline_list": [
-        {
-        "field_content_production": {"class": "search_index"},
-        "preprocessing_list": [
-          ]
-        },
-        {
-        "field_content_production": {"class": "embedding",
-          "combining_technique": {"class":  "centroid"},
-          "embedding_source": {"class": "binary_file", "file_path": "../../datasets/doc2vec/doc2vec.bin", "embedding_type":  "doc2vec"},
-          "granularity": "doc"},
-        "preprocessing_list": [
-          {"class": "nltk", "url_tagging":"True", "strip_multiple_whitespaces": "True"}
-          ]
-        },
-        {
-        "field_content_production": {"class": "lucene_tf-idf"},
-        "preprocessing_list": [
-          {"class": "nltk", "lemmatization": "True"}
-          ]
-        }
-Here instead it is possible to define the pipeline:
-
-For each field you can create many representations, as in this example search_index, embedding and tf-idf.
-
-For each representation we can specify the preprocessing list to be used.
-
-For example, for the tf-idf the nltk class is used which analyzes the natural language and the lemmatization is done
-
-When using nltk these are the variables that can be changed: stopwords_removal, stemming, lemmatization, strip_multiple_white_space and url_tagging
-
-When specifying embedding as field_content_production one must also specify the combining_technique which is currently only centroid, the source of the embedding and the granularity of it which can be word, doc and sentence
+movies_ca_config.add_single_config(
+    'plot',
+    ca.FieldConfig(ca.SkLearnTfIdf(),
+                   preprocessing=ca.NLTK(stopwords_removal=True, lemmatization=True),
+                   id='tfidf')  # Custom id
+)
+```
