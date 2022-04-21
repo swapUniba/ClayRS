@@ -118,7 +118,7 @@ class EmbeddingField(FieldRepresentation):
         return self.__dense_array
 
     def __str__(self):
-        return str(self.__dense_array)
+        return str(np.array2string(self.__dense_array))
 
     def __eq__(self, other):
         return self.__dense_array == other.__sparse_array
