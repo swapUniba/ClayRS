@@ -48,7 +48,7 @@ def item_fit():
 
     config.add_single_config(
         'imdbRating',
-        ca.FieldConfig()
+        ca.FieldConfig(ca.OriginalData(dtype=float))
     )
 
     config.add_single_exogenous(
