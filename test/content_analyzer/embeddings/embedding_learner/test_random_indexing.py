@@ -7,7 +7,7 @@ import numpy as np
 from gensim.corpora import Dictionary
 from gensim.models import RpModel
 from gensim.test.utils import common_texts
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_indexing import GensimRandomIndexing
+from clayrs.content_analyzer.embeddings.embedding_learner.random_indexing import GensimRandomIndexing
 
 num_topics = 10
 model_path = 'test_model_ri'

@@ -1,12 +1,12 @@
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
-from orange_cb_recsys.recsys.graphs.graph import ItemNode, UserNode, PropertyNode
-from orange_cb_recsys.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from clayrs.recsys.graphs.graph import ItemNode, UserNode, PropertyNode
+from clayrs.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
 
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
+from clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 
 
 class TestGraphBasedAlgorithm(TestCase):

@@ -4,18 +4,18 @@ import lzma
 import pickle
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
-from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
-from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
+from clayrs.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
+from clayrs.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
+from clayrs.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
     EmbeddingField, IndexField, PropertiesDict
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
-from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
+from clayrs.content_analyzer.field_content_production_techniques import OriginalData
+from clayrs.content_analyzer.embeddings.embedding_loader.gensim import Gensim
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
     import WordEmbeddingTechnique
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
-from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
+from clayrs.content_analyzer.information_processor import NLTK
+from clayrs.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))

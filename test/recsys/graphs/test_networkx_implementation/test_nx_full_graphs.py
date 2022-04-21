@@ -1,8 +1,8 @@
-from orange_cb_recsys.recsys.graphs.nx_implementation import NXFullGraph
+from clayrs.recsys.graphs.nx_implementation import NXFullGraph
 import os
 
-from orange_cb_recsys.recsys.graphs.graph import PropertyNode, UserNode
-from orange_cb_recsys.utils import load_content_instance
+from clayrs.recsys.graphs.graph import PropertyNode, UserNode
+from clayrs.utils import load_content_instance
 from test.recsys.graphs.test_networkx_implementation.test_nx_tripartite_graphs import TestNXTripartiteGraph
 from test.recsys.graphs.test_networkx_implementation.test_nx_bipartite_graphs import rat, rat_timestamp
 from test import dir_test_files

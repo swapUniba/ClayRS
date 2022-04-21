@@ -1,4 +1,4 @@
-import orange_cb_recsys.content_analyzer as ca
+import clayrs.content_analyzer as ca
 
 items_json = "../movies_info_reduced.json"
 users_dat = "../users_70.dat"
@@ -48,7 +48,7 @@ def item_fit():
 
     config.add_single_config(
         'imdbRating',
-        ca.FieldConfig()
+        ca.FieldConfig(ca.OriginalData(dtype=float))
     )
 
     config.add_single_exogenous(

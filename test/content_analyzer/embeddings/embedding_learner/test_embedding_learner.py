@@ -2,14 +2,14 @@ from unittest import TestCase
 
 import os
 
-from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.information_processor.nlp import NLTK
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test.content_analyzer.embeddings.test_embedding_source import TestEmbeddingSource
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.doc2vec import GensimDoc2Vec
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.fasttext import GensimFastText
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis import GensimLatentSemanticAnalysis
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.random_indexing import GensimRandomIndexing
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.word2vec import GensimWord2Vec
+from clayrs.content_analyzer.embeddings.embedding_learner.doc2vec import GensimDoc2Vec
+from clayrs.content_analyzer.embeddings.embedding_learner.fasttext import GensimFastText
+from clayrs.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis import GensimLatentSemanticAnalysis
+from clayrs.content_analyzer.embeddings.embedding_learner.random_indexing import GensimRandomIndexing
+from clayrs.content_analyzer.embeddings.embedding_learner.word2vec import GensimWord2Vec
 from test import dir_test_files
 
 

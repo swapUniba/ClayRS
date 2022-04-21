@@ -3,11 +3,11 @@ import unittest
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, \
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, \
     NoRatedItems, EmptyUserRatings
-from orange_cb_recsys.recsys.content_based_algorithm.index_query.index_query import IndexQuery
+from clayrs.recsys.content_based_algorithm.index_query.index_query import IndexQuery
 from test import dir_test_files
 
 

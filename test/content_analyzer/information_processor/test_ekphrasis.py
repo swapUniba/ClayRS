@@ -2,7 +2,7 @@ import unittest
 
 import ekphrasis.dicts.emoticons
 
-from orange_cb_recsys.content_analyzer.information_processor.ekphrasis import Ekphrasis
+from clayrs.content_analyzer.information_processor.ekphrasis import Ekphrasis
 
 
 class TestEkphrasis(unittest.TestCase):

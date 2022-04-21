@@ -7,7 +7,7 @@ Submodules
 orange\_cb\_recsys.content\_analyzer.content\_representation.content module
 ---------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.content_representation.content
+.. automodule:: clayrs.content_analyzer.content_representation.content
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ orange\_cb\_recsys.content\_analyzer.content\_representation.content module
 orange\_cb\_recsys.content\_analyzer.content\_representation.representation\_container module
 ---------------------------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.content_representation.representation_container
+.. automodule:: clayrs.content_analyzer.content_representation.representation_container
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ orange\_cb\_recsys.content\_analyzer.content\_representation.representation\_con
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.content_representation
+.. automodule:: clayrs.content_analyzer.content_representation
    :members:
    :undoc-members:
    :show-inheritance:

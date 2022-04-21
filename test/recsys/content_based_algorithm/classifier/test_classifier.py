@@ -4,12 +4,12 @@ from unittest import TestCase
 import pandas as pd
 import os
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import Classifier,\
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
+from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier,\
     SkGaussianProcess, SkRandomForest, SkLogisticRegression, SkKNN, SkSVC, SkDecisionTree
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import OnlyNegativeItems, NoRatedItems, \
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+from clayrs.recsys.content_based_algorithm.exceptions import OnlyNegativeItems, NoRatedItems, \
     OnlyPositiveItems, NotPredictionAlg, EmptyUserRatings
 from test import dir_test_files
 

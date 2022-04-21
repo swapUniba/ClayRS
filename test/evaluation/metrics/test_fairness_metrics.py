@@ -2,12 +2,12 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.exceptions import NotEnoughUsers
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, \
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.exceptions import NotEnoughUsers
+from clayrs.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, \
     DeltaGap, \
     GroupFairnessMetric, Counter
-from orange_cb_recsys.recsys import Split
+from clayrs.recsys import Split
 
 # Will be the same for every test
 truth = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],

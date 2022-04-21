@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind, ranksums
 
-from orange_cb_recsys.evaluation.statistical_test import StatisticalTest, Ttest, Wilcoxon, PairedTest
+from clayrs.evaluation.statistical_test import StatisticalTest, Ttest, Wilcoxon, PairedTest
 
 
 class TestStatisticalTest(unittest.TestCase):

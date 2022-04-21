@@ -6,15 +6,15 @@ import numpy as np
 from scipy.sparse import csr_matrix
 from sklearn.feature_extraction import DictVectorizer
 
-from orange_cb_recsys.content_analyzer import Centroid
-from orange_cb_recsys.recsys import IndexQuery, LinearPredictor
-from orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
-from orange_cb_recsys.utils.class_utils import get_all_implemented_subclasses
-from orange_cb_recsys.utils.load_content import load_content_instance
+from clayrs.content_analyzer import Centroid
+from clayrs.recsys import IndexQuery, LinearPredictor
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
+from clayrs.utils.class_utils import get_all_implemented_subclasses
+from clayrs.utils.load_content import load_content_instance
 
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
+from clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
+from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
 from test import dir_test_files
 
 

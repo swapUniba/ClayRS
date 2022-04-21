@@ -5,11 +5,11 @@ import os
 import lzma
 import pickle
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.graphs import NXBipartiteGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.graphs import NXBipartiteGraph
 import networkx as nx
 
-from orange_cb_recsys.recsys.graphs.graph import UserNode, ItemNode, PropertyNode
+from clayrs.recsys.graphs.graph import UserNode, ItemNode, PropertyNode
 
 rat = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3", "4", "4"],
                               'to_id': ["tt0112281", "tt0112302", "tt0112281", "tt0112346",

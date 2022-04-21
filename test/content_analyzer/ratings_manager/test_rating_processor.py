@@ -1,5 +1,5 @@
 from unittest import TestCase
-from orange_cb_recsys.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
+from clayrs.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
 
 
 class TestNumberNormalizer(TestCase):

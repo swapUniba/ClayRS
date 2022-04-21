@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-from orange_cb_recsys.utils.load_content import load_content_instance
+from clayrs.utils.load_content import load_content_instance
 from test import dir_test_files
 
 movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')

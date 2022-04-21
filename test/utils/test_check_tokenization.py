@@ -1,5 +1,5 @@
 from unittest import TestCase
-from orange_cb_recsys.utils.check_tokenization import check_not_tokenized, check_tokenized, tokenize_in_sentences
+from clayrs.utils.check_tokenization import check_not_tokenized, check_tokenized, tokenize_in_sentences
 
 
 class Test(TestCase):
