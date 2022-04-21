@@ -253,7 +253,7 @@ class PredictionCoverage(FairnessMetric):
 
     def perform(self, split: Split) -> pd.DataFrame:
         prediction = {'user_id': [], str(self): []}
-        catalog = self.__catalog
+        catalog = {str(item) for item in self.__catalog}  # cast to string in case user is not careful
 
         pred = split.pred
 
