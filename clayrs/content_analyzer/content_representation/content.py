@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union, List, Tuple
 import numpy as np
+from _ctypes import PyObj_FromPtr
 import json
+import re
 
 from scipy import sparse
 
@@ -60,7 +62,12 @@ class FeaturesBagField(FieldRepresentation):
         return self.__scores
 
     def to_json(self):
-        return dict(sparse_tfidf=str(sparse.csr_matrix(self.__scores)), pos_word_tuples=str(self.__pos_feature_tuples),
+        sparse_matrix = sparse.csr_matrix(self.__scores)
+        tuple_representation = np.array([(coordinates_tuple, sparse_matrix[coordinates_tuple])
+                                         for coordinates_tuple in zip(*sparse_matrix.nonzero())], dtype=object)
+
+        return dict(sparse_tfidf=np.array2string(tuple_representation, threshold=np.inf, separator=','),
+                    pos_word_tuples=str(self.__pos_feature_tuples),
                     len_vocabulary=self.__scores.shape[1])
 
     def __str__(self):
@@ -118,7 +125,7 @@ class EmbeddingField(FieldRepresentation):
         return self.__dense_array
 
     def __str__(self):
-        return str(np.array2string(self.__dense_array))
+        return np.array2string(self.__dense_array, threshold=np.inf, separator=',')
 
     def __eq__(self, other):
         return self.__dense_array == other.__sparse_array
@@ -251,7 +258,7 @@ class Content:
                  field_dict: Dict[str, RepresentationContainer] = None,
                  exogenous_rep_container: RepresentationContainer = None):
         if field_dict is None:
-            field_dict = {}       # list o dict
+            field_dict = {}  # list o dict
         if exogenous_rep_container is None:
             exogenous_rep_container = RepresentationContainer()
 
