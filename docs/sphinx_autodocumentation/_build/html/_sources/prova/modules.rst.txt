@@ -1,9 +1,9 @@
-orange_cb_recsys
+clayrs
 ================
 
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys
+   clayrs
    setup
    test

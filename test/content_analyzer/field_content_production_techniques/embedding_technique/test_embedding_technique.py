@@ -1,20 +1,20 @@
 from unittest import TestCase
 import os
 
-from orange_cb_recsys.content_analyzer.content_representation.content import EmbeddingField
-from orange_cb_recsys.content_analyzer.embeddings import Transformers
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import GensimFastText
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique import \
+from clayrs.content_analyzer.content_representation.content import EmbeddingField
+from clayrs.content_analyzer.embeddings import Transformers
+from clayrs.content_analyzer.embeddings.embedding_learner import GensimFastText
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique import \
     SentenceEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, \
     Sentence2DocEmbedding, WordEmbeddingTechnique, DocumentEmbeddingTechnique
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique \
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique \
     import Centroid
-from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
-from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.sbert import Sbert
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique import \
+from clayrs.content_analyzer.embeddings.embedding_loader.gensim import Gensim
+from clayrs.content_analyzer.embeddings.embedding_loader.sbert import Sbert
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique import \
     Sentence2WordEmbedding
-from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.information_processor import NLTK
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 
 file_path = os.path.join(dir_test_files, "movies_info_reduced.json")

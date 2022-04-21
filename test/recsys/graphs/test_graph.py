@@ -2,8 +2,8 @@ import os
 
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys import NXFullGraph
 from test import dir_test_files
 from unittest import TestCase
 

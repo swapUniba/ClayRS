@@ -7,9 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.recsys.content_based_algorithm
-   orange_cb_recsys.recsys.graph_based_algorithm
-   orange_cb_recsys.recsys.graphs
+   clayrs.recsys.content_based_algorithm
+   clayrs.recsys.graph_based_algorithm
+   clayrs.recsys.graphs
 
 Submodules
 ----------
@@ -17,7 +17,7 @@ Submodules
 orange\_cb\_recsys.recsys.algorithm module
 ------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.algorithm
+.. automodule:: clayrs.recsys.algorithm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -25,7 +25,7 @@ orange\_cb\_recsys.recsys.algorithm module
 orange\_cb\_recsys.recsys.methodology module
 --------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.methodology
+.. automodule:: clayrs.recsys.methodology
    :members:
    :undoc-members:
    :show-inheritance:
@@ -33,7 +33,7 @@ orange\_cb\_recsys.recsys.methodology module
 orange\_cb\_recsys.recsys.partitioning module
 ---------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.partitioning
+.. automodule:: clayrs.recsys.partitioning
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,7 +41,7 @@ orange\_cb\_recsys.recsys.partitioning module
 orange\_cb\_recsys.recsys.recsys module
 ---------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.recsys
+.. automodule:: clayrs.recsys.recsys
    :members:
    :undoc-members:
    :show-inheritance:
@@ -49,7 +49,7 @@ orange\_cb\_recsys.recsys.recsys module
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.recsys
+.. automodule:: clayrs.recsys
    :members:
    :undoc-members:
    :show-inheritance:

@@ -7,16 +7,16 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.content_analyzer
-   orange_cb_recsys.evaluation
-   orange_cb_recsys.recsys
-   orange_cb_recsys.script
-   orange_cb_recsys.utils
+   clayrs.content_analyzer
+   clayrs.evaluation
+   clayrs.recsys
+   clayrs.script
+   clayrs.utils
 
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys
+.. automodule:: clayrs
    :members:
    :undoc-members:
    :show-inheritance:

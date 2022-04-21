@@ -2,11 +2,11 @@ import pandas as pd
 from unittest import TestCase
 import os
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys import TopKDegreeCentrality
-from orange_cb_recsys.recsys.graphs.feature_selection import TopKPageRank
-from orange_cb_recsys.recsys.graphs.feature_selection import feature_selection
-from orange_cb_recsys.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys import TopKDegreeCentrality
+from clayrs.recsys.graphs.feature_selection import TopKPageRank
+from clayrs.recsys.graphs.feature_selection import feature_selection
+from clayrs.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
 from test import dir_test_files
 
 

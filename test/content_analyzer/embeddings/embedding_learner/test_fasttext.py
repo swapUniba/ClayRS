@@ -2,9 +2,9 @@ from unittest import TestCase
 import os
 import pathlib as pl
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner import GensimFastText
-from orange_cb_recsys.content_analyzer.information_processor.nlp import NLTK
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.embeddings.embedding_learner import GensimFastText
+from clayrs.content_analyzer.information_processor.nlp import NLTK
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 
 file_path = os.path.join(dir_test_files, 'movies_info_reduced.json')

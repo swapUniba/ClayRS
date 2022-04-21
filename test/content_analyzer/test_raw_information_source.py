@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile, DATFile
+from clayrs.content_analyzer.raw_information_source import SQLDatabase, CSVFile, JSONFile, DATFile
 from test import dir_test_files
 
 json_file = os.path.join(dir_test_files, "movies_info_reduced.json")

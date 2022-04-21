@@ -3,8 +3,8 @@ from unittest import TestCase
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.methodology import TestRatingsMethodology, TestItemsMethodology, \
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.methodology import TestRatingsMethodology, TestItemsMethodology, \
     TrainingItemsMethodology, AllItemsMethodology
 
 train1 = pd.DataFrame.from_records([

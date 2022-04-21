@@ -7,10 +7,10 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.recsys.content_based_algorithm.centroid_vector
-   orange_cb_recsys.recsys.content_based_algorithm.classifier
-   orange_cb_recsys.recsys.content_based_algorithm.index_query
-   orange_cb_recsys.recsys.content_based_algorithm.regressor
+   clayrs.recsys.content_based_algorithm.centroid_vector
+   clayrs.recsys.content_based_algorithm.classifier
+   clayrs.recsys.content_based_algorithm.index_query
+   clayrs.recsys.content_based_algorithm.regressor
 
 Submodules
 ----------
@@ -18,7 +18,7 @@ Submodules
 orange\_cb\_recsys.recsys.content\_based\_algorithm.content\_based\_algorithm module
 ------------------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.content_based_algorithm.content_based_algorithm
+.. automodule:: clayrs.recsys.content_based_algorithm.content_based_algorithm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -26,7 +26,7 @@ orange\_cb\_recsys.recsys.content\_based\_algorithm.content\_based\_algorithm mo
 orange\_cb\_recsys.recsys.content\_based\_algorithm.contents\_loader module
 ---------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.content_based_algorithm.contents_loader
+.. automodule:: clayrs.recsys.content_based_algorithm.contents_loader
    :members:
    :undoc-members:
    :show-inheritance:
@@ -34,7 +34,7 @@ orange\_cb\_recsys.recsys.content\_based\_algorithm.contents\_loader module
 orange\_cb\_recsys.recsys.content\_based\_algorithm.exceptions module
 ---------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.recsys.content_based_algorithm.exceptions
+.. automodule:: clayrs.recsys.content_based_algorithm.exceptions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -42,7 +42,7 @@ orange\_cb\_recsys.recsys.content\_based\_algorithm.exceptions module
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.recsys.content_based_algorithm
+.. automodule:: clayrs.recsys.content_based_algorithm
    :members:
    :undoc-members:
    :show-inheritance:

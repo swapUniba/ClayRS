@@ -3,10 +3,10 @@ from copy import deepcopy
 import pandas as pd
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
-from orange_cb_recsys.recsys.graphs import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
+from clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
+from clayrs.recsys.graphs import NXFullGraph
 
 ratings = pd.DataFrame.from_records([
     ("A000", "tt0114576", 1, "54654675"),

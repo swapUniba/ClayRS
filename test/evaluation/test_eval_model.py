@@ -2,14 +2,14 @@ import os
 import unittest
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Ratings
-from orange_cb_recsys.evaluation.metrics.error_metrics import MAE
-from orange_cb_recsys.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
-from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr
-from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG
+from clayrs.content_analyzer.ratings_manager.ratings import Ratings
+from clayrs.evaluation.metrics.error_metrics import MAE
+from clayrs.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
+from clayrs.evaluation.metrics.plot_metrics import LongTailDistr
+from clayrs.evaluation.metrics.ranking_metrics import NDCG
 
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision
-from orange_cb_recsys.evaluation.eval_model import EvalModel
+from clayrs.evaluation.metrics.classification_metrics import Precision
+from clayrs.evaluation.eval_model import EvalModel
 
 import pandas as pd
 

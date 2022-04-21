@@ -3,9 +3,9 @@ import pandas as pd
 from sklearn.metrics import ndcg_score
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
-from orange_cb_recsys.recsys import Split
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
+from clayrs.recsys import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],

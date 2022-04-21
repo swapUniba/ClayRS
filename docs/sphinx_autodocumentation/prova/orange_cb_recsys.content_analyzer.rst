@@ -7,12 +7,12 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.content_analyzer.content_representation
-   orange_cb_recsys.content_analyzer.embeddings
-   orange_cb_recsys.content_analyzer.field_content_production_techniques
-   orange_cb_recsys.content_analyzer.information_processor
-   orange_cb_recsys.content_analyzer.memory_interfaces
-   orange_cb_recsys.content_analyzer.ratings_manager
+   clayrs.content_analyzer.content_representation
+   clayrs.content_analyzer.embeddings
+   clayrs.content_analyzer.field_content_production_techniques
+   clayrs.content_analyzer.information_processor
+   clayrs.content_analyzer.memory_interfaces
+   clayrs.content_analyzer.ratings_manager
 
 Submodules
 ----------
@@ -20,7 +20,7 @@ Submodules
 orange\_cb\_recsys.content\_analyzer.config module
 --------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.config
+.. automodule:: clayrs.content_analyzer.config
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,7 +28,7 @@ orange\_cb\_recsys.content\_analyzer.config module
 orange\_cb\_recsys.content\_analyzer.content\_analyzer\_main module
 -------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.content_analyzer_main
+.. automodule:: clayrs.content_analyzer.content_analyzer_main
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,7 +36,7 @@ orange\_cb\_recsys.content\_analyzer.content\_analyzer\_main module
 orange\_cb\_recsys.content\_analyzer.exceptions module
 ------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.exceptions
+.. automodule:: clayrs.content_analyzer.exceptions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -44,7 +44,7 @@ orange\_cb\_recsys.content\_analyzer.exceptions module
 orange\_cb\_recsys.content\_analyzer.exogenous\_properties\_retrieval module
 ----------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.exogenous_properties_retrieval
+.. automodule:: clayrs.content_analyzer.exogenous_properties_retrieval
    :members:
    :undoc-members:
    :show-inheritance:
@@ -52,7 +52,7 @@ orange\_cb\_recsys.content\_analyzer.exogenous\_properties\_retrieval module
 orange\_cb\_recsys.content\_analyzer.raw\_information\_source module
 --------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.raw_information_source
+.. automodule:: clayrs.content_analyzer.raw_information_source
    :members:
    :undoc-members:
    :show-inheritance:
@@ -60,7 +60,7 @@ orange\_cb\_recsys.content\_analyzer.raw\_information\_source module
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.content_analyzer
+.. automodule:: clayrs.content_analyzer
    :members:
    :undoc-members:
    :show-inheritance:

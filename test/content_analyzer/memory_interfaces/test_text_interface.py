@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.memory_interfaces import KeywordIndex, SearchIndex
+from clayrs.content_analyzer.memory_interfaces import KeywordIndex, SearchIndex
 
 
 class TestIndexInterface(TestCase):

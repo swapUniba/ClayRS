@@ -6,7 +6,7 @@ import gensim
 import numpy as np
 from gensim.models import LsiModel
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis import GensimLatentSemanticAnalysis
+from clayrs.content_analyzer.embeddings.embedding_learner.latent_semantic_analysis import GensimLatentSemanticAnalysis
 from gensim.corpora import Dictionary
 from gensim.test.utils import common_texts
 

@@ -8,7 +8,7 @@ from gensim.models import LdaModel
 from gensim.test.utils import common_texts
 import gensim
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_learner.lda import GensimLDA
+from clayrs.content_analyzer.embeddings.embedding_learner.lda import GensimLDA
 
 # we fix random_state for reproducibility
 random_state = 42

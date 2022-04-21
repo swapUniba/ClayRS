@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.evaluation.eval_pipeline_modules
-   orange_cb_recsys.evaluation.metrics
+   clayrs.evaluation.eval_pipeline_modules
+   clayrs.evaluation.metrics
 
 Submodules
 ----------
@@ -16,7 +16,7 @@ Submodules
 orange\_cb\_recsys.evaluation.eval\_model module
 ------------------------------------------------
 
-.. automodule:: orange_cb_recsys.evaluation.eval_model
+.. automodule:: clayrs.evaluation.eval_model
    :members:
    :undoc-members:
    :show-inheritance:
@@ -24,7 +24,7 @@ orange\_cb\_recsys.evaluation.eval\_model module
 orange\_cb\_recsys.evaluation.exceptions module
 -----------------------------------------------
 
-.. automodule:: orange_cb_recsys.evaluation.exceptions
+.. automodule:: clayrs.evaluation.exceptions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ orange\_cb\_recsys.evaluation.exceptions module
 orange\_cb\_recsys.evaluation.statistical\_test module
 ------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.evaluation.statistical_test
+.. automodule:: clayrs.evaluation.statistical_test
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,7 +40,7 @@ orange\_cb\_recsys.evaluation.statistical\_test module
 orange\_cb\_recsys.evaluation.utils module
 ------------------------------------------
 
-.. automodule:: orange_cb_recsys.evaluation.utils
+.. automodule:: clayrs.evaluation.utils
    :members:
    :undoc-members:
    :show-inheritance:
@@ -48,7 +48,7 @@ orange\_cb\_recsys.evaluation.utils module
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.evaluation
+.. automodule:: clayrs.evaluation
    :members:
    :undoc-members:
    :show-inheritance:

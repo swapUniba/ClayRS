@@ -1,10 +1,10 @@
 from unittest import TestCase
 import os
 
-from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+from clayrs.content_analyzer.content_representation.content import SimpleField
+from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     OriginalData
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile, DATFile
+from clayrs.content_analyzer.raw_information_source import JSONFile, DATFile
 from test import dir_test_files
 
 file_path = os.path.join(dir_test_files, "movies_info_reduced.json")

@@ -4,9 +4,9 @@ import numpy as np
 import torch
 from transformers import BertModel, BertTokenizer
 
-from orange_cb_recsys.content_analyzer import Centroid
-from orange_cb_recsys.content_analyzer.embeddings import Transformers, SumStrategy, CatStrategy
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+from clayrs.content_analyzer import Centroid
+from clayrs.content_analyzer.embeddings import Transformers, SumStrategy, CatStrategy
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     SingleToken
 
 

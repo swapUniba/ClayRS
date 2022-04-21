@@ -2,14 +2,14 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
-from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NotFittedAlg
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
-from orange_cb_recsys.recsys.graphs import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
+from clayrs.recsys.content_based_algorithm.classifier.classifiers import SkSVC
+from clayrs.recsys.recsys import GraphBasedRS, ContentBasedRS
+from clayrs.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NotFittedAlg
+from clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
+from clayrs.recsys.graphs import NXFullGraph
 
 from test import dir_test_files
 

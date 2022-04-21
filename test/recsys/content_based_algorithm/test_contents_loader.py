@@ -3,8 +3,8 @@ import unittest
 from os import listdir
 from os.path import splitext, isfile, join
 
-from orange_cb_recsys.content_analyzer import SearchIndex
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
+from clayrs.content_analyzer import SearchIndex
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict, LoadedContentsIndex
 from test import dir_test_files
 
 

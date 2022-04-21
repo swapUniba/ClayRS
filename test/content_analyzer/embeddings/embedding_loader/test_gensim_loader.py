@@ -4,7 +4,7 @@ from unittest.mock import patch, Mock, MagicMock
 import numpy as np
 
 from test.content_analyzer.embeddings.test_embedding_source import TestEmbeddingSource
-from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
+from clayrs.content_analyzer.embeddings.embedding_loader.gensim import Gensim
 
 result_matrix = {
     'title': np.array([random() for _ in range(25)]),

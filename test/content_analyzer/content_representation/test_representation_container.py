@@ -1,7 +1,7 @@
 from unittest import TestCase
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
+from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
 
 
 class TestRepresentationContainer(TestCase):

@@ -3,11 +3,11 @@ from unittest import TestCase
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
     RPrecision, \
     RecallAtK, FMeasureAtK
-from orange_cb_recsys.recsys.partitioning import Split
+from clayrs.recsys.partitioning import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],

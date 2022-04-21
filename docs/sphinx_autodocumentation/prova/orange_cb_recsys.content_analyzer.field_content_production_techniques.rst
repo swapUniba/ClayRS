@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique
+   clayrs.content_analyzer.field_content_production_techniques.embedding_technique
 
 Submodules
 ----------
@@ -15,7 +15,7 @@ Submodules
 orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.field\_content\_production\_technique module
 ------------------------------------------------------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.field_content_production_technique
+.. automodule:: clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.fiel
 orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.synset\_document\_frequency module
 --------------------------------------------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.synset_document_frequency
+.. automodule:: clayrs.content_analyzer.field_content_production_techniques.synset_document_frequency
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.syns
 orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.tf\_idf module
 ------------------------------------------------------------------------------------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf
+.. automodule:: clayrs.content_analyzer.field_content_production_techniques.tf_idf
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ orange\_cb\_recsys.content\_analyzer.field\_content\_production\_techniques.tf\_
 Module contents
 ---------------
 
-.. automodule:: orange_cb_recsys.content_analyzer.field_content_production_techniques
+.. automodule:: clayrs.content_analyzer.field_content_production_techniques
    :members:
    :undoc-members:
    :show-inheritance:

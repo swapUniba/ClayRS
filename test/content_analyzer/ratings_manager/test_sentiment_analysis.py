@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.ratings_manager.sentiment_analysis import TextBlobSentimentAnalysis
+from clayrs.content_analyzer.ratings_manager.sentiment_analysis import TextBlobSentimentAnalysis
 from textblob import TextBlob
 import numpy as np
 

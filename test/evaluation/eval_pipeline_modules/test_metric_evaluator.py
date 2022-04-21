@@ -2,11 +2,11 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings import Rank, Ratings
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall
+from clayrs.content_analyzer.ratings_manager.ratings import Rank, Ratings
+from clayrs.evaluation.metrics.classification_metrics import Precision, Recall
 
-from orange_cb_recsys.evaluation.eval_model import MetricEvaluator
-from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopRecsCorrelation
+from clayrs.evaluation.eval_model import MetricEvaluator
+from clayrs.evaluation.metrics.plot_metrics import LongTailDistr, PopRecsCorrelation
 
 
 # Every Metric is tested singularly, so we just check that everything goes smoothly at the
