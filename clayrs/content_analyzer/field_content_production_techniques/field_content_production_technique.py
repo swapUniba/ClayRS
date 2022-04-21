@@ -343,7 +343,7 @@ class TfIdfTechnique(CollectionBasedTechnique):
         """
         nonzero_feature_index = self._tfidf_matrix[content_position, :].nonzero()[1]
 
-        tfidf_sparse = self._tfidf_matrix.getrow(content_position)
+        tfidf_sparse = self._tfidf_matrix.getrow(content_position).toarray()
         pos_word_tuple = [(pos, self._feature_names[pos]) for pos in nonzero_feature_index]
 
         return FeaturesBagField(tfidf_sparse, pos_word_tuple)
