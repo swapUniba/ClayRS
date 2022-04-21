@@ -8,7 +8,7 @@
 The framework has three main modules, which you can also use individually:
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/26851363/163631209-2a83da81-9975-4194-9964-0c32a2982434.png" alt="drawing" style="width:75%;"/>
+    <img src="https://user-images.githubusercontent.com/26851363/164490523-00d60efd-7b17-4d20-872a-28eaf2323b03.png" alt="ClayRS" style="width:75%;"/>
 </p>
 
 Given a raw source, the ***Content Analyzer***:
@@ -91,7 +91,7 @@ movies_ca_config.add_single_config(
 )
 ```
 
-To finalize the Content Analyzer part, let's instantiate the `ContentAnalyer` class by passing the built configuration
+To finalize the Content Analyzer part, let's instantiate the `ContentAnalyzer` class by passing the built configuration
 and by calling its `fit()` method
 * The items will be created with the specified representations and serialized
 ```python
