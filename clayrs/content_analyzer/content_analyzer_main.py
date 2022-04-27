@@ -180,9 +180,6 @@ class ContentsProducer:
             for i in range(len(contents_list)):
                 contents_list[i].append_exogenous_representation(lod_properties[i], ex_config.id)
 
-        del lod_properties
-        gc.collect()
-
         # this dictionary will store any representation list that will be kept in one of the the index
         # the elements will be in the form:
         #   { memory_interface: {'Plot_0': [FieldRepr for content1, FieldRepr for content2, ...]}}
