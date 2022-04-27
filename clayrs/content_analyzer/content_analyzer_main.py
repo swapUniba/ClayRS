@@ -1,15 +1,15 @@
+import gc
 import json
 import pickle
 import re
 import lzma
 import os
 import shutil
-import time
+
 from typing import List, Dict
 
 from clayrs.content_analyzer.config import ContentAnalyzerConfig
 from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
-from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
 from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from clayrs.utils.const import logger, get_progbar
 from clayrs.utils.id_merger import id_merger
@@ -165,7 +165,7 @@ class ContentsProducer:
         # will store the contents and is the variable that will be returned by the method
         contents_list = []
 
-        for i, raw_content in enumerate(self.__config.source):
+        for raw_content in self.__config.source:
             # construct id from the list of the fields that compound id
             content_id = id_merger(raw_content, self.__config.id)
             contents_list.append(Content(content_id))
@@ -180,6 +180,9 @@ class ContentsProducer:
             for i in range(len(contents_list)):
                 contents_list[i].append_exogenous_representation(lod_properties[i], ex_config.id)
 
+        del lod_properties
+        gc.collect()
+
         # this dictionary will store any representation list that will be kept in one of the the index
         # the elements will be in the form:
         #   { memory_interface: {'Plot_0': [FieldRepr for content1, FieldRepr for content2, ...]}}
@@ -188,7 +191,7 @@ class ContentsProducer:
         index_representations_dict = {}
 
         for field_name in self.__config.get_field_name_list():
-            print(f"Processing field: {field_name}".center(50, '*'))
+            logger.info(f"   Processing field: {field_name}   ".center(50, '*'))
 
             for repr_number, field_config in enumerate(self.__config.get_configs_list(field_name)):
 
@@ -226,6 +229,9 @@ class ContentsProducer:
 
                 for i in range(len(contents_list)):
                     contents_list[i].append_field_representation(field_name, technique_result[i], field_config.id)
+
+                del technique_result
+                gc.collect()
 
         # after the contents creation process, the data to be indexed will be serialized inside of the memory interfaces
         # for each created content, a new entry in each index will be created
