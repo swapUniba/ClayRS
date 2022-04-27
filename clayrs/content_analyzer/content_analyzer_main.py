@@ -188,7 +188,7 @@ class ContentsProducer:
         index_representations_dict = {}
 
         for field_name in self.__config.get_field_name_list():
-            print(f"Processing field: {field_name}".center(__width=50, __fillchar='*'))
+            print(f"Processing field: {field_name}".center(50, '*'))
 
             for repr_number, field_config in enumerate(self.__config.get_configs_list(field_name)):
 
