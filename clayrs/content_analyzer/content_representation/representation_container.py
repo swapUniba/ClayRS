@@ -46,10 +46,6 @@ class RepresentationContainer:
 
     def __init__(self, representation_list: Union[List[Any], Any] = None,
                  external_id_list: Union[List[Union[str, None]], Union[str, None]] = None):
-        if external_id_list is None:
-            external_id_list = []
-        if representation_list is None:
-            representation_list = []
 
         if not isinstance(external_id_list, list):
             external_id_list = [external_id_list]
