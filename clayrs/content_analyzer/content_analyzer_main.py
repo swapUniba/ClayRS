@@ -59,15 +59,12 @@ class ContentAnalyzer:
         created_contents = contents_producer.create_contents()
 
         if self.__config.export_json:
-            created_contents = list(created_contents)
-
             json_path = os.path.join(self.__config.output_directory, 'contents.json')
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
         with get_progbar(created_contents) as pbar:
             pbar.set_description("Serializing contents")
-            pbar.total = len(self.__config.source)
 
             for content in pbar:
                 self.__serialize_content(content)
