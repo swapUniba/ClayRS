@@ -34,7 +34,7 @@ class LoadedContentsDict(LoadedContentsInterface):
                 logger.warning("Some items are not present locally, they can't be loaded")
 
         self._contents_dict = {}
-        if len(contents_to_load) != 0:
+        if len(contents_to_load_present) != 0:
             logger.info("Loading contents from disk...")
             self._contents_dict = {item_id: load_content_instance(contents_path, item_id, only_representations)
                                    for item_id in contents_to_load_present}
