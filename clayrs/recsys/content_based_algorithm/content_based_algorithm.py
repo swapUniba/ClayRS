@@ -273,7 +273,7 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     def _load_available_contents(self, contents_path: str, items_to_load: set = None):
-        return LoadedContentsDict(contents_path, items_to_load)
+        return LoadedContentsDict(contents_path, items_to_load, only_representations=self.item_field)
 
     def __deepcopy__(self, memo):
         # Create a new instance
