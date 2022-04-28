@@ -1,5 +1,8 @@
 from abc import ABC
+from typing import Union
 
+import numpy as np
+from scipy import sparse
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.linear_model import LogisticRegression
@@ -20,7 +23,7 @@ class Classifier(ABC):
     def classifier(self):
         return self.__classifier
 
-    def fit(self, X: list, Y: list = None):
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
         """
         Fit the classifier.
         First the classifier is instantiated, then we transform the Training Data,
@@ -99,11 +102,11 @@ class SkKNN(Classifier):
 
         super().__init__(clf)
 
-    def fit(self, X: list, Y: list = None):
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
         # If the user did not pass a custom n_neighbor the algorithm tries to fix the error
         # if n_samples < n_neighbors
-        if self.classifier.n_neighbors == 5 and len(X) < self.classifier.n_neighbors:
-            self.classifier.n_neighbors = len(X)
+        if self.classifier.n_neighbors == 5 and X.shape[0] < self.classifier.n_neighbors:
+            self.classifier.n_neighbors = X.shape[0]
 
         super().fit(X, Y)
 
@@ -173,3 +176,9 @@ class SkGaussianProcess(Classifier):
 
     def __str__(self):
         return "SkGaussianProcess"
+
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
+        self.classifier.fit(X.toarray() if isinstance(X, sparse.csr_matrix) else X, Y)
+
+    def predict_proba(self, X_pred: Union[np.ndarray, sparse.csr_matrix]):
+        return self.classifier.predict_proba(X_pred.toarray() if isinstance(X_pred, sparse.csr_matrix) else X_pred)

@@ -3,6 +3,7 @@ from copy import deepcopy
 from unittest import TestCase
 
 import numpy as np
+from scipy import sparse
 from scipy.sparse import csr_matrix
 from sklearn.feature_extraction import DictVectorizer
 
@@ -50,7 +51,7 @@ class TestContentBasedAlgorithm(TestCase):
         result = self.alg.extract_features_item(content)
 
         self.assertEqual(1, len(result))
-        self.assertIsInstance(result[0], np.ndarray)
+        self.assertIsInstance(result[0], sparse.csc_matrix)
 
     def test_fuse_representations(self):
         dv = DictVectorizer(sparse=False, sort=False)

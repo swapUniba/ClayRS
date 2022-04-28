@@ -105,7 +105,7 @@ class ContentBasedAlgorithm(Algorithm):
 
         return item_bag_list
 
-    def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
+    def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique, as_array: bool = False):
         """
         Method which transforms the X passed vectorizing if X contains dicts and merging
         multiple representations in a single one for every item in X.
@@ -176,7 +176,10 @@ class ContentBasedAlgorithm(Algorithm):
         if any(isinstance(x, sparse.csc_matrix) for x in first_arr):
             X_vectorized = (sparse.hstack(single_arr) for single_arr in single_item_fused_gen())
 
-            X_vectorized = sparse.vstack(X_vectorized)
+            X_vectorized = sparse.vstack(X_vectorized, format='csr')
+
+            if as_array is True:
+                X_vectorized = X_vectorized.toarray()
         else:
             X_vectorized = [np.hstack(single_arr) for single_arr in single_item_fused_gen()]
 
