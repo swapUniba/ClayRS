@@ -266,7 +266,8 @@ class ContentBasedRS(RecSys):
         return self.predict(test_set, user_id_list, methodology)
 
     def fit_rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
-                 methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
+                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
+                 save_fit: bool = False) -> Rank:
         """
         The method fits the algorithm and then calculates the rank for each user
 
@@ -278,8 +279,55 @@ class ContentBasedRS(RecSys):
             rank: ranked items for each user
 
         """
-        self.fit()
-        return self.rank(test_set, n_recs, user_id_list, methodology)
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
+
+        rank = []
+
+        with get_progbar(all_users) as pbar:
+
+            for user_id in pbar:
+                user_id = str(user_id)
+                pbar.set_description(f"Computing fit_rank for {user_id}")
+                user_train = self.train_set.get_user_interactions(user_id)
+
+                try:
+                    if save_fit:
+                        user_alg = deepcopy(self.algorithm)
+                        self._user_fit_dic[user_id] = user_alg
+                        alg = user_alg
+                    else:
+                        alg = self.algorithm
+
+                    alg.process_rated(user_train, loaded_items_interface)
+                    alg.fit()
+
+                except UserSkipAlgFit as e:
+                    warning_message = str(e) + f"\nThe algorithm can't be fitted for the user {user_id}"
+                    logger.warning(warning_message)
+                    if save_fit:
+                        self._user_fit_dic[user_id] = None
+                    continue
+
+                filter_list = None
+                if methodology is not None:
+                    filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
+
+                user_rank = alg.rank(user_train, loaded_items_interface,
+                                     n_recs, filter_list=filter_list)
+
+                rank.extend(user_rank)
+
+        rank = Rank.from_list(rank)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return rank
 
 
 class GraphBasedRS(RecSys):
