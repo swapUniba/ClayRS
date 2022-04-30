@@ -164,11 +164,13 @@ class ContentBasedRS(RecSys):
 
         rank = []
 
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
         with get_progbar(all_users) as pbar:
 
+            pbar.set_description(f"Loading first items from memory...")
             for user_id in pbar:
                 user_id = str(user_id)
-                pbar.set_description(f"Computing rank for {user_id}")
                 user_train = self.train_set.get_user_interactions(user_id)
 
                 filter_list = None
@@ -184,6 +186,7 @@ class ContentBasedRS(RecSys):
                     logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
                 rank.extend(user_rank)
+                pbar.set_description(f"Computing rank for {user_id}")
 
         rank = Rank.from_list(rank)
 
@@ -220,11 +223,13 @@ class ContentBasedRS(RecSys):
 
         pred = []
 
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
         with get_progbar(all_users) as pbar:
 
+            pbar.set_description(f"Loading first items from memory...")
             for user_id in pbar:
                 user_id = str(user_id)
-                pbar.set_description(f"Computing predictions for {user_id}")
 
                 user_train = self.train_set.get_user_interactions(user_id)
 
@@ -241,6 +246,7 @@ class ContentBasedRS(RecSys):
                     logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
 
                 pred.extend(user_pred)
+                pbar.set_description(f"Computing predictions for user {user_id}")
 
         pred = Prediction.from_list(pred)
 
@@ -251,7 +257,8 @@ class ContentBasedRS(RecSys):
         return pred
 
     def fit_predict(self, test_set: Ratings, user_id_list: List = None,
-                    methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
+                    methodology: Union[Methodology, None] = TestRatingsMethodology(),
+                    save_fit: bool = False) -> Prediction:
         """
         The method fits the algorithm and then calculates the prediction for each user
 
@@ -262,11 +269,64 @@ class ContentBasedRS(RecSys):
             prediction: prediction for each user
 
         """
-        self.fit()
-        return self.predict(test_set, user_id_list, methodology)
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
+
+        pred = []
+
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
+        with get_progbar(all_users) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id in pbar:
+                user_id = str(user_id)
+
+                user_train = self.train_set.get_user_interactions(user_id)
+
+                try:
+                    if save_fit:
+                        user_alg = deepcopy(self.algorithm)
+                        self._user_fit_dic[user_id] = user_alg
+                        alg = user_alg
+                    else:
+                        alg = self.algorithm
+
+                    alg.process_rated(user_train, loaded_items_interface)
+
+                    alg.fit()
+
+                except UserSkipAlgFit as e:
+                    warning_message = str(e) + f"\nThe algorithm can't be fitted for the user {user_id}"
+                    logger.warning(warning_message)
+                    if save_fit:
+                        self._user_fit_dic[user_id] = None
+                    continue
+
+                filter_list = None
+                if methodology is not None:
+                    filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
+
+                user_pred = alg.predict(user_train, loaded_items_interface,
+                                        filter_list=filter_list)
+
+                pred.extend(user_pred)
+                pbar.set_description(f"Computing fit_rank for user {user_id}")
+
+        pred = Prediction.from_list(pred)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return pred
 
     def fit_rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
-                 methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
+                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
+                 save_fit: bool = False) -> Rank:
         """
         The method fits the algorithm and then calculates the rank for each user
 
@@ -278,8 +338,60 @@ class ContentBasedRS(RecSys):
             rank: ranked items for each user
 
         """
-        self.fit()
-        return self.rank(test_set, n_recs, user_id_list, methodology)
+        all_users = set(test_set.user_id_column)
+        if user_id_list is not None:
+            all_users = set(user_id_list)
+
+        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
+
+        rank = []
+
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
+        with get_progbar(all_users) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id in pbar:
+                user_id = str(user_id)
+
+                user_train = self.train_set.get_user_interactions(user_id)
+
+                try:
+                    if save_fit:
+                        user_alg = deepcopy(self.algorithm)
+                        self._user_fit_dic[user_id] = user_alg
+                        alg = user_alg
+                    else:
+                        alg = self.algorithm
+
+                    alg.process_rated(user_train, loaded_items_interface)
+
+                    alg.fit()
+
+                except UserSkipAlgFit as e:
+                    warning_message = str(e) + f"\nThe algorithm can't be fitted for the user {user_id}"
+                    logger.warning(warning_message)
+                    if save_fit:
+                        self._user_fit_dic[user_id] = None
+                    continue
+
+                filter_list = None
+                if methodology is not None:
+                    filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
+
+                user_rank = alg.rank(user_train, loaded_items_interface,
+                                     n_recs, filter_list=filter_list)
+
+                rank.extend(user_rank)
+                pbar.set_description(f"Computing fit_rank for user {user_id}")
+
+        rank = Rank.from_list(rank)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return rank
 
 
 class GraphBasedRS(RecSys):

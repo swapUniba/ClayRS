@@ -21,15 +21,15 @@ class StatisticalTest(ABC):
         Method called by the statistical test in case of use of df.
         Common users are searched for meaningful comparison.
         """
-        # we need to also extract the user_id column, that's why we append 'from_id'
-        column_list.append('from_id')
+        # we need to also extract the user_id column, that's why we append 'user_id'
+        column_list.append('user_id')
 
         df1 = df1[column_list]
         df2 = df2[column_list]
 
-        common_rows = pd.merge(df1, df2, how="inner", on=['from_id'])
+        common_rows = pd.merge(df1, df2, how="inner", on=['user_id'])
 
-        return common_rows.drop(columns=['from_id']).to_dict('list')
+        return common_rows.drop(columns=['user_id']).to_dict('list')
 
     @abstractmethod
     def perform(self, users_metric_results: list):
@@ -41,16 +41,16 @@ class StatisticalTest(ABC):
 
 class PairedTest(StatisticalTest):
 
-    def perform(self, users_metric_results: list):
+    def perform(self, df_list: list):
 
         final_result = defaultdict(list)
 
         n_system_evaluated = 1
-        while len(users_metric_results) != 0:
-            df1 = users_metric_results.pop(0)
-            for i, other_df in enumerate(users_metric_results, start=n_system_evaluated + 1):
+        while len(df_list) != 0:
+            df1 = df_list.pop(0)
+            for i, other_df in enumerate(df_list, start=n_system_evaluated + 1):
                 common_metrics = [column for column in df1.columns
-                                  if column != 'from_id' and column in other_df.columns]
+                                  if column != 'user_id' and column in other_df.columns]
 
                 score_common_dict = self._common_users(df1, other_df, list(common_metrics))
 

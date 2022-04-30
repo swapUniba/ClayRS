@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union, List, Tuple
 import numpy as np
-from _ctypes import PyObj_FromPtr
 import json
-import re
 
 from scipy import sparse
 
@@ -16,6 +14,7 @@ class FieldRepresentation(ABC):
     Abstract class that generalizes the concept of "field representation",
     a field representation is a semantic way to represent a field of an item.
     """
+    __slots__ = ()
 
     @abstractmethod
     def __str__(self):
@@ -46,13 +45,14 @@ class FeaturesBagField(FieldRepresentation):
     Args:
         features (dict<str, object>): the dictionary where features are stored
     """
+    __slots__ = ('__scores', '__pos_feature_tuples')
 
-    def __init__(self, dense_scores: np.ndarray, pos_feature_tuples: List[Tuple[int, str]]):
-        self.__scores: np.ndarray = dense_scores
+    def __init__(self, sparse_scores: sparse.csc_matrix, pos_feature_tuples: List[Tuple[int, str]]):
+        self.__scores = sparse_scores
         self.__pos_feature_tuples = pos_feature_tuples
 
     @property
-    def value(self) -> np.ndarray:
+    def value(self) -> sparse.csr_matrix:
         """
         Get the features dict
 
@@ -62,9 +62,8 @@ class FeaturesBagField(FieldRepresentation):
         return self.__scores
 
     def to_json(self):
-        sparse_matrix = sparse.csr_matrix(self.__scores)
-        tuple_representation = np.array([(coordinates_tuple, sparse_matrix[coordinates_tuple])
-                                         for coordinates_tuple in zip(*sparse_matrix.nonzero())], dtype=object)
+        tuple_representation = np.array([(coordinates_tuple, self.value[coordinates_tuple])
+                                         for coordinates_tuple in zip(*self.value.nonzero())], dtype=object)
 
         return dict(sparse_tfidf=np.array2string(tuple_representation, threshold=np.inf, separator=','),
                     pos_word_tuples=str(self.__pos_feature_tuples),
@@ -84,6 +83,7 @@ class SimpleField(FieldRepresentation):
     Args:
         value (str): string representing the value of the field
     """
+    __slots__ = ('__value',)
 
     def __init__(self, value: object = None):
         self.__value: object = value
@@ -116,6 +116,7 @@ class EmbeddingField(FieldRepresentation):
         embedding_array (np.ndarray): embeddings array,
             it can be of different shapes according to the granularity of the technique
     """
+    __slots__ = ('__dense_array',)
 
     def __init__(self, embedding_array: np.ndarray):
         self.__dense_array = embedding_array
@@ -142,6 +143,7 @@ class IndexField(FieldRepresentation):
         index_id (int): position of the content in the index
         index (InformationInterface): index from which the data will be retrieved
     """
+    __slots__ = ('__field_name', '__index_id', '__index')
 
     def __init__(self, field_name: str, index_id: int, index: InformationInterface):
         self.__field_name = field_name
@@ -165,6 +167,7 @@ class ExogenousPropertiesRepresentation(ABC):
     """
     Output of LodPropertiesRetrieval, different representations exist according to different techniques
     """
+    __slots__ = ()
 
     @abstractmethod
     def __str__(self):
@@ -193,6 +196,7 @@ class PropertiesDict(ExogenousPropertiesRepresentation):
     Args:
         features: properties in the specified format
     """
+    __slots__ = ('__features',)
 
     def __init__(self, features: Dict[str, str] = None):
         if features is None:
@@ -218,6 +222,7 @@ class EntitiesProp(ExogenousPropertiesRepresentation):
     Args:
         features: properties in the specified format
     """
+    __slots__ = ('__features',)
 
     def __init__(self, features: Dict[str, Dict] = None):
         if features is None:

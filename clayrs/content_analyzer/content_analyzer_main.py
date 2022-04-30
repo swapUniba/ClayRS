@@ -1,14 +1,15 @@
+import gc
 import json
 import pickle
 import re
 import lzma
 import os
 import shutil
+
 from typing import List, Dict
 
 from clayrs.content_analyzer.config import ContentAnalyzerConfig
 from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
-from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
 from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from clayrs.utils.const import logger, get_progbar
 from clayrs.utils.id_merger import id_merger
@@ -161,17 +162,20 @@ class ContentsProducer:
         # will store the contents and is the variable that will be returned by the method
         contents_list = []
 
+        for raw_content in self.__config.source:
+            # construct id from the list of the fields that compound id
+            content_id = id_merger(raw_content, self.__config.id)
+            contents_list.append(Content(content_id))
+
         # two lists are instantiated, one for the configuration names (given by the user) and one for the exogenous
         # properties representations. These lists will maintain the data for the content creation. This is done
         # because otherwise it would be necessary to append directly to the content. But in the Content class
         # the representations are kept as dataframes and appending to dataframes is computationally heavy
-        exo_config_names = []
-        exo_properties = []
-
         for ex_config in self.__config.exogenous_representation_list:
             lod_properties = ex_config.exogenous_technique.get_properties(self.__config.source)
-            exo_config_names.append(ex_config.id)
-            exo_properties.append(lod_properties)
+
+            for i in range(len(contents_list)):
+                contents_list[i].append_exogenous_representation(lod_properties[i], ex_config.id)
 
         # this dictionary will store any representation list that will be kept in one of the the index
         # the elements will be in the form:
@@ -179,15 +183,11 @@ class ContentsProducer:
         # the 0 after the Plot field name is used to define the representation number associated with the Plot field
         # since it's possible to store multiple Plot fields in the index
         index_representations_dict = {}
-        field_representations_dict = {}
+
         for field_name in self.__config.get_field_name_list():
-            logger.info("Processing field: %s", field_name)
-            # stores the field representation for the field name
-            results = []
-            # stores the field config ids for the field name
-            field_config_ids = []
+            logger.info(f"   Processing field: {field_name}   ".center(50, '*'))
+
             for repr_number, field_config in enumerate(self.__config.get_configs_list(field_name)):
-                field_config_ids.append(field_config.id)
 
                 # technique_result is a list of field representation produced by the content technique
                 # each field repr in the list will refer to a content
@@ -214,42 +214,18 @@ class ContentsProducer:
                         index_field_name = "{}#{}".format(field_name, str(repr_number))
 
                     index_representations_dict[memory_interface][index_field_name] = technique_result
-                    result = []
 
                     # in order to refer to the representation that will be stored in the index, an IndexField repr will
                     # be added to each content (and it will contain all the necessary information to retrieve the data
                     # from the index)
-                    for i in range(0, len(list(self.__config.source))):
-                        result.append(
-                            IndexField(index_field_name, i, memory_interface))
-                else:
-                    result = technique_result
+                    technique_result = [IndexField(index_field_name, i, memory_interface)
+                                        for i in range(len(self.__config.source))]
 
-                results.append(result)
+                for i in range(len(contents_list)):
+                    contents_list[i].append_field_representation(field_name, technique_result[i], field_config.id)
 
-            field_representations_dict[field_name] = {'results': results, 'ids': field_config_ids}
-
-        # each representation is added to the corresponding content
-        for i, raw_content in enumerate(self.__config.source):
-            # construct id from the list of the fields that compound id
-            content_id = id_merger(raw_content, self.__config.id)
-            content = Content(content_id)
-
-            # retrieves the exogenous representations associated with the content
-            content_exo_representations = [exo_representation[i] for exo_representation in exo_properties]
-            content.append_exogenous_representation(content_exo_representations, exo_config_names)
-
-            # retrieves the field representations associated with the content
-            for field_name in field_representations_dict:
-                content_field_representations = [representation[i] for representation
-                                                 in field_representations_dict[field_name]['results']]
-
-                ids = field_representations_dict[field_name]['ids']
-
-                content.append_field(field_name,
-                                     RepresentationContainer(content_field_representations, ids))
-
-            contents_list.append(content)
+                del technique_result
+                gc.collect()
 
         # after the contents creation process, the data to be indexed will be serialized inside of the memory interfaces
         # for each created content, a new entry in each index will be created

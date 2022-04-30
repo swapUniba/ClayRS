@@ -28,14 +28,14 @@ class Gensim(WordEmbeddingLoader):
     def load_model(self):
         # if the reference isn't in the possible models, FileNotFoundError is raised
         if self.reference in downloader.info()['models']:
-            logger.info("Downloading/Loading gensim model")
+            logger.info(f"Downloading/Loading {str(self)}")
 
             return downloader.load(self.reference)
         else:
             raise FileNotFoundError
 
     def __str__(self):
-        return "Gensim"
+        return f"Gensim {self.reference}"
 
     def __repr__(self):
         return "< Gensim: model = " + str(self.model) + ">"

@@ -51,7 +51,7 @@ class TestFeatureSelection(TestCase):
         self.most_important_property_label = 'starring'
 
     def test_perform_NXTopKPageRank(self):
-        top_prop_labels_to_keep = 2
+        top_prop_labels_to_keep = 3
 
         result = TopKPageRank(k=top_prop_labels_to_keep).perform(self.g, self.target_item_nodes, mode='to_remove')
 
@@ -69,7 +69,7 @@ class TestFeatureSelection(TestCase):
         self.assertTrue(self.most_important_property_label in result)
 
     def test_perform_NXTopKDegreeCentrality(self):
-        top_prop_labels_to_keep = 2
+        top_prop_labels_to_keep = 3
         result = TopKDegreeCentrality(k=top_prop_labels_to_keep).perform(self.g, self.target_item_nodes,
                                                                          mode='to_remove')
 
@@ -88,7 +88,7 @@ class TestFeatureSelection(TestCase):
         self.assertTrue(self.most_important_property_label in result)
 
     def test_perform_NXTopKEigenVectorCentrality(self):
-        top_prop_labels_to_keep = 2
+        top_prop_labels_to_keep = 3
         result = TopKEigenVectorCentrality(k=top_prop_labels_to_keep, max_iter=200).perform(self.g,
                                                                                             self.target_item_nodes,
                                                                                             mode='to_remove')

@@ -1,6 +1,8 @@
 from abc import ABC
 from typing import Union
 
+import numpy as np
+from scipy import sparse
 from sklearn.linear_model._base import LinearModel as SKLinearModel
 from sklearn.linear_model._stochastic_gradient import BaseSGDRegressor
 
@@ -15,6 +17,10 @@ class Regressor(ABC):
 
     def __init__(self, model: Union[SKLinearModel, BaseSGDRegressor]):
         self.__model = model
+
+    @property
+    def model(self):
+        return self.__model
 
     def fit(self, X: list, Y: list = None):
         """
@@ -80,6 +86,12 @@ class SkRidge(Regressor):
 
         super().__init__(model)
 
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
+        self.model.fit(X.toarray() if isinstance(X, sparse.csr_matrix) else X, Y)
+
+    def predict(self, X_pred: Union[np.ndarray, sparse.csr_matrix]):
+        return self.model.predict(X_pred.toarray() if isinstance(X_pred, sparse.csr_matrix) else X_pred)
+
     def __str__(self):
         return "SkRidge"
 
@@ -94,6 +106,12 @@ class SkBayesianRidge(Regressor):
         model = BayesianRidge(*args, **kwargs)
 
         super().__init__(model)
+
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
+        self.model.fit(X.toarray() if isinstance(X, sparse.csr_matrix) else X, Y)
+
+    def predict(self, X_pred: Union[np.ndarray, sparse.csr_matrix]):
+        return self.model.predict(X_pred.toarray() if isinstance(X_pred, sparse.csr_matrix) else X_pred)
 
     def __str__(self):
         return "SkBayesianRidge"
@@ -123,6 +141,12 @@ class SkARDRegression(Regressor):
 
         model = ARDRegression(*args, **kwargs)
         super().__init__(model)
+
+    def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
+        self.model.fit(X.toarray() if isinstance(X, sparse.csr_matrix) else X, Y)
+
+    def predict(self, X_pred: Union[np.ndarray, sparse.csr_matrix]):
+        return self.model.predict(X_pred.toarray() if isinstance(X_pred, sparse.csr_matrix) else X_pred)
 
     def __str__(self):
         return "SkARDRegression"

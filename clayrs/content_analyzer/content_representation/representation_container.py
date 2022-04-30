@@ -44,6 +44,8 @@ class RepresentationContainer:
     internal_id_list is not required as an argument because it will be automatically created by the class
     """
 
+    __slots__ = ('__int_to_ext', '__ext_to_int', '__representation_container')
+
     def __init__(self, representation_list: Union[List[Any], Any] = None,
                  external_id_list: Union[List[Union[str, None]], Union[str, None]] = None):
         if external_id_list is None:
@@ -60,7 +62,8 @@ class RepresentationContainer:
             raise ValueError("Representation and external_id lists must have the same length")
 
         self.__int_to_ext = {int_id: ext_id for int_id, ext_id in enumerate(external_id_list)}
-        self.__ext_to_int = {ext_id: int_id for int_id, ext_id in zip(self.__int_to_ext.keys(), self.__int_to_ext.values())
+        self.__ext_to_int = {ext_id: int_id for int_id, ext_id in
+                             zip(self.__int_to_ext.keys(), self.__int_to_ext.values())
                              if ext_id is not None}
 
         self.__representation_container = dict(zip(self.__int_to_ext.keys(), representation_list))

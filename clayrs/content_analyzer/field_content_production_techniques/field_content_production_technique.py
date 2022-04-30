@@ -343,7 +343,7 @@ class TfIdfTechnique(CollectionBasedTechnique):
         """
         nonzero_feature_index = self._tfidf_matrix[content_position, :].nonzero()[1]
 
-        tfidf_sparse = self._tfidf_matrix.getrow(content_position).toarray()
+        tfidf_sparse = self._tfidf_matrix.getrow(content_position).tocsc()
         pos_word_tuple = [(pos, self._feature_names[pos]) for pos in nonzero_feature_index]
 
         return FeaturesBagField(tfidf_sparse, pos_word_tuple)
@@ -374,7 +374,7 @@ class SynsetDocumentFrequency(CollectionBasedTechnique):
         """
         nonzero_feature_index = self._synset_matrix[content_position, :].nonzero()[1]
 
-        count_dense = self._synset_matrix.getrow(content_position).toarray()
+        count_dense = self._synset_matrix.getrow(content_position).tocsc()
         pos_word_tuple = [(pos, self._synset_names[pos]) for pos in nonzero_feature_index]
 
         return FeaturesBagField(count_dense, pos_word_tuple)

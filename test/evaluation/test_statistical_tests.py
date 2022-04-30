@@ -9,11 +9,11 @@ from clayrs.evaluation.statistical_test import StatisticalTest, Ttest, Wilcoxon,
 class TestStatisticalTest(unittest.TestCase):
     def test__common_users(self):
         # all_users are in common
-        equal_users_sys1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'NDCG': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        equal_users_sys2 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -23,11 +23,11 @@ class TestStatisticalTest(unittest.TestCase):
         self.assertDictEqual(expected, result)
 
         # not all user are in common
-        equal_users_sys1 = pd.DataFrame({'from_id': ['u5', 'u6', 'u3', 'u4'],
+        equal_users_sys1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u3', 'u4'],
                                          'NDCG': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        equal_users_sys2 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -37,11 +37,11 @@ class TestStatisticalTest(unittest.TestCase):
         self.assertDictEqual(expected, result)
 
         # no column in common
-        equal_users_sys1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'MRR': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - macro': [0.998, 0.123, 0.556, 0.887]})
 
-        equal_users_sys2 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -51,11 +51,11 @@ class TestStatisticalTest(unittest.TestCase):
         self.assertDictEqual(expected, result)
 
         # no column in common and no user in common
-        equal_users_sys1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        equal_users_sys1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'MRR': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - macro': [0.998, 0.123, 0.556, 0.887]})
 
-        equal_users_sys2 = pd.DataFrame({'from_id': ['u5', 'u6', 'u7', 'u8'],
+        equal_users_sys2 = pd.DataFrame({'user_id': ['u5', 'u6', 'u7', 'u8'],
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -79,11 +79,11 @@ class TestPairedTest(unittest.TestCase):
 
     def perform_all_in_common(self, class_to_test, external_function):
         # perform all user and all columns in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.8, 0.2, 0.2, 0.4],
                                               'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -102,15 +102,15 @@ class TestPairedTest(unittest.TestCase):
 
     def perform_3_systems(self, class_to_test, external_function):
         # perform all user and all columns in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.8, 0.2, 0.2, 0.4],
                                               'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
-        users_metrics_result3 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result3 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.9, 0.3, 0.2, 0.5],
                                               'Precision - micro': [0.44, 0.88, 0.21, 0.56]})
 
@@ -144,11 +144,11 @@ class TestPairedTest(unittest.TestCase):
 
     def perform_only_some_in_common(self, class_to_test, external_function):
         # perform only some users in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u5', 'u6', 'u3', 'u4'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u3', 'u4'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u3', 'u2', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
                                               'NDCG': [0.8, 0.2, 0.2, 0.4],
                                               'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -166,11 +166,11 @@ class TestPairedTest(unittest.TestCase):
         self.assertEqual(expected_precision, result_precision)
 
         # perform only some users and only some columns in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u5', 'u6', 'u3', 'u4'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u3', 'u4'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u3', 'u2', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
                                               'MRR': [0.8, 0.2, 0.2, 0.4],
                                               'NDCG': [0.45, 0.23, 0.112, 0.776]})
 
@@ -187,11 +187,11 @@ class TestPairedTest(unittest.TestCase):
 
     def perform_nothing_in_common(self, class_to_test, external_function):
         # perform columns in common but no user in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u5', 'u6', 'u8', 'u9'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u8', 'u9'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u3', 'u2', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
                                               'NDCG': [0.8, 0.2, 0.2, 0.4],
                                               'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
@@ -208,11 +208,11 @@ class TestPairedTest(unittest.TestCase):
         self.assertTrue(np.isnan(result_precision.pvalue))
 
         # perform users in common but not columns in common
-        users_metrics_result1 = pd.DataFrame({'from_id': ['u1', 'u2', 'u3', 'u4'],
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                               'NDCG': [0.5, 0.7, 0.8, 0.2],
                                               'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
 
-        users_metrics_result2 = pd.DataFrame({'from_id': ['u1', 'u3', 'u2', 'u4'],
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
                                               'MRR': [0.8, 0.2, 0.2, 0.4],
                                               'Recall': [0.45, 0.23, 0.112, 0.776]})
 
@@ -248,3 +248,7 @@ class TestWilcoxon(TestPairedTest):
 
     def test_perform_3_systems(self):
         self.perform_3_systems(Wilcoxon(), ranksums)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,5 +1,6 @@
-from typing import List, Union, Optional, Dict, Callable
+from typing import List, Union, Optional, Dict
 
+import scipy.sparse
 from clayrs.content_analyzer import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
@@ -114,8 +115,9 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         positive_rated_features = list(self._positive_rated_dict.values())
 
-        positive_rated_features_fused = self.fuse_representations(positive_rated_features, self._emb_combiner)
-        self._centroid = np.array(positive_rated_features_fused).mean(axis=0)
+        positive_rated_features_fused = self.fuse_representations(positive_rated_features, self._emb_combiner,
+                                                                  as_array=True)
+        self._centroid = positive_rated_features_fused.mean(axis=0)
 
         # we delete variable used to fit since will no longer be used
         del self._positive_rated_dict
@@ -175,7 +177,7 @@ class CentroidVector(ContentBasedAlgorithm):
 
         if len(id_items_to_predict) > 0:
             # Calculate predictions, they are the similarity of the new items with the centroid vector
-            features_fused = self.fuse_representations(features_items_to_predict, self._emb_combiner)
+            features_fused = self.fuse_representations(features_items_to_predict, self._emb_combiner, as_array=True)
             similarities = [self._similarity.perform(self._centroid, item) for item in features_fused]
         else:
             similarities = []

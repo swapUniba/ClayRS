@@ -1,9 +1,11 @@
 import abc
 from copy import deepcopy
 from itertools import chain
-from typing import List
+from typing import List, Generator
 import pandas as pd
 import statistics
+
+from scipy import sparse
 from sklearn.exceptions import NotFittedError
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
@@ -103,7 +105,7 @@ class ContentBasedAlgorithm(Algorithm):
 
         return item_bag_list
 
-    def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique):
+    def fuse_representations(self, X: list, embedding_combiner: CombiningTechnique, as_array: bool = False):
         """
         Method which transforms the X passed vectorizing if X contains dicts and merging
         multiple representations in a single one for every item in X.
@@ -132,7 +134,7 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
-        if any(not isinstance(rep, (dict, np.ndarray, (int, float))) for rep in X[0]):
+        if any(not isinstance(rep, (dict, np.ndarray, (int, float), sparse.csc_matrix)) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
         # We check if there are dicts as representation in the first element of X,
@@ -149,23 +151,39 @@ class ContentBasedAlgorithm(Algorithm):
                 self._transformer.fit(X_dicts)
 
         # In every case, we transform the input
-        X_vectorized = []
-        for item_repr_list in X:
-            single_arr = []
-            for item_repr in item_repr_list:
-                if need_vectorizer and isinstance(item_repr, dict):
-                    item_repr = self._transformer.transform(item_repr)
-                    single_arr.append(item_repr.flatten())
-                elif isinstance(item_repr, np.ndarray):
-                    if item_repr.ndim > 1:
-                        item_repr = embedding_combiner.combine(item_repr)
+        def single_item_fused_gen():
+            for item_repr_list in X:
+                single_arr = []
+                for item_repr in item_repr_list:
+                    if need_vectorizer and isinstance(item_repr, dict):
+                        item_repr = self._transformer.transform(item_repr)
+                        single_arr.append(item_repr.flatten())
+                    elif isinstance(item_repr, np.ndarray):
+                        if item_repr.ndim > 1:
+                            item_repr = embedding_combiner.combine(item_repr)
 
-                    single_arr.append(item_repr.flatten())
-                else:
-                    # it's a float
-                    single_arr.append(item_repr)
+                        single_arr.append(item_repr.flatten())
+                    else:
+                        # it's a float
+                        single_arr.append(item_repr)
 
-            X_vectorized.append(np.hstack(single_arr))
+                yield single_arr
+
+        # if a representation used is a sparse matrix, then we use scipy library to concatenate
+        # otherwise, if we have all dense arrays, we use numpy. To do this check we consider the representations
+        # of the first item
+        first_arr = next(single_item_fused_gen())
+        if any(isinstance(x, sparse.csc_matrix) for x in first_arr):
+            X_vectorized = (sparse.hstack(single_arr) for single_arr in single_item_fused_gen())
+
+            X_vectorized = sparse.vstack(X_vectorized, format='csr')
+
+            if as_array is True:
+                X_vectorized = X_vectorized.toarray()
+        else:
+            X_vectorized = [np.hstack(single_arr) for single_arr in single_item_fused_gen()]
+
+            X_vectorized = np.array(X_vectorized)
 
         return X_vectorized
 
@@ -255,7 +273,7 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     def _load_available_contents(self, contents_path: str, items_to_load: set = None):
-        return LoadedContentsDict(contents_path, items_to_load)
+        return LoadedContentsDict(contents_path, items_to_load, only_representations=self.item_field)
 
     def __deepcopy__(self, memo):
         # Create a new instance
