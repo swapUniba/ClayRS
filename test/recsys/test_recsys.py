@@ -187,10 +187,13 @@ class TestContentBasedRS(TestCase):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
         cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        result = cbrs.fit_rank(test_ratings)
+        result = cbrs.fit_rank(test_ratings, save_fit=True)
 
-        # No further test since the fit_rank() method just calls the fit() method and rank() method
         self.assertTrue(len(result) != 0)
+
+        # with self.assertRaises(NotFittedAlg):
+        #     cbrs.rank(test_ratings)
+
 
     def test_fit_predict(self):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
