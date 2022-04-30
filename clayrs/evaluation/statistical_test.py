@@ -41,14 +41,14 @@ class StatisticalTest(ABC):
 
 class PairedTest(StatisticalTest):
 
-    def perform(self, users_metric_results: list):
+    def perform(self, df_list: list):
 
         final_result = defaultdict(list)
 
         n_system_evaluated = 1
-        while len(users_metric_results) != 0:
-            df1 = users_metric_results.pop(0)
-            for i, other_df in enumerate(users_metric_results, start=n_system_evaluated + 1):
+        while len(df_list) != 0:
+            df1 = df_list.pop(0)
+            for i, other_df in enumerate(df_list, start=n_system_evaluated + 1):
                 common_metrics = [column for column in df1.columns
                                   if column != 'from_id' and column in other_df.columns]
 
