@@ -52,7 +52,7 @@ class ContentAnalyzer:
         output_path = self.__config.output_directory
         if os.path.exists(output_path):
             shutil.rmtree(output_path)
-        os.mkdir(output_path)
+        os.mkdirs(output_path)
 
         contents_producer = ContentsProducer.get_instance()
         contents_producer.set_config(self.__config)
