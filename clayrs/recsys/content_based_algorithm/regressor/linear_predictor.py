@@ -80,8 +80,9 @@ class LinearPredictor(ContentBasedAlgorithm):
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
         # Create list of all the available items that are useful for the user
-        loaded_rated_items: List[Union[Content, None]] = [available_loaded_items.get(item_id)
-                                                          for item_id in set(items_scores_dict.keys())]
+        loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
+                                                                                          for item_id
+                                                                                          in set(items_scores_dict.keys())])
 
         # Assign label and extract features from the rated items
         labels = []
@@ -135,10 +136,11 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         # Load items to predict
         if filter_list is None:
-            items_to_predict = [available_loaded_items.get(item_id)
-                                for item_id in available_loaded_items if item_id not in user_seen_items]
+            items_to_predict = available_loaded_items.get_list([item_id
+                                                                for item_id in available_loaded_items
+                                                                if item_id not in user_seen_items])
         else:
-            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
+            items_to_predict = available_loaded_items.get_list(filter_list)
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -190,9 +192,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         pred_interaction_list = [Interaction(user_id, item_id, score)
                                  for item_id, score in zip(id_items_to_predict, score_labels)]
 
-        predictions = Ratings.from_list(pred_interaction_list)
-
-        return predictions
+        return pred_interaction_list
 
     def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
              recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:

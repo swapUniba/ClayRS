@@ -88,8 +88,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
         # Load rated items from the path
-        loaded_rated_items: List[Union[Content, None]] = [available_loaded_items.get(item_id)
-                                                          for item_id in set(items_scores_dict.keys())]
+        loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
+                                                                                          for item_id
+                                                                                          in items_scores_dict.keys()])
 
         threshold = self.threshold
         if threshold is None:
@@ -183,10 +184,11 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         # Load items to predict
         if filter_list is None:
-            items_to_predict = [available_loaded_items.get(item_id)
-                                for item_id in available_loaded_items if item_id not in user_seen_items]
+            items_to_predict = available_loaded_items.get_list([item_id
+                                                                for item_id in available_loaded_items
+                                                                if item_id not in user_seen_items])
         else:
-            items_to_predict = [available_loaded_items.get(item_id) for item_id in filter_list]
+            items_to_predict = available_loaded_items.get_list(filter_list)
 
         # Extract features of the items to predict
         id_items_to_predict = []
@@ -205,7 +207,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             class_prob = []
 
         # for each item we extract the probability that the item is liked (class 1)
-        score_labels = [prob[1] for prob in class_prob]
+        score_labels = (prob[1] for prob in class_prob)
 
         # Build the item_score dict (key is item_id, value is rank score predicted)
         # and order the keys in descending order
