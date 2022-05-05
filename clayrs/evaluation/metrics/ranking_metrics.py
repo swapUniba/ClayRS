@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterable, Set
 
 import pandas as pd
 import numpy as np
@@ -151,6 +151,7 @@ class MRR(RankingMetric):
         relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
             user. If not specified, the mean rating score of every user will be used
     """
+
     def __init__(self, relevant_threshold: float = None):
         self.__relevant_threshold = relevant_threshold
 
@@ -161,19 +162,18 @@ class MRR(RankingMetric):
     def __str__(self):
         return "MRR"
 
-    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
+    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
+                             relevant_threshold: float):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
             valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
-        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
 
         reciprocal_rank = 0
         i = 1
         for interaction_pred in user_predictions:
-            truth_score = item_score_truth.get(interaction_pred.item_id)
-            if (truth_score is not None) and (truth_score >= relevant_threshold):
+            if interaction_pred.item_id in user_truth_relevant_items:
                 reciprocal_rank = 1 / i
                 break  # We only need the first relevant item position in the rank
 
@@ -194,13 +194,24 @@ class MRR(RankingMetric):
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = np.mean([interaction.score for interaction in user_truth])
+                relevant_threshold = np.nanmean([interaction.score for interaction in user_truth])
 
-            user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth, relevant_threshold)
+            user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
+                                            if interaction.score >= relevant_threshold)
+
+            if len(user_truth_relevant_items) != 0:
+                user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth_relevant_items,
+                                                                 relevant_threshold)
+            else:
+                user_reciprocal_rank = np.nan
 
             rr_list.append(user_reciprocal_rank)
 
-        mrr = np.mean(rr_list)
+        # trick to check for nan values, if all values are nan then an exception is thrown
+        if all(rr != rr for rr in rr_list):
+            raise ValueError("No user has a rating above the given threshold! Try lower it")
+
+        mrr = np.nanmean(rr_list)
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(mrr)
@@ -246,27 +257,16 @@ class MRRAtK(MRR):
     def __str__(self):
         return "MRR@{}".format(self.k)
 
-    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
+    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
+                             relevant_threshold: float):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
             valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
         """
-
-        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
-
         user_predictions_cut = user_predictions[:self.k]
-        reciprocal_rank = 0
-        i = 1
-        for interaction_pred in user_predictions_cut:
-            truth_score = item_score_truth.get(interaction_pred.item_id)
-            if (truth_score is not None) and (truth_score >= relevant_threshold):
-                reciprocal_rank = 1 / i
-                break  # We only need the first relevant item position in the rank
 
-            i += 1
-
-        return reciprocal_rank
+        return super().calc_reciprocal_rank(user_predictions_cut, user_truth_relevant_items, relevant_threshold)
 
 
 class Correlation(RankingMetric):

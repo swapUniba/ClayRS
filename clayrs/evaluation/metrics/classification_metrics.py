@@ -72,17 +72,19 @@ class ClassificationMetric(Metric):
 
             # If basically the user has not provided a rating to any items greater than the threshold,
             # then we don't consider it since it's not fault of the system
-            if len(user_truth_relevant_items) == 0:
-                continue
+            if len(user_truth_relevant_items) != 0:
+                metric_user, user_confusion_matrix = self._perform_single_user(user_predictions,
+                                                                               user_truth_relevant_items)
 
-            metric_user, user_confusion_matrix = self._perform_single_user(user_predictions, user_truth_relevant_items)
-
-            sys_confusion_matrix += user_confusion_matrix
+                sys_confusion_matrix += user_confusion_matrix
+            else:
+                metric_user = np.nan
 
             split_result['user_id'].append(user)
             split_result[str(self)].append(metric_user)
 
-        if np.array_equal(sys_confusion_matrix, np.array([[0, 0], [0, 0]], dtype=np.int32)):
+        # trick to check for nan values, if all values are nan then an exception is thrown
+        if all(user_result != user_result for user_result in split_result[str(self)]):
             raise ValueError("No user has a rating above the given threshold! Try lower it")
 
         sys_metric = -1

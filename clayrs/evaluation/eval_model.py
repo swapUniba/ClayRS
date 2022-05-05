@@ -2,7 +2,6 @@ from typing import List, Union
 
 from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
 from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
-import pandas as pd
 from clayrs.evaluation.metrics.metrics import Metric
 from clayrs.recsys.partitioning import Partitioning
 from clayrs.recsys.recsys import RecSys
