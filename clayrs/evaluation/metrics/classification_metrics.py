@@ -1,6 +1,6 @@
 import statistics
 from abc import abstractmethod
-from typing import Union, List, Set
+from typing import Union, List, Set, Callable
 
 import numpy as np
 
@@ -23,7 +23,8 @@ class ClassificationMetric(Metric):
         sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
-    def __init__(self, relevant_threshold: float = None, sys_average: str = 'macro'):
+    def __init__(self, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
         valid_avg = {'macro', 'micro'}
         self.__avg = sys_average.lower()
 
@@ -32,6 +33,7 @@ class ClassificationMetric(Metric):
                              "{}".format(sys_average, str(self), valid_avg))
 
         self.__relevant_threshold = relevant_threshold
+        self.__precision = precision
 
     @property
     def relevant_threshold(self):
@@ -40,6 +42,10 @@ class ClassificationMetric(Metric):
     @property
     def sys_avg(self):
         return self.__avg
+
+    @property
+    def precision(self):
+        return self.__precision
 
     def perform(self, split: Split) -> pd.DataFrame:
         # This method will calculate for every split true positive, false positive, true negative, false negative items
@@ -130,7 +136,7 @@ class Precision(ClassificationMetric):
     def _calc_metric(self, confusion_matrix: np.ndarray):
         tp = confusion_matrix[0, 0]
         fp = confusion_matrix[0, 1]
-        return np.float32((tp + fp) and tp / (tp + fp) or 0)  # safediv between tp and (tp + fp)
+        return self.precision((tp + fp) and tp / (tp + fp) or 0)  # safediv between tp and (tp + fp)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
         tp = len([prediction_interaction for prediction_interaction in user_prediction
@@ -280,7 +286,7 @@ class Recall(ClassificationMetric):
     def _calc_metric(self, confusion_matrix: np.ndarray):
         tp = confusion_matrix[0, 0]
         fn = confusion_matrix[1, 0]
-        return np.float32((tp + fn) and tp / (tp + fn) or 0)  # safediv between tp and (tp + fn)
+        return self.precision((tp + fn) and tp / (tp + fn) or 0)  # safediv between tp and (tp + fn)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
 
@@ -409,7 +415,7 @@ class FMeasure(ClassificationMetric):
         num = prec * reca
         den = (beta_2 * prec) + reca
 
-        fbeta = (1 + beta_2) * (den and num / den or 0)  # safediv between num and den
+        fbeta = self.precision((1 + beta_2) * (den and num / den or 0))  # safediv between num and den
 
         return fbeta
 
