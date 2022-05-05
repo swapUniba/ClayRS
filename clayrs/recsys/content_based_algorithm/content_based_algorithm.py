@@ -1,9 +1,8 @@
 import abc
 from copy import deepcopy
 from itertools import chain
-from typing import List, Generator
+from typing import List
 import pandas as pd
-import statistics
 
 from scipy import sparse
 from sklearn.exceptions import NotFittedError
@@ -73,7 +72,7 @@ class ContentBasedAlgorithm(Algorithm):
         """
         Private method which simply calculates the average rating by the user given its ratings
         """
-        return statistics.mean([interaction.score for interaction in user_ratings])
+        return np.mean([interaction.score for interaction in user_ratings])
 
     def extract_features_item(self, item: Content):
         """

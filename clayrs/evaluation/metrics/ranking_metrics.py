@@ -1,4 +1,3 @@
-import statistics
 from typing import List
 
 import pandas as pd
@@ -195,13 +194,13 @@ class MRR(RankingMetric):
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = statistics.mean([interaction.score for interaction in user_truth])
+                relevant_threshold = np.mean([interaction.score for interaction in user_truth])
 
             user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth, relevant_threshold)
 
             rr_list.append(user_reciprocal_rank)
 
-        mrr = statistics.mean(rr_list)
+        mrr = np.mean(rr_list)
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(mrr)

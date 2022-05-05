@@ -1,6 +1,5 @@
-import statistics
 from abc import abstractmethod
-from typing import Union, List, Set, Callable
+from typing import List, Set, Callable
 
 import numpy as np
 
