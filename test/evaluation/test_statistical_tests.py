@@ -18,9 +18,13 @@ class TestStatisticalTest(unittest.TestCase):
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
         result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=['NDCG'])
-        expected = {'NDCG_x': [0.5, 0.7, 0.8, 0.2], 'NDCG_y': [0.8, 0.2, 0.2, 0.4],}
 
-        self.assertDictEqual(expected, result)
+        expected_dict = {'NDCG_x': [0.5, 0.7, 0.8, 0.2],
+                         'user_id': ['u1', 'u2', 'u3', 'u4'],
+                         'NDCG_y': [0.8, 0.2, 0.2, 0.4]}
+        result_dict = result.to_dict(orient='list')
+
+        self.assertDictEqual(expected_dict, result_dict)
 
         # not all user are in common
         equal_users_sys1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u3', 'u4'],
@@ -32,11 +36,15 @@ class TestStatisticalTest(unittest.TestCase):
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
         result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=['NDCG'])
-        expected = {'NDCG_x': [0.8, 0.2], 'NDCG_y': [0.2, 0.4]}
 
-        self.assertDictEqual(expected, result)
+        expected_dict = {'NDCG_x': [0.8, 0.2],
+                         'user_id': ['u3', 'u4'],
+                         'NDCG_y': [0.2, 0.4]}
+        result_dict = result.to_dict(orient='list')
 
-        # no column in common
+        self.assertDictEqual(expected_dict, result_dict)
+
+        # no metric in common
         equal_users_sys1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'MRR': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - macro': [0.998, 0.123, 0.556, 0.887]})
@@ -46,11 +54,13 @@ class TestStatisticalTest(unittest.TestCase):
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
         result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=[])
-        expected = {}
 
-        self.assertDictEqual(expected, result)
+        expected_dict = {'user_id': ['u1', 'u2', 'u3', 'u4']}
+        result_dict = result.to_dict(orient='list')
 
-        # no column in common and no user in common
+        self.assertDictEqual(expected_dict, result_dict)
+
+        # no metric in common and no user in common
         equal_users_sys1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
                                          'MRR': [0.5, 0.7, 0.8, 0.2],
                                          'Precision - macro': [0.998, 0.123, 0.556, 0.887]})
@@ -60,9 +70,11 @@ class TestStatisticalTest(unittest.TestCase):
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
         result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=[])
-        expected = {}
 
-        self.assertDictEqual(expected, result)
+        expected_dict = {'user_id': []}
+        result_dict = result.to_dict(orient='list')
+
+        self.assertDictEqual(expected_dict, result_dict)
 
 
 class TestPairedTest(unittest.TestCase):
@@ -220,6 +232,57 @@ class TestPairedTest(unittest.TestCase):
 
         self.assertTrue(result_df.empty)
 
+    def perform_nan_present(self, class_to_test, external_function):
+        # u1 has nan values in NDCG column
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
+                                              'NDCG': [np.nan, 0.7, 0.8, 0.2],
+                                              'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
+
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
+                                              'NDCG': [np.nan, 0.2, 0.2, 0.4],
+                                              'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
+
+        result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
+
+        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+
+        # ndcg column has one nan values, we don't use it
+        expected_ndcg = external_function([0.7, 0.8, 0.2], [0.2, 0.2, 0.4])
+        # other metric columns are unaffected
+        expected_precision = external_function([0.998, 0.123, 0.556, 0.887], [0.45, 0.23, 0.112, 0.776])
+
+        result_ndcg = result_df['NDCG'].values[0]
+        result_precision = result_df['Precision - micro'].values[0]
+
+        self.assertEqual(expected_ndcg, result_ndcg)
+        self.assertEqual(expected_precision, result_precision)
+
+        # all users have nan values in NDCG column
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
+                                              'NDCG': [np.nan, np.nan, np.nan, np.nan],
+                                              'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
+
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u3', 'u2', 'u4'],
+                                              'NDCG': [np.nan, np.nan, np.nan, np.nan],
+                                              'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
+
+        result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
+
+        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+
+        # NDCG columns has all nan values, so we can't compute the statistic
+        result_ndcg = result_df['NDCG'].values[0]
+
+        self.assertTrue(np.isnan(result_ndcg.statistic))
+        self.assertTrue(np.isnan(result_ndcg.pvalue))
+
+        # other metric columns are unaffected
+        expected_precision = external_function([0.998, 0.123, 0.556, 0.887], [0.45, 0.23, 0.112, 0.776])
+        result_precision = result_df['Precision - micro'].values[0]
+
+        self.assertEqual(expected_precision, result_precision)
+
+
 class TestTtest(TestPairedTest):
 
     def test_perform_all_in_common(self):
@@ -233,6 +296,9 @@ class TestTtest(TestPairedTest):
 
     def test_perform_3_systems(self):
         self.perform_3_systems(Ttest(), ttest_ind)
+
+    def test_perform_nan_present(self):
+        self.perform_nan_present(Ttest(), ttest_ind)
 
 
 class TestWilcoxon(TestPairedTest):
@@ -248,6 +314,9 @@ class TestWilcoxon(TestPairedTest):
 
     def test_perform_3_systems(self):
         self.perform_3_systems(Wilcoxon(), ranksums)
+
+    def test_perform_nan_present(self):
+        self.perform_nan_present(Wilcoxon(), ranksums)
 
 
 if __name__ == '__main__':

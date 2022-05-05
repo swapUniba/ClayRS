@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict
+from typing import List
 
 import pandas as pd
 from scipy.stats import ttest_ind, ranksums
@@ -16,7 +16,7 @@ class StatisticalTest(ABC):
 
     """
     @staticmethod
-    def _common_users(df1, df2, column_list) -> Dict:
+    def _common_users(df1, df2, column_list) -> pd.DataFrame:
         """
         Method called by the statistical test in case of use of df.
         Common users are searched for meaningful comparison.
@@ -29,7 +29,7 @@ class StatisticalTest(ABC):
 
         common_rows = pd.merge(df1, df2, how="inner", on=['user_id'])
 
-        return common_rows.drop(columns=['user_id']).to_dict('list')
+        return common_rows
 
     @abstractmethod
     def perform(self, users_metric_results: list):
@@ -41,7 +41,7 @@ class StatisticalTest(ABC):
 
 class PairedTest(StatisticalTest):
 
-    def perform(self, df_list: list):
+    def perform(self, df_list: List[pd.DataFrame]):
 
         final_result = defaultdict(list)
 
@@ -52,12 +52,16 @@ class PairedTest(StatisticalTest):
                 common_metrics = [column for column in df1.columns
                                   if column != 'user_id' and column in other_df.columns]
 
-                score_common_dict = self._common_users(df1, other_df, list(common_metrics))
+                common_rows = self._common_users(df1, other_df, list(common_metrics))
 
                 final_result["Systems evaluated"].append((f"system_{n_system_evaluated}", f"system_{i}"))
                 for metric in common_metrics:
-                    score_system1 = score_common_dict[f"{metric}_x"]
-                    score_system2 = score_common_dict[f"{metric}_y"]
+
+                    # drop nan values since otherwise test may behave unexpectedly
+                    metric_rows = common_rows[[f"{metric}_x", f"{metric}_y"]].dropna()
+
+                    score_system1 = metric_rows[f"{metric}_x"]
+                    score_system2 = metric_rows[f"{metric}_y"]
 
                     single_metric_result = self._perform_test(score_system1, score_system2)
                     final_result[metric].append(single_metric_result)
