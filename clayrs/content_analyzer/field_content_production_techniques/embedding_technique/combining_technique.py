@@ -41,7 +41,7 @@ class Centroid(CombiningTechnique):
         Returns:
             np.ndarray: centroid vector of the input matrix
         """
-        return np.mean(embedding_matrix, axis=0)
+        return np.nanmean(embedding_matrix, axis=0)
 
     def __str__(self):
         return "Centroid"

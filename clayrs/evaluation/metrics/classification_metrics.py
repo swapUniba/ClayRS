@@ -64,8 +64,8 @@ class ClassificationMetric(Metric):
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = np.mean([truth_interaction.score
-                                              for truth_interaction in user_truth])
+                relevant_threshold = np.nanmean([truth_interaction.score
+                                                 for truth_interaction in user_truth])
 
             user_truth_relevant_items = set([truth_interaction.item_id for truth_interaction in user_truth
                                              if truth_interaction.score >= relevant_threshold])
@@ -89,7 +89,7 @@ class ClassificationMetric(Metric):
         if self.sys_avg == 'micro':
             sys_metric = self._calc_metric(sys_confusion_matrix)
         elif self.sys_avg == 'macro':
-            sys_metric = np.mean(split_result[str(self)])
+            sys_metric = np.nanmean(split_result[str(self)])
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(sys_metric)

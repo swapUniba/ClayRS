@@ -72,7 +72,7 @@ class ContentBasedAlgorithm(Algorithm):
         """
         Private method which simply calculates the average rating by the user given its ratings
         """
-        return np.mean([interaction.score for interaction in user_ratings])
+        return np.nanmean([interaction.score for interaction in user_ratings])
 
     def extract_features_item(self, item: Content):
         """
