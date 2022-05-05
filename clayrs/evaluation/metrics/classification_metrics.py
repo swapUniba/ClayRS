@@ -65,11 +65,16 @@ class ClassificationMetric(Metric):
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = statistics.mean([truth_interaction.score
-                                                      for truth_interaction in user_truth])
+                relevant_threshold = np.mean([truth_interaction.score
+                                              for truth_interaction in user_truth])
 
             user_truth_relevant_items = set([truth_interaction.item_id for truth_interaction in user_truth
                                              if truth_interaction.score >= relevant_threshold])
+
+            # If basically the user has not provided a rating to any items greater than the threshold,
+            # then we don't consider it since it's not fault of the system
+            if len(user_truth_relevant_items) == 0:
+                continue
 
             metric_user, user_confusion_matrix = self._perform_single_user(user_predictions, user_truth_relevant_items)
 
@@ -78,11 +83,14 @@ class ClassificationMetric(Metric):
             split_result['user_id'].append(user)
             split_result[str(self)].append(metric_user)
 
+        if np.array_equal(sys_confusion_matrix, np.array([[0, 0], [0, 0]], dtype=np.int32)):
+            raise ValueError("No user has a rating above the given threshold! Try lower it")
+
         sys_metric = -1
         if self.sys_avg == 'micro':
             sys_metric = self._calc_metric(sys_confusion_matrix)
         elif self.sys_avg == 'macro':
-            sys_metric = statistics.mean(split_result[str(self)])
+            sys_metric = np.mean(split_result[str(self)])
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(sys_metric)
@@ -238,7 +246,6 @@ class RPrecision(Precision):
         return "R-Precision - {}".format(self.sys_avg)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-
         r = len(user_truth_relevant_items)
         user_prediction_cut = user_prediction[:r]
 
@@ -289,7 +296,6 @@ class Recall(ClassificationMetric):
         return self.precision((tp + fn) and tp / (tp + fn) or 0)  # safediv between tp and (tp + fn)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-
         tp = len([prediction_interaction for prediction_interaction in user_prediction
                   if prediction_interaction.item_id in user_truth_relevant_items])
         fn = len(user_truth_relevant_items) - tp
@@ -343,7 +349,6 @@ class RecallAtK(Recall):
         return "Recall@{} - {}".format(self.k, self.sys_avg)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-
         user_prediction_cut = user_prediction[:self.k]
 
         tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
@@ -420,7 +425,6 @@ class FMeasure(ClassificationMetric):
         return fbeta
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-
         tp = len([prediction_interaction for prediction_interaction in user_prediction
                   if prediction_interaction.item_id in user_truth_relevant_items])
         fp = len(user_prediction) - tp
@@ -486,7 +490,6 @@ class FMeasureAtK(FMeasure):
         return "F{}@{} - {}".format(self.beta, self.k, self.sys_avg)
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-
         user_prediction_cut = user_prediction[:self.k]
 
         tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
