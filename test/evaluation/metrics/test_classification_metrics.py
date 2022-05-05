@@ -45,19 +45,22 @@ split_missing = Split(pred_i1_i4_missing, truth)
 
 class TestClassificationMetric(TestCase):
 
-    def test_perform_no_relevant_u2(self):
+    def test_perform_no_relevant_u1(self):
         # any classification metric will work, you just need to change the ratio in the test
-        metric_no_relevant_u2 = Precision(relevant_threshold=4)
+        metric_no_relevant_u1 = Precision(relevant_threshold=4)
 
-        result_mean = metric_no_relevant_u2.perform(split_w_new_items)
+        result = metric_no_relevant_u1.perform(split_w_new_items)
+
+        result_u1 = result.query('user_id == "u1"')[str(metric_no_relevant_u1)].values[0]
+        self.assertTrue(np.isnan(result_u1))
 
         expected_u2 = 2 / 8
-        result_mean_u2 = float(result_mean.query('user_id == "u2"')[str(metric_no_relevant_u2)])
-        self.assertAlmostEqual(expected_u2, result_mean_u2)
+        result_u2 = float(result.query('user_id == "u2"')[str(metric_no_relevant_u1)])
+        self.assertAlmostEqual(expected_u2, result_u2)
 
-        expected_mean_sys = expected_u2
-        result_mean_sys = float(result_mean.query('user_id == "sys"')[str(metric_no_relevant_u2)])
-        self.assertAlmostEqual(expected_mean_sys, result_mean_sys)
+        expected_sys = expected_u2
+        result_sys = float(result.query('user_id == "sys"')[str(metric_no_relevant_u1)])
+        self.assertAlmostEqual(expected_sys, result_sys)
 
         # u1 has no relevant items, u2 = [0, 0, 1, 0]
 

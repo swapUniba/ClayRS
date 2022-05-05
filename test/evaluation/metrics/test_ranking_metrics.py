@@ -233,6 +233,31 @@ class TestMRR(unittest.TestCase):
 
         # u1 = [0], u2 = [0]
 
+    def test_perform_no_relevant_u1(self):
+        metric_no_relevant_u1 = MRR(relevant_threshold=4)
+
+        result = metric_no_relevant_u1.perform(split_w_new_items)
+
+        expected_sys = 1 / 3  # only u2 result will be considered
+        result_sys = float(result.query('user_id == "sys"')[str(metric_no_relevant_u1)])
+        self.assertAlmostEqual(expected_sys, result_sys)
+
+        # u1 has no relevant items, u2 = [0, 0, 1, 0]
+
+    def test_no_relevant_items(self):
+        truth_no_rel = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
+                                     'item_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
+                                     'score': [3, 2, 3, 1, 2, 2, 3, 3]})
+        truth_no_rel = Ratings.from_dataframe(truth_no_rel)
+
+        split_no_rel = Split(pred_w_new_items, truth_no_rel)
+
+        # any ClassificationMetric will work
+        metric = MRR(relevant_threshold=4)
+
+        with self.assertRaises(ValueError):
+            metric.perform(split_no_rel)
+
 
 class TestMRRAtK(unittest.TestCase):
     @classmethod
@@ -393,3 +418,7 @@ class TestCorrelation(unittest.TestCase):
         pearsons_predicted = result_only_one[str(metric)]
 
         self.assertTrue(all(pd.isna(pearsons_predicted)))
+
+
+if __name__ == '__main__':
+    unittest.main()
