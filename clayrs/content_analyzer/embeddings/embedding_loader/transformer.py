@@ -85,7 +85,7 @@ class Transformers(SentenceEmbeddingLoader):
         return tokenized_text
 
     def __str__(self):
-        return "Transformers: _model = " + str(self.model)
+        return "Transformers: model = " + str(self.model.name_or_path)
 
     def __repr__(self):
         return str(self)
