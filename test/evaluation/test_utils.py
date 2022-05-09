@@ -4,8 +4,8 @@ from unittest import TestCase
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.utils import popular_items, pop_ratio_by_user, get_avg_pop
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.utils import popular_items, pop_ratio_by_user, get_avg_pop
 
 
 class TestUtils(TestCase):

@@ -7,15 +7,15 @@ with open('requirements.txt') as f:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name='orange_cb_recsys',
+setup(name='clayrs',
       version='0.3.9',
       author='Antonio Silletti, Elio Musacchio, Roberta Sallustio',
       install_requires=requirements,
       description='Python Framework for Content-Based Recommeder Systems',
       long_description=long_description,
       long_description_content_type="text/markdown",
-      url='https://github.com/silleellie/orange_cb_recsys',
+      url='https://github.com/swapuniba/clayrs',
       include_package_data=True,
       packages=setuptools.find_packages(),
-      python_requires='>=3.6'
+      python_requires='>=3.7'
       )

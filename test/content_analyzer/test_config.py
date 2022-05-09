@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
+from clayrs.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
 
-from orange_cb_recsys.content_analyzer import FieldConfig, ExogenousConfig
+from clayrs.content_analyzer import FieldConfig, ExogenousConfig
 
 
 class TestFieldConfig(TestCase):

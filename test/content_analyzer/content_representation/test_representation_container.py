@@ -1,7 +1,7 @@
 from unittest import TestCase
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.content_representation.representation_container import RepresentationContainer
+from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
 
 
 class TestRepresentationContainer(TestCase):
@@ -36,13 +36,17 @@ class TestRepresentationContainer(TestCase):
         single_rep_container = RepresentationContainer('rep', 'test')
         self.assertEqual('rep', single_rep_container['test'])
 
-        # tests for exception: different length of external_id representation lists when passed to
-        # the constructor or to the append method
+        # test exception different length of external_id representation lists when passed to the constructor
         with self.assertRaises(ValueError):
             RepresentationContainer(['rep1', 'rep2'], ['test1'])
 
+        # test exception different length of external_id representation lists when passed to the 'append' method
         with self.assertRaises(ValueError):
             rep_container.append(['rep1', 'rep2'], ['test1'])
+
+        # test exception representation not present
+        with self.assertRaises(KeyError):
+            err = rep_container['not_existent']
 
     def test_iter(self):
         rep_container = RepresentationContainer(['rep1', 'rep2', 'rep3'], ['test1', None, 'test3'])

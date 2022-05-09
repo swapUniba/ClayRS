@@ -1,4 +1,4 @@
-import orange_cb_recsys.content_analyzer as ca
+import clayrs.content_analyzer as ca
 
 items_json = "../movies_info_reduced.json"
 users_dat = "../users_70.dat"
@@ -17,7 +17,7 @@ def item_fit():
         [
             ca.FieldConfig(ca.SkLearnTfIdf(),
                            ca.NLTK(stopwords_removal=True), id='tfidf'),
-            ca.FieldConfig(ca.SentenceEmbeddingTechnique('paraphrase-distilroberta-base-v1'),
+            ca.FieldConfig(ca.SentenceEmbeddingTechnique(ca.Sbert('paraphrase-distilroberta-base-v1')),
                            ca.NLTK(stopwords_removal=True), id='embedding'),
             ca.FieldConfig(ca.OriginalData(), id='index_original', memory_interface=ca.SearchIndex('index')),
             ca.FieldConfig(ca.OriginalData(), ca.NLTK(stopwords_removal=True),
@@ -28,7 +28,7 @@ def item_fit():
     config.add_multiple_config(
         'Genre',
         [
-            ca.FieldConfig(ca.WordEmbeddingTechnique('glove-twitter-25'),
+            ca.FieldConfig(ca.WordEmbeddingTechnique(ca.Gensim('glove-twitter-25')),
                            ca.NLTK(stemming=True), id='embedding'),
             ca.FieldConfig(ca.WhooshTfIdf(),
                            ca.NLTK(stemming=True), id='tfidf'),
@@ -48,7 +48,7 @@ def item_fit():
 
     config.add_single_config(
         'imdbRating',
-        ca.FieldConfig()
+        ca.FieldConfig(ca.OriginalData(dtype=float))
     )
 
     config.add_single_exogenous(

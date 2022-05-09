@@ -1,9 +1,9 @@
 from unittest import TestCase
 import os
 
-from orange_cb_recsys.content_analyzer.content_representation.content import FeaturesBagField
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import WhooshTfIdf, SkLearnTfIdf
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.content_representation.content import FeaturesBagField
+from clayrs.content_analyzer.field_content_production_techniques.tf_idf import WhooshTfIdf, SkLearnTfIdf
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
