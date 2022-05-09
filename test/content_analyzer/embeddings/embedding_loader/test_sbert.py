@@ -2,7 +2,7 @@ from random import random
 from unittest import TestCase, mock
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.embeddings import Sbert
+from clayrs.content_analyzer.embeddings import Sbert
 
 result_matrix = {
     'this is a phrase': np.array([random() for _ in range(768)]),
@@ -16,7 +16,7 @@ def encode(sentence, show_progress_bar):
 
 class TestSbert(TestCase):
 
-    @mock.patch('orange_cb_recsys.content_analyzer.embeddings.sbert.SentenceTransformer')
+    @mock.patch('clayrs.content_analyzer.embeddings.sbert.SentenceTransformer')
     def test_sbert(self, mocked_model):
         instance = mocked_model.return_value
         instance.get_sentence_embedding_dimension.return_value = 768

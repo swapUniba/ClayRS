@@ -6,9 +6,9 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.metrics.plot_metrics import LongTailDistr, PopProfileVsRecs, PopRecsCorrelation
-from orange_cb_recsys.recsys import Split
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.metrics.plot_metrics import LongTailDistr, PopProfileVsRecs, PopRecsCorrelation
+from clayrs.recsys import Split
 
 truth = pd.DataFrame(
     {'from_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2',

@@ -1,20 +1,19 @@
+from typing import Callable
+
 import numpy as np
 from unittest import TestCase
 from math import isclose
 
 
-from orange_cb_recsys.content_analyzer.embeddings.embedding_source import EmbeddingSource
-
-
 class TestEmbeddingSource(TestCase):
 
     # Will be used by several test involving embeddings
-    def assertWordEmbeddingMatches(self, source: EmbeddingSource, embedding: np.ndarray, word: str):
+    def assertWordEmbeddingMatches(self, source, embedding: np.ndarray, word: str):
         # 'similar_by_vector()' returns a list with top n
         # words similar to the vector given. I'm interested only in the most similar
         # so n = 1
         # for example, top_1 will be in the following form ("title", 1.0)
-        top_1 = source.model.wv.similar_by_vector(embedding, 1)[0]
+        top_1 = source.model.similar_by_vector(embedding, 1)[0]
 
         # So I'm using indices to access the tuples values.
         # 'like' contains how similar is 'embedding_word' to the 'embedding' vector given

@@ -1,103 +1,188 @@
-![Build Status](https://github.com/Silleellie/orange_cb_recsys/workflows/Build%20&%20Test%20&%20Push/badge.svg)&nbsp;&nbsp;[![Coverage Status](https://img.shields.io/coveralls/github/m3ttiw/orange_cb_recsys/master?logo=coveralls)](https://coveralls.io/github/m3ttiw/orange_cb_recsys?branch=master)&nbsp;&nbsp;[![Docker hub repo](https://img.shields.io/badge/docker-pull-blue.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/silleellie/framework_dependencies)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
+# ClayRS
 
-# Orange_cb_recsys
+![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
 
-Framework for content-based recommender system
+
+***ClayRS*** is a python framework for (mainly) content-based recommender systems which allows you to perform several operations, starting from a raw representation of users and items to building and evaluating a recommender system. It also supports graph-based recommendation with feature selection algorithms and graph manipulation methods.
+
+The framework has three main modules, which you can also use individually:
+
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/26851363/164490523-00d60efd-7b17-4d20-872a-28eaf2323b03.png" alt="ClayRS" style="width:75%;"/>
+</p>
+
+Given a raw source, the ***Content Analyzer***:
+* Creates and serializes contents,
+* Using the chosen configuration
+
+The ***RecSys*** module allows to:
+* Instantiate a recommender system
+    * *Using items and users serialized by the Content Analyzer*
+* Make score *prediction* or *recommend* items for the active user(s)
+
+The ***EvalModel*** has the task of evaluating a recommender system, using several state-of-the-art metrics
+
+Code examples for all three modules will follow in the *Usage* section
 
 Installation
 =============
-``
-pip install orange-cb-recsys
-``
+*ClayRS* requires Python **3.8** or later, while package dependencies are in `requirements.txt` and are all installable via `pip`, as *ClayRS* itself.
 
-[PyLucene](https://lucene.apache.org/pylucene/) is required and will not be installed like other dependencies, you will need to install it personally.
+To install it execute the following command:
 
-You also need to manually copy in the installing directory the files runnable_instances.xz e categories.xz that you can find in source directory
+``
+pip install git+https://github.com/SwapUniba/clayrs.git
+``
 
 Usage
 =====
-There are two types of use for this framework
-It can be used through API or through the use of a config file
 
-API Usage
----------
-The use through API is the classic use of a library, classes and methods are used by invoking them.
+### Content Analyzer
+The first thing to do is to import the Content Analyzer module
+* We will access its methods and classes via dot notation
+```python
+import clayrs.content_analyzer as ca
+```
 
-Example: 
+First let's point to the source containing raw information to process
+```python
+raw_source = ca.JSONFile('items_info.json')
+```
 
-![Example](img/run.PNG)
+Then let's start building the configuration for the items
+* Note that same operations that can be specified for *items*, could be also specified for *users*, via the
+`ca.UserAnalyzerConfig` class
+```python
+# Configuration of item representation
+movies_ca_config = ca.ItemAnalyzerConfig(
+    source=raw_source,
+    id='movielens_id',  # id which uniquely identifies each item
+    output_directory='movies_codified/'  # where items complexly represented will be stored
+)
+```
 
 
-Config Usage
-------------
-The use through the config file is an automated use.
+Let's represent the *plot* field of each content with a TfIdf representation
+* Since the `preprocessing` parameter has been specified, then each field is first preprocessed with the specified
+operations
+```python
+movies_ca_config.add_single_config(
+    'plot',
+    ca.FieldConfig(ca.SkLearnTfIdf(),
+                   preprocessing=ca.NLTK(stopwords_removal=True, lemmatization=True),
+                   id='tfidf')  # Custom id
+)
+```
 
-Just indicate which algorithms you want to use and change variables where necessary without having to call classes or methods
-This use is intended for users who want to use many framework features.
+Let's also represent the *description* field of each content with the embedding representation of each word by using the
+*glove-twitter-50* model of the Gensim library
+* *ClayRS* will download the model for you if it is not already present locally
 
-[Config File](https://github.com/m3ttiw/orange_cb_recsys/blob/master/orange_cb_recsys/content_analyzer/config.json)
+In this case we are performing a pipeline of *NLP* operations
+```python
+movies_ca_config.add_single_config(
+    'description',
+    ca.FieldConfig(ca.WordEmbeddingTechnique(ca.Gensim('glove-twitter-50')),
+                   preprocessing=[
+                       ca.Spacy(url_tagging=True, remove_punctuation=True),
+                       ca.Ekphrasis(corrector='english', spell_correction=True)
+                   ],
+                   id='gensim')  # Custom id
+)
+```
 
-We can see in the Config File an example of using the framework with this methodology.
+To finalize the Content Analyzer part, let's instantiate the `ContentAnalyzer` class by passing the built configuration
+and by calling its `fit()` method
+* The items will be created with the specified representations and serialized
+```python
+ca.ContentAnalyzer(movies_ca_config).fit()
+```
 
-As mentioned above, you need to change certain variables in order to allow the framework to work properly, here are some examples of these variables:
+### RecSys
+Similarly above, we must first import the RecSys module
+```python
+import clayrs.recsys as rs
+```
 
-    "content_type": "ITEM"
-This can be ITEM, USER or RATING depending on what you are using
+Then we load the rating frame from a TSV file
+* In this case in our file the first three columns are user_id, item_id, score in this order
+  * If your file has a different structure you must specify how to map the column via parameters, check documentation
+  for more
 
-    "output_directory": "movielens_test"
-You can change this value in any output directory you want to get
-    
-    "raw_source_path": "../../datasets/movies_info_reduced.json" 
-This is the source of the ITEM, USER or RATING file that you are using
-    
-    "source_type": "json"
-Here you can specify the source_type, this can be JSON, CSV or SQL
-    
-    "id_field_name": ["imdbID", "Title"]
-Specify the field name of the ID
-    
-    "search_index": "True"
-True if you want to use the text indexing technique, otherwise False
-    
-    "fields": [
-    {
-      "field_name": "Plot",
-      "lang": "EN",
-      "memory_interface": "None",
-      "memory_interface_path": "None",
-In the "field" field you can specify the name of the field on which to use the technique, its language and the memory interface
+```python
+ratings = ca.Ratings(ca.CSVFile('ratings.tsv', separator='\t'))
+```
 
-The language will be specified for each field, so it will be possible to insert a single file to index ITEM or USER in many languages
-    
-    "pipeline_list": [
-        {
-        "field_content_production": {"class": "search_index"},
-        "preprocessing_list": [
-          ]
-        },
-        {
-        "field_content_production": {"class": "embedding",
-          "combining_technique": {"class":  "centroid"},
-          "embedding_source": {"class": "binary_file", "file_path": "../../datasets/doc2vec/doc2vec.bin", "embedding_type":  "doc2vec"},
-          "granularity": "doc"},
-        "preprocessing_list": [
-          {"class": "nltk", "url_tagging":"True", "strip_multiple_whitespaces": "True"}
-          ]
-        },
-        {
-        "field_content_production": {"class": "lucene_tf-idf"},
-        "preprocessing_list": [
-          {"class": "nltk", "lemmatization": "True"}
-          ]
-        }
-Here instead it is possible to define the pipeline:
+Let's split with the KFold technique the loaded rating frame into train set and test set
+* since `n_splits=2`, train_list will contain two *train_sets* and test_list will contain two *test_sets*
+```python
+train_list, test_list = rs.KFoldPartitioning(n_splits=2).split_all(ratings)
+```
 
-For each field you can create many representations, as in this example search_index, embedding and tf-idf.
+In order to recommend items to users, we must choose an algorithm to use
+* In this case we are using the `CentroidVector` algorithm which will work by using the first representation
+specified for the *plot* field and the representation with *glove* id specified for the *description* field
+* You can freely choose which representation to use among all representation codified for the fields in the Content
+Analyzer phase
+```python
+centroid_vec = rs.CentroidVector(
+    {'plot': 0,  # the first representation codified for 'plot' field, we didn't specified a custom id
+     'description': 'glove'},
+  
+    similarity=rs.CosineSimilarity()
+)
+```
 
-For each representation we can specify the preprocessing list to be used.
+Let's now compute the top-10 ranking for each user of the train set
+* By default the candidate items are those in the test set of the user, but you can change this behaviour with the
+`methodology` parameter
 
-For example, for the tf-idf the nltk class is used which analyzes the natural language and the lemmatization is done
+Since we used the kfold technique, we iterate over the train sets and test sets
+```python
+result_list = []
 
-When using nltk these are the variables that can be changed: stopwords_removal, stemming, lemmatization, strip_multiple_white_space and url_tagging
+for train_set, test_set in zip(train_list, test_list):
+  
+  cbrs = rs.ContentBasedRS(centroid_vec, train_set, 'movies_codified/')
+  rank = cbrs.fit_rank(test_set, n_recs=10)
 
-When specifying embedding as field_content_production one must also specify the combining_technique which is currently only centroid, the source of the embedding and the granularity of it which can be word, doc and sentence
+  result_list.append(rank)
+```
+
+### EvalModel
+Similarly to the Content Analyzer and RecSys module, we must first import the evaluation module
+```python
+import clayrs.evaluation as eva
+```
+
+The Evaluation module needs the following parameters:
+
+*   A list of computed rank/predictions (in case multiple splits must be evaluated)
+*   A list of truths (in case multiple splits must be evaluated)
+*   List of metrics to compute
+
+Obviously the list of computed rank/predictions and list of truths must have the same length,
+and the rank/prediction in position $i$ will be compared with the truth at position $i$
+
+```python
+em = eva.EvalModel(
+    pred_list=result_list,
+    truth_list=test_list,
+    metric_list=[
+        eva.NDCG(),
+        eva.Precision(),
+        eva.RecallAtK(k=5)
+    ]
+)
+```
+
+Then simply call the `fit()` method of the instantiated object
+* It will return two pandas DataFrame: the first one contains the metrics aggregated for the system,
+while the second contains the metrics computed for each user (where possible)
+
+```python
+sys_result, users_result =  em.fit()
+```
+
+Note that the EvalModel is able to compute evaluation of recommendations generated by other tools/frameworks, check
+documentation for more

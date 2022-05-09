@@ -2,9 +2,9 @@ import unittest
 import pandas as pd
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-from orange_cb_recsys.content_analyzer.ratings_manager.ratings_importer import Prediction, Ratings
-from orange_cb_recsys.evaluation.metrics.error_metrics import MSE, MAE, RMSE
-from orange_cb_recsys.recsys import Split
+from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Ratings
+from clayrs.evaluation.metrics.error_metrics import MSE, MAE, RMSE
+from clayrs.recsys import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],

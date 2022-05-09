@@ -1,0 +1,877 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>test.evaluation.metrics package &#8212; clay_rs 0.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="test-evaluation-metrics-package">
+<h1>test.evaluation.metrics package<a class="headerlink" href="#test-evaluation-metrics-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-test.evaluation.metrics.test_classification_metrics">
+<span id="test-evaluation-metrics-test-classification-metrics-module"></span><h2>test.evaluation.metrics.test_classification_metrics module<a class="headerlink" href="#module-test.evaluation.metrics.test_classification_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestFMeasure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.fscore">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fscore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reca</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.fscore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_f2">
+<span class="sig-name descname"><span class="pre">test_perform_f2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_f2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_f_real_value">
+<span class="sig-name descname"><span class="pre">test_perform_f_real_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_f_real_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_macro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_mean">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_micro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_only_one_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_macro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_mean">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_micro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasure.test_perform_w_new_items_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestFMeasureAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.fscore">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fscore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reca</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.fscore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_greater_k">
+<span class="sig-name descname"><span class="pre">test_perform_greater_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_greater_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_i1_i4_missing">
+<span class="sig-name descname"><span class="pre">test_perform_i1_i4_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_i1_i4_missing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_mean">
+<span class="sig-name descname"><span class="pre">test_perform_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestFMeasureAtK.test_perform_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestPrecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_macro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_mean">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_micro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_only_one_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_macro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_mean">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_micro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecision.test_perform_w_new_items_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestPrecisionAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_greater_k">
+<span class="sig-name descname"><span class="pre">test_perform_greater_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_greater_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_i1_i4_missing">
+<span class="sig-name descname"><span class="pre">test_perform_i1_i4_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_i1_i4_missing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_mean">
+<span class="sig-name descname"><span class="pre">test_perform_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestPrecisionAtK.test_perform_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRPrecision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestRPrecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRPrecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform_i1_i4_missing">
+<span class="sig-name descname"><span class="pre">test_perform_i1_i4_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform_i1_i4_missing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform_mean">
+<span class="sig-name descname"><span class="pre">test_perform_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRPrecision.test_perform_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestRecall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_macro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_mean">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_micro">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_only_one_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_macro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_macro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_mean">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_micro">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_micro</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecall.test_perform_w_new_items_micro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecallAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_classification_metrics.</span></span><span class="sig-name descname"><span class="pre">TestRecallAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecallAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_greater_k">
+<span class="sig-name descname"><span class="pre">test_perform_greater_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_greater_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_i1_i4_missing">
+<span class="sig-name descname"><span class="pre">test_perform_i1_i4_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_i1_i4_missing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_mean">
+<span class="sig-name descname"><span class="pre">test_perform_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_classification_metrics.TestRecallAtK.test_perform_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.evaluation.metrics.test_error_metrics">
+<span id="test-evaluation-metrics-test-error-metrics-module"></span><h2>test.evaluation.metrics.test_error_metrics module<a class="headerlink" href="#module-test.evaluation.metrics.test_error_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_error_metrics.</span></span><span class="sig-name descname"><span class="pre">TestMAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMAE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMAE.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMAE.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMAE.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMSE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_error_metrics.</span></span><span class="sig-name descname"><span class="pre">TestMSE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMSE.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMSE.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestMSE.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestRMSE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_error_metrics.</span></span><span class="sig-name descname"><span class="pre">TestRMSE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestRMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestRMSE.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestRMSE.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_error_metrics.TestRMSE.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.evaluation.metrics.test_fairness_metrics">
+<span id="test-evaluation-metrics-test-fairness-metrics-module"></span><h2>test.evaluation.metrics.test_fairness_metrics module<a class="headerlink" href="#module-test.evaluation.metrics.test_fairness_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">TestCatalogCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_all_items">
+<span class="sig-name descname"><span class="pre">test_perform_all_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_all_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_all_items_and_plus">
+<span class="sig-name descname"><span class="pre">test_perform_all_items_and_plus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_all_items_and_plus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestCatalogCoverage.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">TestDeltaGap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_calculate_delta_gap">
+<span class="sig-name descname"><span class="pre">test_calculate_delta_gap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_calculate_delta_gap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_calculate_gap">
+<span class="sig-name descname"><span class="pre">test_calculate_gap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_calculate_gap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_invalid_percentage">
+<span class="sig-name descname"><span class="pre">test_invalid_percentage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_invalid_percentage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_0_gap">
+<span class="sig-name descname"><span class="pre">test_perform_0_gap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_0_gap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_2_users_2_groups">
+<span class="sig-name descname"><span class="pre">test_perform_2_users_2_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_2_users_2_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_increased_pop_percentage">
+<span class="sig-name descname"><span class="pre">test_perform_increased_pop_percentage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_increased_pop_percentage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_multiple_users_one_group">
+<span class="sig-name descname"><span class="pre">test_perform_multiple_users_one_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_multiple_users_one_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_top_3">
+<span class="sig-name descname"><span class="pre">test_perform_top_3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestDeltaGap.test_perform_top_3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">TestGini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_equi">
+<span class="sig-name descname"><span class="pre">test_perform_equi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_equi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_equi_top_n">
+<span class="sig-name descname"><span class="pre">test_perform_equi_top_n</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_equi_top_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_mixed">
+<span class="sig-name descname"><span class="pre">test_perform_mixed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_mixed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGini.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">TestGroupFairnessMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric.test_get_avg_pop_by_users">
+<span class="sig-name descname"><span class="pre">test_get_avg_pop_by_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric.test_get_avg_pop_by_users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric.test_split_users_in_groups">
+<span class="sig-name descname"><span class="pre">test_split_users_in_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestGroupFairnessMetric.test_split_users_in_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_fairness_metrics.</span></span><span class="sig-name descname"><span class="pre">TestPredictionCoverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_all_items">
+<span class="sig-name descname"><span class="pre">test_perform_all_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_all_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_all_items_and_plus">
+<span class="sig-name descname"><span class="pre">test_perform_all_items_and_plus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_all_items_and_plus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_fairness_metrics.TestPredictionCoverage.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.evaluation.metrics.test_plot_metrics">
+<span id="test-evaluation-metrics-test-plot-metrics-module"></span><h2>test.evaluation.metrics.test_plot_metrics module<a class="headerlink" href="#module-test.evaluation.metrics.test_plot_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestLongTail">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_plot_metrics.</span></span><span class="sig-name descname"><span class="pre">TestLongTail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestLongTail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestLongTail.tearDownClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tearDownClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestLongTail.tearDownClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for deconstructing the class fixture after running all tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestLongTail.test_overwrite">
+<span class="sig-name descname"><span class="pre">test_overwrite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestLongTail.test_overwrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestLongTail.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestLongTail.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestLongTail.test_string_error">
+<span class="sig-name descname"><span class="pre">test_string_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestLongTail.test_string_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_plot_metrics.</span></span><span class="sig-name descname"><span class="pre">TestPopProfileVsRecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.tearDownClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tearDownClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.tearDownClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for deconstructing the class fixture after running all tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.test_overwrite">
+<span class="sig-name descname"><span class="pre">test_overwrite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.test_overwrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopProfileVsRecs.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_plot_metrics.</span></span><span class="sig-name descname"><span class="pre">TestPopRecsCorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.tearDownClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tearDownClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.tearDownClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for deconstructing the class fixture after running all tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_overwrite">
+<span class="sig-name descname"><span class="pre">test_overwrite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_overwrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_both">
+<span class="sig-name descname"><span class="pre">test_perform_both</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_both" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_no_zeros">
+<span class="sig-name descname"><span class="pre">test_perform_no_zeros</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_no_zeros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_w_zeros">
+<span class="sig-name descname"><span class="pre">test_perform_w_zeros</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_plot_metrics.TestPopRecsCorrelation.test_perform_w_zeros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.evaluation.metrics.test_ranking_metrics">
+<span id="test-evaluation-metrics-test-ranking-metrics-module"></span><h2>test.evaluation.metrics.test_ranking_metrics module<a class="headerlink" href="#module-test.evaluation.metrics.test_ranking_metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">TestCorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_new_top_n">
+<span class="sig-name descname"><span class="pre">test_perform_only_new_top_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_new_top_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_one_top_n">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_top_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_only_one_top_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_w_new_items_top_n">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_top_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestCorrelation.test_perform_w_new_items_top_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">TestMRR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_new_mean">
+<span class="sig-name descname"><span class="pre">test_perform_only_new_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_new_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_one_mean">
+<span class="sig-name descname"><span class="pre">test_perform_only_one_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_only_one_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_w_new_items_mean">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRR.test_perform_w_new_items_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">TestMRRAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_k_not_valid">
+<span class="sig-name descname"><span class="pre">test_k_not_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_k_not_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform_w_greater_k">
+<span class="sig-name descname"><span class="pre">test_perform_w_greater_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform_w_greater_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform_w_new_items_mean">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestMRRAtK.test_perform_w_new_items_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">TestNDCG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCG.setUpClass">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCG.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up class fixture before running tests in the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_only_new">
+<span class="sig-name descname"><span class="pre">test_perform_only_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_only_new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_only_one">
+<span class="sig-name descname"><span class="pre">test_perform_only_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_only_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_w_new_items">
+<span class="sig-name descname"><span class="pre">test_perform_w_new_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCG.test_perform_w_new_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">TestNDCGAtK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK.test_perform">
+<span class="sig-name descname"><span class="pre">test_perform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK.test_perform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK.test_perform_w_greater_k">
+<span class="sig-name descname"><span class="pre">test_perform_w_greater_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.TestNDCGAtK.test_perform_w_greater_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test.evaluation.metrics.test_ranking_metrics.for_each_method">
+<span class="sig-prename descclassname"><span class="pre">test.evaluation.metrics.test_ranking_metrics.</span></span><span class="sig-name descname"><span class="pre">for_each_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.evaluation.metrics.test_ranking_metrics.for_each_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-test.evaluation.metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-test.evaluation.metrics" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">clay_rs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Antonio Silletti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/prova/test.evaluation.metrics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

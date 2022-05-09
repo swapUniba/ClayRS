@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer.config import ContentAnalyzerConfig, FieldConfig, ItemAnalyzerConfig, \
+from clayrs.content_analyzer.config import ContentAnalyzerConfig, FieldConfig, ItemAnalyzerConfig, \
     UserAnalyzerConfig
-from orange_cb_recsys.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
+from clayrs.utils.class_utils import get_all_implemented_classes, get_all_implemented_subclasses
 
 
 class TestClassUtils(TestCase):

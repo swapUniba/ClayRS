@@ -1,23 +1,21 @@
 import os
-import shutil
 from unittest import TestCase
 import lzma
 import pickle
 import numpy as np
 
-from orange_cb_recsys.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
-    BabelPyEntityLinking
-from orange_cb_recsys.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
-from orange_cb_recsys.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
-    EmbeddingField, IndexField, EntitiesProp
-from orange_cb_recsys.content_analyzer.field_content_production_techniques import OriginalData
-from orange_cb_recsys.content_analyzer.embeddings.embedding_loader.gensim import Gensim
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
+from clayrs.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
+from clayrs.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
+from clayrs.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
+    EmbeddingField, IndexField, PropertiesDict
+from clayrs.content_analyzer.field_content_production_techniques import OriginalData
+from clayrs.content_analyzer.embeddings.embedding_loader.gensim import Gensim
+from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.embedding_technique \
     import WordEmbeddingTechnique
-from orange_cb_recsys.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
-from orange_cb_recsys.content_analyzer.information_processor import NLTK
-from orange_cb_recsys.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
-from orange_cb_recsys.content_analyzer.raw_information_source import JSONFile
+from clayrs.content_analyzer.field_content_production_techniques.tf_idf import SkLearnTfIdf
+from clayrs.content_analyzer.information_processor import NLTK
+from clayrs.content_analyzer.memory_interfaces import SearchIndex, KeywordIndex
+from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -29,13 +27,12 @@ decode_tfidf = os.path.join(decode_path, "movies_title_tfidf.json")
 decode_embedding = os.path.join(decode_path, "movies_title_embedding.json")
 
 
-
 class TestContentsProducer(TestCase):
     def test_create_content(self):
-        exogenous_config = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'))
+        exogenous_config = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']))
         content_analyzer_config = ItemAnalyzerConfig(JSONFile(movies_info_reduced), ["imdbID"], "movielens_test")
         content_analyzer_config.add_single_exogenous(exogenous_config)
-        content_analyzer_config.add_single_exogenous(ExogenousConfig(BabelPyEntityLinking('Title')))
+        content_analyzer_config.add_single_exogenous(ExogenousConfig(PropertiesFromDataset(field_name_list=['Title'])))
         content_analyzer = ContentAnalyzer(content_analyzer_config)
         content_analyzer.fit()
 
@@ -46,8 +43,8 @@ class TestContentsProducer(TestCase):
                 with lzma.open(os.path.join(THIS_DIR, name, 'tt0113497.xz'), 'r') as file:
                     content = pickle.load(file)
 
-                    self.assertIsInstance(content.get_field("Title")[0], EntitiesProp)
-                    self.assertIsInstance(content.get_field("Title")[0].value, dict)
+                    self.assertIsInstance(content.get_exogenous_representation(0), PropertiesDict)
+                    self.assertIsInstance(content.get_exogenous_representation(0).value, dict)
                     break
 
     def test_field_exceptions(self):
@@ -84,8 +81,8 @@ class TestContentsProducer(TestCase):
         # exogenous_representation_list with duplicate ids as argument for the content_analyzer,
         # and when appending an ExogenousConfig to the list but the config id is already in the list
 
-        config_1 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
-        config_2 = ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title'), "test")
+        config_1 = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']), "test")
+        config_2 = ExogenousConfig(PropertiesFromDataset(field_name_list=['Title']), "test")
         exogenous_representation_list = [config_1, config_2]
 
         with self.assertRaises(ValueError):
@@ -188,75 +185,77 @@ class TestContentsProducer(TestCase):
                     self.assertIsInstance(content.get_field("Title")[1].value, str)
                     break
 
-    def test_decode_field_data_string(self):
-        movies_ca_config = ItemAnalyzerConfig(
-            source=JSONFile(decode_string),
-            id=['imdbID'],
-            output_directory=decode_path + 'movies_string_'
-        )
-
-        movies_ca_config.add_multiple_config(
-            field_name='Title',
-            config_list=[FieldConfig()]
-        )
-        ContentAnalyzer(config=movies_ca_config).fit()
-
-        for name in os.listdir(decode_path):
-            if os.path.isdir(os.path.join(decode_path, name)) \
-                    and 'movies_string_' in str(name):
-
-                with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
-                    content = pickle.load(file)
-
-                    self.assertIsInstance(content.get_field("Title")[0], SimpleField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, str)
-                    break
-
-    def test_decode_field_data_tfidf(self):
-        movies_ca_config = ItemAnalyzerConfig(
-            source=JSONFile(decode_tfidf),
-            id=['imdbID'],
-            output_directory=decode_path + 'movies_tfidf_'
-        )
-
-        movies_ca_config.add_multiple_config(
-            field_name='Title',
-            config_list=[FieldConfig()]
-        )
-        ContentAnalyzer(config=movies_ca_config).fit()
-
-        for name in os.listdir(decode_path):
-            if os.path.isdir(os.path.join(decode_path, name)) \
-                    and 'movies_tfidf_' in str(name):
-                with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
-                    content = pickle.load(file)
-
-                    self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, dict)
-                    break
-
-    def test_decode_field_data_embedding(self):
-        movies_ca_config = ItemAnalyzerConfig(
-            source=JSONFile(decode_embedding),
-            id=['imdbID'],
-            output_directory=decode_path + 'movies_embedding_'
-        )
-
-        movies_ca_config.add_multiple_config(
-            field_name='Title',
-            config_list=[FieldConfig()]
-        )
-        ContentAnalyzer(config=movies_ca_config).fit()
-
-        for name in os.listdir(decode_path):
-            if os.path.isdir(os.path.join(decode_path, name)) \
-                    and 'movies_embedding_' in str(name):
-                with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
-                    content = pickle.load(file)
-
-                    self.assertIsInstance(content.get_field("Title")[0], EmbeddingField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, np.ndarray)
-                    break
+    # Functionality to decode NOT IMPLEMENTED
+    #
+    # def test_decode_field_data_string(self):
+    #     movies_ca_config = ItemAnalyzerConfig(
+    #         source=JSONFile(decode_string),
+    #         id=['imdbID'],
+    #         output_directory=decode_path + 'movies_string_'
+    #     )
+    #
+    #     movies_ca_config.add_multiple_config(
+    #         field_name='Title',
+    #         config_list=[FieldConfig()]
+    #     )
+    #     ContentAnalyzer(config=movies_ca_config).fit()
+    #
+    #     for name in os.listdir(decode_path):
+    #         if os.path.isdir(os.path.join(decode_path, name)) \
+    #                 and 'movies_string_' in str(name):
+    #
+    #             with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
+    #                 content = pickle.load(file)
+    #
+    #                 self.assertIsInstance(content.get_field("Title")[0], SimpleField)
+    #                 self.assertIsInstance(content.get_field("Title")[0].value, str)
+    #                 break
+    #
+    # def test_decode_field_data_tfidf(self):
+    #     movies_ca_config = ItemAnalyzerConfig(
+    #         source=JSONFile(decode_tfidf),
+    #         id=['imdbID'],
+    #         output_directory=decode_path + 'movies_tfidf_'
+    #     )
+    #
+    #     movies_ca_config.add_multiple_config(
+    #         field_name='Title',
+    #         config_list=[FieldConfig()]
+    #     )
+    #     ContentAnalyzer(config=movies_ca_config).fit()
+    #
+    #     for name in os.listdir(decode_path):
+    #         if os.path.isdir(os.path.join(decode_path, name)) \
+    #                 and 'movies_tfidf_' in str(name):
+    #             with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
+    #                 content = pickle.load(file)
+    #
+    #                 self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
+    #                 self.assertIsInstance(content.get_field("Title")[0].value, dict)
+    #                 break
+    #
+    # def test_decode_field_data_embedding(self):
+    #     movies_ca_config = ItemAnalyzerConfig(
+    #         source=JSONFile(decode_embedding),
+    #         id=['imdbID'],
+    #         output_directory=decode_path + 'movies_embedding_'
+    #     )
+    #
+    #     movies_ca_config.add_multiple_config(
+    #         field_name='Title',
+    #         config_list=[FieldConfig()]
+    #     )
+    #     ContentAnalyzer(config=movies_ca_config).fit()
+    #
+    #     for name in os.listdir(decode_path):
+    #         if os.path.isdir(os.path.join(decode_path, name)) \
+    #                 and 'movies_embedding_' in str(name):
+    #             with lzma.open(os.path.join(decode_path, name, 'tt0113497.xz'), 'r') as file:
+    #                 content = pickle.load(file)
+    #
+    #                 self.assertIsInstance(content.get_field("Title")[0], EmbeddingField)
+    #                 self.assertIsInstance(content.get_field("Title")[0].value, np.ndarray)
+    #                 break
 
 
 class TestContentAnalyzer(TestCase):
