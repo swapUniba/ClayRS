@@ -19,7 +19,6 @@ class RatingProcessor(ABC):
     def fit(self, score_data: object):
         raise NotImplementedError
 
-    @abstractmethod
     def __repr__(self):
         return f'RatingProcessor(decimal rounding={self.__decimal_rounding})'
 
