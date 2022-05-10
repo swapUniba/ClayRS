@@ -171,8 +171,6 @@ class MRR(RankingMetric):
 
     def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
                              relevant_threshold: float):
-
-    def calc_reciprocal_rank(self, user_predictions: pd.DataFrame, user_truth: pd.DataFrame, relevant_threshold: float):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
         Args:
