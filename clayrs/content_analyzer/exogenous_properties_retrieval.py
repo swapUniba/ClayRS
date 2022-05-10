@@ -27,7 +27,6 @@ class ExogenousPropertiesRetrieval(ABC):
         """
         self.__mode = self.__check_mode(mode)
 
-    @abstractmethod
     def __repr__(self):
         return f'ExogenousPropertiesRetrieval(mode={self.__mode}'
 
