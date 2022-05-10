@@ -58,7 +58,6 @@ class NumberNormalizer(RatingProcessor):
     def __str__(self):
         return "NumberNormalizer"
 
-    @abstractmethod
     def __repr__(self):
         return f'NumberNormalizer(decimal rounding={self.decimal_rounding})'
 

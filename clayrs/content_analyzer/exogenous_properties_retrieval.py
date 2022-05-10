@@ -61,7 +61,6 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
         super().__init__(mode)
         self.__field_name_list: List[str] = field_name_list
 
-    @abstractmethod
     def __repr__(self):
         return f'PropertiesFromDataset(mode={self.__mode}, field name list={self.__field_name_list})'
 

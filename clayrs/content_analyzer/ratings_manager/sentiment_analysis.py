@@ -15,7 +15,6 @@ class TextBlobSentimentAnalysis(SentimentAnalysis):
     def __str__(self):
         return "TextBlobSentimentalAnalysis"
 
-    @abstractmethod
     def __repr__(self):
         return f'TextBlobSentimentAnalysis'
 
