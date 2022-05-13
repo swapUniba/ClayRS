@@ -18,8 +18,8 @@ sentence-transformers~=1.2.0
 colorama~=0.4.4
 tqdm~=4.62.2
 spacy~=3.2.1
- # fork of ekphrasis with corpus download that it's working, switch to the main one when bug is fixed
-git+https://github.com/fucaja/ekphrasis.git
+# fork of ekphrasis with corpus download that it's working, switch to the main one when bug is fixed
+git+https://github.com/fucaja/ekphrasis.git#egg=ekphrasis
 scipy~=1.7.3
 torch~=1.10.1
 transformers~=4.15.0
