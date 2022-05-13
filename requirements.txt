@@ -19,7 +19,7 @@ colorama~=0.4.4
 tqdm~=4.62.2
 spacy~=3.2.1
  # fork of ekphrasis with corpus download that it's working, switch to the main one when bug is fixed
--e git+https://github.com/fucaja/ekphrasis.git
+git+https://github.com/fucaja/ekphrasis.git
 scipy~=1.7.3
 torch~=1.10.1
 transformers~=4.15.0
