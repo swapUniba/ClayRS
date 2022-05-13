@@ -6,7 +6,7 @@ from clayrs.recsys.graphs import NXBipartiteGraph
 
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
-from clayrs.utils.const import get_progbar
+from clayrs.utils.const import get_progbar, logger
 
 
 class NXPageRank(PageRank):

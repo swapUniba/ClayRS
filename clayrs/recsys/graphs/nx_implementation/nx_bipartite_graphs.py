@@ -60,7 +60,7 @@ class NXBipartiteGraph(BipartiteDiGraph):
                                                   {**not_none_dict, **{'weight': interaction.score}})
                                                  for interaction in progbar)
 
-            self._graph.add_edges_from(edges_with_attributes_gen)
+                self._graph.add_edges_from(edges_with_attributes_gen)
 
     @property
     def user_nodes(self) -> Set[UserNode]:

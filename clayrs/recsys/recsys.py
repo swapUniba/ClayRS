@@ -493,4 +493,13 @@ class GraphBasedRS(RecSys):
 
         total_rank = Rank.from_list(total_rank_list)
 
+        if len(total_rank) == 0:
+            logger.warning("No items could be ranked for any users! Remember that items to rank must be present "
+                           "in the graph.\n"
+                           "Try changing methodology!")
+
+        elif len(set(total_rank.user_id_column)) != len(all_users):
+            logger.warning(f"No items could be ranked for users {all_users - set(total_rank.user_id_column)}\n"
+                           f"No nodes to rank for them found in the graph. Try changing methodology! ")
+
         return total_rank
