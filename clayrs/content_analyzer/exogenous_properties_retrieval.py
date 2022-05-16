@@ -52,6 +52,14 @@ class ExogenousPropertiesRetrieval(ABC):
     def get_properties(self, raw_source: RawInformationSource) -> List[ExogenousPropertiesRepresentation]:
         raise NotImplementedError
 
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
 
 class PropertiesFromDataset(ExogenousPropertiesRetrieval):
     def __init__(self, mode: str = 'only_retrieved_evaluated', field_name_list: List[str] = None):
@@ -76,6 +84,12 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
             prop_dict_list.append(PropertiesDict(prop_dict))
 
         return prop_dict_list
+
+    def __str__(self):
+        return "PropertiesFromDataset"
+
+    def __repr__(self):
+        return f'PropertiesFromDataset(mode={self.mode}, field_name_list={self.__field_name_list})'
 
 
 class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
@@ -548,6 +562,13 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return prop_dict_list
 
+    def __str__(self):
+        return "DBPediaMappingTechnique"
+
+    def __repr__(self):
+        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}, ' \
+               f'label_field={self.__label_field}, prop_as_uri={self.__prop_as_uri})'
+
 
 class EntityLinking(ExogenousPropertiesRetrieval):
     """
@@ -572,6 +593,7 @@ class BabelPyEntityLinking(EntityLinking):
         super().__init__("all_retrieved")
         self.__field_to_link = field_to_link
         self.__api_key = api_key
+        self.__lang = lang
         self.__babel_client = BabelfyClient(self.__api_key, {"lang": lang})
 
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
@@ -618,4 +640,5 @@ class BabelPyEntityLinking(EntityLinking):
         return "BabelPyEntityLinking"
 
     def __repr__(self):
-        return "< BabelPyEntityLinking: babel client = " + str(self.__babel_client) + " >"
+        return f'BabelPyEntityLinking(field_to_link={self.__field_to_link}, api_key={self.__api_key}, ' \
+               f'lang={self.__lang})'

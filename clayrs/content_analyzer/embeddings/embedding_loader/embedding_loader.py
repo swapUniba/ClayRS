@@ -31,7 +31,7 @@ class EmbeddingLoader(EmbeddingSource):
 
     @abstractmethod
     def __repr__(self):
-        return f'EmbeddingLoader'
+        raise NotImplementedError
 
 
 class WordEmbeddingLoader(EmbeddingLoader):
@@ -57,7 +57,7 @@ class WordEmbeddingLoader(EmbeddingLoader):
 
     @abstractmethod
     def __repr__(self):
-        return f'WordEmbeddingLoader'
+        raise NotImplementedError
 
 
 class SentenceEmbeddingLoader(EmbeddingLoader):
@@ -96,7 +96,7 @@ class SentenceEmbeddingLoader(EmbeddingLoader):
 
     @abstractmethod
     def __repr__(self):
-        return f'SentenceEmbeddingLoader'
+        raise NotImplementedError
 
 
 class DocumentEmbeddingLoader(EmbeddingLoader):
@@ -130,4 +130,4 @@ class DocumentEmbeddingLoader(EmbeddingLoader):
 
     @abstractmethod
     def __repr__(self):
-        return f'DocumentEmbeddingLoader'
+        raise NotImplementedError

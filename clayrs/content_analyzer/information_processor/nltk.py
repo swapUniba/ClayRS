@@ -52,27 +52,6 @@ class NLTK(NLP):
         self.named_entity_recognition = named_entity_recognition
         self.__full_lang_code = lang
 
-    def __str__(self):
-        return "NLTK"
-
-    def __repr__(self):
-        return "< NLTK: " \
-               "stopwords_removal = " + \
-               str(self.stopwords_removal) + ";" + \
-               "stemming = " + \
-               str(self.stemming) + ";" + \
-               "lemmatization = " + \
-               str(self.lemmatization) + ";" + \
-               "named_entity_recognition = " + \
-               str(self.named_entity_recognition) + ";" + \
-               "strip_multiple_whitespaces = " + \
-               str(self.strip_multiple_whitespaces) + ";" + \
-               "url_tagging = " + \
-               str(self.url_tagging) + \
-               "punctuation_removal = " + \
-               str(self.remove_punctuation) + \
-               ">"
-
     def __download_corpus(self):
         try:
             nltk.data.find('corpora/stopwords')
@@ -265,3 +244,25 @@ class NLTK(NLP):
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data)
         return field_data
+
+    def __eq__(self, other):
+        if isinstance(other, NLTK):
+            return self.strip_multiple_whitespaces == other.strip_multiple_whitespaces and \
+                   self.remove_punctuation == other.remove_punctuation and \
+                   self.stopwords_removal == other.stopwords_removal and \
+                   self.url_tagging == other.url_tagging and \
+                   self.lemmatization == other.lemmatization and \
+                   self.stemming == other.stemming and \
+                   self.named_entity_recognition == other.named_entity_recognition and \
+                   self.__full_lang_code == other.__full_lang_code
+        return False
+
+    def __str__(self):
+        return "NLTK"
+
+    def __repr__(self):
+        return f'NLTK(strip_multiple_whitespace={self.strip_multiple_whitespaces}, ' \
+               f'remove_punctuation={self.remove_punctuation}, stopwords_removal={self.stopwords_removal}, ' \
+               f'url_tagging={self.url_tagging}, lemmatization={self.lemmatization}, stemming={self.stemming}, ' \
+               f'named_entity_recognition={self.named_entity_recognition}, ' \
+               f'lang={self.__full_lang_code})'

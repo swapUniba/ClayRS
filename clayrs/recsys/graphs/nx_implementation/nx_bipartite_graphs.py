@@ -60,7 +60,7 @@ class NXBipartiteGraph(BipartiteDiGraph):
                                                   {**not_none_dict, **{'weight': interaction.score}})
                                                  for interaction in progbar)
 
-            self._graph.add_edges_from(edges_with_attributes_gen)
+                self._graph.add_edges_from(edges_with_attributes_gen)
 
     @property
     def user_nodes(self) -> Set[UserNode]:
@@ -178,7 +178,7 @@ class NXBipartiteGraph(BipartiteDiGraph):
         try:
             return list(self._graph.predecessors(node))
         except nx.NetworkXError:
-            logger.warning("The node specified is not in the graph! Return None")
+            raise TypeError("The node specified is not in the graph!")
 
     def get_successors(self, node: Node) -> List[Node]:
         """
@@ -203,7 +203,7 @@ class NXBipartiteGraph(BipartiteDiGraph):
         try:
             return list(self._graph.successors(node))
         except nx.NetworkXError:
-            logger.warning("The node specified is not in the graph! Return None")
+            raise TypeError("The node specified is not in the graph!")
 
     def node_exists(self, node: Node) -> bool:
         """

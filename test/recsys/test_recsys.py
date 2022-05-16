@@ -275,3 +275,50 @@ class TestGraphBasedRS(TestCase):
         # This will raise error since page rank is not a prediction algorithm
         with self.assertRaises(NotPredictionAlg):
             gbrs.predict(self.test_ratings)
+
+    def test_rank_filterlist_empty_A000(self):
+        # no items to recommend is in the graph for user A000
+        test_ratings = pd.DataFrame.from_records([
+            ("A000", "not_in_graph", None),
+            ("A000", "not_in_graph1", None),
+            ("A001", "tt0114576", None),
+            ("A001", "tt0113497", None),
+            ("A002", "tt0114576", None),
+            ("A002", "tt0113041", None),
+            ("A003", "tt0114576", None)],
+            columns=["from_id", "to_id", "score"])
+        test_ratings = Ratings.from_dataframe(test_ratings)
+
+        # Test rank with the graph based algorithm
+        alg = NXPageRank()
+        gbrs = GraphBasedRS(alg, self.graph)
+
+        # Test ranking with the graph based algorithm with items not present in the graph for A000
+        result_rank = gbrs.rank(test_ratings)
+        self.assertTrue(len(result_rank) != 0)
+
+        # no rank is present for A000
+        with self.assertRaises(KeyError):
+            result_rank.get_user_interactions('A000')
+
+    def test_rank_filterlist_empty_all(self):
+        # different test ratings from the cbrs since a graph based algorithm
+        # can give predictions only to items that are in the graph
+        test_ratings = pd.DataFrame.from_records([
+            ("A000", "not_in_graph", None),
+            ("A000", "not_in_graph1", None),
+            ("A001", "not_in_graph2", None),
+            ("A001", "not_in_graph3", None),
+            ("A002", "not_in_graph4", None),
+            ("A002", "not_in_graph5", None),
+            ("A003", "not_in_graph6", None)],
+            columns=["from_id", "to_id", "score"])
+        test_ratings = Ratings.from_dataframe(test_ratings)
+
+        # Test rank with the graph based algorithm
+        alg = NXPageRank()
+        gbrs = GraphBasedRS(alg, self.graph)
+
+        # Test ranking with the graph based algorithm on items not in the graph, we expect it to be empty
+        result_rank_empty = gbrs.rank(test_ratings)
+        self.assertTrue(len(result_rank_empty) == 0)

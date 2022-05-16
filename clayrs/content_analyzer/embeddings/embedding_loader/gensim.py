@@ -38,4 +38,4 @@ class Gensim(WordEmbeddingLoader):
         return f"Gensim {self.reference}"
 
     def __repr__(self):
-        return "< Gensim: model = " + str(self.model) + ">"
+        return f'Gensim(model_name={self.reference}'

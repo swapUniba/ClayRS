@@ -30,10 +30,10 @@ class SumStrategy(VectorStrategy):
         return torch.stack(token_vecs_sum).numpy()
 
     def __str__(self):
-        return "SumStrategy_"+str(self.last_interesting_layers)
+        return "SumStrategy"
 
     def __repr__(self):
-        return "< Sum Strategy >"
+        return f"SumStrategy(last_interesting_layers={self.last_interesting_layers})"
 
 
 class CatStrategy(VectorStrategy):
@@ -51,7 +51,7 @@ class CatStrategy(VectorStrategy):
         return torch.stack(token_vecs_cat).numpy()
 
     def __str__(self):
-        return "CatStrategy_"+str(self.last_interesting_layers)
+        return "CatStrategy"
 
     def __repr__(self):
-        return "< Cat Strategy >"
+        return f"CatStrategy(last_interesting_layers={self.last_interesting_layers})"

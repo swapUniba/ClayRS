@@ -22,6 +22,9 @@ class Regressor(ABC):
     def model(self):
         return self.__model
 
+    def __repr__(self):
+        return f'Regressor(model={self.__model})'
+
     def fit(self, X: list, Y: list = None):
         """
         Fit the regressor.
@@ -74,6 +77,9 @@ class SkLinearRegression(Regressor):
     def __str__(self):
         return "SkLinearRegression"
 
+    def __repr__(self):
+        return f'SkLinearRegression(model={self.__model})'
+
 
 class SkRidge(Regressor):
     """
@@ -94,6 +100,9 @@ class SkRidge(Regressor):
 
     def __str__(self):
         return "SkRidge"
+
+    def __repr__(self):
+        return f'SkRidge(model={self.__model})'
 
 
 class SkBayesianRidge(Regressor):
@@ -130,6 +139,9 @@ class SkSGDRegressor(Regressor):
     def __str__(self):
         return "SkSGDRegressor"
 
+    def __repr__(self):
+        return f'SkSGDRegressor(model={self.__model})'
+
 
 class SkARDRegression(Regressor):
     """
@@ -151,6 +163,9 @@ class SkARDRegression(Regressor):
     def __str__(self):
         return "SkARDRegression"
 
+    def __repr__(self):
+        return f'SkARDRegression(model={self.__model})'
+
 
 class SkHuberRegressor(Regressor):
     """
@@ -166,6 +181,9 @@ class SkHuberRegressor(Regressor):
     def __str__(self):
         return "SkHuberRegressor"
 
+    def __repr__(self):
+        return f'SkHuberRegressor(model={self.__model})'
+
 
 class SkPassiveAggressiveRegressor(Regressor):
     """
@@ -180,3 +198,6 @@ class SkPassiveAggressiveRegressor(Regressor):
 
     def __str__(self):
         return "SkPassiveAggressiveRegressor"
+
+    def __repr__(self):
+        return f'SkPassiveAggressiveRegressor(model={self.__model})'

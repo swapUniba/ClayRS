@@ -1,8 +1,10 @@
+import itertools
 from collections import Counter
 from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 import os
@@ -263,10 +265,10 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
             profile_data = profile_pop_ratios
             data_to_plot.append(profile_data)
-            labels.append('{}_profile'.format(group_name))
             recs_data = recs_pop_ratios
             data_to_plot.append(recs_data)
-            labels.append('{}_recs'.format(group_name))
+
+            labels.append('{}\ngroup'.format(group_name))
 
         # agg backend is used to create plot as a .png file
         mpl.use('agg')
@@ -285,7 +287,7 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
         first_color = '#7570b3'
         second_color = '#b2df8a'
-        fill_color_pop = '#004e98'
+        fill_color_profile = '#004e98'
         fill_color_recs = '#ff6700'
 
         # change outline color, fill color and linewidth of the boxes
@@ -294,7 +296,7 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
             box.set(color=first_color, linewidth=2)
             # change fill color
             if i % 2 == 0:
-                box.set(facecolor=fill_color_pop)
+                box.set(facecolor=fill_color_profile)
             else:
                 box.set(facecolor=fill_color_recs)
 
@@ -314,12 +316,37 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         for flier in bp['fliers']:
             flier.set(marker='o', color='#e7298a', alpha=0.5)
 
-        # Custom x-axis labels
+        # x ticks minor contains the vertical lines for better separate the various groups
+        # a vertical line is 0.5 at the left of the first profile boxplot and another vertical line is at 0.5 of the
+        # second boxplot for each group
+        xticks_minor_tuples = [(i - 0.5, i + 1 + 0.5) for i in range(1, len(bp['boxes']) + 1, 2)]
+        xticks_minor = list(itertools.chain.from_iterable(xticks_minor_tuples))
+
+        # x ticks contains the "middle point" between the profile boxplot and recs boxplot
+        # for each group
+        x_ticks = [(i + (i+1)) / 2 for i in range(1, len(bp['boxes']) + 1, 2)]
+
+        ax.set_xticks(x_ticks)
+        ax.set_xticks(xticks_minor, minor=True)
+
         ax.set_xticklabels(labels)
+
+        # make x_ticks_minor bigger, they are basically the vertical lines
+        ax.tick_params(axis='x', which='minor', direction='out', length=25)
+        # remove the tick and show only the label for the main ticks
+        ax.tick_params(axis='x', which='major', length=0)
 
         # Remove top axes and right axes ticks
         ax.get_xaxis().tick_bottom()
         ax.get_yaxis().tick_left()
+
+        # create the legend
+        profile_patch = mpatches.Patch(color=fill_color_profile, label='Profile popularity')
+        recs_patch = mpatches.Patch(color=fill_color_recs, label='Recs popularity')
+
+        ax.legend(handles=[profile_patch, recs_patch], loc='upper center', bbox_to_anchor=(0.5, -0.15))
+
+        plt.tight_layout()
 
         file_name = self.file_name
         self.save_figure(fig, file_name=file_name)

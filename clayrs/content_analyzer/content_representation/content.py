@@ -52,7 +52,7 @@ class FeaturesBagField(FieldRepresentation):
         self.__pos_feature_tuples = pos_feature_tuples
 
     @property
-    def value(self) -> sparse.csr_matrix:
+    def value(self) -> sparse.csc_matrix:
         """
         Get the features dict
 

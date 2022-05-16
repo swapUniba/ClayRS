@@ -26,6 +26,9 @@ class PageRank(GraphBasedAlgorithm):
         self._personalized = personalized
         super().__init__()
 
+    def __repr__(self):
+        return f'PageRankAlg(personalized={self.__personalized})'
+
     def predict(self, all_users: Set[str], graph: NXBipartiteGraph,
                 filter_dict: Dict[str, Set] = None) -> List[Interaction]:
         """

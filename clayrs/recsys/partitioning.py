@@ -172,7 +172,11 @@ class KFoldPartitioning(Partitioning):
         return user_train_list, user_test_list
 
     def __str__(self):
-        return "KFoldPartitioningTechnique"
+        return "KFoldPartitioning"
+
+    def __repr__(self):
+        return f"KFoldPartitioning(n_splits={self.__kf.n_splits}, shuffle={self.__kf.shuffle}, " \
+               f"random_state={self.__kf.random_state}, skip_user_error={self.skip_user_error})"
 
 
 class HoldOutPartitioning(Partitioning):
@@ -213,4 +217,8 @@ class HoldOutPartitioning(Partitioning):
         return user_train_list, user_test_list
 
     def __str__(self):
-        return "HoldOutPartitioningTechnique"
+        return "HoldOutPartitioning"
+
+    def __repr__(self):
+        return f"HoldOutPartitioning(train_set_size={self.__train_set_size}, shuffle={self.__shuffle}, " \
+               f"random_state={self.__random_state}, skip_user_error={self.skip_user_error})"

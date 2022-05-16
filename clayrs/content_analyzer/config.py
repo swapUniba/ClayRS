@@ -69,8 +69,7 @@ class FieldConfig:
                  content_technique: FieldContentProductionTechnique = OriginalData(),
                  preprocessing: Union[InformationProcessor, List[InformationProcessor]] = None,
                  memory_interface: InformationInterface = None,
-                 id: str = None,
-                 lang: str = "EN"):
+                 id: str = None):
 
         if preprocessing is None:
             preprocessing = []
@@ -82,20 +81,9 @@ class FieldConfig:
         self.__preprocessing = preprocessing
         self.__memory_interface = memory_interface
         self.__id = id
-        self.__lang = lang
-        self.__content_technique.lang = self.__lang
-
-
 
         if not isinstance(self.__preprocessing, list):
             self.__preprocessing = [self.__preprocessing]
-
-        for preprocessor in self.__preprocessing:
-            preprocessor.lang = self.__lang
-
-    def __repr__(self):
-        return f'FieldConfig(content technique={self.__content_technique}, preprocessing={self.__preprocessing}),' \
-               f'memory_interface={self.__memory_interface}, id={self.__id}, lang={self.__lang})'
 
     @property
     def memory_interface(self):
@@ -125,13 +113,6 @@ class FieldConfig:
         """
         return self.__id
 
-    @property
-    def lang(self):
-        """
-        Getter for the language of the field config
-        """
-        return self.__lang
-
     def _check_custom_id(self, id: str):
         if not re.match("^[A-Za-z0-9_-]+$", id):
             raise ValueError("The custom id {} is not valid!\n"
@@ -140,7 +121,9 @@ class FieldConfig:
     def __str__(self):
         return "FieldConfig"
 
-
+    def __repr__(self):
+        return f'FieldConfig(content_technique={self.__content_technique}, preprocessing={self.__preprocessing}, ' \
+               f'memory_interface={self.__memory_interface}, id={self.__id})'
 
 
 class ExogenousConfig:
@@ -203,8 +186,8 @@ class ExogenousConfig:
         return "ExogenousConfig"
 
     def __repr__(self):
-        return f'ExogenousConfig(exogenousbtechnique={self.__exogenous_technique},' \
-               f' id=s{self.__id}'
+        return f'ExogenousConfig(exogenous_technique={self.__exogenous_technique}, ' \
+               f'id={self.__id})'
 
 
 class ContentAnalyzerConfig(ABC):
@@ -235,12 +218,12 @@ class ContentAnalyzerConfig(ABC):
         if exogenous_representation_list is None:
             exogenous_representation_list = []
 
-        self.__source: RawInformationSource = source
-        self.__id: List[str] = id
-        self.__output_directory: str = output_directory
-        self.__field_dict: Dict[str, List[FieldConfig]] = field_dict
-        self.__exogenous_representation_list: List[ExogenousPropertiesRetrieval] = exogenous_representation_list
-        self.__export_json: bool = export_json
+        self.__source = source
+        self.__id = id
+        self.__output_directory = output_directory
+        self.__field_dict = field_dict
+        self.__exogenous_representation_list = exogenous_representation_list
+        self.__export_json = export_json
 
         if not isinstance(self.__exogenous_representation_list, list):
             self.__exogenous_representation_list = [self.__exogenous_representation_list]
@@ -280,7 +263,7 @@ class ContentAnalyzerConfig(ABC):
     def export_json(self) -> bool:
         return self.__export_json
 
-    def get_configs_list(self, field_name: str) -> Iterator[FieldConfig]:
+    def get_configs_list(self, field_name: str) -> List[FieldConfig]:
         """
         Getter the list of the field configs specified for the input field
 
@@ -288,10 +271,9 @@ class ContentAnalyzerConfig(ABC):
             field_name (str): name of the field for which the list of field configs will be retrieved
 
         Returns:
-            Iterator[FieldConfig]: iterator for the field configs specified for the input field
+            List[FieldConfig]: list containing the field configs specified for the input field
         """
-        for config in self.__field_dict[field_name]:
-            yield config
+        return [config for config in self.__field_dict[field_name]]
 
     def get_field_name_list(self) -> List[str]:
         """
@@ -362,10 +344,7 @@ class ContentAnalyzerConfig(ABC):
 
     @abc.abstractmethod
     def __repr__(self):
-        return f'ContentAnalyzerConfig(source={self.__source},' \
-               f' id=s{self.__id}, output directory={self.__output_directory},' \
-               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
-               f'export json={self.__export_json}'
+        raise NotImplementedError
 
 
 class UserAnalyzerConfig(ContentAnalyzerConfig):
@@ -378,10 +357,10 @@ class UserAnalyzerConfig(ContentAnalyzerConfig):
         return str(self.__id)
 
     def __repr__(self):
-        return f'UserAnalyzerConfig(source={self.__source},' \
-               f' id=s{self.__id}, output directory={self.__output_directory},' \
-               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
-               f'export json={self.__export_json}'
+        return f'UserAnalyzerConfig(source={self.__source}, ' \
+               f'id={self.__id}, output directory={self.__output_directory}, ' \
+               f'field_dict= {self.__field_dict}, exogenous representation={self.__exogenous_representation_list} ' \
+               f'export_json={self.__export_json})'
 
 
 class ItemAnalyzerConfig(ContentAnalyzerConfig):
@@ -394,7 +373,7 @@ class ItemAnalyzerConfig(ContentAnalyzerConfig):
         return str(self.__id)
 
     def __repr__(self):
-        return f'ItemAnalyzerConfig(source={self.__source},' \
-               f' id=s{self.__id}, output directory={self.__output_directory},' \
-               f'field dict= {self.__field_dict}, exogenus representation={self.__exogenous_representation_list}' \
-               f'export json={self.__export_json}'
+        return f'ItemAnalyzerConfig(source={self.__source}, ' \
+               f'id={self.__id}, output directory={self.__output_directory}, ' \
+               f'field_dict= {self.__field_dict}, exogenous representation={self.__exogenous_representation_list} ' \
+               f'export_json={self.__export_json})'

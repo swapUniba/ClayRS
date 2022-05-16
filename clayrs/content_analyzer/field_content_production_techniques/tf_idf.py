@@ -105,7 +105,11 @@ class SkLearnTfIdf(TfIdfTechnique):
         return "SkLearnTfIdf"
 
     def __repr__(self):
-        return "< SkLearnTfIdf >"
+        return f"SkLearnTfIdf(max_df={self._sk_vectorizer.max_df}, min_df={self._sk_vectorizer.min_df}, " \
+               f"max_features={self._sk_vectorizer.max_features}, vocabulary={self._sk_vectorizer.vocabulary}, " \
+               f"binary={self._sk_vectorizer.binary}, dtype={self._sk_vectorizer.dtype}, " \
+               f"norm={self._sk_vectorizer.norm}, use_idf={self._sk_vectorizer.use_idf}, " \
+               f"smooth_idf={self._sk_vectorizer.smooth_idf}, sublinear_tf={self._sk_vectorizer.sublinear_tf})"
 
 
 class WhooshTfIdf(TfIdfTechnique):
@@ -149,4 +153,4 @@ class WhooshTfIdf(TfIdfTechnique):
         return "WhooshTfIdf"
 
     def __repr__(self):
-        return "< WhooshTfIdf >"
+        return "WhooshTfIdf()"

@@ -6,7 +6,7 @@ from clayrs.recsys.graphs import NXBipartiteGraph
 
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
-from clayrs.utils.const import get_progbar
+from clayrs.utils.const import get_progbar, logger
 
 
 class NXPageRank(PageRank):
@@ -63,15 +63,15 @@ class NXPageRank(PageRank):
                                if graph.get_link_data(user_node, scored_node).get('weight') is not None}
 
                     pers = {node: profile[node] if node in profile else min(set(profile.values()))
-                            for node in graph._graph.nodes}
+                            for node in graph.to_networkx().nodes}
 
-                    scores = nx.pagerank(graph._graph, personalization=pers, alpha=self.alpha, max_iter=self.max_iter,
-                                         tol=self.tol, nstart=self.nstart, weight=self.weight)
+                    scores = nx.pagerank(graph.to_networkx(), personalization=pers, alpha=self.alpha,
+                                         max_iter=self.max_iter, tol=self.tol, nstart=self.nstart, weight=self.weight)
 
                 # if scores is None it means this is the first time we are running normal pagerank
                 # for all the other users the pagerank won't be computed again
                 elif scores is None:
-                    scores = nx.pagerank(graph._graph, alpha=self.alpha, max_iter=self.max_iter,
+                    scores = nx.pagerank(graph.to_networkx(), alpha=self.alpha, max_iter=self.max_iter,
                                          tol=self.tol, nstart=self.nstart, weight=self.weight)
 
                 # clean the results removing user nodes, selected user profile and eventually properties

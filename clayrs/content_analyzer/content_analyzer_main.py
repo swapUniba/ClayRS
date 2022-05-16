@@ -27,10 +27,10 @@ class ContentAnalyzer:
     """
 
     def __init__(self, config: ContentAnalyzerConfig):
-        self.__config: ContentAnalyzerConfig = config
+        self._config: ContentAnalyzerConfig = config
 
     def set_config(self, config: ContentAnalyzerConfig):
-        self.__config = config
+        self._config = config
 
     def fit(self):
         """
@@ -49,17 +49,17 @@ class ContentAnalyzer:
             raise e
 
         # creates the directory where the data will be serialized and overwrites it if it already exists
-        output_path = self.__config.output_directory
+        output_path = self._config.output_directory
         if os.path.exists(output_path):
             shutil.rmtree(output_path)
         os.makedirs(output_path)
 
         contents_producer = ContentsProducer.get_instance()
-        contents_producer.set_config(self.__config)
+        contents_producer.set_config(self._config)
         created_contents = contents_producer.create_contents()
 
-        if self.__config.export_json:
-            json_path = os.path.join(self.__config.output_directory, 'contents.json')
+        if self._config.export_json:
+            json_path = os.path.join(self._config.output_directory, 'contents.json')
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
@@ -77,7 +77,7 @@ class ContentAnalyzer:
         """
 
         file_name = re.sub(r'[^\w\s]', '', content.content_id)
-        path = os.path.join(self.__config.output_directory, file_name + '.xz')
+        path = os.path.join(self._config.output_directory, file_name + '.xz')
         with lzma.open(path, 'wb') as f:
             pickle.dump(content, f, protocol=4)
 
@@ -88,8 +88,8 @@ class ContentAnalyzer:
         If the config id is None, the representation name will be kept as None even if it is not unique.
         So any case where the id is None is not considered.
         """
-        for field_name in self.__config.get_field_name_list():
-            custom_id_list = [config.id for config in self.__config.get_configs_list(field_name)
+        for field_name in self._config.get_field_name_list():
+            custom_id_list = [config.id for config in self._config.get_configs_list(field_name)
                               if config.id is not None]
 
             if len(custom_id_list) != len(set(custom_id_list)):
@@ -102,7 +102,7 @@ class ContentAnalyzer:
         If the config id is None, the representation name will be kept as None even if it is not unique.
         So any case where the id is None is not considered
         """
-        custom_id_list = [config.id for config in self.__config.exogenous_representation_list if config.id is not None]
+        custom_id_list = [config.id for config in self._config.exogenous_representation_list if config.id is not None]
         if len(custom_id_list) != len(set(custom_id_list)):
             raise ValueError("Each id for each exogenous config in the exogenous list has to be unique")
 
@@ -110,9 +110,7 @@ class ContentAnalyzer:
         return "ContentAnalyzer"
 
     def __repr__(self):
-        msg = "< " + "ContentAnalyzer: " + "" \
-                                           "config = " + str(self.__config) + "; >"
-        return msg
+        return f'ContentAnalyzer(config={self._config})'
 
 
 class ContentsProducer:
@@ -249,6 +247,4 @@ class ContentsProducer:
         return "ContentsProducer"
 
     def __repr__(self):
-        msg = "< " + "ContentsProducer:" + "" \
-                                           "config = " + str(self.__config) + " >"
-        return msg
+        return f'ContentsProducer()'
