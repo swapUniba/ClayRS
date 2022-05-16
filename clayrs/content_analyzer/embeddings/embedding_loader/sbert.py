@@ -36,4 +36,4 @@ class Sbert(SentenceEmbeddingLoader):
         return "Sbert"
 
     def __repr__(self):
-        return "< Sbert: model = " + str(self.model) + ">"
+        return f"Sbert(model_name_or_file_path={self.reference})"

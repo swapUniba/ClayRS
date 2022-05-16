@@ -234,9 +234,12 @@ class IndexInterface(TextInterface):
         return words_bag
 
     @abc.abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def __repr__(self):
-        return f'IndexInterface(doc={self.__doc}, writer={self.__writer}, ' \
-               f'doc index={self.__doc_index}, schema changed={self.__schema_changed})'
+        raise NotImplementedError
 
 
 class KeywordIndex(IndexInterface):
@@ -257,7 +260,7 @@ class KeywordIndex(IndexInterface):
         return "KeywordIndex"
 
     def __repr__(self):
-        return f'KeyWordInterface(directory={self.directory})'
+        return f'KeywordIndex(directory={self.directory})'
 
 
 class SearchIndex(IndexInterface):

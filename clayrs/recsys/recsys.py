@@ -47,6 +47,10 @@ class RecSys(ABC):
     def predict(self, test_set: pd.DataFrame) -> Prediction:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def to_report_yaml(self):
+        raise NotImplementedError
+
 
 class ContentBasedRS(RecSys):
     """
@@ -393,6 +397,8 @@ class ContentBasedRS(RecSys):
 
         return rank
 
+    def to_report_yaml(self):
+        pass
 
 class GraphBasedRS(RecSys):
     """

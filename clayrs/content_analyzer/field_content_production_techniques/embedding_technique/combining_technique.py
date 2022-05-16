@@ -27,7 +27,7 @@ class CombiningTechnique(ABC):
 
     @abstractmethod
     def __repr__(self):
-        return f'CombiningTechnique'
+        raise NotImplementedError
 
 
 class Centroid(CombiningTechnique):
@@ -51,7 +51,7 @@ class Centroid(CombiningTechnique):
         return "Centroid"
 
     def __repr__(self):
-        return f'Centroid'
+        return f'Centroid()'
 
 
 class Sum(CombiningTechnique):
@@ -75,7 +75,7 @@ class Sum(CombiningTechnique):
         return "Sum"
 
     def __repr__(self):
-        return f'Sum'
+        return f'Sum()'
 
 
 
@@ -96,4 +96,4 @@ class SingleToken(CombiningTechnique):
         return "SingleToken"
 
     def __repr__(self):
-        return "< Single token >"
+        return f"SingleToken(token_index={self.token_index})"

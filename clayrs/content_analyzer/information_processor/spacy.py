@@ -30,6 +30,7 @@ class Spacy(NLP):
                  url_tagging: bool = False,
                  named_entity_recognition: bool = False,
                  ):
+        self.model = model
         self.stopwords_removal = stopwords_removal
         self.lemmatization = lemmatization
         self.strip_multiple_whitespaces = strip_multiple_whitespaces
@@ -54,23 +55,15 @@ class Spacy(NLP):
         suffix_regex = spacy.util.compile_suffix_regex(suffixes)
         self._nlp.tokenizer.suffix_search = suffix_regex.search
 
+        self.not_stopwords_list = not_stopwords
         if not_stopwords is not None:
             for stopword in not_stopwords:
                 self._nlp.vocab[stopword].is_stop = False
 
+        self.new_stopwords_list = new_stopwords
         if new_stopwords is not None:
             for stopword in new_stopwords:
                 self._nlp.vocab[stopword].is_stop = True
-
-    def __str__(self):
-        return "Spacy"
-
-    def __repr__(self):
-        return f'NLTK(model={str(self._nlp)}, strip multiple whitespace={self.strip_multiple_whitespaces}, ' \
-               f'stopwords removal={self.stopwords_removal},' \
-               f'lemmatization={self.lemmatization},' \
-               f' url tagging={self.url_tagging}, remove punctuation={self.remove_punctuation},' \
-               f' named entity recognition={self.named_entity_recognition})'
 
     def __tokenization_operation(self, text) -> List[Token]:
         """
@@ -215,3 +208,26 @@ class Spacy(NLP):
             return field_data
         else:
             return self.__token_to_string(field_data)
+
+    def __eq__(self, other):
+        if isinstance(other, Spacy):
+            return self.model == other.model and \
+                   self.strip_multiple_whitespaces == other.strip_multiple_whitespaces and \
+                   self.remove_punctuation == other.remove_punctuation and \
+                   self.stopwords_removal == other.stopwords_removal and \
+                   self.new_stopwords_list == other.new_stopwords_list and \
+                   self.not_stopwords_list == other.not_stopwords_list and \
+                   self.lemmatization == other.lemmatization and \
+                   self.url_tagging == other.url_tagging and \
+                   self.named_entity_recognition == other.named_entity_recognition
+        return False
+
+    def __str__(self):
+        return "Spacy"
+
+    def __repr__(self):
+        return f'Spacy(model={self.model}, strip_multiple_whitespace={self.strip_multiple_whitespaces}, ' \
+               f'remove_punctuation={self.remove_punctuation}, stopwords_removal={self.stopwords_removal}, ' \
+               f'new_stopwords={self.new_stopwords_list}, not_stopwords={self.not_stopwords_list}, ' \
+               f'lemmatization={self.lemmatization}, url_tagging={self.url_tagging}, ' \
+               f'named_entity_recognition={self.named_entity_recognition})'

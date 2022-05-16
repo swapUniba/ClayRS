@@ -52,47 +52,6 @@ class NLTK(NLP):
         self.named_entity_recognition = named_entity_recognition
         self.__full_lang_code = lang
 
-    def __str__(self):
-        return "NLTK"
-
-    def __repr__(self):
-        return f'NLTK(strip multiple whitespace={self.strip_multiple_whitespaces},' \
-               f' stopwords removal={self.stopwords_removal},' \
-               f'stemming={self.stemming}, lemmatization={self.lemmatization},' \
-               f' url tagging={self.url_tagging}, remove punctuation={self.remove_punctuation},' \
-               f' named entity recognition={self.named_entity_recognition}, ' \
-               f'lang={self.__full_lang_code})'
-
-    def __download_corpus(self):
-        try:
-            nltk.data.find('corpora/stopwords')
-        except LookupError:
-            nltk.download('stopwords')
-        try:
-            nltk.data.find('punkt')
-        except LookupError:
-            nltk.download('punkt')
-        try:
-            nltk.data.find('averaged_perceptron_tagger')
-        except LookupError:
-            nltk.download('averaged_perceptron_tagger')
-        try:
-            nltk.data.find('wordnet')
-        except LookupError:
-            nltk.download('wordnet')
-        try:
-            nltk.data.find('maxent_ne_chunker')
-        except LookupError:
-            nltk.download('maxent_ne_chunker')
-        try:
-            nltk.data.find('words')
-        except LookupError:
-            nltk.download('words')
-        try:
-            nltk.data.find('omw-1.4')
-        except LookupError:
-            nltk.download('omw-1.4')
-
     def __download_corpus(self):
         try:
             nltk.data.find('corpora/stopwords')
@@ -285,3 +244,25 @@ class NLTK(NLP):
         if self.named_entity_recognition:
             field_data = self.__named_entity_recognition_operation(field_data)
         return field_data
+
+    def __eq__(self, other):
+        if isinstance(other, NLTK):
+            return self.strip_multiple_whitespaces == other.strip_multiple_whitespaces and \
+                   self.remove_punctuation == other.remove_punctuation and \
+                   self.stopwords_removal == other.stopwords_removal and \
+                   self.url_tagging == other.url_tagging and \
+                   self.lemmatization == other.lemmatization and \
+                   self.stemming == other.stemming and \
+                   self.named_entity_recognition == other.named_entity_recognition and \
+                   self.__full_lang_code == other.__full_lang_code
+        return False
+
+    def __str__(self):
+        return "NLTK"
+
+    def __repr__(self):
+        return f'NLTK(strip_multiple_whitespace={self.strip_multiple_whitespaces}, ' \
+               f'remove_punctuation={self.remove_punctuation}, stopwords_removal={self.stopwords_removal}, ' \
+               f'url_tagging={self.url_tagging}, lemmatization={self.lemmatization}, stemming={self.stemming}, ' \
+               f'named_entity_recognition={self.named_entity_recognition}, ' \
+               f'lang={self.__full_lang_code})'

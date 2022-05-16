@@ -27,9 +27,6 @@ class ExogenousPropertiesRetrieval(ABC):
         """
         self.__mode = self.__check_mode(mode)
 
-    def __repr__(self):
-        return f'ExogenousPropertiesRetrieval(mode={self.__mode}'
-
     @staticmethod
     def __check_mode(mode):
         modalities = [
@@ -55,14 +52,19 @@ class ExogenousPropertiesRetrieval(ABC):
     def get_properties(self, raw_source: RawInformationSource) -> List[ExogenousPropertiesRepresentation]:
         raise NotImplementedError
 
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
 
 class PropertiesFromDataset(ExogenousPropertiesRetrieval):
     def __init__(self, mode: str = 'only_retrieved_evaluated', field_name_list: List[str] = None):
         super().__init__(mode)
         self.__field_name_list: List[str] = field_name_list
-
-    def __repr__(self):
-        return f'PropertiesFromDataset(mode={self.__mode}, field name list={self.__field_name_list})'
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
 
@@ -82,6 +84,12 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
             prop_dict_list.append(PropertiesDict(prop_dict))
 
         return prop_dict_list
+
+    def __str__(self):
+        return "PropertiesFromDataset"
+
+    def __repr__(self):
+        return f'PropertiesFromDataset(mode={self.mode}, field_name_list={self.__field_name_list})'
 
 
 class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
@@ -113,11 +121,6 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         self.__sparql.setReturnFormat(JSON)
 
         self.__class_properties = self.__get_properties_class()
-
-    def __repr__(self):
-        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}),' \
-               f'label_field={self.__label_field}, prop aa url={self.__prop_as_uri}, sparql={self.__sparql}, ' \
-               f'class properties={self.__class_properties}'
 
     @property
     def label_field(self):
@@ -559,6 +562,13 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return prop_dict_list
 
+    def __str__(self):
+        return "DBPediaMappingTechnique"
+
+    def __repr__(self):
+        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}, ' \
+               f'label_field={self.__label_field}, prop_as_uri={self.__prop_as_uri})'
+
 
 class EntityLinking(ExogenousPropertiesRetrieval):
     """
@@ -568,9 +578,6 @@ class EntityLinking(ExogenousPropertiesRetrieval):
     @abstractmethod
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
         raise NotImplementedError
-
-    def __repr__(self):
-        return f'EntityLinking'
 
 
 class BabelPyEntityLinking(EntityLinking):
@@ -586,6 +593,7 @@ class BabelPyEntityLinking(EntityLinking):
         super().__init__("all_retrieved")
         self.__field_to_link = field_to_link
         self.__api_key = api_key
+        self.__lang = lang
         self.__babel_client = BabelfyClient(self.__api_key, {"lang": lang})
 
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
@@ -632,7 +640,5 @@ class BabelPyEntityLinking(EntityLinking):
         return "BabelPyEntityLinking"
 
     def __repr__(self):
-        return f'BabelPyEntityLinking(field_to_link={self.__field_to_link}, api key={self.__api_key}' \
-               f'babel client={self.__babel_client}'
-
-
+        return f'BabelPyEntityLinking(field_to_link={self.__field_to_link}, api_key={self.__api_key}, ' \
+               f'lang={self.__lang})'

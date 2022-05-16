@@ -19,21 +19,6 @@ class FieldContentProductionTechnique(ABC):
     specific field
     """
 
-    def __init__(self):
-        self.__lang = "EN"
-
-    @abstractmethod
-    def __repr__(self):
-        return f'FieldContentProductionTechnique(lang={self.__lang}'
-
-    @property
-    def lang(self):
-        return self.__lang
-
-    @lang.setter
-    def lang(self, lang: str):
-        self.__lang = lang
-
     @staticmethod
     def process_data(data: str, preprocessor_list: List[InformationProcessor]) -> Union[List[str], str]:
         """
@@ -98,6 +83,10 @@ class FieldContentProductionTechnique(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
 
 class SingleContentTechnique(FieldContentProductionTechnique):
     """
@@ -105,9 +94,6 @@ class SingleContentTechnique(FieldContentProductionTechnique):
     to be processed. This type of technique only considers the raw data within the content's field to create
     the complex representation
     """
-
-    def __init__(self):
-        super().__init__()
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
@@ -142,10 +128,6 @@ class SingleContentTechnique(FieldContentProductionTechnique):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def __repr__(self):
-        return f'SingleContentTechnique(lang={self.lang}'
-
 
 class CollectionBasedTechnique(FieldContentProductionTechnique):
     """
@@ -153,9 +135,6 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
     to be processed. This type of technique performs a refactoring operation on the original dataset,
     so that each content in the collection is modified accordingly to the technique's needs
     """
-
-    def __init__(self):
-        super().__init__()
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
@@ -223,10 +202,6 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def __repr__(self):
-        return f'CollectionBasedTechnique(lang={self.lang}'
-
 
 class OriginalData(FieldContentProductionTechnique):
     """
@@ -255,6 +230,9 @@ class OriginalData(FieldContentProductionTechnique):
             representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
 
         return representation_list
+
+    def __repr__(self):
+        return f'OriginalData(dtype={self.__dtype})'
 
 # DECODE POSSIBLE REPRESENTATION: Not implemented for now
 #
@@ -337,9 +315,6 @@ class OriginalData(FieldContentProductionTechnique):
 #
 #         return decoded
 
-    def __repr__(self):
-        return f'DefaultTechnique(lang={self.lang}'
-
 
 class TfIdfTechnique(CollectionBasedTechnique):
     """
@@ -347,7 +322,6 @@ class TfIdfTechnique(CollectionBasedTechnique):
     """
 
     def __init__(self):
-        super().__init__()
         self._tfidf_matrix: Optional[csr_matrix] = None
         self._feature_names: Optional[List[str]] = None
 
@@ -372,16 +346,12 @@ class TfIdfTechnique(CollectionBasedTechnique):
         del self._tfidf_matrix
         del self._feature_names
 
-    def __repr__(self):
-        return f'TfIdfTechnique(lang={self.lang}'
-
 
 class SynsetDocumentFrequency(CollectionBasedTechnique):
     """
     Abstract class that generalizes implementations that use synsets
     """
     def __init__(self):
-        super().__init__()
         self._synset_matrix: Optional[csr_matrix] = None
         self._synset_names: Optional[List[str]] = None
 
@@ -407,4 +377,4 @@ class SynsetDocumentFrequency(CollectionBasedTechnique):
         del self._synset_names
 
     def __repr__(self):
-        return f'SynsetDocumentFrequency(lang={self.lang}'
+        return f'SynsetDocumentFrequency()'

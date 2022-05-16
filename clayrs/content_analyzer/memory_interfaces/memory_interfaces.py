@@ -87,10 +87,6 @@ class InformationInterface(ABC):
         if isinstance(other, InformationInterface):
             return self.directory == other.directory
 
-    @abstractmethod
-    def __repr__(self):
-        return f'InformationInterface(directory={self.directory})'
-
 
 class ImageInterface(InformationInterface):
     """
@@ -122,10 +118,6 @@ class ImageInterface(InformationInterface):
     def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
 
-    @abstractmethod
-    def __repr__(self):
-        return f'ImmageInterface(directory={self.directory})'
-
 
 class AudioInterface(InformationInterface):
     """
@@ -156,10 +148,6 @@ class AudioInterface(InformationInterface):
     @abstractmethod
     def get_field(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
-
-    @abstractmethod
-    def __repr(self):
-        return f'AudioInterface(directory={self.directory})'
 
 
 class TextInterface(InformationInterface):
@@ -199,7 +187,3 @@ class TextInterface(InformationInterface):
     @abstractmethod
     def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
         raise NotImplementedError
-
-    @abstractmethod
-    def __repr__(self):
-        return f'TextInterface(directory={self.directory})'

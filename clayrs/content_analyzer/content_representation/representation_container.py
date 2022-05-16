@@ -189,7 +189,3 @@ class RepresentationContainer:
         })
         dataframe.set_index(['internal_id', 'external_id'], inplace=True)
         return str(dataframe)
-
-    def __repr__(self):
-        return f'RepresentationContainer(representation_list={self.__representation_container}, ' \
-               f'external id={self.get_external_index()})'

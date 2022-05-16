@@ -56,4 +56,4 @@ class PyWSDSynsetDocumentFrequency(SynsetDocumentFrequency):
         return "PyWSDSynsetDocumentFrequency"
 
     def __repr__(self):
-        return "< PyWSDSynsetDocumentFrequency >"
+        return "PyWSDSynsetDocumentFrequency()"
