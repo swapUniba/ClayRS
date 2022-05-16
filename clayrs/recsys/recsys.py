@@ -400,6 +400,7 @@ class ContentBasedRS(RecSys):
     def to_report_yaml(self):
         pass
 
+
 class GraphBasedRS(RecSys):
     """
     Class for recommender systems which use a graph in order to make predictions
@@ -509,3 +510,6 @@ class GraphBasedRS(RecSys):
                            f"No nodes to rank for them found in the graph. Try changing methodology! ")
 
         return total_rank
+
+    def to_report_yaml(self):
+        pass
