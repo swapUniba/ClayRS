@@ -11,7 +11,7 @@ from clayrs.recsys.graphs import NXFullGraph
 from test import dir_test_files
 
 
-class TestFeatureSelection(TestCase):
+class TestFeatureSelectionAlgorithm(TestCase):
 
     def setUp(self) -> None:
         movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')

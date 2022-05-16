@@ -280,8 +280,8 @@ class TestNXBipartiteGraph(TestCase):
         self.assertEqual(expected, result)
 
         # Get predecessors of a non-existent node
-        result = self.g.get_predecessors(ItemNode('non_existent'))
-        self.assertIsNone(result)
+        with self.assertRaises(TypeError):
+            self.g.get_predecessors(ItemNode('non_existent'))
 
         # Get successors of a node
         self.g.add_link(UserNode('u0'), ItemNode('i0'), 0.5)
@@ -291,8 +291,8 @@ class TestNXBipartiteGraph(TestCase):
         self.assertEqual(expected, result)
 
         # Get successors of a non-existent node
-        result = self.g.get_successors(UserNode('non_existent'))
-        self.assertIsNone(result)
+        with self.assertRaises(TypeError):
+            self.g.get_successors(UserNode('non_existent'))
 
     def test_metrics(self):
         # We calculate some metrics, simple assert to make sure they are
