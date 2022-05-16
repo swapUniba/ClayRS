@@ -2,14 +2,14 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifiers import SkSVC
-from orange_cb_recsys.recsys.recsys import GraphBasedRS, ContentBasedRS
-from orange_cb_recsys.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NotFittedAlg
-from orange_cb_recsys.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
-from orange_cb_recsys.recsys.graphs import NXFullGraph
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys import LinearPredictor, SkLinearRegression, TrainingItemsMethodology
+from clayrs.recsys.content_based_algorithm.classifier.classifiers import SkSVC
+from clayrs.recsys.recsys import GraphBasedRS, ContentBasedRS
+from clayrs.recsys.content_based_algorithm.classifier.classifier_recommender import ClassifierRecommender
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NotFittedAlg
+from clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
+from clayrs.recsys.graphs import NXFullGraph
 
 from test import dir_test_files
 
@@ -102,9 +102,10 @@ class TestContentBasedRS(TestCase):
         result_rank_all = cbrs.rank(test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
-        # Test top-n ranking with the cbrs algorithm
-        result_rank_numbered = cbrs.rank(test_ratings, n_recs=2, methodology=None)
-        for user in set(test_ratings.user_id_column):
+        # Test top-n ranking with the cbrs algorithm for only some users
+        result_rank_numbered = cbrs.rank(test_ratings, n_recs=2, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_rank_numbered.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
             result_single = result_rank_numbered.get_user_interactions(user)
             self.assertTrue(len(result_single) == 2)
 
@@ -144,6 +145,13 @@ class TestContentBasedRS(TestCase):
         result_predict_all = cbrs.predict(test_ratings, methodology=None)
         self.assertTrue(len(result_predict_all) != 0)
 
+        # Test predict with the cbrs algorithm for only some users
+        result_predict_subset = cbrs.predict(test_ratings, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_predict_subset.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
+            result_single = result_predict_subset.get_user_interactions(user)
+            self.assertTrue(len(result_single) != 0)
+
         # Test predict with alternative methodology
         result_different_meth = cbrs.predict(test_ratings, methodology=TrainingItemsMethodology())
         for user in set(test_ratings.user_id_column):
@@ -161,7 +169,7 @@ class TestContentBasedRS(TestCase):
         cbrs = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
 
         cbrs.fit()
-        result_empty = cbrs.rank(test_ratings, user_id_list=['A000'])
+        result_empty = cbrs.predict(test_ratings, user_id_list=['A000'])
         self.assertTrue(len(result_empty) == 0)
 
     def test_predict_raise_error(self):
@@ -179,10 +187,13 @@ class TestContentBasedRS(TestCase):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
         cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        result = cbrs.fit_rank(test_ratings)
+        result = cbrs.fit_rank(test_ratings, save_fit=True)
 
-        # No further test since the fit_rank() method just calls the fit() method and rank() method
         self.assertTrue(len(result) != 0)
+
+        # with self.assertRaises(NotFittedAlg):
+        #     cbrs.rank(test_ratings)
+
 
     def test_fit_predict(self):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
@@ -221,6 +232,7 @@ class TestGraphBasedRS(TestCase):
             ("A003", "tt0112453", 1, "54654675"),
             ("A003", "tt0113497", 4, "54654675")],
             columns=["from_id", "to_id", "score", "timestamp"])
+        train_ratings = Ratings.from_dataframe(train_ratings)
 
         cls.graph = NXFullGraph(train_ratings)
 
@@ -237,10 +249,11 @@ class TestGraphBasedRS(TestCase):
         result_rank_all = gbrs.rank(self.test_ratings, methodology=None)
         self.assertTrue(len(result_rank_all) != 0)
 
-        # Test top-n ranking with the gbrs algorithm
-        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None)
-        for user in set(test_ratings.user_id_column):
-            result_single = [pred_rank for pred_rank in result_rank_numbered if pred_rank.user_id == user]
+        # Test top-n ranking with the gbrs algorithm only for some users
+        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None, user_id_list=["A000", "A003"])
+        self.assertEqual(set(result_rank_numbered.user_id_column), {"A000", "A003"})
+        for user in {"A000", "A003"}:
+            result_single = result_rank_numbered.get_user_interactions(user)
             self.assertTrue(len(result_single) == 2)
 
         # Test ranking with alternative methodology
@@ -262,3 +275,50 @@ class TestGraphBasedRS(TestCase):
         # This will raise error since page rank is not a prediction algorithm
         with self.assertRaises(NotPredictionAlg):
             gbrs.predict(self.test_ratings)
+
+    def test_rank_filterlist_empty_A000(self):
+        # no items to recommend is in the graph for user A000
+        test_ratings = pd.DataFrame.from_records([
+            ("A000", "not_in_graph", None),
+            ("A000", "not_in_graph1", None),
+            ("A001", "tt0114576", None),
+            ("A001", "tt0113497", None),
+            ("A002", "tt0114576", None),
+            ("A002", "tt0113041", None),
+            ("A003", "tt0114576", None)],
+            columns=["from_id", "to_id", "score"])
+        test_ratings = Ratings.from_dataframe(test_ratings)
+
+        # Test rank with the graph based algorithm
+        alg = NXPageRank()
+        gbrs = GraphBasedRS(alg, self.graph)
+
+        # Test ranking with the graph based algorithm with items not present in the graph for A000
+        result_rank = gbrs.rank(test_ratings)
+        self.assertTrue(len(result_rank) != 0)
+
+        # no rank is present for A000
+        with self.assertRaises(KeyError):
+            result_rank.get_user_interactions('A000')
+
+    def test_rank_filterlist_empty_all(self):
+        # different test ratings from the cbrs since a graph based algorithm
+        # can give predictions only to items that are in the graph
+        test_ratings = pd.DataFrame.from_records([
+            ("A000", "not_in_graph", None),
+            ("A000", "not_in_graph1", None),
+            ("A001", "not_in_graph2", None),
+            ("A001", "not_in_graph3", None),
+            ("A002", "not_in_graph4", None),
+            ("A002", "not_in_graph5", None),
+            ("A003", "not_in_graph6", None)],
+            columns=["from_id", "to_id", "score"])
+        test_ratings = Ratings.from_dataframe(test_ratings)
+
+        # Test rank with the graph based algorithm
+        alg = NXPageRank()
+        gbrs = GraphBasedRS(alg, self.graph)
+
+        # Test ranking with the graph based algorithm on items not in the graph, we expect it to be empty
+        result_rank_empty = gbrs.rank(test_ratings)
+        self.assertTrue(len(result_rank_empty) == 0)

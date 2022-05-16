@@ -1,12 +1,12 @@
 import unittest
 from unittest import TestCase
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
-from orange_cb_recsys.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
+from clayrs.recsys.content_based_algorithm.regressor.linear_predictor import LinearPredictor
 
-from orange_cb_recsys.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
+from clayrs.recsys.content_based_algorithm.regressor.regressors import SkLinearRegression, \
     SkSGDRegressor, SkARDRegression, SkHuberRegressor, SkPassiveAggressiveRegressor, SkBayesianRidge, SkRidge, \
     Regressor
 import os

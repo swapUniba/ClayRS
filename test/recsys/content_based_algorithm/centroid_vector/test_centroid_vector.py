@@ -4,12 +4,12 @@ from unittest import TestCase
 
 import pandas as pd
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
-from orange_cb_recsys.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
-from orange_cb_recsys.recsys.content_based_algorithm.exceptions import OnlyNegativeItems, NoRatedItems, \
+from clayrs.content_analyzer import Ratings
+from clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector import CentroidVector
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+from clayrs.recsys.content_based_algorithm.exceptions import OnlyNegativeItems, NoRatedItems, \
     NotPredictionAlg, EmptyUserRatings
-from orange_cb_recsys.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
+from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import CosineSimilarity
 from test import dir_test_files
 
 

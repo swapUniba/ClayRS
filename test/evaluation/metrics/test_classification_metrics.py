@@ -3,11 +3,10 @@ from unittest import TestCase
 import pandas as pd
 import numpy as np
 
-from orange_cb_recsys.content_analyzer import Ratings
-from orange_cb_recsys.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
-    RPrecision, \
-    RecallAtK, FMeasureAtK
-from orange_cb_recsys.recsys.partitioning import Split
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
+    RPrecision, RecallAtK, FMeasureAtK
+from clayrs.recsys.partitioning import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],
@@ -42,6 +41,42 @@ split_only_new = Split(pred_only_new_items, truth)
 split_w_new_items = Split(pred_w_new_items, truth)
 split_only_one = Split(pred_only_one_item, truth)
 split_missing = Split(pred_i1_i4_missing, truth)
+
+
+class TestClassificationMetric(TestCase):
+
+    def test_perform_no_relevant_u1(self):
+        # any classification metric will work, you just need to change the ratio in the test
+        metric_no_relevant_u1 = Precision(relevant_threshold=4)
+
+        result = metric_no_relevant_u1.perform(split_w_new_items)
+
+        result_u1 = result.query('user_id == "u1"')[str(metric_no_relevant_u1)].values[0]
+        self.assertTrue(np.isnan(result_u1))
+
+        expected_u2 = 2 / 8
+        result_u2 = float(result.query('user_id == "u2"')[str(metric_no_relevant_u1)])
+        self.assertAlmostEqual(expected_u2, result_u2)
+
+        expected_sys = expected_u2
+        result_sys = float(result.query('user_id == "sys"')[str(metric_no_relevant_u1)])
+        self.assertAlmostEqual(expected_sys, result_sys)
+
+        # u1 has no relevant items, u2 = [0, 0, 1, 0]
+
+    def test_no_relevant_items(self):
+        truth_no_rel = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],
+                                     'item_id': ['i1', 'i2', 'i3', 'i4', 'i6', 'i1', 'i8', 'i4'],
+                                     'score': [3, 2, 3, 1, 2, 2, 3, 3]})
+        truth_no_rel = Ratings.from_dataframe(truth_no_rel)
+
+        split_no_rel = Split(pred_w_new_items, truth_no_rel)
+
+        # any ClassificationMetric will work
+        metric = Precision(relevant_threshold=4)
+
+        with self.assertRaises(ValueError):
+            metric.perform(split_no_rel)
 
 
 class TestPrecision(TestCase):
