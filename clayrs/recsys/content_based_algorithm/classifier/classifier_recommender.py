@@ -5,7 +5,7 @@ import pandas as pd
 from clayrs.content_analyzer import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
@@ -53,7 +53,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
                 as positive
        """
-    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict')
+    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict', '_repr_string')
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
@@ -62,10 +62,6 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._embedding_combiner = embedding_combiner
         self._labels: Optional[list] = None
         self._rated_dict: Optional[dict] = None
-
-    def __repr__(self):
-        return f'ClassifierRecommender(classifier={self.__classifier}, ' \
-               f'embedding_combiner={self.__embedding_combiner})'
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -227,3 +223,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __repr__(self):
+        return f'ClassifierRecommender(item_field={self.item_field}, ' \
+               f'classifier={self._classifier}, ' \
+               f'threshold={self.threshold}, ' \
+               f'embedding_combiner={self._embedding_combiner})'

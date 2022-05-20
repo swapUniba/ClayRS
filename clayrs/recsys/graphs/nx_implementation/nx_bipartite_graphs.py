@@ -255,3 +255,9 @@ class NXBipartiteGraph(BipartiteDiGraph):
             return nx.algorithms.isomorphism.is_isomorphic(self._graph, other._graph)
         else:
             return False
+
+    def __str__(self):
+        return "NXBipartiteGraph"
+
+    def __repr__(self):
+        return str(self)

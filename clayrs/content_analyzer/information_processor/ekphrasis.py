@@ -1,3 +1,4 @@
+import inspect
 import itertools
 
 from clayrs.content_analyzer.information_processor.information_processor import NLP
@@ -11,6 +12,9 @@ from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
 import warnings
+
+from clayrs.utils.automatic_methods import autorepr
+
 with warnings.catch_warnings():
     warnings.simplefilter(action='ignore', category=FutureWarning)
     social_tokenizer_ekphrasis = SocialTokenizer(lowercase=True).tokenize
@@ -121,6 +125,8 @@ class Ekphrasis(NLP):
             else:
                 self.ws = Segmenter()
 
+        self._repr_string = autorepr(self, inspect.currentframe())
+
     def __spell_check(self, field_data):
         """
         Correct any spelling errors
@@ -191,12 +197,13 @@ class Ekphrasis(NLP):
         return "Ekphrasis"
 
     def __repr__(self):
-        return f"Ekphrasis(omit={self.text_processor.omit}, normalize={self.text_processor.backoff}, " \
-               f"unpack_contractions={self.text_processor.unpack_contractions}, " \
-               f"unpack_hashtags={self.text_processor.unpack_hashtags}, " \
-               f"annotate={self.text_processor.include_tags}, " \
-               f"corrector={self.text_processor.corrector_corpus}, tokenizer={self.text_processor.tokenizer}, " \
-               f"segmenter={self.text_processor.segmenter_corpus}, all_caps_tag={self.text_processor.all_caps_tag}, " \
-               f"spell_correction={self.text_processor.spell_correction}, " \
-               f"segmentation={self.segmentation}, dicts={self.text_processor.dicts}, " \
-               f"spell_correct_elong={self.spell_correct_elong})"
+        # return f"Ekphrasis(omit={self.text_processor.omit}, normalize={self.text_processor.backoff}, " \
+        #        f"unpack_contractions={self.text_processor.unpack_contractions}, " \
+        #        f"unpack_hashtags={self.text_processor.unpack_hashtags}, " \
+        #        f"annotate={self.text_processor.include_tags}, " \
+        #        f"corrector={self.text_processor.corrector_corpus}, tokenizer={self.text_processor.tokenizer}, " \
+        #        f"segmenter={self.text_processor.segmenter_corpus}, all_caps_tag={self.text_processor.all_caps_tag}, " \
+        #        f"spell_correction={self.text_processor.spell_correction}, " \
+        #        f"segmentation={self.segmentation}, dicts={self.text_processor.dicts}, " \
+        #        f"spell_correct_elong={self.spell_correct_elong})"
+        return self._repr_string

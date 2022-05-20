@@ -177,7 +177,7 @@ class WordEmbeddingTechnique(StandardEmbeddingTechnique):
         return "WordEmbeddingTechnique"
 
     def __repr__(self):
-        return f'WordEmbeddingTechnique(embedding_source={self.__embedding_source})'
+        return f'WordEmbeddingTechnique(embedding_source={self.embedding_source})'
 
 
 class SentenceEmbeddingTechnique(StandardEmbeddingTechnique):
@@ -198,7 +198,7 @@ class SentenceEmbeddingTechnique(StandardEmbeddingTechnique):
         return "SentenceEmbeddingTechnique"
 
     def __repr__(self):
-        return f'SentenceEmbeddingTechnique(embedding_source={self.__embedding_source})'
+        return f'SentenceEmbeddingTechnique(embedding_source={self.embedding_source})'
 
 
 class DocumentEmbeddingTechnique(StandardEmbeddingTechnique):
@@ -219,7 +219,7 @@ class DocumentEmbeddingTechnique(StandardEmbeddingTechnique):
         return "DocumentEmbeddingTechnique"
 
     def __repr__(self):
-        return f'DocumentEmbeddingTechnique(embedding_source={self.__embedding_source})'
+        return f'DocumentEmbeddingTechnique(embedding_source={self.embedding_source})'
 
 
 class CombiningEmbeddingTechnique(EmbeddingTechnique):
@@ -313,7 +313,7 @@ class Word2SentenceEmbedding(CombiningSentenceEmbeddingTechnique):
 
     def __repr__(self):
         return f"Word2SentenceEmbedding(embedding_source={self.embedding_source}, " \
-               f"combining_technique={self.__combining_technique})"
+               f"combining_technique={self.combining_technique})"
 
 
 class CombiningDocumentEmbeddingTechnique(CombiningEmbeddingTechnique):
@@ -360,7 +360,7 @@ class Word2DocEmbedding(CombiningDocumentEmbeddingTechnique):
 
     def __repr__(self):
         return f"Word2DocEmbedding(embedding_source={self.embedding_source}, " \
-               f"combining_technique={self.__combining_technique})"
+               f"combining_technique={self.combining_technique})"
 
 
 class Sentence2DocEmbedding(CombiningDocumentEmbeddingTechnique):
@@ -383,7 +383,7 @@ class Sentence2DocEmbedding(CombiningDocumentEmbeddingTechnique):
 
     def __repr__(self):
         return f"Sentence2DocEmbedding(embedding_source={self.embedding_source}, " \
-               f"combining_technique={self.__combining_technique})"
+               f"combining_technique={self.combining_technique})"
 
 
 class DecombiningEmbeddingTechnique(EmbeddingTechnique):

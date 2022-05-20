@@ -61,13 +61,6 @@ class CentroidVector(ContentBasedAlgorithm):
         self._centroid: Optional[np.ndarray] = None
         self._positive_rated_dict: Optional[Dict] = None
 
-    def __repr__(self):
-        return f'CentroidVector(similarity={self.__similarity},' \
-               f'embedding_combiner={self.__embedding_combiner},' \
-               f'centroid={self.__centroid},' \
-               f'positive_rated_dic={self.__positive_rated_dict})'
-
-
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from positive rated items ONLY!
@@ -204,3 +197,12 @@ class CentroidVector(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __str__(self):
+        return "CentroidVector"
+
+    def __repr__(self):
+        return f'CentroidVector(item_field={self.item_field}, ' \
+               f'similarity={self._similarity}, ' \
+               f'threshold={self.threshold}, ' \
+               f'embedding_combiner={self._emb_combiner})'

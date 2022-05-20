@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from clayrs.recsys import Split
+from clayrs.recsys.partitioning import Split
 
 
 class Metric(ABC):

@@ -98,6 +98,9 @@ class TestRatingsMethodology(Methodology):
     def __str__(self):
         return "TestRatingsMethodology"
 
+    def __repr__(self):
+        return f"TestRatingsMethodology(only_greater_eq={self._threshold})"
+
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that need to be part of the recommendation list of a single user.
@@ -143,6 +146,9 @@ class TestItemsMethodology(Methodology):
 
     def __str__(self):
         return "TestItemsMethodology"
+
+    def __repr__(self):
+        return f"TestItemsMethodology(only_greater_eq={self._threshold})"
 
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
@@ -193,6 +199,9 @@ class TrainingItemsMethodology(Methodology):
     def __str__(self):
         return "TrainingItemsMethodology"
 
+    def __repr__(self):
+        return f"TrainingItemsMethodology(only_greater_eq={self._threshold})"
+
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that needs to be part of the recommendation list of a single user.
@@ -239,6 +248,9 @@ class AllItemsMethodology(Methodology):
 
     def __str__(self):
         return "AllItemsMethodology"
+
+    def __repr__(self):
+        return f"AllItemsMethodology(items_list={self._items_list})"
 
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
