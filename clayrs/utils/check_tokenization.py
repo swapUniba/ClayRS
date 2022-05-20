@@ -1,10 +1,8 @@
 from typing import Union, List
-from nltk import RegexpTokenizer, data, download, sent_tokenize
+from nltk import RegexpTokenizer, data, download, sent_tokenize, word_tokenize
 
-try:
-    data.find('punkt')
-except LookupError:
-    download('punkt')
+# nltk corpus
+corpus_downloaded = False
 
 
 def check_tokenized(text):
@@ -12,8 +10,17 @@ def check_tokenized(text):
     Tokenizes a text
     """
     if type(text) is str:
-        tokenizer = RegexpTokenizer('[\\w<>$€]+')
-        text = tokenizer.tokenize(text)
+        global corpus_downloaded
+
+        if not corpus_downloaded:
+            try:
+                data.find('punkt')
+            except LookupError:
+                download('punkt')
+
+            corpus_downloaded = True
+
+        text = word_tokenize(text)
 
     return text
 
@@ -32,5 +39,14 @@ def tokenize_in_sentences(text: Union[List[str], str]):
     """
     Tokenizes a text into sentences
     """
+    global corpus_downloaded
+
+    if not corpus_downloaded:
+        try:
+            data.find('punkt')
+        except LookupError:
+            download('punkt')
+
+        corpus_downloaded = True
 
     return sent_tokenize(check_not_tokenized(text))
