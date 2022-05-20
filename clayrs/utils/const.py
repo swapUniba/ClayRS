@@ -1,6 +1,5 @@
 import contextlib
 import os
-from collections.abc import Iterable
 
 from tqdm.contrib.logging import logging_redirect_tqdm
 
@@ -19,5 +18,5 @@ logger = getCustomLogger('custom_logger')
 def get_progbar(iterator) -> tqdm:
     bar_format = "{desc} {percentage:.0f}%|{bar}| {n:}/{total_fmt} [{elapsed}<{remaining}]"
     with logging_redirect_tqdm(loggers=[logger]):
-      with tqdm(iterator, bar_format=bar_format) as pbar:
-        yield pbar
+        with tqdm(iterator, bar_format=bar_format) as pbar:
+            yield pbar
