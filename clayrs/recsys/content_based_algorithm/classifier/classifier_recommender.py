@@ -53,7 +53,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
                 as positive
        """
-    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict', '_repr_string')
+    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict')
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
