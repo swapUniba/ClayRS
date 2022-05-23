@@ -66,10 +66,6 @@ class EmbeddingLearner(EmbeddingSource):
         self.__auto_save = auto_save
         self.__additional_parameters = kwargs
 
-    def __repr__(self):
-        return f'EmbeddingLearner(auto save={self.__auto_save},' \
-               f'additional parameters={self.__additional_parameters}'
-
     @property
     def additional_parameters(self):
         return self.__additional_parameters

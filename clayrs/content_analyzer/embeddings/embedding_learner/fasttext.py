@@ -6,7 +6,7 @@ from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner impo
 
 
 class GensimFastText(GensimWordEmbeddingLearner):
-    """
+    """"
     Class that implements the Abstract Class GensimWordEmdeddingLearner
     Implementation of FastText using the Gensim library.
     """
@@ -21,4 +21,4 @@ class GensimFastText(GensimWordEmbeddingLearner):
         return "FastText"
 
     def __repr__(self):
-        return f'GemsinFastTex(attributes={str(self.model)})'
+        return "< FastText : model = " + str(self.model) + " >"

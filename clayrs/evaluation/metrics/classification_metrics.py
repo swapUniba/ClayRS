@@ -3,7 +3,7 @@ from typing import List, Set, Callable
 
 import numpy as np
 
-from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings, Interaction
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.partitioning import Split
 from clayrs.evaluation.metrics.metrics import Metric
 
@@ -142,6 +142,10 @@ class Precision(ClassificationMetric):
     def __str__(self):
         return "Precision - {}".format(self.sys_avg)
 
+    def __repr__(self):
+        return f"Precision(relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
+               f"precision={self.precision})"
+
     def _calc_metric(self, confusion_matrix: np.ndarray):
         tp = confusion_matrix[0, 0]
         fp = confusion_matrix[0, 1]
@@ -188,8 +192,9 @@ class PrecisionAtK(Precision):
         sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
-    def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
-        super().__init__(relevant_threshold, sys_average)
+    def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
+        super().__init__(relevant_threshold, sys_average, precision)
         if k < 1:
             raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
@@ -200,6 +205,10 @@ class PrecisionAtK(Precision):
 
     def __str__(self):
         return "Precision@{} - {}".format(self.k, self.sys_avg)
+
+    def __repr__(self):
+        return f"PrecisionAtK(k={self.k}, relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
+               f"precision={self.precision})"
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
         user_prediction_cut = user_prediction[:self.k]
@@ -246,6 +255,10 @@ class RPrecision(Precision):
     def __str__(self):
         return "R-Precision - {}".format(self.sys_avg)
 
+    def __repr__(self):
+        return f"RPrecision(relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
+               f"precision={self.precision})"
+
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
         r = len(user_truth_relevant_items)
         user_prediction_cut = user_prediction[:r]
@@ -290,6 +303,10 @@ class Recall(ClassificationMetric):
 
     def __str__(self):
         return "Recall - {}".format(self.sys_avg)
+
+    def __repr__(self):
+        return f"Recall(relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
+               f"precision={self.precision})"
 
     def _calc_metric(self, confusion_matrix: np.ndarray):
         tp = confusion_matrix[0, 0]
@@ -336,8 +353,9 @@ class RecallAtK(Recall):
         sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
-    def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro'):
-        super().__init__(relevant_threshold, sys_average)
+    def __init__(self, k: int, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
+        super().__init__(relevant_threshold, sys_average, precision)
         if k < 1:
             raise ValueError('k={} not valid! k must be >= 1!'.format(k))
         self.__k = k
@@ -348,6 +366,10 @@ class RecallAtK(Recall):
 
     def __str__(self):
         return "Recall@{} - {}".format(self.k, self.sys_avg)
+
+    def __repr__(self):
+        return f"RecallAtK(k={self.k}, relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
+               f"precision={self.precision})"
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
         user_prediction_cut = user_prediction[:self.k]
@@ -401,8 +423,9 @@ class FMeasure(ClassificationMetric):
         sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
 
-    def __init__(self, beta: float = 1, relevant_threshold: float = None, sys_average: str = 'macro'):
-        super().__init__(relevant_threshold, sys_average)
+    def __init__(self, beta: float = 1, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
+        super().__init__(relevant_threshold, sys_average, precision)
         self.__beta = beta
 
     @property
@@ -411,6 +434,10 @@ class FMeasure(ClassificationMetric):
 
     def __str__(self):
         return "F{} - {}".format(self.beta, self.sys_avg)
+
+    def __repr__(self):
+        return f"FMeasure(beta={self.beta}, relevant_threshold={self.relevant_threshold}, " \
+               f"sys_average={self.sys_avg}, precision={self.precision})"
 
     def _calc_metric(self, confusion_matrix: np.ndarray):
         prec = Precision()._calc_metric(confusion_matrix)
@@ -489,6 +516,10 @@ class FMeasureAtK(FMeasure):
 
     def __str__(self):
         return "F{}@{} - {}".format(self.beta, self.k, self.sys_avg)
+
+    def __repr__(self):
+        return f"FMeasureAtK(k={self.k}, beta={self.beta}, relevant_threshold={self.relevant_threshold}, " \
+               f"sys_average={self.sys_avg}, precision={self.precision})"
 
     def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
         user_prediction_cut = user_prediction[:self.k]

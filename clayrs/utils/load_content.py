@@ -1,4 +1,3 @@
-import functools
 import lzma
 import os
 import pickle

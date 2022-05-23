@@ -93,3 +93,10 @@ class NXPageRank(PageRank):
                 all_rank_interaction_list.extend(single_rank_interaction_list)
 
         return all_rank_interaction_list
+
+    def __str__(self):
+        return "NXPageRank"
+
+    def __repr__(self):
+        return f"NXPageRank(alpha={self.alpha}, personalized={self._personalized}, max_iter={self.max_iter}, " \
+               f"tol={self.tol}, nstart={self.nstart}, weight={self.weight})"

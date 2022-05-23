@@ -67,8 +67,7 @@ class DATFile(RawInformationSource):
         # file name with extension
         file_name = os.path.basename(self.__file_path)
 
-        # file name without extension
-        return os.path.splitext(file_name)[0]
+        return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, encoding=self.encoding) as f:
@@ -111,8 +110,7 @@ class JSONFile(RawInformationSource):
         # file name with extension
         file_name = os.path.basename(self.__file_path)
 
-        # file name without extension
-        return os.path.splitext(file_name)[0]
+        return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, encoding=self.encoding) as j:
@@ -150,8 +148,7 @@ class CSVFile(RawInformationSource):
         # file name with extension
         file_name = os.path.basename(self.__file_path)
 
-        # file name without extension
-        return os.path.splitext(file_name)[0]
+        return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:

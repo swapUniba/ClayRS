@@ -34,12 +34,16 @@ class EvalModel:
                  truth_list: List[Ratings],
                  metric_list: List[Metric]):
 
-        if len(pred_list) != len(truth_list):
-            raise ValueError("List containing predictions and list containing ground truth must have the same length!")
+        if len(pred_list) == 0 and len(truth_list) == 0:
+            raise ValueError("List containing predictions and list containing ground truths are empty!")
+        elif len(pred_list) != len(truth_list):
+            raise ValueError("List containing predictions and list containing ground truths must have the same length!")
 
         self._pred_list = pred_list
         self._truth_list = truth_list
         self._metric_list = metric_list
+
+        self._yaml_report_result = None
 
     @property
     def pred_list(self):
@@ -97,10 +101,13 @@ class EvalModel:
             pred_list = [pred.filter_ratings(user_id_list_set) for pred in self._pred_list]
             truth_list = [truth.filter_ratings(user_id_list_set) for truth in self._truth_list]
 
-        result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
+        sys_result, users_result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
 
-        return result
+        # we save the sys result for report yaml
+        self._yaml_report_result = sys_result.to_dict(orient='index')
 
-    def __repr(self):
+        return sys_result, users_result
+
+    def __repr__(self):
         return f'EvalModel(pred_list={self._pred_list}, truth_list={self._truth_list},' \
                f' metric_list={self._metric_list}'

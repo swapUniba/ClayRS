@@ -37,6 +37,9 @@ class NDCG(RankingMetric):
     def __str__(self):
         return "NDCG"
 
+    def __repr__(self):
+        return "NDCG()"
+
     def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
         """
         Private method which calculates the NDCG for a single user using sklearn implementation
@@ -167,7 +170,7 @@ class MRR(RankingMetric):
         return "MRR"
 
     def __repr__(self):
-        return f'Mrr(relevant_threshold={self.__relevant_threshold})'
+        return f'MRR(relevant_threshold={self.__relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
                              relevant_threshold: float):
@@ -265,7 +268,7 @@ class MRRAtK(MRR):
         return "MRR@{}".format(self.k)
 
     def __repr__(self):
-        return f'Mrr(relevant_threshold={self.__relevant_threshold})'
+        return f'MRRAtK(relevant_threshold={self.__relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
                              relevant_threshold: float):
@@ -345,7 +348,7 @@ class Correlation(RankingMetric):
         return name
 
     def __repr__(self):
-        return f'Correlation(Method={self.__method})'
+        return f'Correlation(method={self.__method}, top_n={self.__top_n})'
 
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred

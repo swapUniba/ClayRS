@@ -114,6 +114,9 @@ class MSE(ErrorMetric):
     def __str__(self):
         return "MSE"
 
+    def __repr__(self):
+        return "MSE()"
+
     def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_squared_error(truth_scores, pred_scores)
 
@@ -161,7 +164,7 @@ class RMSE(ErrorMetric):
         return "RMSE"
 
     def __repr__(self):
-        return f"RMSE"
+        return f"RMSE()"
 
     def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_squared_error(truth_scores, pred_scores, squared=False)
@@ -210,7 +213,7 @@ class MAE(ErrorMetric):
         return "MAE"
 
     def __repr__(self):
-        return f"MAE"
+        return f"MAE()"
 
     def _calc_metric(self, truth_scores: list, pred_scores: list):
         return mean_absolute_error(truth_scores, pred_scores)

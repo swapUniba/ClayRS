@@ -50,10 +50,6 @@ class GroupFairnessMetric(FairnessMetric):
     def __init__(self, user_groups: Dict[str, float]):
         self.__user_groups = user_groups
 
-    def __repr__(self):
-        return f'GroupFairnessMetric(user_groups={self.__user_groups})'
-
-
     @property
     def user_groups(self):
         return self.__user_groups
@@ -178,7 +174,7 @@ class GiniIndex(FairnessMetric):
         return name
 
     def __repr__(self):
-        return f'GiniIndex(top_n{self.__top_n})'
+        return f'GiniIndex(top_n={self.__top_n})'
 
     def perform(self, split: Split):
         def gini(x: List):
@@ -333,7 +329,7 @@ class CatalogCoverage(PredictionCoverage):
         return name
 
     def __repr__(self):
-        return f'CatalogCoverage(top_n={self.__top_n}, k={self.__k})'
+        return f'CatalogCoverage(catalog={self.catalog}, top_n={self.__top_n}, k={self.__k})'
 
     def _get_covered(self, pred: Ratings):
         catalog = self.catalog
@@ -406,7 +402,7 @@ class DeltaGap(GroupFairnessMetric):
         return name
 
     def __repr__(self):
-        return f'DeltaGap(pop_percentage={self.__pop_percentage}, top_n={self.__top_n})'
+        return f'DeltaGap(user_groups={self.user_groups}, pop_percentage={self.__pop_percentage}, top_n={self.__top_n})'
 
     @staticmethod
     def calculate_gap(group: Set[str], avg_pop_by_users: Dict[str, object]) -> float:

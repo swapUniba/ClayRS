@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import re
 
 import pandas as pd
@@ -6,8 +6,7 @@ import pandas as pd
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
-from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, NoRatedItems, \
-    OnlyNegativeItems, EmptyUserRatings
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, EmptyUserRatings
 
 
 class IndexQuery(ContentBasedAlgorithm):
@@ -54,13 +53,10 @@ class IndexQuery(ContentBasedAlgorithm):
 
     def __init__(self, item_field: dict, classic_similarity: bool = True, threshold: float = None):
         super().__init__(item_field, threshold)
-        self._string_query: str = None
-        self._scores: list = None
-        self._positive_user_docs: dict = None
+        self._string_query: Optional[str] = None
+        self._scores: Optional[list] = None
+        self._positive_user_docs: Optional[dict] = None
         self._classic_similarity: bool = classic_similarity
-
-    def __repr__(self):
-        return f'IndexQuery(classic_similarity={self.__classic_similarity})'
 
     def __get_representations(self, index_representations: dict):
         """
@@ -247,3 +243,10 @@ class IndexQuery(ContentBasedAlgorithm):
                                  for item_id in score_docs]
 
         return rank_interaction_list
+
+    def __str__(self):
+        return "IndexQuery"
+
+    def __repr__(self):
+        return f'IndexQuery(item_field={self.item_field}, classic_similarity={self._classic_similarity}, ' \
+               f'threshold={self.threshold})'
