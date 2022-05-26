@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Report Content Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <header class="col-12">
+                <h1>
+                    {%if field_representations is defined %}
+                        Report Content Analyzer
+                    {% endif %}
+                    {%if metrics is defined %}
+                        Report Eval Model
+                    {% endif %}
+                    {%if interactions is defined %}
+                        Report Recommender System
+                    {% endif %}
+                </h1>
+            </header>
+        </div>
+
+         <div class="row">
+            <main class="col-9">
+                <section>
+                    <div class="row">
+                        <div class="col-2 dash"></div>
+
+                            <div class="col-10"><h4 class="section">
+                                {%if field_representations is defined %}
+                                    Source_file: {{ source_file }} <br></h4>
+                                    <b>Field Representations:</b><br>
+                                    <b>SkLearnTfIdf:</b><br>
+                                    {% for dict_item in field_representations['plot_0']['SkLearnTfIdf'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['plot_0']['SkLearnTfIdf'][dict_item] }}<br>
+                                    {% endfor %}
+                                    <br>
+                                    <b>Preprocessing:</b><br>
+                                    <b>NLTK:</b><br>
+                                    {% for dict_item in field_representations['plot_0']['preprocessing']['NLTK'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['plot_0']['preprocessing']['NLTK'][dict_item] }}<br>
+                                    {% endfor %}
+                                    <br>
+
+                                    <b>WordEmbeddingTechnique:</b><br>
+                                    {% for dict_item in field_representations['genres_0']['WordEmbeddingTechnique'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['genres_0']['WordEmbeddingTechnique'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+
+                                    <b>Preprocessing:</b><br>
+                                    <b>Spacy:</b><br>
+                                    {% for dict_item in field_representations['genres_0']['preprocessing']['Spacy'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['genres_0']['preprocessing']['Spacy'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+
+                                    <b>SentenceEmbeddingTechnique:</b><br>
+                                    {% for dict_item in field_representations['genres_1']['SentenceEmbeddingTechnique'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['genres_1']['SentenceEmbeddingTechnique'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+
+                                    <b>Preprocessing:</b><br>
+                                    <b>Spacy:</b><br>
+                                    {% for dict_item in field_representations['genres_1']['preprocessing']['Spacy'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['genres_1']['preprocessing']['Spacy'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                {% endif %}
+                            </div>
+
+                             <div>
+                                {%if recsys is defined %}
+                                <b>Interactions:</b><br>
+                                    {% for dict_item in interactions %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ interactions[dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+
+                                <b>Partitioning:</b><br>
+                                 {% if partitioning['HoldOutPartitioning'] is defined %}
+                                <b>HoldOutPartitioning:</b><br>
+                                    {% for dict_item in partitioning['HoldOutPartitioning'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ partitioning['HoldOutPartitioning'][dict_item]}}<br>
+                                    {% endfor %}
+                                 {% endif %}
+                                    <br>
+                                {% endif %}
+
+                                 <b>RecSys:</b><br>
+                                 {% if recsys['GraphBasedRS']['algorithm']['NXPageRank'] is defined %}
+                                 <b>GraphBasedRS:</b><br>
+                                 <b>Algorithm:</b><br>
+                                 <b>NXPageRank:</b><br>
+
+
+                                    {% for dict_item in recsys['GraphBasedRS']['algorithm']['NXPageRank'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ recsys['GraphBasedRS']['algorithm']['NXPageRank'][dict_item]}}<br>
+                                    {% endfor %}
+
+                                 {% endif %}
+
+
+                                 {% if recsys['GraphBasedRS']['graph'] is defined %}
+                                 &nbsp&nbsp&nbsp&nbsp graph:</b> {{recsys['GraphBasedRS']['graph']}}
+                                    <br>
+                                 {% endif %}
+
+
+                                 {% if recsys['GraphBasedRS']['mode'] is defined %}
+                                 &nbsp&nbsp&nbsp&nbsp mode:</b> {{recsys['GraphBasedRS']['mode']}}
+                                    <br>
+                                 {% endif %}
+
+                                 {% if recsys['GraphBasedRS']['n_recs'] is defined %}
+                                 &nbsp&nbsp&nbsp&nbsp n_recs:</b> {{recsys['GraphBasedRS']['n_recs']}}
+                                    <br>
+                                 {% endif %}
+
+                                 {% if recsys['GraphBasedRS']['methodology']['TestRatingsMethodology'] is defined %}
+                                    <b>Methodology:</b><br>
+                                    <b>TestRatingsMethodology:</b><br>
+                                    {% for dict_item in recsys['GraphBasedRS']['methodology']['TestRatingsMethodology'] %}
+                                     &nbsp&nbsp&nbsp&nbsp dict_item:</b> {{recsys['GraphBasedRS']['methodology']['TestRatingsMethodology'][dict_item]}}
+                                    <br>
+                                    {% endfor %}
+                                 {% endif %}
+
+
+                            </div>
+
+                    </div>
+                </section>
+            </main>
+
+             <section>
+
+
+
+
+
+             </section>
+
+
+
+        </div>
+    </div>
+</body>
+</html>

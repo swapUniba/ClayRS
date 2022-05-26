@@ -1,0 +1,55 @@
+source_file: items_info.json
+id_each_content:
+- movielens_id
+exogenous_representations: null
+field_representations:
+  plot_0:
+    SkLearnTfIdf:
+      max_df: 1.0
+      min_df: 1
+      max_features: null
+      vocabulary: null
+      binary: false
+      dtype: <class 'numpy.float64'>
+      norm: l2
+      use_idf: true
+      smooth_idf: true
+      sublinear_tf: false
+    preprocessing:
+      NLTK:
+        strip_multiple_whitespace: true
+        remove_punctuation: false
+        stopwords_removal: true
+        url_tagging: false
+        lemmatization: false
+        stemming: false
+        named_entity_recognition: false
+        lang: english
+  genres_0:
+    WordEmbeddingTechnique:
+      embedding_source: Gensim glove-twitter-25
+    preprocessing:
+      Spacy:
+        model: en_core_web_sm
+        strip_multiple_whitespace: true
+        remove_punctuation: false
+        stopwords_removal: true
+        new_stopwords: null
+        not_stopwords: null
+        lemmatization: false
+        url_tagging: false
+        named_entity_recognition: false
+  genres_1:
+    SentenceEmbeddingTechnique:
+      embedding_source: Sbert
+    preprocessing:
+      Spacy:
+        model: en_core_web_sm
+        strip_multiple_whitespace: true
+        remove_punctuation: false
+        stopwords_removal: true
+        new_stopwords: null
+        not_stopwords: null
+        lemmatization: false
+        url_tagging: false
+        named_entity_recognition: false
