@@ -29,9 +29,8 @@
                 <section>
                     <div class="row">
                         <div class="col-2 dash"></div>
-
                             <div class="col-10"><h4 class="section">
-                                {%if field_representations is defined %}
+                                {%if field_representations is defined %} <!--Report Content Analyzer Section-->
                                     Source_file: {{ source_file }} <br></h4>
                                     <b>Field Representations:</b><br>
                                     <b>SkLearnTfIdf:</b><br>
@@ -71,11 +70,11 @@
                                        &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ field_representations['genres_1']['preprocessing']['Spacy'][dict_item]}}<br>
                                     {% endfor %}
                                     <br>
-                                {% endif %}
+                                {% endif %} <!--END Report Content Analyzer Section-->
                             </div>
 
                              <div>
-                                {%if recsys is defined %}
+                                {%if recsys is defined %} <!--Report RecSys Section-->
                                 <b>Interactions:</b><br>
                                     {% for dict_item in interactions %}
                                        &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ interactions[dict_item]}}<br>
@@ -90,7 +89,7 @@
                                     {% endfor %}
                                  {% endif %}
                                     <br>
-                                {% endif %}
+
 
                                  <b>RecSys:</b><br>
                                  {% if recsys['GraphBasedRS']['algorithm']['NXPageRank'] is defined %}
@@ -129,7 +128,77 @@
                                     <br>
                                     {% endfor %}
                                  {% endif %}
+                             {% endif %} <!--END Report RecSys Section-->
 
+
+                             {%if metrics is defined %} <!--Report Eval Model Section-->
+                                 {% if n_split is defined%}
+                                    <b>n_split</b>: {{n_split}}<br>
+                                 {% endif %}
+
+
+                                 {% if metrics['Precision'] is defined%}
+                                    <b>metrics:</b><br>
+                                    <b>Precision:</b><br>
+                                    {% for dict_item in metrics['Precision'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ metrics['Precision'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+                                  {% if metrics['PrecisionAtK'] is defined%}
+                                    <b>PrecisionAtK:</b><br>
+                                    {% for dict_item in metrics['PrecisionAtK'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ metrics['PrecisionAtK'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+                                  {% if metrics['NDCG'] is defined%}
+                                    <b>NDCG:</b><br>
+                                    {% for dict_item in metrics['NDCG'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ metrics['NDCG'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+                                 {% if metrics['MRR'] is defined%}
+                                    <b>MRR:</b><br>
+                                    {% for dict_item in metrics['MRR'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ metrics['MRR'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+
+                                 {% if metrics['FMeasureAtK'] is defined%}
+                                    <b>FMeasureAtK:</b><br>
+                                    {% for dict_item in metrics['FMeasureAtK'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ metrics['FMeasureAtK'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+                                 {% if sys_results['sys - fold1'] is defined%}
+                                    <b>sys_results:</b><br>
+                                    <b>sys - fold1:</b><br>
+
+                                    {% for dict_item in sys_results['sys - fold1'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ sys_results['sys - fold1'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+                                 {% if sys_results['sys - mean'] is defined%}
+                                    <b>sys - mean:</b><br>
+                                   {% for dict_item in sys_results['sys - mean'] %}
+                                       &nbsp&nbsp&nbsp&nbsp{{dict_item}}: {{ sys_results['sys - mean'][dict_item]}}<br>
+                                    {% endfor %}
+                                    <br>
+                                 {% endif %}
+
+
+                                {% endif %} <!--End Report Eval Model Section-->
 
                             </div>
 

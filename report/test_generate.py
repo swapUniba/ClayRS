@@ -5,7 +5,7 @@ from flask import render_template
 import json
 
 TEMPLATE_FILE = "report_template.html"
-DATA_FILE = "data/rs_report.yml"
+DATA_FILE = "data/eva_report.yml"
 OUTPUT_HTML = "output/report.html"
 OUTPUT_PATH = "output/report.pdf"
 
