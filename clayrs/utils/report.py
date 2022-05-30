@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os.path
 import re
 from pathlib import Path
@@ -5,11 +6,17 @@ from pathlib import Path
 import numpy as np
 import pyaml
 
-from clayrs.content_analyzer import ContentAnalyzer
-from clayrs.content_analyzer.ratings_manager import Ratings
-from clayrs.evaluation.eval_model import EvalModel
-from clayrs.recsys.partitioning import Partitioning
-from clayrs.recsys.recsys import RecSys
+
+from typing import TYPE_CHECKING
+
+# to avoid circular import. Maybe a little 'hacky', better organization for the future?
+# This is almost inevitable though, since Report MUST refer to other modules for type hints
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_analyzer_main import ContentAnalyzer
+    from clayrs.content_analyzer import Ratings
+    from clayrs.evaluation import EvalModel
+    from clayrs.recsys.partitioning import Partitioning
+    from clayrs.recsys.recsys import RecSys
 
 
 class Report:
