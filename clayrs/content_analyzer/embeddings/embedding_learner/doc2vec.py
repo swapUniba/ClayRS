@@ -6,7 +6,7 @@ from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner impo
 
 
 class GensimDoc2Vec(GensimWordEmbeddingLearner):
-    """"
+    """
     Class that implements the Abstract Class GensimWordEmbeddingLearner
     Implementation of Doc2Vec using the Gensim library.
     """
@@ -22,4 +22,4 @@ class GensimDoc2Vec(GensimWordEmbeddingLearner):
         return "GensimDoc2Vec"
 
     def __repr__(self):
-        return "< GensimDoc2Vec : model = " + str(self.model) + " >"
+        return f'GensimDoc2Vec(attributes={str(self.model)})'

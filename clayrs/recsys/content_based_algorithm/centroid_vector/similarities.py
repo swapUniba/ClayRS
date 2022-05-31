@@ -36,3 +36,6 @@ class CosineSimilarity(Similarity):
             # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
             # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
             return 1 - cosine_distance(v1, v2)
+
+    def __repr__(self):
+        return f"CosineSimilarity()"

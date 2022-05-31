@@ -11,6 +11,18 @@ class InformationProcessor(ABC):
     def process(self, field_data):
         raise NotImplementedError
 
+    @abstractmethod
+    def __eq__(self, other):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
 
 class ImageProcessor(InformationProcessor):
     """

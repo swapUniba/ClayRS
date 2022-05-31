@@ -21,4 +21,4 @@ class GensimWord2Vec(GensimWordEmbeddingLearner):
         return "GensimWord2Vec"
 
     def __repr__(self):
-        return "< GensimWord2Vec : model = " + str(self.model) + " >"
+        return f'GensimWord2Vec(attributes={str(self.model)})'

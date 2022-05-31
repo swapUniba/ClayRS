@@ -4,7 +4,6 @@ import lzma
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import List, Set, Union, Iterable, Dict
-import pandas as pd
 
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from clayrs.recsys.graphs.graph_metrics import GraphMetrics
@@ -69,7 +68,7 @@ class UserNode(Node):
         return "User " + str(self.value)
 
     def __repr__(self):
-        return "User " + str(self.value)
+        return f"UserNode({self.value})"
 
 
 class ItemNode(Node):
@@ -87,7 +86,7 @@ class ItemNode(Node):
         return "Item " + str(self.value)
 
     def __repr__(self):
-        return "Item " + str(self.value)
+        return f"ItemNode({self.value})"
 
 
 class PropertyNode(Node):
@@ -105,7 +104,7 @@ class PropertyNode(Node):
         return "Property " + str(self.value)
 
     def __repr__(self):
-        return "Property " + str(self.value)
+        return f"PropertyNode({self.value})"
 
 
 class Graph(ABC):

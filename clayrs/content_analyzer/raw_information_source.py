@@ -1,4 +1,5 @@
 import csv
+import os
 from abc import ABC, abstractmethod
 
 import json
@@ -23,6 +24,11 @@ class RawInformationSource(ABC):
     def encoding(self):
         return self.__encoding
 
+    @property
+    @abstractmethod
+    def representative_name(self):
+        raise NotImplementedError
+
     @abstractmethod
     def __iter__(self) -> Iterator[Dict[str, str]]:
         """
@@ -33,6 +39,14 @@ class RawInformationSource(ABC):
 
     @abstractmethod
     def __len__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
         raise NotImplementedError
 
 
@@ -47,6 +61,13 @@ class DATFile(RawInformationSource):
     def __init__(self, file_path: str, encoding: str = "utf-8"):
         super().__init__(encoding)
         self.__file_path = file_path
+
+    @property
+    def representative_name(self):
+        # file name with extension
+        file_name = os.path.basename(self.__file_path)
+
+        return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, encoding=self.encoding) as f:
@@ -65,6 +86,12 @@ class DATFile(RawInformationSource):
 
             return total_length
 
+    def __str__(self):
+        return "DATFile"
+
+    def __repr__(self):
+        return f'DATFile(encoding={self.__encoding}, file_path={self.__file_path})'
+
 
 class JSONFile(RawInformationSource):
     """
@@ -78,6 +105,13 @@ class JSONFile(RawInformationSource):
         super().__init__(encoding)
         self.__file_path = file_path
 
+    @property
+    def representative_name(self):
+        # file name with extension
+        file_name = os.path.basename(self.__file_path)
+
+        return file_name
+
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, encoding=self.encoding) as j:
             all_lines = json.load(j, parse_int=str, parse_float=str)
@@ -87,6 +121,12 @@ class JSONFile(RawInformationSource):
     def __len__(self):
         with open(self.__file_path, encoding=self.encoding) as j:
             return len(json.load(j))
+
+    def __str__(self):
+        return "JSONFile"
+
+    def __repr__(self):
+        return f'JSONFile(encoding={self.__encoding}, file_path={self.__file_path})'
 
 
 class CSVFile(RawInformationSource):
@@ -102,6 +142,13 @@ class CSVFile(RawInformationSource):
         self.__file_path = file_path
         self.__has_header = has_header
         self.__separator = separator
+
+    @property
+    def representative_name(self):
+        # file name with extension
+        file_name = os.path.basename(self.__file_path)
+
+        return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
         with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
@@ -121,6 +168,13 @@ class CSVFile(RawInformationSource):
                 total_length -= 1
 
             return total_length
+
+    def __str__(self):
+        return "CSVFile"
+
+    def __repr__(self):
+        return f'CSVFile(file_path={self.__file_path}, separator={self.__separator}, has_header={self.__has_header}, ' \
+               f'encoding={self.encoding})'
 
 
 class SQLDatabase(RawInformationSource):
@@ -206,6 +260,10 @@ class SQLDatabase(RawInformationSource):
     def conn(self, conn):
         self.__conn = conn
 
+    @property
+    def representative_name(self):
+        return f"{self.host}/{self.table_name}"
+
     def __iter__(self) -> Iterator[Dict[str, str]]:
         cursor = self.conn.cursor(dictionary=True)
         query = """SELECT * FROM """ + self.table_name + """;"""
@@ -220,3 +278,11 @@ class SQLDatabase(RawInformationSource):
         cursor.fetchall()
 
         return cursor.rowcount
+
+    def __str__(self):
+        return "SQLDatabase"
+
+    def __repr__(self):
+        return f'SQLDatabase(host={self.__host},' \
+               f'username={self.__username}, password={self.__password}, ' \
+               f'database_name={self.__database_name}, table_name={self.__table_name}, encoding={self.__encoding})'

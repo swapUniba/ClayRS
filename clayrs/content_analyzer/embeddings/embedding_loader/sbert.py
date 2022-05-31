@@ -1,6 +1,7 @@
 from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
 
 from sentence_transformers import SentenceTransformer
+
 import numpy as np
 
 
@@ -35,4 +36,4 @@ class Sbert(SentenceEmbeddingLoader):
         return "Sbert"
 
     def __repr__(self):
-        return "< Sbert: model = " + str(self.model) + ">"
+        return f"Sbert(model_name_or_file_path={self.reference})"

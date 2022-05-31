@@ -188,3 +188,9 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
 
         self._graph.add_edges_from(zip(start_node, final_node),
                                    **not_none_dict)
+
+    def __str__(self):
+        return "NXTripartiteGraph"
+
+    def __repr__(self):
+        return str(self)

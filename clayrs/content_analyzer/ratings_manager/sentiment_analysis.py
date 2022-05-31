@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import List
 
 from textblob import TextBlob
@@ -15,7 +16,7 @@ class TextBlobSentimentAnalysis(SentimentAnalysis):
         return "TextBlobSentimentalAnalysis"
 
     def __repr__(self):
-        return "< TextBlobSentimentalAnalysis >"
+        return f'TextBlobSentimentAnalysis'
 
     def fit(self, score_data: str) -> float:
         """

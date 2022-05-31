@@ -19,6 +19,9 @@ class RatingProcessor(ABC):
     def fit(self, score_data: object):
         raise NotImplementedError
 
+    def __repr__(self):
+        return f'RatingProcessor(decimal rounding={self.__decimal_rounding})'
+
 
 class SentimentAnalysis(RatingProcessor):
     """
@@ -28,6 +31,10 @@ class SentimentAnalysis(RatingProcessor):
     @abstractmethod
     def fit(self, score_data: str):
         raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        return f'SentimentAnalysis(decimal rounding={self.decimal_rounding})'
 
 
 class NumberNormalizer(RatingProcessor):
@@ -52,7 +59,7 @@ class NumberNormalizer(RatingProcessor):
         return "NumberNormalizer"
 
     def __repr__(self):
-        return "< NumberNormalizer >"
+        return f'NumberNormalizer(decimal rounding={self.decimal_rounding})'
 
     def fit(self, score_data: float):
         """

@@ -1,3 +1,4 @@
+import inspect
 import itertools
 
 from clayrs.content_analyzer.information_processor.information_processor import NLP
@@ -11,6 +12,9 @@ from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
 import warnings
+
+from clayrs.utils.automatic_methods import autorepr
+
 with warnings.catch_warnings():
     warnings.simplefilter(action='ignore', category=FutureWarning)
     social_tokenizer_ekphrasis = SocialTokenizer(lowercase=True).tokenize
@@ -105,6 +109,7 @@ class Ekphrasis(NLP):
         self.text_processor = TextPreProcessor(**kwargs_to_pass)
 
         self.spell_correct_elong = spell_correct_elong
+
         self.sc = None
         if spell_correction is True:
             if corrector is not None:
@@ -112,12 +117,15 @@ class Ekphrasis(NLP):
             else:
                 self.sc = SpellCorrector()
 
+        self.segmentation = segmentation
         self.ws = None
         if segmentation is True:
             if segmenter is not None:
                 self.ws = Segmenter(corpus=segmenter)
             else:
                 self.ws = Segmenter()
+
+        self._repr_string = autorepr(self, inspect.currentframe())
 
     def __spell_check(self, field_data):
         """
@@ -168,3 +176,34 @@ class Ekphrasis(NLP):
         if self.ws is not None:
             field_data = self.__word_segmenter(field_data)
         return field_data
+
+    def __eq__(self, other):
+        if isinstance(other, Ekphrasis):
+            return self.text_processor.omit == other.text_processor.omit and \
+                   self.text_processor.backoff == other.text_processor.backoff and \
+                   self.text_processor.unpack_contractions == other.text_processor.unpack_contractions and \
+                   self.text_processor.include_tags == other.text_processor.include_tags and \
+                   self.text_processor.corrector_corpus == other.text_processor.corrector_corpus and \
+                   self.text_processor.tokenizer == other.text_processor.tokenizer and \
+                   self.text_processor.segmenter_corpus == other.text_processor.segmenter_corpus and \
+                   self.text_processor.all_caps_tag == other.text_processor.all_caps_tag and \
+                   self.text_processor.spell_correction == other.text_processor.spell_correction and \
+                   self.segmentation == other.segmentation and \
+                   self.text_processor.dicts == other.text_processor.dicts and \
+                   self.spell_correct_elong == other.spell_correct_elong
+        return False
+
+    def __str__(self):
+        return "Ekphrasis"
+
+    def __repr__(self):
+        # return f"Ekphrasis(omit={self.text_processor.omit}, normalize={self.text_processor.backoff}, " \
+        #        f"unpack_contractions={self.text_processor.unpack_contractions}, " \
+        #        f"unpack_hashtags={self.text_processor.unpack_hashtags}, " \
+        #        f"annotate={self.text_processor.include_tags}, " \
+        #        f"corrector={self.text_processor.corrector_corpus}, tokenizer={self.text_processor.tokenizer}, " \
+        #        f"segmenter={self.text_processor.segmenter_corpus}, all_caps_tag={self.text_processor.all_caps_tag}, " \
+        #        f"spell_correction={self.text_processor.spell_correction}, " \
+        #        f"segmentation={self.segmentation}, dicts={self.text_processor.dicts}, " \
+        #        f"spell_correct_elong={self.spell_correct_elong})"
+        return self._repr_string

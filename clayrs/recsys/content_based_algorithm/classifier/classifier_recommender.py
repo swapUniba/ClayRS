@@ -5,7 +5,7 @@ import pandas as pd
 from clayrs.content_analyzer import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
@@ -223,3 +223,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __repr__(self):
+        return f'ClassifierRecommender(item_field={self.item_field}, ' \
+               f'classifier={self._classifier}, ' \
+               f'threshold={self.threshold}, ' \
+               f'embedding_combiner={self._embedding_combiner})'

@@ -12,6 +12,7 @@ class InformationInterface(ABC):
     Args:
         directory (str): directory where to store the serialized content and where to access for deserialization
     """
+
     def __init__(self, directory: str):
         self.__directory: str = directory
 
@@ -92,6 +93,7 @@ class ImageInterface(InformationInterface):
     Future feature
     Abstract class to use when the field information is in image format.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError
@@ -122,6 +124,7 @@ class AudioInterface(InformationInterface):
     Future feature
     Abstract class to use when the field information is in audio format.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError
@@ -151,6 +154,7 @@ class TextInterface(InformationInterface):
     """
     Abstract class to use when the field information is textual.
     """
+
     @abstractmethod
     def new_content(self):
         raise NotImplementedError

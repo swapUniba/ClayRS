@@ -1,7 +1,6 @@
 from typing import List, Union, Optional, Dict
 
-import scipy.sparse
-from clayrs.content_analyzer import Content
+from clayrs.content_analyzer.content_representation.content import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
@@ -197,3 +196,12 @@ class CentroidVector(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __str__(self):
+        return "CentroidVector"
+
+    def __repr__(self):
+        return f'CentroidVector(item_field={self.item_field}, ' \
+               f'similarity={self._similarity}, ' \
+               f'threshold={self.threshold}, ' \
+               f'embedding_combiner={self._emb_combiner})'

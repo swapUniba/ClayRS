@@ -25,14 +25,18 @@ class CombiningTechnique(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
 
 class Centroid(CombiningTechnique):
-    """"
+    """
     Class that implements the Abstract Class CombiningTechnique,
     this class implements the centroid vector of a matrix.
     """
     def combine(self, embedding_matrix: np.ndarray) -> np.ndarray:
-        """"
+        """
         Calculates the centroid of the input matrix
 
         Args:
@@ -47,7 +51,7 @@ class Centroid(CombiningTechnique):
         return "Centroid"
 
     def __repr__(self):
-        return "< Centroid >"
+        return f'Centroid()'
 
 
 class Sum(CombiningTechnique):
@@ -71,7 +75,8 @@ class Sum(CombiningTechnique):
         return "Sum"
 
     def __repr__(self):
-        return "< Vector sum >"
+        return f'Sum()'
+
 
 
 class SingleToken(CombiningTechnique):
@@ -91,4 +96,4 @@ class SingleToken(CombiningTechnique):
         return "SingleToken"
 
     def __repr__(self):
-        return "< Single token >"
+        return f"SingleToken(token_index={self.token_index})"

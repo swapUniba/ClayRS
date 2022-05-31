@@ -1,7 +1,7 @@
 import abc
 import gc
 from copy import deepcopy
-from typing import Union, Dict, List
+from typing import Union, Dict, List, Optional
 
 import pandas as pd
 from abc import ABC
@@ -34,6 +34,8 @@ class RecSys(ABC):
 
     def __init__(self, algorithm: Union[ContentBasedAlgorithm, GraphBasedAlgorithm]):
         self.__alg = algorithm
+
+        self._yaml_report: Optional[Dict] = None
 
     @property
     def algorithm(self):
@@ -194,6 +196,8 @@ class ContentBasedRS(RecSys):
         del loaded_items_interface
         gc.collect()
 
+        self._yaml_report = {'mode': 'rank', 'n_recs': repr(n_recs), 'methodology': repr(methodology)}
+
         return rank
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
@@ -253,6 +257,8 @@ class ContentBasedRS(RecSys):
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
+
+        self._yaml_report = {'mode': 'score_prediction', 'methodology': repr(methodology)}
 
         return pred
 
@@ -321,6 +327,8 @@ class ContentBasedRS(RecSys):
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
+
+        self._yaml_report = {'mode': 'score_prediction', 'methodology': repr(methodology)}
 
         return pred
 
@@ -391,7 +399,13 @@ class ContentBasedRS(RecSys):
         del loaded_items_interface
         gc.collect()
 
+        self._yaml_report = {'mode': 'rank', 'n_recs': repr(n_recs), 'methodology': repr(methodology)}
+
         return rank
+
+    def __repr__(self):
+        return f"ContentBasedRS(algorithm={self.algorithm}, train_set={self.train_set}, " \
+               f"items_directory={self.items_directory}, users_directory={self.users_directory})"
 
 
 class GraphBasedRS(RecSys):
@@ -461,6 +475,8 @@ class GraphBasedRS(RecSys):
 
         total_predict = Prediction.from_list(total_predict_list)
 
+        self._yaml_report = {'graph': repr(self.graph), 'mode': 'score_prediction', 'methodology': repr(methodology)}
+
         return total_predict
 
     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
@@ -502,4 +518,9 @@ class GraphBasedRS(RecSys):
             logger.warning(f"No items could be ranked for users {all_users - set(total_rank.user_id_column)}\n"
                            f"No nodes to rank for them found in the graph. Try changing methodology! ")
 
+        self._yaml_report = {'graph': repr(self.graph), 'mode': 'rank', 'n_recs': repr(n_recs), 'methodology': repr(methodology)}
+
         return total_rank
+
+    def __repr__(self):
+        return f"GraphBasedRS(algorithm={self.algorithm}, graph={self.graph})"

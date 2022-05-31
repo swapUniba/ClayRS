@@ -5,8 +5,8 @@ import os
 import lzma
 import pickle
 
-from clayrs.content_analyzer import Ratings
-from clayrs.recsys.graphs import NXBipartiteGraph
+from clayrs.content_analyzer.ratings_manager.ratings import Ratings
+from clayrs.recsys.graphs.nx_implementation.nx_bipartite_graphs import NXBipartiteGraph
 import networkx as nx
 
 from clayrs.recsys.graphs.graph import UserNode, ItemNode, PropertyNode

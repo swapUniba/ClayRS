@@ -128,3 +128,9 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
             progbar.set_description("Creating Node->Properties links")
 
             self._graph.add_edges_from((tuple_to_add for tuple_to_add in node_prop_link_generator()))
+
+    def __str__(self):
+        return "NXFullGraph"
+
+    def __repr__(self):
+        return str(self)

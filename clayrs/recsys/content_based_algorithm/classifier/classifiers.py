@@ -1,5 +1,6 @@
-from abc import ABC
-from typing import Union
+import inspect
+from abc import ABC, abstractmethod
+from typing import Union, Any
 
 import numpy as np
 from scipy import sparse
@@ -10,14 +11,18 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+from clayrs.utils.automatic_methods import autorepr
+
 
 class Classifier(ABC):
     """
     Abstract class for Classifiers
     """
 
-    def __init__(self, classifier):
+    def __init__(self, classifier, currentframe):
         self.__classifier = classifier
+
+        self._repr_string = autorepr(self, currentframe)
 
     @property
     def classifier(self):
@@ -59,6 +64,13 @@ class Classifier(ABC):
         """
         return self.classifier.predict_proba(X_pred)
 
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return self._repr_string
+
 
 class SkSVC(Classifier):
     """
@@ -68,16 +80,31 @@ class SkSVC(Classifier):
     The only parameter from sklearn that cannot be passed is the 'probability' parameter:
     it is set to True and cannot be changed
     """
-    def __init__(self, *args, **kwargs):
-        # parameters_passed = locals().copy()
-        # del parameters_passed['self']
-        # del parameters_passed['__class__']
+
+    def __init__(self,
+                 *,
+                 C: Any = 1.0,
+                 kernel: Any = "rbf",
+                 degree: Any = 3,
+                 gamma: Any = "scale",
+                 coef0: Any = 0.0,
+                 shrinking: Any = True,
+                 tol: Any = 1e-3,
+                 cache_size: Any = 200,
+                 class_weight: Any = None,
+                 verbose: Any = False,
+                 max_iter: Any = -1,
+                 decision_function_shape: Any = "ovr",
+                 break_ties: Any = False,
+                 random_state: Any = None):
 
         # Force the probability parameter at True, otherwise SVC won't predict_proba
-        kwargs['probability'] = True
-        clf = SVC(*args, **kwargs)
+        clf = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0, shrinking=shrinking, tol=tol,
+                  cache_size=cache_size, class_weight=class_weight, verbose=verbose, max_iter=max_iter,
+                  decision_function_shape=decision_function_shape, break_ties=break_ties, random_state=random_state,
+                  probability=True)
 
-        super().__init__(clf)
+        super().__init__(clf, inspect.currentframe())
 
     def __str__(self):
         return "SkSVC"
@@ -96,11 +123,20 @@ class SkKNN(Classifier):
     Args:
         X (list): Training data
     """
-    def __init__(self, *args, **kwargs):
 
-        clf = KNeighborsClassifier(*args, **kwargs)
+    def __init__(self, n_neighbors: Any = 5,
+                 *,
+                 weights: Any = "uniform",
+                 algorithm: Any = "auto",
+                 leaf_size: Any = 30,
+                 p: Any = 2,
+                 metric: Any = "minkowski",
+                 metric_params: Any = None,
+                 n_jobs: Any = None):
+        clf = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm, leaf_size=leaf_size,
+                                   p=p, metric=metric, metric_params=metric_params, n_jobs=n_jobs)
 
-        super().__init__(clf)
+        super().__init__(clf, inspect.currentframe())
 
     def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
         # If the user did not pass a custom n_neighbor the algorithm tries to fix the error
@@ -120,11 +156,35 @@ class SkRandomForest(Classifier):
     The parameters one could pass are the same ones you would pass instantiating
     the classifier directly from sklearn
     """
-    def __init__(self, *args, **kwargs):
 
-        clf = RandomForestClassifier(*args, **kwargs)
+    def __init__(self, n_estimators: Any = 100,
+                 *,
+                 criterion: Any = "gini",
+                 max_depth: Any = None,
+                 min_samples_split: Any = 2,
+                 min_samples_leaf: Any = 1,
+                 min_weight_fraction_leaf: Any = 0.0,
+                 max_features: Any = "auto",
+                 max_leaf_nodes: Any = None,
+                 min_impurity_decrease: Any = 0.0,
+                 bootstrap: Any = True,
+                 oob_score: Any = False,
+                 n_jobs: Any = None,
+                 random_state: Any = None,
+                 verbose: Any = 0,
+                 warm_start: Any = False,
+                 class_weight: Any = None,
+                 ccp_alpha: Any = 0.0,
+                 max_samples: Any = None):
+        clf = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
+                                     min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                     min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
+                                     max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease,
+                                     bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state,
+                                     verbose=verbose, warm_start=warm_start, class_weight=class_weight,
+                                     ccp_alpha=ccp_alpha, max_samples=max_samples)
 
-        super().__init__(clf)
+        super().__init__(clf, inspect.currentframe())
 
     def __str__(self):
         return "SkRandomForest"
@@ -137,10 +197,29 @@ class SkLogisticRegression(Classifier):
     the classifier directly from sklearn
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, penalty: Any = "l2",
+                 *,
+                 dual: Any = False,
+                 tol: Any = 1e-4,
+                 C: Any = 1.0,
+                 fit_intercept: Any = True,
+                 intercept_scaling: Any = 1,
+                 class_weight: Any = None,
+                 random_state: Any = None,
+                 solver: Any = "lbfgs",
+                 max_iter: Any = 100,
+                 multi_class: Any = "auto",
+                 verbose: Any = 0,
+                 warm_start: Any = False,
+                 n_jobs: Any = None,
+                 l1_ratio: Any = None):
+        clf = LogisticRegression(penalty=penalty, dual=dual, tol=tol, C=C, fit_intercept=fit_intercept,
+                                 intercept_scaling=intercept_scaling, class_weight=class_weight,
+                                 random_state=random_state, solver=solver, max_iter=max_iter,
+                                 multi_class=multi_class, verbose=verbose, warm_start=warm_start,
+                                 n_jobs=n_jobs, l1_ratio=l1_ratio)
 
-        clf = LogisticRegression(*args, **kwargs)
-        super().__init__(clf)
+        super().__init__(clf, inspect.currentframe())
 
     def __str__(self):
         return "SkLogisticRegression"
@@ -153,10 +232,27 @@ class SkDecisionTree(Classifier):
     the classifier directly from sklearn
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *,
+                 criterion: Any = "gini",
+                 splitter: Any = "best",
+                 max_depth: Any = None,
+                 min_samples_split: Any = 2,
+                 min_samples_leaf: Any = 1,
+                 min_weight_fraction_leaf: Any = 0.0,
+                 max_features: Any = None,
+                 random_state: Any = None,
+                 max_leaf_nodes: Any = None,
+                 min_impurity_decrease: Any = 0.0,
+                 class_weight: Any = None,
+                 ccp_alpha: Any = 0.0):
+        clf = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
+                                     min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                     min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
+                                     random_state=random_state, max_leaf_nodes=max_leaf_nodes,
+                                     min_impurity_decrease=min_impurity_decrease, class_weight=class_weight,
+                                     ccp_alpha=ccp_alpha)
 
-        clf = DecisionTreeClassifier(*args, **kwargs)
-        super().__init__(clf)
+        super().__init__(clf, inspect.currentframe())
 
     def __str__(self):
         return "SkDecisionTree"
@@ -169,10 +265,23 @@ class SkGaussianProcess(Classifier):
     the classifier directly from sklearn
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, kernel: Any = None,
+                 *,
+                 optimizer: Any = "fmin_l_bfgs_b",
+                 n_restarts_optimizer: Any = 0,
+                 max_iter_predict: Any = 100,
+                 warm_start: Any = False,
+                 copy_X_train: Any = True,
+                 random_state: Any = None,
+                 multi_class: Any = "one_vs_rest",
+                 n_jobs: Any = None):
 
-        clf = GaussianProcessClassifier(*args, **kwargs)
-        super().__init__(clf)
+        clf = GaussianProcessClassifier(kernel=kernel, optimizer=optimizer, n_restarts_optimizer=n_restarts_optimizer,
+                                        max_iter_predict=max_iter_predict, warm_start=warm_start,
+                                        copy_X_train=copy_X_train, random_state=random_state,
+                                        multi_class=multi_class, n_jobs=n_jobs)
+
+        super().__init__(clf, inspect.currentframe())
 
     def __str__(self):
         return "SkGaussianProcess"

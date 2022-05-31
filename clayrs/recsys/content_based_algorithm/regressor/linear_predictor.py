@@ -3,8 +3,8 @@ from typing import List, Union, Optional
 from clayrs.content_analyzer import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex, LoadedContentsDict
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
 import pandas as pd
@@ -238,3 +238,7 @@ class LinearPredictor(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __repr__(self):
+        return f'LinearPredictor(item_field={self.item_field}, regressor={self._regressor}, ' \
+               f'only_greater_eq={self.threshold}, embedding_combiner={self._embedding_combiner})'

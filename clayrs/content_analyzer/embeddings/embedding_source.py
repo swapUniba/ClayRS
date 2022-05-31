@@ -101,8 +101,10 @@ class EmbeddingSource(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
+    @abstractmethod
     def __repr__(self):
         raise NotImplementedError
