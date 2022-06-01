@@ -1,14 +1,51 @@
-%! Author = vincenzo
-%! Date = 5/25/22
+\documentclass{article}
+\title{Report ClayRS}
+\author{Semantic Web Access and Personalization Research Group}
 
-% Preamble
-\documentclass[11pt]{article}
-
-% Packages
-\usepackage{amsmath}
-
-% Document
 \begin{document}
+
+\maketitle
+
+
+\BLOCK{ if field_representations is defined }
+\section{Report Content Analyzer}
+The data source for the Content Analyzer is:
+\begin{verbatim}source_file = \VAR{ (source_file)}\end{verbatim}
+Field Representation:
+
+\BLOCK{if field_representations['plot_0']['SkLearnTfIdf'] is defined}
+SkLearnTfIdf:
+\begin{verbatim}
+    \BLOCK{for dict_item in field_representations['plot_0']['SkLearnTfIdf'] }
+    \VAR{dict_item} = \VAR{ field_representations['plot_0']['SkLearnTfIdf'][dict_item] }
+    \BLOCK{ endfor }
+\end{verbatim}
+
+\BLOCK{ endif }
+
+\BLOCK{if field_representations['plot_0']['preprocessing']['NLTK'] is defined}
+Preprocessing:
+
+NLTK:
+\begin{verbatim}
+    \BLOCK{for dict_item in field_representations['plot_0']['preprocessing']['NLTK'] }
+    \VAR{dict_item} = \VAR{ field_representations['plot_0']['preprocessing']['NLTK'][dict_item] }
+    \BLOCK{ endfor }
+\end{verbatim}
+
+\BLOCK{ endif }
+
+
+\BLOCK{ endif }
+
+\BLOCK{if metrics is defined }
+\section{Report Eval Model}
+\BLOCK{ endif }
+
+\BLOCK{if interactions is defined }
+\section{Report Recommender System}
+\BLOCK{ endif }
+
 
 
 
