@@ -15,9 +15,9 @@ made in ClayRS\@.
 \BLOCK{ if dict['source_file'] is defined }
 \section{Report Content Analyzer}
 The data source for the Content Analyzer is:
-source\_file = \VAR{dict['source_file']|safe_tex}\\
+source\_file = \VAR{dict['source_file']|safe_text}\\
 exogenous\_representations = \VAR{dict['exogenous_representations']}\\
-Dataset: \VAR{dict['id_each_content']|safe_tex}\\
+Dataset: \VAR{dict['id_each_content']|safe_text}\\
 \BLOCK{ endif }
 
 \BLOCK{if dict['field_representations']['plot_0']['SkLearnTfIdf'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
@@ -29,16 +29,16 @@ Field Representation:
   \begin{tabular}{ccl}
     \midrule
     \textbf{Parameter}& \textbf{Value} \\
-    \VAR max\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_df']|safe_tex}\\
-    \VAR min\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['min_df']|safe_tex}\\
-    \VAR max\_features  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_features']|safe_tex}\\
-    \VAR vocabulary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['vocabulary']|safe_tex}\\
-    \VAR binary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['binary']|safe_tex}\\
-    \VAR dtype  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['dtype']|safe_tex}\\
-    \VAR norm  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['norm']|safe_tex}\\
-    \VAR use\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['use_idf']|safe_tex}\\
-    \VAR smooth\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['smooth_idf']|safe_tex}\\
-    \VAR sublinear\_tf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['sublinear_tf']|safe_tex}\\
+    \VAR max\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_df']|safe_text}\\
+    \VAR min\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['min_df']|safe_text}\\
+    \VAR max\_features  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_features']|safe_text}\\
+    \VAR vocabulary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['vocabulary']|safe_text}\\
+    \VAR binary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['binary']|safe_text}\\
+    \VAR dtype  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['dtype']|safe_text}\\
+    \VAR norm  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['norm']|safe_text}\\
+    \VAR use\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['use_idf']|safe_text}\\
+    \VAR smooth\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\
+    \VAR sublinear\_tf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\
 
     \bottomrule
   \end{tabular}
@@ -55,21 +55,21 @@ The preprocessing used is NLTK with those functions:
   \begin{tabular}{ccl}
     \midrule
     \textbf{Parameter}& \textbf{Value} \\
-    \VAR strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_tex}\\
-    \VAR remove\_punctuation  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation']|safe_tex}\\
-    \VAR stopwords\_removal  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal']|safe_tex}\\
-    \VAR url\_tagging  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging']|safe_tex}\\
-    \VAR lemmatization  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization']|safe_tex}\\
-    \VAR stemming  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming']|safe_tex}\\
-    \VAR named\_entity\_recognition  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_tex}\\
-    \VAR lang  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lang']|safe_tex}\\
+    \VAR strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\
+    \VAR remove\_punctuation  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation']|safe_text}\\
+    \VAR stopwords\_removal  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal']|safe_text}\\
+    \VAR url\_tagging  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging']|safe_text}\\
+    \VAR lemmatization  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization']|safe_text}\\
+    \VAR stemming  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming']|safe_text}\\
+    \VAR named\_entity\_recognition  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\
+    \VAR lang  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lang']|safe_text}\\
     \bottomrule
   \end{tabular}
 \end{table}
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 \\
 %#\{\BLOCK{for dict_item in dict['field_representations']['plot_0']['SkLearnTfIdf'] }
-%#\VAR{dict_item|safe_tex} = \VAR{ dict['field_representations']['plot_0']['SkLearnTfIdf'][dict_item]|safe_tex }\\
+%#\VAR{dict_item|safe_text} = \VAR{ dict['field_representations']['plot_0']['SkLearnTfIdf'][dict_item]|safe_text }\\
 %#\BLOCK{ endfor }
 
 

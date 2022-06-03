@@ -29,14 +29,14 @@ LATEX_JINJA_ENV = jinja2.Environment(
     loader=jinja2.FileSystemLoader(searchpath="templates"),
 )
 
-def safe_tex(text: str) -> str:
+def safe_text(text: str) -> str:
     special_chars = ['&', '%', '$', '_', '{', '}', '#']
     for char in special_chars:
         text = str(text)
         text = text.replace(char, "\\" + char)
     return text
 
-LATEX_JINJA_ENV.filters["safe_tex"] = safe_tex
+LATEX_JINJA_ENV.filters["safe_text"] = safe_text
 
 
 
