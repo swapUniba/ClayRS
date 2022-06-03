@@ -3,23 +3,68 @@ import yaml
 import os
 import subprocess
 import pdfkit
+import yaml_dump as yaml_dump
 from flask import render_template
 import json
+from pathlib import Path
+import pandas as pd
 
 TEMPLATE_FILE = "report_template.tex"
+#todo UNIFIEDI DATA_FILE = "data/unified_report.yml"
 DATA_FILE = "data/ca_report.yml"
-DATA_FILE_LIST = ["data/ca_report.yml", "data/eva_report.yml", "rs_report"]
+DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
 OUTPUT_TEX = "output/report.tex"
 OUTPUT_PATH = "output/report.pdf"
 
-def unify_yaml_files(DATA_FILES_LIST):
-    return 0
 
-def get_data():
+LATEX_JINJA_ENV = jinja2.Environment(
+    block_start_string="\BLOCK{",
+    block_end_string="}",
+    variable_start_string="\VAR{",
+    variable_end_string="}",
+    comment_start_string="\#{",
+    comment_end_string="}",
+    trim_blocks=True,
+    autoescape=False,
+    loader=jinja2.FileSystemLoader(searchpath="templates"),
+)
+
+def safe_tex(text: str) -> str:
+    special_chars = ['&', '%', '$', '_', '{', '}', '#']
+    for char in special_chars:
+        text = str(text)
+        text = text.replace(char, "\\" + char)
+    return text
+
+LATEX_JINJA_ENV.filters["safe_tex"] = safe_tex
+
+
+
+def unify_yaml_files():
+    file_ca_path = DATA_FILES_LIST[0]
+    file_ev_path = DATA_FILES_LIST[1]
+    file_rs_path = DATA_FILES_LIST[2]
+
+    data_ca = get_data(file_ca_path)
+    data_ev = get_data(file_ev_path)
+    data_rs = get_data(file_rs_path)
+    #print(data_ca)
+    #print(data_ev)
+    #print(data_rs)
+
+    #data_ca.update(data_ev)
+    #data_ca.update(data_rs)
+
+    # print(output_text)
+    with open(DATA_FILE, 'w') as file:
+        yaml.dump(data_ca, file)
+
+
+def get_data(DATA_FILE):
     with open(DATA_FILE, 'r') as stream:
         try:
             data = yaml.safe_load(stream)
-            print(data)
+            #print(data)
             #print("GET_DATA type: " + str(type(data)))
             # return yaml.safe_load(stream)
             return data
@@ -27,13 +72,32 @@ def get_data():
             print(exc)
 
 def process_data():
-    #TODO
-    data = get_data() #dict
-    print(data['source_file'])
+    #TODO multiple file data = unify_yaml_files() #dict
+    data = get_data(DATA_FILE)  # dict
+    processed_data = {}
+    #recursive_print_dict(data)
+
+
+    processed_data = pd.json_normalize(data, sep='_')
+    print(processed_data)
+
+    return(processed_data)
+    #print(source_file)
+    #print(data)
+    #TODO print(data['source_file'])
+
+
+def recursive_print_dict(d, indent=0):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            print("\t" * indent, f"{k}:")
+            recursive_print_dict(v, indent + 1)
+        else:
+            print("\t" * indent, f"{k}:{v}")
 
 
 def get_template():
-    template_loader = jinja2.FileSystemLoader(searchpath="templates")
+    '''template_loader = jinja2.FileSystemLoader(searchpath="templates")
     template_env = jinja2.Environment(loader=template_loader)
     # define new delimiters to avoid TeX conflicts
     template_env.block_start_string = '\BLOCK{'
@@ -45,38 +109,63 @@ def get_template():
     template_env.line_statement_prefix = '%%'
     template_env.line_comment_prefix = '%#'
     template_env.trim_blocks = True
-    return template_env.get_template(TEMPLATE_FILE)
+    template_env.autoescape = True,
+    return template_env.get_template(TEMPLATE_FILE)'''
+    return LATEX_JINJA_ENV.get_template(TEMPLATE_FILE)
+
 
 
 def generate_tex_output():
-    data = get_data() #dict
+    #TODO SINGLE FILE
+    data = get_data(DATA_FILE) #dict
+
+    #TODO MULTIPLE FILE DA RIVEDERE data = unify_yaml_files()
     template = get_template()
+
     #print(template)
-    output_text = template.render(**data)
+    #output_text = template.render(data['source_file'])
     #output_text = template.render(**data)
+    output_text = template.render(dict = data)
+
     #print(output_text)
     with open(OUTPUT_TEX, 'w') as ofile:
         ofile.write(output_text)
 
+def load_file(*args: str):
+    with open(Path(*args)) as f:
+        return f.read()
 
 def generate_pdf_output():
     generate_tex_output()
-
+    '''data = unify_yaml_files()  # dict
+    #source_file = data['source_file']
+    source_file = {k: v for k, v in data.items() if 'source_file' in k}
+    field_representations = {k: v for k, v in data.items() if 'field_representations' in k}
+    print(source_file)
+    template = get_template()
+    rendered_template = template.render(
+        field_representations = field_representations
+    )'''
     # TeX source filename
+    # TODO ORIGINAL
     tex_filename = OUTPUT_TEX
+    #tex_filename = "report.pdf"
+    #TODO ORIGINAL
     filename, ext = os.path.splitext(tex_filename)
     # the corresponding PDF filename
+    #TODO ORIGINAL
     pdf_filename = filename + '.pdf'
-    print(pdf_filename)  # TODO
+    # TODO ORIGINAL print(pdf_filename)
     # compile TeX file
-    subprocess.run(['pdflatex', '-interaction=nonstopmode', tex_filename])
+    subprocess.run(['pdflatex', '-interaction=nonstopmode', str(tex_filename)])
 
 
 def main():
+    #process_data()
     generate_pdf_output()
     print("Generating Report PDF File...")
     print("Test process data")
-    process_data()
+    #unify_yaml_files()
 
 
 if __name__ == "__main__":

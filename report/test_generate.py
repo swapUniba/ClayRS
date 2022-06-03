@@ -5,7 +5,7 @@ from flask import render_template
 import json
 
 TEMPLATE_FILE = "report_template.html"
-DATA_FILE = "data/eva_report.yml"
+DATA_FILE = "data/ca_report.yml"
 OUTPUT_HTML = "output/report.html"
 OUTPUT_PATH = "output/report.pdf"
 
@@ -27,7 +27,9 @@ def get_template():
 def generate_html_output():
     data = get_data()
     template = get_template()
+    print(template)
     output_text = template.render(**data)
+    print(output_text)
     with open(OUTPUT_HTML, 'w') as ofile:
         ofile.write(output_text)
 
