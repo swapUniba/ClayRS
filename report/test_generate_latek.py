@@ -52,12 +52,13 @@ def unify_yaml_files():
     #print(data_ev)
     #print(data_rs)
 
-    #data_ca.update(data_ev)
-    #data_ca.update(data_rs)
+    data_ca.update(data_ev)
+    data_ca.update(data_rs)
 
-    # print(output_text)
-    with open(DATA_FILE, 'w') as file:
-        yaml.dump(data_ca, file)
+    return data_ca
+    #TODO  print(output_text)
+    # with open(DATA_FILE, 'w') as file:
+    #    yaml.dump(data_ca, file)
 
 
 def get_data(DATA_FILE):
@@ -117,9 +118,10 @@ def get_template():
 
 def generate_tex_output():
     #TODO SINGLE FILE
-    data = get_data(DATA_FILE) #dict
+    # data = get_data(DATA_FILE) #dict
 
-    #TODO MULTIPLE FILE DA RIVEDERE data = unify_yaml_files()
+    #TODO MULTIPLE FILE DA RIVEDERE
+    data = unify_yaml_files()
     template = get_template()
 
     #print(template)

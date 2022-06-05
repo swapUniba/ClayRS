@@ -1,5 +1,5 @@
 
-\documentclass{article}
+\documentclass[12pt, a4paper]{article}
 \title{Report ClayRS}
 \author{Semantic Web Access and Personalization Research Group}
 
@@ -8,8 +8,8 @@
 
 \maketitle
 
-This document contains information about the dataset, preprocessing and analysis algorithms for the purpose of replicability of the experiments
-made in ClayRS\@.
+This Latex document was generated for the purpose of replicability of experiments done with ClayRS.
+This document was created from yaml files and contains information about the dataset, preprocessing methods, analysis algorithms and their parameters. \@.
 
 
 \BLOCK{ if dict['source_file'] is defined }
@@ -18,7 +18,6 @@ The data source for the Content Analyzer is:
 source\_file = \VAR{dict['source_file']|safe_text}\\
 exogenous\_representations = \VAR{dict['exogenous_representations']}\\
 Dataset: \VAR{dict['id_each_content']|safe_text}\\
-\BLOCK{ endif }
 
 \BLOCK{if dict['field_representations']['plot_0']['SkLearnTfIdf'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 Field Representation:
@@ -39,19 +38,26 @@ Field Representation:
     \VAR use\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['use_idf']|safe_text}\\
     \VAR smooth\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\
     \VAR sublinear\_tf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\
-
     \bottomrule
   \end{tabular}
 \end{table}
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 
-\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-The preprocessing used is NLTK with those functions:
+\BLOCK{ if dict['field_representations']['genres_0']['WordEmbeddingTechnique'] is defined }
+The word embedding source used is:
+\VAR{dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text}\\
+\BLOCK{ endif }
 
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+and semantic reasoning, wrappers for industrial-strength NLP libraries, and an active discussion forum.\\
+NLTK has been used in this experiment with this configuration:
 
 \begin{table}[!ht]
     \centering
-  \caption{Table of the parameters used with Spacy}
+  \caption{Table of the parameters used with NLTK}
   \begin{tabular}{ccl}
     \midrule
     \textbf{Parameter}& \textbf{Value} \\
@@ -73,9 +79,163 @@ The preprocessing used is NLTK with those functions:
 %#\BLOCK{ endfor }
 
 
+\BLOCK{ if dict['field_representations']['genres_1']['SentenceEmbeddingTechnique'] is defined }
+The sentence embedding source used is:
+\VAR{dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text}\\
+\BLOCK{ endif }
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
+spaCy is designed specifically for production use and helps you build applications that process and “understand”
+large volumes of text. It can be used to build information extraction or natural language understanding systems,
+or to pre-process text for deep learning.
+spaCy has been used in this experiment with this configuration:
+
+\begin{table}[!ht]
+    \centering
+  \caption{Table of the parameters used with Spacy}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR model  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['model']|safe_text}\\
+    \VAR strip\_multiple\_whitespace  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['strip_multiple_whitespace']|safe_text}\\
+    \VAR remove\_punctuation  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['remove_punctuation']|safe_text}\\
+    \VAR stopwords\_removal  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['stopwords_removal']|safe_text}\\
+    \VAR new\_stopwords  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['new_stopwords']|safe_text}\\
+    \VAR not\_stopwords  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['not_stopwords']|safe_text}\\
+    \VAR lemmatization  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['lemmatization']|safe_text}\\
+    \VAR url\_tagging  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['url_tagging']|safe_text}\\
+    \VAR named\_entity\_recognition  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['named_entity_recognition']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\\
+\BLOCK{ endif } %end of the content analyzer section
+
+\BLOCK{ if dict['interactions'] is defined } %beginning of the recommender system section
+\section{Report Recommender System}
+\subsection{Interactions}
+
+\begin{table}[!ht]
+    \centering
+  \caption{Table of the Interactions}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR n\_users  & \VAR{dict['interactions']['n_users']|safe_text}\\
+    \VAR n\_items  & \VAR{dict['interactions']['n_items']|safe_text}\\
+    \VAR total\_interactions  & \VAR{dict['interactions']['total_interactions']|safe_text}\\
+    \VAR sparsity  & \VAR{dict['interactions']['sparsity']|safe_text}\\
+    \VAR min\_score  & \VAR{dict['interactions']['min_score']|safe_text}\\
+    \VAR max\_score  & \VAR{dict['interactions']['max_score']|safe_text}\\
+    \VAR mean\_score  & \VAR{dict['interactions']['mean_score']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\BLOCK{ if dict['partitioning']['HoldOutPartitioning'] is defined}
+\subsection{Partitioning}
+
+The partitioning used is the Hold-Out Partitioning.
+This approach splits the dataset in use into a ‘train’ and ‘test’ set.
+The training set is what the model is trained on, and the test set is used to see how
+well the model will perform on new, unseen data.
+
+The Hold-Out Partitioning has been used in this experiment with the following configuration:
+\begin{table}[!ht]
+    \centering
+  \caption{Table of Hold-Out Partitioning}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR train\_set\_size  & \VAR{dict['partitioning']['HoldOutPartitioning']['train_set_size']|safe_text}\\
+    \VAR shuffle  & \VAR{dict['partitioning']['HoldOutPartitioning']['shuffle']|safe_text}\\
+    \VAR total\_interactions  & \VAR{dict['partitioning']['HoldOutPartitioning']['random_state']|safe_text}\\
+    \VAR skip\_user\_error  & \VAR{dict['partitioning']['HoldOutPartitioning']['skip_user_error']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\BLOCK{endif}% end of the partitioning section
+
+\BLOCK{if dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined} %beginning recsys graph based area
+\subsection{Algorithm Graph Based}
+In this experiment a Graph Based Recommender Algorithm has been used.
+Specifically the NXPageRank algorithm, with the following configuration:
+\begin{table}[!ht]
+    \centering
+  \caption{Table of the NXPageRank algorithm}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR alpha  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|safe_text}\\
+    \VAR personalized  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['personalized']|safe_text}\\
+    \VAR max\_iter  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['max_iter']|safe_text}\\
+    \VAR tol  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['tol']|safe_text}\\
+    \VAR nstart  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['nstart']|safe_text}\\
+    \VAR weight  & \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['weight']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\BLOCK{endif} %end recsys area
+
+\BLOCK{endif} %end of the recsys section
+
+\\
+
+\BLOCK{ if dict['metrics'] is defined } %beginning of the eval model section
+\section{Report Eval Model}
+\subsection{metrics}
 
 
 
+\BLOCK{if dict['metrics']['Precision'] is defined} %beginning of the precision section
+In the field of information retrieval, precision is the fraction
+of retrieved documents that are relevant to the query.
+
+
+Precision has this configuration in this experiment:
+\begin{table}[!ht]
+    \centering
+  \caption{Table of the precision configuration}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR relevant\_threshold  & \VAR{dict['metrics']['Precision']['relevant_threshold']|safe_text}\\
+    \VAR sys\_average  & \VAR{dict['metrics']['Precision']['sys_average']|safe_text}\\
+    \VAR precision  & \VAR{dict['metrics']['Precision']['precision']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\\\\\\
+\BLOCK{if dict['metrics']['PrecisionAtK'] is defined} %beginning of the precision at k section
+Precision at k is the proportion of recommended items in the top-k set that are relevant.
+
+Precision at k has this configuration in this experiment:
+\begin{table}[!ht]
+    \centering
+  \caption{Table of the precision at k configuration}
+  \begin{tabular}{ccl}
+    \midrule
+    \textbf{Parameter}& \textbf{Value} \\
+    \VAR k  & \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}\\
+    \VAR sys\_average  & \VAR{dict['metrics']['PrecisionAtK']['sys_average']|safe_text}\\
+    \VAR precision  & \VAR{dict['metrics']['PrecisionAtK']['precision']|safe_text}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\BLOCK{endif} %end of the precision at ksection
+
+\BLOCK{endif} %end of the precision section
+
+
+
+\BLOCK{endif} %end of the recsys section
 
 
 \end{document}
