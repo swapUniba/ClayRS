@@ -1,5 +1,4 @@
 from typing import Set, Dict, List
-import pandas as pd
 from collections import Counter
 
 from clayrs.content_analyzer import Ratings
