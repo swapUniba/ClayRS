@@ -12,9 +12,6 @@ class ErrorMetric(Metric):
     """
     Abstract class for error metrics.
     An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
-
-    Obviously the recommender system must be able to do score prediction in order to be evaluated in one of these
-    metrics
     """
 
     def perform(self, split: Split) -> pd.DataFrame:
@@ -76,39 +73,44 @@ class MSE(ErrorMetric):
     r"""
     The MSE (Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    $$
+    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    $$
 
-    |
     Where:
 
-    - :math:`T_u` is the *test set* of the user :math:`u`
-    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
-    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+    - $T_u$ is the *test set* of the user :math:`u`
+    - $r_{u, i}$ is the actual score give by user :math:`u` to item :math:`i`
+    - $\hat{r}_{u, i}$ is the predicted score give by user :math:`u` to item :math:`i`
 
     And it is calculated as such for the **entire system**:
 
-    .. math::
-        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
-    |
+    $$
+    MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+    $$
     Where:
 
-    - :math:`T` is the *test set*
-    - :math:`MSE_u` is the MSE calculated for user :math:`u`
+    - $T$ is the *test set*
+    - $MSE_u$ is the MSE calculated for user $u$
 
     There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
-    and items were not present locally, a methodology different than *TestRatings* was chosen).
+    and items were not present locally)
 
-    In those cases the :math:`MSE_u` formula becomes
+    In those cases the $MSE_u$ formula becomes
 
-    .. math:: MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
-    |
+    $$
+    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    $$
+
     Where:
 
-    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+    - $unk$ (*unknown*) is the number of items of the *user test set* that could not be predicted
 
-    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+    If no items of the user test set has been predicted ($|T_u| - unk = 0$), then:
 
-    .. math:: MSE_u = NaN
+    $$
+    MSE_u = NaN
+    $$
     """
 
     def __str__(self):
@@ -125,39 +127,45 @@ class RMSE(ErrorMetric):
     r"""
     The RMSE (Root Mean Squared Error) metric is calculated as such for the **single user**:
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    $$
+    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    $$
 
-    |
     Where:
 
-    - :math:`T_u` is the *test set* of the user :math:`u`
-    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
-    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+    - $T_u$ is the *test set* of the user :math:`u`
+    - $r_{u, i}$ is the actual score give by user :math:`u` to item :math:`i`
+    - $\hat{r}_{u, i}$ is the predicted score give by user :math:`u` to item :math:`i`
 
     And it is calculated as such for the **entire system**:
 
-    .. math::
-        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
-    |
+    $$
+    RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+    $$
+
     Where:
 
-    - :math:`T` is the *test set*
-    - :math:`RMSE_u` is the RMSE calculated for user :math:`u`
+    - $T$ is the *test set*
+    - $RMSE_u$ is the RMSE calculated for user :math:`u`
 
     There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
     and items were not present locally, a methodology different than *TestRatings* was chosen).
 
-    In those cases the :math:`RMSE_u` formula becomes
+    In those cases the $RMSE_u$ formula becomes
 
-    .. math:: RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
-    |
+    $$
+    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    $$
+
     Where:
 
-    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+    - $unk$ (*unknown*) is the number of items of the *user test set* that could not be predicted
 
-    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+    If no items of the user test set has been predicted ($|T_u| - unk = 0$), then:
 
-    .. math:: RMSE_u = NaN
+    $$
+    RMSE_u = NaN
+    $$
     """
 
     def __str__(self):
@@ -174,39 +182,45 @@ class MAE(ErrorMetric):
     r"""
     The MAE (Mean Absolute Error) metric is calculated as such for the **single user**:
 
-    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    $$
+    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    $$
 
-    |
     Where:
 
-    - :math:`T_u` is the *test set* of the user :math:`u`
-    - :math:`r_{u, i}` is the actual score give by user :math:`u` to item :math:`i`
-    - :math:`\hat{r}_{u, i}` is the predicted score give by user :math:`u` to item :math:`i`
+    - $T_u$ is the *test set* of the user $u$
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
 
     And it is calculated as such for the **entire system**:
 
-    .. math::
-        MAE_sys = \sum_{u \in T} \frac{MAE_u}{|T|}
-    |
+    $$
+    MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+    $$
+
     Where:
 
-    - :math:`T` is the *test set*
-    - :math:`MAE_u` is the MAE calculated for user :math:`u`
+    - $T$ is the *test set*
+    - $MAE_u$ is the MAE calculated for user $u$
 
     There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
     and items were not present locally, a methodology different than *TestRatings* was chosen).
 
-    In those cases the :math:`MAE_u` formula becomes
+    In those cases the $MAE_u$ formula becomes
 
-    .. math:: MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
-    |
+    $$
+    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    $$
+
     Where:
 
-    - **unk** (*unknown*) is the number of items of the *user test set* that could not be predicted
+    - $unk$ (*unknown*) is the number of items of the *user test set* that could not be predicted
 
-    If no items of the user test set has been predicted (:math:`|T_u| - unk = 0`), then:
+    If no items of the user test set has been predicted ($|T_u| - unk = 0$), then:
 
-    .. math:: MAE_u = NaN
+    $$
+    MAE_u = NaN
+    $$
     """
 
     def __str__(self):

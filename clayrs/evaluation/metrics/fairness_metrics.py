@@ -95,8 +95,8 @@ class GroupFairnessMetric(FairnessMetric):
         Args:
             score_frame (pd.DataFrame): DataFrame with columns = ['user_id', 'to_id', 'rating']
             groups (Dict[str, float]): each key contains the name of the group and each value contains the
-            percentage of the specified group. If the groups don't cover the entire user collection,
-            the rest of the users are considered in a 'default_diverse' group
+                percentage of the specified group. If the groups don't cover the entire user collection,
+                the rest of the users are considered in a 'default_diverse' group
             pop_items (Set[str]): set of most popular 'to_id' labels
 
         Returns:
@@ -145,12 +145,14 @@ class GiniIndex(FairnessMetric):
     result it will be returned and not those of every user.
     The metric is calculated as such:
 
-    .. math:: Gini_sys = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
-    |
+    $$
+    Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    $$
+
     Where:
 
-    - :math:`n` is the total number of distinct items that are being recommended
-    - :math:`x_i` is the number of times that the item :math:`i` has been recommended
+    - $n$ is the total number of distinct items that are being recommended
+    - $x_i$ is the number of times that the item $i$ has been recommended
 
     A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
     index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1
@@ -217,16 +219,18 @@ class PredictionCoverage(FairnessMetric):
     user.
     The metric is calculated as such:
 
-    .. math:: Prediction Coverage_sys = (\frac{|I_p|}{|I|})\cdot100
-    |
+    $$
+    Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+    $$
+
     Where:
 
-    - :math:`I` is the set of all available items
-    - :math:`I_p` is the set of recommended items
+    - $I$ is the set of all available items
+    - $I_p$ is the set of recommended items
 
-    The :math:`I` must be specified through the 'catalog' parameter
+    The $I$ must be specified through the 'catalog' parameter
 
-    Check the 'Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity' paper for more
+    Check the 'Beyond Accuracy: Evaluating Recommender Systems by Coverage and Serendipity' paper for more
     """
 
     def __init__(self, catalog: Set[str]):
@@ -248,7 +252,7 @@ class PredictionCoverage(FairnessMetric):
         the constructor)
 
         Args:
-            pred (pd.DataFrame): DataFrame containing recommendation lists of all users
+            pred: DataFrame containing recommendation lists of all users
 
         Returns:
             Set of distinct items that have been recommended that also appear in the catalog
@@ -282,27 +286,31 @@ class CatalogCoverage(PredictionCoverage):
     parameter is passed then it's a simple Prediction Coverage.
     The metric is calculated as such:
 
-    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
-    |
+    $$
+    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    $$
+
     Where:
 
-    - :math:`N` is the total number of users
-    - :math:`reclist(u_j)` is the set of items contained in the recommendation list of user :math:`j`
-    - :math:`I` is the set of all available items
+    - $N$ is the total number of users
+    - $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$
+    - $I$ is the set of all available items
 
-    The :math:`I` must be specified through the 'catalog' parameter
+    The $I$ must be specified through the 'catalog' parameter
 
-    The recommendation list of every user (:math:`reclist(u_j)`) can be reduced to the first *n* parameter with the
+    The recommendation list of every user ($reclist(u_j)$) can be reduced to the first *n* parameter with the
     top-n parameter, so that catalog coverage is measured considering only the most highest ranked items.
 
     With the 'k' parameter one could specify the number of users that will be used to calculate catalog coverage:
     k users will be randomly sampled and their recommendation lists will be used. The formula above becomes:
 
-    .. math:: Catalog Coverage_sys = (\frac{|\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
-    |
+    $$
+    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...k}reclist(u_j)|}{|I|})\cdot100
+    $$
+
     Where:
 
-    - :math:`k` is the parameter specified
+    - $k$ is the parameter specified
 
     Obviously 'k' < N, else simply recommendation lists of all users will be used
 
@@ -363,7 +371,9 @@ class DeltaGap(GroupFairnessMetric):
 
     It is calculated as such:
 
-    .. math:: \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+    $$
+    \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+    $$
 
     Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
     and percentage of how many user must contain a group as values. For example::
@@ -410,13 +420,15 @@ class DeltaGap(GroupFairnessMetric):
         Compute the GAP (Group Average Popularity) formula
 
 
-        .. math:: GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in iu} pop_i}{|iu|}}{|G|}
+        $$
+        GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
+        $$
 
         Where:
 
-        - G is the set of users
-        - iu is the set of items rated by user u
-        - pop_i is the popularity of item i
+        - $G$ is the set of users
+        - $i_u$ is the set of items rated by user u
+        - $pop_i$ is the popularity of item i
 
         Args:
             group (Set<str>): the set of users (user_id)
