@@ -1,4 +1,4 @@
-import inspect
+from __future__ import annotations
 import os.path
 import re
 from pathlib import Path
@@ -6,17 +6,30 @@ from pathlib import Path
 import numpy as np
 import pyaml
 
-from clayrs.content_analyzer import ContentAnalyzer
-from clayrs.content_analyzer.ratings_manager import Ratings
-from clayrs.evaluation.eval_model import EvalModel
-from clayrs.recsys.partitioning import Partitioning
-from clayrs.recsys.recsys import RecSys
+
+from typing import TYPE_CHECKING
+
+# to avoid circular import. Maybe a little 'hacky', better organization for the future?
+# This is almost inevitable though, since Report MUST refer to other modules for type hints
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_analyzer_main import ContentAnalyzer
+    from clayrs.content_analyzer import Ratings
+    from clayrs.evaluation import EvalModel
+    from clayrs.recsys.partitioning import Partitioning
+    from clayrs.recsys.recsys import RecSys
 
 
 class Report:
 
-    def __init__(self, output_dir: str = '.'):
+    def __init__(self, output_dir: str = '.',
+                 ca_report_filename: str = 'ca_report',
+                 rs_report_filename: str = 'rs_report',
+                 eva_report_filename: str = 'eva_report'):
+
         self._output_dir = output_dir
+        self._ca_report_filename = ca_report_filename
+        self._rs_report_filename = rs_report_filename
+        self._eva_report_filename = eva_report_filename
 
     @property
     def output_dir(self):
@@ -25,6 +38,30 @@ class Report:
     @output_dir.setter
     def output_dir(self, path):
         self._output_dir = path
+
+    @property
+    def ca_report_filename(self):
+        return self._ca_report_filename
+
+    @ca_report_filename.setter
+    def ca_report_filename(self, filename: str):
+        self._ca_report_filename = filename
+
+    @property
+    def rs_report_filename(self):
+        return self._rs_report_filename
+
+    @rs_report_filename.setter
+    def rs_report_filename(self, filename: str):
+        self._rs_report_filename = filename
+
+    @property
+    def eva_report_filename(self):
+        return self._eva_report_filename
+
+    @eva_report_filename.setter
+    def eva_report_filename(self, filename: str):
+        self._eva_report_filename = filename
 
     @staticmethod
     def _extract_arguments(repr_string):
@@ -236,7 +273,7 @@ class Report:
             # create folder if it doesn't exist
             Path(self.output_dir).mkdir(parents=True, exist_ok=True)
 
-            output_dir = os.path.join(self.output_dir, 'ca_report.yml')
+            output_dir = os.path.join(self.output_dir, f'{self._ca_report_filename}.yml')
             dump_yaml(output_dir, ca_dict)
 
         if original_ratings is not None or partitioning_technique is not None or recsys is not None:
@@ -245,7 +282,7 @@ class Report:
             # create folder if it doesn't exist
             Path(self.output_dir).mkdir(parents=True, exist_ok=True)
 
-            output_dir = os.path.join(self.output_dir, 'rs_report.yml')
+            output_dir = os.path.join(self.output_dir, f'{self._rs_report_filename}.yml')
             dump_yaml(output_dir, rs_dict)
 
         if eval_model is not None:
@@ -254,5 +291,5 @@ class Report:
             # create folder if it doesn't exist
             Path(self.output_dir).mkdir(parents=True, exist_ok=True)
 
-            output_dir = os.path.join(self.output_dir, 'eva_report.yml')
+            output_dir = os.path.join(self.output_dir, f'{self._eva_report_filename}.yml')
             dump_yaml(output_dir, eva_dict)

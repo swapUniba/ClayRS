@@ -1,7 +1,6 @@
 from typing import List, Union, Optional, Dict
 
-import scipy.sparse
-from clayrs.content_analyzer import Content
+from clayrs.content_analyzer.content_representation.content import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction

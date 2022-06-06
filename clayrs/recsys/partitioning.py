@@ -8,7 +8,7 @@ from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
 
-from clayrs.content_analyzer import Ratings
+from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.utils.const import logger, get_progbar
 

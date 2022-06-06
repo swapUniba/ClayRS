@@ -170,7 +170,7 @@ class MRR(RankingMetric):
         return "MRR"
 
     def __repr__(self):
-        return f'MRR(relevant_threshold={self.__relevant_threshold})'
+        return f'MRR(relevant_threshold={self.relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
                              relevant_threshold: float):
@@ -268,7 +268,7 @@ class MRRAtK(MRR):
         return "MRR@{}".format(self.k)
 
     def __repr__(self):
-        return f'MRRAtK(relevant_threshold={self.__relevant_threshold})'
+        return f'MRRAtK(relevant_threshold={self.relevant_threshold})'
 
     def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
                              relevant_threshold: float):
