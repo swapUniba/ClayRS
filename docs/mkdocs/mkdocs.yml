@@ -1,0 +1,84 @@
+site_name: ClayRS documentation
+repo_url: https://github.com/swapUniba/ClayRS
+repo_name: swapUniba/ClayRS
+theme:
+  name: material
+  logo: images/icon_no_borders.svg
+  favicon: images/icon_no_borders.svg
+  icon:
+    repo: fontawesome/brands/github
+  palette: 
+      - media: "(prefers-color-scheme: light)"
+        scheme: default
+        primary: blue
+        accent: deep orange
+        toggle:
+          icon: material/weather-sunny
+          name: Switch to dark mode
+      - media: "(prefers-color-scheme: dark)"
+        scheme: slate
+        primary: indigo
+        accent: amber
+        toggle:
+          icon: material/weather-night
+          name: Switch to light mode
+  features:
+    - content.tooltips
+    - navigation.tabs
+    - navigation.sections
+    - content.code.annotate
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - abbr
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+nav:
+    - Home: 'index.md'
+    - 'First steps':
+        - Installation: 'first_steps/installation.md'
+        - Quickstart: 'first_steps/quickstart.md'
+    - 'Content Analyzer':
+        - Introduction: 'content_analyzer/introduction.md'
+        - Ratings: 'content_analyzer/ratings.md'
+    - Recsys:
+        - Introduction: 'recsys/introduction.md'
+        - RecSys: 'recsys/recsys.md'
+    - Evaluation:
+        - Introduction: 'evaluation/introduction.md'
+        - 'EvalModel class': 'evaluation/eval_model.md'
+        - Metrics:
+            - 'Classification metrics': 'evaluation/metrics/classification_metrics.md'
+            - 'Ranking metrics': 'evaluation/metrics/ranking_metrics.md'
+            - 'Error metrics': 'evaluation/metrics/error_metrics.md'
+            - 'Fairness metrics': 'evaluation/metrics/fairness_metrics.md'
+            - 'Plot metrics': 'evaluation/metrics/plot_metrics.md'
+        - 'Statistical tests':
+            - Wilcoxon: 'evaluation/eval_model.md'
+            - Ttest: 'evaluation/eval_model.md'
+plugins:
+    - search
+    - mkdocstrings:
+        handlers:
+            python:
+                paths: [../../]
+                options:
+                  show_root_toc_entry: false
+                  show_root_heading: false
+                  show_root_full_path: false
+                  merge_init_into_class: false
+watch:
+    - ../../clayrs
