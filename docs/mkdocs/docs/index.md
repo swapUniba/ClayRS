@@ -9,7 +9,7 @@ hide:
 	Docs are still a WIP
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:75%;"/>
+    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:50%;"/>
 </p>
 
 # Welcome to ClayRS's documentation!
