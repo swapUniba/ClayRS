@@ -8,6 +8,10 @@ hide:
 
 	Docs are still a WIP
 
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:75%;"/>
+</p>
+
 # Welcome to ClayRS's documentation!
 
 ![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
