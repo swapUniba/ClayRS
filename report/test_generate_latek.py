@@ -48,15 +48,12 @@ def unify_yaml_files():
     data_ca = get_data(file_ca_path)
     data_ev = get_data(file_ev_path)
     data_rs = get_data(file_rs_path)
-    #print(data_ca)
-    #print(data_ev)
-    #print(data_rs)
 
     data_ca.update(data_ev)
     data_ca.update(data_rs)
 
     return data_ca
-    #TODO  print(output_text)
+    #TODO  to write the unified YAML file
     # with open(DATA_FILE, 'w') as file:
     #    yaml.dump(data_ca, file)
 
@@ -65,27 +62,10 @@ def get_data(DATA_FILE):
     with open(DATA_FILE, 'r') as stream:
         try:
             data = yaml.safe_load(stream)
-            #print(data)
-            #print("GET_DATA type: " + str(type(data)))
-            # return yaml.safe_load(stream)
             return data
         except yaml.YAMLError as exc:
             print(exc)
 
-def process_data():
-    #TODO multiple file data = unify_yaml_files() #dict
-    data = get_data(DATA_FILE)  # dict
-    processed_data = {}
-    #recursive_print_dict(data)
-
-
-    processed_data = pd.json_normalize(data, sep='_')
-    print(processed_data)
-
-    return(processed_data)
-    #print(source_file)
-    #print(data)
-    #TODO print(data['source_file'])
 
 
 def recursive_print_dict(d, indent=0):
@@ -163,7 +143,6 @@ def generate_pdf_output():
 
 
 def main():
-    #process_data()
     generate_pdf_output()
     print("Generating Report PDF File...")
     print("Test process data")

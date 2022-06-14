@@ -5,23 +5,22 @@
 
 
 \begin{document}
-
 \maketitle
-
-
 This \LaTeX{} document was generated from yaml files for the purpose of replicability of experiments done with
 \href{https://github.com/swapUniba/ClayRS}{ClayRS},
-it contains information about the dataset, preprocessing methods, analysis algorithms and their parameters.
-
+it contains information about the dataset, preprocessing methods, analysis algorithms and
+the results of the experimental evaluation.
 
 \BLOCK{ if dict['source_file'] is defined }
-\section{Report Content Analyzer}\label{sec:report-content-analyzer}
-The data source for the Content Analyzer is:
-source\_file = \VAR{dict['source_file']|safe_text}\\
-The following \textbf{Dataset} was used:
-\BLOCK{ if dict['id_each_content'] == ['movielens_id']} \textbf{Movielens}
+%\section{Report Content Analyzer}\label{sec:report-content-analyzer}
+\section{ClayRS configurations of the experiment}
+%The data source for the Content Analyzer is: source\_file = \VAR{dict['source_file']|safe_text}\\
+\subsection{Dataset}
+In this experiment, \BLOCK{ if dict['id_each_content'] == ['movielens_id']} \textbf{Movielens}\BLOCK{endif}
+\textbf{Dataset} was used.
 
-This dataset has those charateristics:
+
+The statistics of the dataset used are reported in the following table:
 
 \begin{table}[ht]
     \centering
@@ -40,22 +39,28 @@ This dataset has those charateristics:
 \end{table}
 
 
-\BLOCK{endif }
+The following techniques have been used:
 
 
+\VAR{dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text}
+has been used as word embedding
 
-\BLOCK{ if dict['field_representations']['genres_0']['WordEmbeddingTechnique'] is defined }
 
-The word embedding source used is:
-\VAR{dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text}\\
-\BLOCK{ endif }
+\VAR{dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text}
+has been used as sentence embedding
 
+
+\clearpage
+
+\subsection{Preprocessing}
 \BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
 It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
 along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
 and semantic reasoning.
 
+
+The NLTK configuration for this experiment is reported in the following table:
 \begin{table}[ht]
     \centering
   \begin{tabular}{|c|c|}
@@ -98,7 +103,7 @@ and semantic reasoning.
 \end{table}
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 
-\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['NLTK']
 
 
 %#\{\BLOCK{for dict_item in dict['field_representations']['plot_0']['SkLearnTfIdf'] }
@@ -106,13 +111,8 @@ and semantic reasoning.
 %#\BLOCK{ endfor }
 
 
-\BLOCK{ if dict['field_representations']['genres_1']['SentenceEmbeddingTechnique'] is defined }
-The sentence embedding source used is:
-\VAR{dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text}
-\BLOCK{ endif }
 
-\clearpage
-\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+ \BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy'] is defined} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
 spaCy is designed specifically for production use and helps you build applications that process and “understand”
 large volumes of text. It can be used to build information extraction or natural language understanding systems,
@@ -143,39 +143,41 @@ spaCy has been used in this experiment with this configuration:
 \BLOCK{ endif } %end of the content analyzer section
 
 \BLOCK{ if dict['interactions'] is defined } %beginning of the recommender system section recsys
-\section{Report Recommender System}\label{sec:report-recommender-system}
 %\subsection{Interactions}
 
 
-
+\subsection{Partitioning}
 \BLOCK{ if dict['partitioning']['HoldOutPartitioning'] is defined}
 %\subsection{Partitioning}
 
 The partitioning used is the Hold-Out Partitioning.
-This approach splits the dataset in use into a ‘train’ and ‘test’ set.
+This approach splits the dataset in use into a ‘train’ set and a ‘test’ set.
 The training set is what the model is trained on, and the test set is used to see how
 well the model will perform on new, unseen data.
+
+
+
 The train set size of this experiment is the \VAR{dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100}\%
-of the dataset.
+of the original dataset, while the test set is the remaining \VAR{(100 - (dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100))}\%.
 
 \BLOCK{if dict['partitioning']['HoldOutPartitioning']['shuffle'] == True}
 The data has been shuffled before being splitted into batches.
 \BLOCK{endif}
 
 
-The Hold-Out Partitioning has been used in this experiment with the following configuration:
-\begin{table}[ht]
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    train\_set\_size  & \VAR{dict['partitioning']['HoldOutPartitioning']['train_set_size']|safe_text}\\ \hline
-    shuffle  & \VAR{dict['partitioning']['HoldOutPartitioning']['shuffle']|safe_text}\\ \hline
+%The Hold-Out Partitioning has been used in this experiment with the following configuration:
+%\begin{table}[ht]
+%    \centering
+%  \begin{tabular}{|c|c|}
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    train\_set\_size  & \VAR{dict['partitioning']['HoldOutPartitioning']['train_set_size']|safe_text}\\ \hline
+%    shuffle  & \VAR{dict['partitioning']['HoldOutPartitioning']['shuffle']|safe_text}\\ \hline
     %\VAR total\_interactions  & \VAR{dict['partitioning']['HoldOutPartitioning']['random_state']|safe_text}\\
     %\VAR skip\_user\_error  & \VAR{dict['partitioning']['HoldOutPartitioning']['skip_user_error']|safe_text}\\
-  \end{tabular}
-    \caption{Table of Hold-Out Partitioning}
-\end{table}
+%  \end{tabular}
+%    \caption{Table of Hold-Out Partitioning}
+%\end{table}
 
 \BLOCK{endif}% end of the partitioning section
 
@@ -190,32 +192,67 @@ The alpha value used was: \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPa
 
 
 \BLOCK{endif} %end recsys area
-
+\\
 \BLOCK{endif} %end of the recsys section
 
 \BLOCK{ if dict['metrics'] is defined } %beginning of the eval model section
-\section{Report Eval Model}
+\section{Metrics}
 
 
 \BLOCK{if dict['metrics']['Precision'] is defined} %beginning of the precision section
-%\subsection{Metrics: Precision}
+%\subsection{Precision}
 
-In the field of information retrieval, precision is the fraction
+
+In the field of information retrieval, the metric \textbf{Precision} is the fraction
 of retrieved documents that are relevant to the query.
 
 
-Precision has this configuration in this experiment:
-\begin{table}[ht]
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    relevant\_threshold  & \VAR{dict['metrics']['Precision']['relevant_threshold']|safe_text}\\ \hline
-    sys\_average  & \VAR{dict['metrics']['Precision']['sys_average']|safe_text}\\ \hline
+In ClayRS the Precision metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+
+    Where:
+
+    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $\geq$ relevant\_threshold in its 'ground truth'
+
+    - $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$ relevant\_threshold in its 'ground truth'
+
+
+
+    And it is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    \[
+    Precision_{sys} - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fp_u}
+    \]
+
+
+    \[
+    Precision_{sys} - macro = \frac{\sum_{u \in U} Precision_u}{|U|}
+    \]
+In ClayRS, Precision needs those parameters:
+
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
+
+\textbf{sys\_average}, a parameter that specifies how the system average must be computed the default value is 'macro',
+in this experiment the value of the sys\_average is \textbf{\VAR{dict['metrics']['Precision']['sys_average']|safe_text}}.
+%\begin{table}[ht]
+%    \centering
+%  \begin{tabular}{|c|c|}
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    relevant\_threshold  & \VAR{dict['metrics']['Precision']['relevant_threshold']|safe_text}\\ \hline
+%    sys\_average  & \VAR{dict['metrics']['Precision']['sys_average']|safe_text}\\ \hline
     %\VAR precision  & \VAR{dict['metrics']['Precision']['precision']|safe_text}\\
-  \end{tabular}
-    \caption{Table of the precision configuration}
-\end{table}
+%  \end{tabular}
+%    \caption{Table of the precision configuration}
+%\end{table}
 
 \BLOCK{endif} %end of the precision section
 
@@ -224,20 +261,49 @@ Precision has this configuration in this experiment:
 \BLOCK{if dict['metrics']['PrecisionAtK'] is defined} %beginning of the precision at k section
 %\subsection{Metrics: Precision at K}
 
-Precision at k is the proportion of recommended items in the top-k set that are relevant.
+\textbf{Precision at k} is the proportion of recommended items in the top-k set that are relevant.
+ The Precision@K metric is calculated as such for the \textbf{single user}:
 
-Precision at k has this configuration in this experiment:
-\begin{table}[ht]
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    k  & \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}\\ \hline
-    sys\_average  & \VAR{dict['metrics']['PrecisionAtK']['sys_average']|safe_text}\\ \hline
+    \[
+    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+
+    Where:
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $\geq$ relevant\_threshold in its 'ground truth'
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $<$ relevant\_threshold in its 'ground truth'
+
+    And it is calculated as such for the **entire system**, depending if 'macro' average or 'micro' average has been
+    chosen:
+
+    \[
+    Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+    \]
+
+    \[
+    Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+    \]
+
+
+
+In this experiment the value \textbf{k is \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}},
+the sys\_average is \textbf{\VAR{dict['metrics']['PrecisionAtK']['sys_average']|safe_text}}
+
+
+%\begin{table}[ht]
+%    \centering
+%  \begin{tabular}{|c|c|}
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    k  & \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}\\ \hline
+%    sys\_average  & \VAR{dict['metrics']['PrecisionAtK']['sys_average']|safe_text}\\ \hline
     %\VAR precision  & \VAR{dict['metrics']['PrecisionAtK']['precision']|safe_text}\\
-  \end{tabular}
-   \caption{Table of the precision at k configuration}
-\end{table}
+%  \end{tabular}
+%   \caption{Table of the precision at k configuration}
+%\end{table}
 \BLOCK{endif} %end of the precision at ksection
 
 \BLOCK{if dict['metrics']['FMeasureAtK'] is defined} %beginning of the fmeasure at k section
@@ -261,10 +327,11 @@ The F-measure of the system is defined as the weighted harmonic mean of its prec
 \BLOCK{if dict['sys_results']['sys - fold1'] is defined} %beginning of sysfold 1 results
 %\subsection{Sys Results fold1 :}
 
-\begin{table}[!t]
+\begin{table}[!hbp]
     \centering
   \begin{tabular}{|c|c|}
     \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
     Precision - macro & \VAR{dict['sys_results']['sys - fold1']['Precision - macro']|safe_text}\\ \hline
     Precision@2 - macro  & \VAR{dict['sys_results']['sys - fold1']['Precision@2 - macro']|safe_text}\\ \hline
     NDCG  & \VAR{dict['sys_results']['sys - fold1']['NDCG']|safe_text}\\ \hline
