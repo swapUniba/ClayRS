@@ -9,10 +9,18 @@ import json
 from pathlib import Path
 import pandas as pd
 
+from jinja2 import Undefined
+
 TEMPLATE_FILE = "report_template.tex"
 #todo UNIFIEDI DATA_FILE = "data/unified_report.yml"
 DATA_FILE = "data/ca_report.yml"
-DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+#DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+#DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml",
+                #   "/home/vincenzo/PycharmProjects/ClayRS/eva_report.yml",
+                #   "/home/vincenzo/PycharmProjects/ClayRS/rs_report.yml"]
+DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+
+
 OUTPUT_TEX = "output/report.tex"
 OUTPUT_PATH = "output/report.pdf"
 
@@ -49,8 +57,10 @@ def unify_yaml_files():
     data_ev = get_data(file_ev_path)
     data_rs = get_data(file_rs_path)
 
-    data_ca.update(data_ev)
-    data_ca.update(data_rs)
+    if(data_ev is not None):
+        data_ca.update(data_ev)
+    if(data_rs is not None):
+        data_ca.update(data_rs)
 
     return data_ca
     #TODO  to write the unified YAML file
@@ -102,6 +112,7 @@ def generate_tex_output():
 
     #TODO MULTIPLE FILE DA RIVEDERE
     data = unify_yaml_files()
+    #print(data)
     template = get_template()
 
     #print(template)
