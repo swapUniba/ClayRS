@@ -14,14 +14,15 @@ the results of the experimental evaluation.
 \VAR{'genres_0' in dict['field_representations'] }
 
 \BLOCK{ if 'source_file' in dict }
-\section{ClayRS configurations of the experiment}
-\subsection{Dataset}
+\section{ClayRS configurations of the experiment}\label{sec:clayrs-configurations-of-the-experiment}
+
+\subsection{Dataset}\label{subsec:dataset}
 In this experiment, the \BLOCK{ if dict['id_each_content'] == ['movielens_id']} \textbf{Movielens}\BLOCK{endif}
  \textbf{Dataset} was used.
 
 \hfill\break
 \BLOCK{if 'interactions' in dict}
-The statistics of the dataset used are reported in the following table:
+The statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
 
 \begin{table}[ht]
     \centering
@@ -36,25 +37,25 @@ The statistics of the dataset used are reported in the following table:
     mean\_score  & \VAR{dict['interactions']['mean_score']|safe_text}\\ \hline
     sparsity  & \VAR{dict['interactions']['sparsity']|safe_text}\\ \hline
   \end{tabular}
-   \caption{Table of the Interactions}\label{tab:table4}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
 \end{table}
 \BLOCK{endif}
 
+\hfill\break
+\hfill\break
 
 \BLOCK{ if 'WordEmbeddingTechnique' in dict['field_representations']['genres_0'] }
 The following techniques have been used:
 \VAR{dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text}
-has been used as word embedding
+has been used as word embedding.
 \BLOCK{endif}
-
-
 \BLOCK{if 'SentenceEmbeddingTechnique' in dict['field_representations']['genres_1'] }
 \VAR{dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text}
 has been used as sentence embedding
 \BLOCK{endif}
 \hfill\break
 
-\subsection{Preprocessing}
+\subsection{Preprocessing}\label{subsec:preprocessing}
 \BLOCK{if 'plot_0' in dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 \BLOCK{if 'NLTK' in dict['field_representations']['plot_0']['preprocessing']}
 The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
@@ -63,24 +64,62 @@ along with a suite of text processing libraries for classification, tokenization
 and semantic reasoning.
 
 \hfill\break
-The NLTK configuration for this experiment is reported in the following table:
-\begin{table}[ht]
-    \centering
-  \begin{tabular}{|c|c|}
+In this experiment, those operations of NLTK were used:
 
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\ \hline
-    remove\_punctuation  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation']|safe_text}\\ \hline
-    stopwords\_removal  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal']|safe_text}\\ \hline
-    url\_tagging  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging']|safe_text}\\ \hline
-    lemmatization  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization']|safe_text}\\ \hline
-    stemming  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming']|safe_text}\\ \hline
-    named\_entity\_recognition  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\ \hline
-    lang  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lang']|safe_text}\\ \hline
-    \end{tabular}
-  \caption{Table of the parameters used with NLTK}\label{tab:table}
-\end{table}
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace'] == True}
+\textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation'] == True}
+\textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal'] == True}
+\textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging'] == True}
+\textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization'] == True}
+\textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming'] == True}
+Stemming, an operation that reduces a word to its root, for example "Flying" becomes "Fly" after the stemming operations is applied.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition'] == True}
+Named entity recognition, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+\BLOCK{endif}
+\hfill\break
+
+
+
+%\begin{table}[ht]
+%    \centering
+%  \begin{tabular}{|c|c|}
+
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\ \hline
+%    remove\_punctuation  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation']|safe_text}\\ \hline
+%    stopwords\_removal  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal']|safe_text}\\ \hline
+    %url\_tagging  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging']|safe_text}\\ \hline
+    %lemmatization  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization']|safe_text}\\ \hline
+    %stemming  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming']|safe_text}\\ \hline
+   % named\_entity\_recognition  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\ \hline
+    %lang  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lang']|safe_text}\\ \hline
+    %\end{tabular}
+  %\caption{Table of the parameters used with NLTK}\label{tab:table}
+%\end{table}
 
 \BLOCK{ endif }
 \BLOCK{ endif }
@@ -93,7 +132,7 @@ along with a suite of text processing libraries for classification, tokenization
 and semantic reasoning.
 
 \hfill\break
-The NLTK configuration for this experiment is reported in the following table:
+The NLTK configuration for this experiment is reported in the following table \ref{tab:NLTK_table}:
 \begin{table}[ht]
     \centering
   \begin{tabular}{|c|c|}
@@ -109,7 +148,7 @@ The NLTK configuration for this experiment is reported in the following table:
     named\_entity\_recognition  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\ \hline
     lang  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['lang']|safe_text}\\ \hline
     \end{tabular}
-  \caption{Table of the parameters used with NLTK}
+  \caption{Table of the parameters used with NLTK}\label{tab:NLTK_table}
 \end{table}
 
 \BLOCK{ endif }
@@ -124,13 +163,21 @@ The preprocessing used is Ekphrasis, ........................
 
 \hfill\break
 The Ekphrasis configuration for this experiment is :
-    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\ \hline
 
 \BLOCK{ endif }
 
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['Ekphrasis']
 
+\BLOCK{if 'genres_0' in dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{if 'Ekphrasis' in dict['field_representations']['genres_0']['preprocessing'] }
+The preprocessing used is Ekphrasis, ........................
 
+\hfill\break
+The Ekphrasis configuration for this experiment is :
+
+\BLOCK{ endif }
+
+\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['Ekphrasis']
 
 \BLOCK{if 'genres_0' in dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 \BLOCK{if 'Spacy' in dict['field_representations']['genres_0']['preprocessing'] }
@@ -139,7 +186,7 @@ spaCy is a free, open-source library for advanced Natural Language Processing (N
 spaCy is designed specifically for production use and helps you build applications that process and “understand”
 large volumes of text. It can be used to build information extraction or natural language understanding systems,
 or to pre-process text for deep learning.
-spaCy has been used in this experiment with this configuration:
+spaCy has been used in this experiment with this configuration \ref{tab:Spacy_genres}:
 
 \begin{table}[htbp]
     \centering
@@ -157,7 +204,7 @@ spaCy has been used in this experiment with this configuration:
     url\_tagging  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['url_tagging']|safe_text}\\ \hline
     named\_entity\_recognition  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['named_entity_recognition']|safe_text}\\ \hline
   \end{tabular}
-    \caption{Table of the parameters used with Spacy}\label{tab:table3}
+    \caption{Table of the parameters used with Spacy}\label{tab:Spacy_genres}
 \end{table}
 \BLOCK{ endif }
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
@@ -168,7 +215,7 @@ spaCy has been used in this experiment with this configuration:
 %\subsection{Interactions}
 
 \newpage
-\subsection{Partitioning}
+\subsection{Partitioning}\label{subsec:partitioning}
 \BLOCK{ if dict['partitioning']['HoldOutPartitioning'] is defined}
 %\subsection{Partitioning}
 
@@ -211,7 +258,30 @@ The PageRank can be 'personalized', in this case the PageRank will be calculated
 The alpha value used was: \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|safe_text}
 
 
-\BLOCK{if SkLearnTfIdf in dict} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+%\BLOCK{if 'SkLearnTfIdf' in dict['field_representations']['plot_0']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+
+%\begin{table}[htpb]
+%    \centering
+%  \begin{tabular}{|c|c|}
+
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    max\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_df']|safe_text} \\ \hline
+%    min\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['min_df']|safe_text}\\ \hline
+%    max\_features  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_features']|safe_text}\\ \hline
+%    vocabulary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['vocabulary']|safe_text}\\ \hline
+%    binary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['binary']|safe_text}\\ \hline
+    %\VAR dtype  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['dtype']|safe_text}\\
+%    norm  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['norm']|safe_text}\\ \hline
+%    use\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['use_idf']|safe_text}\\ \hline
+%    smooth\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\ \hline
+%    sublinear\_tf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\ \hline
+%  \end{tabular}
+%    \caption{Table of the parameters used with SkLearnTfIdf}
+%\end{table}
+%\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+
+\BLOCK{if 'SkLearnTfIdf' in dict['field_representations']['genres_0']} %# Beginning OF THE dict['field_representations']['genres_0']['SkLearnTfIdf']
 
 \begin{table}[htpb]
     \centering
@@ -219,26 +289,25 @@ The alpha value used was: \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPa
 
     \hline
     \textbf{Parameter}& \textbf{Value} \\ \hline
-    max\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_df']|safe_text} \\ \hline
-    min\_df  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['min_df']|safe_text}\\ \hline
-    max\_features  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['max_features']|safe_text}\\ \hline
-    vocabulary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['vocabulary']|safe_text}\\ \hline
-    binary  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['binary']|safe_text}\\ \hline
+    max\_df  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['max_df']|safe_text} \\ \hline
+    min\_df  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['min_df']|safe_text}\\ \hline
+    max\_features  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['max_features']|safe_text}\\ \hline
+    vocabulary  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['vocabulary']|safe_text}\\ \hline
+    binary  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['binary']|safe_text}\\ \hline
     %\VAR dtype  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['dtype']|safe_text}\\
-    norm  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['norm']|safe_text}\\ \hline
-    use\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['use_idf']|safe_text}\\ \hline
-    smooth\_idf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\ \hline
-    sublinear\_tf  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\ \hline
+    norm  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['norm']|safe_text}\\ \hline
+    use\_idf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['use_idf']|safe_text}\\ \hline
+    smooth\_idf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\ \hline
+    sublinear\_tf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\ \hline
   \end{tabular}
     \caption{Table of the parameters used with SkLearnTfIdf}\label{tab:table2}
 \end{table}
-\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-
+\BLOCK{ endif } %# END OF THE dict['field_representations']['genres_0']['SkLearnTfIdf']
 
 \BLOCK{endif} %end recsys area
 \\
 \BLOCK{endif} %end of the recsys section
-
+\newpage
 \BLOCK{ if dict['metrics'] is defined } %beginning of the eval model section
 \section{Metrics}
 
@@ -247,8 +316,7 @@ The alpha value used was: \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPa
 %\subsection{Precision}
 
 
-In the field of information retrieval, the metric \textbf{Precision} is the fraction
-of retrieved documents that are relevant to the query.
+
 \hfill\break
 In ClayRS the Precision metric is calculated as such for the \textbf{single user}:
 
@@ -267,16 +335,8 @@ In ClayRS the Precision metric is calculated as such for the \textbf{single user
 
 
     And it is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro' average has been
-    chosen:
+    chosen.
 
-    \[
-    Precision_{sys} - micro = \frac{\sum_{u \in U} tp_u}{\sum_{u \in U} tp_u + \sum_{u \in U} fp_u}
-    \]
-
-
-    \[
-    Precision_{sys} - macro = \frac{\sum_{u \in U} Precision_u}{|U|}
-    \]
 In ClayRS, Precision needs those parameters:
 \hfill\break
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
@@ -320,16 +380,7 @@ in this experiment the value of the sys\_average is \textbf{\VAR{dict['metrics']
       \textbf{cutoff to the first K items} and have a rating $<$ relevant\_threshold in its 'ground truth'
 
     And it is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro' average has been
-    chosen:
-
-    \[
-    Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
-    \]
-
-    \[
-    Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
-    \]
-
+    chosen.
 
 
 In this experiment the value \textbf{k is \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}},
@@ -380,15 +431,8 @@ the sys\_average is \textbf{\VAR{dict['metrics']['PrecisionAtK']['sys_average']|
     \]
 
     The FMeasure@K metric is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro'
-    average has been chosen:
+    average has been chosen.
 
-    \[
-    FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
-    \]
-
-    \[
-    FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
-    \]
 
 \hfill\break
 \hfill\break

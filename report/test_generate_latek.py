@@ -14,11 +14,11 @@ from jinja2 import Undefined
 TEMPLATE_FILE = "report_template.tex"
 #todo UNIFIEDI DATA_FILE = "data/unified_report.yml"
 DATA_FILE = "data/ca_report.yml"
-#DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
 #DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml",
                 #   "/home/vincenzo/PycharmProjects/ClayRS/eva_report.yml",
                 #   "/home/vincenzo/PycharmProjects/ClayRS/rs_report.yml"]
-DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+#DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
 
 
 OUTPUT_TEX = "output/report.tex"
@@ -110,14 +110,10 @@ def generate_tex_output():
     #TODO SINGLE FILE
     # data = get_data(DATA_FILE) #dict
 
-    #TODO MULTIPLE FILE DA RIVEDERE
+    #TODO MULTIPLE FILE TO REVIEW
     data = unify_yaml_files()
-    #print(data)
     template = get_template()
 
-    #print(template)
-    #output_text = template.render(data['source_file'])
-    #output_text = template.render(**data)
     output_text = template.render(dict = data)
 
     #print(output_text)
@@ -156,7 +152,6 @@ def generate_pdf_output():
 def main():
     generate_pdf_output()
     print("Generating Report PDF File...")
-    print("Test process data")
     #unify_yaml_files()
 
 
