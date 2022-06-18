@@ -103,23 +103,6 @@ Named entity recognition, an operation that detects the named entities such as p
 
 
 
-%\begin{table}[ht]
-%    \centering
-%  \begin{tabular}{|c|c|}
-
-%    \hline
-%    \textbf{Parameter}& \textbf{Value} \\ \hline
-%    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\ \hline
-%    remove\_punctuation  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['remove_punctuation']|safe_text}\\ \hline
-%    stopwords\_removal  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stopwords_removal']|safe_text}\\ \hline
-    %url\_tagging  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['url_tagging']|safe_text}\\ \hline
-    %lemmatization  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lemmatization']|safe_text}\\ \hline
-    %stemming  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['stemming']|safe_text}\\ \hline
-   % named\_entity\_recognition  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\ \hline
-    %lang  & \VAR{dict['field_representations']['plot_0']['preprocessing']['NLTK']['lang']|safe_text}\\ \hline
-    %\end{tabular}
-  %\caption{Table of the parameters used with NLTK}\label{tab:table}
-%\end{table}
 
 \BLOCK{ endif }
 \BLOCK{ endif }
@@ -131,25 +114,47 @@ It provides easy-to-use interfaces to over 50 corpora and lexical resources such
 along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
 and semantic reasoning.
 
-\hfill\break
-The NLTK configuration for this experiment is reported in the following table \ref{tab:NLTK_table}:
-\begin{table}[ht]
-    \centering
-  \begin{tabular}{|c|c|}
 
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['strip_multiple_whitespace']|safe_text}\\ \hline
-    remove\_punctuation  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['remove_punctuation']|safe_text}\\ \hline
-    stopwords\_removal  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['stopwords_removal']|safe_text}\\ \hline
-    url\_tagging  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['url_tagging']|safe_text}\\ \hline
-    lemmatization  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['lemmatization']|safe_text}\\ \hline
-    stemming  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['stemming']|safe_text}\\ \hline
-    named\_entity\_recognition  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['named_entity_recognition']|safe_text}\\ \hline
-    lang  & \VAR{dict['field_representations']['genres_0']['preprocessing']['NLTK']['lang']|safe_text}\\ \hline
-    \end{tabular}
-  \caption{Table of the parameters used with NLTK}\label{tab:NLTK_table}
-\end{table}
+\hfill\break
+In this experiment, those operations of NLTK were used:
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['strip_multiple_whitespace'] == True}
+\textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['remove_punctuation'] == True}
+\textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['stopwords_removal'] == True}
+\textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['url_tagging'] == True}
+\textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['lemmatization'] == True}
+\textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['stemming'] == True}
+Stemming, an operation that reduces a word to its root, for example "Flying" becomes "Fly" after the stemming operations is applied.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['NLTK']['named_entity_recognition'] == True}
+Named entity recognition, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+\BLOCK{endif}
+\hfill\break
+
+\hfill\break
+
 
 \BLOCK{ endif }
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['Ekphrasis']
@@ -186,26 +191,41 @@ spaCy is a free, open-source library for advanced Natural Language Processing (N
 spaCy is designed specifically for production use and helps you build applications that process and “understand”
 large volumes of text. It can be used to build information extraction or natural language understanding systems,
 or to pre-process text for deep learning.
-spaCy has been used in this experiment with this configuration \ref{tab:Spacy_genres}:
+In this experiment, those spaCy operations have been used:
 
-\begin{table}[htbp]
-    \centering
-  \begin{tabular}{|c|c|}
+\hfill\break
+In this experiment, those spaCy operations were used:
 
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    model  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['model']|safe_text}\\ \hline
-    strip\_multiple\_whitespace  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['strip_multiple_whitespace']|safe_text}\\ \hline
-    remove\_punctuation  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['remove_punctuation']|safe_text}\\ \hline
-    stopwords\_removal  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['stopwords_removal']|safe_text}\\ \hline
-    new\_stopwords  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['new_stopwords']|safe_text}\\ \hline
-    not\_stopwords  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['not_stopwords']|safe_text}\\ \hline
-    lemmatization  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['lemmatization']|safe_text}\\ \hline
-    url\_tagging  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['url_tagging']|safe_text}\\ \hline
-    named\_entity\_recognition  & \VAR{dict['field_representations']['genres_0']['preprocessing']['Spacy']['named_entity_recognition']|safe_text}\\ \hline
-  \end{tabular}
-    \caption{Table of the parameters used with Spacy}\label{tab:Spacy_genres}
-\end{table}
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['strip_multiple_whitespace'] == True}
+\textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['remove_punctuation'] == True}
+\textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+\BLOCK{endif}
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['stopwords_removal'] == True}
+\textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['url_tagging'] == True}
+\textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['lemmatization'] == True}
+\textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+\BLOCK{endif}
+
+
+\BLOCK{if dict['field_representations']['genres_0']['preprocessing']['Spacy']['named_entity_recognition'] == True}
+Named entity recognition, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+\BLOCK{endif}
+
+
+
 \BLOCK{ endif }
 \BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 
@@ -214,7 +234,7 @@ spaCy has been used in this experiment with this configuration \ref{tab:Spacy_ge
 \BLOCK{ if dict['interactions'] is defined } %beginning of the recommender system section recsys
 %\subsection{Interactions}
 
-\newpage
+%\newpage
 \subsection{Partitioning}\label{subsec:partitioning}
 \BLOCK{ if dict['partitioning']['HoldOutPartitioning'] is defined}
 %\subsection{Partitioning}
@@ -250,6 +270,39 @@ The data has been shuffled before being splitted into batches.
 
 \BLOCK{endif}% end of the partitioning section
 
+\BLOCK{ if dict['partitioning']['KFoldPartitioning'] is defined}
+%\subsection{Partitioning}
+
+The partitioning used is the KFoldPartitioning Partitioning.
+...............................
+\hfill\break
+\hfill\break
+%The train set size of this experiment is the \VAR{dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100}\%
+%of the original dataset, while the test set is the remaining \VAR{(100 - (dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100))}\%.
+\hfill\break
+\hfill\break
+\BLOCK{if dict['partitioning']['HoldOutPartitioning']['shuffle'] == True}
+%The data has been shuffled before being splitted into batches.
+\BLOCK{endif}
+
+
+%The Hold-Out Partitioning has been used in this experiment with the following configuration:
+%\begin{table}[ht]
+%    \centering
+%  \begin{tabular}{|c|c|}
+%    \hline
+%    \textbf{Parameter}& \textbf{Value} \\ \hline
+%    train\_set\_size  & \VAR{dict['partitioning']['HoldOutPartitioning']['train_set_size']|safe_text}\\ \hline
+%    shuffle  & \VAR{dict['partitioning']['HoldOutPartitioning']['shuffle']|safe_text}\\ \hline
+    %\VAR total\_interactions  & \VAR{dict['partitioning']['HoldOutPartitioning']['random_state']|safe_text}\\
+    %\VAR skip\_user\_error  & \VAR{dict['partitioning']['HoldOutPartitioning']['skip_user_error']|safe_text}\\
+%  \end{tabular}
+%    \caption{Table of Hold-Out Partitioning}
+%\end{table}
+
+\BLOCK{endif}% end of the partitioning section
+
+
 \BLOCK{if dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined} %beginning recsys graph based area
 \subsection{Algorithm Used}
 In this experiment a Graph Based Recommender Algorithm has been used.
@@ -281,35 +334,14 @@ The alpha value used was: \VAR{dict['recsys']['GraphBasedRS']['algorithm']['NXPa
 %\end{table}
 %\BLOCK{ endif } %# END OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
 
-\BLOCK{if 'SkLearnTfIdf' in dict['field_representations']['genres_0']} %# Beginning OF THE dict['field_representations']['genres_0']['SkLearnTfIdf']
 
-\begin{table}[htpb]
-    \centering
-  \begin{tabular}{|c|c|}
-
-    \hline
-    \textbf{Parameter}& \textbf{Value} \\ \hline
-    max\_df  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['max_df']|safe_text} \\ \hline
-    min\_df  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['min_df']|safe_text}\\ \hline
-    max\_features  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['max_features']|safe_text}\\ \hline
-    vocabulary  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['vocabulary']|safe_text}\\ \hline
-    binary  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['binary']|safe_text}\\ \hline
-    %\VAR dtype  & \VAR{dict['field_representations']['plot_0']['SkLearnTfIdf']['dtype']|safe_text}\\
-    norm  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['norm']|safe_text}\\ \hline
-    use\_idf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['use_idf']|safe_text}\\ \hline
-    smooth\_idf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['smooth_idf']|safe_text}\\ \hline
-    sublinear\_tf  & \VAR{dict['field_representations']['genres_0']['SkLearnTfIdf']['sublinear_tf']|safe_text}\\ \hline
-  \end{tabular}
-    \caption{Table of the parameters used with SkLearnTfIdf}\label{tab:table2}
-\end{table}
-\BLOCK{ endif } %# END OF THE dict['field_representations']['genres_0']['SkLearnTfIdf']
 
 \BLOCK{endif} %end recsys area
 \\
 \BLOCK{endif} %end of the recsys section
-\newpage
+%\newpage
 \BLOCK{ if dict['metrics'] is defined } %beginning of the eval model section
-\section{Metrics}
+\subsection{Metrics}
 
 
 \BLOCK{if dict['metrics']['Precision'] is defined} %beginning of the precision section
@@ -327,15 +359,20 @@ In ClayRS the Precision metric is calculated as such for the \textbf{single user
     Where:
 
     - $tp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $\geq$ relevant\_threshold in its 'ground truth'
+      rating $\geq$ \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
+        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
+        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+
 
     - $fp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $<$ relevant\_threshold in its 'ground truth'
+      rating $<$ \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
+        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
+        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
     \hfill\break
 
 
-    And it is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro' average has been
-    chosen.
 
 In ClayRS, Precision needs those parameters:
 \hfill\break
@@ -374,13 +411,20 @@ in this experiment the value of the sys\_average is \textbf{\VAR{dict['metrics']
     Where:
 
     - $tp@K_u$ is the number of items which are in the recommendation list  of the user
-      \textbf{cutoff to the first K items} and have a rating $\geq$ relevant\_threshold in its 'ground truth'
+      \textbf{cutoff to the first K items} and have a rating $\geq$
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
+        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
+        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+
 
     - $tp@K_u$ is the number of items which are in the recommendation list  of the user
-      \textbf{cutoff to the first K items} and have a rating $<$ relevant\_threshold in its 'ground truth'
+      \textbf{cutoff to the first K items} and have a rating $<$
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
+        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
+        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
 
-    And it is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro' average has been
-    chosen.
 
 
 In this experiment the value \textbf{k is \VAR{dict['metrics']['PrecisionAtK']['k']|safe_text}},
@@ -430,8 +474,7 @@ the sys\_average is \textbf{\VAR{dict['metrics']['PrecisionAtK']['sys_average']|
     F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
     \]
 
-    The FMeasure@K metric is calculated as such for the \textbf{entire system}, depending if 'macro' average or 'micro'
-    average has been chosen.
+
 
 
 \hfill\break
@@ -455,9 +498,10 @@ In this experiment \textbf{k = \VAR{dict['metrics']['FMeasureAtK']['k']|safe_tex
 
 \BLOCK{if dict['sys_results']['sys - fold1'] is defined} %beginning of sysfold 1 results
 %\subsection{Sys Results fold1 :}
-\newpage
-\subsection{Results}
-\begin{table}[!hbp]
+%\newpage
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
     \centering
   \begin{tabular}{|c|c|}
     \hline
