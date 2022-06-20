@@ -25,11 +25,10 @@ class RecSys(ABC):
     There exists various type of recommender systems, content-based, graph-based, etc. so extend this class
     if another type must be implemented into the framework.
 
-    Every recommender system do its prediction based on a rating frame, containing interactions between
-    users and items
+    Every recommender system has an algorithm which is used to compute rank/score predictions
 
     Args:
-        rating_frame (pd.DataFrame): a dataframe containing interactions between users and items
+        algorithm: The algorithm used to compute rank/score prediction
     """
 
     def __init__(self, algorithm: Union[ContentBasedAlgorithm, GraphBasedAlgorithm]):
@@ -53,16 +52,58 @@ class RecSys(ABC):
 class ContentBasedRS(RecSys):
     """
     Class for recommender systems which use the items' content in order to make predictions,
-    some algorithms may also use users' content
+    some algorithms may also use users' content, so it's an optional parameter.
 
-    Every CBRS differ from each other based the algorithm chosen
+    Every CBRS differ from each other based the algorithm used.
+
+    Examples:
+
+        In case you perform a splitting of the dataset which returns a single train and test set (e.g. HoldOut
+        technique):
+
+        ```python title="Single split train"
+        from clayrs import recsys as rs
+        from clayrs import content_analyzer as ca
+
+        original_rat = ca.Ratings(ca.CSVFile(ratings_path))
+
+        [train], [test] = rs.HoldOutPartitioning().split_all(original_rat)
+
+        alg = rs.CentroidVector()  # any cb algorithm
+
+        cbrs = rs.ContentBasedRS(alg, train, items_path)
+
+        rank = cbrs.fit_rank(test, n_recs=10)
+        ```
+
+        In case you perform a splitting of the dataset which returns a multiple train and test sets (KFold technique):
+
+        ```python title="Multiple split train"
+        from clayrs import recsys as rs
+        from clayrs import content_analyzer as ca
+
+        original_rat = ca.Ratings(ca.CSVFile(ratings_path))
+
+        train_list, test_list = rs.KFoldPartitioning(n_splits=5).split_all(original_rat)
+
+        alg = rs.CentroidVector()  # any cb algorithm
+
+        for train_set, test_set in zip(train_list, test_list):
+
+            cbrs = rs.ContentBasedRS(alg, train_set, items_path)
+            rank_to_append = cbrs.fit_rank(test_set)
+
+            result_list.append(rank_to_append)
+        ```
+
+        `result_list` will contain recommendation lists for each split
 
     Args:
-        algorithm (ContentBasedAlgorithm): the content based algorithm that will be used in order to
+        algorithm: the content based algorithm that will be used in order to
             rank or make score prediction
-        train_set (pd.DataFrame): a DataFrame containing interactions between users and items
-        items_directory (str): the path of the items serialized by the Content Analyzer
-        users_directory (str): the path of the users serialized by the Content Analyzer
+        train_set: a Ratings object containing interactions between users and items
+        items_directory: the path of the items serialized by the Content Analyzer
+        users_directory: the path of the users serialized by the Content Analyzer
     """
 
     def __init__(self,
@@ -87,28 +128,30 @@ class ContentBasedRS(RecSys):
 
     @property
     def train_set(self):
+        """
+        The train set of the Content Based RecSys
+        """
         return self.__train_set
 
     @property
     def items_directory(self):
         """
-        Path of the serialized items
+        Path of the serialized items by the Content Analyzer
         """
         return self.__items_directory
 
     @property
     def users_directory(self):
         """
-        Path of the serialized users
+        Path of the serialized users by the Content Analyzer
         """
         return self.__users_directory
 
     def fit(self):
         """
-        Method that divides the train set into as many parts as
-        there are different users. then it proceeds with the fit
-        for each user and saves the result in the dictionary "user_fit_dic"
+        Method which will fit the algorithm chosen for each user in the train set passed in the constructor
 
+        If the algorithm can't be fit for some users, a warning message is printed
         """
         items_to_load = set(self.train_set.item_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
@@ -138,21 +181,31 @@ class ContentBasedRS(RecSys):
     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
         """
-        Method used to calculate ranking for the user in test set
+        Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
+        You must first call the `fit()` method before you can compute the ranking.
 
-        If the recs_number is specified, then the rank will contain the top-n items for the users.
+        If the `n_recs` is specified, then the rank will contain the top-n items for the users.
         Otherwise the rank will contain all unrated items of the particular users
 
-        if the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
-            test_set: set of users for which to calculate the rank
-            n_recs: number of the top items that will be present in the ranking
+            test_set: Ratings object which represents the ground truth of the split considered
+            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
+                will be returned for the user
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+
+        Raises:
+            NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            concat_rank: list of the items ranked for each user
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
 
         """
         if len(self._user_fit_dic) == 0:
@@ -203,17 +256,30 @@ class ContentBasedRS(RecSys):
     def predict(self, test_set: Ratings, user_id_list: List = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
         """
-        Method to call when score prediction must be done for the users in test set
+        Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
+        You must first call the `fit()` method before you can compute score predictions.
 
-        If the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
+        **BE CAREFUL**: not all algorithms are able to perform *score prediction*
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        prediction
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
-            test_set: set of users for which to calculate the predictions
+            test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+
+        Raises:
+            NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            concat_score_preds: prediction for each user
+            Prediction object containing score prediction lists for all users of the test set or for all users in
+                `user_id_list`
 
         """
         if len(self._user_fit_dic) == 0:
@@ -266,14 +332,35 @@ class ContentBasedRS(RecSys):
                     methodology: Union[Methodology, None] = TestRatingsMethodology(),
                     save_fit: bool = False) -> Prediction:
         """
-        The method fits the algorithm and then calculates the prediction for each user
+        Method used to both fit and calculate score prediction for all users in test set or all users in `user_id_list`
+        parameter.
+        The Recommender System will first be fit for each user in the train set passed in the constructor.
+        If the algorithm can't be fit for some users, a warning message is printed
+
+        **BE CAREFUL**: not all algorithms are able to perform *score prediction*
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        prediction
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+
+        With the `save_fit` parameter you can decide if you want that you recommender system remains *fit* even after
+        the complete execution of this method, in case you want to compute ranking/score prediction with other
+        methodologies, or with a different `n_recs` parameter. Be mindful since it can be memory-expensive,
+        thus by default this behaviour is disabled
 
         Args:
-            test_set: set of users for which to calculate the prediction
+            test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+            save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
+                complete execution of this method. Default is False
 
         Returns:
-            prediction: prediction for each user
-
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
         """
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
@@ -336,15 +423,40 @@ class ContentBasedRS(RecSys):
                  methodology: Union[Methodology, None] = TestRatingsMethodology(),
                  save_fit: bool = False) -> Rank:
         """
-        The method fits the algorithm and then calculates the rank for each user
+        Method used to both fit and calculate ranking for all users in test set or all users in `user_id_list`
+        parameter.
+        The Recommender System will first be fit for each user in the train set passed in the constructor.
+        If the algorithm can't be fit for some users, a warning message is printed
+
+        If the `n_recs` is specified, then the rank will contain the top-n items for the users.
+        Otherwise the rank will contain all unrated items of the particular users
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+
+        With the `save_fit` parameter you can decide if you want that you recommender system remains *fit* even after
+        the complete execution of this method, in case you want to compute ranking with other methodologies, or
+        with a different `n_recs` parameter. Be mindful since it can be memory-expensive, thus by default this behaviour
+        is disabled
 
         Args:
-            test_set: set of users for which to calculate the rank
-            n_recs: number of the top items that will be present in the ranking
+            test_set: Ratings object which represents the ground truth of the split considered
+            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
+                will be returned for the user
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+            save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
+                complete execution of this method. Default is False
+
+        Raises:
+            NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            rank: ranked items for each user
-
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
         """
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
@@ -412,12 +524,57 @@ class GraphBasedRS(RecSys):
     """
     Class for recommender systems which use a graph in order to make predictions
 
-    Every graph based recommender system differ from each other based the algorithm chosen
+    Every GBRS differ from each other based the algorithm used.
+
+    Examples:
+
+        In case you perform a splitting of the dataset which returns a single train and test set (e.g. HoldOut
+        technique):
+
+        ```python title="Single split train"
+        from clayrs import recsys as rs
+        from clayrs import content_analyzer as ca
+
+        original_rat = ca.Ratings(ca.CSVFile(ratings_path))
+
+        [train], [test] = rs.HoldOutPartitioning().split_all(original_rat)
+
+        alg = rs.NXPageRank()  # any gb algorithm
+
+        graph = rs.NXBipartiteGraph(train)
+
+        gbrs = rs.GraphBasedRS(alg, graph)
+
+        rank = gbrs.rank(test, n_recs=10)
+        ```
+
+        In case you perform a splitting of the dataset which returns a multiple train and test sets (KFold technique):
+
+        ```python title="Multiple split train"
+        from clayrs import recsys as rs
+        from clayrs import content_analyzer as ca
+
+        original_rat = ca.Ratings(ca.CSVFile(ratings_path))
+
+        train_list, test_list = rs.KFoldPartitioning(n_splits=5).split_all(original_rat)
+
+        alg = rs.NXPageRank()  # any gb algorithm
+
+        for train_set, test_set in zip(train_list, test_list):
+
+            graph = rs.NXBipartiteGraph(train_set)
+            gbrs = rs.GraphBasedRS(alg, graph)
+            rank_to_append = gbrs.rank(test_set)
+
+            result_list.append(rank_to_append)
+        ```
+
+        `result_list` will contain recommendation lists for each split
 
     Args:
-        algorithm (GraphBasedAlgorithm): the graph based algorithm that will be used in order to
+        algorithm: the graph based algorithm that will be used in order to
             rank or make score prediction
-        graph (FullGraph): a FullGraph containing interactions
+        graph: a Graph object containing interactions
     """
 
     def __init__(self,
@@ -441,25 +598,34 @@ class GraphBasedRS(RecSys):
     @property
     def algorithm(self):
         """
-        The content based algorithm chosen
+        The graph based algorithm chosen
         """
         alg: GraphBasedAlgorithm = super().algorithm
         return alg
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
-                methodology: Union[Methodology, None] = TestRatingsMethodology()):
+                methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Prediction:
         """
-        Method used to predict the rating of the users
+        Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
 
-        If the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
+        **BE CAREFUL**: not all algorithms are able to perform *score prediction*
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        prediction
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
-            test_set: set of users for which to calculate the predictions
+            test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
 
         Returns:
-            concate_score_preds: list of predictions for each user
+            Prediction object containing score prediction lists for all users of the test set or for all users in
+                `user_id_list`
 
         """
         all_users = set(test_set.user_id_column)
@@ -480,20 +646,33 @@ class GraphBasedRS(RecSys):
         return total_predict
 
     def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
-             methodology: Union[Methodology, None] = TestRatingsMethodology()):
+             methodology: Union[Methodology, None] = TestRatingsMethodology()) -> Rank:
         """
-        Method used to rank the rating of the users
+        Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
+        You must first call the `fit()` method before you can compute the ranking.
 
-        If the items evaluated are present for each user, the filter list is calculated, and
-        score prediction is executed only for the items inside the filter list.
-        Otherwise, score prediction is executed for all unrated items of the particular user
+        If the `n_recs` is specified, then the rank will contain the top-n items for the users.
+        Otherwise the rank will contain all unrated items of the particular users
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default the
+        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+
+        If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
-            test_set:  set of users for which to calculate the rank
-            n_recs:  number of the top items that will be present in the ranking
+            test_set: Ratings object which represents the ground truth of the split considered
+            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
+                will be returned for the user
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+
+        Raises:
+            NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            concate_rank: list of the items ranked for each user
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
 
         """
         all_users = set(test_set.user_id_column)
@@ -518,7 +697,8 @@ class GraphBasedRS(RecSys):
             logger.warning(f"No items could be ranked for users {all_users - set(total_rank.user_id_column)}\n"
                            f"No nodes to rank for them found in the graph. Try changing methodology! ")
 
-        self._yaml_report = {'graph': repr(self.graph), 'mode': 'rank', 'n_recs': repr(n_recs), 'methodology': repr(methodology)}
+        self._yaml_report = {'graph': repr(self.graph), 'mode': 'rank', 'n_recs': repr(n_recs),
+                             'methodology': repr(methodology)}
 
         return total_rank
 

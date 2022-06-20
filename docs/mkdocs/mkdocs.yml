@@ -25,6 +25,7 @@ theme:
   features:
     - content.tooltips
     - navigation.tabs
+    - navigation.top
     - navigation.sections
     - content.code.annotate
 markdown_extensions:
@@ -56,7 +57,23 @@ nav:
         - Ratings: 'content_analyzer/ratings.md'
     - Recsys:
         - Introduction: 'recsys/introduction.md'
-        - RecSys: 'recsys/recsys.md'
+        - 'Content Based recommendation': 
+            - 'Content Based recsys': 'recsys/content_based/content_based_recsys.md'
+            - 'Content Based algorithms':
+                - 'Centroid Vector': 'recsys/content_based/content_based_algorithms/centroid_vector.md'
+                - 'Classifier Recommender': 'recsys/content_based/content_based_algorithms/classifier_recommender.md'
+                - 'Linear Predictor': 'recsys/content_based/content_based_algorithms/linear_predictor.md'
+                - 'Index Query': 'recsys/content_based/content_based_algorithms/index_query.md'
+        - 'Graph based recommendation':
+            - 'Graph Based recsys': 'recsys/graph_based/graph_based_recsys.md'
+            - 'Graphs':
+                - 'Nodes categories': 'recsys/graph_based/graphs/nodes.md'
+                - 'Bipartite Graph': 'recsys/graph_based/graphs/nx_bipartite.md'
+                - 'Tripartite Graph': 'recsys/graph_based/graphs/nx_tripartite.md'
+                - 'Full Graph': 'recsys/graph_based/graphs/nx_full.md'
+            - 'Graph Based algorithms':
+                - 'Page Rank': 'recsys/graph_based/graph_based_algorithms/nx_pagerank.md'
+            - 'Feature Selection': 'recsys/graph_based/feature_selection.md'
     - Evaluation:
         - Introduction: 'evaluation/introduction.md'
         - 'EvalModel class': 'evaluation/eval_model.md'
@@ -67,10 +84,10 @@ nav:
             - 'Fairness metrics': 'evaluation/metrics/fairness_metrics.md'
             - 'Plot metrics': 'evaluation/metrics/plot_metrics.md'
         - 'Statistical tests':
-            - Wilcoxon: 'evaluation/eval_model.md'
-            - Ttest: 'evaluation/eval_model.md'
+            - Paired: 'evaluation/statistical_tests/paired.md'
 plugins:
     - search
+    - autorefs
     - mkdocstrings:
         handlers:
             python:
@@ -79,6 +96,6 @@ plugins:
                   show_root_toc_entry: false
                   show_root_heading: false
                   show_root_full_path: false
-                  merge_init_into_class: false
+                  merge_init_into_class: true
 watch:
     - ../../clayrs

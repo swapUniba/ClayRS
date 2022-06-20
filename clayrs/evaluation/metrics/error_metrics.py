@@ -79,9 +79,9 @@ class MSE(ErrorMetric):
 
     Where:
 
-    - $T_u$ is the *test set* of the user :math:`u`
-    - $r_{u, i}$ is the actual score give by user :math:`u` to item :math:`i`
-    - $\hat{r}_{u, i}$ is the predicted score give by user :math:`u` to item :math:`i`
+    - $T_u$ is the *test set* of the user $u$
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
 
     And it is calculated as such for the **entire system**:
 
@@ -133,9 +133,9 @@ class RMSE(ErrorMetric):
 
     Where:
 
-    - $T_u$ is the *test set* of the user :math:`u`
-    - $r_{u, i}$ is the actual score give by user :math:`u` to item :math:`i`
-    - $\hat{r}_{u, i}$ is the predicted score give by user :math:`u` to item :math:`i`
+    - $T_u$ is the *test set* of the user $u$
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
 
     And it is calculated as such for the **entire system**:
 
@@ -146,7 +146,7 @@ class RMSE(ErrorMetric):
     Where:
 
     - $T$ is the *test set*
-    - $RMSE_u$ is the RMSE calculated for user :math:`u`
+    - $RMSE_u$ is the RMSE calculated for user $u$
 
     There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
     and items were not present locally, a methodology different than *TestRatings* was chosen).

@@ -1,16 +1,17 @@
 import itertools
 import random
 from abc import abstractmethod
-from typing import List, Dict
+from collections import Counter
 
 import pandas as pd
 import numpy as np
+from typing import Dict, Set, List
 
 from clayrs.content_analyzer import Ratings
 from clayrs.evaluation.metrics.metrics import Metric
+from clayrs.evaluation.utils import get_avg_pop, pop_ratio_by_user, popular_items
 from clayrs.recsys.partitioning import Split
 from clayrs.evaluation.exceptions import NotEnoughUsers
-from clayrs.evaluation.utils import *
 
 from clayrs.utils.const import logger
 
@@ -32,17 +33,17 @@ class GroupFairnessMetric(FairnessMetric):
     It has some concrete methods useful for group divisions, since every subclass needs to split users into groups:
 
     Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
-    and percentage of how many user must contain a group as values. For example::
+    and percentage of how many user must contain a group as values. For example:
 
         user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 
     Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
     percentage of users we specified as value in the dictionary):
     users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups
+    into one of the last groups. In general users are grouped by popularity in a descending order.
 
     Args:
-        user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
+        user_groups: Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
     """
@@ -59,15 +60,14 @@ class GroupFairnessMetric(FairnessMetric):
         raise NotImplementedError
 
     @staticmethod
-    def get_avg_pop_by_users(data: Ratings, pop_by_items: Counter,
-                             group: Set[str] = None) -> Dict[str, float]:
+    def get_avg_pop_by_users(data: Ratings, pop_by_items: Counter, group: Set[str] = None) -> Dict[str, float]:
         """
         Get the average popularity for each user in the DataFrame
 
         Args:
-            data (pd.DataFrame): a pandas dataframe with columns = ['user_id', 'to_id', 'rating']
-            pop_by_items (Dict<str, object>): popularity for each label ('label', 'popularity')
-            group (Set<str>): (optional) the set of users (user_id)
+            data: a Ratings object
+            pop_by_items: popularity for each label ('label', 'popularity')
+            group: (optional) the set of users (user_id)
 
         Returns:
             avg_pop_by_users (Dict<str, float>): average popularity by user
@@ -87,20 +87,20 @@ class GroupFairnessMetric(FairnessMetric):
         return avg_pop_by_users
 
     @staticmethod
-    def split_user_in_groups(score_frame: Ratings, groups: Dict[str, float], pop_items: Set[str]
-                             ) -> Dict[str, Set[str]]:
+    def split_user_in_groups(score_frame: Ratings, groups: Dict[str, float],
+                             pop_items: Set[str]) -> Dict[str, Set[str]]:
         """
         Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user
 
         Args:
-            score_frame (pd.DataFrame): DataFrame with columns = ['user_id', 'to_id', 'rating']
-            groups (Dict[str, float]): each key contains the name of the group and each value contains the
+            score_frame: the Ratings object
+            groups: each key contains the name of the group and each value contains the
                 percentage of the specified group. If the groups don't cover the entire user collection,
                 the rest of the users are considered in a 'default_diverse' group
-            pop_items (Set[str]): set of most popular 'to_id' labels
+            pop_items: set of most popular 'to_id' labels
 
         Returns:
-            groups_dict (Dict<str, Set<str>>): key = group_name, value = Set of 'user_id' labels
+            groups_dict: key = group_name, value = Set of 'user_id' labels
         """
         num_of_users = len(set(score_frame.user_id_column))
         if num_of_users < len(groups):
@@ -161,7 +161,7 @@ class GiniIndex(FairnessMetric):
     *n* items of every recommendation list of all users
 
     Args:
-        top_n (int): it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+        top_n: it's a cutoff parameter, if specified the Gini index will be calculated considering only the first
             'n' items of every recommendation list of all users. Default is None
     """
 
@@ -184,7 +184,7 @@ class GiniIndex(FairnessMetric):
             Inner method which given a list of values, calculates the gini index
 
             Args:
-                x (list): list of values of which we want to measure inequality
+                x: list of values of which we want to measure inequality
             """
             # The rest of the code requires numpy arrays.
             x = np.asarray(x)
@@ -231,10 +231,13 @@ class PredictionCoverage(FairnessMetric):
     The $I$ must be specified through the 'catalog' parameter
 
     Check the 'Beyond Accuracy: Evaluating Recommender Systems by Coverage and Serendipity' paper for more
+
+    Args:
+        catalog: set of item id of the catalog on which the prediction coverage must be computed
     """
 
     def __init__(self, catalog: Set[str]):
-        self.__catalog = catalog
+        self.__catalog = set(str(item_id) for item_id in catalog)
 
     def __str__(self):
         return "PredictionCoverage"
@@ -252,7 +255,7 @@ class PredictionCoverage(FairnessMetric):
         the constructor)
 
         Args:
-            pred: DataFrame containing recommendation lists of all users
+            pred: Ratings object containing recommendation lists of all users
 
         Returns:
             Set of distinct items that have been recommended that also appear in the catalog
@@ -316,6 +319,13 @@ class CatalogCoverage(PredictionCoverage):
 
     Check the 'Beyond Accuracy: Evaluating Recommender Systems  by Coverage and Serendipity' paper and
     page 13 of the 'Comparison of group recommendation algorithms' paper for more
+
+    Args:
+        catalog: set of item id of the catalog on which the prediction coverage must be computed
+        top_n: it's a cutoff parameter, if specified the Catalog Coverage will be calculated considering only the first
+            'n' items of every recommendation list of all users. Default is None
+        k: number of users randomly sampled. If specified, k users will be randomly sampled across all users and only
+            their recommendation lists will be used to compute the CatalogCoverage
     """
 
     def __init__(self, catalog: Set[str], top_n: int = None, k: int = None):
@@ -376,25 +386,25 @@ class DeltaGap(GroupFairnessMetric):
     $$
 
     Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
-    and percentage of how many user must contain a group as values. For example::
+    and percentage of how many user must contain a group as values. For example:
 
         user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 
     Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
     percentage of users we specified as value in the dictionary):
     users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups
+    into one of the last groups. In general users are grouped by popularity in a descending order.
 
-    If the 'top_n' parameter is specified, then the Delta GAP will be calculated considering only the first
+    If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
     *n* items of every recommendation list of all users
 
     Args:
-        user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
+        user_groups: Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
-        top_n (int): it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+        top_n: it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
             'n' items of every recommendation list of all users. Default is None
-        pop_percentage (float): How many (in percentage) 'most popular items' must be considered. Default is 0.2
+        pop_percentage: How many (in percentage) 'most popular items' must be considered. Default is 0.2
     """
 
     def __init__(self, user_groups: Dict[str, float], top_n: int = None, pop_percentage: float = 0.2):
@@ -419,7 +429,6 @@ class DeltaGap(GroupFairnessMetric):
         r"""
         Compute the GAP (Group Average Popularity) formula
 
-
         $$
         GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
         $$
@@ -431,8 +440,8 @@ class DeltaGap(GroupFairnessMetric):
         - $pop_i$ is the popularity of item i
 
         Args:
-            group (Set<str>): the set of users (user_id)
-            avg_pop_by_users (Dict<str, object>): average popularity by user
+            group: the set of users (user_id)
+            avg_pop_by_users: average popularity by user
 
         Returns:
             score (float): gap score
@@ -449,11 +458,11 @@ class DeltaGap(GroupFairnessMetric):
         Compute the ratio between the recommendation gap and the user profiles gap
 
         Args:
-            recs_gap (float): recommendation gap
+            recs_gap: recommendation gap
             profile_gap: user profiles gap
 
         Returns:
-            score (float): delta gap measure
+            score: delta gap measure
         """
         result = 0
         if profile_gap != 0.0:

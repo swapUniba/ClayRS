@@ -5,7 +5,7 @@ import os
 from clayrs.content_analyzer import Ratings
 from clayrs.recsys import TopKDegreeCentrality
 from clayrs.recsys.graphs.feature_selection import TopKPageRank
-from clayrs.recsys.graphs.feature_selection import feature_selection
+from clayrs.recsys.graphs.feature_selection import feature_selector
 from clayrs.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
 from test import dir_test_files
 
@@ -38,12 +38,9 @@ class TestFeatureSelection(TestCase):
         user_alg = TopKPageRank(k=1)
         item_alg = TopKDegreeCentrality(k=2)
 
-        graph_fs = feature_selection(self.g,
-                                     fs_algorithm_user=user_alg,
-                                     fs_algorithm_item=item_alg,
-                                     user_target_nodes=self.users_target_nodes,
-                                     item_target_nodes=self.items_target_nodes
-                                     )
+        graph_fs = feature_selector(self.g, fs_algorithm_user=user_alg, fs_algorithm_item=item_alg,
+                                    user_target_nodes=self.users_target_nodes,
+                                    item_target_nodes=self.items_target_nodes)
 
         self.assertNotEqual(graph_fs, self.g)
 
@@ -61,13 +58,9 @@ class TestFeatureSelection(TestCase):
                 self.assertNotIn(link_label, labels_to_remove)
 
         # test inplace feature selection
-        graph_fs = feature_selection(self.g,
-                                     fs_algorithm_user=user_alg,
-                                     fs_algorithm_item=item_alg,
-                                     user_target_nodes=self.users_target_nodes,
-                                     item_target_nodes=self.items_target_nodes,
-                                     inplace=True
-                                     )
+        graph_fs = feature_selector(self.g, fs_algorithm_user=user_alg, fs_algorithm_item=item_alg,
+                                    user_target_nodes=self.users_target_nodes,
+                                    item_target_nodes=self.items_target_nodes, inplace=True)
 
         self.assertEqual(graph_fs, self.g)
 
@@ -75,10 +68,7 @@ class TestFeatureSelection(TestCase):
 
         user_alg = TopKDegreeCentrality(k=3)
 
-        graph_fs = feature_selection(self.g,
-                                     fs_algorithm_user=user_alg,
-                                     user_target_nodes=self.users_target_nodes,
-                                     )
+        graph_fs = feature_selector(self.g, fs_algorithm_user=user_alg, user_target_nodes=self.users_target_nodes)
 
         # we manually perform feature selection in order to get all labels that should not be present in the graph
         # after feature selection is performed
@@ -96,10 +86,7 @@ class TestFeatureSelection(TestCase):
 
         item_alg = TopKPageRank(k=3)
 
-        graph_fs = feature_selection(self.g,
-                                     fs_algorithm_item=item_alg,
-                                     item_target_nodes=self.items_target_nodes
-                                     )
+        graph_fs = feature_selector(self.g, fs_algorithm_item=item_alg, item_target_nodes=self.items_target_nodes)
 
         # we manually perform feature selection in order to get all labels that should not be present in the graph
         # after feature selection is performed
@@ -115,29 +102,25 @@ class TestFeatureSelection(TestCase):
 
     def test_special_cases_feature_selection(self):
         # algorithm failed to converge both for items and users
-        graph_fs = feature_selection(self.g,
-                                     fs_algorithm_user=TopKPageRank(max_iter=0),
-                                     fs_algorithm_item=TopKPageRank(max_iter=0))
+        graph_fs = feature_selector(self.g, fs_algorithm_user=TopKPageRank(max_iter=0),
+                                    fs_algorithm_item=TopKPageRank(max_iter=0))
 
         # since both fs algorithm failed, the graph remained untouched
         self.assertEqual(graph_fs, self.g)
 
         # check that the original graph is returned if no fs algorithm is defined
-        graph_fs = feature_selection(self.g,
-                                     user_target_nodes=self.users_target_nodes,
-                                     item_target_nodes=self.items_target_nodes)
+        graph_fs = feature_selector(self.g, user_target_nodes=self.users_target_nodes,
+                                    item_target_nodes=self.items_target_nodes)
 
         self.assertEqual(graph_fs, self.g)
 
         # check that when no target list is defined, all users nodes and all items nodes are used as targets
-        graph_fs_no_target = feature_selection(self.g,
-                                               fs_algorithm_user=TopKPageRank(k=2),
-                                               fs_algorithm_item=TopKPageRank(k=2))
+        graph_fs_no_target = feature_selector(self.g, fs_algorithm_user=TopKPageRank(k=2),
+                                              fs_algorithm_item=TopKPageRank(k=2))
 
-        graph_fs_w_target = feature_selection(self.g,
-                                              fs_algorithm_user=TopKPageRank(k=2),
-                                              fs_algorithm_item=TopKPageRank(k=2),
-                                              user_target_nodes=self.users_target_nodes,
-                                              item_target_nodes=self.items_target_nodes)
+        graph_fs_w_target = feature_selector(self.g, fs_algorithm_user=TopKPageRank(k=2),
+                                             fs_algorithm_item=TopKPageRank(k=2),
+                                             user_target_nodes=self.users_target_nodes,
+                                             item_target_nodes=self.items_target_nodes)
 
         self.assertEqual(graph_fs_no_target, graph_fs_w_target)

@@ -20,7 +20,9 @@ class RankingMetric(Metric):
 class NDCG(RankingMetric):
     r"""
     The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the **single user** by using the sklearn
-    implementation, so be sure to check its documentation for more.
+    implementation, so be sure to check its [documentation][sklearn_link].
+
+    [sklearn_link]: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html
 
     The NDCG of the **entire system** is calculated instead as such:
 
@@ -60,7 +62,8 @@ class NDCG(RankingMetric):
         perfect ranking for the user
 
         Args:
-            valid (pd.DataFrame): DataFrame which contains ranking for a user and its test set
+            user_predictions: list of Interactions object of the recommendation list for the user
+            user_truth: list of Interactions object of the truth set for the user
         """
         # important that predicted items is a list, we must maintain the order
         predicted_items = [interaction.item_id for interaction in user_predictions]
@@ -106,7 +109,9 @@ class NDCG(RankingMetric):
 class NDCGAtK(NDCG):
     r"""
     The NDCG@K (Normalized Discounted Cumulative Gain at K) metric is calculated for the **single user** by using the
-    sklearn implementation, so be sure to check its documentation for more.
+    sklearn implementation, so be sure to check its [documentation][sklearn_link].
+
+    [sklearn_link]: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html
 
     The NDCG@K of the **entire system** is calculated instead as such:
 
@@ -143,7 +148,7 @@ class MRR(RankingMetric):
     r"""
     The MRR (Mean Reciprocal Rank) metric is a system wide metric, so only its result it will be returned and not those
     of every user.
-    MRR is calculated as such
+    MRR is calculated as such:
 
     $$
     MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
@@ -155,9 +160,9 @@ class MRR(RankingMetric):
     - $rank(i)$ is the position of the first relevant item in the i-th recommendation list
 
     The MRR metric needs to discern relevant items from the not relevant ones: in order to do that, one could pass a
-    custom relevant_threshold parameter that will be applied to every user, so that if a rating of an item
+    custom `relevant_threshold` parameter that will be applied to every user, so that if a rating of an item
     is >= relevant_threshold, then it's relevant, otherwise it's not.
-    If no relevant_threshold parameter is passed then, for every user, its mean rating score will be used
+    If no `relevant_threshold` parameter is passed then, for every user, its mean rating score will be used
 
     Args:
         relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
@@ -177,12 +182,13 @@ class MRR(RankingMetric):
     def __repr__(self):
         return f'MRR(relevant_threshold={self.relevant_threshold})'
 
-    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
-                             relevant_threshold: float):
+    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction]):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
+
         Args:
-            valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
+            user_predictions: list of Interactions object of the recommendation list for the user
+            user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
         """
 
         reciprocal_rank = 0
@@ -215,8 +221,7 @@ class MRR(RankingMetric):
                                             if interaction.score >= relevant_threshold)
 
             if len(user_truth_relevant_items) != 0:
-                user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth_relevant_items,
-                                                                 relevant_threshold)
+                user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth_relevant_items)
             else:
                 user_reciprocal_rank = np.nan
 
@@ -276,16 +281,17 @@ class MRRAtK(MRR):
     def __repr__(self):
         return f'MRRAtK(relevant_threshold={self.relevant_threshold})'
 
-    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction],
-                             relevant_threshold: float):
+    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction]):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
+
         Args:
-            valid (pd.DataFrame): a DataFrame containing the recommendation list and the truth of a single user
+            user_predictions: list of Interactions object of the recommendation list for the user
+            user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
         """
         user_predictions_cut = user_predictions[:self.k]
 
-        return super().calc_reciprocal_rank(user_predictions_cut, user_truth_relevant_items, relevant_threshold)
+        return super().calc_reciprocal_rank(user_predictions_cut, user_truth_relevant_items)
 
 
 class Correlation(RankingMetric):
@@ -293,11 +299,13 @@ class Correlation(RankingMetric):
     The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
     The currently correlation methods implemented are:
 
-    - pearson
-    - kendall
-    - spearman
+    - `pearson`
+    - `kendall`
+    - `spearman`
 
-    Every correlation method is implemented by the scipy library, so read its documentation for more
+    Every correlation method is implemented by the pandas library, so read its [documentation][pd_link] for more
+
+    [pd_link]: https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html
 
     The correlation metric is calculated as such for the **single user**:
 

@@ -254,11 +254,11 @@ class RPrecision(Precision):
     chosen:
 
     $$
-    Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+    Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
     $$
 
     $$
-    Precision@K_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+    Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
     $$
 
     Args:
@@ -266,6 +266,9 @@ class RPrecision(Precision):
             user. If not specified, the mean rating score of every user will be used
         sys_average: specify how the system average must be computed. Default is 'macro'
     """
+    def __init__(self, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
+        super().__init__(relevant_threshold, sys_average, precision)
 
     def __str__(self):
         return "R-Precision - {}".format(self.sys_avg)
@@ -313,7 +316,16 @@ class Recall(ClassificationMetric):
     $$
     Recall_{sys} - macro = \frac{\sum_{u \in U} Recall_u}{|U|}
     $$
+
+    Args:
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+        sys_average (str): specify how the system average must be computed. Default is 'macro'
     """
+
+    def __init__(self, relevant_threshold: float = None, sys_average: str = 'macro',
+                 precision: [Callable] = np.float64):
+        super().__init__(relevant_threshold, sys_average, precision)
 
     def __str__(self):
         return "Recall - {}".format(self.sys_avg)
@@ -493,7 +505,7 @@ class FMeasureAtK(FMeasure):
     **single user**:
 
     $$
-    FMeasure_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
     $$
 
     Where:

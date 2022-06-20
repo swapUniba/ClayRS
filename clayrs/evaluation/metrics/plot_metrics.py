@@ -3,6 +3,7 @@ from collections import Counter
 from pathlib import Path
 
 import matplotlib as mpl
+import matplotlib.figure
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
@@ -22,10 +23,10 @@ class PlotMetric(Metric):
     """
     A plot metric is a metric which generates a plot and saves it to the directory specified
 
-    The plot file will be saved as *out_dir/file_name.format*
+    The plot file will be saved as `out_dir/file_name.format`
 
     Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
-    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
     so that for every split a plot is generated without overwriting any file previously generated
 
     Args:
@@ -87,19 +88,19 @@ class LongTailDistr(PlotMetric):
 
     - **on = 'pred'**: in this case the long tail distribution is useful to see which are the most recommended items
 
-    The plot file will be saved as *out_dir/file_name.format*
+    The plot file will be saved as `out_dir/file_name.format`
 
     Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
-    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
     so that for every split a plot is generated without overwriting any file previously generated
 
     Args:
-        out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
+        out_dir: Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
             in the same directory where the python script it's being executed
-        file_name (str): Name of the plot file. Default is 'long_tail_distr'
-        on (str): Set on which the Long Tail Distribution plot will be generated. Values accepted are 'truth' or 'pred'
-        format (str): Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
-        overwrite (bool): parameter which specifies if the plot saved must overwrite any file that as the same name
+        file_name: Name of the plot file. Default is 'long_tail_distr'
+        on: Set on which the Long Tail Distribution plot will be generated. Values accepted are 'truth' or 'pred'
+        format: Format of the plot file. Could be 'jpg', 'svg', 'png'. Default is 'png'
+        overwrite: parameter which specifies if the plot saved must overwrite any file that as the same name
             ('file_name.format'). Default is False
 
     Raises:
@@ -166,33 +167,33 @@ class LongTailDistr(PlotMetric):
 
 class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
     """
-    This metric generates a plot where users are splitted into groups and, for every group, a boxplot comparing
+    This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
     profile popularity and recommendations popularity is drawn
 
-    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
-    and percentage of how many user must contain a group as values. For example::
+    Users are split into groups based on the *user_groups* parameter, which contains names of the groups as keys,
+    and percentage of how many user must contain a group as values. For example:
 
         user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 
     Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
     percentage of users we specified as value in the dictionary):
     users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups
+    into one of the last groups. In general users are grouped by popularity in a descending order.
 
-    You could also specify how many *most popular items* must be considered with the 'pop_percentage' parameter. By
+    You could also specify how many *most popular items* must be considered with the `pop_percentage` parameter. By
     default is set to 0.2 which means that the top 20% items are considered as most popular
 
-    The plot file will be saved as *out_dir/file_name.format*
+    The plot file will be saved as `out_dir/file_name.format`
 
-    Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
-    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    Since multiple split could be evaluated at once, the `overwrite` parameter comes into play:
+    if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
     so that for every split a plot is generated without overwriting any file previously generated
 
     Thanks to the 'store_frame' parameter it's also possible to store a csv containing the calculations done in order
     to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
     with the .csv format):
 
-    The csv will be saved as *out_dir/file_name.csv*
+    The csv will be saved as `out_dir/file_name.csv`
 
 
     Args:
@@ -364,10 +365,10 @@ class PopRecsCorrelation(PlotMetric):
     that it can be easily seen the correlation between popular (niche) items and how many times are being recommended
     by the recsys
 
-    The plot file will be saved as *out_dir/file_name.format*
+    The plot file will be saved as `out_dir/file_name.format`
 
     Since multiple split could be evaluated at once, the *overwrite* parameter comes into play:
-    if is set to False, file with the same name will be saved as *file_name (1).format*, *file_name (2).format*, etc.
+    if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
     so that for every split a plot is generated without overwriting any file previously generated
 
     There exists cases in which some items are not recommended even once, so in the graph could appear
@@ -418,7 +419,7 @@ class PopRecsCorrelation(PlotMetric):
                f'format={self.format}, ' \
                f'overwrite={self.overwrite})'
 
-    def build_plot(self, x: list, y: list, title: str):
+    def build_plot(self, x: list, y: list, title: str) -> matplotlib.figure.Figure:
         """
         Method which builds a matplotlib plot given x-axis values, y-axis values and the title of the plot.
         X-axis label and Y-axis label are hard-coded as 'Popularity' and 'Recommendation frequency' respectively.

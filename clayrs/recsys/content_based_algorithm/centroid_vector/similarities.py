@@ -20,7 +20,7 @@ class Similarity(ABC):
 
 class CosineSimilarity(Similarity):
     """
-    Computes cosine similarity of given numpy arrays
+    Computes cosine similarity
     """
     def __init__(self):
         super().__init__()
@@ -28,6 +28,10 @@ class CosineSimilarity(Similarity):
     def perform(self, v1: np.ndarray, v2: np.ndarray):
         """
         Calculates the cosine similarity between v1 and v2
+
+        Args:
+            v1: first numpy array
+            v2: second numpy array
         """
 
         if not v1.any() or not v2.any():
@@ -36,6 +40,9 @@ class CosineSimilarity(Similarity):
             # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
             # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
             return 1 - cosine_distance(v1, v2)
+
+    def __str__(self):
+        return "CosineSimilarity"
 
     def __repr__(self):
         return f"CosineSimilarity()"

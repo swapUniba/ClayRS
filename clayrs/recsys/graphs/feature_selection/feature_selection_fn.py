@@ -6,23 +6,57 @@ from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, ItemNode
 from clayrs.utils.const import logger
 
 
-def feature_selection(graph: FullDiGraph,
-                      fs_algorithm_user: FeatureSelectionAlgorithm = None,
-                      fs_algorithm_item: FeatureSelectionAlgorithm = None,
-                      user_target_nodes: Iterable[UserNode] = None,
-                      item_target_nodes: Iterable[ItemNode] = None,
-                      inplace: bool = False) -> FullDiGraph:
+def feature_selector(graph: FullDiGraph,
+                     fs_algorithm_user: FeatureSelectionAlgorithm = None,
+                     fs_algorithm_item: FeatureSelectionAlgorithm = None,
+                     user_target_nodes: Iterable[UserNode] = None,
+                     item_target_nodes: Iterable[ItemNode] = None,
+                     inplace: bool = False) -> FullDiGraph:
     """
-    Given a FullGraph, this method performs feature selection on said graph. It also allows to define a custom list
-    of user and item nodes which properties will be considered during the feature selection process (instead of
-    using the whole set of user and item nodes).
+    Given a FullGraph, this method performs feature selection on it and returns the "reduced" graph.
+
+    You can choose to reduce only *user properties* (*evaluate the `fs_algorithm_user` parameter*),
+    to reduce only *item properties* (*evaluate the `fs_algorithm_item` parameter*) or both (*evaluate
+    the `fs_algorithm_user` parameter* and the `fs_algorithm_item` parameter*).
+    You can also choose different *feature selection algorithms* for users and items.
+
+    You can also define a custom list of user and item nodes:
+
+    * In this case only properties of those nodes will be considered during the feature selection process (instead of
+    using properties of all users and items)
+
+    This function changes a *copy* of the original graph by default, but you can change this behaviour with the
+    `inplace` parameter.
+
+    Examples:
+
+        ```python
+        # create a full graph
+        full_graph = rs.NXFullGraph(ratings,
+                                     user_contents_dir='users_codified/', # (1)
+                                     item_contents_dir='movies_codified/', # (2)
+                                     user_exo_properties={0}, # (3)
+                                     item_exo_properties={'dbpedia'}, # (4)
+                                     link_label='score')
+
+         # perform feature selection by keeping only top 5 property labels
+         # according to page rank algorithm
+         fs_graph = rs.feature_selector(full_graph,
+                                        fs_algorithm_item=rs.TopKPageRank(k=5))
+        ```
 
     Args:
-        graph (FullGraph): original graph on which feature selection will be performed
-        user_target_nodes (list): list of user nodes (or values of said nodes) to consider in the feature selection
-            process
-        item_target_nodes (list): list of item nodes (or values of said nodes) to consider in the feature selection
-            process
+        graph: Original graph on which feature selection will be performed
+        fs_algorithm_user: FeatureSelectionAlgorithm that will be performed on user properties. Can be different from
+            `fs_algorithm_item`
+        fs_algorithm_item: FeatureSelectionAlgorithm that will be performed on item properties. Can be different from
+            `fs_algorithm_user`
+        user_target_nodes (list): List of user nodes to consider in the feature selection process: only properties
+            of user nodes in this list will be "reduced"
+        item_target_nodes (list): List of item nodes to consider in the feature selection process: only properties
+            of item nodes in this list will be "reduced"
+        inplace: Boolean parameter that let you choose if changes must be performed on the original graph
+            (`inplace=True`) or on its copy (`inplace=False`). Default is False
 
     Returns:
         Copy of the original graph from which the less important Property nodes (the ones having edges with less
@@ -74,15 +108,13 @@ def feature_selection(graph: FullDiGraph,
 
 def _delete_property_nodes(graph: FullDiGraph, property_labels_to_remove: List[str]) -> FullDiGraph:
     """
-    Creates a copy of the original graph from which the Property nodes having links not defined in the
-    properties_to_keep parameter will be deleted (these property nodes will be the ones for which the feature
+    Creates a copy of the original graph from which the Property nodes with labels defined in the
+    `properties_to_remove` parameter will be deleted (these property nodes will be the ones for which the feature
     selection algorithm found the lowest 'importance' score for the property label of their links)
 
     Args:
-        original_graph (FullGraph): the original graph used for Feature Selection
-        properties_to_keep (list): list of properties that should be kept in the original graph.
-        Note that properties are the labels in the edges connected to Property nodes (so not the Property nodes
-        themselves)
+        graph: The original graph used for Feature Selection
+        property_labels_to_remove: List of property labels that should be removed from the original graph
 
     Returns:
         Graph on which the less important property nodes will be removed
@@ -100,7 +132,7 @@ def _delete_property_nodes(graph: FullDiGraph, property_labels_to_remove: List[s
                 prop_nodes_to_remove.append(property_node)
 
                 # we don't check for other predecessors,
-                # if node must be removed we check the others property nodes
+                # if node is linked to only one node with the label to remove it will be removed
                 break
 
     graph.remove_node(prop_nodes_to_remove)

@@ -46,7 +46,7 @@ class EvalModel:
         metric_list: List of metrics that will be used to evaluate recommendation list specified
 
     Raises:
-        ValueError in case the pred_list and truth_list are empty or have different length
+        ValueError: ValueError is raised in case the pred_list and truth_list are empty or have different length
     """
     def __init__(self,
                  pred_list: Union[List[Prediction], List[Rank]],

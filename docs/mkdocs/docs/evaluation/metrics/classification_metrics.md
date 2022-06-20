@@ -9,4 +9,4 @@ users
     options:
         filters:
         - "!^_[^_]"
-        - "!.*(Metric).*"
+        - "!^ClassificationMetric$"

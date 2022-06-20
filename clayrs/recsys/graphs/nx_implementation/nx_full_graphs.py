@@ -6,7 +6,7 @@ from clayrs.recsys.graphs.nx_implementation import NXTripartiteGraph
 from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, PropertyNode, Node
 import pandas as pd
 
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import get_progbar
 
 
 # Multiple Inheritance so that we will use NXTripartite as an interface (we only use its methods)
@@ -14,34 +14,80 @@ from clayrs.utils.const import logger, get_progbar
 class NXFullGraph(NXTripartiteGraph, FullDiGraph):
     """
     Class that implements a Full graph through networkx library.
-    It supports every node implemented in the framework with no restriction in linking
 
-    It creates a graph from an initial rating frame and if the 'item_contents_dir' or 'user_contents_dir'
-    are specified, tries to add properties for every 'to' or 'from' node respectively.
-    EXAMPLE::
-            _| from_id | to_id | score|
-            _|   u1    | Tenet | 0.6  |
+    !!! info
 
-        Becomes:
-                u1 -----> Tenet
-        with the edge weighted and labelled based on the score column and on the
-        'default_score_label' parameter
-        Then tries to load 'Tenet' from the 'item_contents_dir' if it is specified and if succeeds,
-        adds in the graph its loaded properties as specified with 'item_exo_representation' and
-        'item_exo_properties'.
-        Then tries to load 'u1' from the 'item_contents_dir' if it is specified and if succeeds,
-        adds in the graph its loaded properties as specified with 'user_exo_representation' and
-        'user_exo_properties'.
+        A *Full Graph* is a graph which doesn't impose any particular restriction
+
+    It creates a graph from an initial Rating object.
+
+    Consider the following matrix representation of the Rating object
+    ```
+        +------+-----------+-------+
+        | User |   Item    | Score |
+        +------+-----------+-------+
+        | u1   | Tenet     |     4 |
+        | u2   | Inception |     5 |
+        | ...  | ...       |   ... |
+        +------+-----------+-------+
+    ```
+
+    The graph will be created with the following interactions:
+
+    ```
+                 4
+            u1 -----> Tenet
+                 5
+            u2 -----> Inception
+    ```
+
+    where `u1` and `u2` become *User nodes* and `Tenet` and `Inception` become *Item nodes*,
+    with the edge weighted depending on the score given
+
+    If the `link_label` parameter is specified, then each link between users and items will be labeled with the label
+    specified (e.g. `link_label='score'`):
+
+    ```
+            (4, 'score')
+        u1 -------------> Tenet
+            (5, 'score')
+        u2 -------------> Inception
+    ```
+
+    Then the framework tries to load 'Tenet' and 'Inception' from the `item_contents_dir` and 'u1' and 'u2' from
+    `user_contents_dir` if they are specified and if it succeeds, adds in the graph their loaded properties as
+    specified in the `item_exo_properties` parameter and `user_exo_properties`.
+
+    !!! info "Load exogenous properties"
+
+        In order to load properties in the graph, we must specify where users (and/or) items are serialized and ***which
+        properties to add*** (the following is the same for *item_exo_properties*):
+
+        *   If *user_exo_properties* is specified as a **set**, then the graph will try to load **all properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id'}
+        ```
+
+        *   If *user_exo_properties* is specified as a **dict**, then the graph will try to load **said properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id': ['my_prop1', 'my_prop2']]}
+        ```
 
     Args:
-        source_frame (pd.DataFrame): the initial rating frame needed to create the graph
-        item_contents_dir (str): the path containing items serialized
-        item_exo_representation (str): the exogenous representation we want to extract properties from
-        item_exo_properties (list): the properties we want to extract from the exogenous representation
-        default_score_label (str): the label of the link between 'from' and 'to' nodes.
-            Default is 'score'
-        default_not_rated_value (float): the default value with which the link will be weighted
-            Default is 0.5
+        source_frame: The initial Ratings object needed to create the graph
+        item_exo_properties: Set or Dict which contains representations to load from items. Use a `Set` if you want
+            to load all properties from specific representations, or use a `Dict` if you want to choose which properties
+            to load from specific representations
+        item_contents_dir: The path containing items serialized with the Content Analyzer
+        user_exo_properties: Set or Dict which contains representations to load from items. Use a `Set` if you want
+            to load all properties from specific representations, or use a `Dict` if you want to choose which properties
+            to load from specific representations
+        user_contents_dir: The path containing users serialized with the Content Analyzer
+        link_label: If specified, each link will be labeled with the given label. Default is None
 
     """
 
@@ -58,6 +104,22 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
             self.add_node_with_prop([UserNode(user_id) for user_id in set(source_frame.user_id_column)],
                                     user_exo_properties,
                                     user_contents_dir)
+
+    def add_node(self, node: Union[Node, List[Node]]):
+        """
+        Adds one or multiple Node objects to the graph.
+        Since this is a Full Graph, any category of node is allowed
+
+        No duplicates are allowed, but different category nodes with same id are (e.g. `ItemNode('1')` and
+        `UserNode('1')`)
+
+        Args:
+            node: Node(s) object(s) that needs to be added to the graph
+        """
+        if not isinstance(node, list):
+            node = [node]
+
+        self._graph.add_nodes_from(node)
 
     def add_link(self, start_node: Union[Node, List[Node]], final_node: Union[Node, List[Node]],
                  weight: float = None, label: str = None, timestamp: str = None):
@@ -97,7 +159,53 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
     def add_node_with_prop(self, node: Union[Node, List[Node]], exo_properties: Union[Dict, set],
                            contents_dir: str,
                            content_filename: Union[str, List[str]] = None):
+        """
+        Adds one or multiple Node objects and its/their properties to the graph
+        Since this is a Full Graph, no restriction are imposed and you can add any category of node together with its
+        properties.
 
+        In order to load properties in the graph, we must specify where contents are serialized and ***which
+        properties to add*** (the following is the same for *item_exo_properties*):
+
+        *   If *exo_properties* is specified as a **set**, then the graph will try to load **all properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id'}
+        ```
+
+        *   If *exo_properties* is specified as a **dict**, then the graph will try to load **said properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id': ['my_prop1', 'my_prop2']]}
+        ```
+
+        In case you want your node to have a different id from serialized contents, via the `content_filename` parameter
+        you can specify what is the filename of the node that you are adding, e.g.
+
+        ```
+        item_to_add = ItemNode('different_id')
+
+        # content_filename is 'item_serialized_1.xz'
+
+        graph.add_node_with_prop(item_to_add, ..., content_filename='item_serialized_1')
+        ```
+
+        In case you are adding a list of nodes, you can specify the filename for each node in the list.
+
+        Args:
+            node: Node(s) object(s) that needs to be added to the graph along with their properties
+            exo_properties: Set or Dict which contains representations to load from items. Use a `Set` if you want
+                to load all properties from specific representations, or use a `Dict` if you want to choose which
+                properties to load from specific representations
+            contents_dir: The path containing items serialized with the Content Analyzer
+            content_filename: Filename(s) of the node(s) to add
+
+        Raises:
+            ValueError: Exception raised when one of the node to add to the graph with their properties is not
+                an ItemNode
+        """
         def node_prop_link_generator():
             for n, id in zip(progbar, content_filename):
                 item: Content = loaded_items.get(id)

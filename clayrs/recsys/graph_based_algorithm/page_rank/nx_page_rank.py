@@ -6,22 +6,26 @@ from clayrs.recsys.graphs import NXBipartiteGraph
 
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
-from clayrs.utils.const import get_progbar, logger
+from clayrs.utils.const import get_progbar
 
 
 class NXPageRank(PageRank):
     """
-    Page Rank algorithm based on the networkx implementation
+    Page Rank algorithm based on the networkx implementation.
+    Please note that it can only be used for instantiated NXGraphs
 
-    The PageRank can be 'personalized', in this case the PageRank will be calculated with Priors.
-    Also, since it's a graph based algorithm, it can be done feature selection to the graph before calculating
-    any prediction.
+    The PageRank can be ***personalized***, in this case the PageRank will be calculated with a personalization vector
+    made by items in the user profile weighted by the score given to them.
 
     Args:
-        personalized (bool): boolean value that specifies if the page rank must be calculated with Priors
-            considering the user profile as personalization vector. Default is False
-        feature_selection (FeatureSelectionAlgorithm): a FeatureSelection algorithm if the graph needs to be reduced
-
+        alpha: Damping parameter for PageRank, default=0.85.
+        personalized: Boolean value that specifies if the page rank must be calculated considering the user profile
+            as personalization vector. Default is False
+        max_iter: Maximum number of iterations in power method eigenvalue solver.
+        tol: Error tolerance used to check convergence in power method solver.
+        nstart: Starting value of PageRank iteration for each node.
+        weight: Boolean value which tells the algorithm if weight of the edges must be considered or not.
+            Default is True
     """
     def __init__(self, alpha: Any = 0.85, personalized: bool = False, max_iter: Any = 100, tol: Any = 1.0e-6,
                  nstart: Any = None, weight: bool = True):
@@ -35,7 +39,25 @@ class NXPageRank(PageRank):
 
     def rank(self, all_users: Set[str], graph: NXBipartiteGraph, recs_number: int = None,
              filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+        """
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
+        One can specify which items must be ranked for each user with the `filter_dict` parameter,
+        in this case every user is mapped with a list of items for which a ranking score must be computed.
+        Otherwise, **ALL** unrated items will be ranked for each user.
+
+        Args:
+            all_users: Set of user id for which a recommendation list must be generated
+            graph: A NX graph previously instantiated
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
+                ranked
+
+        Returns:
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
+        """
         # scores will contain pagerank scores
         scores = None
         all_rank_interaction_list = []
