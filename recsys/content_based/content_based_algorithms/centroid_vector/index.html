@@ -1,0 +1,2137 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../../images/icon_no_borders.svg">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.16">
+    
+    
+      
+        <title>Centroid Vector - ClayRS documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.1c3799f8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#centroid-vector" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ClayRS documentation" class="md-header__button md-logo" aria-label="ClayRS documentation" data-md-component="logo">
+      
+  <img src="../../../../images/icon_no_borders.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ClayRS documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Centroid Vector
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    swapUniba/ClayRS
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../first_steps/installation/" class="md-tabs__link">
+        First steps
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../content_analyzer/introduction/" class="md-tabs__link">
+        Content Analyzer
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../introduction/" class="md-tabs__link md-tabs__link--active">
+        Recsys
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../evaluation/introduction/" class="md-tabs__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ClayRS documentation" class="md-nav__button md-logo" aria-label="ClayRS documentation" data-md-component="logo">
+      
+  <img src="../../../../images/icon_no_borders.svg" alt="logo">
+
+    </a>
+    ClayRS documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    swapUniba/ClayRS
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          First steps
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="First steps" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          First steps
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../first_steps/installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../first_steps/quickstart/" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Content Analyzer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Analyzer" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Content Analyzer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/ratings/" class="md-nav__link">
+        Ratings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Recsys
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Recsys" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Recsys
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Content Based recommendation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Based recommendation" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Content Based recommendation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_based_recsys/" class="md-nav__link">
+        Content Based recsys
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_2" type="checkbox" id="__nav_4_2_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2_2">
+          Content Based algorithms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Based algorithms" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Content Based algorithms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Centroid Vector
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Centroid Vector
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.CentroidVector" class="md-nav__link">
+    CentroidVector
+  </a>
+  
+    <nav class="md-nav" aria-label="CentroidVector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="md-nav__link">
+    fit()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="md-nav__link">
+    predict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.process_rated" class="md-nav__link">
+    process_rated()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="md-nav__link">
+    rank()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#similarities-implemented" class="md-nav__link">
+    Similarities implemented
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity" class="md-nav__link">
+    CosineSimilarity
+  </a>
+  
+    <nav class="md-nav" aria-label="CosineSimilarity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity.perform" class="md-nav__link">
+    perform()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classifier_recommender/" class="md-nav__link">
+        Classifier Recommender
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_predictor/" class="md-nav__link">
+        Linear Predictor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index_query/" class="md-nav__link">
+        Index Query
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3">
+          Graph based recommendation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graph based recommendation" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Graph based recommendation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graph_based_recsys/" class="md-nav__link">
+        Graph Based recsys
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3_2" type="checkbox" id="__nav_4_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3_2">
+          Graphs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graphs" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Graphs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graphs/nodes/" class="md-nav__link">
+        Nodes categories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graphs/nx_bipartite/" class="md-nav__link">
+        Bipartite Graph
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graphs/nx_tripartite/" class="md-nav__link">
+        Tripartite Graph
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graphs/nx_full/" class="md-nav__link">
+        Full Graph
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3_3" type="checkbox" id="__nav_4_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3_3">
+          Graph Based algorithms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graph Based algorithms" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Graph Based algorithms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/graph_based_algorithms/nx_pagerank/" class="md-nav__link">
+        Page Rank
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../graph_based/feature_selection/" class="md-nav__link">
+        Feature Selection
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Evaluation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Evaluation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/eval_model/" class="md-nav__link">
+        EvalModel class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          Metrics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Metrics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Metrics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/metrics/classification_metrics/" class="md-nav__link">
+        Classification metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/metrics/ranking_metrics/" class="md-nav__link">
+        Ranking metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/metrics/error_metrics/" class="md-nav__link">
+        Error metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/metrics/fairness_metrics/" class="md-nav__link">
+        Fairness metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/metrics/plot_metrics/" class="md-nav__link">
+        Plot metrics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_4">
+          Statistical tests
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistical tests" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          Statistical tests
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../evaluation/statistical_tests/paired/" class="md-nav__link">
+        Paired
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.CentroidVector" class="md-nav__link">
+    CentroidVector
+  </a>
+  
+    <nav class="md-nav" aria-label="CentroidVector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="md-nav__link">
+    fit()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="md-nav__link">
+    predict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.process_rated" class="md-nav__link">
+    process_rated()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="md-nav__link">
+    rank()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#similarities-implemented" class="md-nav__link">
+    Similarities implemented
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity" class="md-nav__link">
+    CosineSimilarity
+  </a>
+  
+    <nav class="md-nav" aria-label="CosineSimilarity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity.perform" class="md-nav__link">
+    perform()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/swapUniba/ClayRS/edit/master/docs/recsys/content_based/content_based_algorithms/centroid_vector.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="centroid-vector">Centroid Vector</h1>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clayrs.recsys.content_based_algorithm.centroid_vector.CentroidVector" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">CentroidVector</span><span class="p">(</span><span class="n">item_field</span><span class="p">,</span> <span class="n">similarity</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">embedding_combiner</span><span class="o">=</span><span class="n">Centroid</span><span class="p">())</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="clayrs.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm">ContentBasedAlgorithm</span></code></p>
+
+  
+      <p>Class that implements a centroid-like recommender. It first gets the centroid of the items that the user liked.
+Then computes the similarity between the centroid and the item of which the ranking score must be predicted.
+It's a ranking algorithm, so it can't do score prediction</p>
+<ul>
+<li>It computes the centroid vector of the features of items <em>liked by the user</em></li>
+<li>It computes the similarity between the centroid vector and the items of which the ranking score must be
+predicted</li>
+</ul>
+<p>The items liked by a user are those having a rating higher or equal than a specific <strong>threshold</strong>.
+If the threshold is not specified, the average score of all items liked by the user is used.</p>
+
+<p><strong>Examples:</strong></p>
+    <ul>
+<li>Interested in only a field representation, CosineSimilarity as similarity,
+<span class="arithmatex">\(threshold = 3\)</span> (Every item with rating <span class="arithmatex">\(&gt;= 3\)</span> will be considered as positive)</li>
+</ul>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clayrs</span> <span class="kn">import</span> <span class="n">recsys</span> <span class="k">as</span> <span class="n">rs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alg</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">CentroidVector</span><span class="p">({</span><span class="s2">&quot;Plot&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">rs</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+    <ul>
+<li>Interested in multiple field representations of the items, CosineSimilarity as similarity,
+<span class="arithmatex">\(threshold = None\)</span> (Every item with rating <span class="arithmatex">\(&gt;=\)</span> mean rating of the user will be considered as positive)</li>
+</ul>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">alg</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">CentroidVector</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="n">item_field</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Plot&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;tfidf&quot;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                                 <span class="s2">&quot;Genre&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                                 <span class="s2">&quot;Director&quot;</span><span class="p">:</span> <span class="s2">&quot;doc2vec&quot;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="n">similarity</span><span class="o">=</span><span class="n">rs</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+    <div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>After instantiating the CentroidVector algorithm, pass it in the initialization of
+a CBRS and the use its method to calculate ranking for single user or multiple users:</p>
+<p>Examples:</p>
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; cbrs = rs.ContentBasedRS(algorithm=alg, ...)
+&gt;&gt;&gt; cbrs.fit_rank(...)
+&gt;&gt;&gt; # ...
+</code></pre></div>
+</div>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>item_field</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>dict where the key is the name of the field
+that contains the content to use, value is the representation(s) id(s) that will be
+used for the said item. The value of a field can be a string or a list,
+use a list if you want to use multiple representations for a particular field.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>similarity</code></td>
+          <td>
+                <code><span title="clayrs.recsys.content_based_algorithm.centroid_vector.similarities.Similarity">Similarity</span></code>
+          </td>
+          <td><p>Kind of similarity to use</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>threshold</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+as positive. If the threshold is not specified, the average score of all items liked by the user is used.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>embedding_combiner</code></td>
+          <td>
+                <code><span title="clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique.CombiningTechnique">CombiningTechnique</span></code>
+          </td>
+          <td><p><code>CombiningTechnique</code> used when embeddings representation must be used but they are in a
+matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
+vector for each word). By default the <code>Centroid</code> of the rows of the matrix is computed</p></td>
+          <td>
+                <code>Centroid()</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          <details class="quote">
+            <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">similarity</span><span class="p">:</span> <span class="n">Similarity</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">embedding_combiner</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">item_field</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_similarity</span> <span class="o">=</span> <span class="n">similarity</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span> <span class="o">=</span> <span class="n">embedding_combiner</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">fit</span><span class="p">()</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The fit process for the CentroidVector consists in calculating the centroid of the features
+of the positive items ONLY.</p>
+<p>This method uses extracted features of the positive items stored in a private attribute, so
+<code>process_rated()</code> must be called before this method.</p>
+<p>The built centroid will also be stored in a private attribute.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The fit process for the CentroidVector consists in calculating the centroid of the features</span>
+<span class="sd">    of the positive items ONLY.</span>
+
+<span class="sd">    This method uses extracted features of the positive items stored in a private attribute, so</span>
+<span class="sd">    `process_rated()` must be called before this method.</span>
+
+<span class="sd">    The built centroid will also be stored in a private attribute.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">positive_rated_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="n">positive_rated_features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="n">positive_rated_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">,</span>
+                                                              <span class="n">as_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span> <span class="o">=</span> <span class="n">positive_rated_features_fused</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># we delete variable used to fit since will no longer be used</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_dict</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">filter_list</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>CentroidVector is not a score prediction algorithm, calling this method will raise
+the <code>NotPredictionAlg</code> exception!</p>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="clayrs.recsys.content_based_algorithm.exceptions.NotPredictionAlg">NotPredictionAlg</span></code>
+          </td>
+          <td><p>exception raised since the CentroidVector algorithm is not a score prediction algorithm</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+            <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CentroidVector is not a score prediction algorithm, calling this method will raise</span>
+<span class="sd">    the `NotPredictionAlg` exception!</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="n">NotPredictionAlg</span><span class="p">(</span><span class="s2">&quot;CentroidVector is not a Score Prediction Algorithm!&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.process_rated" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process_rated</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Function that extracts features from positive rated items ONLY!
+The extracted features will be used to fit the algorithm (build the centroid).</p>
+<p>Features extracted will be stored in a private attributes of the class.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>user_ratings</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+          </td>
+          <td><p>List of Interaction objects for a single user</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>available_loaded_items</code></td>
+          <td>
+                <code><span title="clayrs.recsys.content_based_algorithm.contents_loader.LoadedContentsDict">LoadedContentsDict</span></code>
+          </td>
+          <td><p>The LoadedContents interface which contains loaded contents</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that extracts features from positive rated items ONLY!</span>
+<span class="sd">    The extracted features will be used to fit the algorithm (build the centroid).</span>
+
+<span class="sd">    Features extracted will be stored in a private attributes of the class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_ratings: List of Interaction objects for a single user</span>
+<span class="sd">        available_loaded_items: The LoadedContents interface which contains loaded contents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span><span class="p">:</span> <span class="n">interaction</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">}</span>
+
+    <span class="c1"># Load rated items from the path</span>
+    <span class="n">loaded_rated_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Content</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">([</span><span class="n">item_id</span>
+                                                                                      <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span>
+                                                                                      <span class="n">items_scores_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+    <span class="c1"># If threshold wasn&#39;t passed in the constructor, then we take the mean rating</span>
+    <span class="c1"># given by the user as its threshold</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+    <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_mean_user_threshold</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span>
+
+    <span class="c1"># Calculates labels and extract features from the positive rated items</span>
+    <span class="n">positive_rated_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">loaded_rated_items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">score_assigned</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">items_scores_dict</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">score_assigned</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">positive_rated_dict</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">EmptyUserRatings</span><span class="p">(</span><span class="s2">&quot;The user selected doesn&#39;t have any ratings!&quot;</span><span class="p">)</span>
+
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaded_rated_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="n">loaded_rated_items</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaded_rated_items</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">NoRatedItems</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> - No rated items available locally!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positive_rated_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OnlyNegativeItems</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> - There are only negative items available locally!&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_dict</span> <span class="o">=</span> <span class="n">positive_rated_dict</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">recs_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+All unrated items for the user will be ranked (or only items in the filter list, if specified).</p>
+<p>One can specify which items must be ranked with the <code>filter_list</code> parameter,
+in this case ONLY items in the <code>filter_list</code> parameter will be ranked.
+One can also pass items already seen by the user with the filter_list parameter.
+Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>user_ratings</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+          </td>
+          <td><p>List of Interaction objects for a single user</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>available_loaded_items</code></td>
+          <td>
+                <code><span title="clayrs.recsys.content_based_algorithm.contents_loader.LoadedContentsDict">LoadedContentsDict</span></code>
+          </td>
+          <td><p>The LoadedContents interface which contains loaded contents</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>recs_number</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>number of the top ranked items to return, if None all ranked items will be returned</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>filter_list</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>list of the items to rank, if None all unrated items for the user will be ranked</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing.List">List</span>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+          </td>
+          <td><p>List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+a single user</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+         <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rank the top-n recommended items for the user. If the recs_number parameter isn&#39;t specified,</span>
+<span class="sd">    All unrated items for the user will be ranked (or only items in the filter list, if specified).</span>
+
+<span class="sd">    One can specify which items must be ranked with the `filter_list` parameter,</span>
+<span class="sd">    in this case ONLY items in the `filter_list` parameter will be ranked.</span>
+<span class="sd">    One can also pass items already seen by the user with the filter_list parameter.</span>
+<span class="sd">    Otherwise, **ALL** unrated items will be ranked.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_ratings: List of Interaction objects for a single user</span>
+<span class="sd">        available_loaded_items: The LoadedContents interface which contains loaded contents</span>
+<span class="sd">        recs_number: number of the top ranked items to return, if None all ranked items will be returned</span>
+<span class="sd">        filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Interactions object in a descending order w.r.t the &#39;score&#39; attribute, representing the ranking for</span>
+<span class="sd">            a single user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">EmptyUserRatings</span><span class="p">(</span><span class="s2">&quot;The user selected doesn&#39;t have any ratings!&quot;</span><span class="p">)</span>
+
+    <span class="n">user_seen_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">])</span>
+
+    <span class="c1"># Load items to predict</span>
+    <span class="k">if</span> <span class="n">filter_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">items_to_predict</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">([</span><span class="n">item_id</span> <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">available_loaded_items</span>
+                                                            <span class="k">if</span> <span class="n">item_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">user_seen_items</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">items_to_predict</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">filter_list</span><span class="p">)</span>
+
+    <span class="c1"># Extract features of the items to predict</span>
+    <span class="n">id_items_to_predict</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">features_items_to_predict</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items_to_predict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">id_items_to_predict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">)</span>
+            <span class="n">features_items_to_predict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_features_item</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_items_to_predict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Calculate predictions, they are the similarity of the new items with the centroid vector</span>
+        <span class="n">features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="n">features_items_to_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">,</span> <span class="n">as_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_similarity</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">features_fused</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Build the item_score dict (key is item_id, value is rank score predicted)</span>
+    <span class="c1"># and order the keys in descending order</span>
+    <span class="n">item_score_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">id_items_to_predict</span><span class="p">,</span> <span class="n">similarities</span><span class="p">))</span>
+    <span class="n">ordered_item_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item_score_dict</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">item_score_dict</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># we only save the top-n items_ids corresponding to top-n recommendations</span>
+    <span class="c1"># (if recs_number is None ordered_item_ids will contain all item_ids as the original list)</span>
+    <span class="n">ordered_item_ids</span> <span class="o">=</span> <span class="n">ordered_item_ids</span><span class="p">[:</span><span class="n">recs_number</span><span class="p">]</span>
+
+    <span class="c1"># we construct the output data</span>
+    <span class="n">rank_interaction_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Interaction</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_score_dict</span><span class="p">[</span><span class="n">item_id</span><span class="p">])</span>
+                             <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">ordered_item_ids</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">rank_interaction_list</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div><hr />
+<h2 id="similarities-implemented">Similarities implemented</h2>
+<p>The following are similarities you can use in the <code>similarity</code> parameter of the <code>CentroidVector</code> class</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">CosineSimilarity</span><span class="p">()</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="clayrs.recsys.content_based_algorithm.centroid_vector.similarities.Similarity">Similarity</span></code></p>
+
+  
+      <p>Computes cosine similarity</p>
+
+
+          <details class="quote">
+            <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/similarities.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.similarities.CosineSimilarity.perform" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">perform</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Calculates the cosine similarity between v1 and v2</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>v1</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td><p>first numpy array</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>v2</code></td>
+          <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td><p>second numpy array</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/similarities.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">v2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the cosine similarity between v1 and v2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        v1: first numpy array</span>
+<span class="sd">        v2: second numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">v1</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">v2</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:</span>
+        <span class="c1"># 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cosine_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../content_based_recsys/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Content Based recsys" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Content Based recsys
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../classifier_recommender/" class="md-footer__link md-footer__link--next" aria-label="Next: Classifier Recommender" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Classifier Recommender
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.tooltips", "navigation.tabs", "navigation.top", "navigation.sections", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.3a4b43e5.min.js"></script>
+      
+        <script src="../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
