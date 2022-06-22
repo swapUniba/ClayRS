@@ -36,7 +36,7 @@ class NLTK(NLP):
                  url_tagging: bool = False,
                  lemmatization: bool = False,
                  stemming: bool = False,
-                 named_entity_recognition: bool = False,
+                 pos_tag: bool = False,
                  lang: str = 'english'):
 
         if not NLTK._corpus_downloaded:
@@ -49,7 +49,7 @@ class NLTK(NLP):
         self.strip_multiple_whitespaces = strip_multiple_whitespaces
         self.url_tagging = url_tagging
         self.remove_punctuation = remove_punctuation
-        self.named_entity_recognition = named_entity_recognition
+        self.pos_tag = pos_tag
         self.__full_lang_code = lang
 
     def __download_corpus(self):
@@ -164,9 +164,9 @@ class NLTK(NLP):
         return lemmatized_text
 
     @staticmethod
-    def __named_entity_recognition_operation(text) -> nltk.tree.Tree:
+    def __pos_operation(text) -> str:
         """
-        Execute NER on input text
+        Execute POS on input text
 
         Args:
             text (List<str>): Text containing the entities
@@ -174,9 +174,10 @@ class NLTK(NLP):
         Returns:
             namedEnt (nltk.tree.Tree): A tree containing the bonds between the entities
         """
-        text = nltk.pos_tag(text)
-        named_ent = nltk.ne_chunk(text)
-        return named_ent
+        text_tuples = nltk.pos_tag(text)
+        text_tagged = ' '.join([f"{tagged[0]}_{tagged[1]}" for tagged in text_tuples])
+
+        return text_tagged
 
     @staticmethod
     def __strip_multiple_whitespaces_operation(text) -> str:
@@ -241,8 +242,8 @@ class NLTK(NLP):
             field_data = self.__lemmatization_operation(field_data)
         if self.stemming:
             field_data = self.__stemming_operation(field_data)
-        if self.named_entity_recognition:
-            field_data = self.__named_entity_recognition_operation(field_data)
+        if self.pos_tag:
+            field_data = self.__pos_operation(field_data)
         return field_data
 
     def __eq__(self, other):
@@ -253,7 +254,7 @@ class NLTK(NLP):
                    self.url_tagging == other.url_tagging and \
                    self.lemmatization == other.lemmatization and \
                    self.stemming == other.stemming and \
-                   self.named_entity_recognition == other.named_entity_recognition and \
+                   self.pos_tag == other.pos_tag and \
                    self.__full_lang_code == other.__full_lang_code
         return False
 
@@ -264,5 +265,5 @@ class NLTK(NLP):
         return f'NLTK(strip_multiple_whitespace={self.strip_multiple_whitespaces}, ' \
                f'remove_punctuation={self.remove_punctuation}, stopwords_removal={self.stopwords_removal}, ' \
                f'url_tagging={self.url_tagging}, lemmatization={self.lemmatization}, stemming={self.stemming}, ' \
-               f'named_entity_recognition={self.named_entity_recognition}, ' \
+               f'pos_tag={self.pos_tag}, ' \
                f'lang={self.__full_lang_code})'
