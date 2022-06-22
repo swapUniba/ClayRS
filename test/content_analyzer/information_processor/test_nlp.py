@@ -43,13 +43,9 @@ class TestNLTK(TestCase):
         self.assertEqual(expected, result)
 
     def test_entity_recognition(self):
-        nltka = NLTK(named_entity_recognition=True)
-        expected = Tree('S',
-                        [Tree('PERSON', [('Facebook', 'NNP')]), ('was', 'VBD'), ('fined', 'VBN'), ('by', 'IN'),
-                         Tree('PERSON', [('Hewlett', 'NNP'), ('Packard', 'NNP')]), ('for', 'IN'),
-                         ('spending', 'VBG'), ('100€', 'CD'), ('to', 'TO'), ('buy', 'VB'),
-                         Tree('PERSON', [('Cristiano', 'NNP'), ('Ronaldo', 'NNP')]), ('from', 'IN'),
-                         Tree('GPE', [('Juventus', 'NNP')])])
+        nltka = NLTK(pos_tag=True)
+        expected = 'Facebook_NNP was_VBD fined_VBN by_IN Hewlett_NNP Packard_NNP for_IN spending_VBG 100€_CD ' \
+                   'to_TO buy_VB Cristiano_NNP Ronaldo_NNP from_IN Juventus_NNP'
         result = nltka.process("Facebook was fined by Hewlett Packard for spending 100€ to buy Cristiano Ronaldo from "
                                "Juventus")
 

@@ -2,7 +2,7 @@ from spacy.tokens import Token
 
 from clayrs.content_analyzer.information_processor.information_processor import NLP
 
-from typing import List, Dict
+from typing import List
 
 from clayrs.utils.check_tokenization import check_not_tokenized
 
@@ -112,7 +112,7 @@ class Spacy(NLP):
 
         return self.__tokenization_operation(lemmas_to_tokenize)
 
-    def __named_entity_recognition_operation(self, text) -> Dict[str, str]:
+    def __named_entity_recognition_operation(self, text) -> str:
         """
         Execute NER on input text with spacy
 
@@ -123,9 +123,10 @@ class Spacy(NLP):
             word_entity: Dict of entity
         """
         tokens_with_entities = self._nlp(' '.join([str(word) for word in text]))
-        word_entity = {word.text: word.label_ for word in tokens_with_entities.ents}
+        string_entities = ' '.join([f"{token.text}_{token.ent_type_}/{token.ent_iob_}" if token.ent_type != 0
+                                   else f"{token.text}" for token in tokens_with_entities])
 
-        return word_entity
+        return string_entities
 
     @staticmethod
     def __strip_multiple_whitespaces_operation(text) -> str:

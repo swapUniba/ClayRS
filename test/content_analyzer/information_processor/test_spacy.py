@@ -51,7 +51,8 @@ class TestSpacy(TestCase):
 
     def test_entity_recognition(self):
         spa = Spacy(named_entity_recognition=True)
-        expected = {'Hewlett Packard': 'ORG', '100 €': 'MONEY', 'Cristiano Ronaldo': 'PERSON', 'Juventus': 'ORG'}
+        expected = "Facebook was fined by Hewlett_ORG/B Packard_ORG/I for spending 100_MONEY/B €_MONEY/I to buy " \
+                   "Cristiano_PERSON/B Ronaldo_PERSON/I from Juventus_ORG/B"
         result = spa.process(
             "Facebook was fined by Hewlett Packard for spending 100€ to buy Cristiano Ronaldo from "
             "Juventus")
