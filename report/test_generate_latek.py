@@ -44,7 +44,16 @@ def safe_text(text: str) -> str:
         text = text.replace(char, "\\" + char)
     return text
 
+def truncate(text: str) -> str:
+    number = float(text)
+    number = round(number, 5)
+    text = str(number)
+    print(text)
+    return text
+
 LATEX_JINJA_ENV.filters["safe_text"] = safe_text
+LATEX_JINJA_ENV.filters["truncate"] = truncate
+
 
 
 

@@ -359,17 +359,17 @@ In ClayRS the Precision metric is calculated as such for the \textbf{single user
     Where:
 
     - $tp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $\geq$ \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
-        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+      ratingasdjiasd $\geq$ \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
+        \textbf{\VAR{dict['metrics']['Precision']['relevant_threshold']}}\BLOCK{endif}
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
-        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+        \textbf{\VAR{dict['interactions']['mean_score']}}\BLOCK{endif}
 
 
     - $fp_u$ is the number of items which are in the recommendation list of the user and have a
       rating $<$ \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
-        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \textbf{\VAR{dict['metrics']['Precision']['relevant_threshold']}}\BLOCK{endif}
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
-        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+        \textbf{\VAR{dict['interactions']['mean_score']}}\BLOCK{endif}
     \hfill\break
 
 
@@ -413,17 +413,17 @@ in this experiment the value of the sys\_average is \textbf{\VAR{dict['metrics']
     - $tp@K_u$ is the number of items which are in the recommendation list  of the user
       \textbf{cutoff to the first K items} and have a rating $\geq$
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
-        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \textbf{\VAR{dict['metrics']['Precision']['relevant_threshold']}}\BLOCK{endif}
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
-        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+        \textbf{\VAR{dict['interactions']['mean_score']}}\BLOCK{endif}
 
 
     - $tp@K_u$ is the number of items which are in the recommendation list  of the user
       \textbf{cutoff to the first K items} and have a rating $<$
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] != None}
-        \VAR{dict['metrics']['Precision']['relevant_threshold']}\BLOCK{endif}
+        \textbf{\VAR{dict['metrics']['Precision']['relevant_threshold']}}\BLOCK{endif}
         \BLOCK{if dict['metrics']['Precision']['relevant_threshold'] == None}
-        \VAR{dict['interactions']['mean_score']}\BLOCK{endif}
+        \textbf{\VAR{dict['interactions']['mean_score']}}\BLOCK{endif}
 
 
 
@@ -506,11 +506,11 @@ In the following table, we present the results of the evaluation \ref{tab:result
   \begin{tabular}{|c|c|}
     \hline
     \textbf{Metric}& \textbf{Value} \\ \hline
-    Precision - macro & \VAR{dict['sys_results']['sys - fold1']['Precision - macro']|safe_text}\\ \hline
-    Precision@2 - macro  & \VAR{dict['sys_results']['sys - fold1']['Precision@2 - macro']|safe_text}\\ \hline
-    NDCG  & \VAR{dict['sys_results']['sys - fold1']['NDCG']|safe_text}\\ \hline
-    MRR  & \VAR{dict['sys_results']['sys - fold1']['MRR']|safe_text}\\ \hline
-    F1@1 - macro  & \VAR{dict['sys_results']['sys - fold1']['F1@1 - macro']|safe_text}\\ \hline
+    Precision - macro & \VAR{dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text}\\ \hline
+    Precision@2 - macro  & \VAR{dict['sys_results']['sys - fold1']['Precision@2 - macro']|truncate|safe_text}\\ \hline
+    NDCG  & \VAR{dict['sys_results']['sys - fold1']['NDCG']|truncate|safe_text}\\ \hline
+    MRR  & \VAR{dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text}\\ \hline
+    F1@1 - macro  & \VAR{dict['sys_results']['sys - fold1']['F1@1 - macro']|truncate|safe_text}\\ \hline
   \end{tabular}
   \caption{Table of the results}
 \end{table}
