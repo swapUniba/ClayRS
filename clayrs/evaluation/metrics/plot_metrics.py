@@ -120,10 +120,11 @@ class LongTailDistr(PlotMetric):
         return "LongTailDistr"
 
     def __repr__(self):
-        return f'LongTailDistr(out_dir={self.__out_dir}, ' \
-               f'file_name={self.__file_name}, ' \
-               f'format={self.__format}, ' \
-               f'overwrite={self.__overwrite})'
+        return f'LongTailDistr(out_dir={self.output_directory}, ' \
+               f'file_name={self.file_name}, ' \
+               f'on={self.__on}, ' \
+               f'format={self.format}, ' \
+               f'overwrite={self.overwrite})'
 
     def perform(self, split: Split) -> pd.DataFrame:
         if self.__on == 'truth':
