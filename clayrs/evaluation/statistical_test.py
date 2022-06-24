@@ -42,7 +42,10 @@ class StatisticalTest(ABC):
 class PairedTest(StatisticalTest):
 
     def perform(self, df_list: List[pd.DataFrame]):
-
+        
+        # we consider the 'user_id' index as a column
+        df_list = [df.reset_index() if 'user_id' not in df.columns else df for df in df_list]
+        
         final_result = defaultdict(list)
 
         n_system_evaluated = 1
