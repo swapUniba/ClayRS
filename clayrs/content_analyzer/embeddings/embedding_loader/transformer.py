@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import numpy as np
 import torch
 import transformers
@@ -44,32 +46,34 @@ class Transformers(SentenceEmbeddingLoader):
 
     def get_vector_size(self) -> int:
         if isinstance(self._vec_strategy, CatStrategy):
-            return self.model.embeddings.token_type_embeddings.embedding_dim * self._last_interesting_layers
+            return self.model.config.hidden_size * self._last_interesting_layers
         else:
-            return self.model.embeddings.token_type_embeddings.embedding_dim
+            return self.model.config.hidden_size
 
     def get_embedding(self, sentence: str) -> np.ndarray:
         token_vecs = self.get_embedding_token(sentence)
         sentence_vec = self._pooling_strategy.combine(token_vecs)
         return sentence_vec
 
+    @abstractmethod
     def get_embedding_token(self, sentence: str) -> np.ndarray:
-
-        encoded = self._tokenizer.encode_plus(sentence)
-        tokens_tensor = torch.tensor([encoded['input_ids']])
-        segments_tensors = torch.tensor([encoded['attention_mask']])
-
-        with torch.no_grad():
-            model_output = self.model(tokens_tensor, segments_tensors)
-            hidden_states = model_output[2]
-
-        token_embeddings = torch.stack(hidden_states, dim=0)
-        token_embeddings = torch.squeeze(token_embeddings, dim=1)
-        token_embeddings = token_embeddings.permute(1, 0, 2)
-
-        token_vecs = self._vec_strategy.build_embedding(token_embeddings)
-
-        return token_vecs
+        raise NotImplementedError
+        # encoded = self._tokenizer(sentence, truncation=True, return_tensors='pt')
+        #
+        # with torch.no_grad():
+        #     if self.model.name_or_path == 'google/t5-v1_1-base':
+        #         model_output = self.model.encoder(**encoded)
+        #     else:
+        #         model_output = self.model(**encoded)
+        #     hidden_states = model_output['hidden_states']
+        #
+        # token_embeddings = torch.stack(hidden_states, dim=0)
+        # token_embeddings = torch.squeeze(token_embeddings, dim=1)
+        # token_embeddings = token_embeddings.permute(1, 0, 2)
+        #
+        # token_vecs = self._vec_strategy.build_embedding(token_embeddings)
+        #
+        # return token_vecs
 
     def get_sentence_token(self, sentence: str):
         """
@@ -89,3 +93,39 @@ class Transformers(SentenceEmbeddingLoader):
 
     def __repr__(self):
         return str(self)
+
+
+class BertModel(Transformers):
+
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        encoded = self._tokenizer(sentence, truncation=True, return_tensors='pt')
+
+        with torch.no_grad():
+            model_output = self.model(**encoded)
+            hidden_states = model_output['hidden_states']
+
+        token_embeddings = torch.stack(hidden_states, dim=0)
+        token_embeddings = torch.squeeze(token_embeddings, dim=1)
+        token_embeddings = token_embeddings.permute(1, 0, 2)
+
+        token_vecs = self._vec_strategy.build_embedding(token_embeddings)
+
+        return token_vecs
+
+
+class T5Model(Transformers):
+
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        encoded = self._tokenizer(sentence, truncation=True, return_tensors='pt')
+
+        with torch.no_grad():
+            model_output = self.model.encoder(**encoded)
+            hidden_states = model_output['hidden_states']
+
+        token_embeddings = torch.stack(hidden_states, dim=0)
+        token_embeddings = torch.squeeze(token_embeddings, dim=1)
+        token_embeddings = token_embeddings.permute(1, 0, 2)
+
+        token_vecs = self._vec_strategy.build_embedding(token_embeddings)
+
+        return token_vecs
