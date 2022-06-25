@@ -566,7 +566,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         return "DBPediaMappingTechnique"
 
     def __repr__(self):
-        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}, ' \
+        return f'DBPediaMappingTechnique(mode={self.mode}, entity type={self.__entity_type}, ' \
                f'label_field={self.__label_field}, prop_as_uri={self.__prop_as_uri})'
 
 

@@ -33,7 +33,7 @@ class NXPageRank(PageRank):
         self.max_iter = max_iter
         self.tol = tol
         self.nstart = nstart
-        self.weight = 'weight' if weight is True else None
+        self.weight = weight
 
         super().__init__(personalized)
 
@@ -61,6 +61,7 @@ class NXPageRank(PageRank):
         # scores will contain pagerank scores
         scores = None
         all_rank_interaction_list = []
+        weight = 'weight' if self.weight is True else None
 
         with get_progbar(all_users) as pbar:
 
@@ -88,13 +89,13 @@ class NXPageRank(PageRank):
                             for node in graph.to_networkx().nodes}
 
                     scores = nx.pagerank(graph.to_networkx(), personalization=pers, alpha=self.alpha,
-                                         max_iter=self.max_iter, tol=self.tol, nstart=self.nstart, weight=self.weight)
+                                         max_iter=self.max_iter, tol=self.tol, nstart=self.nstart, weight=weight)
 
                 # if scores is None it means this is the first time we are running normal pagerank
                 # for all the other users the pagerank won't be computed again
                 elif scores is None:
                     scores = nx.pagerank(graph.to_networkx(), alpha=self.alpha, max_iter=self.max_iter,
-                                         tol=self.tol, nstart=self.nstart, weight=self.weight)
+                                         tol=self.tol, nstart=self.nstart, weight=weight)
 
                 # clean the results removing user nodes, selected user profile and eventually properties
                 user_scores = self.filter_result(graph, scores, filter_list, user_node)
