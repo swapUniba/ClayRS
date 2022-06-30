@@ -1,8 +1,8 @@
 from unittest import TestCase
 import os
 
+from clayrs.content_analyzer import BertTransformers
 from clayrs.content_analyzer.content_representation.content import EmbeddingField
-from clayrs.content_analyzer.embeddings import Transformers
 from clayrs.content_analyzer.embeddings.embedding_learner import GensimFastText
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique import \
     SentenceEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, \
@@ -87,7 +87,7 @@ class TestSentenceEmbeddingTechnique(TestCase):
 
     def test_produce_single_repr(self):
         file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
-        fromsentencetowords = SentenceEmbeddingTechnique(Transformers("prajjwal1/bert-tiny"))
+        fromsentencetowords = SentenceEmbeddingTechnique(BertTransformers("prajjwal1/bert-tiny"))
 
         embedding_list = fromsentencetowords.produce_content("Plot", [], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)
@@ -98,7 +98,7 @@ class TestFromSentenceWordsEmbeddingTechnique(TestCase):
 
     def test_produce_single_repr(self):
         file_path = os.path.join(dir_test_files, "movies_info_reduced.json")
-        fromsentencetowords = Sentence2WordEmbedding(Transformers("prajjwal1/bert-tiny"))
+        fromsentencetowords = Sentence2WordEmbedding(BertTransformers("prajjwal1/bert-tiny"))
 
         embedding_list = fromsentencetowords.produce_content("Plot", [], JSONFile(file_path))
         self.assertEqual(len(embedding_list), 20)

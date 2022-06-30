@@ -407,13 +407,13 @@ class TestPopRecsCorrelation(TestCase):
         self.assertFalse(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (3).png')))
         self.assertFalse(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (3).png')))
 
-    # @classmethod
-    # def tearDownClass(cls) -> None:
-    #     os.remove('./pop_recs_correlation.png')
-    #     os.remove('./pop_recs_correlation.svg')
-    #     os.remove('./pop_recs_correlation_no_zeros.png')
-    #     os.remove('pop_recs_correlation_no_zeros.svg')
-    #     shutil.rmtree('test_pop_recs')
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.remove('./pop_recs_correlation.png')
+        os.remove('./pop_recs_correlation.svg')
+        os.remove('./pop_recs_correlation_no_zeros.png')
+        os.remove('pop_recs_correlation_no_zeros.svg')
+        shutil.rmtree('test_pop_recs')
 
 
 if __name__ == '__main__':

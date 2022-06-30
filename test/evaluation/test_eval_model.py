@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
-from clayrs.content_analyzer.ratings_manager.ratings import Ratings
+from clayrs.content_analyzer.ratings_manager.ratings import Ratings, Rank
 from clayrs.evaluation.metrics.error_metrics import MAE
 from clayrs.evaluation.metrics.fairness_metrics import CatalogCoverage, DeltaGap
 from clayrs.evaluation.metrics.plot_metrics import LongTailDistr
@@ -20,7 +20,7 @@ rank_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'rank_split
 truth_split_1 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_1.csv'))
 truth_split_2 = pd.read_csv(os.path.join(dir_test_files, 'test_eval', 'truth_split_2.csv'))
 
-pred_list = [Ratings.from_dataframe(rank_split_1), Ratings.from_dataframe(rank_split_2)]
+pred_list = [Rank.from_dataframe(rank_split_1), Ratings.from_dataframe(rank_split_2)]
 truth_list = [Ratings.from_dataframe(truth_split_1), Ratings.from_dataframe(truth_split_2)]
 
 
@@ -40,9 +40,8 @@ class TestEvalModel(TestCase):
             # one error metric
             MAE(),
 
-            # two fairness metrics
+            # one fairness metrics
             CatalogCoverage(catalog),
-            DeltaGap({'first': 0.5, 'second': 0.5}),
 
             # one metric which returns a plot
             LongTailDistr()
@@ -69,10 +68,9 @@ class TestEvalModel(TestCase):
         self.assertEqual({'sys - fold1', 'sys - fold2', 'sys - mean'}, set(sys_result.index))
 
         # the sys result frame must contain results for the whole sys of the Precision, NDCG, MAE,
-        # Catalog Coverage and Delta Gap
+        # Catalog Coverage
         self.assertEqual(list(sys_result.columns), ['Precision - micro', 'NDCG', 'MAE',
-                                                    'CatalogCoverage (PredictionCov)', 'DeltaGap | first',
-                                                    'DeltaGap | second'])
+                                                    'CatalogCoverage (PredictionCov)'])
 
     def test_fit_user_list(self):
 
@@ -96,15 +94,14 @@ class TestEvalModel(TestCase):
         self.assertEqual({'sys - fold1', 'sys - fold2', 'sys - mean'}, set(sys_result.index))
 
         # the sys result frame must contain results for the whole sys of the Precision, NDCG, MAE,
-        # Catalog Coverage and Delta Gap
+        # Catalog Coverage
         self.assertEqual(list(sys_result.columns), ['Precision - micro', 'NDCG', 'MAE',
-                                                    'CatalogCoverage (PredictionCov)', 'DeltaGap | first',
-                                                    'DeltaGap | second'])
+                                                    'CatalogCoverage (PredictionCov)'])
 
     def test_fit_error(self):
         # should raise error since pred_list and truth_list must be of equal length
         with self.assertRaises(ValueError):
-            pred_list_smaller = [Ratings.from_dataframe(pd.DataFrame())]
+            pred_list_smaller = [Rank.from_dataframe(pd.DataFrame())]
             pred_list_bigger = [Ratings.from_dataframe(pd.DataFrame()), Ratings.from_dataframe(pd.DataFrame())]
 
             EvalModel(pred_list_smaller, pred_list_bigger, self.metric_list)
