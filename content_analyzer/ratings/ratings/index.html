@@ -1,0 +1,3972 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../images/icon_no_borders.svg">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.16">
+    
+    
+      
+        <title>Ratings class - ClayRS documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.1c3799f8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ratings-class" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ClayRS documentation" class="md-header__button md-logo" aria-label="ClayRS documentation" data-md-component="logo">
+      
+  <img src="../../../images/icon_no_borders.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ClayRS documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ratings class
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    swapUniba/ClayRS
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../first_steps/installation/" class="md-tabs__link">
+        First steps
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../introduction/" class="md-tabs__link md-tabs__link--active">
+        Content Analyzer
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../recsys/introduction/" class="md-tabs__link">
+        Recsys
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../evaluation/introduction/" class="md-tabs__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../utils/report/" class="md-tabs__link">
+        Utils
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ClayRS documentation" class="md-nav__button md-logo" aria-label="ClayRS documentation" data-md-component="logo">
+      
+  <img src="../../../images/icon_no_borders.svg" alt="logo">
+
+    </a>
+    ClayRS documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    swapUniba/ClayRS
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          First steps
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="First steps" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          First steps
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../first_steps/installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../first_steps/quickstart/" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Content Analyzer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Analyzer" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Content Analyzer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config/" class="md-nav__link">
+        Content Analyzer config and class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../raw_sources/" class="md-nav__link">
+        Raw source wrappers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Ratings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ratings" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Ratings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Ratings class
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Ratings class
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.Ratings" class="md-nav__link">
+    Ratings
+  </a>
+  
+    <nav class="md-nav" aria-label="Ratings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.__iter__" class="md-nav__link">
+    __iter__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.filter_ratings" class="md-nav__link">
+    filter_ratings()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dataframe" class="md-nav__link">
+    from_dataframe()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dict" class="md-nav__link">
+    from_dict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_list" class="md-nav__link">
+    from_list()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.get_user_interactions" class="md-nav__link">
+    get_user_interactions()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.item_id_column" class="md-nav__link">
+    item_id_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.score_column" class="md-nav__link">
+    score_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.take_head_all" class="md-nav__link">
+    take_head_all()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.timestamp_column" class="md-nav__link">
+    timestamp_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_csv" class="md-nav__link">
+    to_csv()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_dataframe" class="md-nav__link">
+    to_dataframe()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.user_id_column" class="md-nav__link">
+    user_id_column()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../score_processors/" class="md-nav__link">
+        Score processors
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Information Preprocessors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Information Preprocessors" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Information Preprocessors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information_preprocessors/nltk/" class="md-nav__link">
+        NLTK
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information_preprocessors/spacy/" class="md-nav__link">
+        Spacy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information_preprocessors/ekphrasis/" class="md-nav__link">
+        Ekphrasis
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6" type="checkbox" id="__nav_3_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_6">
+          Content Techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Techniques" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_6">
+          <span class="md-nav__icon md-icon"></span>
+          Content Techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6_1" type="checkbox" id="__nav_3_6_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_6_1">
+          Embedding techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Embedding techniques" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_6_1">
+          <span class="md-nav__icon md-icon"></span>
+          Embedding techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/embedding_techniques/word_embeddings/" class="md-nav__link">
+        Word Embeddings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/embedding_techniques/sentence_embeddings/" class="md-nav__link">
+        Sentence Embeddings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/embedding_techniques/document_embeddings/" class="md-nav__link">
+        Document Embeddings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/embedding_techniques/combining_embeddings/" class="md-nav__link">
+        Combining Embeddings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/embedding_techniques/contextualized_embeddings/" class="md-nav__link">
+        Contextualized Embeddings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/tfidf/" class="md-nav__link">
+        TfIdf
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/original_data/" class="md-nav__link">
+        Original Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../content_techniques/synset_df_frequency/" class="md-nav__link">
+        Synset Document Frequency
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_7" type="checkbox" id="__nav_3_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_7">
+          Exogenous Techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Exogenous Techniques" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          Exogenous Techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exogenous_techniques/dbpedia/" class="md-nav__link">
+        DBPedia Mapping
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exogenous_techniques/properties_from_dataset/" class="md-nav__link">
+        Properties From Dataset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exogenous_techniques/babelfy/" class="md-nav__link">
+        BabelFy Entity Linking
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_8">
+          Memory Interfaces
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Memory Interfaces" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_8">
+          <span class="md-nav__icon md-icon"></span>
+          Memory Interfaces
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index_interface/" class="md-nav__link">
+        Index Interface
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Recsys
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Recsys" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Recsys
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Partitioning techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Partitioning techniques" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Partitioning techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/partitioning/abstract_partitioning/" class="md-nav__link">
+        Abstract Partitioning class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/partitioning/hold_out/" class="md-nav__link">
+        Hold Out
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/partitioning/kfold/" class="md-nav__link">
+        KFold
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3">
+          Content Based recommendation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Based recommendation" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Content Based recommendation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/content_based/content_based_recsys/" class="md-nav__link">
+        Content Based recsys
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3_2" type="checkbox" id="__nav_4_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3_2">
+          Content Based algorithms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Content Based algorithms" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Content Based algorithms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/content_based/content_based_algorithms/centroid_vector/" class="md-nav__link">
+        Centroid Vector
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/content_based/content_based_algorithms/classifier_recommender/" class="md-nav__link">
+        Classifier Recommender
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/content_based/content_based_algorithms/linear_predictor/" class="md-nav__link">
+        Linear Predictor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/content_based/content_based_algorithms/index_query/" class="md-nav__link">
+        Index Query
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4">
+          Graph based recommendation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graph based recommendation" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          Graph based recommendation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graph_based_recsys/" class="md-nav__link">
+        Graph Based recsys
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4_2" type="checkbox" id="__nav_4_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4_2">
+          Graphs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graphs" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Graphs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graphs/nodes/" class="md-nav__link">
+        Nodes categories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graphs/nx_bipartite/" class="md-nav__link">
+        Bipartite Graph
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graphs/nx_tripartite/" class="md-nav__link">
+        Tripartite Graph
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graphs/nx_full/" class="md-nav__link">
+        Full Graph
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4_3" type="checkbox" id="__nav_4_4_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4_3">
+          Graph Based algorithms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Graph Based algorithms" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Graph Based algorithms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/graph_based_algorithms/nx_pagerank/" class="md-nav__link">
+        Page Rank
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/graph_based/feature_selection/" class="md-nav__link">
+        Feature Selection
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5" type="checkbox" id="__nav_4_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_5">
+          Methodologies
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Methodologies
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/methodology/abstract_methodology/" class="md-nav__link">
+        Abstract Methodology class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/methodology/test_ratings/" class="md-nav__link">
+        TestRatings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/methodology/test_items/" class="md-nav__link">
+        TestItems
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/methodology/training_items/" class="md-nav__link">
+        TrainingItems
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/methodology/all_items/" class="md-nav__link">
+        AllItems
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Evaluation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Evaluation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/eval_model/" class="md-nav__link">
+        EvalModel class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          Metrics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Metrics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Metrics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/metrics/classification_metrics/" class="md-nav__link">
+        Classification metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/metrics/ranking_metrics/" class="md-nav__link">
+        Ranking metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/metrics/error_metrics/" class="md-nav__link">
+        Error metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/metrics/fairness_metrics/" class="md-nav__link">
+        Fairness metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/metrics/plot_metrics/" class="md-nav__link">
+        Plot metrics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_4">
+          Statistical tests
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistical tests" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          Statistical tests
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../evaluation/statistical_tests/paired/" class="md-nav__link">
+        Paired
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Utils
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Utils" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Utils
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../utils/report/" class="md-nav__link">
+        Report
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.Ratings" class="md-nav__link">
+    Ratings
+  </a>
+  
+    <nav class="md-nav" aria-label="Ratings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.__iter__" class="md-nav__link">
+    __iter__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.filter_ratings" class="md-nav__link">
+    filter_ratings()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dataframe" class="md-nav__link">
+    from_dataframe()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dict" class="md-nav__link">
+    from_dict()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_list" class="md-nav__link">
+    from_list()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.get_user_interactions" class="md-nav__link">
+    get_user_interactions()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.item_id_column" class="md-nav__link">
+    item_id_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.score_column" class="md-nav__link">
+    score_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.take_head_all" class="md-nav__link">
+    take_head_all()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.timestamp_column" class="md-nav__link">
+    timestamp_column()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_csv" class="md-nav__link">
+    to_csv()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_dataframe" class="md-nav__link">
+    to_dataframe()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clayrs.content_analyzer.ratings_manager.ratings.Ratings.user_id_column" class="md-nav__link">
+    user_id_column()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/swapUniba/ClayRS/edit/master/docs/content_analyzer/ratings/ratings.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="ratings-class">Ratings class</h1>
+<p>The <code>Ratings</code> class is the main responsible for importing a dataset containing interactions between users and items</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clayrs.content_analyzer.ratings_manager.Ratings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">Ratings</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">user_id_column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">item_id_column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">score_column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">timestamp_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_processor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+  
+      <p>Class responsible of importing an interaction frame into the framework</p>
+<p><strong>If</strong> the source file contains users, items and ratings in this order,
+no additional parameters are needed, <strong>otherwise</strong> the mapping must be explicitly specified using:</p>
+<ul>
+<li><strong>'user_id'</strong> column,</li>
+<li><strong>'item_id'</strong> column,</li>
+<li><strong>'score'</strong> column</li>
+</ul>
+<p>The <em>score</em> column can also be processed: in case you would like to consider as score the sentiment of a textual
+review, or maybe normalizing all scores in <span class="arithmatex">\([0, 1]\)</span> range. Check the example below for more</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><span class="filename">CSV raw source</span><pre><span></span><code>user_id,item_id,rating,timestamp,review
+u1,i1,4,00112,good movie
+u2,i1,3,00113,an average movie
+u2,i32,2,00114,a bad movie
+</code></pre></div>
+<p>As you can see the user id column, item id column and score column are the first three column and are already in
+sequential order, so no additional parameter is required to the Ratings class:</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clayrs.content_analyzer</span> <span class="k">as</span> <span class="nn">ca</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings_raw_source</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s1">&#39;ratings.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># add timestamp=&#39;timestamp&#39; to the following if</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># you want to load also the timestamp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">Ratings</span><span class="p">(</span><span class="n">ratings_raw_source</span><span class="p">)</span>
+</code></pre></div>
+    <p>In case columns in the raw source are not in the above order you must specify an appropriate mapping via
+positional index (useful in case your raw source doesn't have a header) or via column ids:</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># (mapping by index) EQUIVALENT:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">Ratings</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ca</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s1">&#39;ratings.csv&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_id_column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># (1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item_id_column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># (2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">score_column</span><span class="o">=</span><span class="mi">2</span>  <span class="c1"># (3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</code></pre></div>
+    <ol>
+<li>First column of raw source is the column containing all user ids</li>
+<li>Second column of raw source is the column containing all item ids</li>
+<li>Third column of raw source is the column containing all the scores</li>
+</ol>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># (mapping by column name) EQUIVALENT:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">Ratings</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ca</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s1">&#39;ratings.csv&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_id_column</span><span class="o">=</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span>  <span class="c1"># (1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item_id_column</span><span class="o">=</span><span class="s1">&#39;item_id&#39;</span><span class="p">,</span>  <span class="c1"># (2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">score_column</span><span class="o">=</span><span class="s1">&#39;rating&#39;</span>  <span class="c1"># (3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</code></pre></div>
+    <ol>
+<li>The column with id 'user_id' of raw source is the column containing all user ids</li>
+<li>The column with id 'item_id' of raw source is the column containing all item ids</li>
+<li>The column with id 'rating' of raw source is the column containing all the scores</li>
+</ol>
+<p>In case you would like to use the sentiment of the <code>review</code> column of the above raw source as score column,
+simply specify the appropriate <code>ScoreProcessor</code> object</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">ratings_raw_source</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s1">&#39;ratings.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">Ratings</span><span class="p">(</span><span class="n">ratings_raw_source</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="n">score_column</span><span class="o">=</span><span class="s1">&#39;review&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="n">score_processor</span><span class="o">=</span><span class="n">ca</span><span class="o">.</span><span class="n">TextBlobSentimentAnalysis</span><span class="p">())</span>
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>source</code></td>
+          <td class="doc-param-details">
+            <p>Source containing the raw interaction frame</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><span title="clayrs.content_analyzer.raw_information_source.RawInformationSource">RawInformationSource</span></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>user_id_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the raw source representing <em>users</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>0</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>item_id_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the raw source representing <em>items</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>1</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>score_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the raw source representing <em>score</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>2</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>timestamp_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the raw source representing <em>timesamp</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>score_processor</code></td>
+          <td class="doc-param-details">
+            <p><code>ScoreProcessor</code> object which will process the <code>score_column</code> accordingly. Useful if you want
+to perform sentiment analysis on a textual column or you want to normalize all scores in <span class="arithmatex">\([0, 1]\)</span> range</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><span title="clayrs.content_analyzer.ratings_manager.score_processor.ScoreProcessor">ScoreProcessor</span></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          <details class="quote">
+            <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">RawInformationSource</span><span class="p">,</span>
+             <span class="n">user_id_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="n">item_id_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="n">score_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+             <span class="n">timestamp_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">score_processor</span><span class="p">:</span> <span class="n">ScoreProcessor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_import_ratings</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">user_id_column</span><span class="p">,</span> <span class="n">item_id_column</span><span class="p">,</span> <span class="n">score_column</span><span class="p">,</span>
+                                              <span class="n">timestamp_column</span><span class="p">,</span> <span class="n">score_processor</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.__iter__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__iter__</span><span class="p">()</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The <code>Ratings</code> object can be iterated over and each iteration will return an <code>Interaction</code> object</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><span class="filename">Rating object to iterate</span><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u2      | i5      |     1 |
++---------+---------+-------+
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># for simplicity we stop after the first iteration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">ratings</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">first_interaction</span> <span class="o">=</span> <span class="n">interaction</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">break</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_interaction</span>
+<span class="go">Interaction(&#39;u1&#39;, &#39;i1&#39;, 4)</span>
+</code></pre></div>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The `Ratings` object can be iterated over and each iteration will return an `Interaction` object</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        ```title=&quot;Rating object to iterate&quot;</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u2      | i5      |     1 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        &gt;&gt;&gt; # for simplicity we stop after the first iteration</span>
+<span class="sd">        &gt;&gt;&gt; for interaction in ratings:</span>
+<span class="sd">        &gt;&gt;&gt;     first_interaction = interaction</span>
+<span class="sd">        &gt;&gt;&gt;     break</span>
+<span class="sd">        &gt;&gt;&gt; first_interaction</span>
+<span class="sd">        Interaction(&#39;u1&#39;, &#39;i1&#39;, 4)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">yield from</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.filter_ratings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">filter_ratings</span><span class="p">(</span><span class="n">user_list</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Method which will filter the rating frame by keeping only interactions of users appearing in the <code>user_list</code>.
+This method will return a new <code>Ratings</code> object without changing the original</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><span class="filename">Starting Rating object</span><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u1      | i2      |     3 |
+| u2      | i5      |     1 |
++---------+---------+-------+
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">rating_frame</span><span class="o">.</span><span class="n">filter_ratings</span><span class="p">([</span><span class="s1">&#39;u1&#39;</span><span class="p">])</span>
+</code></pre></div>
+    <div class="highlight"><span class="filename">Returned Rating object</span><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u1      | i2      |     3 |
++---------+---------+-------+
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>user_list</code></td>
+          <td class="doc-param-details">
+            <p>List of user ids that will be present in the filtered <code>Ratings</code> object</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <p>Returns
+    The filtered Ratings object which contains only interactions of selected users</p>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">filter_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method which will filter the rating frame by keeping only interactions of users appearing in the `user_list`.</span>
+<span class="sd">    This method will return a new `Ratings` object without changing the original</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        ```title=&quot;Starting Rating object&quot;</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u1      | i2      |     3 |</span>
+<span class="sd">        | u2      | i5      |     1 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        &gt;&gt;&gt; rating_frame.filter_ratings([&#39;u1&#39;])</span>
+
+<span class="sd">        ```title=&quot;Returned Rating object&quot;</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u1      | i2      |     3 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_list: List of user ids that will be present in the filtered `Ratings` object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        The filtered Ratings object which contains only interactions of selected users</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filtered_ratings_generator</span> <span class="o">=</span> <span class="p">((</span><span class="n">user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span><span class="p">[</span><span class="n">user</span><span class="p">])</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">user_list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">filtered_ratings_generator</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dataframe" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_dataframe</span><span class="p">(</span><span class="n">interaction_frame</span><span class="p">,</span> <span class="n">user_column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">item_column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">score_column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">timestamp_column</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Class method which allows to instantiate a <code>Ratings</code> object by using an existing pandas DataFrame</p>
+<p><strong>If</strong> the pandas DataFrame contains users, items and ratings in this order,
+no additional parameters are needed, <strong>otherwise</strong> the mapping must be explicitly specified using:</p>
+<ul>
+<li><strong>'user_id'</strong> column,</li>
+<li><strong>'item_id'</strong> column,</li>
+<li><strong>'score'</strong> column</li>
+</ul>
+<p>Check documentation of the <code>Ratings</code> class for examples on mapping columns explicitly, the functioning is the
+same</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">ratings_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                           <span class="s1">&#39;item_id&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;i1&#39;</span><span class="p">,</span> <span class="s1">&#39;i2&#39;</span><span class="p">,</span> <span class="s1">&#39;i3&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                           <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ratings</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">ratings_df</span><span class="p">)</span>
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>interaction_frame</code></td>
+          <td class="doc-param-details">
+            <p>pandas DataFrame which represents the original interactions frame</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="pandas" href="https://pandas.pydata.org/docs/index.html#module-pandas">pd</a>.<a class="autorefs autorefs-external" title="pandas.DataFrame" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>user_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the DataFrame representing <em>users</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>0</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>item_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the DataFrame representing <em>items</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>1</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>score_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the DataFrame representing <em>score</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>2</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>timestamp_column</code></td>
+          <td class="doc-param-details">
+            <p>Name or positional index of the field of the raw source representing <em>timesamp</em> column</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.ratings_manager.ratings.Ratings" href="#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p><code>Ratings</code> object instantiated thanks to an existing Pandas DataFrame</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                   <span class="n">user_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">item_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                   <span class="n">score_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+                   <span class="n">timestamp_column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class method which allows to instantiate a `Ratings` object by using an existing pandas DataFrame</span>
+
+<span class="sd">    **If** the pandas DataFrame contains users, items and ratings in this order,</span>
+<span class="sd">    no additional parameters are needed, **otherwise** the mapping must be explicitly specified using:</span>
+
+<span class="sd">    * **&#39;user_id&#39;** column,</span>
+<span class="sd">    * **&#39;item_id&#39;** column,</span>
+<span class="sd">    * **&#39;score&#39;** column</span>
+
+<span class="sd">    Check documentation of the `Ratings` class for examples on mapping columns explicitly, the functioning is the</span>
+<span class="sd">    same</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; ratings_df = pd.DataFrame({&#39;user_id&#39;: [&#39;u1&#39;, &#39;u1&#39;, &#39;u1&#39;],</span>
+<span class="sd">        &gt;&gt;&gt;                            &#39;item_id&#39;: [&#39;i1&#39;, &#39;i2&#39;, &#39;i3&#39;],</span>
+<span class="sd">        &gt;&gt;&gt;                            &#39;score&#39;: [4, 3, 3])</span>
+<span class="sd">        &gt;&gt;&gt; Ratings.from_dataframe(ratings_df)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        interaction_frame: pandas DataFrame which represents the original interactions frame</span>
+<span class="sd">        user_column: Name or positional index of the field of the DataFrame representing *users* column</span>
+<span class="sd">        item_column: Name or positional index of the field of the DataFrame representing *items* column</span>
+<span class="sd">        score_column: Name or positional index of the field of the DataFrame representing *score* column</span>
+<span class="sd">        timestamp_column: Name or positional index of the field of the raw source representing *timesamp* column</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Ratings` object instantiated thanks to an existing Pandas DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_value_row_df</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># it&#39;s an int, so we get the column id and then we get the corresponding value in the row</span>
+                <span class="n">key_dict</span> <span class="o">=</span> <span class="n">interaction_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">key_dict</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> not found in interaction frame!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> not found in interaction frame!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dtype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># Does not call __init__</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Ratings</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Don&#39;t forget to call any polymorphic base class initializers</span>
+
+    <span class="n">ratings_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">interaction_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">interaction_frame</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">):</span>
+            <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_value_row_df</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">user_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">get_value_row_df</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">item_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">get_value_row_df</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">score_column</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">get_value_row_df</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">timestamp_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">if</span> <span class="n">timestamp_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="n">ratings_dict</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Interaction</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">_ratings_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ratings_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_dict" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">interaction_dict</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Class method which allows to instantiate a <code>Ratings</code> object by using an existing dictionary containing
+user_id as keys and lists of <code>Interaction</code> objects as value</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">interactions_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;u1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interaction</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;i2&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">Interaction</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;i3&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="s1">&#39;u2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interaction</span><span class="p">(</span><span class="s1">&#39;u2&#39;</span><span class="p">,</span> <span class="s1">&#39;i2&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ratings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">interactions_dict</span><span class="p">)</span>
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>interaction_dict</code></td>
+          <td class="doc-param-details">
+            <p>Dictionary containing user_id as keys and lists of <code>Interaction</code> objets as values
+or its generator</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]], <a class="autorefs autorefs-external" title="typing.Generator" href="https://docs.python.org/3/library/typing.html#typing.Generator">Generator</a>]</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.ratings_manager.ratings.Ratings" href="#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p><code>Ratings</code> object instantiated thanks to an existing dictionary</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]],</span> <span class="n">Generator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing</span>
+<span class="sd">    user_id as keys and lists of `Interaction` objects as value</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; interactions_dict = {&#39;u1&#39;: [Interaction(&#39;u1&#39;, &#39;i2&#39;, 4), Interaction(&#39;u1&#39;, &#39;i3&#39;, 3)],</span>
+<span class="sd">        &gt;&gt;&gt;                      &#39;u2&#39;: [Interaction(&#39;u2&#39;, &#39;i2&#39;, 5)]}</span>
+<span class="sd">        &gt;&gt;&gt; Ratings.from_dict(interactions_dict)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        interaction_dict: Dictionary containing user_id as keys and lists of `Interaction` objets as values</span>
+<span class="sd">            or its generator</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Ratings` object instantiated thanks to an existing dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># Does not call __init__</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Ratings</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Don&#39;t forget to call any polymorphic base class initializers</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">_ratings_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">interaction_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.from_list" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_list</span><span class="p">(</span><span class="n">interaction_list</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Class method which allows to instantiate a <code>Ratings</code> object by using an existing list containing <code>Interaction</code>
+objects or its generator</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">interactions_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Interaction</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;i1&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">Interaction</span><span class="p">(</span><span class="s1">&#39;u2&#39;</span><span class="p">,</span> <span class="s1">&#39;i1&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Ratings</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">interactions_list</span><span class="p">)</span>
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>interaction_list</code></td>
+          <td class="doc-param-details">
+            <p>List containing <code>Interaction</code> objects or its generator</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>], <a class="autorefs autorefs-external" title="typing.Generator" href="https://docs.python.org/3/library/typing.html#typing.Generator">Generator</a>]</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.ratings_manager.ratings.Ratings" href="#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p><code>Ratings</code> object instantiated thanks to an existing interaction list</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">Generator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`</span>
+<span class="sd">    objects or its generator</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; interactions_list = [Interaction(&#39;u1&#39;, &#39;i1&#39;, 5), Interaction(&#39;u2&#39;, &#39;i1&#39;, 4)]</span>
+<span class="sd">        &gt;&gt;&gt; Ratings.from_list(interactions_list)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        interaction_list: List containing `Interaction` objects or its generator</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Ratings` object instantiated thanks to an existing interaction list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># Does not call __init__</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Ratings</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Don&#39;t forget to call any polymorphic base class initializers</span>
+
+    <span class="n">ratings_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">interaction_list</span><span class="p">:</span>
+        <span class="n">ratings_dict</span><span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">_ratings_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ratings_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.get_user_interactions" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_user_interactions</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Method which returns a list of <code>Interaction</code> objects for a single user, one for each interaction of the user.
+Then you can easily iterate and extract useful information using list comprehension</p>
+
+<p><strong>Examples:</strong></p>
+    <p>So if the rating frame is the following:</p>
+<div class="highlight"><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u1      | i2      |     3 |
+| u2      | i5      |     1 |
++---------+---------+-------+
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">rating_frame</span><span class="o">.</span><span class="n">get_user_interactions</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">)</span>
+<span class="go">[Interaction(user_id=&#39;u1&#39;, item_id=&#39;i1&#39;, score=4),</span>
+<span class="go">Interaction(user_id=&#39;u1&#39;, item_id=&#39;i2&#39;, score=3)]</span>
+</code></pre></div>
+    <p>So you could easily extract all the ratings that a user has given for example:</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">rating_frame</span><span class="o">.</span><span class="n">get_user_interactions</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">)]</span>
+<span class="go">[4, 3]</span>
+</code></pre></div>
+    <p>If you only want the first <span class="arithmatex">\(k\)</span> interactions of the user, set <code>head=k</code>. The interactions returned are the
+first <span class="arithmatex">\(k\)</span> according to their order of appearance in the rating frame:</p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">rating_frame</span><span class="o">.</span><span class="n">get_user_interactions</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">[Interaction(user_id=&#39;u1&#39;, item_id=&#39;i1&#39;, score=4)]</span>
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>user_id</code></td>
+          <td class="doc-param-details">
+            <p>User for which interactions must be extracted</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>head</code></td>
+          <td class="doc-param-details">
+            <p>Integer which will cut the list of interactions of the user returned. The interactions returned are
+the first <span class="arithmatex">\(k\)</span> according to their order of appearance</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>List of Interaction objects of a single user</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_user_interactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">head</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method which returns a list of `Interaction` objects for a single user, one for each interaction of the user.</span>
+<span class="sd">    Then you can easily iterate and extract useful information using list comprehension</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        So if the rating frame is the following:</span>
+
+<span class="sd">        ```</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u1      | i2      |     3 |</span>
+<span class="sd">        | u2      | i5      |     1 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        &gt;&gt;&gt; rating_frame.get_user_interactions(&#39;u1&#39;)</span>
+<span class="sd">        [Interaction(user_id=&#39;u1&#39;, item_id=&#39;i1&#39;, score=4),</span>
+<span class="sd">        Interaction(user_id=&#39;u1&#39;, item_id=&#39;i2&#39;, score=3)]</span>
+
+<span class="sd">        So you could easily extract all the ratings that a user has given for example:</span>
+
+<span class="sd">        &gt;&gt;&gt; [interaction.score for interaction in rating_frame.get_user_interactions(&#39;u1&#39;)]</span>
+<span class="sd">        [4, 3]</span>
+
+<span class="sd">        If you only want the first $k$ interactions of the user, set `head=k`. The interactions returned are the</span>
+<span class="sd">        first $k$ according to their order of appearance in the rating frame:</span>
+
+<span class="sd">        &gt;&gt;&gt; rating_frame.get_user_interactions(&#39;u1&#39;, head=1)</span>
+<span class="sd">        [Interaction(user_id=&#39;u1&#39;, item_id=&#39;i1&#39;, score=4)]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_id: User for which interactions must be extracted</span>
+<span class="sd">        head: Integer which will cut the list of interactions of the user returned. The interactions returned are</span>
+<span class="sd">            the first $k$ according to their order of appearance</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Interaction objects of a single user</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span><span class="p">[</span><span class="n">user_id</span><span class="p">][:</span><span class="n">head</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.item_id_column" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">item_id_column</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Getter for the user id column. This will return the item column "as is", so it will contain duplicate items.
+Use set(item_id_column) to get all unique users</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>Items column with duplicates</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">item_id_column</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getter for the user id column. This will return the item column &quot;as is&quot;, so it will contain duplicate items.</span>
+<span class="sd">    Use set(item_id_column) to get all unique users</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Items column with duplicates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.score_column" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">score_column</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Getter for the score column. This will return the score column "as is".</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>Score column</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">score_column</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getter for the score column. This will return the score column &quot;as is&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Score column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.take_head_all" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">take_head_all</span><span class="p">(</span><span class="n">head</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Method which will retain only <span class="arithmatex">\(k\)</span> interactions for each user. The <span class="arithmatex">\(k\)</span> interactions retained are the first which
+appears in the rating frame.</p>
+<p>This method will return a new <code>Ratings</code> object without changing the original</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><span class="filename">Starting Rating object</span><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u1      | i2      |     3 |
+| u2      | i5      |     1 |
+| u2      | i6      |     2 |
++---------+---------+-------+
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">rating_frame</span><span class="o">.</span><span class="n">take_head_all</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+    <div class="highlight"><span class="filename">Returned Rating object</span><pre><span></span><code>+---------+---------+-------+
+| user_id | item_id | score |
++---------+---------+-------+
+| u1      | i1      |     4 |
+| u2      | i5      |     1 |
++---------+---------+-------+
+</code></pre></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>head</code></td>
+          <td class="doc-param-details">
+            <p>The number of interactions to retain for each user</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.ratings_manager.ratings.Ratings" href="#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>The filtered Ratings object which contains only first <span class="arithmatex">\(k\)</span> interactions for each user</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">take_head_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method which will retain only $k$ interactions for each user. The $k$ interactions retained are the first which</span>
+<span class="sd">    appears in the rating frame.</span>
+
+<span class="sd">    This method will return a new `Ratings` object without changing the original</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        ```title=&quot;Starting Rating object&quot;</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u1      | i2      |     3 |</span>
+<span class="sd">        | u2      | i5      |     1 |</span>
+<span class="sd">        | u2      | i6      |     2 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        &gt;&gt;&gt; rating_frame.take_head_all(head=1)</span>
+
+<span class="sd">        ```title=&quot;Returned Rating object&quot;</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | user_id | item_id | score |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        | u1      | i1      |     4 |</span>
+<span class="sd">        | u2      | i5      |     1 |</span>
+<span class="sd">        +---------+---------+-------+</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        head: The number of interactions to retain for each user</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered Ratings object which contains only first $k$ interactions for each user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ratings_cut_generator</span> <span class="o">=</span> <span class="p">((</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">[:</span><span class="n">head</span><span class="p">])</span>
+                             <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_ratings</span> <span class="ow">in</span>
+                             <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratings_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">ratings_cut_generator</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.timestamp_column" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">timestamp_column</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Getter for the timestamp column. This will return the score column "as is". If no timestamp is present then an
+empty list is returned</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>Timestamp column or empty list if no timestamp is present</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">timestamp_column</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getter for the timestamp column. This will return the score column &quot;as is&quot;. If no timestamp is present then an</span>
+<span class="sd">    empty list is returned</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Timestamp column or empty list if no timestamp is present</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">timestamp</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">interaction</span><span class="o">.</span><span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_csv" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_csv</span><span class="p">(</span><span class="n">output_directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;ratings_frame&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Method which will save the <code>Ratings</code> object to a <code>csv</code> file</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>output_directory</code></td>
+          <td class="doc-param-details">
+            <p>directory which will contain the csv file</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>&#39;.&#39;</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>file_name</code></td>
+          <td class="doc-param-details">
+            <p>Name of the csv_file</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>&#39;ratings_frame&#39;</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>overwrite</code></td>
+          <td class="doc-param-details">
+            <p>If set to True and a csv file exists in the same output directory with the same file name, it
+will be overwritten</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>False</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ratings_frame&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method which will save the `Ratings` object to a `csv` file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_directory: directory which will contain the csv file</span>
+<span class="sd">        file_name: Name of the csv_file</span>
+<span class="sd">        overwrite: If set to True and a csv file exists in the same output directory with the same file name, it</span>
+<span class="sd">            will be overwritten</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_directory</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_valid_filename</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+    <span class="n">frame</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.to_dataframe" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_dataframe</span><span class="p">()</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Method which will convert the <code>Rating</code> object to a <code>pandas DataFrame object</code>.</p>
+<p>The returned DataFrame object will contain the 'user_id', 'item_id' and 'score' column and optionally the
+'timestamp' column, if at least one interaction has a timestamp.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" title="pandas" href="https://pandas.pydata.org/docs/index.html#module-pandas">pd</a>.<a class="autorefs autorefs-external" title="pandas.DataFrame" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>The rating frame converted to a pandas DataFrame with 'user_id', 'item_id', 'score' column and optionally</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" title="pandas" href="https://pandas.pydata.org/docs/index.html#module-pandas">pd</a>.<a class="autorefs autorefs-external" title="pandas.DataFrame" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>the 'timestamp' column</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method which will convert the `Rating` object to a `pandas DataFrame object`.</span>
+
+<span class="sd">    The returned DataFrame object will contain the &#39;user_id&#39;, &#39;item_id&#39; and &#39;score&#39; column and optionally the</span>
+<span class="sd">    &#39;timestamp&#39; column, if at least one interaction has a timestamp.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The rating frame converted to a pandas DataFrame with &#39;user_id&#39;, &#39;item_id&#39;, &#39;score&#39; column and optionally</span>
+<span class="sd">        the &#39;timestamp&#39; column</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">will_be_frame</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">,</span>
+                     <span class="s1">&#39;item_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_id_column</span><span class="p">,</span>
+                     <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_column</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_column</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">will_be_frame</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_column</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">will_be_frame</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="clayrs.content_analyzer.ratings_manager.ratings.Ratings.user_id_column" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">user_id_column</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Getter for the user id column. This will return the user column "as is", so it will contain duplicate users.
+Use set(user_id_column) to get all
+unique users</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <p>Users column with duplicates</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>clayrs/content_analyzer/ratings_manager/ratings.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user_id_column</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getter for the user id column. This will return the user column &quot;as is&quot;, so it will contain duplicate users.</span>
+<span class="sd">    Use set(user_id_column) to get all</span>
+<span class="sd">    unique users</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Users column with duplicates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">user_id</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../raw_sources/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Raw source wrappers" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Raw source wrappers
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../score_processors/" class="md-footer__link md-footer__link--next" aria-label="Next: Score processors" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Score processors
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tooltips", "navigation.tabs", "navigation.top", "navigation.sections", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.3a4b43e5.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
