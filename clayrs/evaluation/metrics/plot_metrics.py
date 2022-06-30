@@ -9,11 +9,13 @@ import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 import os
+import matplotlib.ticker as plticker
 
+from clayrs.content_analyzer import Ratings
+from clayrs.evaluation.utils import get_item_popularity, get_most_popular_items
 from clayrs.utils.save_content import get_valid_filename
 
-from clayrs.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, popular_items, \
-    pop_ratio_by_user
+from clayrs.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, pop_ratio_by_user
 from clayrs.evaluation.metrics.metrics import Metric
 from clayrs.recsys.partitioning import Split
 from clayrs.utils.const import logger
@@ -166,10 +168,10 @@ class LongTailDistr(PlotMetric):
         return pd.DataFrame(columns=['user_id', 'item_id', 'score'])
 
 
-class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
-    """
+class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
+    r"""
     This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
-    profile popularity and recommendations popularity is drawn
+    ***profile popularity ratio*** and ***recommendations popularity ratio*** is drawn
 
     Users are split into groups based on the *user_groups* parameter, which contains names of the groups as keys,
     and percentage of how many user must contain a group as values. For example:
@@ -178,11 +180,26 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
     Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
     percentage of users we specified as value in the dictionary):
-    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups. In general users are grouped by popularity in a descending order.
 
-    You could also specify how many *most popular items* must be considered with the `pop_percentage` parameter. By
-    default is set to 0.2 which means that the top 20% items are considered as most popular
+    * users with many popular items will be inserted into the first group
+    * users with niche items rated will be inserted into one of the last groups.
+
+    In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
+    is defined as:
+
+    $$
+    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+    $$
+
+    The *most popular items* are the first `pop_percentage`% items of all items ordered in a descending order by
+    popularity.
+
+    The popularity of an item is defined as the number of times it is rated in the `original_ratings` parameter
+    divided by the total number of users in the `original_ratings`.
+
+    It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+    and it won't be considered in the $Popularity\_ratio$ computation of its group. In case no user of a group has recs
+    available, a warning will be printed and the whole group won't be considered.
 
     The plot file will be saved as `out_dir/file_name.format`
 
@@ -201,6 +218,10 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
+        user_profiles: `Ratings` object containing interactions of the profile of each user (e.g. the **train set**)
+        original_ratings: `Ratings` object containing original interactions of the dataset that will be used to
+            compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
+            users)
         out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
             in the same directory where the python script it's being executed
         file_name (str): Name of the plot file. Default is 'pop_ratio_profile_vs_recs'
@@ -212,8 +233,8 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
             ('file_name.format'). Default is False
     """
 
-    def __init__(self, user_groups: Dict[str, float], out_dir: str = '.',
-                 file_name: str = 'pop_ratio_profile_vs_recs', pop_percentage: float = 0.2,
+    def __init__(self, user_groups: Dict[str, float],  user_profiles: Ratings, original_ratings: Ratings,
+                 out_dir: str = '.', file_name: str = 'pop_ratio_profile_vs_recs', pop_percentage: float = 0.2,
                  store_frame: bool = False, format: str = 'png', overwrite: bool = False):
 
         PlotMetric.__init__(self, out_dir, file_name, format, overwrite)
@@ -222,43 +243,40 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         if not 0 < pop_percentage <= 1:
             raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
+        self._pop_by_item = get_item_popularity(original_ratings)
+        self._user_profiles = user_profiles
         self.__pop_percentage = pop_percentage
         self.__user_groups = user_groups
         self.__store_frame = store_frame
 
-    def __str__(self):
-        return "PopProfileVsRecs"
-
-    def __repr__(self):
-        return f'PopProfileVsRecs('\
-               f'user_groups={self.__user_groups}, ' \
-               f'out_dir={self.output_directory}, ' \
-               f'file_name={self.file_name}, ' \
-               f'pop_percentage={self.__pop_percentage}, ' \
-               f'store_frame={self.__store_frame}, ' \
-               f'format={self.format}, ' \
-               f'overwrite={self.overwrite})'
-
     def perform(self, split: Split) -> pd.DataFrame:
         predictions = split.pred
-        truth = split.truth
 
-        most_popular_items = popular_items(score_frame=truth, pop_percentage=self.__pop_percentage)
-        user_groups = self.split_user_in_groups(score_frame=predictions, groups=self.user_groups,
-                                                pop_items=most_popular_items)
+        most_pop_items = get_most_popular_items(self._pop_by_item, self.__pop_percentage)
+        splitted_user_groups = self.split_user_in_groups(score_frame=self._user_profiles, groups=self.user_groups,
+                                                         pop_items=most_pop_items)
 
         split_result = {'user_group': [], 'profile_pop_ratio': [], 'recs_pop_ratio': []}
         data_to_plot = []
         labels = []
-        for group_name in user_groups:
-            truth_group = truth.filter_ratings(user_list=user_groups[group_name])
-            pred_group = predictions.filter_ratings(user_list=user_groups[group_name])
+        for group_name in splitted_user_groups:
 
-            profile_pop_ratios_frame = pop_ratio_by_user(truth_group, most_popular_items)
-            recs_pop_ratios_frame = pop_ratio_by_user(pred_group, most_popular_items)
+            # we don't consider users of the group for which we do not have any recommendation
+            valid_group = splitted_user_groups[group_name].intersection(predictions.user_id_column)
 
-            profile_pop_ratios = list(profile_pop_ratios_frame.values())
-            recs_pop_ratios = list(recs_pop_ratios_frame.values())
+            if len(valid_group) == 0:
+                logger.warning(f"Group {group_name} won't be considered in the DeltaGap since no recs is available "
+                               f"for any user of said group!")
+                continue
+
+            profile_group_ratings = self._user_profiles.filter_ratings(user_list=valid_group)
+            pred_group_recommendations = predictions.filter_ratings(user_list=valid_group)
+
+            profile_pop_ratios = pop_ratio_by_user(profile_group_ratings, most_pop_items)
+            recs_pop_ratios = pop_ratio_by_user(pred_group_recommendations, most_pop_items)
+
+            profile_pop_ratios = list(profile_pop_ratios.values())
+            recs_pop_ratios = list(recs_pop_ratios.values())
 
             split_result['user_group'].append(group_name)
             split_result['profile_pop_ratio'].append(profile_pop_ratios)
@@ -285,6 +303,9 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
         # add patch_artist=True option to ax.boxplot()
         # to get fill color
         bp = ax.boxplot(np.array(data_to_plot, dtype=object), patch_artist=True)
+
+        # make max y value always visible in the plot
+        ax.set_ylim([0, 1])
 
         first_color = '#7570b3'
         second_color = '#b2df8a'
@@ -359,12 +380,28 @@ class PopProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
         return pd.DataFrame(columns=['user_id', 'item_id', 'score'])
 
+    def __str__(self):
+        return "PopRatioProfileVsRecs"
+
+    def __repr__(self):
+        return f'PopRatioProfileVsRecs('\
+               f'user_groups={self.__user_groups}, ' \
+               f'out_dir={self.output_directory}, ' \
+               f'file_name={self.file_name}, ' \
+               f'pop_percentage={self.__pop_percentage}, ' \
+               f'store_frame={self.__store_frame}, ' \
+               f'format={self.format}, ' \
+               f'overwrite={self.overwrite})'
+
 
 class PopRecsCorrelation(PlotMetric):
     """
-    This metric generates a plot which has as the X-axis the popularity and as Y-axis number of recommendations, so
-    that it can be easily seen the correlation between popular (niche) items and how many times are being recommended
-    by the recsys
+    This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+    frequency, so that it can be easily seen the correlation between popular (niche) items and how many times are being
+    recommended
+
+    The popularity of an item is defined as the number of times it is rated in the `original_ratings` parameter
+    divided by the total number of users in the `original_ratings`.
 
     The plot file will be saved as `out_dir/file_name.format`
 
@@ -387,6 +424,9 @@ class PopRecsCorrelation(PlotMetric):
 
 
     Args:
+        original_ratings: `Ratings` object containing original interactions of the dataset that will be used to
+            compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
+            users)
         out_dir (str): Directory where the plot will be saved. Default is '.', meaning that the plot will be saved
             in the same directory where the python script it's being executed
         file_name (str): Name of the plot file. Default is 'pop_recs_correlation'
@@ -398,14 +438,20 @@ class PopRecsCorrelation(PlotMetric):
             ('file_name.format'). Default is False
     """
 
-    def __init__(self, out_dir: str = '.', file_name: str = 'pop_recs_correlation', mode: str = 'both',
+    def __init__(self, original_ratings: Ratings,
+                 out_dir: str = '.',
+                 file_name: str = 'pop_recs_correlation',
+                 mode: str = 'both',
                  format: str = 'png', overwrite: bool = False):
+
         valid = {'both', 'no_zeros', 'w_zeros'}
         self.__mode = mode.lower()
 
         if self.__mode not in valid:
             raise ValueError("Mode {} is not supported! Modes available:\n"
                              "{}".format(mode, valid))
+
+        self._pop_by_item = get_item_popularity(original_ratings)
 
         super().__init__(out_dir, file_name, format, overwrite)
 
@@ -436,42 +482,45 @@ class PopRecsCorrelation(PlotMetric):
         fig = plt.figure()
         ax = fig.add_subplot()
 
-        ax.set(xlabel='Popularity', ylabel='Recommendation frequency',
+        ax.set(xlabel='Popularity Ratio', ylabel='Recommendation frequency',
                title=title)
 
         ax.scatter(x, y, marker='o', s=20, c='orange', edgecolors='black',
                    linewidths=0.05)
 
+        loc = plticker.MultipleLocator(base=1.0)  # this locator puts ticks at regular intervals
+        ax.yaxis.set_major_locator(loc)
+
         return fig
 
-    def build_w_zeros_plot(self, popularities: list, recommendations: list):
+    def build_w_zeros_plot(self, popularity: list, recommendations: list):
         """
         Method which builds and saves the plot containing eventual *zero recommendations*
         It saves the plot as *out_dir/filename.format*, according to their value passed in the constructor
 
         Args:
-            popularities (list): x-axis values representing popularity of every item
+            popularity (list): x-axis values representing popularity of every item
             recommendations (list): y-axis values representing number of times every item has been recommended
         """
-        title = 'Popularity-Recommendations Correlation'
-        fig = self.build_plot(popularities, recommendations, title)
+        title = 'Popularity Ratio - Recommendations Correlation'
+        fig = self.build_plot(popularity, recommendations, title)
 
         file_name = self.file_name
 
         self.save_figure(fig, file_name)
 
-    def build_no_zeros_plot(self, popularities: list, recommendations: list):
+    def build_no_zeros_plot(self, popularity: list, recommendations: list):
         """
         Method which builds and saves the plot **excluding** eventual *zero recommendations*
         It saves the plot as *out_dir/filename_no_zeros.format*, according to their value passed in the constructor.
         Note that the '_no_zeros' string is automatically added to the file_name chosen
 
         Args:
-            popularities (list): x-axis values representing popularity of every item
+            popularity (list): x-axis values representing popularity of every item
             recommendations (list): y-axis values representing number of times every item has been recommended
         """
-        title = 'Popularity-Recommendations Correlation (No zeros)'
-        fig = self.build_plot(popularities, recommendations, title)
+        title = 'Popularity Ratio - Recommendations Correlation (No zeros)'
+        fig = self.build_plot(popularity, recommendations, title)
 
         file_name = self.file_name + '_no_zeros'
 
@@ -479,14 +528,8 @@ class PopRecsCorrelation(PlotMetric):
 
     def perform(self, split: Split):
         predictions = split.pred
-        truth = split.truth
 
-        # Calculating popularity by item
-        items = truth.item_id_column
-        pop_by_items = Counter(items)
-
-        # Calculating num of recommendations by item
-        pop_by_items = pop_by_items.most_common()
+        # Calculating num of recommendations for each item
         recs_by_item = Counter(predictions.item_id_column)
         popularities = list()
         recommendations = list()
@@ -494,7 +537,7 @@ class PopRecsCorrelation(PlotMetric):
         recommendations_no_zeros = list()
 
         at_least_one_zero = False
-        for item, pop in pop_by_items:
+        for item, pop in self._pop_by_item.items():
             num_of_recs = recs_by_item[item]
 
             popularities.append(pop)

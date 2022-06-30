@@ -2,11 +2,10 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from clayrs.content_analyzer import Ratings
+from clayrs.content_analyzer import Ratings, Rank
 from clayrs.evaluation.exceptions import NotEnoughUsers
 from clayrs.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, \
-    DeltaGap, \
-    GroupFairnessMetric, Counter
+    DeltaGap, GroupFairnessMetric, Counter
 from clayrs.recsys import Split
 
 # Will be the same for every test
@@ -292,7 +291,7 @@ class TestGroupFairnessMetric(unittest.TestCase):
                                                      groups={'a': 1.9},
                                                      pop_items=popular_items)
 
-        # Check default_diverse group when percentage total < 1
+        # Check error raised when percentage total < 1
         pred_4_users = pd.DataFrame(
             {'user_id': ['u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u3', 'u3', 'u4', 'u4', 'u4', 'u4'],
              'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i2', 'i6', 'i1', 'i8'],
@@ -300,12 +299,10 @@ class TestGroupFairnessMetric(unittest.TestCase):
         popular_items = {'i2', 'i1'}
         pred_4_users = Ratings.from_dataframe(pred_4_users)
 
-        result = GroupFairnessMetric.split_user_in_groups(pred_4_users,
-                                                          groups={'a': 0.3, 'b': 0.5},
-                                                          pop_items=popular_items)
-        self.assertIn('a', result.keys())
-        self.assertIn('b', result.keys())
-        self.assertIn('default_diverse', result.keys())
+        with self.assertRaises(ValueError):
+            result = GroupFairnessMetric.split_user_in_groups(pred_4_users,
+                                                              groups={'a': 0.3, 'b': 0.5},
+                                                              pop_items=popular_items)
 
         # Check splitted groups in a usual situation
         result = GroupFairnessMetric.split_user_in_groups(pred_4_users,
@@ -361,11 +358,87 @@ class TestGroupFairnessMetric(unittest.TestCase):
 class TestDeltaGap(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        original_ratings = pd.DataFrame(
+            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1',
+                         'u2', 'u2', 'u2', 'u2',
+                         'u3', 'u3', 'u3', 'u3', 'u3', 'u3',
+                         'u4', 'u4', 'u4', 'u4', 'u4', 'u4', 'u4',
+                         'u5', 'u5', 'u5', 'u5', 'u5',
+                         'u6', 'u6'],
+             'item_id': ['i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7', 'i8',
+                         'i1', 'i9', 'i10', 'i11',
+                         'i1', 'i12', 'i13', 'i3', 'i10', 'i14',
+                         'i3', 'i10', 'i15', 'i16', 'i9', 'i17', 'i99',
+                         'i10', 'i18', 'i19', 'i20', 'i21',
+                         'inew_1', 'inew_2'],
+             'score': [5, 4, 4, 1, 2, 3, 3, 1,
+                       4, 5, 1, 1,
+                       3, 3, 2, 1, 1, 4,
+                       4, 4, 5, 5, 3, 3, 3,
+                       3, 3, 2, 2, 1,
+                       4, 3]})
+        cls.original_ratings = Ratings.from_dataframe(original_ratings)
+
+        train = pd.DataFrame(
+            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1',  # removed last 2
+                         'u2', 'u2', 'u2',  # removed last 1
+                         'u3', 'u3', 'u3', 'u3',  # removed last 2
+                         'u4', 'u4', 'u4', 'u4', 'u4',  # removed last 2
+                         'u5', 'u5', 'u5', 'u5',  # removed last 1
+                         'u6'],  # removed last 1
+             'item_id': ['i1', 'i2', 'i3', 'i4', 'i5', 'i6',
+                         'i1', 'i9', 'i10',
+                         'i1', 'i12', 'i13', 'i3',
+                         'i3', 'i10', 'i15', 'i16', 'i9',
+                         'i10', 'i18', 'i19', 'i20',
+                         'inew_1'],
+             'score': [5, 4, 4, 1, 2, 3,
+                       4, 5, 1,
+                       3, 3, 2, 1,
+                       4, 4, 5, 5, 3,
+                       3, 3, 2, 2,
+                       4]})
+        cls.train = Ratings.from_dataframe(train)
+
+        truth = pd.DataFrame(
+            {'user_id': ['u1', 'u1',
+                         'u2',
+                         'u3', 'u3',
+                         'u4', 'u4', 'u4',
+                         'u5',
+                         'u6'],
+             'item_id': ['i7', 'i8',
+                         'i11',
+                         'i10', 'i14',
+                         'i9', 'i17', 'i99',
+                         'i21',
+                         'inew_2'],
+             'score': [3, 1,
+                       1,
+                       1, 4,
+                       3, 3, 3,
+                       1,
+                       3]})
+        truth = Ratings.from_dataframe(truth)
+
+        # u6 is missing, just to test DeltaGap in case for some users recs can't be computed
         recs = pd.DataFrame(
-            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2'],
-             'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8'],
-             'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50]})
-        recs = Ratings.from_dataframe(recs)
+            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1',
+                         'u2', 'u2', 'u2', 'u2', 'u2',
+                         'u3', 'u3', 'u3', 'u3', 'u3',
+                         'u4', 'u4', 'u4', 'u4', 'u4',
+                         'u5', 'u5', 'u5', 'u5', 'u5'],
+             'item_id': ['i7', 'i10', 'i11', 'i12', 'i13',
+                         'i11', 'i20', 'i6', 'i3', 'i4',
+                         'i4', 'i5', 'i6', 'i7', 'i10',
+                         'i9', 'i2', 'i3', 'i1', 'i5',
+                         'i2', 'i3', 'i4', 'i5', 'i6'],
+             'score': [500, 400, 300, 200, 100,
+                       400, 300, 200, 100, 50,
+                       150, 125, 110, 100, 80,
+                       390, 380, 360, 320, 200,
+                       250, 150, 190, 100, 50]})
+        recs = Rank.from_dataframe(recs)
 
         cls.split = Split(recs, truth)
 
@@ -397,39 +470,108 @@ class TestDeltaGap(unittest.TestCase):
 
     def test_invalid_percentage(self):
         with self.assertRaises(ValueError):
-            DeltaGap(user_groups={'a': 0.5}, pop_percentage=-0.5)
-            DeltaGap(user_groups={'a': 0.5}, pop_percentage=0)
-            DeltaGap(user_groups={'a': 0.5}, pop_percentage=1.5)
+            DeltaGap(user_groups={'a': 0.5}, pop_percentage=-0.5, user_profiles=self.train,
+                     original_ratings=self.original_ratings)
+            DeltaGap(user_groups={'a': 0.5}, pop_percentage=0, user_profiles=self.train,
+                     original_ratings=self.original_ratings)
+            DeltaGap(user_groups={'a': 0.5}, pop_percentage=1.5, user_profiles=self.train,
+                     original_ratings=self.original_ratings)
 
-    def test_perform_2_users_2_groups(self):
-        metric = DeltaGap(user_groups={'a': 0.5, 'b': 0.5})
+    def _compute_deltagap(self, valid_groups_splitted: dict, top_n: int = None):
+
+        n_users = len(set(self.original_ratings.user_id_column))  # { u1, u2, u3, u4, u5, u6 } so 6 users
+        pop_by_item = {item_id: count / n_users
+                       for item_id, count in Counter(self.original_ratings.item_id_column).items()}
+
+        expected_result_list = []
+
+        for group_name, valid_group in valid_groups_splitted.items():
+            # *******************************************************************************************
+            # *** For every user in the group calculate the average popularity of the recommendations ***
+            # *******************************************************************************************
+
+            # compute for each user of the group the popularity sum in the recommendations
+            # (cut the ranking list if top_n != None)
+            RECS_sum_pop_group = {
+                user: sum([pop_by_item.get(interaction.item_id)
+                           for interaction in self.split.pred.get_user_interactions(user)][:top_n])
+
+                for user in valid_group
+            }
+
+            # compute for each user of the group the average popularity in the recommendations
+            # (sum_pop_item_recommended / n_item_recommended)ù
+            # (cut the ranking list if top_n != None)
+            RECS_avg_pop_group = {user: sum_pop / len(self.split.pred.get_user_interactions(user)[:top_n])
+                                  for user, sum_pop in RECS_sum_pop_group.items()}
+
+            # ************************************************************************************
+            # *** For every user in the group calculate the average popularity of the profiles ***
+            # ************************************************************************************
+
+            # compute for each user of the group the popularity sum in the recommendations
+            PROFILE_sum_pop_group = {
+                user: sum([pop_by_item.get(interaction.item_id)
+                           for interaction in self.train.get_user_interactions(user)])
+
+                for user in valid_group
+            }
+
+            # compute for each user of the group the average popularity in the recommendations
+            # (sum_pop_item_recommended / n_item_recommended)
+            PROFILE_avg_pop_group = {user: sum_pop / len(self.train.get_user_interactions(user))
+                                     for user, sum_pop in PROFILE_sum_pop_group.items()}
+
+            # ************************
+            # *** Compute DeltaGAP ***
+            # ************************
+
+            # sum the RECS_avg_pop of every user of the group / n_users in group
+            RECS_gap_group = sum(RECS_avg_pop_group.values()) / len(valid_group)
+
+            # sum the PROFILE_avg_pop of every user of the group / n_users in group
+            PROFILE_gap_group = sum(PROFILE_avg_pop_group.values()) / len(valid_group)
+
+            expected_delta_gap_group = (RECS_gap_group - PROFILE_gap_group) / PROFILE_gap_group
+
+            expected_result_list.append(expected_delta_gap_group)
+
+        return expected_result_list
+
+    def test_perform_1_group(self):
+        metric = DeltaGap(user_groups={'a': 1},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings)
         result = metric.perform(self.split)
 
-        pop_by_item_truth = Counter(list(truth.item_id_column))
+        # since one group, all users will belong to this group
+        # except u6 for which we don't have any recs
+        valid_group_a = {'u1', 'u2', 'u3', 'u4', 'u4', 'u5'}
 
-        # group_a = { u2 } (since it has higher popular ratio, it is put into the first group)
-        # group_b = { u1 }
+        valid_groups_splitted = {'a': valid_group_a}
 
-        # For every user in the group calculate the average popularity of the recommendations.
-        # To calculate the avg popularity, pop_by_item_pred is used, since due to the methodology
-        # items in the recommendation lists may differ from item in the truth
-        RECS_avg_pop_group_a = {'u2': 6 / 4}  # for every user sum_pop_item_rated / n_item_rated
-        RECS_avg_pop_group_b = {'u1': 8 / 8}  # for every user sum_pop_item_rated / n_item_rated
+        [expected_delta_gap_group_a] = self._compute_deltagap(valid_groups_splitted)
 
-        # For every user in the group calculate the average popularity of the profile.
-        # To calculate the avg popularity, pop_by_item_truth is used, since due to the methodology
-        # items in the truth may differ from item in the recommendation lists
-        PROFILE_avg_pop_group_a = {'u2': 5 / 3}  # for every user sum_pop_item_rated / n_item_rated
-        PROFILE_avg_pop_group_b = {'u1': 7 / 5}  # for every user sum_pop_item_rated / n_item_rated
+        result_delta_gap_group_a = float(result["{} | a".format(str(metric))])
 
-        RECS_gap_group_a = (6 / 4) / 1  # sum the RECS_avg_pop of every user of the group_a / n_users in group_a
-        RECS_gap_group_b = (8 / 8) / 1  # sum the RECS_avg_pop of every user of the group_b / n_users in group_b
+        self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
 
-        PROFILE_gap_group_a = (5 / 3) / 1  # sum the PROFILE_avg_pop of every user of the group_a / n_users in group_a
-        PROFILE_gap_group_b = (7 / 5) / 1  # sum the PROFILE_avg_pop of every user of the group_b / n_users in group_b
+    def test_perform_2_groups(self):
+        metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings)
+        result = metric.perform(self.split)
 
-        expected_delta_gap_group_a = (RECS_gap_group_a - PROFILE_gap_group_a) / PROFILE_gap_group_a
-        expected_delta_gap_group_b = (RECS_gap_group_b - PROFILE_gap_group_b) / PROFILE_gap_group_b
+        # since u2 and u4 have higher popular ratio, it is put into the first group)
+        valid_group_a = {'u2', 'u4'}
+
+        # u6 won't be considered in computation since we don't have recs for it,
+        # but it should belong to group b
+        valid_group_b = {'u3', 'u1', 'u5'}
+
+        valid_groups_splitted = {'a': valid_group_a, 'b': valid_group_b}
+
+        [expected_delta_gap_group_a, expected_delta_gap_group_b] = self._compute_deltagap(valid_groups_splitted)
 
         result_delta_gap_group_a = float(result["{} | a".format(str(metric))])
         result_delta_gap_group_b = float(result["{} | b".format(str(metric))])
@@ -437,99 +579,76 @@ class TestDeltaGap(unittest.TestCase):
         self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
         self.assertAlmostEqual(expected_delta_gap_group_b, result_delta_gap_group_b)
 
-    def test_perform_multiple_users_one_group(self):
-        metric = DeltaGap(user_groups={'a': 1})
+    def test_perform_3_group_without_recs(self):
+        metric = DeltaGap(user_groups={'a': 0.2, 'b': 0.6, 'c': 0.2},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings)
         result = metric.perform(self.split)
 
-        pop_by_item_truth = Counter(list(truth.item_id_column))
+        # no 'c' group since u6 belongs to this group but we don't have any recs for it,
+        # so it won't be considered and a warning is printed
+        valid_groups_splitted = {'a': {'u2'},
+                                 'b': {'u4', 'u5', 'u1', 'u3'}}
 
-        # group_a = { u2, u1 }
-
-        # For every user in the group calculate the average popularity of the recommendations.
-        # To calculate the avg popularity, pop_by_item_pred is used, since due to the methodology
-        # items in the recommendation lists may differ from item in the truth
-        RECS_avg_pop_group_a = {'u2': 6 / 4, 'u1': 8 / 8}  # for every user sum_pop_item_rated / n_item_rated
-
-        # For every user in the group calculate the average popularity of the profile.
-        # To calculate the avg popularity, pop_by_item_truth is used, since due to the methodology
-        # items in the truth may differ from item in the recommendation lists
-        PROFILE_avg_pop_group_a = {'u2': 5 / 3, 'u1': 7 / 5}  # for every user sum_pop_item_rated / n_item_rated
-
-        # Sum the RECS_avg_pop of every user of the group_a / n_users in group_a
-        RECS_gap_group_a = ((6 / 4) + (8 / 8)) / 2
-
-        # Sum the PROFILE_avg_pop of every user of the group_a / n_users in group_a
-        PROFILE_gap_group_a = ((5 / 3) + (7 / 5)) / 2
-
-        expected_delta_gap_group_a = (RECS_gap_group_a - PROFILE_gap_group_a) / PROFILE_gap_group_a
+        [expected_delta_gap_group_a,
+         expected_delta_gap_group_b] = self._compute_deltagap(valid_groups_splitted)
 
         result_delta_gap_group_a = float(result["{} | a".format(str(metric))])
+        result_delta_gap_group_b = float(result["{} | b".format(str(metric))])
 
         self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
+        self.assertAlmostEqual(expected_delta_gap_group_b, result_delta_gap_group_b)
 
     def test_perform_0_gap(self):
         # DeltaGap with 2 equals frame should return 0 for every group
-        split = Split(truth, truth)
+        equal_split = Split(self.split.pred, self.split.pred)
 
-        metric = DeltaGap(user_groups={'a': 0.5, 'b': 0.5})
+        metric = DeltaGap(user_groups={'a': 0.5, 'b': 0.5},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings)
 
-        result = metric.perform(split)
+        result = metric.perform(equal_split)
 
         for col in result.columns:
             self.assertTrue(v == 0 for v in result[col])
 
     def test_perform_top_3(self):
-        metric = DeltaGap(user_groups={'a': 1}, top_n=3)
+
+        top_n = 3
+
+        metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings,
+                          top_n=top_n)
         result = metric.perform(self.split)
 
-        pop_by_item_truth = Counter(list(truth.item_id_column))
+        # since u2 and u4 have higher popular ratio, it is put into the first group)
+        valid_group_a = {'u2', 'u4'}
 
-        # group_a = { u2, u1 }
+        # u6 won't be considered in computation since we don't have recs for it,
+        # but it should belong to group b
+        valid_group_b = {'u3', 'u1', 'u5'}
 
-        # For every user in the group calculate the average popularity of the recommendations.
-        # To calculate the avg popularity, pop_by_item_pred is used, since due to the methodology
-        # items in the recommendation lists may differ from item in the truth
-        RECS_avg_pop_group_a = {'u2': 5 / 3, 'u1': 5 / 3}  # for every user sum_pop_item_rated / n_item_rated
+        valid_groups_splitted = {'a': valid_group_a, 'b': valid_group_b}
 
-        # For every user in the group calculate the average popularity of the profile.
-        # To calculate the avg popularity, pop_by_item_truth is used, since due to the methodology
-        # items in the truth may differ from item in the recommendation lists
-        PROFILE_avg_pop_group_a = {'u2': 5 / 3, 'u1': 7 / 5}  # for every user sum_pop_item_rated / n_item_rated
-
-        # Sum the RECS_avg_pop of every user of the group_a / n_users in group_a
-        RECS_gap_group_a = ((5 / 3) + (5 / 3)) / 2
-
-        # Sum the PROFILE_avg_pop of every user of the group_a / n_users in group_a
-        PROFILE_gap_group_a = ((5 / 3) + (7 / 5)) / 2
-
-        expected_delta_gap_group_a = (RECS_gap_group_a - PROFILE_gap_group_a) / PROFILE_gap_group_a
+        [expected_delta_gap_group_a, expected_delta_gap_group_b] = self._compute_deltagap(valid_groups_splitted, top_n)
 
         result_delta_gap_group_a = float(result["{} | a".format(str(metric))])
+        result_delta_gap_group_b = float(result["{} | b".format(str(metric))])
 
         self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
+        self.assertAlmostEqual(expected_delta_gap_group_b, result_delta_gap_group_b)
 
     def test_perform_increased_pop_percentage(self):
-        truth = pd.DataFrame(
-            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2',
-                         'u3', 'u3', 'u3', 'u3', 'u4', 'u4', 'u4', 'u5', 'u5', 'u5'],
-             'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i8',
-                         'i2', 'i4', 'i3', 'i20', 'i3', 'i1', 'i21', 'i3', 'i5', 'i1'],
-             'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50,
-                       500, 400, 300, 200, 150, 100, 50, 800, 600, 500]})
-        truth = Ratings.from_dataframe(truth)
 
-        recs = pd.DataFrame(
-            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2', 'u2', 'u2',
-                         'u3', 'u3', 'u3', 'u3', 'u4', 'u4', 'u4', 'u5', 'u5', 'u5', 'u5', 'u5'],
-             'item_id': ['i2', 'i1', 'i4', 'i5', 'i6', 'i3', 'i8', 'i9', 'i4', 'i6', 'i1', 'i5', 'i35',
-                         'i2', 'i4', 'i3', 'i20', 'i3', 'i1', 'i3', 'i5', 'i1', 'i9', 'i36', 'i6'],
-             'score': [650, 600, 500, 400, 300, 220, 100, 50, 350, 200, 100, 50, 25,
-                       500, 400, 300, 200, 350, 100, 50, 800, 600, 500, 400, 300]})
-        recs = Ratings.from_dataframe(recs)
-        split = Split(recs, truth)
+        result_pop_normal = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                                     user_profiles=self.train,
+                                     original_ratings=self.original_ratings).perform(self.split)
 
-        result_pop_normal = DeltaGap(user_groups={'a': 0.3, 'b': 0.3, 'c': 0.4}).perform(split)
-        result_pop_increased = DeltaGap(user_groups={'a': 0.3, 'b': 0.3, 'c': 0.4}, pop_percentage=0.6).perform(split)
+        result_pop_increased = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                                        user_profiles=self.train,
+                                        original_ratings=self.original_ratings,
+                                        pop_percentage=0.6).perform(self.split)
 
         result_pop_normal = np.array(result_pop_normal)
         result_pop_increased = np.array(result_pop_increased)

@@ -1,7 +1,8 @@
+import inspect
 import itertools
 import random
 from abc import abstractmethod
-from collections import Counter
+from collections import Counter, defaultdict
 
 import pandas as pd
 import numpy as np
@@ -9,7 +10,7 @@ from typing import Dict, Set, List
 
 from clayrs.content_analyzer import Ratings
 from clayrs.evaluation.metrics.metrics import Metric
-from clayrs.evaluation.utils import get_avg_pop, pop_ratio_by_user, popular_items
+from clayrs.evaluation.utils import get_avg_pop, pop_ratio_by_user, get_item_popularity, get_most_popular_items
 from clayrs.recsys.partitioning import Split
 from clayrs.evaluation.exceptions import NotEnoughUsers
 
@@ -30,17 +31,7 @@ class GroupFairnessMetric(FairnessMetric):
     """
     Abstract class for fairness metrics based on user groups
 
-    It has some concrete methods useful for group divisions, since every subclass needs to split users into groups:
-
-    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
-    and percentage of how many user must contain a group as values. For example:
-
-        user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
-
-    Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
-    percentage of users we specified as value in the dictionary):
-    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups. In general users are grouped by popularity in a descending order.
+    It has some concrete methods useful for group divisions, since every subclass needs to split users into groups.
 
     Args:
         user_groups: Dict containing group names as keys and percentage of users as value, used to
@@ -60,17 +51,23 @@ class GroupFairnessMetric(FairnessMetric):
         raise NotImplementedError
 
     @staticmethod
-    def get_avg_pop_by_users(data: Ratings, pop_by_items: Counter, group: Set[str] = None) -> Dict[str, float]:
-        """
-        Get the average popularity for each user in the DataFrame
+    def get_avg_pop_by_users(data: Ratings, pop_by_items: Dict, group: Set[str] = None) -> Dict[str, float]:
+        r"""
+        Get the average popularity for each user in the `data` parameter.
+
+        Average popularity of a single user $u$ is defined as:
+
+        $$
+        avg\_pop_u = \frac{\sum_{i \in i_u} pop_i}{|i_u|}
+        $$
 
         Args:
-            data: a Ratings object
+            data: The `Ratings` object that will be used to compute average popularity of each user
             pop_by_items: popularity for each label ('label', 'popularity')
             group: (optional) the set of users (user_id)
 
         Returns:
-            avg_pop_by_users (Dict<str, float>): average popularity by user
+            Python dictionary containing as keys each user id and as values the average popularity of each user
         """
         if group is None:
             group = set(data.user_id_column)
@@ -89,18 +86,41 @@ class GroupFairnessMetric(FairnessMetric):
     @staticmethod
     def split_user_in_groups(score_frame: Ratings, groups: Dict[str, float],
                              pop_items: Set[str]) -> Dict[str, Set[str]]:
-        """
-        Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user
+        r"""
+        Users are split into groups based on the *groups* parameter, which contains names of the groups as keys,
+        and percentage of how many user must contain a group as values. For example:
+
+            groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+
+        Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+        percentage of users we specified as value in the dictionary):
+
+        * users with many popular items will be inserted into the first group
+        * users with niche items rated will be inserted into one of the last groups.
+
+        In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a
+        single user $u$ is defined as:
+
+        $$
+        Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+        $$
+
+        The *most popular items* are the first `pop_percentage`% items of all items ordered in a descending order by
+        popularity.
+
+        The popularity of an item is defined as the number of times it is rated in the `original_ratings` parameter
+        divided by the total number of users in the `original_ratings`.
 
         Args:
             score_frame: the Ratings object
             groups: each key contains the name of the group and each value contains the
                 percentage of the specified group. If the groups don't cover the entire user collection,
                 the rest of the users are considered in a 'default_diverse' group
-            pop_items: set of most popular 'to_id' labels
+            pop_items: set of most popular *item_id* labels
 
         Returns:
-            groups_dict: key = group_name, value = Set of 'user_id' labels
+            A python dictionary containing as keys each group name and as values the set of *user_id* belonging to
+                the particular group.
         """
         num_of_users = len(set(score_frame.user_id_column))
         if num_of_users < len(groups):
@@ -114,10 +134,8 @@ class GroupFairnessMetric(FairnessMetric):
         if total > 1:
             raise ValueError("Incorrect percentage! Sum of percentage is > than 1")
         elif total < 1:
-            remaining = round(1 - total, 10)  # rounded at the 10th digit
-            logger.warning("Sum of percentage is < than 1, "
-                           f"the {remaining} percentage of users will be inserted into the "
-                           "'default_diverse' group")
+            raise ValueError("Sum of percentage is < than 1! Please add another group or redistribute percentages "
+                             "among already defined group to reach a total of 1!")
 
         pop_ratio_by_users = pop_ratio_by_user(score_frame, most_pop_items=pop_items)
         pop_ratio_by_users = sorted(pop_ratio_by_users, key=pop_ratio_by_users.get, reverse=True)
@@ -133,9 +151,6 @@ class GroupFairnessMetric(FairnessMetric):
             else:
                 groups_dict[group_name] = set(pop_ratio_by_users[last_index:group_index])
                 last_index = group_index
-        if percentage < 1:
-            group_index = round(num_of_users)
-            groups_dict['default_diverse'] = set(pop_ratio_by_users[last_index:group_index])
         return groups_dict
 
 
@@ -385,15 +400,33 @@ class DeltaGap(GroupFairnessMetric):
     \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
     $$
 
-    Users are splitted into groups based on the *user_groups* parameter, which contains names of the groups as keys,
+    Users are split into groups based on the *user_groups* parameter, which contains names of the groups as keys,
     and percentage of how many user must contain a group as values. For example:
 
         user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 
     Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
     percentage of users we specified as value in the dictionary):
-    users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-    into one of the last groups. In general users are grouped by popularity in a descending order.
+
+    * users with many popular items will be inserted into the first group
+    * users with niche items rated will be inserted into one of the last groups.
+
+    In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
+    is defined as:
+
+    $$
+    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+    $$
+
+    The *most popular items* are the first `pop_percentage`% items of all items ordered in a descending order by
+    popularity.
+
+    The popularity of an item is defined as the number of times it is rated in the `original_ratings` parameter
+    divided by the total number of users in the `original_ratings`.
+
+    It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+    and it won't be considered in the $\Delta GAP$ computation of its group. In case no user of a group has recs
+    available, a warning will be printed and the whole group won't be considered.
 
     If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
     *n* items of every recommendation list of all users
@@ -402,18 +435,25 @@ class DeltaGap(GroupFairnessMetric):
         user_groups: Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
-        top_n: it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+        user_profiles: `Ratings` object containing interactions of the profile of each user (e.g. the **train set**)
+        original_ratings: `Ratings` object containing original interactions of the dataset that will be used to
+            compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
+            users)
+        top_n: it's a cutoff parameter, if specified the Gini index will be calculated considering only their first
             'n' items of every recommendation list of all users. Default is None
-        pop_percentage: How many (in percentage) 'most popular items' must be considered. Default is 0.2
+        pop_percentage: How many (in percentage) *most popular items* must be considered. Default is 0.2
     """
 
-    def __init__(self, user_groups: Dict[str, float], top_n: int = None, pop_percentage: float = 0.2):
+    def __init__(self, user_groups: Dict[str, float], user_profiles: Ratings, original_ratings: Ratings,
+                 top_n: int = None, pop_percentage: float = 0.2):
         if not 0 < pop_percentage <= 1:
             raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
-        self.__pop_percentage = pop_percentage
-        self.__top_n = top_n
         super().__init__(user_groups)
+        self._pop_by_item = get_item_popularity(original_ratings)
+        self._user_profiles = user_profiles
+        self.__top_n = top_n
+        self._pop_percentage = pop_percentage
 
     def __str__(self):
         name = "DeltaGap"
@@ -421,8 +461,9 @@ class DeltaGap(GroupFairnessMetric):
             name += " - Top {}".format(self.__top_n)
         return name
 
+    # not a complete repr, better understand how to manage cases with 'ratings' repr
     def __repr__(self):
-        return f'DeltaGap(user_groups={self.user_groups}, pop_percentage={self.__pop_percentage}, top_n={self.__top_n})'
+        return f"DeltaGap(user_groups={self.user_groups}, top_n={self.__top_n}, pop_percentage={self._pop_percentage})"
 
     @staticmethod
     def calculate_gap(group: Set[str], avg_pop_by_users: Dict[str, object]) -> float:
@@ -430,13 +471,13 @@ class DeltaGap(GroupFairnessMetric):
         Compute the GAP (Group Average Popularity) formula
 
         $$
-        GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
+        GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|i_u|}}{|G|}
         $$
 
         Where:
 
         - $G$ is the set of users
-        - $i_u$ is the set of items rated by user u
+        - $i_u$ is the set of items rated/recommended by/to user $u$
         - $pop_i$ is the popularity of item i
 
         Args:
@@ -447,9 +488,9 @@ class DeltaGap(GroupFairnessMetric):
             score (float): gap score
         """
         total_pop = 0
-        for element in group:
-            if avg_pop_by_users.get(element):
-                total_pop += avg_pop_by_users[element]
+        for user in group:
+            if avg_pop_by_users.get(user):
+                total_pop += avg_pop_by_users[user]
         return total_pop / len(group)
 
     @staticmethod
@@ -472,30 +513,35 @@ class DeltaGap(GroupFairnessMetric):
 
     def perform(self, split: Split) -> pd.DataFrame:
         predictions = split.pred
-        truth = split.truth
 
         if self.__top_n:
             predictions = predictions.take_head_all(self.__top_n)
 
-        most_popular_items = popular_items(score_frame=truth, pop_percentage=self.__pop_percentage)
-        user_groups = self.split_user_in_groups(score_frame=predictions, groups=self.user_groups,
-                                                pop_items=most_popular_items)
+        most_pop_items = get_most_popular_items(self._pop_by_item, self._pop_percentage)
+        splitted_user_groups = self.split_user_in_groups(score_frame=self._user_profiles, groups=self.user_groups,
+                                                         pop_items=most_pop_items)
 
-        split_result = {"{} | {}".format(str(self), group): []
-                        for group in user_groups}
+        split_result = defaultdict(list)
         split_result['user_id'] = ['sys']
 
-        pop_by_items = Counter(list(truth.item_id_column))
+        for group_name in splitted_user_groups:
 
-        for group_name in user_groups:
+            # we don't consider users of the group for which we do not have any recommendation
+            valid_group = splitted_user_groups[group_name].intersection(predictions.user_id_column)
+
+            if len(valid_group) == 0:
+                logger.warning(f"Group {group_name} won't be considered in the DeltaGap since no recs is available "
+                               f"for any user of said group!")
+                continue
+
             # Computing avg pop by users recs for delta gap
-            avg_pop_by_users_recs = self.get_avg_pop_by_users(predictions, pop_by_items, user_groups[group_name])
+            avg_pop_by_users_recs = self.get_avg_pop_by_users(predictions, self._pop_by_item, valid_group)
             # Computing avg pop by users profiles for delta gap
-            avg_pop_by_users_profiles = self.get_avg_pop_by_users(truth, pop_by_items, user_groups[group_name])
+            avg_pop_by_users_profiles = self.get_avg_pop_by_users(self._user_profiles, self._pop_by_item, valid_group)
 
             # Computing delta gap for every group
-            recs_gap = self.calculate_gap(group=user_groups[group_name], avg_pop_by_users=avg_pop_by_users_recs)
-            profile_gap = self.calculate_gap(group=user_groups[group_name], avg_pop_by_users=avg_pop_by_users_profiles)
+            recs_gap = self.calculate_gap(group=valid_group, avg_pop_by_users=avg_pop_by_users_recs)
+            profile_gap = self.calculate_gap(group=valid_group, avg_pop_by_users=avg_pop_by_users_profiles)
             group_delta_gap = self.calculate_delta_gap(recs_gap=recs_gap, profile_gap=profile_gap)
 
             split_result['{} | {}'.format(str(self), group_name)].append(group_delta_gap)
