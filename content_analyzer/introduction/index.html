@@ -2006,6 +2006,8 @@ It is also possible to assign a <strong>custom id</strong> for each generated re
 in the recommendation phase.</p>
 <ul>
 <li>Both NLP pipeline and custom id are optional parameters</li>
+<li>If a list of <em>NLP preprocessors</em> is passed to the <code>preprocessing</code> parameter, then all operations specified will be
+performed in order</li>
 </ul>
 <p>So, for example, we could represent the 'plot' field by performing <strong>lemmatization</strong> and <strong>stopwords removal</strong>, 
 and represent it using <strong>tfidf</strong>:</p>
