@@ -71,6 +71,8 @@ It is also possible to assign a **custom id** for each generated representation,
 in the recommendation phase.
 
 * Both NLP pipeline and custom id are optional parameters
+* If a list of *NLP preprocessors* is passed to the `preprocessing` parameter, then all operations specified will be
+performed in order
 
 So, for example, we could represent the 'plot' field by performing **lemmatization** and **stopwords removal**, 
 and represent it using **tfidf**:
