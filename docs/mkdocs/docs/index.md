@@ -9,7 +9,7 @@ hide:
     Docs are complete, but revision is still a Work in Progress. Sorry for any typos!
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:70%;"/>
+    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:60%;"/>
 </p>
 
 # Welcome to ClayRS's documentation!
@@ -38,4 +38,4 @@ The ***RecSys*** module allows to:
 
 The ***EvalModel*** has the task of evaluating a recommender system, using several state-of-the-art metrics
 
-Code examples for all three modules will follow in the *Usage* section
+The various sections of this documentation will guide you in becoming a full expert of **ClayRS**!
