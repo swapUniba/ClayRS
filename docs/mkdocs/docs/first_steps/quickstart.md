@@ -7,12 +7,12 @@ The first thing to do is to import the Content Analyzer module
 import clayrs.content_analyzer as ca
 ```
 
-First let's point to the source containing raw information to process
+Then, let's point to the source containing raw information to process
 ```python
 raw_source = ca.JSONFile('items_info.json')
 ```
 
-Then let's start building the configuration for the items
+We can now start building the configuration for the items
 
 !!! info
 
@@ -32,7 +32,7 @@ movies_ca_config = ca.ItemAnalyzerConfig(
 2. Directory which will contain items complexly represented
 
 Let's represent the *plot* field of each content with a ***TfIdf*** representation
-* 
+
 * Since the `preprocessing` parameter has been specified, then each field is first preprocessed with the specified
 operations
 ```python
