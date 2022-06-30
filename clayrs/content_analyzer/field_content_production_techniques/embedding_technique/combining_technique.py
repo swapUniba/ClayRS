@@ -8,9 +8,6 @@ class CombiningTechnique(ABC):
     combined to produce a semantic representation.
     """
 
-    def __init__(self):
-        pass
-
     @abstractmethod
     def combine(self, embedding_matrix: np.ndarray):
         """
@@ -32,18 +29,18 @@ class CombiningTechnique(ABC):
 
 class Centroid(CombiningTechnique):
     """
-    Class that implements the Abstract Class CombiningTechnique,
-    this class implements the centroid vector of a matrix.
+    This class computes the centroid vector of a matrix.
     """
     def combine(self, embedding_matrix: np.ndarray) -> np.ndarray:
         """
         Calculates the centroid of the input matrix
 
         Args:
-            embedding_matrix (np.ndarray): np bi-dimensional array whose centroid will be calculated
+            embedding_matrix: np bi-dimensional array where rows are words columns are hidden dimension
+                whose centroid will be calculated
 
         Returns:
-            np.ndarray: centroid vector of the input matrix
+            Centroid vector of the input matrix
         """
         return np.nanmean(embedding_matrix, axis=0)
 
@@ -55,19 +52,19 @@ class Centroid(CombiningTechnique):
 
 
 class Sum(CombiningTechnique):
-    """"
-    Class that implements the Abstract Class CombiningTechnique,
-    this class implements the sum vector of a matrix.
+    """
+    This class computes the sum vector of a matrix.
     """
     def combine(self, embedding_matrix: np.ndarray) -> np.ndarray:
-        """"
-        Calculates the centroid of the input matrix
+        """
+        Calculates the sum vector of the input matrix
 
         Args:
-            embedding_matrix (np.ndarray): np bi-dimensional array whose sum will be calculated
+            embedding_matrix: np bi-dimensional array where rows are words columns are hidden dimension
+                whose sum vector will be calculated
 
         Returns:
-            np.ndarray: sum vector of the input matrix
+            Sum vector of the input matrix
         """
         return np.sum(embedding_matrix, axis=0)
 
@@ -78,13 +75,32 @@ class Sum(CombiningTechnique):
         return f'Sum()'
 
 
-
 class SingleToken(CombiningTechnique):
+    """
+    Class which takes a specific row as representative of the whole matrix
+
+    Args:
+        token_index: index of the row of the matrix to take
+    """
     def __init__(self, token_index: int):
         self.token_index = token_index
         super().__init__()
 
     def combine(self, embedding_matrix: np.ndarray) -> np.ndarray:
+        """
+        Takes the row with index `token_index` (set in the constructor) from the input `embedding_matrix`
+
+        Args:
+            embedding_matrix: np bi-dimensional array where rows are words columns are hidden dimension
+                from where the single token will be extracted
+
+        Returns:
+            Single row as representative of the whole matrix
+
+        Raises:
+            IndexError: Exception raised when `token_index` (set in the constructor) is out of bounds for the input
+                matrix
+        """
         try:
             sentence_embedding = embedding_matrix[self.token_index]
         except IndexError:

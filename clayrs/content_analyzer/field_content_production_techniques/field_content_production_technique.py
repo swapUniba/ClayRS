@@ -206,8 +206,16 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
 class OriginalData(FieldContentProductionTechnique):
     """
     Technique used to retrieve the original data within the content's raw source without applying any
-    processing operation. This technique is particularly useful if the user wants to keep the original
+    processing operation.
+
+    Note that if specified, preprocessing operations will still be applied!
+
+    This technique is particularly useful if the user wants to keep the original
     data of the contents
+
+    Args:
+        dtype: If specified, data will be casted to the chosen dtype
+
     """
 
     def __init__(self, dtype: Callable = str):

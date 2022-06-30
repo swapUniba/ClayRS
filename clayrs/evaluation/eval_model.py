@@ -1,10 +1,10 @@
-from typing import List, Union
+from typing import List, Union, Tuple
+
+import pandas as pd
 
 from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
 from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
 from clayrs.evaluation.metrics.metrics import Metric
-from clayrs.recsys.partitioning import Partitioning
-from clayrs.recsys.recsys import RecSys
 from clayrs.utils.const import logger
 
 
@@ -12,22 +12,41 @@ class EvalModel:
     """
     Class for evaluating a recommender system.
 
-    It needs to be specified which partitioning technique must be used and which methodology to use (by default
-    TestRatings methodology is used, check the Methodology module documentation for more), as well as the recsys to
-    evaluate and on which metrics it must be evaluated.
+    The Evaluation module needs the following parameters:
 
-    This class automates the evaluation for a recommender system, but every part of the evaluation pipeline can be used
-    manually. Check the documentation of eval pipeline modules for more
+    *   A list of computed rank/predictions (in case multiple splits must be evaluated)
+    *   A list of truths (in case multiple splits must be evaluated)
+    *   List of metrics to compute
+
+    Obviously the list of computed rank/predictions and list of truths must have the same length,
+    and the rank/prediction in position $i$ will be compared with the truth at position $i$
+
+    Examples:
+
+        >>> import clayrs.evaluation as eva
+        >>>
+        >>> em = eva.EvalModel(
+        >>>         pred_list=rank_list,
+        >>>         truth_list=truth_list,
+        >>>         metric_list=[
+        >>>             eva.NDCG(),
+        >>>             eva.Precision()
+        >>>             eva.RecallAtK(k=5, sys_average='micro')
+        >>>         ]
+        >>> )
+
+    Then call the fit() method of the instantiated EvalModel to perform the actual evaluation
 
     Args:
-        recsys (RecSys): Recommender System to evaluate
-        partitioning (Partitioning): Partitioning technique that will be used to split the original dataframe containing
-            interactions between users and items in 'train set' and 'test set'
-        metric_list (list[Metric]): List of metrics that eval model will compute for the recsys specified
-        methodology (Methodology): Methodology to use for evaluating the recsys, TestRatings methodology is used by
-            default
-        verbose_predictions (bool): If True, the logger is enabled for the Recommender module, printing possible
-            warnings. Else, the logger will be disabled for the Recommender module. This parameter is False by default
+        pred_list: Recommendations list to evaluate. It's a list in case multiple splits must be evaluated. Both Rank
+            objects (where items are ordered and the score is not relevant) or Prediction objects (where the score
+             predicted is the predicted rating for the user regarding a certain item) can be evaluated
+        truth_list: Ground truths list used to compare recommendations. It's a list in case multiple splits must
+            be evaluated.
+        metric_list: List of metrics that will be used to evaluate recommendation list specified
+
+    Raises:
+        ValueError: ValueError is raised in case the pred_list and truth_list are empty or have different length
     """
     def __init__(self,
                  pred_list: Union[List[Prediction], List[Rank]],
@@ -46,49 +65,70 @@ class EvalModel:
         self._yaml_report_result = None
 
     @property
-    def pred_list(self):
+    def pred_list(self) -> Union[List[Prediction], List[Rank]]:
+        """
+        List containing recommendations frame
+
+        Returns:
+            The list containing recommendations frame
+        """
         return self._pred_list
 
     @property
-    def truth_list(self):
+    def truth_list(self) -> List[Ratings]:
+        """
+        List containing ground truths
+
+        Returns:
+            The list containing ground truths
+        """
         return self._truth_list
 
     @property
-    def metric_list(self):
+    def metric_list(self) -> List[Metric]:
         """
-        List of metrics that eval model will compute for the recsys
+        List of metrics used to evaluate recommendation lists
+
+        Returns:
+            The list containing all metrics
         """
         return self._metric_list
 
     def append_metric(self, metric: Metric):
         """
-        Append a metric to the metric list that will be used to evaluate the recommender system
+        Append a metric to the metric list that will be used to evaluate recommendation lists
 
         Args:
-            metric (Metric): Metric to append to the metric list
+            metric: Metric to append to the metric list
         """
         self._metric_list.append(metric)
 
-    def fit(self, user_id_list: list = None):
+    def fit(self, user_id_list: list = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        This method performs the evaluation for all the users of the recommender system or for the user list specified
-        in the 'user_id_list' parameter.
+        This method performs the actual evaluation of the recommendation frames passed as input in the constructor of
+        the class
 
-        The evaluation is performed by firstly creating a training set and a test set based on the partitioning
-        technique specified.
-        Then the EvalModel calculates for every user which items must be used to generate recommendations (or to make
-        score prediction) based on the methodology chosen, and eventually generate recommendations lists for every users
-        and evaluate them based on the metric list specified.
+        In case you want to perform evaluation for selected users, specify their ids parameter of this method.
+        Otherwise, all users in the recommendation frames will be considered in the evaluation process
 
-        Note that if a metric needs to calculate score prediction (e.g. MAE, RMSE) and the recsys evaluated doesn't use
-        a score prediction algorithm, then the metric will be popped from the metric list
+        Examples:
 
-        The method returns two pandas DataFrame: one containing system results for every metric in the metric list, one
-        containing users results for every metric eligible
+            >>> import clayrs.evaluation as eva
+            >>> selected_users = ['u1', 'u22', 'u3'] # (1)
+            >>> em = eva.EvalModel(
+            >>>         pred_list,
+            >>>         truth_list,
+            >>>         metric_list=[eva.Precision(), eva.Recall()]
+            >>> )
+            >>> em.fit(selected_users)
+
+        The method returns two pandas DataFrame: one containing ***system results*** for every metric in the metric
+        list, one containing ***users results*** for every metric eligible
 
         Returns:
-            Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
-            list, the second one will contain every user results for every metric eligible
+            The first DataFrame contains the **system result** for every metric inside the metric_list
+
+            The second DataFrame contains every **user results** for every metric eligible inside the metric_list
         """
         logger.info('Performing evaluation on metrics chosen')
 

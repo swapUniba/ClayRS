@@ -63,12 +63,12 @@ class EmbeddingLearner(EmbeddingSource):
 
         super().__init__(file_path)
 
-        self.__auto_save = auto_save
-        self.__additional_parameters = kwargs
+        self._auto_save = auto_save
+        self._additional_parameters = kwargs
 
     @property
     def additional_parameters(self):
-        return self.__additional_parameters
+        return self._additional_parameters
 
     @abstractmethod
     def load_model(self):
@@ -98,7 +98,7 @@ class EmbeddingLearner(EmbeddingSource):
         logger.info("Fitting model with extracted corpus...")
         self.fit_model(corpus)
 
-        if self.__auto_save and self.reference is not None:
+        if self._auto_save and self.reference is not None:
             self.save()
 
     @abstractmethod

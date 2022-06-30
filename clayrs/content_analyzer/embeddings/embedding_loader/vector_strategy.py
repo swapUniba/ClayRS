@@ -19,8 +19,13 @@ class VectorStrategy(ABC):
 
 class SumStrategy(VectorStrategy):
     """
-    class that extends VectorStrategy and allows me to sum up the last layers
+    Class which sums the `last_interesting_layers` of the output obtained by the Transformer model
+
+    Args:
+        last_interesting_layers: Which layer to sum in order to summarize information
     """
+    def __init__(self, last_interesting_layers: int):
+        super().__init__(last_interesting_layers)
 
     def build_embedding(self, token_embeddings: torch.Tensor) -> np.ndarray:
         token_vecs_sum = []
@@ -38,8 +43,13 @@ class SumStrategy(VectorStrategy):
 
 class CatStrategy(VectorStrategy):
     """
-    class that extends VectorStrategy and allows me to concatenate the last layers
+    Class which concatenate the `last_interesting_layers` of the output obtained by the Transformer model
+
+    Args:
+        last_interesting_layers: Which layer to concatenate in order to summarize information
     """
+    def __init__(self, last_interesting_layers: int):
+        super().__init__(last_interesting_layers)
 
     def build_embedding(self, token_embeddings: torch.Tensor) -> np.ndarray:
         token_vecs_cat = []

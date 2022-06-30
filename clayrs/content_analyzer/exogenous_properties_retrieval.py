@@ -25,20 +25,19 @@ class ExogenousPropertiesRetrieval(ABC):
         Args:
             mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
         """
-        self.__mode = self.__check_mode(mode)
+        self._check_mode(mode)
+        self.__mode = mode
 
     @staticmethod
-    def __check_mode(mode):
-        modalities = [
+    def _check_mode(mode):
+        modalities = {
             'all',
             'all_retrieved',
             'only_retrieved_evaluated',
             'original_retrieved',
-        ]
-        if mode in modalities:
-            return mode
-        else:
-            return 'all'
+        }
+        if mode not in modalities:
+            raise ValueError(f"mode={mode} not supported! Valid modalities are {modalities}")
 
     @property
     def mode(self):
@@ -46,7 +45,8 @@ class ExogenousPropertiesRetrieval(ABC):
 
     @mode.setter
     def mode(self, mode):
-        self.__mode = self.__check_mode(mode)
+        self._check_mode(mode)
+        self.__mode = mode
 
     @abstractmethod
     def get_properties(self, raw_source: RawInformationSource) -> List[ExogenousPropertiesRepresentation]:
@@ -62,9 +62,84 @@ class ExogenousPropertiesRetrieval(ABC):
 
 
 class PropertiesFromDataset(ExogenousPropertiesRetrieval):
+    """
+    Exogenous technique which expands each content by using as external source the raw source itself
+
+    Different modalities are available:
+
+    * If `mode='only_retrieved_evaluated'` all fields for the content will be retrieved from raw source but discarding
+    the ones with a blank value (i.e. '')
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated').get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji', 'Year': 1995},
+    #  {'Title': 'Toy Story'}]
+    ```
+
+    * If `mode='all'` all fields for the content will be retrieved from raw source including the ones with a blank value
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated').get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji', 'Year': 1995},
+    #  {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    You could also choose exactly **which** fields to use to expand each content with the `field_name_list` parameter
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated',
+                          field_name_list=['Title']).get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji'},
+    #  {'Title': 'Toy Story'}]
+    ```
+
+    Args:
+
+        mode: Parameter which specifies which properties should be retrieved.
+
+            Possible values are ['only_retrieved_evaluated', 'all']:
+
+                1. 'only retrieved evaluated' will retrieve properties which have a
+                value, discarding ones with a blank value (i.e. '')
+                2. 'all' will retrieve all properties, regardless if they have a value
+                or not
+
+        field_name_list: List of fields from the raw source that will be retrieved. Useful if you want to expand each
+            content with only a subset of available properties from the local dataset
+
+    """
     def __init__(self, mode: str = 'only_retrieved_evaluated', field_name_list: List[str] = None):
         super().__init__(mode)
         self.__field_name_list: List[str] = field_name_list
+
+    def _check_mode(self, mode):
+        modalities = {
+            'all',
+            'only_retrieved_evaluated',
+        }
+        if mode not in modalities:
+            raise ValueError(f"mode={mode} not supported! Valid modalities are {modalities}")
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
 
@@ -94,26 +169,53 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
 
 class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
     """
-    Class that creates a list of couples like this:
-        <property: property value URI>
-    In this implementation the properties are retrieved from DBPedia
+    Exogenous technique which expands each content by using as external source the DBPedia ontology
+
+    It needs the entity of the contents for which a mapping is required (e.g. entity_type=`dbo:Film`) and the field
+    of the raw source that will be used for the actual mapping:
+
+
+    Different modalities are available:
+
+    * If `mode='only_retrieved_evaluated'`, all properties from DBPedia will be retrieved but discarding
+    the ones with a blank value (i.e. '')
+
+    * If `mode='all'`, all properties in DBPedia + all properties in local raw source will be retrieved.
+    Local properties will be overwritten by dbpedia values if there's a conflict (same property in dbpedia and in local
+    dataset)
+
+    * If `mode='all_retrieved'`, all properties in DBPedia *only* will be retrieved
+
+    * If `mode='original_retrieved'`, all local properties with their DBPedia value will be retrieved
 
     Args:
-        entity_type (str): domain of the items that you want to process
-        lang (str): lang of the descriptions
-        label_field: field to be used as a filter,
-            DBPedia node that has the property rdfs:label equal to specified field value
-            will be retrieved
-        mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
+        entity_type: Domain of the contents you want to process (e.g. 'dbo:Film')
+        label_field: Field of the raw source that will be used to map each content, DBPedia node with
+            property **rdfs:label equal** to specified field value will be retrieved
+        lang: Language of the properties to retrieve
+        mode: Parameter which specifies which properties should be retrieved.
+
+            Possible values are ['only_retrieved_evaluated', 'all', 'all_retrieved', 'original_retrieved']:
+
+                1. 'only retrieved evaluated' will retrieve properties which have a
+                value, discarding ones with a blank value (i.e. '')
+                2. 'all' will retrieve all properties from DBPedia + local source,
+                regardless if they have a value or not
+                3. 'all_retrieved' will retrieve all properties from DBPedia only
+                4. 'original_retrieved' will retrieve all local properties with
+                their DBPedia value
+        return_prop_as_uri: If set to True, properties will be returned in their full uri form rather than in their
+            rdfs:label form (e.g. "http://dbpedia.org/ontology/director" rather than "film director")
     """
 
-    def __init__(self, entity_type: str, label_field: str,
-                 mode: str = 'only_retrieved_evaluated', prop_as_uri: bool = False):
+    def __init__(self, entity_type: str, label_field: str, lang: str = 'EN',
+                 mode: str = 'only_retrieved_evaluated', return_prop_as_uri: bool = False):
         super().__init__(mode)
 
         self.__entity_type = entity_type
         self.__label_field = label_field
-        self.__prop_as_uri = prop_as_uri
+        self.__prop_as_uri = return_prop_as_uri
+        self.__lang = lang
 
         self.__sparql = SPARQLWrapper("http://factforge.net/repositories/ff-news")
         self.__sparql.setMethod(POST)
@@ -273,7 +375,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         query += "?property rdfs:domain %s " % self.__entity_type
         query += "} "
         query += "?property rdfs:label ?property_label. "
-        query += f"FILTER (langMatches(lang(?property_label), \"EN\"))." + "} "
+        query += f"FILTER (langMatches(lang(?property_label), \"{self.__lang}\"))." + "} "
 
         self.__sparql.setQuery(query)
         results = self.__sparql.query().convert()
@@ -530,17 +632,6 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         return prop_dict_list
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
-        """
-        Execute the properties couple retrieval
-
-        Args:
-            name (str): string identifier of the returned properties object
-            raw_content: represent a row in the dataset that
-                is being processed
-
-        Returns:
-            PropertiesDict
-        """
         logger.info("Extracting exogenous properties from DBPedia")
         uris = self.__get_uris_all_contents(raw_source)
 
@@ -582,32 +673,32 @@ class EntityLinking(ExogenousPropertiesRetrieval):
 
 class BabelPyEntityLinking(EntityLinking):
     """
-    Interface for the Babelpy library that wraps some feature of Babelfy entity Linking.
+    Exogenous technique which expands each content by using as external source the the BabelFy library.
+
+    Each content will be expanded with the following babelfy properties (if available):
+
+    * 'babelSynsetID',
+    * 'DBPediaURL',
+    * 'BabelNetURL',
+    * 'score',
+    * 'coherenceScore',
+    * 'globalScore',
+    * 'source'
 
     Args:
-        api_key: string obtained by registering to babelfy website, with None babelpy key only few
-            queries can be executed
+        field_to_link: Field of the raw source which will be used to search for the content properties in BabelFy
+        api_key: String obtained by registering to babelfy website. If None only few queries can be executed
+        lang: Language of the properties to retrieve
     """
 
     def __init__(self, field_to_link: str, api_key: str = None, lang: str = "EN"):
-        super().__init__("all_retrieved")
+        super().__init__("all_retrieved")  # fixed mode since it doesn't make sense for babelfy
         self.__field_to_link = field_to_link
         self.__api_key = api_key
         self.__lang = lang
         self.__babel_client = BabelfyClient(self.__api_key, {"lang": lang})
 
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
-        """
-        Produces a list of EntitiesProp objects for every raw content in the raw source where .
-
-        An Entity Prop object is basically a dict where the keys are the entity linked (since there can be multiple
-        entities in a field) and values are properties retrieved from BabelPy for that entity.
-        EXAMPLE:
-            properties_list = [EntityProp(), EntityProp(), ...]
-
-            EntityProp.value -> {'DiCaprio': {'babelSynsetID': ..., ...},'Nolan': {'babelSynsetID: ..., ...}, ...}
-
-        """
         properties_list = []
         logger.info("Performing Entity Linking with BabelFy")
         with get_progbar(list(raw_source)) as pbar:

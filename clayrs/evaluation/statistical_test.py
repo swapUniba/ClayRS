@@ -8,12 +8,11 @@ from scipy.stats import ttest_ind, ranksums
 
 class StatisticalTest(ABC):
     """
-        Abstract class for Statistical Test.
+    Abstract class for Statistical Test.
 
-        Every statistical test have to identify common users if the user
-        chooses to pass us a df. The method stat_test_results is implemented
-        differently for each statistical test you decide to do.
-
+    Every statistical test have to identify common users if the user
+    chooses to pass us a df. The method stat_test_results is implemented
+    differently for each statistical test you decide to do.
     """
     @staticmethod
     def _common_users(df1, df2, column_list) -> pd.DataFrame:
@@ -32,7 +31,7 @@ class StatisticalTest(ABC):
         return common_rows
 
     @abstractmethod
-    def perform(self, users_metric_results: list):
+    def perform(self, users_metric_results: list) -> pd.DataFrame:
         """
         Abstract method in which must be specified how to calculate Statistical test
         """
@@ -41,11 +40,41 @@ class StatisticalTest(ABC):
 
 class PairedTest(StatisticalTest):
 
-    def perform(self, df_list: List[pd.DataFrame]):
-        
+    def perform(self, df_list: List[pd.DataFrame]) -> pd.DataFrame:
+        """
+        Method which performs the chosen paired statistical test.
+
+        Since it's a paired test, the final result is a pandas DataFrame which contains learning
+        schemas compared in pair.
+        For example if you call the `perform()` method by passing a list containing three different DataFrames, one for
+        each learning schema to compare:
+
+        ```python
+        # Ttest as example since it's a Paired Test
+        Ttest().perform([user_df1, user_df2, user_df3])
+        ```
+
+        You will obtain a DataFrame comparing all different combinations:
+
+        * (system1, system2)
+        * (system1, system3)
+        * (system2, system3)
+
+        The first value of each cell is the ***statistic***, the second is the ***p-value***
+
+        Args:
+            df_list: List containing DataFrames with several metrics to compare, preferably metrics computed for each
+                user. One DataFrame corresponds to one learning schema
+
+        Returns:
+            A Pandas DataFrame where each combination of learning schemas are compared in pair. The first value of each
+                cell is the ***statistic***, the second is the ***p-value***
+
+        """
+
         # we consider the 'user_id' index as a column
         df_list = [df.reset_index() if 'user_id' not in df.columns else df for df in df_list]
-        
+
         final_result = defaultdict(list)
 
         n_system_evaluated = 1
@@ -82,12 +111,25 @@ class PairedTest(StatisticalTest):
 
 
 class Ttest(PairedTest):
+    """
+    Calculate the T-test for the means of *two independent* samples of scores.
 
+    This is a two-sided test for the null hypothesis that 2 independent samples
+    have identical average (expected) values. This test assumes that the
+    populations have identical variances by default.
+    """
     def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
         return ttest_ind(score_metric_system1, score_metric_system2)
 
 
 class Wilcoxon(PairedTest):
+    """
+    Compute the Wilcoxon rank-sum statistic for two samples.
 
+    The Wilcoxon rank-sum test tests the null hypothesis that two sets
+    of measurements are drawn from the same distribution. The alternative
+    hypothesis is that values in one sample are more likely to be
+    larger than the values in the other sample.
+    """
     def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
         return ranksums(score_metric_system1, score_metric_system2)

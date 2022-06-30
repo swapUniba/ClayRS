@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import numpy as np
 import torch
 import transformers
@@ -11,12 +13,7 @@ from clayrs.content_analyzer.field_content_production_techniques.embedding_techn
 
 class Transformers(SentenceEmbeddingLoader):
     """
-    This class loads the embeddings using the Transformers from pretrained _model.
-
-    Args:
-        model_name (str): name of the embeddings _model to download or path where the _model is stored locally
-        vec_strategy (VectorStrategy): strategy with which to combine layers for each token
-        pooling_strategy (CombiningTechnique): strategy with which to combine embeddings for each token
+    Abstract class for Transformers
     """
 
     def __init__(self, model_name: str = 'bert-base-uncased',
@@ -44,24 +41,50 @@ class Transformers(SentenceEmbeddingLoader):
 
     def get_vector_size(self) -> int:
         if isinstance(self._vec_strategy, CatStrategy):
-            return self.model.embeddings.token_type_embeddings.embedding_dim * self._last_interesting_layers
+            return self.model.config.hidden_size * self._last_interesting_layers
         else:
-            return self.model.embeddings.token_type_embeddings.embedding_dim
+            return self.model.config.hidden_size
 
     def get_embedding(self, sentence: str) -> np.ndarray:
         token_vecs = self.get_embedding_token(sentence)
         sentence_vec = self._pooling_strategy.combine(token_vecs)
         return sentence_vec
 
+    @abstractmethod
     def get_embedding_token(self, sentence: str) -> np.ndarray:
+        raise NotImplementedError
 
-        encoded = self._tokenizer.encode_plus(sentence)
-        tokens_tensor = torch.tensor([encoded['input_ids']])
-        segments_tensors = torch.tensor([encoded['attention_mask']])
+    def get_sentence_token(self, sentence: str):
+        marked_text = "[CLS] " + sentence + " [SEP]"
+        tokenized_text = self.model.tokenize(marked_text)
+        return tokenized_text
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+
+class BertTransformers(Transformers):
+    """
+    Class that produces sentences/token embeddings using any Bert model from hugging face.
+
+    Args:
+        model_name: Name of the embeddings model to download or path where the model is stored locally
+        vec_strategy: Strategy which will be used to combine each output layer to obtain a single one
+        pooling_strategy: Strategy which will be used to combine the embedding representation of each token into a
+            single one, representing the embedding of the whole sentence
+    """
+    def __init__(self, model_name: str = 'bert-base-uncased',
+                 vec_strategy: VectorStrategy = CatStrategy(1),
+                 pooling_strategy: CombiningTechnique = Centroid()):
+        super().__init__(model_name, vec_strategy, pooling_strategy)
+
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        encoded = self._tokenizer(sentence, truncation=True, return_tensors='pt')
 
         with torch.no_grad():
-            model_output = self.model(tokens_tensor, segments_tensors)
-            hidden_states = model_output[2]
+            model_output = self.model(**encoded)
+            hidden_states = model_output['hidden_states']
 
         token_embeddings = torch.stack(hidden_states, dim=0)
         token_embeddings = torch.squeeze(token_embeddings, dim=1)
@@ -71,21 +94,49 @@ class Transformers(SentenceEmbeddingLoader):
 
         return token_vecs
 
-    def get_sentence_token(self, sentence: str):
-        """
-        method that returns the tokenization of the sentence
-        Args:
-            sentence: sentence to analyze
-
-        Returns: list containing tokens
-
-        """
-        marked_text = "[CLS] " + sentence + " [SEP]"
-        tokenized_text = self.model.tokenize(marked_text)
-        return tokenized_text
-
     def __str__(self):
-        return "Transformers: model = " + str(self.model.name_or_path)
+        return "BertTransformers"
 
     def __repr__(self):
-        return str(self)
+        return f"BertTransformers(model_name={self._name_model}, " \
+               f"vec_strategy={self._vec_strategy}, " \
+               f"pooling_strategy={self._pooling_strategy})"
+
+
+class T5Transformers(Transformers):
+    """
+    Class that produces sentences/token embeddings using sbert.
+
+    Args:
+        model_name: Name of the embeddings model to download or path where the model is stored locally
+        vec_strategy: Strategy which will be used to combine each output layer to obtain a single one
+        pooling_strategy: Strategy which will be used to combine the embedding representation of each token into a
+            single one, representing the embedding of the whole sentence
+    """
+    def __init__(self, model_name: str = 't5-small',
+                 vec_strategy: VectorStrategy = CatStrategy(1),
+                 pooling_strategy: CombiningTechnique = Centroid()):
+        super().__init__(model_name, vec_strategy, pooling_strategy)
+
+    def get_embedding_token(self, sentence: str) -> np.ndarray:
+        encoded = self._tokenizer(sentence, truncation=True, return_tensors='pt')
+
+        with torch.no_grad():
+            model_output = self.model.encoder(**encoded)
+            hidden_states = model_output['hidden_states']
+
+        token_embeddings = torch.stack(hidden_states, dim=0)
+        token_embeddings = torch.squeeze(token_embeddings, dim=1)
+        token_embeddings = token_embeddings.permute(1, 0, 2)
+
+        token_vecs = self._vec_strategy.build_embedding(token_embeddings)
+
+        return token_vecs
+
+    def __str__(self):
+        return "T5Transformers"
+
+    def __repr__(self):
+        return f"T5Transformers(model_name={self._name_model}, " \
+               f"vec_strategy={self._vec_strategy}, " \
+               f"pooling_strategy={self._pooling_strategy})"

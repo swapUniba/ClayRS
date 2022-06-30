@@ -7,7 +7,6 @@ from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
-import pandas as pd
 
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 
@@ -18,42 +17,52 @@ class LinearPredictor(ContentBasedAlgorithm):
     It's a score prediction algorithm, so it can predict what rating a user would give to an unseen item.
     As such, it's also a ranking algorithm (it simply ranks in descending order unseen items by the predicted rating)
 
-    USAGE:
-        > # Interested in only a field representation, LinearRegression regressor from sklearn,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = LinearPredictor({"Plot": 0}, SkLinearRegression(), 3)
+    Examples:
 
-        > # Interested in only a field representation, Ridge regressor from sklearn with custom parameters,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = LinearPredictor({"Plot": 0}, SkRidge(alpha=0.8), 0)
+        * Interested in only a field representation, LinearRegression regressor from sklearn
 
-        > # Interested in multiple field representations of the items, Ridge regressor from sklearn with custom
-        > # parameters, threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = LinearPredictor(
-        >                       item_field={"Plot": [0, "tfidf"],
-        >                                   "Genre": [0, 1],
-        >                                   "Director": "doc2vec"},
-        >                       regressor=SkRidge(alpha=0.8),
-        >                       threshold=3)
+        >>> from clayrs import recsys as rs
+        >>> alg = rs.LinearPredictor({"Plot": 0}, rs.SkLinearRegression())
 
-        > # After instantiating the LinearPredictor algorithm, pass it in the initialization of
-        > # a CBRS and the use its method to predict ratings or calculate ranking for a single user or multiple users:
-        > cbrs = ContentBasedRS(algorithm=alg, ...)
-        > cbrs.fit_predict(...)
-        > cbrs.fit_rank(...)
-        > ...
-        > # Check the corresponding method documentation for more
+        * Interested in only a field representation, Ridge regressor from sklearn with custom parameters
 
-       Args:
-            item_field (dict): dict where the key is the name of the field
-                that contains the content to use, value is the representation(s) id(s) that will be
-                used for the said item. The value of a field can be a string or a list,
-                use a list if you want to use multiple representations for a particular field.
-            regressor (Regressor): classifier that will be used.
-               Can be one object of the Classifier class.
-            only_greater_eq (float): Threshold for the ratings. Only ratings which are greater or equal than the
-                threshold will be considered, ratings which are less than the threshold will be discarded
-       """
+        >>> alg = rs.LinearPredictor({"Plot": 0}, rs.SkRidge(alpha=0.8))
+
+        * Interested in multiple field representations of the items, Ridge regressor from sklearn with custom
+        parameters, $only_greater_eq = 2$ (Every item with rating $>= 2$ will be discarded and not considered in the
+        ranking/score prediction task)
+
+        >>> alg = rs.LinearPredictor(
+        >>>                         item_field={"Plot": [0, "tfidf"],
+        >>>                                     "Genre": [0, 1],
+        >>>                                     "Director": "doc2vec"},
+        >>>                         regressor=rs.SkRidge(alpha=0.8),
+        >>>                         only_greater_eq=2)
+
+        !!! info
+
+            After instantiating the LinearPredictor algorithm, pass it in the initialization of
+            a CBRS and the use its method to predict ratings or calculate ranking for a single user or multiple users:
+
+            Examples:
+
+                >>> cbrs = rs.ContentBasedRS(algorithm=alg, ...)
+                >>> cbrs.fit_predict(...)
+                >>> cbrs.fit_rank(...)
+                >>> # ...
+
+    Args:
+        item_field: dict where the key is the name of the field
+            that contains the content to use, value is the representation(s) id(s) that will be
+            used for the said item. The value of a field can be a string or a list,
+            use a list if you want to use multiple representations for a particular field.
+        regressor: regressor that will be used. Can be one object of the `Regressor` class.
+        only_greater_eq: Threshold for the ratings. Only items with rating greater or equal than the
+            threshold will be considered, items with lower rating will be discarded. If None, no item will be filter out
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
+            matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
+            vector for each word). By default the `Centroid` of the rows of the matrix is computed
+    """
     __slots__ = ('_regressor', '_labels', '_rated_dict', '_embedding_combiner')
 
     def __init__(self, item_field: dict, regressor: Regressor, only_greater_eq: float = None,
@@ -69,13 +78,17 @@ class LinearPredictor(ContentBasedAlgorithm):
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
 
-        Features and labels will be stored in private attributes of the class.
+        Features and labels (in this case the rating score) will be stored in private attributes of the class.
 
-        IF there are no rated_items available locally, an exception is thrown.
+        IF there are no rated items available locally, an exception is thrown.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+
+        Raises:
+            NoRatedItems: Exception raised when there isn't any item available locally
+                rated by the user
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
@@ -112,7 +125,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
     def fit(self):
         """
-        Fit the regressor specified in the constructor with the features and labels
+        Fit the regressor specified in the constructor with the features and labels (rating scores)
         extracted with the process_rated() method.
 
         It uses private attributes to fit the classifier, so process_rated() must be called
@@ -173,12 +186,12 @@ class LinearPredictor(ContentBasedAlgorithm):
         Otherwise, ALL unrated items will be predicted.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            filter_list: List of the items to predict, if None all unrated items for the user will be predicted
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted
+            List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
         """
         try:
             user_id = user_ratings[0].user_id
@@ -198,22 +211,22 @@ class LinearPredictor(ContentBasedAlgorithm):
              recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All items will be ranked.
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be used to calculate the rank.
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be used to calculate the rank.
+        Otherwise, **ALL** unrated items will be ranked.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
         """
         try:
             user_id = user_ratings[0].user_id

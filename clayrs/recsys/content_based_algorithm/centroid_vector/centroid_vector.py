@@ -9,7 +9,6 @@ from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContents
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
-import pandas as pd
 import numpy as np
 
 
@@ -19,35 +18,52 @@ class CentroidVector(ContentBasedAlgorithm):
     Then computes the similarity between the centroid and the item of which the ranking score must be predicted.
     It's a ranking algorithm, so it can't do score prediction
 
-    USAGE:
-        > # Interested in only a field representation, CosineSimilarity as similarity,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = CentroidVector({"Plot": 0}, CosineSimilarity(), 3)
+    *   It computes the centroid vector of the features of items *liked by the user*
+    *   It computes the similarity between the centroid vector and the items of which the ranking score must be
+    predicted
 
-        > # Interested in multiple field representations of the items, CosineSimilarity as similarity,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = CentroidVector(
-        >                      item_field={"Plot": [0, "tfidf"],
-        >                                  "Genre": [0, 1],
-        >                                  "Director": "doc2vec"},
-        >                      similarity=CosineSimilarity(),
-        >                      threshold=3)
+    The items liked by a user are those having a rating higher or equal than a specific **threshold**.
+    If the threshold is not specified, the average score of all items liked by the user is used.
 
-        > # After instantiating the CentroidVector algorithm, pass it in the initialization of
-        > # a CBRS and the use its method to calculate ranking for single user or multiple users:
-        > cbrs = ContentBasedRS(algorithm=alg, ...)
-        > cbrs.fit_rank(...)
-        > ...
-        > # Check the corresponding method documentation for more
+    Examples:
+        * Interested in only a field representation, CosineSimilarity as similarity,
+        $threshold = 3$ (Every item with rating $>= 3$ will be considered as positive)
+
+        >>> from clayrs import recsys as rs
+        >>> alg = rs.CentroidVector({"Plot": 0}, rs.CosineSimilarity(), 3)
+
+        * Interested in multiple field representations of the items, CosineSimilarity as similarity,
+        $threshold = None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
+
+        >>> alg = rs.CentroidVector(
+        >>>                      item_field={"Plot": [0, "tfidf"],
+        >>>                                  "Genre": [0, 1],
+        >>>                                  "Director": "doc2vec"},
+        >>>                      similarity=rs.CosineSimilarity(),
+        >>>                      threshold=None)
+
+        !!! info
+
+            After instantiating the CentroidVector algorithm, pass it in the initialization of
+            a CBRS and the use its method to calculate ranking for single user or multiple users:
+
+            Examples:
+                 
+                >>> cbrs = rs.ContentBasedRS(algorithm=alg, ...)
+                >>> cbrs.fit_rank(...)
+                >>> # ...
 
     Args:
-        item_field (dict): dict where the key is the name of the field
+        item_field: dict where the key is the name of the field
             that contains the content to use, value is the representation(s) id(s) that will be
             used for the said item. The value of a field can be a string or a list,
             use a list if you want to use multiple representations for a particular field.
-        similarity (Similarity): Kind of similarity to use
-        threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-            as positive
+        similarity: Kind of similarity to use
+        threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+            as positive. If the threshold is not specified, the average score of all items liked by the user is used.
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
+            matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
+            vector for each word). By default the `Centroid` of the rows of the matrix is computed
     """
     __slots__ = ('_similarity', '_emb_combiner', '_centroid', '_positive_rated_dict')
 
@@ -68,8 +84,8 @@ class CentroidVector(ContentBasedAlgorithm):
         Features extracted will be stored in a private attributes of the class.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
@@ -109,7 +125,7 @@ class CentroidVector(ContentBasedAlgorithm):
         of the positive items ONLY.
 
         This method uses extracted features of the positive items stored in a private attribute, so
-        process_rated() must be called before this method.
+        `process_rated()` must be called before this method.
 
         The built centroid will also be stored in a private attribute.
         """
@@ -126,9 +142,10 @@ class CentroidVector(ContentBasedAlgorithm):
                 filter_list: List[str] = None) -> List[Interaction]:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
-        the 'NotPredictionAlg' exception!
+        the `NotPredictionAlg` exception!
+
         Raises:
-            NotPredictionAlg
+            NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
@@ -136,22 +153,22 @@ class CentroidVector(ContentBasedAlgorithm):
              recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items will be ranked (or only items in the filter list, if specified).
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list parameter will be ranked.
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be ranked.
+        Otherwise, **ALL** unrated items will be ranked.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking, if None
-                all unrated items will be ranked
-            filter_list (list): list of the items to rank, if None all unrated items will be ranked
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
         """
         try:
             user_id = user_ratings[0].user_id

@@ -20,6 +20,19 @@ if TYPE_CHECKING:
 
 
 class Report:
+    """
+    Class which will generate a YAML report for the whole experiment (or a part of it) depending on the objects
+    passed to the `yaml()` function.
+
+    A report will be generated for each module used (`Content Analyzer`, `RecSys`, `Evaluation`).
+
+    Args:
+        output_dir: Path of the folder where reports generated will be saved
+        ca_report_filename: Filename of the Content Analyzer report
+        rs_report_filename: Filename of the Recsys report
+        eva_report_filename: Filename of the evaluation report
+
+    """
 
     def __init__(self, output_dir: str = '.',
                  ca_report_filename: str = 'ca_report',
@@ -255,6 +268,66 @@ class Report:
              partitioning_technique: Partitioning = None,
              recsys: RecSys = None,
              eval_model: EvalModel = None):
+        """
+        Main module responsible of generating the `YAML` reports based on the objects passed to this function:
+
+        * If `content_analyzer` is set, then the report for the Content Analyzer will be produced
+        * If one between `original_ratings`, `partitioning_technique`, `recsys` is set, then the report for the recsys
+        module will be produced.
+        * If `eval_model` is set, then the report for the evaluation module will be produced
+
+        **PLEASE NOTE**: by setting the `recsys` parameter, the last experiment conducted will be documented! If no
+        experiment is conducted in the current run, then a `ValueError` exception is raised!
+
+        * Same goes for the `eval_model`
+
+        Examples:
+
+            * Generate a report for the Content Analyzer module
+            >>> from clayrs import content_analyzer as ca
+            >>> from clayrs import utils as ut
+            >>> # movies_ca_config = ...  # user defined configuration
+            >>> content_a = ca.ContentAnalyzer(movies_config)
+            >>> content_a.fit()  # generate and serialize contents
+            >>> ut.Report().yaml(content_analyzer=content_a)  # generate yaml
+
+            * Generate a partial report for the RecSys module
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
+            >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))
+            >>> pt = rs.HoldOutPartitioning()
+            >>> [train], [test] = pt.split_all(ratings)
+            >>> ut.Report().yaml(original_ratings=ratings, partitioning_technique=pt)
+
+            * Generate a full report for the RecSys module and evaluation module
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
+            >>> from clayrs import evaluation as eva
+            >>>
+            >>> # Generate recommendations
+            >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))
+            >>> pt = rs.HoldOutPartitioning()
+            >>> [train], [test] = pt.split_all(ratings)
+            >>> alg = rs.CentroidVector()
+            >>> cbrs = rs.ContentBasedRS(alg, train_set=train, items_directory=items_path)
+            >>> rank = cbrs.fit_rank(test, n_recs=10)
+            >>>
+            >>> # Evaluate recommendations and generate report
+            >>> em = EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])
+            >>> ut.Report().yaml(original_ratings=ratings,
+            >>>                  partitioning_technique=pt,
+            >>>                  recsys=cbrs,
+            >>>                  eval_model=em)
+
+        Args:
+            content_analyzer: `ContentAnalyzer` object used to generate complex representation in the experiment
+            original_ratings: `Ratings` object representing the original dataset
+            partitioning_technique: `Partitioning` object used to split the original dataset
+            recsys: `RecSys` object used to produce recommendations/score predictions. Please note that the latest
+                experiment run will be documented. If no experiment is run, then an exception is thrown
+            eval_model: `EvalModel` object used to evaluate predictions generated. Please note that the latest
+                evaluation run will be documented. If no evaluation is run, then an exception is thrown
+        """
 
         def represent_none(self, _):
             return self.represent_scalar('tag:yaml.org,2002:null', 'null')

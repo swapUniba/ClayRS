@@ -1,8 +1,6 @@
 from typing import List, Optional
 import re
 
-import pandas as pd
-
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
@@ -18,36 +16,45 @@ class IndexQuery(ContentBasedAlgorithm):
 
     Just be sure to use textual representation(s) to build a significant query and to make a significant search!
 
-        USAGE:
-        > # Interested in only a field representation, classic tfidf similarity,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = IndexQuery({"Plot": 0}, threshold=3)
+    Examples:
 
-        > # Interested in multiple field representations of the items, BM25 similarity,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = IndexQuery(
-        >                  item_field={"Plot": [0, "original_text"],
-        >                              "Genre": [0, 1],
-        >                              "Director": "preprocessed_text"},
-        >                  classic_similarity=False,
-        >                  threshold=3)
+        * Interested in only a field representation, classic tfidf similarity,
+        $threshold = 3$ (Every item with rating $>= 3$ will be considered as positive)
 
-        > # After instantiating the IndexQuery algorithm, pass it in the initialization of
-        > # a CBRS and the use its method to calculate ranking for single user or multiple users:
-        > cbrs = ContentBasedRS(algorithm=alg, ...)
-        > cbrs.fit_rank(...)
-        > ...
-        > # Check the corresponding method documentation for more
+        >>> from clayrs import recsys as rs
+        >>> alg = rs.IndexQuery({"Plot": 0}, threshold=3)
+
+        * Interested in multiple field representations of the items, BM25 similarity,
+        $threshold = None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
+
+        >>> alg = rs.IndexQuery(
+        >>>                     item_field={"Plot": [0, "original_text"],
+        >>>                                 "Genre": [0, 1],
+        >>>                                 "Director": "preprocessed_text"},
+        >>>                     classic_similarity=False,
+        >>>                     threshold=3)
+
+
+        !!! info
+
+            After instantiating the IndexQuery algorithm, pass it in the initialization of
+            a CBRS and the use its method to calculate ranking for single user or multiple users:
+
+            Examples:
+
+                >>> cbrs = rs.ContentBasedRS(algorithm=alg, ...)
+                >>> cbrs.fit_rank(...)
+                >>> # ...
 
     Args:
-        item_field (dict): dict where the key is the name of the field
+        item_field: dict where the key is the name of the field
             that contains the content to use, value is the representation(s) id(s) that will be
             used for the said item, just BE SURE to use textual representation(s). The value of a field can be a string
             or a list, use a list if you want to use multiple representations for a particular field.
-        classic_similarity (bool): True if you want to use the classic implementation of tfidf in Whoosh,
+        classic_similarity: True if you want to use the classic implementation of tfidf in Whoosh,
             False if you want BM25F
-        threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-            as positive
+        threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+            as positive. If the threshold is not specified, the average score of all items liked by the user is used.
     """
     __slots__ = ('_string_query', '_scores', '_positive_user_docs', '_classic_similarity')
 
@@ -58,7 +65,7 @@ class IndexQuery(ContentBasedAlgorithm):
         self._positive_user_docs: Optional[dict] = None
         self._classic_similarity: bool = classic_similarity
 
-    def __get_representations(self, index_representations: dict):
+    def _get_representations(self, index_representations: dict):
         """
         Private method which extracts representation(s) chosen from all representations codified for the items
         extracted from the index
@@ -105,8 +112,8 @@ class IndexQuery(ContentBasedAlgorithm):
         Features extracted will be stored in private attributes of the class.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            index_directory (str): path of the index folder
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
 
@@ -130,7 +137,7 @@ class IndexQuery(ContentBasedAlgorithm):
                 if len(item_query) != 0:
                     item = item_query.pop(item_id).get('item')
                     scores.append(score)
-                    positive_user_docs[item_id] = self.__get_representations(item)
+                    positive_user_docs[item_id] = self._get_representations(item)
 
         if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
@@ -185,8 +192,8 @@ class IndexQuery(ContentBasedAlgorithm):
         mask query so that the prediction for those items can be calculated
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            user_seen_items: set of items present in the user profile
+            filter_list: list of the items to predict, if None all unrated items will be predicted
         """
         masked_list = list(user_seen_items)
         if filter_list is not None:
@@ -201,7 +208,7 @@ class IndexQuery(ContentBasedAlgorithm):
         a NotPredictionAlg exception is raised
 
         Raises:
-            NotPredictionAlg
+            NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
@@ -209,22 +216,23 @@ class IndexQuery(ContentBasedAlgorithm):
              recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items will be ranked (or only items in the filter list, if specified).
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list parameter will be ranked.
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be ranked.
+        Otherwise, **ALL** unrated items will be ranked.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            index_directory (str): path of the index folder
-            recs_number (int): number of the top items that will be present in the ranking, if None
-                all unrated items will be ranked
-            filter_list (list): list of the items to rank, if None all unrated items will be ranked
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents. In this case it will
+                be a `LoadedContentsIndex`
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
         """
         try:
             user_id = user_ratings[0].user_id

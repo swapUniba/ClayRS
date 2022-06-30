@@ -247,27 +247,23 @@ class ContentBasedAlgorithm(Algorithm):
     def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
              recs_number: int = None, filter_list: List[str] = None) -> Rank:
         """
-        |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        |  all items will be ranked.
-        |  If the algorithm is not a Ranking Algorithm, implement this method like this:
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
-        def rank():
-            raise NotRankingAlg
-
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be ranked.
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be ranked.
+        Otherwise, **ALL** unrated items will be ranked.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking
-            filter_list (list): list of the items to rank, if None all unrated items will be used to
-                calculate the rank
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+            a single user
         """
         raise NotImplementedError
 

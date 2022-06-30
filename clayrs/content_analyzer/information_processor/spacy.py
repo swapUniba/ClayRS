@@ -13,11 +13,61 @@ class Spacy(NLP):
     """
     Interface to the Spacy library for natural language processing features
 
+    Examples:
+
+        * Strip multiple whitespaces from running text
+        >>> spacy_obj = Spacy(strip_multiple_whitespaces=True)
+        >>> spacy_obj.process('This   has  a lot  of   spaces')
+        ['This', 'has', 'a', 'lot', 'of', 'spaces']
+
+        * Remove punctuation from running text
+        >>> spacy_obj = Spacy(remove_punctuation=True)
+        >>> spacy_obj.process("Hello there. How are you? I'm fine, thanks.")
+        ["Hello", "there", "How", "are", "you", "I", "'m", "fine", "thanks"]
+
+        * Remove stopwords using default stopwords corpus of spacy from running text
+        >>> spacy_obj = Spacy(stopwords_removal=True)
+        >>> spacy_obj.process("The striped bats are hanging on their feet for the best")
+        ["striped", "bats", "hanging", "feet", "best"]
+
+        * Remove stopwords using default stopwords corpus of spacy + `new_stopwords` list from running text
+        >>> spacy_obj = Spacy(stopwords_removal=True, new_stopwords=['bats', 'best'])
+        >>> spacy_obj.process("The striped bats are hanging on their feet for the best")
+        ["striped", "hanging", "feet"]
+
+        * Remove stopwords using default stopwords corpus of spacy - `not_stopwords` list from running text
+        >>> spacy_obj = Spacy(stopwords_removal=True, not_stopwords=['The', 'the', 'on'])
+        >>> spacy_obj.process("The striped bats are hanging on their feet for the best")
+        ["The", "striped", "bats", "hanging", "on", "feet", "the", "best"]
+
+        * Replace URL with a normalized token `<URL>`
+        >>> spacy_obj = Spacy(url_tagging=True)
+        >>> spacy_obj.process("This is facebook http://facebook.com and github https://github.com")
+        ['This', 'is', 'facebook', '<URL>', 'and', 'github', '<URL>']
+
+        * Perform lemmatization on running text
+        >>> spacy_obj = Spacy(lemmatization=True)
+        >>> spacy_obj.process("The striped bats are hanging on their feet for best")
+        ["The", "strip", "bat", "be", "hang", "on", "their", "foot", "for", "best"]
+
+        * Perform NER on running text (NEs will be tagged with BIO tagging)
+        >>> spacy_obj = Spacy(named_entity_recognition=True)
+        >>> spacy_obj.process("Facebook was fined by Hewlett Packard for spending 100€")
+        ["Facebook", "was", "fined", "by", "<Hewlett_ORG_B>", "<Packard_ORG_I>", "for", "spending",
+        "<100_MONEY_B>", "<€_MONEY_I>"]
+
     Args:
-        stopwords_removal (bool): Whether you want to remove stop words
-        lemmatization (bool): Whether you want to perform lemmatization
-        strip_multiple_whitespaces (bool): Whether you want to remove multiple whitespaces
-        url_tagging (bool): Whether you want to tag the urls in the text and to replace with "<URL>"
+        model: Spacy model that will be used to perform nlp operations. It will be downloaded if not present locally
+        strip_multiple_whitespaces: If set to True, all multiple whitespaces will be reduced to only one white space
+        remove_punctuation: If set to True, all punctuation from the running text will be removed
+        stopwords_removal: If set to True, all stowpwords from the running text will be removed
+        new_stopwords: List which contains custom defined stopwords that will be removed if `stopwords_removal=True`
+        not_stopwords: List which contains custom defined stopwords that will not be considered as such, therefore won't
+            be removed if `stopwords_removal=True`
+        url_tagging: If set to True, all urls in the running text will be replaced with the `<URL>` token
+        lemmatization: If set to True, each token in the running text will be brought to its lemma
+        named_entity_recognition: If set to True, named entities recognized will be labeled in the form `<token_B_TAG>`
+            or `<token_I_TAG>`, according to BIO tagging strategy
     """
 
     def __init__(self, model: str = 'en_core_web_sm', *,
@@ -28,8 +78,8 @@ class Spacy(NLP):
                  not_stopwords: List[str] = None,
                  lemmatization: bool = False,
                  url_tagging: bool = False,
-                 named_entity_recognition: bool = False,
-                 ):
+                 named_entity_recognition: bool = False):
+
         self.model = model
         self.stopwords_removal = stopwords_removal
         self.lemmatization = lemmatization
@@ -43,8 +93,8 @@ class Spacy(NLP):
             spacy.cli.download(model)
         self._nlp = spacy.load(model)
 
-        # Adding custom rule of preserving <URL> token and in general token
-        # wrapped by <...>
+        # Adding custom rule of preserving '<URL>' token and in general token
+        # wrapped by '<...>'
         prefixes = list(self._nlp.Defaults.prefixes)
         prefixes.remove('<')
         prefix_regex = spacy.util.compile_prefix_regex(prefixes)
@@ -112,7 +162,7 @@ class Spacy(NLP):
 
         return self.__tokenization_operation(lemmas_to_tokenize)
 
-    def __named_entity_recognition_operation(self, text) -> str:
+    def __named_entity_recognition_operation(self, text) -> List[Token]:
         """
         Execute NER on input text with spacy
 
@@ -122,11 +172,10 @@ class Spacy(NLP):
         Returns:
             word_entity: Dict of entity
         """
-        tokens_with_entities = self._nlp(' '.join([str(word) for word in text]))
-        string_entities = ' '.join([f"{token.text}_{token.ent_type_}/{token.ent_iob_}" if token.ent_type != 0
-                                   else f"{token.text}" for token in tokens_with_entities])
+        labeled_entities = ' '.join([f"<{token.text}_{token.ent_type_}_{token.ent_iob_}>" if token.ent_type != 0
+                                     else f"{token.text}" for token in text])
 
-        return string_entities
+        return self.__tokenization_operation(labeled_entities)
 
     @staticmethod
     def __strip_multiple_whitespaces_operation(text) -> str:
@@ -179,11 +228,11 @@ class Spacy(NLP):
         Returns:
             list of string
         """
-        string_list = [str(token) for token in token_field]
+        string_list = [token.text for token in token_field]
 
         return string_list
 
-    def process(self, field_data) -> List[str]:
+    def process(self, field_data: str) -> List[str]:
         """
         Args:
             field_data: content to be processed
@@ -196,6 +245,8 @@ class Spacy(NLP):
         if self.strip_multiple_whitespaces:
             field_data = self.__strip_multiple_whitespaces_operation(field_data)
         field_data = self.__tokenization_operation(field_data)
+        if self.named_entity_recognition:
+            field_data = self.__named_entity_recognition_operation(field_data)
         if self.remove_punctuation:
             field_data = self.__remove_punctuation(field_data)
         if self.stopwords_removal:
@@ -204,11 +255,8 @@ class Spacy(NLP):
             field_data = self.__lemmatization_operation(field_data)
         if self.url_tagging:
             field_data = self.__url_tagging_operation(field_data)
-        if self.named_entity_recognition:
-            field_data = self.__named_entity_recognition_operation(field_data)
-            return field_data
-        else:
-            return self.__token_to_string(field_data)
+
+        return self.__token_to_string(field_data)
 
     def __eq__(self, other):
         if isinstance(other, Spacy):

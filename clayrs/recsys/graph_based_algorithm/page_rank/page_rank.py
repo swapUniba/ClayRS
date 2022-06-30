@@ -11,14 +11,12 @@ class PageRank(GraphBasedAlgorithm):
     """
     Abstract class that contains the main methods and attributes for any PageRank algorithm.
 
-    Every PageRank algorithm can be 'personalized', in this case the PageRank will be calculated with Priors.
-    Also, since it's a graph based algorithm, it can be done feature selection to the graph before calculating
-    any prediction.
+    Every PageRank algorithm can be `personalized`, in this case the PageRank will be calculated with a personalization
+    vector made by items in the user profile weighted by the score given to them.
 
     Args:
-        personalized (bool): boolean value that specifies if the page rank must be calculated with Priors
-            considering the user profile as personalization vector. Default is False
-        feature_selection (FeatureSelectionAlgorithm): a FeatureSelection algorithm if the graph needs to be reduced
+        personalized (bool): boolean value that specifies if the page rank must be calculated considering the user
+            profile as personalization vector. Default is False
     """
 
     def __init__(self, personalized: bool = False):
@@ -33,6 +31,6 @@ class PageRank(GraphBasedAlgorithm):
         a NotPredictionAlg exception is raised
 
         Raises:
-            NotPredictionAlg
+            NotPredictionAlg: exception raised since the PageRank algorithm is not a score prediction algorithm
         """
         raise NotPredictionAlg("PageRank is not a Score Prediction Algorithm!")

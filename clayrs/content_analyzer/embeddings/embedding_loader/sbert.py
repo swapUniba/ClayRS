@@ -7,10 +7,12 @@ import numpy as np
 
 class Sbert(SentenceEmbeddingLoader):
     """
-    This class loads the embeddings using the SentenceTransformer (from sbert).
+    Class that produces sentences embeddings using sbert.
+
+    The model will be automatically downloaded if not present locally.
 
     Args:
-        model_name_or_file_path (str): name of the embeddings model to download or path where the model is stored
+        model_name_or_file_path: name of the model to download or path where the model is stored
             locally
     """
 

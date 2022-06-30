@@ -28,37 +28,39 @@ class Regressor(ABC):
 
     def fit(self, X: list, Y: list = None):
         """
-        Fit the regressor.
-        First the classifier is instantiated, then we transform the Training Data,
-        then the actual fitting is done.
+        Fit the instantiated regressor.
 
         Training data (X) is in the form:
-            X = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+
+            `X = [ (merged) representation for item 1, (merged) representation for item 2, ...]`
+
         where every item is a representation for an item (can be a merged one in case multiple representations
         are chosen)
 
         Target data (Y) is in the form:
-            Y = [0, 1, ... ]
-        where 0 represent a negative item, 1 represent a positive item
+            `Y = [1.2, 4.0, ... ]`
+
+        where all labels are the numeric score given by the user
 
         Args:
-            X (list): list containing Training data.
-            Y (list): list containing Training targets.
+            X: list containing Training data.
+            Y: list containing Training targets.
         """
         self.__model = self.__model.fit(X, Y)
 
     def predict(self, X_pred: list):
         """
-        Predicts the probability for every item in X_pred.
+        Predicts the score for every item in X_pred.
         It uses the method predict() from sklearn of the instantiated regressor
 
         It's in the form:
-            X_pred = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+            `X_pred = [ (merged) representation for item 1, (merged) representation for item 2, ...]`
+
         where every item is a representation for an item (can be a merged one in case multiple representations
         are chosen)
 
         Args:
-            X_pred (list): list containing data to predict.
+            X_pred: list containing data to predict.
         """
         return self.__model.predict(X_pred)
 
@@ -71,6 +73,8 @@ class SkLinearRegression(Regressor):
     Class that implements the LinearRegression regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor LinearRegression directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html)
     """
 
     def __init__(self, *, fit_intercept: Any = True,
@@ -92,6 +96,9 @@ class SkRidge(Regressor):
     Class that implements the Ridge regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor Ridge directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html)
+
     """
 
     def __init__(self, alpha: Any = 1.0,
@@ -124,6 +131,9 @@ class SkBayesianRidge(Regressor):
     Class that implements the BayesianRidge regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor BayesianRidge directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.BayesianRidge.html)
+
     """
 
     def __init__(self, *,
@@ -162,6 +172,8 @@ class SkSGDRegressor(Regressor):
     Class that implements the SGD regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor SGD directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDRegressor.html)
     """
 
     def __init__(self, loss: Any = "squared_error",
@@ -200,6 +212,8 @@ class SkARDRegression(Regressor):
     Class that implements the ARD regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor ARD directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ARDRegression.html)
     """
 
     def __init__(self, *,
@@ -235,6 +249,8 @@ class SkHuberRegressor(Regressor):
     Class that implements the Huber regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor Huber directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.HuberRegressor.html)
     """
 
     def __init__(self, *,
@@ -258,6 +274,8 @@ class SkPassiveAggressiveRegressor(Regressor):
     Class that implements the PassiveAggressive regressor from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the regressor PassiveAggressive directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PassiveAggressiveRegressor.html)
     """
 
     def __init__(self, *,

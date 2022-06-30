@@ -4,33 +4,35 @@ from typing import Dict, List, Set, Union
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.algorithm import Algorithm
 
-from clayrs.recsys.graphs.graph import UserNode, Node, Graph, ItemNode, \
-    BipartiteDiGraph
-
-import pandas as pd
+from clayrs.recsys.graphs.graph import UserNode, Node, Graph, ItemNode, BipartiteDiGraph
 
 
 class GraphBasedAlgorithm(Algorithm):
     """
     Abstract class for the graph-based algorithms
-
-    Args:
-    feature_selection (FeatureSelectionAlgorithm): a FeatureSelectionAlgorithm algorithm if the graph needs to be
-        reduced
     """
 
     def __init__(self):
-        # this can be expanded in making the page rank keeping also PropertyNodes, etc.
+        # FUTURE WORK: this can be expanded in making the page rank keeping also PropertyNodes, etc.
         self._nodes_to_keep = {ItemNode}
 
     def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[List[Node], None],
                       user_node: UserNode) -> Dict:
         """
-        Method which filters the result dict returning only items that are also in the filter_list
+        Method which filters and cleans the result dict based on the parameters passed
+
+        If `filter_list` parameter is not None, then the final dict will contains items and score only for items
+        in said `filter_list`
+
+        Otherwise if no filter list is specified, then all unrated items by the user will be returned in the final
+        dict
 
         Args:
-            result (dict): dictionary representing the result (keys are nodes and values are their score prediction)
-            filter_list (list): list of the items to predict, if None all unrated items will be predicted
+            graph: Directed graph which models interactions between users and items
+            result: dictionary representing the result (keys are nodes and values are their score)
+            filter_list: list of the items for which a ranking score/score prediction must be computed.
+                If None all unrated items for the user will be ranked/score predicted.
+            user_node: Node of the particular user for which we want to compute rank/score prediction
         """
 
         def must_keep(node: object, user_profile):
@@ -52,25 +54,26 @@ class GraphBasedAlgorithm(Algorithm):
     @abc.abstractmethod
     def predict(self, all_users: Set[str], graph: Graph, filter_dict: Dict[str, Set] = None) -> List[Interaction]:
         """
-        |  Abstract method that predicts the rating which a user would give to items
-        |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
+        Abstract method that predicts how much a user will like unrated items.
+        If the algorithm is not a PredictionScore Algorithm, implement this method like this:
 
+        ```python
         def predict():
             raise NotPredictionAlg
+        ```
 
-        One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list will be predicted.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be predicted.
+        One can specify on which items score prediction must be performed for each user with the `filter_dict`
+        parameter, in this case every user is mapped with a list of items for which a prediction score must be computed.
+        Otherwise, for **ALL** unrated items a prediction score will be computed for each user.
 
         Args:
-            user_id (str): id of the user of which predictions will be calculated
-            graph (FullGraph): graph containing interactions between users and items (and optionally other types of
-                nodes)
-            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
+            all_users: Set of user id for which a recommendation list must be generated
+            graph: A graph previously instantiated
+            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
+                ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the score predicted
+            List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
         """
         raise NotImplementedError
 
@@ -78,25 +81,27 @@ class GraphBasedAlgorithm(Algorithm):
     def rank(self, all_users: Set[str], graph: Graph, recs_number: int = None,
              filter_dict: Dict[str, Set] = None) -> List[Interaction]:
         """
-        |  Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        |  all items will be ranked.
-        |  If the algorithm is not a Ranking Algorithm, implement this method like this:
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
+        ```python
         def rank():
             raise NotRankingAlg
+        ```
 
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list will be ranked.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be ranked.
+        One can specify which items must be ranked for each user with the `filter_dict` parameter,
+        in this case every user is mapped with a list of items for which a ranking score must be computed.
+        Otherwise, **ALL** unrated items will be ranked for each user.
 
         Args:
-            user_id (str): id of the user of which predictions will be calculated
-            graph (FullGraph): graph containing interactions between users and items (and optionally other types of
-                nodes)
-            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
+            all_users: Set of user id for which a recommendation list must be generated
+            graph: A NX graph previously instantiated
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
+                ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
         """
         raise NotImplementedError

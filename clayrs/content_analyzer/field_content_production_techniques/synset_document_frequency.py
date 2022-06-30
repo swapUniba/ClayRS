@@ -14,7 +14,38 @@ from clayrs.utils.const import get_progbar
 
 class PyWSDSynsetDocumentFrequency(SynsetDocumentFrequency):
     """
-    Pywsd word sense disambiguation
+    Class that produces a sparse vector for each content representing the document frequency of each synset found inside
+    the document. The synsets are computed thanks to ***PyWSD*** library.
+
+    Consider this textual representation:
+    ```
+    content1: "After being trapped in a jungle board game for 26 years"
+    content2: "After considering jungle County, it was trapped in a jungle"
+    ```
+
+    This technique will produce the following sparse vectors:
+
+    ```
+    # vocabulary of the features
+    vocabulary = {'trap.v.04': 4, 'jungle.n.03': 2, 'board.n.09': 0,
+                  'plot.n.01': 3, 'twenty-six.s.01': 5,
+                  'year.n.03': 7, 'view.v.02': 6, 'county.n.02': 1}
+
+    content1:
+        (0, 4)	1
+        (0, 2)	1
+        (0, 0)	1
+        (0, 3)	1
+        (0, 5)	1
+        (0, 7)	1
+
+    content2:
+        (0, 4)	1
+        (0, 2)	2
+        (0, 6)	1
+        (0, 1)	1
+    ```
+
     """
     def __init__(self):
         # The import is here since pywsd has a long warm up phase that should affect the computation

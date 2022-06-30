@@ -2,10 +2,9 @@ import unittest
 from collections import Counter
 from unittest import TestCase
 import pandas as pd
-import numpy as np
 
 from clayrs.content_analyzer import Ratings
-from clayrs.evaluation.utils import popular_items, pop_ratio_by_user, get_avg_pop
+from clayrs.evaluation.utils import get_most_popular_items, pop_ratio_by_user, get_avg_pop, get_item_popularity
 
 
 class TestUtils(TestCase):
@@ -19,15 +18,24 @@ class TestUtils(TestCase):
         })
         cls.custom_rat = Ratings.from_dataframe(df)
 
+    def test_get_popularity(self):
+
+        # n_frequency / n_users
+        expected_pop_by_item = {'i1': 4 / 5, 'i2': 3 / 5, 'i50': 2 / 5, 'i70': 1 / 5}
+        result_pop_by_item = get_item_popularity(self.custom_rat)
+
+        self.assertCountEqual(expected_pop_by_item, result_pop_by_item)
+
     def test_popular_items(self):
         # there are 4 unique items, default percentage = 0.2, will return 1 most popular item
-        result = popular_items(self.custom_rat)
+        pop_by_item = get_item_popularity(self.custom_rat)
+        result = get_most_popular_items(pop_by_item)
         expected = {'i1'}
 
         self.assertEqual(expected, result)
 
         # there are 4 unique items, percentage = 0.5, will return 2 most popular item
-        result = popular_items(self.custom_rat, 0.5)
+        result = get_most_popular_items(pop_by_item, 0.5)
         expected = {'i1', 'i2'}
 
         self.assertEqual(expected, result)

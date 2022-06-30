@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import pandas as pd
 
-from clayrs.content_analyzer.ratings_manager.rating_processor import NumberNormalizer
+from clayrs.content_analyzer.ratings_manager.score_processor import NumberNormalizer
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings, Interaction
 from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files

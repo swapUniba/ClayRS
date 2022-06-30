@@ -1,7 +1,5 @@
 from typing import List, Union, Optional
 
-import pandas as pd
-
 from clayrs.content_analyzer import Content
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique, Centroid
@@ -15,44 +13,55 @@ from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyP
 
 class ClassifierRecommender(ContentBasedAlgorithm):
     """
-    Class that implements recommendation through a specified Classifier.
+    Class that implements recommendation through a specified `Classifier`.
     It's a ranking algorithm so it can't do score prediction.
 
-    USAGE:
-        > # Interested in only a field representation, DecisionTree classifier from sklearn,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = ClassifierRecommender({"Plot": 0}, SkDecisionTree(), 3)
+    Examples:
+        * Interested in only a field representation, DecisionTree classifier from sklearn,
+        $threshold = 3$ (Every item with rating score $>= 3$ will be considered as *positive*)
 
-        > # Interested in only a field representation, KNN classifier with custom parameters from sklearn,
-        > # threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = ClassifierRecommender({"Plot": 0}, SkKNN(n_neighbors=3), 0)
+        >>> from clayrs import recsys as rs
+        >>> alg = rs.ClassifierRecommender({"Plot": 0}, rs.SkDecisionTree(), 3)
 
-        > # Interested in multiple field representations of the items, KNN classifier with custom parameters from
-        > # sklearn, threshold = 3 (Every item with rating >= 3 will be considered as positive)
-        > alg = ClassifierRecommender(
-        >                             item_field={"Plot": [0, "tfidf"],
-        >                                         "Genre": [0, 1],
-        >                                         "Director": "doc2vec"},
-        >                             classifier=SkKNN(n_neighbors=3),
-        >                             threshold=3)
+        * Interested in only a field representation, KNN classifier with custom parameters from sklearn,
+        $threshold = 3$ (Every item with rating score $>= 3$ will be considered as positive)
 
-        > # After instantiating the ClassifierRecommender algorithm, pass it in the initialization of
-        > # a CBRS and the use its method to calculate ranking for single user or multiple users:
-        > cbrs = ContentBasedRS(algorithm=alg, ...)
-        > cbrs.fit_rank(...)
-        > ...
-        > # Check the corresponding method documentation for more
+        >>> alg = rs.ClassifierRecommender({"Plot": 0}, rs.SkKNN(n_neighbors=3), 0)
 
-       Args:
-            item_field (dict): dict where the key is the name of the field
-                that contains the content to use, value is the representation(s) id(s) that will be
-                used for the said item. The value of a field can be a string or a list,
-                use a list if you want to use multiple representations for a particular field.
-            classifier (Classifier): classifier that will be used.
-               Can be one object of the Classifier class.
-            threshold (float): Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-                as positive
-       """
+        * Interested in multiple field representations of the items, KNN classifier with custom parameters from
+        sklearn, $threshold = None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
+
+        >>> alg = ClassifierRecommender(
+        >>>                             item_field={"Plot": [0, "tfidf"],
+        >>>                                         "Genre": [0, 1],
+        >>>                                         "Director": "doc2vec"},
+        >>>                             classifier=rs.SkKNN(n_neighbors=3),
+        >>>                             threshold=None)
+
+        !!! info
+
+            After instantiating the ClassifierRecommender algorithm, pass it in the initialization of
+            a CBRS and the use its method to calculate ranking for single user or multiple users:
+
+            Examples:
+
+                >>> cbrs = rs.ContentBasedRS(algorithm=alg, ...)
+                >>> cbrs.fit_rank(...)
+                >>> # ...
+
+
+    Args:
+        item_field (dict): dict where the key is the name of the field
+            that contains the content to use, value is the representation(s) id(s) that will be
+            used for the said item. The value of a field can be a string or a list,
+            use a list if you want to use multiple representations for a particular field.
+        classifier (Classifier): classifier that will be used. Can be one object of the Classifier class.
+        threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered
+            as positive. If the threshold is not specified, the average score of all items liked by the user is used.
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
+            matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
+            vector for each word). By default the `Centroid` of the rows of the matrix is computed
+    """
     __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict')
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
@@ -74,14 +83,15 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         items, an exception is thrown.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+
         Raises:
-            NoRatedItems: exception raised when there isn't any item available locally
+            NoRatedItems: Exception raised when there isn't any item available locally
                 rated by the user
-            OnlyPositiveItems: exception raised when there are only positive items available locally
+            OnlyPositiveItems: Exception raised when there are only positive items available locally
                 for the user (Items that the user liked)
-            OnlyNegativeitems: exception raised when there are only negative items available locally
+            OnlyNegativeitems: Exception raised when there are only negative items available locally
                 for the user (Items that the user disliked)
         """
         # Load rated items from the path
@@ -128,9 +138,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
     def fit(self):
         """
         Fit the classifier specified in the constructor with the features and labels
-        extracted with the process_rated() method.
+        extracted with the `process_rated()` method.
 
-        It uses private attributes to fit the classifier, so process_rated() must be called
+        It uses private attributes to fit the classifier, so `process_rated()` must be called
         before this method.
         """
         rated_features = list(self._rated_dict.values())
@@ -148,9 +158,10 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                 filter_list: List[str] = None) -> List[Interaction]:
         """
         ClassifierRecommender is not a score prediction algorithm, calling this method will raise
-        the 'NotPredictionAlg' exception!
+        the `NotPredictionAlg` exception!
+
         Raises:
-            NotPredictionAlg
+            NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
@@ -158,22 +169,22 @@ class ClassifierRecommender(ContentBasedAlgorithm):
              recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items will be ranked (or only items in the filter list, if specified).
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
 
-        One can specify which items must be ranked with the filter_list parameter,
-        in this case ONLY items in the filter_list parameter will be ranked.
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
         One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be ranked.
+        Otherwise, **ALL** unrated items will be ranked.
 
         Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
-            recs_number (int): number of the top items that will be present in the ranking, if None
-                all unrated items will be ranked
-            filter_list (list): list of the items to rank, if None all unrated items will be ranked
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
         Returns:
-            pd.DataFrame: DataFrame containing one column with the items name,
-                one column with the rating predicted, sorted in descending order by the 'rating' column
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+                a single user
         """
         try:
             user_id = user_ratings[0].user_id
