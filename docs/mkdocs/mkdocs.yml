@@ -121,6 +121,12 @@ nav:
             - Paired: 'evaluation/statistical_tests/paired.md'
     - Utils:
         - Report: 'utils/report.md'
+copyright: Documentation made by Antonio Silletti
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/swapUniba
+      name: Swap Uniba on GitHub
 plugins:
     - search
     - autorefs
