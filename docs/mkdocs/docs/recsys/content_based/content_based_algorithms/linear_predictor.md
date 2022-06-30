@@ -16,6 +16,6 @@ The following are the regressors you can use in the `regressor` parameter of the
 ::: clayrs.recsys.content_based_algorithm.regressor.regressors
     handler: python
     options:
+        heading_level: 3
         filters:
-        - "!^_[^_]"
         - '!^Regressor$'

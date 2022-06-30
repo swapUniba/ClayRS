@@ -16,6 +16,6 @@ The following are the classifiers you can use in the `classifier` parameter of t
 ::: clayrs.recsys.content_based_algorithm.classifier.classifiers
     handler: python
     options:
+        heading_level: 3
         filters:
-        - "!^_[^_]"
         - '!^Classifier$'

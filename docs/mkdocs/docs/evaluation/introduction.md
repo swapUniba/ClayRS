@@ -1,14 +1,15 @@
 !!! warning
 
-	Docs are still a WIP
+	Docs are complete, but revision is still a Work in Progress. Sorry for any typos!
 
 
 # Introduction
 
 The Evaluation module has the task of evaluating a recommender system, using several ***state-of-the-art*** metrics
 
-The usage pipeline it's pretty simple, all the work is done by the EvalModel class. Suppose you want to
-evaluate recommendation lists using ***NDCG***, ***macro Precision***, ***micro Precision@5***, you need to instantiate
+The usage pipeline it's pretty simple, all the work is done by the 
+[`EvalModel` class][clayrs.evaluation.eval_model.EvalModel] class. Suppose you want to
+evaluate recommendation lists using ***NDCG***, ***macro Precision***, ***micro Recall@5***, you need to instantiate
 the EvalModel class with the following parameters:
 
 * A list of computed rank/predictions (in case multiple splits must be evaluated)
@@ -41,13 +42,13 @@ em = eva.EvalModel(
 
 !!! info
 
-    `Precision`, `Recall`, and in general all classification metrics requires a **threshold** which separates relevant
+    `Precision`, `Recall`, and in general all classification metrics require a **threshold** which separates relevant
     items from non-relevant.
     
     * If a threshold is specified, then it is *fixed* for all users
     * If no threshold is specified, the mean rating score of each user will be used
     
-    Check documentation for more
+    Check documentation of each metric for more
 
 Then simply call the `#!python fit()` method of the instantiated object
 
@@ -64,7 +65,7 @@ The evaluation module is completely independent from the Recsys and Content Anal
 easily evaluate recommendation lists computed by other frameworks/tools!
 
 Let's suppose we have recommendations (and related truths) generated via other tools in a csv format.
-We first import them into the framework and then pass them to the EvalModel class
+We first import them into the framework and then pass them to the `EvalModel` class
 
 ```python
 import clayrs.content_analyzer as ca
@@ -89,10 +90,12 @@ imported_truths = [truth_1, truth_2]
 ```
 
 1. Remember that this instantiation to the `Rank/Ratings` class assumes a certain order of the columns of your
-raw source. Otherwise, you need to manually map columns. Check documentation for more
+raw source. Otherwise, you need to manually map columns. 
+Check [related documentation](/content_analyzer/ratings/ratings/) for more
 
 2. Remember that this instantiation to the `Rank/Ratings` class assumes a certain order of the columns of your
-raw source. Otherwise, you need to manually map columns. Check documentation for more
+raw source. Otherwise, you need to manually map columns.
+Check [related documentation](/content_analyzer/ratings/ratings/) for more
 
 
 Then simply evaluate them exactly in the same way as shown before!
@@ -115,7 +118,7 @@ sys_results_df, users_results_df = em.fit()
 ClayRS lets you also compare different learning schemas by performing statistical tests:
 
 * Simply instantiate the desired test and call its `#!python perform()` method. The parameter it expects is the
-list of user_results dataframe obtained in the evaluation step, one for each learning schema to compare.
+list of `user_results` dataframe obtained in the evaluation step, one for each learning schema to compare.
 
 ```python
 ttest = eva.Ttest()

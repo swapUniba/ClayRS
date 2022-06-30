@@ -65,7 +65,13 @@ class Split:
 
 class Partitioning(ABC):
     """
-    Abstract Class for partitioning technique
+    Abstract class for partitioning technique. Each class must implement the `split_single()` method which specify how
+    data for a single user will be split
+
+    Args:
+        skip_user_error:
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
+            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, skip_user_error: bool = True):
@@ -80,19 +86,46 @@ class Partitioning(ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def split_single(self, user_ratings: pd.DataFrame):
-        raise NotImplementedError
-
-    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None):
+    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
         """
-        Method that effectively splits the 'ratings' parameter into 'train set' and 'test set'.
-        It must be specified a 'user_id_list' parameter so that the method will do the splitting only for the users
-        specified inside the list.
+        Abstract method in which each partitioning technique must specify how to split data for a single user
 
         Args:
-            ratings_to_split (pd.DataFrame): The DataFrame which contains the interactions of the users that must be splitted
-                into 'train set' and 'test set'
-            user_id_list (Set[str]): The set of users for which splitting will be done
+            user_ratings: List of `Interaction` objects of a single user
+
+        Returns:
+            Two lists, where the first contains one list of `Interaction` objects for each split that will
+                constitute the *train set* of the user, the second contains one list of `Interaction` objects for each split
+                that will constitute the *test set* for the user
+        """
+        raise NotImplementedError
+
+    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[list, list]:
+        """
+        Concrete method that splits, for every user in the `ratings_to_split` parameter, the original ratings
+        into *train set* and *test set*.
+        If a `user_id_list` parameter is set, the method will do the splitting only for the users
+        specified inside the list.
+
+        The method returns two lists:
+
+        * The first contains all train set for each split (if the partitioning technique returns more than one split
+        e.g. KFold)
+        * The second contains all test set for each split (if the partitioning technique returns more than one split
+        e.g. KFold)
+
+        Obviously the two lists will have the same length, and to the *train set* in position $i$ corresponds the
+        *truth set* at position $i$
+
+        Args:
+            ratings_to_split: `Ratings` object which contains the interactions of the users that must be splitted
+                into *train set* and *test set*
+            user_id_list: The set of users for which splitting will be done. If set, splitting will be performed only
+                for users inside the list. Otherwise, splitting will be performed for all users in `ratings_to_split`
+                parameter
+
+        Raises:
+            ValueError: if `skip_user_error=True` in the constructor and for some users splitting can't be performed
         """
 
         if user_id_list is None:
@@ -146,7 +179,17 @@ class KFoldPartitioning(Partitioning):
 
     Args:
         n_splits (int): Number of splits. Must be at least 2
-        random_state (int): random state
+        shuffle:
+            Whether to shuffle the data before splitting into batches.
+            Note that the samples within each split will not be shuffled.
+        random_state:
+            When `shuffle` is True, `random_state` affects the ordering of the
+            indices, which controls the randomness of each fold. Otherwise, this
+            parameter has no effect.
+            Pass an int for reproducible output across multiple function calls.
+        skip_user_error:
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
+            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, n_splits: int = 2, shuffle: bool = True, random_state: int = None,
@@ -155,7 +198,18 @@ class KFoldPartitioning(Partitioning):
 
         super(KFoldPartitioning, self).__init__(skip_user_error)
 
-    def split_single(self, user_ratings: List[Interaction]):
+    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+        """
+        Method which splits in $k$ splits both in *train set* and *test set* the ratings of a single user
+
+        Args:
+            user_ratings: List of `Interaction` objects of a single user
+
+        Returns:
+            Two lists, where the first contains one list of `Interaction` objects for each split that will
+                constitute the *train set* of the user, the second contains one list of `Interaction` objects for each split
+                that will constitute the *test set* for the user
+        """
         split_result = self.__kf.split(user_ratings)
 
         user_train_list = []
@@ -184,9 +238,16 @@ class HoldOutPartitioning(Partitioning):
     Class that perform Hold-Out partitioning
 
     Args:
-        train_set_size (float): percentage of how much big in percentage the train set of each user must be
-            EXAMPLE: train_set_size = 0.8, train_set_size = 0.65, train_set_size = 0.2
-        random_state (int): random state
+        train_set_size: Should be between 0.0 and 1.0 and represent the proportion of the ratings to
+            ***hold*** in the train set for each user.
+        random_state:
+            Controls the shuffling applied to the data before applying the split.
+            Pass an int for reproducible output across multiple function calls.
+        shuffle:
+            Whether or not to shuffle the data before splitting.
+        skip_user_error:
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
+            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, train_set_size: float = 0.8, shuffle: bool = True, random_state: int = None,
@@ -204,7 +265,19 @@ class HoldOutPartitioning(Partitioning):
         if (percentage <= 0) or (percentage >= 1):
             raise ValueError("The train set size must be a float in the (0, 1) interval")
 
-    def split_single(self, user_ratings: List[Interaction]):
+    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+        """
+        Method which splits *train set* and *test set* the ratings of a single user by holding in the train
+        set the percentage of data specified in `train_set_size` in the constructor
+
+        Args:
+            user_ratings: List of `Interaction` objects of a single user
+
+        Returns:
+            Two lists, where the first contains one list of `Interaction` objects that will
+                constitute the *train set* of the user, the second contains one list of `Interaction` objects
+                that will constitute the *test set* for the user
+        """
         interactions_train, interactions_test = train_test_split(user_ratings,
                                                                  train_size=self.__train_set_size,
                                                                  test_size=self.__test_set_size,

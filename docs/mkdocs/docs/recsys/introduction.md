@@ -1,6 +1,6 @@
 !!! warning
 
-	Docs are still a WIP
+    Docs are complete, but revision is still a Work in Progress. Sorry for any typos!
 
 
 # Introduction
@@ -19,7 +19,7 @@ generating recommendation lists.
 
 The **Ratings** class allows you to import rating from a source file (or also from an existent dataframe) into a custom object.
 
-**If** the source file contains users (U), items (I) and ratings (R) in this order, no additional parameters are needed,
+**If** the source file contains users, items and ratings in this order, no additional parameters are needed,
 **otherwise**  the mapping must be explictly specified using:
 
 * **'user_id'** column,
@@ -32,7 +32,7 @@ In this case the dataset we want to import is a CSV file with the following head
 user_id,item_id,rating,timestamp
 ```
 
-As you can see the user id column, item id column and score column are the first three column and are already in
+As you can see the *user id column*, *item id column* and *score column* are the first three column and are already in
 sequential order, so no additional parameter is required to the `Ratings` class:
 
 ```python
@@ -49,8 +49,9 @@ ratings = ca.Ratings(ratings_raw_source)
 
 Once you imported the dataset, the first thing you may want to do is to split it with a ***Partitioning technique***
 
-* The output of any partitioning technique are two lists. One containing the two train set (in this case),
-the other containing the two test set (in this case)
+* The output of any partitioning technique are two lists. The first containing all the train set produced by the
+partitioning technique (two train set in the below example), the other containing all the test set produced by the
+partitioning technique (two test set in the below example)
 
 ```python
 import clayrs.recsys as rs
@@ -67,7 +68,7 @@ for a specific subset of users (e.g. select only users with more than x ratings)
 ## Defining a Content Based Recommender System
 
 A Content Based Recommender System needs an algorithm for ranking or predicting items to users.
-There are many available, in the following example we use the **CentroidVector** algorithm:
+There are many available, in the following example we will use the **CentroidVector** algorithm:
 
 *   It computes the centroid vector of the features of items *liked by the user*
 *   It computes the similarity between the centroid vector and unrated items
@@ -132,25 +133,6 @@ cbrs = rs.ContentBasedRS(random_forests, train_set, 'movies_codified/')
 1. Since every partitioning technique returns a *list* of train sets ([here](#splitting-the-dataset)), in this way we are using only the first train set produced. Just below there's an example
 on how to produce recommendation for more than one split
 
-In case you perform a splitting of the dataset which returns a multiple train and test sets (KFold technique):
-
-```python
-original_rat = ca.Ratings(ca.CSVFile(ratings_path))
-
-train_list, test_list = rs.KFoldPartitioning(n_splits=5).split_all(original_rat)
-
-alg = rs.CentroidVector()  # any cb algorithm
-
-for train_set, test_set in zip(train_list, test_list):
-
-    cbrs = rs.ContentBasedRS(alg, train_set, items_path)
-    rank_to_append = cbrs.fit_rank(test_set)
-
-    result_list.append(rank_to_append)
-```
-
-`result_list` will contain recommendation lists for each split
-
 ## Defining a Graph Based Recommender System
 
 A Graph Based Recommender System (**GBRS**) requires to first define a *graph*
@@ -186,7 +168,7 @@ full_graph = rs.NXFullGraph(ratings,
 
 1. Where users complexly represented have been serialized during Content Analyzer phase
 2. Where items complexly represented have been serialized during Content Analyzer phase
-3. This means that you want to use the first exogenous representation with which the each user has been expanded
+3. This means that you want to use the first exogenous representation with which each user has been expanded
 4. You can also access exogenous representation with custom id, if specified during Content Analyzer phase
 
 The last step to perform before defining the GBRS is to instantiate an algorithm for ranking or predicting items to users.
@@ -208,6 +190,8 @@ gbrs = rs.GraphBasedRS(pr, full_graph)
 !!! info
 
 	The following procedure works both for ***CBRS*** and ***GBRS***. In the following we will consider a cbrs as an example
+    
+    * For ***GBRS*** there is no `fit()` method, only `rank()` or `predict()` method must be called
 
 Now the ***cbrs*** must be fit before we can compute the rank:
 
@@ -236,19 +220,12 @@ original_rat = ca.Ratings(ca.CSVFile(ratings_path))
 
 train_list, test_list = rs.KFoldPartitioning(n_splits=5).split_all(original_rat)
 
-alg = rs.NXPageRank()  # any gb algorithm
+alg = rs.CentroidVector()  # any cb algorithm
 
 for train_set, test_set in zip(train_list, test_list):
-    
-    full_graph = rs.NXFullGraph(train_set, 
-                                user_contents_dir='users_codified/',
-                                item_contents_dir='movies_codified/',
-                                user_exo_properties={0},
-                                item_exo_properties={'dbpedia'},
-                                link_label='score')
-    
-    gbrs = rs.GraphBasedRS(alg, full_graph)
-    rank_to_append = gbrs.rank(test_set)
+
+    cbrs = rs.ContentBasedRS(alg, train_set, items_path)
+    rank_to_append = cbrs.fit_rank(test_set)
 
     result_list.append(rank_to_append)
 ```
@@ -276,12 +253,12 @@ rank = cbrs.rank(test_set, n_recs=10)
 !!! info
    
 	A *methodology* lets you customize which items must be ranked for each user.
-	For each target user **u**, the following 4 different methodologies are available for defining those lists:
+	For each target user $u$, the following 4 different methodologies are available for defining those lists:
 	
-	1.   **TestRatings** (default): the list of items to be evaluated consists of items rated by u in the test set
-	2.   **TestItems**: every item in the test set of every user except those in the training set of the target user will be predicted
-	3.   **TrainingItems**: every item in the training set of every user will be predicted except those in the training set of the target user
-	4.   **AllItems**: the whole set of items, except those in the training set of the target user, will be predicted
+	1.   **TestRatings** (default): the list of items to be evaluated consists of items rated by $u$ in the test set
+	2.   **TestItems**: every item in the test set of every user except those in the training set of $u$ will be predicted
+	3.   **TrainingItems**: every item in the training set of every user will be predicted except those in the training set of $u$
+	4.   **AllItems**: the whole set of items defined will be predicted, except those in the training set of $u$
 
 	More information on [this paper](https://repositorio.uam.es/bitstream/handle/10486/665121/precision-oriented_bellogin_recsys_2011_ps.pdf;jsessionid=85982302D4DA9FF4DD7F21E4AC4F3391?sequence=1).
 

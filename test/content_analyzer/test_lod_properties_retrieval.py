@@ -89,7 +89,7 @@ class TestDBPediaMappingTechnique(TestCase):
 
     def test_get_properties_as_uri(self):
 
-        mapp = DBPediaMappingTechnique('dbo:Film', 'Title', prop_as_uri=True)
+        mapp = DBPediaMappingTechnique('dbo:Film', 'Title', return_prop_as_uri=True)
 
         uri_prop_cinematography = "http://dbpedia.org/ontology/cinematography"
         uri_prop_starring = "http://dbpedia.org/ontology/starring"

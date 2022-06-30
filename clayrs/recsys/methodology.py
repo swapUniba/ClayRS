@@ -1,6 +1,6 @@
 import abc
 from abc import ABC
-from typing import Set, Union, Dict, Optional, Generator
+from typing import Set, Union, Optional, Generator
 import pandas as pd
 
 from clayrs.content_analyzer import Ratings
@@ -9,11 +9,11 @@ from clayrs.utils.const import get_progbar
 
 class Methodology(ABC):
     """
-    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
-    which items must be used in order to generate a recommendation list
+    Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
+    order to generate a recommendation list
 
     The methodologies here implemented follow the 'Precision-Oriented Evaluation of Recommender Systems: An Algorithmic
-    Comparison' paper, check it for more
+    Comparison' paper
     """
 
     def __init__(self, only_greater_eq: float = None):
@@ -26,23 +26,25 @@ class Methodology(ABC):
         return items_list_greater_eq
 
     def filter_all(self, train_set: Ratings, test_set: Ratings,
-                   result_as_iter_dict: bool = False) -> Union[pd.DataFrame, Dict]:
+                   result_as_iter_dict: bool = False) -> Union[pd.DataFrame, Generator]:
         """
-        Method which effectively calculates which items must be used in order to generate a recommendation list
+        Concrete method which calculates for all users of the *test set* which items must be used in order to
+        generate a recommendation list
 
-        It takes in input a 'train set' and a 'test set' and returns a single DataFrame which contains,
-        for every user inside the train set, all items which must be recommended based on the methodology chosen.
+        It takes in input a *train set* and a *test set* and returns a single DataFrame or a generator of a python
+        dictionary containing, for every user, all items which must be recommended based on the methodology chosen.
 
         Args:
-            train_set (pd.DataFrame): Pandas dataframe which contains the train set of every user
-            test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
-            result_as_dict (bool): If True the output of the method will be a dict containing users as a key and
-                list of item that must be predicted as a value.
-                EXAMPLE:
-                    {'u1': ['i1', 'i2', 'i3'], 'u2': ['i1', 'i4'], ...}
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
+            result_as_iter_dict (bool): If True the output of the method will be a generator of a dictionary that,
+                once evaluated, will contains users as a key and list of item that must be predicted as a value.
+
+                    EXAMPLE:
+                        `{'u1': ['i1', 'i2', 'i3'], 'u2': ['i1', 'i4'], ...}`
         Returns:
-            A DataFrame which contains all items which must be recommended to every user based on the methodology
-            chosen.
+            A DataFrame or a generator of a python dictionary which contains all items which must be recommended to
+            every user based on the methodology chosen.
         """
         user_list = set(test_set.user_id_column)
 
@@ -77,19 +79,18 @@ class Methodology(ABC):
 
 class TestRatingsMethodology(Methodology):
     """
-    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
-    which items must be used in order to generate a recommendation list
+    Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
+    order to generate a recommendation list
 
-    With TestRatingsMethodology, given a user U, items to recommend for U are simply those items that appear in its
-    'test set'
-    \n
+    With TestRatingsMethodology, given a user $u$, items to recommend for $u$ are simply those items that appear in its
+    *test set*
 
-    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    If the `only_greater_eq` parameter is set, then only items with rating score $>=$ only_greater_eq will be
     returned
 
     Args:
-        only_greater_eq (float): float which acts as a filter, if specified only items with
-            rating score >= only_greater_eq will be returned
+        only_greater_eq: float which acts as a filter, if specified only items with
+            rating score $>=$ only_greater_eq will be returned
     """
 
     def __init__(self, only_greater_eq: float = None):
@@ -104,12 +105,12 @@ class TestRatingsMethodology(Methodology):
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that need to be part of the recommendation list of a single user.
-        Since it's the TestRatings Methodology, only items that appear in the 'test set' of the user will be returned.
+        Since it's the TestRatings Methodology, only items that appear in the *test set* of the user will be returned.
 
         Args:
-            user_id (str): User of which we want to calculate items that must appear in its recommendation list
-            train_set (pd.DataFrame): Pandas Dataframe which contains the train set of every user
-            test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
+            user_id: User of which we want to calculate items that must appear in its recommendation list
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
         """
         user_test = test_set.get_user_interactions(user_id)
 
@@ -125,18 +126,18 @@ class TestRatingsMethodology(Methodology):
 
 class TestItemsMethodology(Methodology):
     """
-    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
-    which items must be used in order to generate a recommendation list
+    Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
+    order to generate a recommendation list
 
-    With TestItemsMethodology, given a user U, items to recommend for U are all items that appear in the 'test set' of
-    every user excluding those items that appear in the 'train set' of U
-    \n
-    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    With TestItemsMethodology, given a user $u$, items to recommend for $u$ are all items that appear in the
+    *test set* of every user excluding those items that appear in the *train set* of $u$
+
+    If the `only_greater_eq` parameter is set, then only items with rating score $>=$ only_greater_eq will be
     returned
 
     Args:
-        only_greater_eq (float): float which acts as a filter, if specified only items with
-            rating score >= only_greater_eq will be returned
+        only_greater_eq: float which acts as a filter, if specified only items with
+            rating score $>=$ only_greater_eq will be returned
     """
 
     def __init__(self, only_greater_eq: float = None):
@@ -153,13 +154,13 @@ class TestItemsMethodology(Methodology):
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that need to be part of the recommendation list of a single user.
-        Since it's the TestItems Methodology, all items that appear in the 'test set' of every user will be returned,
-        except for those that appear in the 'train set' of the user passed as parameter
+        Since it's the TestItems Methodology, all items that appear in the *test set* of every user will be returned,
+        except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id (str): User of which we want to calculate items that must appear in its recommendation list
-            train_set (pd.DataFrame): Pandas dataframe which contains the train set of every user
-            test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
+            user_id: User of which we want to calculate items that must appear in its recommendation list
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
         """
         already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
 
@@ -177,18 +178,18 @@ class TestItemsMethodology(Methodology):
 
 class TrainingItemsMethodology(Methodology):
     """
-    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
-    which items must be used in order to generate a recommendation list
+    Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
+    order to generate a recommendation list
 
-    With TrainingItemsMethodology, given a user U, items to recommend for U are all items that appear in the 'train set'
-    of every user excluding those items that appear in the 'train set' of U
-    \n
-    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
+    With TrainingItemsMethodology, given a user $u$, items to recommend for $u$ are all items that appear in the
+    'train set' of every user excluding those items that appear in the 'train set' of $u$
+
+    If the `only_greater_eq` parameter is set, then only items with rating score $>=$ only_greater_eq will be
     returned
 
     Args:
-        only_greater_eq (float): float which acts as a filter, if specified only items with
-            rating score >= only_greater_eq will be returned
+        only_greater_eq: float which acts as a filter, if specified only items with
+            rating score $>=$ only_greater_eq will be returned
     """
 
     def __init__(self, only_greater_eq: float = None):
@@ -205,13 +206,13 @@ class TrainingItemsMethodology(Methodology):
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that needs to be part of the recommendation list of a single user.
-        Since it's the TrainingItems Methodology, all items that appear in the 'train set' of every user will be
-        returned, except for those that appear in the 'train set' of the user passed as parameter
+        Since it's the TrainingItems Methodology, all items that appear in the *train set* of every user will be
+        returned, except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id (str): User of which we want to calculate items that must appear in its recommendation list
-            train_set (pd.DataFrame): Pandas dataframe which contains the train set of every user
-            test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
+            user_id: User of which we want to calculate items that must appear in its recommendation list
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
         """
         already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
 
@@ -229,17 +230,14 @@ class TrainingItemsMethodology(Methodology):
 
 class AllItemsMethodology(Methodology):
     """
-    Module of the Evaluation pipeline which, given a 'train set' and a 'test set', has the task to calculate
-    which items must be used in order to generate a recommendation list
+    Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
+    order to generate a recommendation list
 
-    With AllItemsMethodology, given a user U, items to recommend for U are all items that appear in 'items_list'
-    parameter excluding those items that appear in the 'train set' of U
-    \n
-    If the 'only_greater_eq' parameter is specified, then only items with rating score >= only_greater_eq will be
-    returned
+    With AllItemsMethodology, given a user $u$, items to recommend for $u$ are all items that appear in 'items_list'
+    parameter excluding those items that appear in the *train set* of $u$
 
     Args:
-        items_list (Set[str]): Items set that must appear in the recommendation list of every user
+        items_list: Items set that must appear in the recommendation list of every user
     """
 
     def __init__(self, items_list: Set[str]):
@@ -255,13 +253,13 @@ class AllItemsMethodology(Methodology):
     def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
         """
         Method that returns items that needs to be part of the recommendation list of a single user.
-        Since it's the AllItems Methodology, all items that appear in the 'items_list' parameter of the constructor
-        will be returned, except for those that appear in the 'train set' of the user passed as parameter
+        Since it's the AllItems Methodology, all items that appear in the `items_list` parameter of the constructor
+        will be returned, except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id (str): User of which we want to calculate items that must appear in its recommendation list
-            train_set (pd.DataFrame): Pandas dataframe which contains the train set of every user
-            test_set (pd.DataFrame): Pandas dataframe which contains the test set of every user
+            user_id: User of which we want to calculate items that must appear in its recommendation list
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
         """
         already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
 

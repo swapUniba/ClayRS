@@ -22,8 +22,122 @@ with warnings.catch_warnings():
 
 class Ekphrasis(NLP):
     """
-    Class to manage text to locate dates, currencies, etc.,
-    unpack hashtags and correct spelling.
+    Interface to the Ekphrasis library for natural language processing features
+
+    Examples:
+
+        * Normalize email and percentage tokens but omit email ones:
+        >>> ek = Ekphrasis(omit=['email'], normalize=['email', 'percent'])
+        >>> ek.process("this is an email: alias@mail.com and this is a percent 23%")
+        ['this', 'is', 'an', 'email', ':', 'and', 'this', 'is', 'a', 'percent', '<percent>']
+
+        * Unpack contractions on running text:
+        >>> ek = Ekphrasis(unpack_contractions=True)
+        >>> ek.process("I can't do this because I won't and I shouldn't")
+        ['i', 'can', 'not', 'do', 'this', 'because', 'i', 'will', 'not', 'and', 'i', 'should', 'not']
+
+        * Unpack hashtag using statistics from 'twitter' corpus:
+        >>> ek = Ekphrasis(unpack_hashtags=True, segmenter='twitter')
+        >>> ek.process("#next #gamedev #retrogaming #coolphoto no unpack")
+        ['next', 'game', 'dev', 'retro', 'gaming', 'cool', 'photo', 'no', 'unpack']
+
+        * Annotate words in CAPS and repeated tokens with single tag for CAPS words:
+        >>> ek = Ekphrasis(annotate=['allcaps', 'repeated'], all_caps_tag='single')
+        >>> ek.process("this is good !!! text and a SHOUTED one")
+        ['this', 'is', 'good', '!', '<repeated>', 'text', 'and', 'a', 'shouted', '<allcaps>', 'one']
+
+        * Perform segmentation using statistics from 'twitter' corpus:
+        >>> ek = Ekphrasis(segmentation=True, segmenter='twitter')
+        >>> ek.process("thewatercooler exponentialbackoff no segmentation")
+        ['the', 'watercooler', 'exponential', 'back', 'off', 'no', 'segmentation']
+
+        * Substitute words with custom tokens:
+        >>> ek = Ekphrasis(dicts=[{':)': '<happy>', ':(': '<sad>'}])
+        >>> ek.process("Hello :) how are you? :(")
+        ['Hello', '<happy>', 'how', 'are', 'you', '?', '<sad>']
+
+        * Perform spell correction on text and on elongated words by using statistics from default 'english' corpus:
+        >>> Ekphrasis(spell_correction=True, spell_correct_elong=True)
+        >>> ek.process("This is huuuuge. The korrect way of doing tihngs is not the followingt")
+        ["this", 'is', 'huge', '.', 'the', 'correct', "way", "of", "doing", "things", "is", 'not', 'the',
+        'following']
+
+    Args:
+        omit: Choose what tokens that you want to omit from the text.
+
+            Possible values: ***['email', 'percent', 'money', 'phone', 'user','time', 'url', 'date', 'hashtag']***
+
+            Important Notes:
+
+                1 - the token in this list must be present in the `normalize`
+                    list to have any effect!
+                2 - put url at front, if you plan to use it.
+                    Messes with the regexes!
+                3 - if you use hashtag then unpack_hashtags will
+                    automatically be set to False
+
+        normalize: Choose what tokens that you want to normalize from the text.
+            Possible values: ***['email', 'percent', 'money', 'phone', 'user', 'time', 'url', 'date', 'hashtag']***
+
+            For example: myaddress@mysite.com -> `<email>`
+
+            Important Notes:
+
+                1 - put url at front, if you plan to use it.
+                    Messes with the regexes!
+                2 - if you use hashtag then unpack_hashtags will
+                    automatically be set to False
+
+        unpack_contractions: Replace *English* contractions in running text with their unshortened forms
+
+            for example: can't -> can not, wouldn't -> would not, and so on...
+
+        unpack_hashtags: split a hashtag to its constituent words.
+
+            for example: #ilikedogs -> i like dogs
+
+        annotate: add special tags to special tokens.
+
+            Possible values: ['hashtag', 'allcaps', 'elongated', 'repeated']
+
+            for example: myaddress@mysite.com -> myaddress@mysite.com <email>
+
+        corrector: define the statistics of what corpus you would like to use [english, twitter].
+            Be sure to set `spell_correction` to True if you want to perform
+            spell correction on the running text
+
+        tokenizer: callable function that accepts a string and returns a list of strings.
+            If no tokenizer is provided then the text will be tokenized on whitespace
+
+        segmenter: define the statistics of what corpus you would like to use [english, twitter].
+            Be sure to set `segmentation` to True if you want to perform segmentation on the running text
+
+        all_caps_tag: how to wrap the capitalized words
+            Note: applicable only when `allcaps` is included in the `annotate` list
+            Possible values ***[single, wrap, every]***:
+
+                - single: add a tag after the last capitalized word
+                    for example: "SHOUTED TEXT" -> "shouted text <allcaps>"
+                - wrap: wrap all words with opening and closing tags
+                    for example: "SHOUTED TEXT" -> "<allcaps> shouted text </allcaps>"
+                - every: add a tag after each word
+                    for example: "SHOUTED TEXT" -> "shouted <allcaps> text <allcaps>"
+
+        spell_correction: If set to True, running text will be spell corrected using statistics of corpus set in
+            `corrector` parameter
+
+        segmentation: If set to True, running text will be segmented using statistics of corpus set in
+            `corrector` parameter
+
+            for example: exponentialbackoff -> exponential back off
+
+        spell_correct_elong: choose if you want to perform spell correction after the normalization of elongated words.
+
+            *significantly affects performance (speed)*
+
+        spell_correction: choose if you want to perform spell correction to the text.
+
+            *significantly affects performance (speed)*
     """
 
     def __init__(self, *,
@@ -39,67 +153,7 @@ class Ekphrasis(NLP):
                  spell_correction: bool = False,
                  segmentation: bool = False,
                  dicts: List[Dict] = None,
-                 spell_correct_elong: bool = False
-                 ):
-        """
-        omit (list): choose what tokens that you want to omit from the text.
-            possible values: ['email', 'percent', 'money', 'phone', 'user',
-                'time', 'url', 'date', 'hashtag']
-            Important Notes:
-                        1 - put url at front, if you plan to use it.
-                            Messes with the regexes!
-                        2 - if you use hashtag then unpack_hashtags will
-                            automatically be set to False
-
-        normalize (list): choose what tokens that you want to normalize
-            from the text.
-            possible values: ['email', 'percent', 'money', 'phone', 'user',
-                'time', 'url', 'date', 'hashtag']
-            for example: myaddress@mysite.com will be transformed to <email>
-            Important Notes:
-                        1 - put url at front, if you plan to use it.
-                            Messes with the regexes!
-                        2 - if you use hashtag then unpack_hashtags will
-                            automatically be set to False
-
-        unpack_contractions (bool): Replace *English* contractions in
-            ``text`` str with their unshortened forms
-            for example: can't -> can not, wouldn't -> would not, and so on...
-
-        unpack_hashtags (bool): split a hashtag to it's constituent words.
-            for example: #ilikedogs -> i like dogs
-
-        annotate (list): add special tags to special tokens.
-            possible values: ['hashtag', 'allcaps', 'elongated', 'repeated']
-            for example: myaddress@mysite.com -> myaddress@mysite.com <email>
-
-        tokenizer (callable): callable function that accepts a string and
-            returns a list of strings if no tokenizer is provided then
-            the text will be tokenized on whitespace
-
-        segmenter (str): define the statistics of what corpus you would
-            like to use [english, twitter]
-
-        corrector (str): define the statistics of what corpus you would
-            like to use [english, twitter]
-
-        all_caps_tag (str): how to wrap the capitalized words
-            values [single, wrap, every]
-            Note: applicable only when `allcaps` is included in annotate[]
-                - single: add a tag after the last capitalized word
-                - wrap: wrap all words with opening and closing tags
-                - every: add a tag after each word
-
-        spell_correct_elong (bool): choose if you want to perform
-            spell correction after the normalization of elongated words.
-            * significantly affects performance (speed)
-
-        spell_correction (bool): choose if you want to perform
-            spell correction to the text
-            * significantly affects performance (speed)
-        """
-        if tokenizer == 'default':
-            tokenizer = SocialTokenizer().tokenize
+                 spell_correct_elong: bool = False):
 
         # ekphrasis has default values for arguments not passed. So if they are not evaluated in our class,
         # we simply don't pass them to ekphrasis
@@ -162,13 +216,12 @@ class Ekphrasis(NLP):
 
         return list(word_seg_list)
 
-    def process(self, field_data) -> List[str]:
-
+    def process(self, field_data: str) -> List[str]:
         """
         Args:
-            field_data: content to be processed
+            field_data: Running text to be processed
         Returns:
-            field_data (List<str>): list of str or dict in case of named entity recognition
+            field_data: List of str representing running text preprocessed
         """
         field_data = self.text_processor.pre_process_doc(field_data)
         if self.sc is not None:
@@ -197,13 +250,4 @@ class Ekphrasis(NLP):
         return "Ekphrasis"
 
     def __repr__(self):
-        # return f"Ekphrasis(omit={self.text_processor.omit}, normalize={self.text_processor.backoff}, " \
-        #        f"unpack_contractions={self.text_processor.unpack_contractions}, " \
-        #        f"unpack_hashtags={self.text_processor.unpack_hashtags}, " \
-        #        f"annotate={self.text_processor.include_tags}, " \
-        #        f"corrector={self.text_processor.corrector_corpus}, tokenizer={self.text_processor.tokenizer}, " \
-        #        f"segmenter={self.text_processor.segmenter_corpus}, all_caps_tag={self.text_processor.all_caps_tag}, " \
-        #        f"spell_correction={self.text_processor.spell_correction}, " \
-        #        f"segmentation={self.segmentation}, dicts={self.text_processor.dicts}, " \
-        #        f"spell_correct_elong={self.spell_correct_elong})"
         return self._repr_string

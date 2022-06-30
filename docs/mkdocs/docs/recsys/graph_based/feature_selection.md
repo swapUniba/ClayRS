@@ -17,6 +17,7 @@ and/or in the `fs_algorithm_item`
 ::: clayrs.recsys.graphs.feature_selection.feature_selection_alg.TopKPageRank
     handler: python
     options:
+        heading_level: 3
         show_root_toc_entry: true
         show_root_heading: true
 		members: none
@@ -24,6 +25,7 @@ and/or in the `fs_algorithm_item`
 ::: clayrs.recsys.graphs.feature_selection.feature_selection_alg.TopKEigenVectorCentrality
     handler: python
     options:
+        heading_level: 3
         show_root_toc_entry: true
         show_root_heading: true
 		members: none
@@ -31,6 +33,7 @@ and/or in the `fs_algorithm_item`
 ::: clayrs.recsys.graphs.feature_selection.feature_selection_alg.TopKDegreeCentrality
     handler: python
     options:
+        heading_level: 3
         show_root_toc_entry: true
         show_root_heading: true
 		members: none

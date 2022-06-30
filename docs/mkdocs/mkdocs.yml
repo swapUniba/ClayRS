@@ -54,9 +54,37 @@ nav:
         - Quickstart: 'first_steps/quickstart.md'
     - 'Content Analyzer':
         - Introduction: 'content_analyzer/introduction.md'
-        - Ratings: 'content_analyzer/ratings.md'
+        - 'Content Analyzer config and class': 'content_analyzer/config.md'
+        - 'Raw source wrappers': 'content_analyzer/raw_sources.md'
+        - Ratings:
+            - 'Ratings class': 'content_analyzer/ratings/ratings.md'
+            - 'Score processors': 'content_analyzer/ratings/score_processors.md'
+        - 'Information Preprocessors':
+            - 'NLTK': 'content_analyzer/information_preprocessors/nltk.md'
+            - 'Spacy': 'content_analyzer/information_preprocessors/spacy.md'
+            - 'Ekphrasis': 'content_analyzer/information_preprocessors/ekphrasis.md'
+        - 'Content Techniques':
+            - 'Embedding techniques':
+                - 'Word Embeddings': 'content_analyzer/content_techniques/embedding_techniques/word_embeddings.md'
+                - 'Sentence Embeddings': 'content_analyzer/content_techniques/embedding_techniques/sentence_embeddings.md'
+                - 'Document Embeddings': 'content_analyzer/content_techniques/embedding_techniques/document_embeddings.md'
+                - 'Combining Embeddings': 'content_analyzer/content_techniques/embedding_techniques/combining_embeddings.md'
+                - 'Contextualized Embeddings': 'content_analyzer/content_techniques/embedding_techniques/contextualized_embeddings.md'
+            - 'TfIdf': 'content_analyzer/content_techniques/tfidf.md'
+            - 'Original Data': 'content_analyzer/content_techniques/original_data.md'
+            - 'Synset Document Frequency': 'content_analyzer/content_techniques/synset_df_frequency.md'
+        - 'Exogenous Techniques':
+            - 'DBPedia Mapping' : 'content_analyzer/exogenous_techniques/dbpedia.md'
+            - 'Properties From Dataset': 'content_analyzer/exogenous_techniques/properties_from_dataset.md'
+            - 'BabelFy Entity Linking': 'content_analyzer/exogenous_techniques/babelfy.md'
+        - 'Memory Interfaces':
+            - 'Index Interface': 'content_analyzer/index_interface.md'
     - Recsys:
         - Introduction: 'recsys/introduction.md'
+        - 'Partitioning techniques':
+          - 'Abstract Partitioning class': 'recsys/partitioning/abstract_partitioning.md'
+          - 'Hold Out': 'recsys/partitioning/hold_out.md'
+          - 'KFold': 'recsys/partitioning/kfold.md'
         - 'Content Based recommendation': 
             - 'Content Based recsys': 'recsys/content_based/content_based_recsys.md'
             - 'Content Based algorithms':
@@ -74,6 +102,12 @@ nav:
             - 'Graph Based algorithms':
                 - 'Page Rank': 'recsys/graph_based/graph_based_algorithms/nx_pagerank.md'
             - 'Feature Selection': 'recsys/graph_based/feature_selection.md'
+        - Methodologies:
+            - 'Abstract Methodology class': 'recsys/methodology/abstract_methodology.md'
+            - TestRatings: 'recsys/methodology/test_ratings.md'
+            - TestItems: 'recsys/methodology/test_items.md'
+            - TrainingItems: 'recsys/methodology/training_items.md'
+            - AllItems: 'recsys/methodology/all_items.md'
     - Evaluation:
         - Introduction: 'evaluation/introduction.md'
         - 'EvalModel class': 'evaluation/eval_model.md'
@@ -85,17 +119,28 @@ nav:
             - 'Plot metrics': 'evaluation/metrics/plot_metrics.md'
         - 'Statistical tests':
             - Paired: 'evaluation/statistical_tests/paired.md'
+    - Utils:
+        - Report: 'utils/report.md'
 plugins:
     - search
     - autorefs
     - mkdocstrings:
         handlers:
             python:
+                import:
+                - https://docs.python.org/3/objects.inv
+                - https://pandas.pydata.org/docs/objects.inv
+                - https://numpy.org/doc/stable/objects.inv
+                - https://scikit-learn.org/stable/objects.inv
                 paths: [../../]
                 options:
                   show_root_toc_entry: false
                   show_root_heading: false
                   show_root_full_path: false
                   merge_init_into_class: true
+                  docstring_section_style: 'spacy'
+                  filters:
+                    - '!^_+'  # hide private functions
+                    - '^__\w+__'  # show built-in function
 watch:
     - ../../clayrs

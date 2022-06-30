@@ -1,16 +1,16 @@
-from abc import abstractmethod
-from typing import List
-
 from textblob import TextBlob
-import numpy as np
 
-from clayrs.content_analyzer.ratings_manager.rating_processor import SentimentAnalysis
+from clayrs.content_analyzer.ratings_manager.score_processor import SentimentAnalysis
 
 
 class TextBlobSentimentAnalysis(SentimentAnalysis):
     """
-    Interface for the textblob library that does sentimental analysis on text.
+    Class that compute sentiment polarity on a textual field using TextBlob library.
+
+    The given score will be in the $[-1.0, 1.0]$ range
     """
+    def __init__(self, decimal_rounding: int = None):
+        super().__init__(decimal_rounding)
 
     def __str__(self):
         return "TextBlobSentimentalAnalysis"
@@ -20,10 +20,13 @@ class TextBlobSentimentAnalysis(SentimentAnalysis):
 
     def fit(self, score_data: str) -> float:
         """
-        This method calculates the sentiment analysis score on textual reviews
+        This method calculates the sentiment polarity score on textual reviews
+
+        Args:
+            score_data: text for which sentiment polarity must be computed and considered as score
 
         Returns:
-            sentiment_data: a list of sentiment analysis score
+            The sentiment polarity of the textual data in range $[-1.0, 1.0]$
         """
         polarity_score = TextBlob(score_data).sentiment.polarity
 
