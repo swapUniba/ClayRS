@@ -2113,10 +2113,10 @@ their recommendation lists will be used to compute the CatalogCoverage</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__top_n</span> <span class="o">=</span> <span class="n">top_n</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__k</span> <span class="o">=</span> <span class="n">k</span>
@@ -2148,7 +2148,7 @@ their recommendation lists will be used to compute the CatalogCoverage</p>
 
 
 <h2 id="clayrs.evaluation.metrics.fairness_metrics.DeltaGap" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">DeltaGap</span><span class="p">(</span><span class="n">user_groups</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pop_percentage</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">DeltaGap</span><span class="p">(</span><span class="n">user_groups</span><span class="p">,</span> <span class="n">user_profiles</span><span class="p">,</span> <span class="n">original_ratings</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pop_percentage</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2165,14 +2165,28 @@ It's a system wide metric and results of every group will be returned.</p>
 <div class="arithmatex">\[
 \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
 \]</div>
-<p>Users are splitted into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
+<p>Users are split into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
 and percentage of how many user must contain a group as values. For example:</p>
 <div class="highlight"><pre><span></span><code>user_groups = {&#39;popular_users&#39;: 0.3, &#39;medium_popular_users&#39;: 0.2, &#39;low_popular_users&#39;: 0.5}
 </code></pre></div>
 <p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
-percentage of users we specified as value in the dictionary):
-users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-into one of the last groups. In general users are grouped by popularity in a descending order.</p>
+percentage of users we specified as value in the dictionary):</p>
+<ul>
+<li>users with many popular items will be inserted into the first group</li>
+<li>users with niche items rated will be inserted into one of the last groups.</li>
+</ul>
+<p>In general users are grouped by <span class="arithmatex">\(Popularity\_ratio\)</span> in a descending order. <span class="arithmatex">\(Popularity\_ratio\)</span> for a single user <span class="arithmatex">\(u\)</span>
+is defined as:</p>
+<div class="arithmatex">\[
+Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+\]</div>
+<p>The <em>most popular items</em> are the first <code>pop_percentage</code>% items of all items ordered in a descending order by
+popularity.</p>
+<p>The popularity of an item is defined as the number of times it is rated in the <code>original_ratings</code> parameter
+divided by the total number of users in the <code>original_ratings</code>.</p>
+<p>It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+and it won't be considered in the <span class="arithmatex">\(\Delta GAP\)</span> computation of its group. In case no user of a group has recs
+available, a warning will be printed and the whole group won't be considered.</p>
 <p>If the 'top_n' parameter is specified, then the <span class="arithmatex">\(\Delta GAP\)</span> will be calculated considering only the first
 <em>n</em> items of every recommendation list of all users</p>
 
@@ -2199,9 +2213,35 @@ slightly less popular items rated are grouped into the second one, etc.</p>
           </td>
         </tr>
         <tr>
+          <td><code>user_profiles</code></td>
+          <td class="doc-param-details">
+            <p><code>Ratings</code> object containing interactions of the profile of each user (e.g. the <strong>train set</strong>)</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>original_ratings</code></td>
+          <td class="doc-param-details">
+            <p><code>Ratings</code> object containing original interactions of the dataset that will be used to
+compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
+users)</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
           <td><code>top_n</code></td>
           <td class="doc-param-details">
-            <p>it's a cutoff parameter, if specified the Gini index will be calculated considering only ther first
+            <p>it's a cutoff parameter, if specified the Gini index will be calculated considering only their first
 'n' items of every recommendation list of all users. Default is None</p>
             <p>
                 <span class="doc-param-annotation">
@@ -2218,7 +2258,7 @@ slightly less popular items rated are grouped into the second one, etc.</p>
         <tr>
           <td><code>pop_percentage</code></td>
           <td class="doc-param-details">
-            <p>How many (in percentage) 'most popular items' must be considered. Default is 0.2</p>
+            <p>How many (in percentage) <em>most popular items</em> must be considered. Default is 0.2</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2237,19 +2277,25 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">410</span>
-<span class="normal">411</span>
-<span class="normal">412</span>
-<span class="normal">413</span>
-<span class="normal">414</span>
-<span class="normal">415</span>
-<span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pop_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">user_profiles</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">original_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
+             <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pop_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">pop_percentage</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect percentage! Valid percentage range: 0 &lt; percentage &lt;= 1&#39;</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">__pop_percentage</span> <span class="o">=</span> <span class="n">pop_percentage</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__top_n</span> <span class="o">=</span> <span class="n">top_n</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">user_groups</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pop_by_item</span> <span class="o">=</span> <span class="n">get_item_popularity</span><span class="p">(</span><span class="n">original_ratings</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_user_profiles</span> <span class="o">=</span> <span class="n">user_profiles</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__top_n</span> <span class="o">=</span> <span class="n">top_n</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pop_percentage</span> <span class="o">=</span> <span class="n">pop_percentage</span>
 </code></pre></div></td></tr></table></div>
           </details>
 
@@ -2345,23 +2391,23 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span>
-<span class="normal">465</span>
-<span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">calculate_delta_gap</span><span class="p">(</span><span class="n">recs_gap</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">profile_gap</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the ratio between the recommendation gap and the user profiles gap</span>
@@ -2402,12 +2448,12 @@ slightly less popular items rated are grouped into the second one, etc.</p>
   
       <p>Compute the GAP (Group Average Popularity) formula</p>
 <div class="arithmatex">\[
-GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
+GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|i_u|}}{|G|}
 \]</div>
 <p>Where:</p>
 <ul>
 <li><span class="arithmatex">\(G\)</span> is the set of users</li>
-<li><span class="arithmatex">\(i_u\)</span> is the set of items rated by user u</li>
+<li><span class="arithmatex">\(i_u\)</span> is the set of items rated/recommended by/to user <span class="arithmatex">\(u\)</span></li>
 <li><span class="arithmatex">\(pop_i\)</span> is the popularity of item i</li>
 </ul>
 
@@ -2473,45 +2519,45 @@ GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
-<span class="normal">433</span>
-<span class="normal">434</span>
-<span class="normal">435</span>
-<span class="normal">436</span>
-<span class="normal">437</span>
-<span class="normal">438</span>
-<span class="normal">439</span>
-<span class="normal">440</span>
-<span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
-<span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">calculate_gap</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">avg_pop_by_users</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the GAP (Group Average Popularity) formula</span>
 
 <span class="sd">    $$</span>
-<span class="sd">    GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}</span>
+<span class="sd">    GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|i_u|}}{|G|}</span>
 <span class="sd">    $$</span>
 
 <span class="sd">    Where:</span>
 
 <span class="sd">    - $G$ is the set of users</span>
-<span class="sd">    - $i_u$ is the set of items rated by user u</span>
+<span class="sd">    - $i_u$ is the set of items rated/recommended by/to user $u$</span>
 <span class="sd">    - $pop_i$ is the popularity of item i</span>
 
 <span class="sd">    Args:</span>
@@ -2522,9 +2568,9 @@ GAP = \frac{\sum_{u \in U}\cdot \frac{\sum_{i \in i_u} pop_i}{|iu|}}{|G|}
 <span class="sd">        score (float): gap score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">total_pop</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">avg_pop_by_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
-            <span class="n">total_pop</span> <span class="o">+=</span> <span class="n">avg_pop_by_users</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">avg_pop_by_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+            <span class="n">total_pop</span> <span class="o">+=</span> <span class="n">avg_pop_by_users</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">total_pop</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -2602,8 +2648,8 @@ index would be equal to 0. The more the recsys is "disegual", the more the Gini 
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
-<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__top_n</span> <span class="o">=</span> <span class="n">top_n</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2644,15 +2690,7 @@ index would be equal to 0. The more the recsys is "disegual", the more the Gini 
 
   
       <p>Abstract class for fairness metrics based on user groups</p>
-<p>It has some concrete methods useful for group divisions, since every subclass needs to split users into groups:</p>
-<p>Users are splitted into groups based on the <em>user_groups</em> parameter, which contains names of the groups as keys,
-and percentage of how many user must contain a group as values. For example:</p>
-<div class="highlight"><pre><span></span><code>user_groups = {&#39;popular_users&#39;: 0.3, &#39;medium_popular_users&#39;: 0.2, &#39;low_popular_users&#39;: 0.5}
-</code></pre></div>
-<p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
-percentage of users we specified as value in the dictionary):
-users with many popular items will be inserted into the first group, users with niche items rated will be inserted
-into one of the last groups. In general users are grouped by popularity in a descending order.</p>
+<p>It has some concrete methods useful for group divisions, since every subclass needs to split users into groups.</p>
 
   <table>
     <thead>
@@ -2682,8 +2720,8 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__user_groups</span> <span class="o">=</span> <span class="n">user_groups</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2716,7 +2754,11 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the average popularity for each user in the DataFrame</p>
+      <p>Get the average popularity for each user in the <code>data</code> parameter.</p>
+<p>Average popularity of a single user <span class="arithmatex">\(u\)</span> is defined as:</p>
+<div class="arithmatex">\[
+avg\_pop_u = \frac{\sum_{i \in i_u} pop_i}{|i_u|}
+\]</div>
 
   <table>
     <thead>
@@ -2729,7 +2771,7 @@ slightly less popular items rated are grouped into the second one, etc.</p>
         <tr>
           <td><code>data</code></td>
           <td class="doc-param-details">
-            <p>a Ratings object</p>
+            <p>The <code>Ratings</code> object that will be used to compute average popularity of each user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2745,7 +2787,7 @@ slightly less popular items rated are grouped into the second one, etc.</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="collections.Counter" href="https://docs.python.org/3/library/collections.html#collections.Counter">Counter</a></code>
+                    <code><a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></code>
                 </span>
             </p>
           </td>
@@ -2779,16 +2821,12 @@ slightly less popular items rated are grouped into the second one, etc.</p>
     <tbody>
         <tr>
           <td>
-              <code>avg_pop_by_users</code>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>]</code>
+              </span>
           </td>
           <td class="doc-returns-details">
-            <p>average popularity by user</p>
-              <p>
-                <span class="doc-returns-annotation">
-                  <b>TYPE:</b>
-                    <code>Dict&lt;str, float&gt;</code>
-                </span>
-              </p>
+            <p>Python dictionary containing as keys each user id and as values the average popularity of each user</p>
           </td>
         </tr>
     </tbody>
@@ -2796,7 +2834,16 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
@@ -2818,21 +2865,24 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
-<span class="k">def</span> <span class="nf">get_avg_pop_by_users</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">pop_by_items</span><span class="p">:</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the average popularity for each user in the DataFrame</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">get_avg_pop_by_users</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">pop_by_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the average popularity for each user in the `data` parameter.</span>
+
+<span class="sd">    Average popularity of a single user $u$ is defined as:</span>
+
+<span class="sd">    $$</span>
+<span class="sd">    avg\_pop_u = \frac{\sum_{i \in i_u} pop_i}{|i_u|}</span>
+<span class="sd">    $$</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data: a Ratings object</span>
+<span class="sd">        data: The `Ratings` object that will be used to compute average popularity of each user</span>
 <span class="sd">        pop_by_items: popularity for each label (&#39;label&#39;, &#39;popularity&#39;)</span>
 <span class="sd">        group: (optional) the set of users (user_id)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        avg_pop_by_users (Dict&lt;str, float&gt;): average popularity by user</span>
+<span class="sd">        Python dictionary containing as keys each user id and as values the average popularity of each user</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">group</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
@@ -2869,7 +2919,25 @@ slightly less popular items rated are grouped into the second one, etc.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user</p>
+      <p>Users are split into groups based on the <em>groups</em> parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:</p>
+<div class="highlight"><pre><span></span><code>groups = {&#39;popular_users&#39;: 0.3, &#39;medium_popular_users&#39;: 0.2, &#39;low_popular_users&#39;: 0.5}
+</code></pre></div>
+<p>Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):</p>
+<ul>
+<li>users with many popular items will be inserted into the first group</li>
+<li>users with niche items rated will be inserted into one of the last groups.</li>
+</ul>
+<p>In general users are grouped by <span class="arithmatex">\(Popularity\_ratio\)</span> in a descending order. <span class="arithmatex">\(Popularity\_ratio\)</span> for a
+single user <span class="arithmatex">\(u\)</span> is defined as:</p>
+<div class="arithmatex">\[
+Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+\]</div>
+<p>The <em>most popular items</em> are the first <code>pop_percentage</code>% items of all items ordered in a descending order by
+popularity.</p>
+<p>The popularity of an item is defined as the number of times it is rated in the <code>original_ratings</code> parameter
+divided by the total number of users in the <code>original_ratings</code>.</p>
 
   <table>
     <thead>
@@ -2908,7 +2976,7 @@ the rest of the users are considered in a 'default_diverse' group</p>
         <tr>
           <td><code>pop_items</code></td>
           <td class="doc-param-details">
-            <p>set of most popular 'to_id' labels</p>
+            <p>set of most popular <em>item_id</em> labels</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2930,16 +2998,13 @@ the rest of the users are considered in a 'default_diverse' group</p>
     <tbody>
         <tr>
           <td>
-              <code>groups_dict</code>
+              <span class="doc-returns-annotation">
+                  <code><a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Set" href="https://docs.python.org/3/library/typing.html#typing.Set">Set</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]</code>
+              </span>
           </td>
           <td class="doc-returns-details">
-            <p>key = group_name, value = Set of 'user_id' labels</p>
-              <p>
-                <span class="doc-returns-annotation">
-                  <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Set" href="https://docs.python.org/3/library/typing.html#typing.Set">Set</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]</code>
-                </span>
-              </p>
+            <p>A python dictionary containing as keys each group name and as values the set of <em>user_id</em> belonging to
+the particular group.</p>
           </td>
         </tr>
     </tbody>
@@ -2947,7 +3012,10 @@ the rest of the users are considered in a 'default_diverse' group</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
@@ -2997,21 +3065,59 @@ the rest of the users are considered in a 'default_diverse' group</p>
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">split_user_in_groups</span><span class="p">(</span><span class="n">score_frame</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
                          <span class="n">pop_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Splits the DataFrames in 3 different Sets, based on the recommendation popularity of each user</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Users are split into groups based on the *groups* parameter, which contains names of the groups as keys,</span>
+<span class="sd">    and percentage of how many user must contain a group as values. For example:</span>
+
+<span class="sd">        groups = {&#39;popular_users&#39;: 0.3, &#39;medium_popular_users&#39;: 0.2, &#39;low_popular_users&#39;: 0.5}</span>
+
+<span class="sd">    Every user will be inserted in a group based on how many popular items the user has rated (in relation to the</span>
+<span class="sd">    percentage of users we specified as value in the dictionary):</span>
+
+<span class="sd">    * users with many popular items will be inserted into the first group</span>
+<span class="sd">    * users with niche items rated will be inserted into one of the last groups.</span>
+
+<span class="sd">    In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a</span>
+<span class="sd">    single user $u$ is defined as:</span>
+
+<span class="sd">    $$</span>
+<span class="sd">    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u</span>
+<span class="sd">    $$</span>
+
+<span class="sd">    The *most popular items* are the first `pop_percentage`% items of all items ordered in a descending order by</span>
+<span class="sd">    popularity.</span>
+
+<span class="sd">    The popularity of an item is defined as the number of times it is rated in the `original_ratings` parameter</span>
+<span class="sd">    divided by the total number of users in the `original_ratings`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        score_frame: the Ratings object</span>
 <span class="sd">        groups: each key contains the name of the group and each value contains the</span>
 <span class="sd">            percentage of the specified group. If the groups don&#39;t cover the entire user collection,</span>
 <span class="sd">            the rest of the users are considered in a &#39;default_diverse&#39; group</span>
-<span class="sd">        pop_items: set of most popular &#39;to_id&#39; labels</span>
+<span class="sd">        pop_items: set of most popular *item_id* labels</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        groups_dict: key = group_name, value = Set of &#39;user_id&#39; labels</span>
+<span class="sd">        A python dictionary containing as keys each group name and as values the set of *user_id* belonging to</span>
+<span class="sd">            the particular group.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_of_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">score_frame</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">num_of_users</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
@@ -3025,10 +3131,8 @@ the rest of the users are considered in a 'default_diverse' group</p>
     <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect percentage! Sum of percentage is &gt; than 1&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">total</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">remaining</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">total</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># rounded at the 10th digit</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Sum of percentage is &lt; than 1, &quot;</span>
-                       <span class="sa">f</span><span class="s2">&quot;the </span><span class="si">{</span><span class="n">remaining</span><span class="si">}</span><span class="s2"> percentage of users will be inserted into the &quot;</span>
-                       <span class="s2">&quot;&#39;default_diverse&#39; group&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sum of percentage is &lt; than 1! Please add another group or redistribute percentages &quot;</span>
+                         <span class="s2">&quot;among already defined group to reach a total of 1!&quot;</span><span class="p">)</span>
 
     <span class="n">pop_ratio_by_users</span> <span class="o">=</span> <span class="n">pop_ratio_by_user</span><span class="p">(</span><span class="n">score_frame</span><span class="p">,</span> <span class="n">most_pop_items</span><span class="o">=</span><span class="n">pop_items</span><span class="p">)</span>
     <span class="n">pop_ratio_by_users</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">pop_ratio_by_users</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -3044,9 +3148,6 @@ the rest of the users are considered in a 'default_diverse' group</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">groups_dict</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">[</span><span class="n">last_index</span><span class="p">:</span><span class="n">group_index</span><span class="p">])</span>
             <span class="n">last_index</span> <span class="o">=</span> <span class="n">group_index</span>
-    <span class="k">if</span> <span class="n">percentage</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">group_index</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_of_users</span><span class="p">)</span>
-        <span class="n">groups_dict</span><span class="p">[</span><span class="s1">&#39;default_diverse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pop_ratio_by_users</span><span class="p">[</span><span class="n">last_index</span><span class="p">:</span><span class="n">group_index</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">groups_dict</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -3118,8 +3219,8 @@ Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/fairness_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">239</span>
-<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">254</span>
+<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__catalog</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">catalog</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -3206,10 +3307,24 @@ Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
+    <div class="md-copyright__highlight">
+      Documentation made by Antonio Silletti
+    </div>
+  
   
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/swapUniba" target="_blank" rel="noopener" title="Swap Uniba on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
 </div>
