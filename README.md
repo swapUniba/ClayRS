@@ -39,7 +39,7 @@ via `pip`, as *ClayRS* itself.
 To install it execute the following command:
 
 ``
-pip install git+https://github.com/SwapUniba/clayrs.git
+pip install clayrs
 ``
 
 ## Usage
