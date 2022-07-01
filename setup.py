@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 setup(name='clayrs',
       version=VERSION,
@@ -17,6 +17,7 @@ setup(name='clayrs',
       description='Complexly represent contents, build recommender systems, evaluate them. All in one place!',
       long_description=long_description,
       long_description_content_type="text/markdown",
+      keywords=['recommender system', 'cbrs', 'evaluation', 'recsys'],
       url='https://github.com/swapUniba/ClayRS',
       include_package_data=True,
       packages=setuptools.find_packages(),
