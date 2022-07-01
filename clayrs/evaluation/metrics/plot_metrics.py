@@ -1,6 +1,7 @@
 import itertools
 from collections import Counter
 from pathlib import Path
+from typing import Union
 
 import matplotlib as mpl
 import matplotlib.figure
@@ -213,12 +214,15 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
     The csv will be saved as `out_dir/file_name.csv`
 
+    ***Please note***: once computed, the DeltaGAP class needs to be re-instantiated in case you want to compute it
+    again!
 
     Args:
         user_groups (Dict<str, float>): Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
-        user_profiles: `Ratings` object containing interactions of the profile of each user (e.g. the **train set**)
+        user_profiles: one or more `Ratings` objects containing interactions of the profile of each user
+            (e.g. the **train set**). It should be one for each split to evaluate!
         original_ratings: `Ratings` object containing original interactions of the dataset that will be used to
             compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
             users)
@@ -233,7 +237,7 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
             ('file_name.format'). Default is False
     """
 
-    def __init__(self, user_groups: Dict[str, float],  user_profiles: Ratings, original_ratings: Ratings,
+    def __init__(self, user_groups: Dict[str, float],  user_profiles: Union[list, Ratings], original_ratings: Ratings,
                  out_dir: str = '.', file_name: str = 'pop_ratio_profile_vs_recs', pop_percentage: float = 0.2,
                  store_frame: bool = False, format: str = 'png', overwrite: bool = False):
 
@@ -244,16 +248,28 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
             raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
         self._pop_by_item = get_item_popularity(original_ratings)
+
+        if not isinstance(user_profiles, list):
+            user_profiles = [user_profiles]
+
         self._user_profiles = user_profiles
         self.__pop_percentage = pop_percentage
         self.__user_groups = user_groups
         self.__store_frame = store_frame
 
     def perform(self, split: Split) -> pd.DataFrame:
+
+        try:
+            split_user_profile = self._user_profiles.pop(0)
+        except IndexError:
+            raise ValueError("The user_profiles parameter must contain one user profile frame for each split!\n"
+                             "Please also notice that PopRatioProfileVsRecs must be re-instantiated each time you want "
+                             "to compute it!")
+
         predictions = split.pred
 
         most_pop_items = get_most_popular_items(self._pop_by_item, self.__pop_percentage)
-        splitted_user_groups = self.split_user_in_groups(score_frame=self._user_profiles, groups=self.user_groups,
+        splitted_user_groups = self.split_user_in_groups(score_frame=split_user_profile, groups=self.user_groups,
                                                          pop_items=most_pop_items)
 
         split_result = {'user_group': [], 'profile_pop_ratio': [], 'recs_pop_ratio': []}
@@ -269,7 +285,7 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
                                f"for any user of said group!")
                 continue
 
-            profile_group_ratings = self._user_profiles.filter_ratings(user_list=valid_group)
+            profile_group_ratings = split_user_profile.filter_ratings(user_list=valid_group)
             pred_group_recommendations = predictions.filter_ratings(user_list=valid_group)
 
             profile_pop_ratios = pop_ratio_by_user(profile_group_ratings, most_pop_items)
@@ -488,8 +504,8 @@ class PopRecsCorrelation(PlotMetric):
         ax.scatter(x, y, marker='o', s=20, c='orange', edgecolors='black',
                    linewidths=0.05)
 
-        loc = plticker.MultipleLocator(base=1.0)  # this locator puts ticks at regular intervals
-        ax.yaxis.set_major_locator(loc)
+        # automatic ticks but only integer ones
+        ax.yaxis.set_major_locator(plticker.MaxNLocator(integer=True))
 
         return fig
 

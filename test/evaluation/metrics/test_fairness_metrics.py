@@ -660,6 +660,43 @@ class TestDeltaGap(unittest.TestCase):
         # since users are put into groups differently
         self.assertFalse(np.array_equal(result_pop_normal, result_pop_increased))
 
+    def test_perform_2_groups_2_splits(self):
+        metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                          user_profiles=[self.train, self.train],
+                          original_ratings=self.original_ratings)
+
+        # we are simulating two splits
+        for _ in range(2):
+            result = metric.perform(self.split)
+
+            # since u2 and u4 have higher popular ratio, it is put into the first group)
+            valid_group_a = {'u2', 'u4'}
+
+            # u6 won't be considered in computation since we don't have recs for it,
+            # but it should belong to group b
+            valid_group_b = {'u3', 'u1', 'u5'}
+
+            valid_groups_splitted = {'a': valid_group_a, 'b': valid_group_b}
+
+            [expected_delta_gap_group_a, expected_delta_gap_group_b] = self._compute_deltagap(valid_groups_splitted)
+
+            result_delta_gap_group_a = float(result["{} | a".format(str(metric))])
+            result_delta_gap_group_b = float(result["{} | b".format(str(metric))])
+
+            self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
+            self.assertAlmostEqual(expected_delta_gap_group_b, result_delta_gap_group_b)
+
+    def test_perform_2_splits_error(self):
+        metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
+                          user_profiles=self.train,
+                          original_ratings=self.original_ratings)
+
+        metric.perform(self.split)
+
+        # we are simulating two splits but only one user profile metric given to the metric
+        with self.assertRaises(ValueError):
+            metric.perform(self.split)
+
 
 if __name__ == '__main__':
     unittest.main()

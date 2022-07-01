@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Set, List
+from typing import Dict, Set, List, Union
 
 from clayrs.content_analyzer import Ratings
 from clayrs.evaluation.metrics.metrics import Metric
@@ -431,11 +431,15 @@ class DeltaGap(GroupFairnessMetric):
     If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
     *n* items of every recommendation list of all users
 
+    ***Please note***: once computed, the DeltaGAP class needs to be re-instantiated in case you want to compute it
+        again!
+
     Args:
         user_groups: Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
             slightly less popular items rated are grouped into the second one, etc.
-        user_profiles: `Ratings` object containing interactions of the profile of each user (e.g. the **train set**)
+        user_profiles: one or more `Ratings` objects containing interactions of the profile of each user
+            (e.g. the **train set**). It should be one for each split to evaluate!
         original_ratings: `Ratings` object containing original interactions of the dataset that will be used to
             compute the popularity of each item (i.e. the number of times it is rated divided by the total number of
             users)
@@ -444,13 +448,16 @@ class DeltaGap(GroupFairnessMetric):
         pop_percentage: How many (in percentage) *most popular items* must be considered. Default is 0.2
     """
 
-    def __init__(self, user_groups: Dict[str, float], user_profiles: Ratings, original_ratings: Ratings,
+    def __init__(self, user_groups: Dict[str, float], user_profiles: Union[list, Ratings], original_ratings: Ratings,
                  top_n: int = None, pop_percentage: float = 0.2):
         if not 0 < pop_percentage <= 1:
             raise ValueError('Incorrect percentage! Valid percentage range: 0 < percentage <= 1')
 
         super().__init__(user_groups)
         self._pop_by_item = get_item_popularity(original_ratings)
+
+        if not isinstance(user_profiles, list):
+            user_profiles = [user_profiles]
         self._user_profiles = user_profiles
         self.__top_n = top_n
         self._pop_percentage = pop_percentage
@@ -512,13 +519,21 @@ class DeltaGap(GroupFairnessMetric):
         return result
 
     def perform(self, split: Split) -> pd.DataFrame:
+
+        try:
+            split_user_profile = self._user_profiles.pop(0)
+        except IndexError:
+            raise ValueError("The user_profiles parameter must contain one user profile frame for each split!\n"
+                             "Please also notice that DeltaGAP must be re-instantiated each time you want to compute "
+                             "it!")
+
         predictions = split.pred
 
         if self.__top_n:
             predictions = predictions.take_head_all(self.__top_n)
 
         most_pop_items = get_most_popular_items(self._pop_by_item, self._pop_percentage)
-        splitted_user_groups = self.split_user_in_groups(score_frame=self._user_profiles, groups=self.user_groups,
+        splitted_user_groups = self.split_user_in_groups(score_frame=split_user_profile, groups=self.user_groups,
                                                          pop_items=most_pop_items)
 
         split_result = defaultdict(list)
@@ -537,7 +552,7 @@ class DeltaGap(GroupFairnessMetric):
             # Computing avg pop by users recs for delta gap
             avg_pop_by_users_recs = self.get_avg_pop_by_users(predictions, self._pop_by_item, valid_group)
             # Computing avg pop by users profiles for delta gap
-            avg_pop_by_users_profiles = self.get_avg_pop_by_users(self._user_profiles, self._pop_by_item, valid_group)
+            avg_pop_by_users_profiles = self.get_avg_pop_by_users(split_user_profile, self._pop_by_item, valid_group)
 
             # Computing delta gap for every group
             recs_gap = self.calculate_gap(group=valid_group, avg_pop_by_users=avg_pop_by_users_recs)
