@@ -662,7 +662,7 @@ class TestDeltaGap(unittest.TestCase):
 
     def test_perform_2_groups_2_splits(self):
         metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
-                          user_profiles=[self.train, self.split.truth],
+                          user_profiles=[self.train, self.train],
                           original_ratings=self.original_ratings)
 
         # we are simulating two splits
