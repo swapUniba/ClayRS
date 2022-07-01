@@ -52,6 +52,7 @@ nav:
     - 'First steps':
         - Installation: 'first_steps/installation.md'
         - Quickstart: 'first_steps/quickstart.md'
+        - 'Colab examples': 'first_steps/colab_examples.md'
     - 'Content Analyzer':
         - Introduction: 'content_analyzer/introduction.md'
         - 'Content Analyzer config and class': 'content_analyzer/config.md'
