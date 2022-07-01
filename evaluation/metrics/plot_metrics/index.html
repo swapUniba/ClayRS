@@ -2103,15 +2103,15 @@ in the same directory where the python script it's being executed</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
-<span class="normal">113</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
-<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;long_tail_distr&#39;</span><span class="p">,</span> <span class="n">on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;truth&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span>
+<span class="normal">120</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;long_tail_distr&#39;</span><span class="p">,</span> <span class="n">on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;truth&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span>
              <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="n">valid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;truth&#39;</span><span class="p">,</span> <span class="s1">&#39;pred&#39;</span><span class="p">}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__on</span> <span class="o">=</span> <span class="n">on</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -2190,6 +2190,8 @@ so that for every split a plot is generated without overwriting any file previou
 to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
 with the .csv format):</p>
 <p>The csv will be saved as <code>out_dir/file_name.csv</code></p>
+<p><strong><em>Please note</em></strong>: once computed, the DeltaGAP class needs to be re-instantiated in case you want to compute it
+again!</p>
 
   <table>
     <thead>
@@ -2216,11 +2218,12 @@ slightly less popular items rated are grouped into the second one, etc.</p>
         <tr>
           <td><code>user_profiles</code></td>
           <td class="doc-param-details">
-            <p><code>Ratings</code> object containing interactions of the profile of each user (e.g. the <strong>train set</strong>)</p>
+            <p>one or more <code>Ratings</code> objects containing interactions of the profile of each user
+(e.g. the <strong>train set</strong>). It should be one for each split to evaluate!</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>, <a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a>]</code>
                 </span>
             </p>
           </td>
@@ -2344,11 +2347,7 @@ False otherwise. Default is set to False</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">240</span>
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
@@ -2358,7 +2357,15 @@ False otherwise. Default is set to False</p>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
-<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>  <span class="n">user_profiles</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">original_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>  <span class="n">user_profiles</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Ratings</span><span class="p">],</span> <span class="n">original_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
              <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pop_ratio_profile_vs_recs&#39;</span><span class="p">,</span> <span class="n">pop_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
              <span class="n">store_frame</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
@@ -2369,6 +2376,10 @@ False otherwise. Default is set to False</p>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect percentage! Valid percentage range: 0 &lt; percentage &lt;= 1&#39;</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_pop_by_item</span> <span class="o">=</span> <span class="n">get_item_popularity</span><span class="p">(</span><span class="n">original_ratings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_profiles</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">user_profiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_profiles</span><span class="p">]</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">_user_profiles</span> <span class="o">=</span> <span class="n">user_profiles</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__pop_percentage</span> <span class="o">=</span> <span class="n">pop_percentage</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__user_groups</span> <span class="o">=</span> <span class="n">user_groups</span>
@@ -2550,22 +2561,22 @@ Check the class documentation for more</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
-<span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
              <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
              <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pop_recs_correlation&#39;</span><span class="p">,</span>
              <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span>
@@ -2649,22 +2660,22 @@ Note that the '_no_zeros' string is automatically added to the file_name chosen<
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
-<span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
-<span class="normal">521</span>
-<span class="normal">522</span>
-<span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
-<span class="normal">527</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_no_zeros_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">popularity</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_no_zeros_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">popularity</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which builds and saves the plot **excluding** eventual *zero recommendations*</span>
 <span class="sd">    It saves the plot as *out_dir/filename_no_zeros.format*, according to their value passed in the constructor.</span>
@@ -2771,23 +2782,7 @@ X-axis label and Y-axis label are hard-coded as 'Popularity' and 'Recommendation
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span>
-<span class="normal">472</span>
-<span class="normal">473</span>
-<span class="normal">474</span>
-<span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span>
-<span class="normal">478</span>
-<span class="normal">479</span>
-<span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span>
-<span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">485</span>
 <span class="normal">486</span>
 <span class="normal">487</span>
 <span class="normal">488</span>
@@ -2796,7 +2791,23 @@ X-axis label and Y-axis label are hard-coded as 'Popularity' and 'Recommendation
 <span class="normal">491</span>
 <span class="normal">492</span>
 <span class="normal">493</span>
-<span class="normal">494</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which builds a matplotlib plot given x-axis values, y-axis values and the title of the plot.</span>
 <span class="sd">    X-axis label and Y-axis label are hard-coded as &#39;Popularity&#39; and &#39;Recommendation frequency&#39; respectively.</span>
@@ -2818,8 +2829,8 @@ X-axis label and Y-axis label are hard-coded as 'Popularity' and 'Recommendation
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
                <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 
-    <span class="n">loc</span> <span class="o">=</span> <span class="n">plticker</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># this locator puts ticks at regular intervals</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+    <span class="c1"># automatic ticks but only integer ones</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plticker</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">fig</span>
 </code></pre></div></td></tr></table></div>
@@ -2880,21 +2891,21 @@ It saves the plot as <em>out_dir/filename.format</em>, according to their value 
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/plot_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">496</span>
-<span class="normal">497</span>
-<span class="normal">498</span>
-<span class="normal">499</span>
-<span class="normal">500</span>
-<span class="normal">501</span>
-<span class="normal">502</span>
-<span class="normal">503</span>
-<span class="normal">504</span>
-<span class="normal">505</span>
-<span class="normal">506</span>
-<span class="normal">507</span>
-<span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_w_zeros_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">popularity</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_w_zeros_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">popularity</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which builds and saves the plot containing eventual *zero recommendations*</span>
 <span class="sd">    It saves the plot as *out_dir/filename.format*, according to their value passed in the constructor</span>
