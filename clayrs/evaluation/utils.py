@@ -94,6 +94,6 @@ def get_avg_pop(items: List, pop_by_item: Dict) -> float:
         The average popularity of the input `items` list
     """
 
-    popularities = [pop_by_item[item] for item in items]
+    popularities = [pop_by_item.get(item, 0.0) for item in items]
 
     return sum(popularities) / len(items)

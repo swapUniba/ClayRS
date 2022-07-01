@@ -227,6 +227,15 @@ class TestEvalModel(TestCase):
 
     def test_fit_user_list(self):
         # we compute evaluation only for a certain users
+
+        # we must also cut user profiles of DeltaGAP by only considering u1, u2, u3
+        self.metric_list.pop(4)
+        self.metric_list.append(DeltaGap({'a': 0.2, 'b': 0.5, 'c': 0.3},
+                                         user_profiles=[train_1.filter_ratings(['u1', 'u2', 'u3']),
+                                                        train_2.filter_ratings(['u1', 'u2', 'u3'])],
+                                         original_ratings=original_ratings.filter_ratings(['u1', 'u2', 'u3']))
+                                )
+
         em = EvalModel(pred_list, truth_list, self.metric_list)
         sys_result, user_results = em.fit(['u1', 'u2', 'u3'])
 
