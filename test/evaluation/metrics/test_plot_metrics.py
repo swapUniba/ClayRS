@@ -220,6 +220,23 @@ class TestPopProfileVsRecs(TestCase):
         self.assertTrue(os.path.isfile(os.path.join('test_prof_recs', 'prof_vs_recs_svg_format.svg')))
         self.assertTrue(os.path.isfile(os.path.join('test_prof_recs', 'prof_vs_recs_svg_format.csv')))
 
+    def test_perform_more_splits(self):
+        # Save on same folder
+        metric = PopRatioProfileVsRecs(user_groups={'a': 0.5, 'b': 0.5},
+                                       user_profiles=[train, train],
+                                       original_ratings=original_ratings,
+                                       out_dir='test_more_splits')
+        metric.perform(split)
+        self.assertTrue(os.path.isfile('test_more_splits/pop_ratio_profile_vs_recs.png'))
+
+        # simulate 2 split call
+        metric.perform(split)
+        self.assertTrue(os.path.isfile('test_more_splits/pop_ratio_profile_vs_recs (1).png'))
+
+        # simulate 3 split call but we only passed 2 user profiles frame
+        with self.assertRaises(ValueError):
+            metric.perform(split)
+
     def test_overwrite(self):
         # Save on an existent folder with a specified file_name
         # Save also the frame used to build the box_plot
@@ -278,6 +295,7 @@ class TestPopProfileVsRecs(TestCase):
         os.remove('pop_ratio_profile_vs_recs.png')
         os.remove('pop_ratio_profile_vs_recs.svg')
         shutil.rmtree('test_prof_recs')
+        shutil.rmtree('test_more_splits')
 
 
 class TestPopRecsCorrelation(TestCase):
