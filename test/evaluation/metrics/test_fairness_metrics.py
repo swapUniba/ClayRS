@@ -500,7 +500,7 @@ class TestDeltaGap(unittest.TestCase):
             }
 
             # compute for each user of the group the average popularity in the recommendations
-            # (sum_pop_item_recommended / n_item_recommended)ù
+            # (sum_pop_item_recommended / n_item_recommended)
             # (cut the ranking list if top_n != None)
             RECS_avg_pop_group = {user: sum_pop / len(self.split.pred.get_user_interactions(user)[:top_n])
                                   for user, sum_pop in RECS_sum_pop_group.items()}
@@ -686,16 +686,14 @@ class TestDeltaGap(unittest.TestCase):
             self.assertAlmostEqual(expected_delta_gap_group_a, result_delta_gap_group_a)
             self.assertAlmostEqual(expected_delta_gap_group_b, result_delta_gap_group_b)
 
-    def test_perform_2_splits_error(self):
+    def test_perform_repeated(self):
         metric = DeltaGap(user_groups={'a': 0.4, 'b': 0.6},
                           user_profiles=self.train,
                           original_ratings=self.original_ratings)
 
-        metric.perform(self.split)
-
         # we are simulating two splits but only one user profile metric given to the metric
-        with self.assertRaises(ValueError):
-            metric.perform(self.split)
+        metric.perform(self.split)
+        metric.perform(self.split)
 
 
 if __name__ == '__main__':

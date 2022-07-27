@@ -9,7 +9,6 @@ from clayrs.content_analyzer import Ratings, Rank
 from clayrs.evaluation.metrics.plot_metrics import LongTailDistr, PopRatioProfileVsRecs, PopRecsCorrelation
 from clayrs.recsys import Split
 
-
 original_ratings = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1',
                  'u2', 'u2', 'u2', 'u2', 'u2',
@@ -171,7 +170,7 @@ class TestLongTail(TestCase):
         shutil.rmtree('test_long')
 
 
-class TestPopProfileVsRecs(TestCase):
+class TestPopRatioProfileVsRecs(TestCase):
     def test_perform(self):
         # Save on same folder
         metric = PopRatioProfileVsRecs(user_groups={'a': 0.5, 'b': 0.5},
@@ -223,7 +222,7 @@ class TestPopProfileVsRecs(TestCase):
     def test_perform_more_splits(self):
         # Save on same folder
         metric = PopRatioProfileVsRecs(user_groups={'a': 0.5, 'b': 0.5},
-                                       user_profiles=[train, train],
+                                       user_profiles=[train, truth],
                                        original_ratings=original_ratings,
                                        out_dir='test_more_splits')
         metric.perform(split)
@@ -233,9 +232,12 @@ class TestPopProfileVsRecs(TestCase):
         metric.perform(split)
         self.assertTrue(os.path.isfile('test_more_splits/pop_ratio_profile_vs_recs (1).png'))
 
-        # simulate 3 split call but we only passed 2 user profiles frame
-        with self.assertRaises(ValueError):
-            metric.perform(split)
+        # simulate 3 split call, even if we only passed 2 user profiles frame
+        # we will generate again the first plot
+        metric.perform(split)
+        self.assertTrue(os.path.isfile('test_more_splits/pop_ratio_profile_vs_recs (2).png'))
+        self.assertEqual(os.path.getsize('test_more_splits/pop_ratio_profile_vs_recs.png'),
+                         os.path.getsize('test_more_splits/pop_ratio_profile_vs_recs (2).png'))
 
     def test_overwrite(self):
         # Save on an existent folder with a specified file_name
@@ -290,17 +292,16 @@ class TestPopProfileVsRecs(TestCase):
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).png')))
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).csv')))
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        os.remove('pop_ratio_profile_vs_recs.png')
-        os.remove('pop_ratio_profile_vs_recs.svg')
-        shutil.rmtree('test_prof_recs')
-        shutil.rmtree('test_more_splits')
+    # @classmethod
+    # def tearDownClass(cls) -> None:
+    #     os.remove('pop_ratio_profile_vs_recs.png')
+    #     os.remove('pop_ratio_profile_vs_recs.svg')
+    #     shutil.rmtree('test_prof_recs')
+    #     shutil.rmtree('test_more_splits')
 
 
 class TestPopRecsCorrelation(TestCase):
     def test_perform(self):
-
         # Save on same folder
         metric = PopRecsCorrelation(original_ratings=original_ratings)
         metric.perform(split)
@@ -363,7 +364,8 @@ class TestPopRecsCorrelation(TestCase):
         metric.perform(split_no_zero_present)
         self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/both_identical', 'pop_recs_correlation.png')))
         # If The 'no-zeros' is created, its file_name will be: file_name = file_name + '_no_zeros'
-        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/both_identical', 'pop_recs_correlation_no_zeros.png')))
+        self.assertTrue(
+            os.path.isfile(os.path.join('test_pop_recs/both_identical', 'pop_recs_correlation_no_zeros.png')))
 
     def test_perform_w_zeros(self):
         # Save only 'w-zeros' graph
@@ -402,7 +404,8 @@ class TestPopRecsCorrelation(TestCase):
         metric.perform(split)
         self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (1).png')))
         # If The 'no-zeros' is created, its file_name will be: file_name = file_name + '_no_zeros'
-        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation_no_zeros (1).png')))
+        self.assertTrue(
+            os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation_no_zeros (1).png')))
 
         # Save both graph already existent for the second time
         metric = PopRecsCorrelation(original_ratings=original_ratings,
@@ -411,7 +414,8 @@ class TestPopRecsCorrelation(TestCase):
         metric.perform(split)
         self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation (2).png')))
         # If The 'no-zeros' is created, its file_name will be: file_name = file_name + '_no_zeros'
-        self.assertTrue(os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation_no_zeros (2).png')))
+        self.assertTrue(
+            os.path.isfile(os.path.join('test_pop_recs/overwrite', 'pop_recs_correlation_no_zeros (2).png')))
 
         # Save both graph already existent but overwrite them
         metric = PopRecsCorrelation(original_ratings=original_ratings,

@@ -1,4 +1,3 @@
-import inspect
 import itertools
 import random
 from abc import abstractmethod
@@ -431,9 +430,6 @@ class DeltaGap(GroupFairnessMetric):
     If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
     *n* items of every recommendation list of all users
 
-    ***Please note***: once computed, the DeltaGAP class needs to be re-instantiated in case you want to compute it
-        again!
-
     Args:
         user_groups: Dict containing group names as keys and percentage of users as value, used to
             split users in groups. Users with more popular items rated are grouped into the first group, users with
@@ -520,12 +516,12 @@ class DeltaGap(GroupFairnessMetric):
 
     def perform(self, split: Split) -> pd.DataFrame:
 
-        try:
-            split_user_profile = self._user_profiles.pop(0)
-        except IndexError:
-            raise ValueError("The user_profiles parameter must contain one user profile frame for each split!\n"
-                             "Please also notice that DeltaGAP must be re-instantiated each time you want to compute "
-                             "it!")
+        # in order to point to the right `user_profile` set each time the
+        # `perform()` method is called, we pop the list but add the `user_profile` set
+        # back at the end so that DeltaGap is ready for another evaluation without
+        # need to instantiate it again
+        split_user_profile = self._user_profiles.pop(0)
+        self._user_profiles.append(split_user_profile)
 
         predictions = split.pred
 

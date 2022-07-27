@@ -259,12 +259,12 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
 
     def perform(self, split: Split) -> pd.DataFrame:
 
-        try:
-            split_user_profile = self._user_profiles.pop(0)
-        except IndexError:
-            raise ValueError("The user_profiles parameter must contain one user profile frame for each split!\n"
-                             "Please also notice that PopRatioProfileVsRecs must be re-instantiated each time you want "
-                             "to compute it!")
+        # in order to point to the right `user_profile` set each time the
+        # `perform()` method is called, we pop the list but add the `user_profile` set
+        # back at the end so that PopRatioProfileVsRecs is ready for another evaluation without
+        # need to instantiate it again
+        split_user_profile = self._user_profiles.pop(0)
+        self._user_profiles.append(split_user_profile)
 
         predictions = split.pred
 
