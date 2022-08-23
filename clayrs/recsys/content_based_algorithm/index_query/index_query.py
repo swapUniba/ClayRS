@@ -116,6 +116,7 @@ class IndexQuery(ContentBasedAlgorithm):
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         threshold = self.threshold
         if threshold is None:
@@ -130,7 +131,9 @@ class IndexQuery(ContentBasedAlgorithm):
 
         ix = available_loaded_items.get_contents_interface()
 
-        for item_id, score in zip(items_scores_dict.keys(), items_scores_dict.values()):
+        # we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!
+        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
+        for item_id, score in items_scores_dict.items():
             if score >= threshold:
                 # {item_id: {"item": item_dictionary, "score": item_score}}
                 item_query = ix.query(item_id, 1, classic_similarity=self._classic_similarity)

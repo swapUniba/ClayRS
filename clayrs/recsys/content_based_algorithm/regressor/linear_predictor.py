@@ -91,16 +91,19 @@ class LinearPredictor(ContentBasedAlgorithm):
                 rated by the user
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Create list of all the available items that are useful for the user
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
                                                                                           for item_id
-                                                                                          in set(items_scores_dict.keys())])
+                                                                                          in items_scores_dict.keys()])
 
         # Assign label and extract features from the rated items
         labels = []
         rated_dict = {}
 
+        # we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!
+        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
         for item in loaded_rated_items:
             if item is not None:
                 # This conversion raises Exception when there are multiple equals 'to_id' for the user

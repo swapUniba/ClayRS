@@ -88,6 +88,7 @@ class CentroidVector(ContentBasedAlgorithm):
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
         items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Load rated items from the path
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
@@ -100,7 +101,8 @@ class CentroidVector(ContentBasedAlgorithm):
         if threshold is None:
             threshold = self._calc_mean_user_threshold(user_ratings)
 
-        # Calculates labels and extract features from the positive rated items
+        # we extract feature of each POSITIVE item sorted based on its key: IMPORTANT for reproducibility!!
+        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
         positive_rated_dict = {}
         for item in loaded_rated_items:
             if item is not None:
