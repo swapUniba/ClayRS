@@ -1,6 +1,5 @@
 import contextlib
 import os
-
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 from clayrs.utils.custom_logger import getCustomLogger
@@ -15,8 +14,8 @@ logger = getCustomLogger('custom_logger')
 
 
 @contextlib.contextmanager
-def get_progbar(iterator) -> tqdm:
+def get_progbar(iterator, total=None) -> tqdm:
     bar_format = "{desc} {percentage:.0f}%|{bar}| {n:}/{total_fmt} [{elapsed}<{remaining}]"
     with logging_redirect_tqdm(loggers=[logger]):
-        with tqdm(iterator, bar_format=bar_format) as pbar:
+        with tqdm(iterator, bar_format=bar_format, total=total) as pbar:
             yield pbar
