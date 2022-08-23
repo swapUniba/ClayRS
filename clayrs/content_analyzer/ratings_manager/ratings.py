@@ -5,7 +5,7 @@ import itertools
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Generator
+from typing import Dict, Union, List, Iterable, Iterator
 
 import pandas as pd
 
@@ -531,7 +531,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_list(cls, interaction_list: Union[List[Interaction], Generator]) -> Ratings:
+    def from_list(cls, interaction_list: Union[List[Interaction], Iterator]) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`
         objects or its generator
@@ -558,7 +558,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Generator]) -> Ratings:
+    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Iterator]) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing
         user_id as keys and lists of `Interaction` objects as value
