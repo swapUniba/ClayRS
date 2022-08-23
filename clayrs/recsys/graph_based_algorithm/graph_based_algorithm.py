@@ -1,10 +1,11 @@
 import abc
 from typing import Dict, List, Set, Union
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from clayrs.recsys.algorithm import Algorithm
 
 from clayrs.recsys.graphs.graph import UserNode, Node, Graph, ItemNode, BipartiteDiGraph
+from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
 
 
 class GraphBasedAlgorithm(Algorithm):
@@ -52,7 +53,9 @@ class GraphBasedAlgorithm(Algorithm):
         return filtered_result
 
     @abc.abstractmethod
-    def predict(self, all_users: Set[str], graph: Graph, filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+    def predict(self, all_users: Set[str], graph: Graph, test_set: Ratings,
+                methodology: Methodology = TestRatingsMethodology(),
+                num_cpus: int = 0) -> List[Interaction]:
         """
         Abstract method that predicts how much a user will like unrated items.
         If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -78,8 +81,9 @@ class GraphBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, all_users: Set[str], graph: Graph, recs_number: int = None,
-             filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+    def rank(self, all_users: Set[str], graph: Graph, test_set: Ratings,
+             recs_number: int = None, methodology: Methodology = TestRatingsMethodology(),
+             num_cpus: int = 0) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).

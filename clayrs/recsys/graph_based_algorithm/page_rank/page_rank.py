@@ -1,10 +1,11 @@
-from typing import List, Set, Dict
+from typing import List, Set
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from clayrs.recsys.graphs import NXBipartiteGraph
 
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
 
 
 class PageRank(GraphBasedAlgorithm):
@@ -24,8 +25,9 @@ class PageRank(GraphBasedAlgorithm):
         self._personalized = personalized
         super().__init__()
 
-    def predict(self, all_users: Set[str], graph: NXBipartiteGraph,
-                filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+    def predict(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
+                methodology: Methodology = TestRatingsMethodology(),
+                num_cpus: int = 0) -> List[Interaction]:
         """
         PageRank is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
