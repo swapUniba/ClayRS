@@ -27,6 +27,7 @@ jobs:
           pip install --upgrade pip
           pip install wheel pytest==7.0.0 pytest-cov==3.00
           pip install -r requirements.txt
+          python setup.py install
       -
         name: Test
         run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=clayrs test/
