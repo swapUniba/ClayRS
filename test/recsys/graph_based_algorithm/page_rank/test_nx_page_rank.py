@@ -39,7 +39,7 @@ class TestNXPageRank(TestCase):
 
         # Will raise Exception since it's not a Score Prediction Algorithm
         with self.assertRaises(NotPredictionAlg):
-            alg.predict({'A000'}, self.graph)
+            alg.predict({'A000'}, self.graph, test_set)
 
     def test_rank(self):
         # test not personalized
