@@ -20,13 +20,12 @@ jobs:
         name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8 #install the python needed
+          python-version: 3.8
       -
         name: Setup installation requirements
         run: |
           pip install --upgrade pip
           pip install wheel pytest==7.0.0 pytest-cov==3.00
-          pip install -r requirements.txt
           python setup.py install
       -
         name: Test
