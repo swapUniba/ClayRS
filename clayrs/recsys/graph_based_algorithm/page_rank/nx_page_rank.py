@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Set, Any
+from typing import List, Set, Any, Union
 
 import networkx as nx
 import distex
@@ -43,7 +43,7 @@ class NXPageRank(PageRank):
         super().__init__(personalized)
 
     def rank(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
-             recs_number: int = None, methodology: Methodology = TestRatingsMethodology(),
+             recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
              num_cpu: int = 0) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
