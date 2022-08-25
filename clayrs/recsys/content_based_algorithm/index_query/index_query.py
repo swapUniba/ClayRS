@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Optional
 import re
 
@@ -115,32 +116,39 @@ class IndexQuery(ContentBasedAlgorithm):
             user_ratings: List of Interaction objects for a single user
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
-        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        # a list since there could be duplicate interaction (eg bootstrap partitioning)
+        items_scores_dict = defaultdict(list)
+        for interaction in user_ratings:
+            items_scores_dict[interaction.item_id].append(interaction.score)
+
         items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         threshold = self.threshold
         if threshold is None:
             threshold = self._calc_mean_user_threshold(user_ratings)
 
-        # Initializes positive_user_docs which is a dictionary that has the document_id as key and
-        # another dictionary as value. The dictionary value has the name of the field as key
+        # Initializes positive_user_docs which is a list that has tuples with document_id as first element and
+        # a dictionary as second. The dictionary value has the name of the field as key
         # and its contents as value. By doing so we obtain the data of the fields while
         # also storing information regarding the field and the document where it was
         scores = []
-        positive_user_docs = {}
+        positive_user_docs = []
 
         ix = available_loaded_items.get_contents_interface()
 
         # we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!
-        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
-        for item_id, score in items_scores_dict.items():
-            if score >= threshold:
-                # {item_id: {"item": item_dictionary, "score": item_score}}
-                item_query = ix.query(item_id, 1, classic_similarity=self._classic_similarity)
-                if len(item_query) != 0:
-                    item = item_query.pop(item_id).get('item')
-                    scores.append(score)
-                    positive_user_docs[item_id] = self._get_representations(item)
+        for item_id, score_list in items_scores_dict.items():
+
+            score_assigned = map(float, score_list)
+
+            for score in score_assigned:
+                if score >= threshold:
+                    # {item_id: {"item": item_dictionary, "score": item_score}}
+                    item_query = ix.query(item_id, results_number=1, classic_similarity=self._classic_similarity)
+                    if len(item_query) != 0:
+                        item = item_query.pop(item_id).get('item')
+                        scores.append(score)
+                        positive_user_docs.append((item_id, self._get_representations(item)))
 
         if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
@@ -169,12 +177,12 @@ class IndexQuery(ContentBasedAlgorithm):
         # Also each part of the query that refers to a document
         # is boosted by the score given by the user to said document
         string_query = "("
-        for doc, score in zip(self._positive_user_docs.keys(), self._scores):
+        for (doc_id, doc_data), score in zip(self._positive_user_docs, self._scores):
             string_query += "("
-            for field_name in self._positive_user_docs[doc]:
+            for field_name in doc_data:
                 if field_name == 'content_id':
                     continue
-                word_list = self._positive_user_docs[doc][field_name].split()
+                word_list = doc_data[field_name].split()
                 string_query += field_name + ":("
                 for term in word_list:
                     string_query += term + " "
