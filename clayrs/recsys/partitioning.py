@@ -7,6 +7,7 @@ import abc
 from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
+from sklearn.utils import resample
 
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
@@ -296,3 +297,35 @@ class HoldOutPartitioning(Partitioning):
     def __repr__(self):
         return f"HoldOutPartitioning(train_set_size={self.__train_set_size}, shuffle={self.__shuffle}, " \
                f"random_state={self.__random_state}, skip_user_error={self.skip_user_error})"
+
+
+class BootstrapPartitioning(Partitioning):
+
+    def __init__(self, random_state: int = None, skip_user_error: bool = True):
+        super().__init__(skip_user_error)
+
+        self.__random_state = random_state
+
+    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+
+        interactions_train = resample(user_ratings,
+                                      replace=True,
+                                      n_samples=len(user_ratings),
+                                      random_state=self.__random_state)
+
+        interactions_test = [interaction for interaction in user_ratings
+                             if interaction not in interactions_train]
+
+        user_train_list = [interactions_train]
+        user_test_list = [interactions_test]
+
+        if len(interactions_test) == 0:
+            raise ValueError("The test set for the user is empty! Try increasing the number of its interactions!")
+
+        return user_train_list, user_test_list
+
+    def __str__(self):
+        return "BootstrapPartitioning"
+
+    def __repr__(self):
+        return f"BootstrapPartitioning(random_state={self.__random_state}, skip_user_error={self.skip_user_error})"
