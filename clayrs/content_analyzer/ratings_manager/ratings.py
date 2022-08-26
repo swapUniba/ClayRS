@@ -87,6 +87,9 @@ class Interaction:
         else:
             return False
 
+    def __hash__(self):
+        return hash(self.user_id + self.item_id + str(self.score) + str(self.timestamp))
+
 
 class Ratings:
     """
