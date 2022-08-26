@@ -100,7 +100,8 @@ class Partitioning(ABC):
         """
         raise NotImplementedError
 
-    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[list, list]:
+    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[List[Ratings],
+                                                                                           List[Ratings]]:
         """
         Concrete method that splits, for every user in the `ratings_to_split` parameter, the original ratings
         into *train set* and *test set*.
