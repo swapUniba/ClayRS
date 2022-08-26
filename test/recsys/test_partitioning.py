@@ -3,7 +3,7 @@ from unittest import TestCase
 import pandas as pd
 
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
-from clayrs.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning
+from clayrs.recsys.partitioning import HoldOutPartitioning, KFoldPartitioning, BootstrapPartitioning
 
 original_ratings = pd.DataFrame.from_dict(
     {'from_id': ["001", "001", "002", "002", "002", "003", "003", "004", "004"],
@@ -157,6 +157,55 @@ class TestHoldOutPartitioning(TestPartitioning):
         hold_percentage = -0.2
         with self.assertRaises(ValueError):
             HoldOutPartitioning(train_set_size=hold_percentage)
+
+
+class TestBootstrapPartitioning(TestPartitioning):
+
+    def check_partition_correct(self, train, test, original):
+        original_list = list(original)
+        train_list = list(train)
+        test_list = list(test)
+
+        # Check that train and test are a partition
+        train_not_in_test = [row for row in train_list if row not in test_list]
+        self.assertCountEqual(train_list, train_not_in_test)  # Count so regardless of order
+        test_not_in_train = [row for row in test_list if row not in train_list]
+        self.assertCountEqual(test_list, test_not_in_train)  # Count so regardless of order
+
+        # Check that the union of the two give the original data.
+        # We remove any duplicate that can naturally happen due to the resampling of the
+        # bootstrap method
+        union_list = list(set(train_list)) + test_list
+        self.assertCountEqual(original_list, union_list)  # Count so regardless of order
+
+    def test_split_all(self):
+
+        bs = BootstrapPartitioning(random_state=5)
+
+        [train], [test] = bs.split_all(original_ratings)
+
+        # 001, 003 and 004 had not enough ratings and so with this particular random state
+        # the resampling will give us empty test set for those user, meaning that they will not be
+        # present in the final train and test set
+        self.assertTrue("001" not in train.user_id_column)
+        self.assertTrue("002" in train.user_id_column)
+        self.assertTrue("003" not in train.user_id_column)
+        self.assertTrue("004" not in train.user_id_column)
+
+        # only user 002 is present in train and test set
+        original_002 = original_ratings.filter_ratings(['002'])
+        self.check_partition_correct(train, test, original_002)
+
+    def test_split_raise_error(self):
+        bs = BootstrapPartitioning(random_state=5)
+
+        # with this particular random state user 001 has not enough ratings and the resampling
+        # will get all its ratings, making the test set empty, and so an error will be raised
+        # by the split_single method
+        user_001_rat = original_ratings.get_user_interactions('001')
+
+        with self.assertRaises(ValueError):
+            bs.split_single(user_001_rat)
 
 
 if __name__ == '__main__':
