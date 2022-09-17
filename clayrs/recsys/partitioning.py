@@ -177,7 +177,7 @@ class Partitioning(ABC):
 
 class KFoldPartitioning(Partitioning):
     """
-    Class that perform K-Fold partitioning
+    Class that performs K-Fold partitioning
 
     Args:
         n_splits (int): Number of splits. Must be at least 2
@@ -237,7 +237,7 @@ class KFoldPartitioning(Partitioning):
 
 class HoldOutPartitioning(Partitioning):
     """
-    Class that perform Hold-Out partitioning
+    Class that performs Hold-Out partitioning
 
     Args:
         train_set_size: Should be between 0.0 and 1.0 and represent the proportion of the ratings to
@@ -300,6 +300,26 @@ class HoldOutPartitioning(Partitioning):
 
 
 class BootstrapPartitioning(Partitioning):
+    """
+    Class that performs Bootstrap Partitioning.
+
+    The bootstrap partitioning consists in executing $n$ extractions with replacement for each user from the original
+    interaction frame, where $n$ is the length of the user interactions:
+
+        * The sampled data will be part of the ***train set***
+        * All the data which is part of the original dataset but was not sampled will be part of the ***test set***
+
+    The bootstrap partitioning can **change** the original data distribution, since during the extraction phase you
+    could sample the same data more than once
+
+    Args:
+        random_state:
+            Controls the shuffling applied to the data before applying the split.
+            Pass an int for reproducible output across multiple function calls.
+        skip_user_error:
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
+            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+    """
 
     def __init__(self, random_state: int = None, skip_user_error: bool = True):
         super().__init__(skip_user_error)
@@ -307,6 +327,19 @@ class BootstrapPartitioning(Partitioning):
         self.__random_state = random_state
 
     def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+        """
+        Method which splits *train set* and *test set* the ratings of a single user by performing $n$ extraction with
+        replacement of the user interactions, where $n$ is the number of its interactions.
+        The interactions which are not sampled will be part of the *test set*
+
+        Args:
+            user_ratings: List of `Interaction` objects of a single user
+
+        Returns:
+            Two lists, where the first contains one list of `Interaction` objects that will
+                constitute the *train set* of the user, the second contains one list of `Interaction` objects
+                that will constitute the *test set* for the user
+        """
 
         interactions_train = resample(user_ratings,
                                       replace=True,
