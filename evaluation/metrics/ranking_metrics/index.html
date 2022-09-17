@@ -1654,6 +1654,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#clayrs.evaluation.metrics.ranking_metrics.MAP" class="md-nav__link">
+    MAP
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.evaluation.metrics.ranking_metrics.MAPAtK" class="md-nav__link">
+    MAPAtK
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clayrs.evaluation.metrics.ranking_metrics.MRR" class="md-nav__link">
     MRR
   </a>
@@ -1902,6 +1916,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#clayrs.evaluation.metrics.ranking_metrics.MAP" class="md-nav__link">
+    MAP
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clayrs.evaluation.metrics.ranking_metrics.MAPAtK" class="md-nav__link">
+    MAPAtK
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clayrs.evaluation.metrics.ranking_metrics.MRR" class="md-nav__link">
     MRR
   </a>
@@ -2109,15 +2137,15 @@ in order to calculate the correlation</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">349</span>
-<span class="normal">350</span>
-<span class="normal">351</span>
-<span class="normal">352</span>
-<span class="normal">353</span>
-<span class="normal">354</span>
-<span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pearson&#39;</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pearson&#39;</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">valid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pearson&#39;</span><span class="p">,</span> <span class="s1">&#39;kendall&#39;</span><span class="p">,</span> <span class="s1">&#39;spearman&#39;</span><span class="p">}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
@@ -2126,6 +2154,204 @@ in order to calculate the correlation</p>
                          <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">valid</span><span class="p">))</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">__top_n</span> <span class="o">=</span> <span class="n">top_n</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clayrs.evaluation.metrics.ranking_metrics.MAP" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">MAP</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="clayrs.evaluation.metrics.ranking_metrics.RankingMetric">RankingMetric</span></code></p>
+
+  
+      <p>The <span class="arithmatex">\(MAP\)</span> metric (<em>Mean average Precision</em>) is a ranking metric computed by first calculating the <span class="arithmatex">\(AP\)</span>
+(<em>Average Precision</em>) for each user and then taking its mean.</p>
+<p>The <span class="arithmatex">\(AP\)</span> is calculated as such for the single user:</p>
+<div class="arithmatex">\[
+AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+\]</div>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(m_u\)</span> is the number of relevant items for the user <span class="arithmatex">\(u\)</span></li>
+<li><span class="arithmatex">\(N_u\)</span> is the number of recommended items for the user <span class="arithmatex">\(u\)</span></li>
+<li><span class="arithmatex">\(P(i)\)</span> is the precision computed at cutoff <span class="arithmatex">\(i\)</span></li>
+<li><span class="arithmatex">\(rel(i)\)</span> is an indicator variable that says whether the i-th item is relevant (<span class="arithmatex">\(rel(i)=1\)</span>) or not (<span class="arithmatex">\(rel(i)=0\)</span>)</li>
+</ul>
+<p>After computing the <span class="arithmatex">\(AP\)</span> for each user, we can compute the <span class="arithmatex">\(MAP\)</span> for the whole system:</p>
+<div class="arithmatex">\[
+MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+\]</div>
+<p>This metric will return the <span class="arithmatex">\(AP\)</span> computed for each user in the dataframe containing users results, and the <span class="arithmatex">\(MAP\)</span>
+computed for the whole system in the dataframe containing system results</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>relevant_threshold</code></td>
+          <td class="doc-param-details">
+            <p>parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          <details class="quote">
+            <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">328</span>
+<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">relevant_threshold</span> <span class="o">=</span> <span class="n">relevant_threshold</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clayrs.evaluation.metrics.ranking_metrics.MAPAtK" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">MAPAtK</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="clayrs.evaluation.metrics.ranking_metrics.MAP" href="#clayrs.evaluation.metrics.ranking_metrics.MAP">MAP</a></code></p>
+
+  
+      <p>The <span class="arithmatex">\(MAP@K\)</span> metric (<em>Mean average Precision At K</em>) is a ranking metric computed by first calculating the <span class="arithmatex">\(AP@K\)</span>
+(<em>Average Precision At K</em>) for each user and then taking its mean.</p>
+<p>The <span class="arithmatex">\(AP@K\)</span> is calculated as such for the single user:</p>
+<div class="arithmatex">\[
+AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+\]</div>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(m_u\)</span> is the number of relevant items for the user <span class="arithmatex">\(u\)</span></li>
+<li><span class="arithmatex">\(K\)</span> is the cutoff value</li>
+<li><span class="arithmatex">\(P(i)\)</span> is the precision computed at cutoff <span class="arithmatex">\(i\)</span></li>
+<li><span class="arithmatex">\(rel(i)\)</span> is an indicator variable that says whether the i-th item is relevant (<span class="arithmatex">\(rel(i)=1\)</span>) or not (<span class="arithmatex">\(rel(i)=0\)</span>)</li>
+</ul>
+<p>After computing the <span class="arithmatex">\(AP@K\)</span> for each user, we can compute the <span class="arithmatex">\(MAP@K\)</span> for the whole system:</p>
+<div class="arithmatex">\[
+MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+\]</div>
+<p>This metric will return the <span class="arithmatex">\(AP@K\)</span> computed for each user in the dataframe containing users results, and the <span class="arithmatex">\(MAP@K\)</span>
+computed for the whole system in the dataframe containing system results</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>k</code></td>
+          <td class="doc-param-details">
+            <p>the cutoff parameter. It must be &gt;= 1, otherwise a ValueError exception is raised</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>relevant_threshold</code></td>
+          <td class="doc-param-details">
+            <p>parameter needed to discern relevant items and non-relevant items for every
+user. If not specified, the mean rating score of every user will be used</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>None</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          <details class="quote">
+            <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
 </code></pre></div></td></tr></table></div>
           </details>
 
@@ -2211,8 +2437,8 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__relevant_threshold</span> <span class="o">=</span> <span class="n">relevant_threshold</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2280,7 +2506,8 @@ user. If not specified, the mean rating score of every user will be used</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">185</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
+<span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span>
@@ -2297,8 +2524,7 @@ user. If not specified, the mean rating score of every user will be used</p>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_reciprocal_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">user_truth_relevant_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]):</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_reciprocal_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">user_truth_relevant_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which calculates the RR (Reciprocal Rank) for a single user</span>
 
@@ -2423,11 +2649,11 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">268</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">267</span>
+<span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;k=</span><span class="si">{}</span><span class="s1"> not valid! k must be &gt;= 1!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__k</span> <span class="o">=</span> <span class="n">k</span>
@@ -2498,7 +2724,8 @@ user. If not specified, the mean rating score of every user will be used</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/evaluation/metrics/ranking_metrics.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
+<span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
@@ -2507,8 +2734,7 @@ user. If not specified, the mean rating score of every user will be used</p>
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_reciprocal_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">user_truth_relevant_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]):</span>
+<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_reciprocal_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_predictions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">user_truth_relevant_items</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which calculates the RR (Reciprocal Rank) for a single user</span>
 

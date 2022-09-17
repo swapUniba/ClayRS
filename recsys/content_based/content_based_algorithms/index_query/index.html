@@ -2045,12 +2045,12 @@ as positive. If the threshold is not specified, the average score of all items l
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/content_based_algorithm/index_query/index_query.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
-<span class="normal">62</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">classic_similarity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">classic_similarity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">item_field</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_string_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_scores</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2092,18 +2092,7 @@ process_rated() must be called before this method.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/index_query/index_query.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
@@ -2121,7 +2110,18 @@ process_rated() must be called before this method.</p>
 <span class="normal">179</span>
 <span class="normal">180</span>
 <span class="normal">181</span>
-<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The fit process for the IndexQuery consists in building a query using the features of the positive items ONLY</span>
 <span class="sd">    (items that the user liked). The terms relative to these &#39;positive&#39; items are boosted by the</span>
@@ -2137,12 +2137,12 @@ process_rated() must be called before this method.</p>
     <span class="c1"># Also each part of the query that refers to a document</span>
     <span class="c1"># is boosted by the score given by the user to said document</span>
     <span class="n">string_query</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span>
-    <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positive_user_docs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scores</span><span class="p">):</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">doc_data</span><span class="p">),</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positive_user_docs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scores</span><span class="p">):</span>
         <span class="n">string_query</span> <span class="o">+=</span> <span class="s2">&quot;(&quot;</span>
-        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positive_user_docs</span><span class="p">[</span><span class="n">doc</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">doc_data</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s1">&#39;content_id&#39;</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">word_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positive_user_docs</span><span class="p">[</span><span class="n">doc</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">word_list</span> <span class="o">=</span> <span class="n">doc_data</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="n">string_query</span> <span class="o">+=</span> <span class="n">field_name</span> <span class="o">+</span> <span class="s2">&quot;:(&quot;</span>
             <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">word_list</span><span class="p">:</span>
                 <span class="n">string_query</span> <span class="o">+=</span> <span class="n">term</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
@@ -2195,16 +2195,16 @@ a NotPredictionAlg exception is raised</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/index_query/index_query.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">,</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">,</span>
             <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    IndexQuery is not a Prediction Score Algorithm, so if this method is called,</span>
@@ -2273,8 +2273,7 @@ The extracted features will be used to fit the algorithm (build the query).</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/index_query/index_query.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
-<span class="normal">108</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -2317,7 +2316,18 @@ The extracted features will be used to fit the algorithm (build the query).</p>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">):</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function that extracts features from positive rated items ONLY!</span>
 <span class="sd">    The extracted features will be used to fit the algorithm (build the query).</span>
@@ -2328,29 +2338,39 @@ The extracted features will be used to fit the algorithm (build the query).</p>
 <span class="sd">        user_ratings: List of Interaction objects for a single user</span>
 <span class="sd">        available_loaded_items: The LoadedContents interface which contains loaded contents</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span><span class="p">:</span> <span class="n">interaction</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">}</span>
+    <span class="c1"># a list since there could be duplicate interaction (eg bootstrap partitioning)</span>
+    <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">:</span>
+        <span class="n">items_scores_dict</span><span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+
+    <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">items_scores_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>  <span class="c1"># sort dictionary based on key for reproducibility</span>
 
     <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_mean_user_threshold</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span>
 
-    <span class="c1"># Initializes positive_user_docs which is a dictionary that has the document_id as key and</span>
-    <span class="c1"># another dictionary as value. The dictionary value has the name of the field as key</span>
+    <span class="c1"># Initializes positive_user_docs which is a list that has tuples with document_id as first element and</span>
+    <span class="c1"># a dictionary as second. The dictionary value has the name of the field as key</span>
     <span class="c1"># and its contents as value. By doing so we obtain the data of the fields while</span>
     <span class="c1"># also storing information regarding the field and the document where it was</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">positive_user_docs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">positive_user_docs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">ix</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_contents_interface</span><span class="p">()</span>
 
-    <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">items_scores_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">items_scores_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
-            <span class="c1"># {item_id: {&quot;item&quot;: item_dictionary, &quot;score&quot;: item_score}}</span>
-            <span class="n">item_query</span> <span class="o">=</span> <span class="n">ix</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">classic_similarity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_classic_similarity</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_query</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">item</span> <span class="o">=</span> <span class="n">item_query</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
-                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
-                <span class="n">positive_user_docs</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_representations</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="c1"># we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!</span>
+    <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score_list</span> <span class="ow">in</span> <span class="n">items_scores_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">score_assigned</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">score_list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">score_assigned</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="c1"># {item_id: {&quot;item&quot;: item_dictionary, &quot;score&quot;: item_score}}</span>
+                <span class="n">item_query</span> <span class="o">=</span> <span class="n">ix</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">results_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">classic_similarity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_classic_similarity</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_query</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">item_query</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
+                    <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+                    <span class="n">positive_user_docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_representations</span><span class="p">(</span><span class="n">item</span><span class="p">)))</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">EmptyUserRatings</span><span class="p">(</span><span class="s2">&quot;The user selected doesn&#39;t have any ratings!&quot;</span><span class="p">)</span>
@@ -2479,18 +2499,7 @@ a single user</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/index_query/index_query.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
@@ -2517,7 +2526,18 @@ a single user</p>
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span>
-<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">,</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsIndex</span><span class="p">,</span>
          <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rank the top-n recommended items for the user. If the recs_number parameter isn&#39;t specified,</span>

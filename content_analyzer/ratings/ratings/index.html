@@ -2827,7 +2827,7 @@ or its generator</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]], <a class="autorefs autorefs-external" title="typing.Generator" href="https://docs.python.org/3/library/typing.html#typing.Generator">Generator</a>]</code>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]], <a class="autorefs autorefs-external" title="typing.Iterator" href="https://docs.python.org/3/library/typing.html#typing.Iterator">Iterator</a>]</code>
                 </span>
             </p>
           </td>
@@ -2882,7 +2882,7 @@ or its generator</p>
 <span class="normal">581</span>
 <span class="normal">582</span>
 <span class="normal">583</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]],</span> <span class="n">Generator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]],</span> <span class="n">Iterator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing</span>
 <span class="sd">    user_id as keys and lists of `Interaction` objects as value</span>
@@ -2950,7 +2950,7 @@ objects or its generator</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>], <a class="autorefs autorefs-external" title="typing.Generator" href="https://docs.python.org/3/library/typing.html#typing.Generator">Generator</a>]</code>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>], <a class="autorefs autorefs-external" title="typing.Iterator" href="https://docs.python.org/3/library/typing.html#typing.Iterator">Iterator</a>]</code>
                 </span>
             </p>
           </td>
@@ -3007,7 +3007,7 @@ objects or its generator</p>
 <span class="normal">556</span>
 <span class="normal">557</span>
 <span class="normal">558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">Generator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">from_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">interaction_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">Iterator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ratings</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`</span>
 <span class="sd">    objects or its generator</span>
@@ -3241,8 +3241,8 @@ the first <span class="arithmatex">\(k\)</span> according to their order of appe
 <code class="highlight language-python"><span class="n">item_id_column</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
@@ -3311,8 +3311,8 @@ Use set(item_id_column) to get all unique users</p>
 <code class="highlight language-python"><span class="n">score_column</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
@@ -3551,8 +3551,8 @@ appears in the rating frame.</p>
 <code class="highlight language-python"><span class="n">timestamp_column</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
@@ -3828,8 +3828,8 @@ will be overwritten</p>
 <code class="highlight language-python"><span class="n">user_id_column</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
