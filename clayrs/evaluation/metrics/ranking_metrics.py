@@ -294,7 +294,37 @@ class MRRAtK(MRR):
 
 
 class MAP(RankingMetric):
+    r"""
 
+    The $MAP$ metric (*Mean average Precision*) is a ranking metric computed by first calculating the $AP$
+    (*Average Precision*) for each user and then taking its mean.
+
+    The $AP$ is calculated as such for the single user:
+
+    $$
+    AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    $$
+
+    Where:
+
+    - $m_u$ is the number of relevant items for the user $u$
+    - $N_u$ is the number of recommended items for the user $u$
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
+
+    After computing the $AP$ for each user, we can compute the $MAP$ for the whole system:
+
+    $$
+    MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+    $$
+
+    This metric will return the $AP$ computed for each user in the dataframe containing users results, and the $MAP$
+    computed for the whole system in the dataframe containing system results
+
+    Args:
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+    """
     def __init__(self, relevant_threshold: float = None):
         self.relevant_threshold = relevant_threshold
 
@@ -352,8 +382,39 @@ class MAP(RankingMetric):
 
 
 class MAPAtK(MAP):
+    r"""
 
-    def __init__(self, k: int, relevant_threshold=None):
+    The $MAP@K$ metric (*Mean average Precision At K*) is a ranking metric computed by first calculating the $AP@K$
+    (*Average Precision At K*) for each user and then taking its mean.
+
+    The $AP@K$ is calculated as such for the single user:
+
+    $$
+    AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+    $$
+
+    Where:
+
+    - $m_u$ is the number of relevant items for the user $u$
+    - $K$ is the cutoff value
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
+
+    After computing the $AP@K$ for each user, we can compute the $MAP@K$ for the whole system:
+
+    $$
+    MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+    $$
+
+    This metric will return the $AP@K$ computed for each user in the dataframe containing users results, and the $MAP@K$
+    computed for the whole system in the dataframe containing system results
+
+    Args:
+        k (int): the cutoff parameter. It must be >= 1, otherwise a ValueError exception is raised
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+    """
+    def __init__(self, k: int, relevant_threshold: float = None):
         super().__init__(relevant_threshold)
         self.k = k
 
