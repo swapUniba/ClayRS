@@ -199,7 +199,7 @@ class ContentBasedAlgorithm(Algorithm):
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            available_loaded_items (LoadedContentsDict): loaded contents interface point to the items directory
         """
         raise NotImplementedError
 
@@ -235,7 +235,7 @@ class ContentBasedAlgorithm(Algorithm):
 
         Args:
             user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            items_directory (str): path of the directory where the items are stored
+            available_loaded_items (LoadedContentsDict): loaded contents interface point to the items directory
             filter_list (list): list of the items to predict, if None all unrated items will be score predicted
         Returns:
             pd.DataFrame: DataFrame containing one column with the items name,

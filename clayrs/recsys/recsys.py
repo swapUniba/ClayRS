@@ -213,6 +213,8 @@ class ContentBasedRS(RecSys):
                 for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -296,6 +298,8 @@ class ContentBasedRS(RecSys):
                 will be computed for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -388,6 +392,8 @@ class ContentBasedRS(RecSys):
                 `TestRatingsMethodology`
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
                 complete execution of this method. Default is False
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Returns:
             Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
@@ -484,6 +490,8 @@ class ContentBasedRS(RecSys):
                 `TestRatingsMethodology`
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
                 complete execution of this method. Default is False
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -660,6 +668,8 @@ class GraphBasedRS(RecSys):
                 will be computed for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Returns:
             Prediction object containing score prediction lists for all users of the test set or for all users in
@@ -704,6 +714,8 @@ class GraphBasedRS(RecSys):
                 for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method

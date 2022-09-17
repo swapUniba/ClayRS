@@ -44,7 +44,7 @@ class NXPageRank(PageRank):
 
     def rank(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
              recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpu: int = 0) -> List[Interaction]:
+             num_cpus: int = 0) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -57,8 +57,12 @@ class NXPageRank(PageRank):
             all_users: Set of user id for which a recommendation list must be generated
             graph: A NX graph previously instantiated
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
-                ranked
+            test_set: Ratings object which represents the ground truth of the split considered
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Returns:
             List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
@@ -124,7 +128,7 @@ class NXPageRank(PageRank):
         weight = 'weight' if self.weight is True else None
         train_set = graph.to_ratings()
 
-        with distex.Pool(func_pickle=distex.PickleType.cloudpickle) as pool:
+        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
             with get_progbar(pool.map(compute_single_rank, all_users), total=len(all_users)) as pbar:
                 pbar.set_description("Prepping rank... (wait max 20s)")
 
