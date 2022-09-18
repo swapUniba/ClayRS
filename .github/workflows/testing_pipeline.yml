@@ -4,6 +4,8 @@ on:
     branches:
       - master
   pull_request:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
@@ -15,7 +17,7 @@ jobs:
         name: Checkout Repository
         uses: actions/checkout@v2
         with:
-            fetch-depth: 0        
+          fetch-depth: 0
       -
         name: Setup python
         uses: actions/setup-python@v2
@@ -34,5 +36,5 @@ jobs:
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with: # no token required for public repos
-              fail_ci_if_error: true
-              files: ./codecoverage.xml
+          fail_ci_if_error: true
+          files: ./codecoverage.xml
