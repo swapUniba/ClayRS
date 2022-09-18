@@ -31,7 +31,8 @@ jobs:
           pip install -e .
           ls -a
           python install_coverage_subprocess_pth.py
-          export COVERAGE_PROCESS_START=$PWD/.coveragerc
+          echo "COVERAGE_PROCESS_START=$PWD/.coveragerc" >> $GITHUB_ENV
+          echo "${{ env.COVERAGE_PROCESS_START }}"
       -
         name: Test
         run: |
