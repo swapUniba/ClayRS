@@ -58,7 +58,7 @@ class TestContentBasedRS(TestCase):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
         cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
 
-        cbrs.fit(num_cpus=1)
+        cbrs.fit()
 
         # For the following user the algorithm could be fit
         self.assertIsNotNone(cbrs._user_fit_dic.get("A000"))
@@ -70,7 +70,7 @@ class TestContentBasedRS(TestCase):
         # For user A000 no items available locally, so the alg will not be fit for it
         cbrs_missing = ContentBasedRS(alg, train_ratings_some_missing, self.movies_multiple)
 
-        cbrs_missing.fit(num_cpus=1)
+        cbrs_missing.fit()
 
         # For user A000 the alg could not be fit, but it could for A001
         self.assertIsNone(cbrs_missing._user_fit_dic.get("A000"))
