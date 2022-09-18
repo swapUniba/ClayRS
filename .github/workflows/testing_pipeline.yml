@@ -27,16 +27,16 @@ jobs:
         name: Setup installation requirements
         run: |
           pip install --upgrade pip
-          pip install coverage coverage-enable-subprocess pytest
+          pip install coverage pytest
           pip install -e .
+          python .github/workflows/install_coverage_subprocess_pth.py
           export COVERAGE_PROCESS_START=$PWD/.coveragerc
       -
         name: Test
         run: |
           coverage run -m pytest --color=yes test/
-          coverage combine --quiet --append
+          coverage combine
           coverage xml -o codecoverage.xml
-          coverage report  # display the report as text on stdout
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
