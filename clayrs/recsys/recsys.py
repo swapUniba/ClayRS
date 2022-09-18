@@ -4,6 +4,7 @@ import itertools
 from copy import deepcopy
 from typing import Union, Dict, List, Optional
 
+import coverage
 import distex
 import pandas as pd
 from abc import ABC
@@ -541,6 +542,7 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
+        coverage.process_startup()
         pool = distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle)
         with get_progbar(pool.map(compute_single_fit_rank, all_users), total=len(all_users)) as pbar:
 
