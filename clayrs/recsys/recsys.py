@@ -177,13 +177,14 @@ class ContentBasedRS(RecSys):
         all_users = set(self.train_set.user_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(self._compute_single_fit, all_users, itertools.repeat(loaded_items_interface)), total=len(all_users)) as pbar:
-                pbar.set_description("Fitting algorithm")
+        pool = distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle)
+        with get_progbar(pool.map(self._compute_single_fit, all_users, itertools.repeat(loaded_items_interface)), total=len(all_users)) as pbar:
+            pbar.set_description("Fitting algorithm")
 
-                for user_id, fitted_user_alg in pbar:
-                    self._user_fit_dic[user_id] = fitted_user_alg
+            for user_id, fitted_user_alg in pbar:
+                self._user_fit_dic[user_id] = fitted_user_alg
 
+        pool.shutdown()
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
