@@ -27,11 +27,16 @@ jobs:
         name: Setup installation requirements
         run: |
           pip install --upgrade pip
-          pip install pytest-cov==3.00
+          pip install coverage coverage-enable-subprocess pytest
           pip install -e .
+          export COVERAGE_PROCESS_START=$PWD/.coveragerc
       -
         name: Test
-        run: pytest --color=yes --cov-report xml:codecoverage.xml --cov=clayrs test/
+        run: |
+          coverage run -m pytest --color=yes test/
+          coverage combine --quiet --append
+          coverage xml -o codecoverage.xml
+          coverage report  # display the report as text on stdout
       -
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0

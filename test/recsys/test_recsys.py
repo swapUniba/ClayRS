@@ -54,14 +54,6 @@ class TestContentBasedRS(TestCase):
         cls.movies_multiple = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
     def test_fit(self):
-
-        try:
-            from pytest_cov.embed import cleanup_on_sigterm
-        except ImportError:
-            pass
-        else:
-            cleanup_on_sigterm()
-
         # Test fit with cbrs algorithm
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
         cbrs = ContentBasedRS(alg, train_ratings, self.movies_multiple)
