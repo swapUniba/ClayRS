@@ -29,7 +29,7 @@ jobs:
           pip install --upgrade pip
           pip install coverage pytest
           ls -a
-          python .github/workflows/install_coverage_subprocess_pth.py
+          python install_coverage_subprocess_pth.py
           pip install -e .
           export COVERAGE_PROCESS_START=$PWD/.coveragerc
       -
