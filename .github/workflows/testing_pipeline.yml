@@ -29,13 +29,12 @@ jobs:
           pip install --upgrade pip
           pip install coverage pytest
           pip install -e .
-          ls -a
           python install_coverage_subprocess_pth.py
-          echo "COVERAGE_PROCESS_START=$PWD/.coveragerc" >> $GITHUB_ENV
-          echo "${{ env.COVERAGE_PROCESS_START }}"
+          echo "COVERAGE_PROCESS_START=${{ github.workspace }}/.coveragerc" >> $GITHUB_ENV
       -
         name: Test
         run: |
+          echo "${{ env.COVERAGE_PROCESS_START }}"
           coverage run -m pytest --color=yes test/
           coverage combine
           coverage xml -o codecoverage.xml
