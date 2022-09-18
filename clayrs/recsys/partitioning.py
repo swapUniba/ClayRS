@@ -7,6 +7,7 @@ import abc
 from abc import ABC
 
 from sklearn.model_selection import KFold, train_test_split
+from sklearn.utils import resample
 
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
@@ -100,7 +101,8 @@ class Partitioning(ABC):
         """
         raise NotImplementedError
 
-    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[list, list]:
+    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[List[Ratings],
+                                                                                           List[Ratings]]:
         """
         Concrete method that splits, for every user in the `ratings_to_split` parameter, the original ratings
         into *train set* and *test set*.
@@ -175,7 +177,7 @@ class Partitioning(ABC):
 
 class KFoldPartitioning(Partitioning):
     """
-    Class that perform K-Fold partitioning
+    Class that performs K-Fold partitioning
 
     Args:
         n_splits (int): Number of splits. Must be at least 2
@@ -235,7 +237,7 @@ class KFoldPartitioning(Partitioning):
 
 class HoldOutPartitioning(Partitioning):
     """
-    Class that perform Hold-Out partitioning
+    Class that performs Hold-Out partitioning
 
     Args:
         train_set_size: Should be between 0.0 and 1.0 and represent the proportion of the ratings to
@@ -295,3 +297,68 @@ class HoldOutPartitioning(Partitioning):
     def __repr__(self):
         return f"HoldOutPartitioning(train_set_size={self.__train_set_size}, shuffle={self.__shuffle}, " \
                f"random_state={self.__random_state}, skip_user_error={self.skip_user_error})"
+
+
+class BootstrapPartitioning(Partitioning):
+    """
+    Class that performs Bootstrap Partitioning.
+
+    The bootstrap partitioning consists in executing $n$ extractions with replacement for each user from the original
+    interaction frame, where $n$ is the length of the user interactions:
+
+        * The sampled data will be part of the ***train set***
+        * All the data which is part of the original dataset but was not sampled will be part of the ***test set***
+
+    The bootstrap partitioning can **change** the original data distribution, since during the extraction phase you
+    could sample the same data more than once
+
+    Args:
+        random_state:
+            Controls the shuffling applied to the data before applying the split.
+            Pass an int for reproducible output across multiple function calls.
+        skip_user_error:
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
+            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+    """
+
+    def __init__(self, random_state: int = None, skip_user_error: bool = True):
+        super().__init__(skip_user_error)
+
+        self.__random_state = random_state
+
+    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+        """
+        Method which splits *train set* and *test set* the ratings of a single user by performing $n$ extraction with
+        replacement of the user interactions, where $n$ is the number of its interactions.
+        The interactions which are not sampled will be part of the *test set*
+
+        Args:
+            user_ratings: List of `Interaction` objects of a single user
+
+        Returns:
+            Two lists, where the first contains one list of `Interaction` objects that will
+                constitute the *train set* of the user, the second contains one list of `Interaction` objects
+                that will constitute the *test set* for the user
+        """
+
+        interactions_train = resample(user_ratings,
+                                      replace=True,
+                                      n_samples=len(user_ratings),
+                                      random_state=self.__random_state)
+
+        interactions_test = [interaction for interaction in user_ratings
+                             if interaction not in interactions_train]
+
+        user_train_list = [interactions_train]
+        user_test_list = [interactions_test]
+
+        if len(interactions_test) == 0:
+            raise ValueError("The test set for the user is empty! Try increasing the number of its interactions!")
+
+        return user_train_list, user_test_list
+
+    def __str__(self):
+        return "BootstrapPartitioning"
+
+    def __repr__(self):
+        return f"BootstrapPartitioning(random_state={self.__random_state}, skip_user_error={self.skip_user_error})"

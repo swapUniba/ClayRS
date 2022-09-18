@@ -1,10 +1,10 @@
-from typing import List, Iterable, Set
+from typing import List, Set
 
 import pandas as pd
 import numpy as np
 from sklearn.metrics import ndcg_score
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.partitioning import Split
 from clayrs.evaluation.metrics.metrics import Metric
 
@@ -138,7 +138,6 @@ class NDCGAtK(NDCG):
 
     def __repr__(self):
         return f'NDCGAtK(k={self.__k})'
-
 
     def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
         return ndcg_score(ideal_rank, actual_rank, k=self.__k)
@@ -292,6 +291,137 @@ class MRRAtK(MRR):
         user_predictions_cut = user_predictions[:self.k]
 
         return super().calc_reciprocal_rank(user_predictions_cut, user_truth_relevant_items)
+
+
+class MAP(RankingMetric):
+    r"""
+
+    The $MAP$ metric (*Mean average Precision*) is a ranking metric computed by first calculating the $AP$
+    (*Average Precision*) for each user and then taking its mean.
+
+    The $AP$ is calculated as such for the single user:
+
+    $$
+    AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    $$
+
+    Where:
+
+    - $m_u$ is the number of relevant items for the user $u$
+    - $N_u$ is the number of recommended items for the user $u$
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
+
+    After computing the $AP$ for each user, we can compute the $MAP$ for the whole system:
+
+    $$
+    MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+    $$
+
+    This metric will return the $AP$ computed for each user in the dataframe containing users results, and the $MAP$
+    computed for the whole system in the dataframe containing system results
+
+    Args:
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+    """
+    def __init__(self, relevant_threshold: float = None):
+        self.relevant_threshold = relevant_threshold
+
+    def _compute_ap(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[str]):
+        tp = 0
+        cumulative_precision = 0
+        for position, interaction in enumerate(user_predictions, start=1):
+
+            # this 'if' acts as the relevance indicator in the AP formula
+            if interaction.item_id in user_truth_relevant_items:
+                tp += 1
+                cumulative_precision += tp / position
+
+        user_ap = (1 / len(user_truth_relevant_items)) * cumulative_precision
+
+        return user_ap
+
+    def perform(self, split: Split):
+        pred = split.pred
+        truth = split.truth
+
+        split_result = {'user_id': [], 'AP': []}
+
+        for user in set(truth.user_id_column):
+            user_predictions = pred.get_user_interactions(user)
+            user_truth = truth.get_user_interactions(user)
+
+            relevant_threshold = self.relevant_threshold
+            if relevant_threshold is None:
+                relevant_threshold = np.nanmean([interaction.score for interaction in user_truth])
+
+            user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
+                                            if interaction.score >= relevant_threshold)
+
+            if len(user_truth_relevant_items) != 0:
+                user_ap = self._compute_ap(user_predictions, user_truth_relevant_items)
+            else:
+                user_ap = np.nan
+
+            split_result['user_id'].append(user)
+            split_result['AP'].append(user_ap)  # for users we are computing Average Precision
+
+        df_users = pd.DataFrame(split_result)
+
+        # for the system we are computing Mean Average Precision
+        sys_map = np.nanmean(df_users['AP'])
+        df_sys = pd.DataFrame({'user_id': ['sys'], str(self): [sys_map]})
+
+        df = pd.concat([df_users, df_sys])
+
+        return df
+
+    def __str__(self):
+        return "MAP"
+
+
+class MAPAtK(MAP):
+    r"""
+
+    The $MAP@K$ metric (*Mean average Precision At K*) is a ranking metric computed by first calculating the $AP@K$
+    (*Average Precision At K*) for each user and then taking its mean.
+
+    The $AP@K$ is calculated as such for the single user:
+
+    $$
+    AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+    $$
+
+    Where:
+
+    - $m_u$ is the number of relevant items for the user $u$
+    - $K$ is the cutoff value
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
+
+    After computing the $AP@K$ for each user, we can compute the $MAP@K$ for the whole system:
+
+    $$
+    MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+    $$
+
+    This metric will return the $AP@K$ computed for each user in the dataframe containing users results, and the $MAP@K$
+    computed for the whole system in the dataframe containing system results
+
+    Args:
+        k (int): the cutoff parameter. It must be >= 1, otherwise a ValueError exception is raised
+        relevant_threshold (float): parameter needed to discern relevant items and non-relevant items for every
+            user. If not specified, the mean rating score of every user will be used
+    """
+    def __init__(self, k: int, relevant_threshold: float = None):
+        super().__init__(relevant_threshold)
+        self.k = k
+
+    def _compute_ap(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[str]):
+        user_predictions = user_predictions[:self.k]
+
+        return super()._compute_ap(user_predictions, user_truth_relevant_items)
 
 
 class Correlation(RankingMetric):

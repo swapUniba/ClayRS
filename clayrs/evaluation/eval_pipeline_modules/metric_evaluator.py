@@ -89,6 +89,13 @@ class MetricEvaluator:
                 if not total_results_metric.empty:
                     total_results_metric = total_results_metric.set_index('user_id')
                     system_results = total_results_metric.loc[['sys']]
+
+                    # this means that if a system result is nan, it won't be present in the final df.
+                    # Maybe there's a better solution?
+                    # (This removal is done in case metric for users and system have different name eg. AP for users and
+                    # MAP for sys)
+                    system_results = system_results.dropna(axis='columns', how='all')
+
                     each_user_result = total_results_metric.drop(['sys'])
                     each_user_result = each_user_result.dropna(axis=1, how='all')
 

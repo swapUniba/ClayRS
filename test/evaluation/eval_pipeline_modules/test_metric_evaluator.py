@@ -3,6 +3,7 @@ from unittest import TestCase
 import pandas as pd
 
 from clayrs.content_analyzer.ratings_manager.ratings import Rank, Ratings
+from clayrs.evaluation import MAP
 from clayrs.evaluation.metrics.classification_metrics import Precision, Recall
 
 from clayrs.evaluation.eval_model import MetricEvaluator
@@ -11,7 +12,7 @@ from clayrs.evaluation.metrics.plot_metrics import LongTailDistr, PopRecsCorrela
 
 # Every Metric is tested singularly, so we just check that everything goes smoothly at the
 # MetricEvaluator level
-class TestMetricCalculator(TestCase):
+class TestMetricEvaluator(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -110,12 +111,11 @@ class TestMetricCalculator(TestCase):
         self.assertTrue(len(users_results) == 0)
 
     def test_eval_metrics_users_missing_truth(self):
-
         rank_wo_u3 = pd.DataFrame({
             'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1',
                         'u2', 'u2', 'u2', 'u2', 'u2', 'u2', 'u2'],
             'item_id': ['i9', 'i6', 'inew1', 'inew2', 'i2', 'i1', 'i8',
-                      'i10', 'inew3', 'i2', 'i1', 'i8', 'i4', 'i9'],
+                        'i10', 'inew3', 'i2', 'i1', 'i8', 'i4', 'i9'],
 
             'score': [500, 450, 400, 350, 300, 200, 150,
                       400, 300, 200, 100, 50, 25, 10]
@@ -127,8 +127,8 @@ class TestMetricCalculator(TestCase):
                         'u2', 'u2', 'u2', 'u2', 'u2',
                         'u3', 'u3', 'u3', 'u3', 'u3'],
             'item_id': ['i1', 'i2', 'i6', 'i8', 'i9',
-                      'i1', 'i2', 'i4', 'i9', 'i10',
-                      'i2', 'i3', 'i12', 'imissing3', 'imissing4'],
+                        'i1', 'i2', 'i4', 'i9', 'i10',
+                        'i2', 'i3', 'i12', 'imissing3', 'imissing4'],
 
             'score': [3, 3, 4, 1, 1,
                       5, 3, 3, 4, 4,
@@ -139,20 +139,20 @@ class TestMetricCalculator(TestCase):
         rank_list = [rank_wo_u3]
         truth_list = [truth]
 
-        sys_result, users_results = MetricEvaluator(rank_list, truth_list).eval_metrics([Precision(), Recall()])
+        sys_result, users_results = MetricEvaluator(rank_list, truth_list).eval_metrics([Precision(), Recall(), MAP()])
 
         # check that u3 isn't present in results since we don't have any prediction for it
         self.assertEqual({'u1', 'u2'}, set(users_results.index))
 
-        # the user result frame must contain results for each user of the Precision and Recall
-        self.assertEqual(list(users_results.columns), ['Precision - macro', 'Recall - macro'])
+        # the user result frame must contain results for each user of the Precision, Recall and AP
+        self.assertEqual(list(users_results.columns), ['Precision - macro', 'Recall - macro', 'AP'])
 
         # the sys_result frame must contain result of the system for each fold (1 in this case) + the mean result
         self.assertTrue(len(sys_result) == 2)
         self.assertEqual({'sys - fold1', 'sys - mean'}, set(sys_result.index))
 
-        # the sys result frame must contain results for the system of the Precision and Recall
-        self.assertEqual(list(sys_result.columns), ['Precision - macro', 'Recall - macro'])
+        # the sys result frame must contain results for the system of the Precision, Recall and MAP
+        self.assertEqual(list(sys_result.columns), ['Precision - macro', 'Recall - macro', 'MAP'])
 
     @classmethod
     def tearDownClass(cls) -> None:

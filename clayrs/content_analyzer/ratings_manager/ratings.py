@@ -79,10 +79,16 @@ class Interaction:
 
     def __eq__(self, other):
         if isinstance(other, Interaction):
+            timestamp_equal = (self.timestamp is None and other.timestamp is None) or \
+                              (self.timestamp == other.timestamp)
+
             return self.user_id == other.user_id and self.item_id == other.item_id and \
-                   self.score == other.score and self.timestamp == other.timestamp
+                   self.score == other.score and timestamp_equal
         else:
             return False
+
+    def __hash__(self):
+        return hash(self.user_id + self.item_id + str(self.score) + str(self.timestamp))
 
 
 class Ratings:
