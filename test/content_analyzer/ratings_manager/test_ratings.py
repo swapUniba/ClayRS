@@ -31,6 +31,32 @@ class TestInteraction(TestCase):
         self.assertTrue(interaction_w_timestamp.score == 4)
         self.assertTrue(interaction_w_timestamp.timestamp == 'timestamp')
 
+    def test__eq(self):
+
+        interaction1_same_no_timestamp = Interaction('u1', 'i1', 5)
+        interaction2_same_no_timestamp = Interaction('u1', 'i1', 5)
+        interaction3_different_no_timestamp = Interaction('u2', 'i1', 2)
+
+        self.assertEqual(interaction1_same_no_timestamp, interaction2_same_no_timestamp)
+        self.assertNotEqual(interaction1_same_no_timestamp, interaction3_different_no_timestamp)
+
+        interaction1_same_w_timestamp = Interaction('u1', 'i1', 5, '112222')
+        interaction2_same_w_timestamp = Interaction('u1', 'i1', 5, '112222')
+        interaction3_different_w_timestamp = Interaction('u2', 'i1', 2, '223333')
+
+        self.assertEqual(interaction1_same_w_timestamp, interaction2_same_w_timestamp)
+        self.assertNotEqual(interaction1_same_w_timestamp, interaction3_different_w_timestamp)
+        self.assertNotEqual(interaction1_same_no_timestamp, interaction1_same_w_timestamp)
+
+    def test__hash(self):
+
+        interaction1_same_no_timestamp = Interaction('u1', 'i1', 5)
+        interaction2_same_no_timestamp = Interaction('u1', 'i1', 5)
+        interaction3_same_w_timestamp = Interaction('u2', 'i1', 2, '11222')
+
+        self.assertEqual(hash(interaction1_same_no_timestamp), hash(interaction2_same_no_timestamp))
+        self.assertNotEqual(hash(interaction1_same_no_timestamp), hash(interaction3_same_w_timestamp))
+
 
 class TestRatings(TestCase):
 
