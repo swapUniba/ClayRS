@@ -541,13 +541,14 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_fit_rank, all_users), total=len(all_users)) as pbar:
+        pool = distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle)
+        with get_progbar(pool.map(compute_single_fit_rank, all_users), total=len(all_users)) as pbar:
 
-                pbar.set_description(f"Loading first items from memory...")
-                for user_id, user_rank in pbar:
-                    pbar.set_description(f"Computing fit_rank for user {user_id}")
-                    rank.append(user_rank)
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_rank in pbar:
+                pbar.set_description(f"Computing fit_rank for user {user_id}")
+                rank.append(user_rank)
+        pool.shutdown()
 
         rank = itertools.chain.from_iterable(rank)
         rank = Rank.from_list(rank)
