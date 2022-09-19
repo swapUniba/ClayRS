@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pandas as pd
 from unittest import TestCase
 
@@ -46,7 +44,7 @@ class TestNXPageRank(TestCase):
         alg = NXPageRank()
 
         # rank with None methodology (all unrated items will be ranked)
-        res_all_unrated = alg.rank({'A000'}, self.graph, test_set, methodology=None)
+        res_all_unrated = alg.rank({'A000'}, self.graph, test_set, methodology=None, num_cpus=1)
         item_rated_set = set([interaction.item_id for interaction in ratings.get_user_interactions("A000")])
         item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -65,18 +63,18 @@ class TestNXPageRank(TestCase):
 
         # test personalized
         alg = NXPageRank(personalized=True)
-        result_personalized = alg.rank({'A000'}, self.graph, test_set)
+        result_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         alg = NXPageRank()
-        result_not_personalized = alg.rank({'A000'}, self.graph, test_set)
+        result_not_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         self.assertNotEqual(result_personalized, result_not_personalized)
 
         # test with custom parameters
         alg = NXPageRank(alpha=0.9, max_iter=4, tol=1e-3)
-        result_custom = alg.rank({'A000'}, self.graph, test_set)
+        result_custom = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         alg = NXPageRank()
-        result_not_custom = alg.rank({'A000'}, self.graph, test_set)
+        result_not_custom = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         self.assertNotEqual(result_custom, result_not_custom)
