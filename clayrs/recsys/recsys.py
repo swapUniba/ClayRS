@@ -169,9 +169,6 @@ class ContentBasedRS(RecSys):
 
             return user_id, user_alg
 
-        if num_cpus == 0:
-            num_cpus = None
-
         items_to_load = set(self.train_set.item_id_column)
         all_users = set(self.train_set.user_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
@@ -249,9 +246,6 @@ class ContentBasedRS(RecSys):
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
             all_users = set(user_id_list)
-
-        if num_cpus == 0:
-            num_cpus = None
 
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
 
@@ -335,9 +329,6 @@ class ContentBasedRS(RecSys):
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
             all_users = set(user_id_list)
-
-        if num_cpus == 0:
-            num_cpus = None
 
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
 
@@ -428,9 +419,6 @@ class ContentBasedRS(RecSys):
             user_pred = alg.predict(user_train, loaded_items_interface, filter_list=filter_list)
 
             return user_id, user_pred
-
-        if num_cpus == 0:
-            num_cpus = None
 
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
@@ -531,9 +519,6 @@ class ContentBasedRS(RecSys):
                                  n_recs, filter_list=filter_list)
 
             return user_id, user_rank
-
-        if num_cpus == 0:
-            num_cpus = None
 
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
@@ -686,9 +671,6 @@ class GraphBasedRS(RecSys):
         if user_id_list is not None:
             all_users = set(user_id_list)
 
-        if num_cpus == 0:
-            num_cpus = None
-
         total_predict_list = self.algorithm.predict(all_users, self.graph, test_set, methodology, num_cpus)
 
         total_predict = Prediction.from_list(total_predict_list)
@@ -733,9 +715,6 @@ class GraphBasedRS(RecSys):
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
             all_users = set(user_id_list)
-
-        if num_cpus == 0:
-            num_cpus = None
 
         total_rank_list = self.algorithm.rank(all_users, self.graph, test_set, n_recs, methodology, num_cpus)
 
