@@ -1,3 +1,6 @@
+import os
+from typing import Union, Iterator
+
 import distex
 import contextlib
 from tqdm import tqdm
@@ -15,7 +18,11 @@ def get_progbar(iterator, total=None) -> tqdm:
 
 
 @contextlib.contextmanager
-def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f, progress_bar=False, total=None):
+def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f,
+                          progress_bar=False, total=None) -> Union[Iterator, tqdm]:
+
+    num_cpus = num_cpus or os.cpu_count() or 1
+
     if num_cpus > 1:
         pool = distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle)
         iterator_res = pool.map(f_to_parallelize, *args_to_f)
