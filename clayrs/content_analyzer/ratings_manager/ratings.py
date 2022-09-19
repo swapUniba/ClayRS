@@ -12,7 +12,7 @@ import pandas as pd
 from clayrs.content_analyzer.exceptions import Handler_ScoreNotFloat
 from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
 

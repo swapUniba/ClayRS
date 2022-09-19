@@ -5,7 +5,8 @@ from clayrs.recsys.graphs.graph import BipartiteDiGraph, Node
 import networkx as nx
 
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 
 class NXBipartiteGraph(BipartiteDiGraph):

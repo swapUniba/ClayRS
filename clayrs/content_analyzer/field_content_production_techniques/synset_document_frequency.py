@@ -9,7 +9,7 @@ from typing import List
 
 import re
 
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 class PyWSDSynsetDocumentFrequency(SynsetDocumentFrequency):

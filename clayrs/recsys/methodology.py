@@ -4,7 +4,7 @@ from typing import Set, Union, Optional, Generator, Dict
 import pandas as pd
 
 from clayrs.content_analyzer import Ratings
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 class Methodology(ABC):

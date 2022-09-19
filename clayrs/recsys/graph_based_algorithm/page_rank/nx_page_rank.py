@@ -10,7 +10,7 @@ from clayrs.recsys.graphs import NXBipartiteGraph
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
 from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_iterator_parallel
 
 
 class NXPageRank(PageRank):
@@ -128,13 +128,15 @@ class NXPageRank(PageRank):
         weight = 'weight' if self.weight is True else None
         train_set = graph.to_ratings()
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_rank, all_users), total=len(all_users)) as pbar:
-                pbar.set_description("Prepping rank... (wait max 20s)")
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_rank, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                for user_id, user_rank in pbar:
-                    all_rank_interaction_list.append(user_rank)
-                    pbar.set_description(f"Computing rank for user {user_id}")
+            pbar.set_description("Prepping rank...")
+
+            for user_id, user_rank in pbar:
+                all_rank_interaction_list.append(user_rank)
+                pbar.set_description(f"Computing rank for user {user_id}")
 
         return list(itertools.chain.from_iterable(all_rank_interaction_list))
 

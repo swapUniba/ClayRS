@@ -4,7 +4,6 @@ import itertools
 from copy import deepcopy
 from typing import Union, Dict, List, Optional
 
-import distex
 import pandas as pd
 from abc import ABC
 
@@ -17,7 +16,8 @@ from clayrs.recsys.content_based_algorithm.content_based_algorithm import Conten
 from clayrs.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
 from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from clayrs.recsys.methodology import Methodology
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_iterator_parallel
 
 
 class RecSys(ABC):
@@ -176,12 +176,14 @@ class ContentBasedRS(RecSys):
         all_users = set(self.train_set.user_id_column)
         loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_fit, all_users), total=len(all_users)) as pbar:
-                pbar.set_description("Fitting algorithm")
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                for user_id, fitted_user_alg in pbar:
-                    self._user_fit_dic[user_id] = fitted_user_alg
+            pbar.set_description("Fitting algorithm")
+
+            for user_id, fitted_user_alg in pbar:
+                self._user_fit_dic[user_id] = fitted_user_alg
 
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
@@ -258,13 +260,14 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_rank, all_users), total=len(all_users)) as pbar:
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_rank, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                pbar.set_description(f"Loading first items from memory...")
-                for user_id, user_rank in pbar:
-                    pbar.set_description(f"Computing rank for user {user_id}")
-                    rank.append(user_rank)
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_rank in pbar:
+                pbar.set_description(f"Computing rank for user {user_id}")
+                rank.append(user_rank)
 
         rank = itertools.chain.from_iterable(rank)
         rank = Rank.from_list(rank)
@@ -343,13 +346,14 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_predict, all_users), total=len(all_users)) as pbar:
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_predict, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                pbar.set_description(f"Loading first items from memory...")
-                for user_id, user_pred in pbar:
-                    pbar.set_description(f"Computing score prediction for user {user_id}")
-                    pred.append(user_pred)
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_pred in pbar:
+                pbar.set_description(f"Computing score prediction for user {user_id}")
+                pred.append(user_pred)
 
         pred = itertools.chain.from_iterable(pred)
         pred = Prediction.from_list(pred)
@@ -439,13 +443,14 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_fit_predict, all_users), total=len(all_users)) as pbar:
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit_predict, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                pbar.set_description(f"Loading first items from memory...")
-                for user_id, user_pred in pbar:
-                    pbar.set_description(f"Computing fit_predict for user {user_id}")
-                    pred.append(user_pred)
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_pred in pbar:
+                pbar.set_description(f"Computing fit_predict for user {user_id}")
+                pred.append(user_pred)
 
         pred = itertools.chain.from_iterable(pred)
         pred = Prediction.from_list(pred)
@@ -541,13 +546,14 @@ class ContentBasedRS(RecSys):
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
-        with distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle) as pool:
-            with get_progbar(pool.map(compute_single_fit_rank, all_users), total=len(all_users)) as pbar:
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit_rank, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
 
-                pbar.set_description(f"Loading first items from memory...")
-                for user_id, user_rank in pbar:
-                    pbar.set_description(f"Computing fit_rank for user {user_id}")
-                    rank.append(user_rank)
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_rank in pbar:
+                pbar.set_description(f"Computing fit_rank for user {user_id}")
+                rank.append(user_rank)
 
         rank = itertools.chain.from_iterable(rank)
         rank = Rank.from_list(rank)

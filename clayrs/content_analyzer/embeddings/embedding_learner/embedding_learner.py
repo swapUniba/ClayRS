@@ -9,7 +9,8 @@ from clayrs.content_analyzer.embeddings.embedding_source import \
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from clayrs.utils.const import get_progbar, logger
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 
 class EmbeddingLearner(EmbeddingSource):

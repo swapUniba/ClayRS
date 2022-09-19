@@ -8,7 +8,7 @@ from clayrs.recsys.graphs.nx_implementation.nx_bipartite_graphs import NXBiparti
 from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, Node, UserNode
 
 from clayrs.recsys.graphs.graph import PropertyNode
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 # Multiple Inheritance so that we will use NXBipartite as its proper father class (we'll its __init__ method)

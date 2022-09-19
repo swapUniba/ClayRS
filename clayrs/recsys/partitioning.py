@@ -11,7 +11,8 @@ from sklearn.utils import resample
 
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 
 class Split:
