@@ -2031,12 +2031,12 @@ rank or make score prediction</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">625</span>
-<span class="normal">626</span>
-<span class="normal">627</span>
-<span class="normal">628</span>
-<span class="normal">629</span>
-<span class="normal">630</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">algorithm</span><span class="p">:</span> <span class="n">GraphBasedAlgorithm</span><span class="p">,</span>
              <span class="n">graph</span><span class="p">:</span> <span class="n">FullDiGraph</span><span class="p">):</span>
 
@@ -2077,13 +2077,13 @@ rank or make score prediction</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span>
-<span class="normal">646</span>
-<span class="normal">647</span>
-<span class="normal">648</span>
-<span class="normal">649</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The graph based algorithm chosen</span>
@@ -2116,12 +2116,12 @@ rank or make score prediction</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">636</span>
-<span class="normal">637</span>
-<span class="normal">638</span>
-<span class="normal">639</span>
-<span class="normal">640</span>
-<span class="normal">641</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The graph containing interactions</span>
@@ -2250,7 +2250,16 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">651</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
 <span class="normal">652</span>
 <span class="normal">653</span>
 <span class="normal">654</span>
@@ -2279,19 +2288,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">677</span>
 <span class="normal">678</span>
 <span class="normal">679</span>
-<span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">680</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
             <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2322,9 +2319,6 @@ the number of cpus will be automatically detected.</p>
     <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">test_set</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">total_predict_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">all_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">methodology</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">)</span>
 
@@ -2494,7 +2488,19 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">694</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
 <span class="normal">695</span>
 <span class="normal">696</span>
 <span class="normal">697</span>
@@ -2535,22 +2541,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">732</span>
 <span class="normal">733</span>
 <span class="normal">734</span>
-<span class="normal">735</span>
-<span class="normal">736</span>
-<span class="normal">737</span>
-<span class="normal">738</span>
-<span class="normal">739</span>
-<span class="normal">740</span>
-<span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
-<span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">735</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
          <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
          <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2586,9 +2577,6 @@ the number of cpus will be automatically detected.</p>
     <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">test_set</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">total_rank_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">all_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">,</span> <span class="n">methodology</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">)</span>
 

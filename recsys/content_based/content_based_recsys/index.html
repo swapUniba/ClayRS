@@ -2256,8 +2256,7 @@ rank or make score prediction</p>
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which will fit the algorithm chosen for each user in the train set passed in the constructor</span>
 
@@ -2277,19 +2276,18 @@ rank or make score prediction</p>
 
         <span class="k">return</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_alg</span>
 
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">items_to_load</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">item_id_column</span><span class="p">)</span>
     <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
     <span class="n">loaded_items_interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">_load_available_contents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="n">items_to_load</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">distex</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">,</span> <span class="n">func_pickle</span><span class="o">=</span><span class="n">distex</span><span class="o">.</span><span class="n">PickleType</span><span class="o">.</span><span class="n">cloudpickle</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">get_progbar</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">compute_single_fit</span><span class="p">,</span> <span class="n">all_users</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
-            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Fitting algorithm&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">get_iterator_parallel</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">,</span>
+                               <span class="n">compute_single_fit</span><span class="p">,</span> <span class="n">all_users</span><span class="p">,</span>
+                               <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
 
-            <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">fitted_user_alg</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_user_fit_dic</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_user_alg</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Fitting algorithm&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">fitted_user_alg</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_fit_dic</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_user_alg</span>
 
     <span class="c1"># we force the garbage collector after freeing loaded items</span>
     <span class="k">del</span> <span class="n">loaded_items_interface</span>
@@ -2442,7 +2440,12 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
 <span class="normal">368</span>
@@ -2529,14 +2532,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">452</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
                 <span class="n">save_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2599,9 +2595,6 @@ the number of cpus will be automatically detected.</p>
 
         <span class="k">return</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_pred</span>
 
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">test_set</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
@@ -2613,13 +2606,14 @@ the number of cpus will be automatically detected.</p>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Don&#39;t worry if it looks stuck at first&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;First iterations will stabilize the estimated remaining time&quot;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">distex</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">,</span> <span class="n">func_pickle</span><span class="o">=</span><span class="n">distex</span><span class="o">.</span><span class="n">PickleType</span><span class="o">.</span><span class="n">cloudpickle</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">get_progbar</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">compute_single_fit_predict</span><span class="p">,</span> <span class="n">all_users</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">get_iterator_parallel</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">,</span>
+                               <span class="n">compute_single_fit_predict</span><span class="p">,</span> <span class="n">all_users</span><span class="p">,</span>
+                               <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
 
-            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_pred</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing fit_predict for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_pred</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_pred</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing fit_predict for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_pred</span><span class="p">)</span>
 
     <span class="n">pred</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
     <span class="n">pred</span> <span class="o">=</span> <span class="n">Prediction</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
@@ -2815,7 +2809,14 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">461</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
 <span class="normal">462</span>
 <span class="normal">463</span>
 <span class="normal">464</span>
@@ -2906,16 +2907,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span>
-<span class="normal">553</span>
-<span class="normal">554</span>
-<span class="normal">555</span>
-<span class="normal">556</span>
-<span class="normal">557</span>
-<span class="normal">558</span>
-<span class="normal">559</span>
-<span class="normal">560</span>
-<span class="normal">561</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
              <span class="n">save_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2984,9 +2976,6 @@ the number of cpus will be automatically detected.</p>
 
         <span class="k">return</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_rank</span>
 
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">test_set</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
@@ -2998,13 +2987,14 @@ the number of cpus will be automatically detected.</p>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Don&#39;t worry if it looks stuck at first&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;First iterations will stabilize the estimated remaining time&quot;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">distex</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">,</span> <span class="n">func_pickle</span><span class="o">=</span><span class="n">distex</span><span class="o">.</span><span class="n">PickleType</span><span class="o">.</span><span class="n">cloudpickle</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">get_progbar</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">compute_single_fit_rank</span><span class="p">,</span> <span class="n">all_users</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">get_iterator_parallel</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">,</span>
+                               <span class="n">compute_single_fit_rank</span><span class="p">,</span> <span class="n">all_users</span><span class="p">,</span>
+                               <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
 
-            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_rank</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing fit_rank for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_rank</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_rank</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing fit_rank for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_rank</span><span class="p">)</span>
 
     <span class="n">rank</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="n">Rank</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
@@ -3198,7 +3188,10 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">280</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
 <span class="normal">283</span>
@@ -3276,12 +3269,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
-<span class="normal">358</span>
-<span class="normal">359</span>
-<span class="normal">360</span>
-<span class="normal">361</span>
-<span class="normal">362</span>
-<span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
             <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -3337,9 +3325,6 @@ the number of cpus will be automatically detected.</p>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">loaded_items_interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">_load_available_contents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
 
     <span class="n">pred</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3347,13 +3332,14 @@ the number of cpus will be automatically detected.</p>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Don&#39;t worry if it looks stuck at first&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;First iterations will stabilize the estimated remaining time&quot;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">distex</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">,</span> <span class="n">func_pickle</span><span class="o">=</span><span class="n">distex</span><span class="o">.</span><span class="n">PickleType</span><span class="o">.</span><span class="n">cloudpickle</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">get_progbar</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">compute_single_predict</span><span class="p">,</span> <span class="n">all_users</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">get_iterator_parallel</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">,</span>
+                               <span class="n">compute_single_predict</span><span class="p">,</span> <span class="n">all_users</span><span class="p">,</span>
+                               <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
 
-            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_pred</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing score prediction for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_pred</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_pred</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing score prediction for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_pred</span><span class="p">)</span>
 
     <span class="n">pred</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
     <span class="n">pred</span> <span class="o">=</span> <span class="n">Prediction</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
@@ -3526,7 +3512,8 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
+<span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
@@ -3609,10 +3596,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">272</span>
 <span class="normal">273</span>
 <span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
          <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
          <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank</span><span class="p">:</span>
 
@@ -3671,9 +3655,6 @@ the number of cpus will be automatically detected.</p>
     <span class="k">if</span> <span class="n">user_id_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">all_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">num_cpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">loaded_items_interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">_load_available_contents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items_directory</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
 
     <span class="n">rank</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3681,13 +3662,14 @@ the number of cpus will be automatically detected.</p>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Don&#39;t worry if it looks stuck at first&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;First iterations will stabilize the estimated remaining time&quot;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">distex</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">,</span> <span class="n">func_pickle</span><span class="o">=</span><span class="n">distex</span><span class="o">.</span><span class="n">PickleType</span><span class="o">.</span><span class="n">cloudpickle</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">get_progbar</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">compute_single_rank</span><span class="p">,</span> <span class="n">all_users</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">get_iterator_parallel</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">,</span>
+                               <span class="n">compute_single_rank</span><span class="p">,</span> <span class="n">all_users</span><span class="p">,</span>
+                               <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_users</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
 
-            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_rank</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing rank for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_rank</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading first items from memory...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_rank</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing rank for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_rank</span><span class="p">)</span>
 
     <span class="n">rank</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
     <span class="n">rank</span> <span class="o">=</span> <span class="n">Rank</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>

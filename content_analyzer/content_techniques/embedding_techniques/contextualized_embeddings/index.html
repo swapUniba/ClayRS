@@ -1980,10 +1980,10 @@ embeddings).</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
-<span class="normal">461</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">461</span>
 <span class="normal">462</span>
-<span class="normal">463</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">]):</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">]):</span>
     <span class="c1"># if isinstance(embedding_source, str):</span>
     <span class="c1">#     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedding_source</span><span class="p">)</span>
@@ -2063,8 +2063,7 @@ while the columns are the hidden dimension of the chosen model</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">465</span>
-<span class="normal">466</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
 <span class="normal">467</span>
 <span class="normal">468</span>
 <span class="normal">469</span>
@@ -2078,7 +2077,8 @@ while the columns are the hidden dimension of the chosen model</p>
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span>
-<span class="normal">480</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">produce_single_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EmbeddingField</span><span class="p">:</span>
+<span class="normal">480</span>
+<span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">produce_single_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EmbeddingField</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produces a single matrix where each row is the embedding representation of each token of the sentence,</span>
 <span class="sd">    while the columns are the hidden dimension of the chosen model</span>
