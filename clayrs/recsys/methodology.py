@@ -1,10 +1,10 @@
 import abc
 from abc import ABC
-from typing import Set, Union, Optional, Generator
+from typing import Set, Union, Optional, Generator, Dict
 import pandas as pd
 
 from clayrs.content_analyzer import Ratings
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 class Methodology(ABC):
@@ -26,7 +26,7 @@ class Methodology(ABC):
         return items_list_greater_eq
 
     def filter_all(self, train_set: Ratings, test_set: Ratings,
-                   result_as_iter_dict: bool = False) -> Union[pd.DataFrame, Generator]:
+                   result_as_iter_dict: bool = False) -> Union[pd.DataFrame, Dict[str, Generator]]:
         """
         Concrete method which calculates for all users of the *test set* which items must be used in order to
         generate a recommendation list

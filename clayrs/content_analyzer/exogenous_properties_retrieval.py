@@ -9,7 +9,8 @@ from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
 from clayrs.content_analyzer.content_representation.content import PropertiesDict, \
     ExogenousPropertiesRepresentation, EntitiesProp
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 from babelpy.babelfy import BabelfyClient
 from clayrs.utils.check_tokenization import check_not_tokenized
 
@@ -350,6 +351,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
             results.extend(result_incomplete)
             contents_taken.extend(set([row['contents']['value'] for row in result_incomplete]))
+            logger.info(f"Contents queried so far: {len(results)} of {len(all_contents_labels_set)}")
 
         if len(results) == 0:
             raise ValueError("No mapping found")

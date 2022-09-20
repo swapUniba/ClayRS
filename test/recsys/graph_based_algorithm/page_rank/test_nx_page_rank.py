@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pandas as pd
 from unittest import TestCase
 
@@ -20,6 +18,14 @@ ratings = pd.DataFrame.from_records([
     columns=["from_id", "to_id", "score", "timestamp"])
 ratings = Ratings.from_dataframe(ratings, timestamp_column="timestamp")
 
+test_set = pd.DataFrame.from_records([
+    ("A000", "tt0113497", 1, "54654675"),
+    ("A001", "tt0112453", 0.5, "54654675"),
+    ("A002", "tt0114576", 0.5, "54654675"),
+    ("A003", "tt0114576", 0, "54654675")],
+    columns=["from_id", "to_id", "score", "timestamp"])
+test_set = Ratings.from_dataframe(test_set, timestamp_column="timestamp")
+
 
 class TestNXPageRank(TestCase):
 
@@ -31,14 +37,14 @@ class TestNXPageRank(TestCase):
 
         # Will raise Exception since it's not a Score Prediction Algorithm
         with self.assertRaises(NotPredictionAlg):
-            alg.predict({'A000'}, self.graph)
+            alg.predict({'A000'}, self.graph, test_set)
 
     def test_rank(self):
         # test not personalized
         alg = NXPageRank()
 
-        # rank without filter_list
-        res_all_unrated = alg.rank({'A000'}, self.graph)
+        # rank with None methodology (all unrated items will be ranked)
+        res_all_unrated = alg.rank({'A000'}, self.graph, test_set, methodology=None, num_cpus=1)
         item_rated_set = set([interaction.item_id for interaction in ratings.get_user_interactions("A000")])
         item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_all_unrated])
         # We expect this to be empty, since the alg should rank only unrated items (unless in filter list)
@@ -47,7 +53,7 @@ class TestNXPageRank(TestCase):
 
         # rank with n_recs specified
         n_recs = 1
-        res_n_recs = alg.rank({'A000'}, self.graph, n_recs)
+        res_n_recs = alg.rank({'A000'}, self.graph, test_set, n_recs)
         self.assertEqual(len(res_n_recs), n_recs)
         item_rated_set = set([interaction.item_id for interaction in ratings.get_user_interactions("A000")])
         item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_n_recs])
@@ -57,37 +63,18 @@ class TestNXPageRank(TestCase):
 
         # test personalized
         alg = NXPageRank(personalized=True)
-        result_personalized = alg.rank({'A000'}, self.graph)
+        result_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         alg = NXPageRank()
-        result_not_personalized = alg.rank({'A000'}, self.graph)
+        result_not_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         self.assertNotEqual(result_personalized, result_not_personalized)
 
         # test with custom parameters
         alg = NXPageRank(alpha=0.9, max_iter=4, tol=1e-3)
-        result_custom = alg.rank({'A000'}, self.graph)
+        result_custom = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         alg = NXPageRank()
-        result_not_custom = alg.rank({'A000'}, self.graph)
+        result_not_custom = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         self.assertNotEqual(result_custom, result_not_custom)
-
-    def test_rank_w_filter_list(self):
-        filter_dict = {"A000": {'tt0114576', 'tt0112453', 'tt0113497'},
-                       "A001": {'tt0114576', 'tt0112453', 'tt0113497'},
-                       "A002": {'tt0114576', 'tt0112453', 'tt0113497'},
-                       "A003": {'tt0114576', 'tt0112453', 'tt0113497'}}
-
-        filter_dict_persistent = deepcopy(filter_dict)
-
-        alg = NXPageRank()
-
-        # rank with filter_list
-        res_filtered = alg.rank({'A000'}, self.graph, filter_dict=filter_dict)
-        item_ranked_set = set([pred_interaction.item_id for pred_interaction in res_filtered])
-        self.assertEqual(len(item_ranked_set), len(filter_dict_persistent["A000"]))
-        self.assertCountEqual(item_ranked_set, filter_dict_persistent["A000"])
-
-        # check that user A000 has been popped from original dict
-        self.assertIsNone(filter_dict.get("A000"))

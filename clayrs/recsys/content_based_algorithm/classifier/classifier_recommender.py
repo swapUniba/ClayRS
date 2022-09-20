@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Union, Optional
 
 from clayrs.content_analyzer import Content
@@ -62,7 +63,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
             vector for each word). By default the `Centroid` of the rows of the matrix is computed
     """
-    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_rated_dict')
+    __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_items_features')
 
     def __init__(self, item_field: dict, classifier: Classifier, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
@@ -70,7 +71,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._classifier = classifier
         self._embedding_combiner = embedding_combiner
         self._labels: Optional[list] = None
-        self._rated_dict: Optional[dict] = None
+        self._items_features: Optional[list] = None
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -94,8 +95,12 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             OnlyNegativeitems: Exception raised when there are only negative items available locally
                 for the user (Items that the user disliked)
         """
-        # Load rated items from the path
-        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        # a list since there could be duplicate interaction (eg bootstrap partitioning)
+        items_scores_dict = defaultdict(list)
+        for interaction in user_ratings:
+            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Load rated items from the path
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
@@ -108,24 +113,28 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         # Assign label and extract features from the rated items
         labels = []
-        rated_dict = {}
+        items_features = []
 
+        # we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!
+        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
         for item in loaded_rated_items:
             if item is not None:
-                rated_dict[item] = self.extract_features_item(item)
 
-                # This conversion raises Exception when there are multiple same to_id for the user
-                score_assigned = float(items_scores_dict[item.content_id])
-                if score_assigned >= threshold:
-                    labels.append(1)
-                else:
-                    labels.append(0)
+                score_assigned = map(float, items_scores_dict[item.content_id])
+
+                for score in score_assigned:
+                    items_features.append(self.extract_features_item(item))
+
+                    if score >= threshold:
+                        labels.append(1)
+                    else:
+                        labels.append(0)
 
         if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         user_id = user_ratings[0].user_id
-        if len(rated_dict) == 0:
+        if len(items_features) == 0:
             raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
         if 0 not in labels:
             raise OnlyPositiveItems("User {} - There are only positive items available locally!".format(user_id))
@@ -133,7 +142,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
             raise OnlyNegativeItems("User {} - There are only negative items available locally!".format(user_id))
 
         self._labels = labels
-        self._rated_dict = rated_dict
+        self._items_features = items_features
 
     def fit(self):
         """
@@ -143,15 +152,13 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         It uses private attributes to fit the classifier, so `process_rated()` must be called
         before this method.
         """
-        rated_features = list(self._rated_dict.values())
-
         # Fuse the input if there are dicts, multiple representation, etc.
-        fused_features = self.fuse_representations(rated_features, self._embedding_combiner)
+        fused_features = self.fuse_representations(self._items_features, self._embedding_combiner)
 
         self._classifier.fit(fused_features, self._labels)
 
         # we delete variables used to fit since will no longer be used
-        del self._rated_dict
+        del self._items_features
         del self._labels
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,

@@ -1,10 +1,11 @@
 import abc
 from typing import Dict, List, Set, Union
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from clayrs.recsys.algorithm import Algorithm
 
 from clayrs.recsys.graphs.graph import UserNode, Node, Graph, ItemNode, BipartiteDiGraph
+from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
 
 
 class GraphBasedAlgorithm(Algorithm):
@@ -52,7 +53,9 @@ class GraphBasedAlgorithm(Algorithm):
         return filtered_result
 
     @abc.abstractmethod
-    def predict(self, all_users: Set[str], graph: Graph, filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+    def predict(self, all_users: Set[str], graph: Graph, test_set: Ratings,
+                methodology: Union[Methodology, None] = TestRatingsMethodology(),
+                num_cpus: int = 0) -> List[Interaction]:
         """
         Abstract method that predicts how much a user will like unrated items.
         If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -69,8 +72,11 @@ class GraphBasedAlgorithm(Algorithm):
         Args:
             all_users: Set of user id for which a recommendation list must be generated
             graph: A graph previously instantiated
-            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
-                ranked
+            test_set: Ratings object which represents the ground truth of the split considered
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Returns:
             List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
@@ -78,8 +84,9 @@ class GraphBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, all_users: Set[str], graph: Graph, recs_number: int = None,
-             filter_dict: Dict[str, Set] = None) -> List[Interaction]:
+    def rank(self, all_users: Set[str], graph: Graph, test_set: Ratings,
+             recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
+             num_cpus: int = 0) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -95,10 +102,13 @@ class GraphBasedAlgorithm(Algorithm):
 
         Args:
             all_users: Set of user id for which a recommendation list must be generated
-            graph: A NX graph previously instantiated
+            graph: A graph previously instantiated
+            test_set: Ratings object which represents the ground truth of the split considered
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_dict: Dict containing filters list for each user. If None all unrated items for each user will be
-                ranked
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`
+            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
+                the number of cpus will be automatically detected.
 
         Returns:
             List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for

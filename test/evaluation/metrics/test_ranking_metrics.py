@@ -4,7 +4,7 @@ from sklearn.metrics import ndcg_score
 import numpy as np
 
 from clayrs.content_analyzer import Ratings
-from clayrs.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK
+from clayrs.evaluation.metrics.ranking_metrics import NDCG, Correlation, MRR, NDCGAtK, MRRAtK, MAP, MAPAtK
 from clayrs.recsys import Split
 
 pred_only_new_items = pd.DataFrame(
@@ -262,9 +262,10 @@ class TestMRR(unittest.TestCase):
 class TestMRRAtK(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.k = 2
+        k = 2
+        cls.k = k
 
-        cls.metric_mean_threshold = MRRAtK(cls.k)
+        cls.metric_mean_threshold = MRRAtK(k)
 
     def test_perform(self):
         metric = MRRAtK(self.k, relevant_threshold=3)
@@ -316,6 +317,114 @@ class TestMRRAtK(unittest.TestCase):
         with self.assertRaises(ValueError):
             MRRAtK(k=-2)
             MRRAtK(k=0)
+
+
+class TestMAP(unittest.TestCase):
+
+    def test_perform_w_new(self):
+        split = Split(pred_w_new_items, truth)
+
+        metric = MAP(relevant_threshold=3)
+        df_result = metric.perform(split)
+
+        u1_result = float(df_result.query('user_id == "u1"')['AP'])
+        u1_expected = 1/2 * (1/2 + 2/6)
+        self.assertAlmostEqual(u1_expected, u1_result)
+
+        u2_result = float(df_result.query('user_id == "u2"')['AP'])
+        u2_expected = 1/3 * (1/1 + 2/3 + 3/4)
+        self.assertAlmostEqual(u2_expected, u2_result)
+
+        sys_result = float(df_result.query('user_id == "sys"')['MAP'])
+        sys_expected = (u1_expected + u2_expected) / 2
+        self.assertAlmostEqual(sys_expected, sys_result)
+
+        # WITH MEAN as relevant threshold
+        metric = MAP(relevant_threshold=None)
+        df_result = metric.perform(split)
+
+        u1_result = float(df_result.query('user_id == "u1"')['AP'])
+        u1_expected = 1/2 * (1/2 + 2/6)
+        self.assertAlmostEqual(u1_expected, u1_result)
+
+        u2_result = float(df_result.query('user_id == "u2"')['AP'])
+        u2_expected = 1/1 * (1/3)
+        self.assertAlmostEqual(u2_expected, u2_result)
+
+        sys_result = float(df_result.query('user_id == "sys"')['MAP'])
+        sys_expected = (u1_expected + u2_expected) / 2
+        self.assertAlmostEqual(sys_expected, sys_result)
+
+    def test_perform_only_one(self):
+        split = Split(pred_only_one_item, truth)
+
+        metric = MAP(relevant_threshold=3)
+        df_result = metric.perform(split)
+
+        u1_result = float(df_result.query('user_id == "u1"')['AP'])
+        u1_expected = 0
+        self.assertAlmostEqual(u1_expected, u1_result)
+
+        u2_result = float(df_result.query('user_id == "u2"')['AP'])
+        u2_expected = 1/3 * (1/1)
+        self.assertAlmostEqual(u2_expected, u2_result)
+
+        sys_result = float(df_result.query('user_id == "sys"')['MAP'])
+        sys_expected = (u1_expected + u2_expected) / 2
+        self.assertAlmostEqual(sys_expected, sys_result)
+
+    def test_perform_only_new(self):
+
+        split = Split(pred_only_new_items, truth)
+
+        metric = MAP(relevant_threshold=2)
+        df_result = metric.perform(split)
+
+        u1_result = float(df_result.query('user_id == "u1"')['AP'])
+        u1_expected = 0
+        self.assertEqual(u1_expected, u1_result)
+
+        u2_result = float(df_result.query('user_id == "u2"')['AP'])
+        u2_expected = 0
+        self.assertEqual(u2_expected, u2_result)
+
+        sys_result = float(df_result.query('user_id == "sys"')['MAP'])
+        sys_expected = 0
+        self.assertEqual(sys_expected, sys_result)
+
+    def test_perform_nan(self):
+        # RELEVANT THRESHOLD greater than all rating given by u1
+        split = Split(pred_w_new_items, truth)
+        metric = MAP(relevant_threshold=4)
+        df_result = metric.perform(split)
+
+        u1_result = df_result.query('user_id == "u1"')['AP'].values
+        self.assertTrue(pd.isna(u1_result))
+
+        u2_result = float(df_result.query('user_id == "u2"')['AP'])
+        u2_expected = 1/1 * (1/3)
+        self.assertAlmostEqual(u2_expected, u2_result)
+
+        sys_result = float(df_result.query('user_id == "sys"')['MAP'])
+        sys_expected = u2_expected  # since u1 is nan only u2 will matter for MAP computation
+        self.assertAlmostEqual(sys_expected, sys_result)
+
+
+class TestMAPAtK(unittest.TestCase):
+
+    def test__compute_ap(self):
+        relevant_threshold = 3
+
+        user_predictions = pred_w_new_items.get_user_interactions('u1')
+        user_truth = truth.get_user_interactions('u1')
+        user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
+                                        if interaction.score >= relevant_threshold)
+
+        metric = MAPAtK(k=2)
+
+        result_u1_ap = metric._compute_ap(user_predictions, user_truth_relevant_items)
+        expected_u1_ap = 1/2 * 1/2
+        self.assertAlmostEqual(expected_u1_ap, result_u1_ap)
 
 
 class TestCorrelation(unittest.TestCase):

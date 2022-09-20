@@ -6,7 +6,7 @@ from clayrs.recsys.graphs.nx_implementation import NXTripartiteGraph
 from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, PropertyNode, Node
 import pandas as pd
 
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 # Multiple Inheritance so that we will use NXTripartite as an interface (we only use its methods)

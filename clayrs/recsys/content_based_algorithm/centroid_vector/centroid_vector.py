@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Union, Optional, Dict
 
 from clayrs.content_analyzer.content_representation.content import Content
@@ -65,7 +66,7 @@ class CentroidVector(ContentBasedAlgorithm):
             matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
             vector for each word). By default the `Centroid` of the rows of the matrix is computed
     """
-    __slots__ = ('_similarity', '_emb_combiner', '_centroid', '_positive_rated_dict')
+    __slots__ = ('_similarity', '_emb_combiner', '_centroid', '_positive_rated_list')
 
     def __init__(self, item_field: dict, similarity: Similarity, threshold: float = None,
                  embedding_combiner: CombiningTechnique = Centroid()):
@@ -74,7 +75,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self._similarity = similarity
         self._emb_combiner = embedding_combiner
         self._centroid: Optional[np.ndarray] = None
-        self._positive_rated_dict: Optional[Dict] = None
+        self._positive_rated_list: Optional[List] = None
 
     def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
         """
@@ -87,7 +88,12 @@ class CentroidVector(ContentBasedAlgorithm):
             user_ratings: List of Interaction objects for a single user
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
-        items_scores_dict = {interaction.item_id: interaction.score for interaction in user_ratings}
+        # a list since there could be duplicate interaction (eg bootstrap partitioning)
+        items_scores_dict = defaultdict(list)
+        for interaction in user_ratings:
+            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Load rated items from the path
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
@@ -100,13 +106,17 @@ class CentroidVector(ContentBasedAlgorithm):
         if threshold is None:
             threshold = self._calc_mean_user_threshold(user_ratings)
 
-        # Calculates labels and extract features from the positive rated items
-        positive_rated_dict = {}
+        # we extract feature of each POSITIVE item sorted based on its key: IMPORTANT for reproducibility!!
+        # otherwise the matrix we feed to sklearn will have input item in different rows each run!
+        positive_rated_list = []
         for item in loaded_rated_items:
             if item is not None:
-                score_assigned = float(items_scores_dict[item.content_id])
-                if score_assigned >= threshold:
-                    positive_rated_dict[item] = self.extract_features_item(item)
+
+                score_assigned = map(float, items_scores_dict[item.content_id])
+
+                for score in score_assigned:
+                    if score >= threshold:
+                        positive_rated_list.append(self.extract_features_item(item))
 
         if len(user_ratings) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
@@ -114,10 +124,10 @@ class CentroidVector(ContentBasedAlgorithm):
         user_id = user_ratings[0].user_id
         if len(loaded_rated_items) == 0 or (loaded_rated_items.count(None) == len(loaded_rated_items)):
             raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
-        if len(positive_rated_dict) == 0:
+        if len(positive_rated_list) == 0:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!")
 
-        self._positive_rated_dict = positive_rated_dict
+        self._positive_rated_list = positive_rated_list
 
     def fit(self):
         """
@@ -129,14 +139,12 @@ class CentroidVector(ContentBasedAlgorithm):
 
         The built centroid will also be stored in a private attribute.
         """
-        positive_rated_features = list(self._positive_rated_dict.values())
-
-        positive_rated_features_fused = self.fuse_representations(positive_rated_features, self._emb_combiner,
+        positive_rated_features_fused = self.fuse_representations(self._positive_rated_list, self._emb_combiner,
                                                                   as_array=True)
         self._centroid = positive_rated_features_fused.mean(axis=0)
 
         # we delete variable used to fit since will no longer be used
-        del self._positive_rated_dict
+        del self._positive_rated_list
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:

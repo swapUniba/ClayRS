@@ -5,14 +5,14 @@ import itertools
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Generator
+from typing import Dict, Union, List, Iterable, Iterator
 
 import pandas as pd
 
 from clayrs.content_analyzer.exceptions import Handler_ScoreNotFloat
 from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.const import get_progbar
+from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
 
@@ -79,10 +79,16 @@ class Interaction:
 
     def __eq__(self, other):
         if isinstance(other, Interaction):
+            timestamp_equal = (self.timestamp is None and other.timestamp is None) or \
+                              (self.timestamp == other.timestamp)
+
             return self.user_id == other.user_id and self.item_id == other.item_id and \
-                   self.score == other.score and self.timestamp == other.timestamp
+                   self.score == other.score and timestamp_equal
         else:
             return False
+
+    def __hash__(self):
+        return hash(self.user_id + self.item_id + str(self.score) + str(self.timestamp))
 
 
 class Ratings:
@@ -531,7 +537,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_list(cls, interaction_list: Union[List[Interaction], Generator]) -> Ratings:
+    def from_list(cls, interaction_list: Union[List[Interaction], Iterator]) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`
         objects or its generator
@@ -558,7 +564,7 @@ class Ratings:
         return obj
 
     @classmethod
-    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Generator]) -> Ratings:
+    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Iterator]) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing
         user_id as keys and lists of `Interaction` objects as value

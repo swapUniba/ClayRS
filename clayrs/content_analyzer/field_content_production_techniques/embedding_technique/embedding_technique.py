@@ -15,7 +15,8 @@ from clayrs.content_analyzer.information_processor.information_processor import 
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from clayrs.utils.class_utils import get_all_implemented_subclasses
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 from typing import Union, List, Type
 
