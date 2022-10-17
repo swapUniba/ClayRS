@@ -122,6 +122,7 @@ nav:
             - Paired: 'evaluation/statistical_tests/paired.md'
     - Utils:
         - Report: 'utils/report.md'
+        - Experiment: 'utils/experiment.md'
 copyright: Documentation made by Antonio Silletti
 extra:
   social:
