@@ -196,17 +196,17 @@ class ContentBasedRS(RecSys):
         You must first call the `fit()` method before you can compute the ranking.
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
-                will be returned for the user
+            n_recs: Number of the top items that will be present in the ranking of each user.
+                If `None` all candidate items will be returned for the user
             user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
                 for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
@@ -282,8 +282,8 @@ class ContentBasedRS(RecSys):
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score
         prediction
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
@@ -367,8 +367,8 @@ class ContentBasedRS(RecSys):
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score
         prediction
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
@@ -460,10 +460,10 @@ class ContentBasedRS(RecSys):
         If the algorithm can't be fit for some users, a warning message is printed
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
@@ -474,8 +474,8 @@ class ContentBasedRS(RecSys):
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
-                will be returned for the user
+            n_recs: Number of the top items that will be present in the ranking of each user.
+                If `None` all candidate items will be returned for the user
             user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
                 for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
@@ -646,8 +646,8 @@ class GraphBasedRS(RecSys):
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so for each user items in its test set only will be considered for score
         prediction
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
@@ -686,17 +686,17 @@ class GraphBasedRS(RecSys):
         You must first call the `fit()` method before you can compute the ranking.
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users
 
-        Via the `methodology` parameter you can perform different candidate item selection. By default the
-        `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
         If the algorithm was not fit for some users, they will be skipped and a warning is printed
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            n_recs: Number of the top items that will be present in the ranking. If None all candidate items
-                will be returned for the user
+            n_recs: Number of the top items that will be present in the ranking of each user.
+                If `None` all candidate items will be returned for the user
             user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
                 for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
