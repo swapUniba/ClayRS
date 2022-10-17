@@ -210,12 +210,15 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
             for n, id in zip(progbar, content_filename):
                 item: Content = loaded_items.get(id)
 
-                exo_props = self._get_exo_props(exo_properties, item)
+                if item is not None:
+                    exo_props = self._get_exo_props(exo_properties, item)
 
-                single_item_prop_edges = [(n,
-                                           PropertyNode(prop_dict[prop]),
-                                           {'label': prop})
-                                          for prop_dict in exo_props for prop in prop_dict]
+                    single_item_prop_edges = [(n,
+                                               PropertyNode(prop_dict[prop]),
+                                               {'label': prop})
+                                              for prop_dict in exo_props for prop in prop_dict]
+                else:
+                    single_item_prop_edges = []
 
                 yield from single_item_prop_edges
 
