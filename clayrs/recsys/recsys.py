@@ -409,7 +409,7 @@ class ContentBasedRS(RecSys):
                 logger.warning(warning_message)
                 if save_fit:
                     self._user_fit_dic[user_id] = None
-                return
+                return user_id, []
 
             filter_list = None
             if methodology is not None:
@@ -508,7 +508,7 @@ class ContentBasedRS(RecSys):
                 logger.warning(warning_message)
                 if save_fit:
                     self._user_fit_dic[user_id] = None
-                return
+                return user_id, []
 
             filter_list = None
             if methodology is not None:
