@@ -242,6 +242,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         return rank_interaction_list
 
+    def __str__(self):
+        return "ClassifierRecommender"
+
     def __repr__(self):
         return f'ClassifierRecommender(item_field={self.item_field}, ' \
                f'classifier={self._classifier}, ' \

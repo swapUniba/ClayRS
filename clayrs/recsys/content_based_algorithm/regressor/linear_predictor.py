@@ -254,6 +254,9 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         return rank_interaction_list
 
+    def __str__(self):
+        return "LinearPredictor"
+
     def __repr__(self):
         return f'LinearPredictor(item_field={self.item_field}, regressor={self._regressor}, ' \
                f'only_greater_eq={self.threshold}, embedding_combiner={self._embedding_combiner})'
