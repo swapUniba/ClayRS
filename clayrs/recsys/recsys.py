@@ -43,11 +43,11 @@ class RecSys(ABC):
         return self.__alg
 
     @abc.abstractmethod
-    def rank(self, test_set: pd.DataFrame, n_recs: int = None) -> Rank:
+    def rank(self, test_set: Ratings, n_recs: int = 10) -> Rank:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict(self, test_set: pd.DataFrame) -> Prediction:
+    def predict(self, test_set: Ratings) -> Prediction:
         raise NotImplementedError
 
 
@@ -188,7 +188,7 @@ class ContentBasedRS(RecSys):
 
         return self
 
-    def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+    def rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
              num_cpus: int = 0) -> Rank:
 
@@ -451,7 +451,7 @@ class ContentBasedRS(RecSys):
 
         return pred
 
-    def fit_rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+    def fit_rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
                  methodology: Union[Methodology, None] = TestRatingsMethodology(),
                  save_fit: bool = False, num_cpus: int = 0) -> Rank:
         """
@@ -679,7 +679,7 @@ class GraphBasedRS(RecSys):
 
         return total_predict
 
-    def rank(self, test_set: Ratings, n_recs: int = None, user_id_list: List = None,
+    def rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
              num_cpus: int = 0) -> Rank:
         """
