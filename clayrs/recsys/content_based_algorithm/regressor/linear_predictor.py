@@ -141,8 +141,8 @@ class LinearPredictor(ContentBasedAlgorithm):
         self._regressor.fit(fused_features, self._labels)
 
         # we delete variables used to fit since will no longer be used
-        del self._labels
-        del self._items_features
+        self._labels = None
+        self._items_features = None
 
     def _common_prediction_process(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                                    filter_list: List[str] = None):

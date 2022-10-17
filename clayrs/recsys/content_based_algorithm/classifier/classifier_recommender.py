@@ -158,8 +158,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._classifier.fit(fused_features, self._labels)
 
         # we delete variables used to fit since will no longer be used
-        del self._items_features
-        del self._labels
+        self._items_features = None
+        self._labels = None
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:

@@ -144,7 +144,7 @@ class CentroidVector(ContentBasedAlgorithm):
         self._centroid = positive_rated_features_fused.mean(axis=0)
 
         # we delete variable used to fit since will no longer be used
-        del self._positive_rated_list
+        self._positive_rated_list = None
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:
