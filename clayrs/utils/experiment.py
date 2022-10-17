@@ -1,11 +1,15 @@
+from __future__ import annotations
 import abc
 import os
 import shutil
 import sys
 from abc import ABC
-from typing import List, Union, Dict, Callable
+from typing import List, Union, Dict, Callable, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings
+# fix circular import, for the future: move Ratings class to the RecSys module
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+
 from clayrs.evaluation import EvalModel
 from clayrs.evaluation.metrics.metrics import Metric
 from clayrs.recsys import ContentBasedRS, GraphBasedRS, NXFullGraph, UserNode, ItemNode
