@@ -4,7 +4,6 @@ import itertools
 from copy import deepcopy
 from typing import Union, Dict, List, Optional
 
-import pandas as pd
 from abc import ABC
 
 from clayrs.content_analyzer import Ratings
