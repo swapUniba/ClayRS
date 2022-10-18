@@ -1,8 +1,11 @@
-from typing import List, Iterable
+from __future__ import annotations
+from typing import List, Iterable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.recsys.graphs.feature_selection.feature_selection_alg import FeatureSelectionAlgorithm
+    from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, ItemNode
 
 from clayrs.recsys.graphs.feature_selection.exceptions import FeatureSelectionException
-from clayrs.recsys.graphs.feature_selection.feature_selection_alg import FeatureSelectionAlgorithm
-from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, ItemNode
 from clayrs.utils.const import logger
 
 

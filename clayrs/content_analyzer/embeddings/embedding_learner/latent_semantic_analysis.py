@@ -5,16 +5,16 @@ from gensim.corpora import Dictionary
 from gensim.models import LsiModel
 
 from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import GensimDocumentEmbeddingLearner
-from clayrs.utils.check_tokenization import check_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized
 
 
 class GensimLatentSemanticAnalysis(GensimDocumentEmbeddingLearner):
     """
     Class that implements Latent Semantic Analysis (A.K.A. Latent Semantic Indexing)
-    (LSI) thanks to the the Gensim library.
+    (LSI) thanks to the Gensim library.
 
     If a pre-trained local Word2Vec model must be loaded, put its path in the `reference` parameter.
-    Otherwise a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
+    Otherwise, a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
     represent
 
     If you'd like to save the model once trained, set the path in the `reference` parameter and set

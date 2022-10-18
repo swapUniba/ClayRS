@@ -1,7 +1,8 @@
+from __future__ import annotations
 import abc
 from copy import deepcopy
 from itertools import chain
-from typing import List
+from typing import List, TYPE_CHECKING
 import pandas as pd
 
 from scipy import sparse
@@ -10,13 +11,17 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
 import numpy as np
 
-from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
+    from clayrs.content_analyzer.content_representation.content import Content
+    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface
+
+
 from clayrs.recsys.algorithm import Algorithm
 
-from clayrs.content_analyzer.content_representation.content import Content
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface, LoadedContentsDict
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 
 
 class ContentBasedAlgorithm(Algorithm):

@@ -1,5 +1,5 @@
 from typing import Union, List
-from nltk import RegexpTokenizer, data, download, sent_tokenize, word_tokenize
+from nltk import data, download, sent_tokenize, word_tokenize
 
 # nltk corpus
 corpus_downloaded = False

@@ -1,13 +1,15 @@
+from __future__ import annotations
 from abc import abstractmethod
-from typing import List, Set, Callable
+from typing import List, Set, Callable, TYPE_CHECKING
 
 import numpy as np
-
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.partitioning import Split
-from clayrs.evaluation.metrics.metrics import Metric
-
 import pandas as pd
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+    from clayrs.recsys.partitioning import Split
+
+from clayrs.evaluation.metrics.metrics import Metric
 
 
 class ClassificationMetric(Metric):

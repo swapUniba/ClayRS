@@ -1,14 +1,17 @@
+from __future__ import annotations
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from typing import List, Union, Mapping, Iterable, Callable
+from typing import List, Union, Mapping, Iterable, Callable, TYPE_CHECKING
 
-from clayrs.content_analyzer.field_content_production_techniques.\
-    field_content_production_technique import TfIdfTechnique
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
+from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique \
+    import TfIdfTechnique
 from clayrs.content_analyzer.memory_interfaces.text_interface import KeywordIndex
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, check_not_tokenized
 from clayrs.utils.const import logger
 
 

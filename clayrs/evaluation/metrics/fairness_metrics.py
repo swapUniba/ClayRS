@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 import random
 from abc import abstractmethod
@@ -5,14 +6,15 @@ from collections import Counter, defaultdict
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Set, List, Union
+from typing import Dict, Set, List, Union, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+    from clayrs.recsys.partitioning import Split
+
 from clayrs.evaluation.metrics.metrics import Metric
 from clayrs.evaluation.utils import get_avg_pop, pop_ratio_by_user, get_item_popularity, get_most_popular_items
-from clayrs.recsys.partitioning import Split
 from clayrs.evaluation.exceptions import NotEnoughUsers
-
 from clayrs.utils.const import logger
 
 

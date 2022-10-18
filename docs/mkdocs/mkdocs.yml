@@ -103,6 +103,8 @@ nav:
             - 'Graph Based algorithms':
                 - 'Page Rank': 'recsys/graph_based/graph_based_algorithms/nx_pagerank.md'
             - 'Feature Selection': 'recsys/graph_based/feature_selection.md'
+        - Experiment:
+            - 'Experiment class': 'recsys/experiment.md'
         - Methodologies:
             - 'Abstract Methodology class': 'recsys/methodology/abstract_methodology.md'
             - TestRatings: 'recsys/methodology/test_ratings.md'

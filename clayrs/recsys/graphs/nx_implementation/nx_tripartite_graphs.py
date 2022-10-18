@@ -1,12 +1,16 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import List, Set, Union, Dict
+from typing import List, Set, Union, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings, Content
+from clayrs.utils.const import logger
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings, Content
+    from clayrs.recsys.graphs.graph import Node
+
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.graphs.nx_implementation.nx_bipartite_graphs import NXBipartiteGraph
-
-from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, Node, UserNode
-
+from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, UserNode
 from clayrs.recsys.graphs.graph import PropertyNode
 from clayrs.utils.context_managers import get_progbar
 
@@ -97,7 +101,14 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
 
         NXBipartiteGraph.__init__(self, source_frame, link_label)
 
-        if source_frame is not None and item_contents_dir is not None:
+        if item_exo_properties and not item_contents_dir:
+            logger.warning("`item_exo_properties` parameter set but `item_contents_dir` is None! "
+                           "No property will be loaded")
+        elif not item_exo_properties and item_contents_dir:
+            logger.warning("`item_contents_dir` parameter set but `item_exo_properties` is None! "
+                           "No property will be loaded")
+
+        if source_frame is not None and item_contents_dir is not None and item_exo_properties is not None:
             self.add_node_with_prop([ItemNode(item_id) for item_id in set(source_frame.item_id_column)],
                                     item_exo_properties,
                                     item_contents_dir)
@@ -184,12 +195,16 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
             for n, id in zip(progbar, item_filename):
                 item: Content = loaded_items.get(id)
 
-                exo_props = self._get_exo_props(item_exo_properties, item)
+                if item is not None:
+                    exo_props = self._get_exo_props(item_exo_properties, item)
 
-                single_item_prop_edges = [(n,
-                                           PropertyNode(prop_dict[prop]),
-                                           {'label': prop})
-                                          for prop_dict in exo_props for prop in prop_dict]
+                    single_item_prop_edges = [(n,
+                                               PropertyNode(prop_dict[prop]),
+                                               {'label': prop})
+                                              for prop_dict in exo_props for prop in prop_dict]
+
+                else:
+                    single_item_prop_edges = []
 
                 yield from single_item_prop_edges
 

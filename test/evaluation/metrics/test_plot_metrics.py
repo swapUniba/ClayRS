@@ -7,7 +7,7 @@ import pandas as pd
 
 from clayrs.content_analyzer import Ratings, Rank
 from clayrs.evaluation.metrics.plot_metrics import LongTailDistr, PopRatioProfileVsRecs, PopRecsCorrelation
-from clayrs.recsys import Split
+from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import Split
 
 original_ratings = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1',

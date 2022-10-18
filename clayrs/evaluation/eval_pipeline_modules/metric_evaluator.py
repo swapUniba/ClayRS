@@ -1,11 +1,13 @@
-from typing import List, Tuple, Union
-
-from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
-from clayrs.recsys.partitioning import Split
-from clayrs.evaluation.metrics.metrics import Metric
-from clayrs.utils.context_managers import get_progbar
+from __future__ import annotations
+from typing import List, Tuple, Union, TYPE_CHECKING
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
+    from clayrs.evaluation.metrics.metrics import Metric
+
+from clayrs.utils.context_managers import get_progbar
 
 
 class MetricEvaluator:
@@ -127,3 +129,53 @@ class MetricEvaluator:
             final_result_system.loc['sys - mean'] = system_means
 
         return final_result_system, final_result_users
+
+
+class Split:
+    """
+    Class container for two pandas DataFrame
+
+    It may represent a split containing 'train set' and 'test set', or a split containing a ground truth and predictions
+    for it, etc.
+
+    Once instantiated, one can access the two dataframes in different ways:
+
+    | > sp = Split()
+    | > # Various ways of accessing the FIRST DataFrame
+    | > sp.train
+    | > sp.pred
+    | > sp.first
+    | >
+    | > # Various ways of accessing the SECOND DataFrame
+    | > sp.test
+    | > sp.truth
+    | > sp.second
+
+    Args:
+        first_set (pd.DatFrame): the first DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id', and 'score' column will be instantiated
+        second_set (pd.DataFrame): the second DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id' and 'score' column will be instantiated
+    """
+
+    def __init__(self,
+                 first_set: Ratings,
+                 second_set: Ratings):
+
+        self.__dict__['first'] = first_set
+        self.__dict__['second'] = second_set
+
+        self.__dict__['_valid_first_name'] = ['train', 'pred', 'first']
+        self.__dict__['_valid_second_name'] = ['test', 'truth', 'second']
+
+    def __getattr__(self, name):
+        if name in self._valid_first_name:
+            return self.first
+        elif name in self._valid_second_name:
+            return self.second
+
+    def __setattr__(self, name, value):
+        if name in self._valid_first_name:
+            super().__setattr__('first', value)
+        elif name in self._valid_second_name:
+            super().__setattr__('second', value)

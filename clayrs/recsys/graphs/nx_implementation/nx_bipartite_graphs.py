@@ -1,9 +1,12 @@
-from typing import List, Set, Union, Dict
+from __future__ import annotations
+from typing import List, Set, Union, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings
-from clayrs.recsys.graphs.graph import BipartiteDiGraph, Node
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+
 import networkx as nx
 
+from clayrs.recsys.graphs.graph import BipartiteDiGraph, Node
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar

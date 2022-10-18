@@ -6,7 +6,7 @@ from clayrs.content_analyzer import Ratings, Rank
 from clayrs.evaluation.exceptions import NotEnoughUsers
 from clayrs.evaluation.metrics.fairness_metrics import PredictionCoverage, CatalogCoverage, GiniIndex, \
     DeltaGap, GroupFairnessMetric, Counter
-from clayrs.recsys import Split
+from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import Split
 
 # Will be the same for every test
 truth = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'],

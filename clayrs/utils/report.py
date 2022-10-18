@@ -99,7 +99,7 @@ class Report:
             # we are also matching whole nested objects as attributes, with the max recursion discussed above
             # NameObject(a1=1.0, a2=2.0, a3=NestedObject()) -> [(a1, 1.0), (a2, 2.0), (a3, NestedObject())]
             # we are matching any \w preceded by '(' (the beginning) or by a space (it's a follow up parameter)
-            # which has has follow up character the '=' and a nested object after that or anything else.
+            # which has as follow-up character the '=' and a nested object after that or anything else.
             # The last part is the bounding, the match ends when ', \w+=' is found (another parameter= or the ')' (the
             # end)
             tuples_list_args = re.findall(r"(?<=\(|\s)(\w+)=(\w+"+balanced_parenthesis_pattern+r"|.*?)(?=,\s\w+=|\))",
@@ -313,7 +313,7 @@ class Report:
             >>> rank = cbrs.fit_rank(test, n_recs=10)
             >>>
             >>> # Evaluate recommendations and generate report
-            >>> em = EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])
+            >>> em = eva.EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])
             >>> ut.Report().yaml(original_ratings=ratings,
             >>>                  partitioning_technique=pt,
             >>>                  recsys=cbrs,

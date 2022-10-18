@@ -1,7 +1,8 @@
+from __future__ import annotations
 import itertools
 from collections import Counter
 from pathlib import Path
-from typing import Union
+from typing import Union, Dict, TYPE_CHECKING
 
 import matplotlib as mpl
 import matplotlib.figure
@@ -12,13 +13,14 @@ import pandas as pd
 import os
 import matplotlib.ticker as plticker
 
-from clayrs.content_analyzer import Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+    from clayrs.recsys.partitioning import Split
+
 from clayrs.evaluation.utils import get_item_popularity, get_most_popular_items
 from clayrs.utils.save_content import get_valid_filename
-
-from clayrs.evaluation.metrics.fairness_metrics import GroupFairnessMetric, Dict, pop_ratio_by_user
+from clayrs.evaluation.metrics.fairness_metrics import GroupFairnessMetric, pop_ratio_by_user
 from clayrs.evaluation.metrics.metrics import Metric
-from clayrs.recsys.partitioning import Split
 from clayrs.utils.const import logger
 
 

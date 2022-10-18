@@ -1,8 +1,10 @@
 import os
+import unittest
 from unittest import TestCase
 import lzma
 import pickle
 import numpy as np
+import scipy.sparse
 
 from clayrs.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
 from clayrs.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
@@ -118,7 +120,7 @@ class TestContentsProducer(TestCase):
                     content = pickle.load(file)
 
                     self.assertIsInstance(content.get_field("Title")[0], FeaturesBagField)
-                    self.assertIsInstance(content.get_field("Title")[0].value, dict)
+                    self.assertIsInstance(content.get_field("Title")[0].value, scipy.sparse.csc_matrix)
                     break
 
     def test_create_content_embedding(self):
@@ -131,7 +133,7 @@ class TestContentsProducer(TestCase):
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(
-                    WordEmbeddingTechnique(Gensim('glove-twitter-25')),
+                    WordEmbeddingTechnique(Gensim('glove-wiki-gigaword-50')),
                     NLTK(lemmatization=True, stopwords_removal=True))])
 
         content_analyzer = ContentAnalyzer(movies_ca_config)
@@ -289,3 +291,7 @@ class TestContentAnalyzer(TestCase):
     # def doCleanups(self) -> None:
     #     if os.path.isdir(self.out_dir):
     #         shutil.rmtree(self.out_dir)
+
+
+if __name__ == "__main__":
+    unittest.main()

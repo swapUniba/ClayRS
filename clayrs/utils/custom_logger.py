@@ -24,7 +24,7 @@ class ColoredFormatter(logging.Formatter):
 
 
 formatter = ColoredFormatter(
-    "\r{color}{levelname}{reset} - {message} ({filename}:{lineno})",
+    "\r{color}{levelname}{reset} - {message}",
     style='{',
     colors={
         'DEBUG': Fore.CYAN,

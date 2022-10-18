@@ -3,6 +3,7 @@ from typing import Union, Iterator
 
 import distex
 import contextlib
+
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
@@ -17,6 +18,15 @@ def get_progbar(iterator, total=None) -> tqdm:
             yield pbar
 
 
+def handle_exception(loop, context):
+    # this is a simple hack to stopping asyncio from logging "task was never retrieved" exception
+    # that should not happen in the first place.
+    # In fact this problem happens only on specific scenarios like Pycharm interpreter, or by running
+    # an asyncio snippet as script, but does not happen if the exact same script is run interactively,
+    # or in IPython environment
+    pass
+
+
 @contextlib.contextmanager
 def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f,
                           progress_bar=False, total=None) -> Union[Iterator, tqdm]:
@@ -25,6 +35,7 @@ def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f,
 
     if num_cpus > 1:
         pool = distex.Pool(num_workers=num_cpus, func_pickle=distex.PickleType.cloudpickle)
+        pool._loop.set_exception_handler(handle_exception)
         iterator_res = pool.map(f_to_parallelize, *args_to_f)
     else:
         pool = None

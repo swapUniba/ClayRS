@@ -1,17 +1,20 @@
+from __future__ import annotations
 import lzma
 import os
 import pickle
 
-from clayrs.content_analyzer.content_representation.content import Content
 from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
+from clayrs.content_analyzer.content_representation.content import Content
 
 
 def load_content_instance(directory: str, content_id: str, only_field_representations: dict = None) -> Content:
     """
     Loads a serialized content
     Args:
-        directory (str): Path to the directory in which the content is stored
-        content_id (str): Id of the content to load
+        directory: Path to the directory in which the content is stored
+        content_id: ID of the content to load (its filename)
+        only_field_representations: Specify exactly which representation to load for the content
+            (e.g. {'Plot': 0, 'Genres': 1}). Useful for alleviating memory load
 
     Returns:
         content (Content)

@@ -1,14 +1,15 @@
+from __future__ import annotations
+import re
 from sklearn.feature_extraction.text import CountVectorizer
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     SynsetDocumentFrequency
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_not_tokenized
-from typing import List
-
-import re
-
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 from clayrs.utils.context_managers import get_progbar
 
 

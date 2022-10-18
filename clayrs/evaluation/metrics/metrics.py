@@ -1,6 +1,9 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from clayrs.recsys.partitioning import Split
+if TYPE_CHECKING:
+    from clayrs.recsys.partitioning import Split
 
 
 class Metric(ABC):

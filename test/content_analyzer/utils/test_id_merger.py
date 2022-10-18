@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from clayrs.utils.id_merger import id_values_merger
+from clayrs.content_analyzer.utils.id_merger import id_values_merger
 
 
 class Test(TestCase):

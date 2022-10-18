@@ -1,10 +1,13 @@
-from typing import List, Union, Tuple
+from __future__ import annotations
+from typing import List, Union, Tuple, TYPE_CHECKING
 
 import pandas as pd
 
-from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
+    from clayrs.evaluation.metrics.metrics import Metric
+
 from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import MetricEvaluator
-from clayrs.evaluation.metrics.metrics import Metric
 from clayrs.utils.const import logger
 
 

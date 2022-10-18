@@ -1,14 +1,18 @@
+from __future__ import annotations
 from collections import defaultdict
-from typing import List, Union, Optional
+from typing import List, Union, Optional, TYPE_CHECKING
 
-from clayrs.content_analyzer import Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Content
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+    from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
+
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique, Centroid
+    Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
-from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
-
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 
 
@@ -141,8 +145,8 @@ class LinearPredictor(ContentBasedAlgorithm):
         self._regressor.fit(fused_features, self._labels)
 
         # we delete variables used to fit since will no longer be used
-        del self._labels
-        del self._items_features
+        self._labels = None
+        self._items_features = None
 
     def _common_prediction_process(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                                    filter_list: List[str] = None):
@@ -253,6 +257,9 @@ class LinearPredictor(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __str__(self):
+        return "LinearPredictor"
 
     def __repr__(self):
         return f'LinearPredictor(item_field={self.item_field}, regressor={self._regressor}, ' \

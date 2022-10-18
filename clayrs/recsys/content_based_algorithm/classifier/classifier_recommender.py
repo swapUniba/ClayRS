@@ -1,13 +1,18 @@
+from __future__ import annotations
 from collections import defaultdict
-from typing import List, Union, Optional
+from typing import List, Union, Optional, TYPE_CHECKING
 
-from clayrs.content_analyzer import Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Content
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
+    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique, Centroid
+    Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
     OnlyNegativeItems, NotPredictionAlg, EmptyUserRatings
 
@@ -158,8 +163,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._classifier.fit(fused_features, self._labels)
 
         # we delete variables used to fit since will no longer be used
-        del self._items_features
-        del self._labels
+        self._items_features = None
+        self._labels = None
 
     def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
                 filter_list: List[str] = None) -> List[Interaction]:
@@ -241,6 +246,9 @@ class ClassifierRecommender(ContentBasedAlgorithm):
                                  for item_id in ordered_item_ids]
 
         return rank_interaction_list
+
+    def __str__(self):
+        return "ClassifierRecommender"
 
     def __repr__(self):
         return f'ClassifierRecommender(item_field={self.item_field}, ' \

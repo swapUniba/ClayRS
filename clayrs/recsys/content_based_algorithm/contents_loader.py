@@ -1,10 +1,9 @@
-import functools
 from os.path import isfile, splitext, join
 from os import listdir
 from abc import abstractmethod, ABC
-from typing import Set, List, Iterable
+from typing import Set, Iterable
 
-from clayrs.content_analyzer import SearchIndex
+from clayrs.content_analyzer.memory_interfaces.text_interface import SearchIndex
 from clayrs.utils import load_content_instance
 from clayrs.utils.const import logger
 
