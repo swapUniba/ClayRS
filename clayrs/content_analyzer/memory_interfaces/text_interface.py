@@ -8,10 +8,10 @@ from whoosh.qparser import QueryParser, OrGroup, FieldsPlugin
 from whoosh.query import Term, Or
 from whoosh.scoring import TF_IDF, BM25F
 from typing import Union, Dict
-
-from clayrs.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
 import math
 import abc
+
+from clayrs.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
 
 
 class IndexInterface(TextInterface):

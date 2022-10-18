@@ -1,12 +1,9 @@
+from typing import List
+import spacy
 from spacy.tokens import Token
 
 from clayrs.content_analyzer.information_processor.information_processor import NLP
-
-from typing import List
-
-from clayrs.utils.check_tokenization import check_not_tokenized
-
-import spacy
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 
 class Spacy(NLP):

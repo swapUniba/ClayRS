@@ -1,8 +1,7 @@
-from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
-
 from sentence_transformers import SentenceTransformer
-
 import numpy as np
+
+from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
 
 
 class Sbert(SentenceEmbeddingLoader):

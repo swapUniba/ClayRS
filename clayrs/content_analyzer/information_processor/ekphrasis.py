@@ -1,9 +1,7 @@
 import inspect
 import itertools
-
-from clayrs.content_analyzer.information_processor.information_processor import NLP
-
 from typing import List, Dict, Callable
+import warnings
 
 from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.classes.segmenter import Segmenter
@@ -11,8 +9,7 @@ from ekphrasis.classes.segmenter import Segmenter
 from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
-import warnings
-
+from clayrs.content_analyzer.information_processor.information_processor import NLP
 from clayrs.utils.automatic_methods import autorepr
 
 with warnings.catch_warnings():

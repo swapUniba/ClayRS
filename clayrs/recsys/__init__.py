@@ -6,5 +6,6 @@ from .content_based_algorithm import *
 from .graph_based_algorithm import *
 from .graphs import *
 from .recsys import ContentBasedRS, GraphBasedRS
-from .partitioning import KFoldPartitioning, HoldOutPartitioning, Split, BootstrapPartitioning
+from .partitioning import KFoldPartitioning, HoldOutPartitioning, BootstrapPartitioning
 from .methodology import TestRatingsMethodology, TestItemsMethodology, TrainingItemsMethodology, AllItemsMethodology
+from .experiment import ContentBasedRS, GraphBasedRS

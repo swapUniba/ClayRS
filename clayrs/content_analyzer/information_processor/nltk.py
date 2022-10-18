@@ -13,7 +13,7 @@ from nltk.corpus import wordnet
 from nltk.stem.snowball import SnowballStemmer
 
 from clayrs.content_analyzer.information_processor.information_processor import NLP
-from clayrs.utils.check_tokenization import check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 
 class NLTK(NLP):
