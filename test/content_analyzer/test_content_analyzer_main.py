@@ -133,7 +133,7 @@ class TestContentsProducer(TestCase):
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(
-                    WordEmbeddingTechnique(Gensim('glove-twitter-25')),
+                    WordEmbeddingTechnique(Gensim('glove-wiki-gigaword-50')),
                     NLTK(lemmatization=True, stopwords_removal=True))])
 
         content_analyzer = ContentAnalyzer(movies_ca_config)
