@@ -8,4 +8,4 @@ from .graphs import *
 from .recsys import ContentBasedRS, GraphBasedRS
 from .partitioning import KFoldPartitioning, HoldOutPartitioning, BootstrapPartitioning
 from .methodology import TestRatingsMethodology, TestItemsMethodology, TrainingItemsMethodology, AllItemsMethodology
-from .experiment import ContentBasedRS, GraphBasedRS
+from .experiment import ContentBasedExperiment, GraphBasedExperiment
