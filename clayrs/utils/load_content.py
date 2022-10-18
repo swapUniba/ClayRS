@@ -2,11 +2,8 @@ from __future__ import annotations
 import lzma
 import os
 import pickle
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
-
+from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
 from clayrs.content_analyzer.content_representation.content import Content
 
 
