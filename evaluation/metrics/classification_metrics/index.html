@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1411,12 +1411,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../recsys/experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2082,10 +2131,10 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__beta</span> <span class="o">=</span> <span class="n">beta</span>
@@ -2234,11 +2283,11 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">547</span>
-<span class="normal">548</span>
-<span class="normal">549</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">549</span>
 <span class="normal">550</span>
-<span class="normal">551</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">):</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;k=</span><span class="si">{}</span><span class="s1"> not valid! k must be &gt;= 1!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
@@ -2348,9 +2397,9 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">Precision</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2470,12 +2519,12 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -2587,9 +2636,9 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2697,9 +2746,9 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2819,12 +2868,12 @@ user. If not specified, the mean rating score of every user will be used</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/evaluation/metrics/classification_metrics.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">386</span>
-<span class="normal">387</span>
-<span class="normal">388</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
-<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relevant_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;macro&#39;</span><span class="p">,</span>
              <span class="n">precision</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">relevant_threshold</span><span class="p">,</span> <span class="n">sys_average</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>

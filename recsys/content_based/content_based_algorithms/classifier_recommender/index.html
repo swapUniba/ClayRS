@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1547,12 +1547,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2178,13 +2227,13 @@ vector for each word). By default the <code>Centroid</code> of the rows of the m
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/content_based_algorithm/classifier/classifier_recommender.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">classifier</span><span class="p">:</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">classifier</span><span class="p">:</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">embedding_combiner</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">item_field</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_classifier</span> <span class="o">=</span> <span class="n">classifier</span>
@@ -2225,12 +2274,7 @@ before this method.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/classifier/classifier_recommender.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
@@ -2240,7 +2284,12 @@ before this method.</p>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
-<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit the classifier specified in the constructor with the features and labels</span>
 <span class="sd">    extracted with the `process_rated()` method.</span>
@@ -2254,8 +2303,8 @@ before this method.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fused_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span>
 
     <span class="c1"># we delete variables used to fit since will no longer be used</span>
-    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items_features</span>
-    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_items_features</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2300,16 +2349,16 @@ the <code>NotPredictionAlg</code> exception!</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/classifier/classifier_recommender.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
             <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ClassifierRecommender is not a score prediction algorithm, calling this method will raise</span>
@@ -2424,12 +2473,7 @@ for the user (Items that the user disliked)</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/classifier/classifier_recommender.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
 <span class="normal"> 84</span>
@@ -2493,7 +2537,12 @@ for the user (Items that the user disliked)</p>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">):</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function that extracts features from rated item and labels them.</span>
 <span class="sd">    The extracted features will be later used to fit the classifier.</span>
@@ -2679,12 +2728,7 @@ a single user</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/classifier/classifier_recommender.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">180</span>
 <span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span>
@@ -2747,7 +2791,12 @@ a single user</p>
 <span class="normal">240</span>
 <span class="normal">241</span>
 <span class="normal">242</span>
-<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
          <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rank the top-n recommended items for the user. If the recs_number parameter isn&#39;t specified,</span>

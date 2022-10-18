@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1411,12 +1411,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recsys/experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2081,7 +2130,7 @@ experiment is conducted in the current run, then a <code>ValueError</code> excep
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rank</span> <span class="o">=</span> <span class="n">cbrs</span><span class="o">.</span><span class="n">fit_rank</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Evaluate recommendations and generate report</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">em</span> <span class="o">=</span> <span class="n">EvalModel</span><span class="p">([</span><span class="n">rank</span><span class="p">],</span> <span class="p">[</span><span class="n">test</span><span class="p">],</span> <span class="n">metric_list</span><span class="o">=</span><span class="p">[</span><span class="n">eva</span><span class="o">.</span><span class="n">Precision</span><span class="p">(),</span> <span class="n">eva</span><span class="o">.</span><span class="n">Recall</span><span class="p">()])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">em</span> <span class="o">=</span> <span class="n">eva</span><span class="o">.</span><span class="n">EvalModel</span><span class="p">([</span><span class="n">rank</span><span class="p">],</span> <span class="p">[</span><span class="n">test</span><span class="p">],</span> <span class="n">metric_list</span><span class="o">=</span><span class="p">[</span><span class="n">eva</span><span class="o">.</span><span class="n">Precision</span><span class="p">(),</span> <span class="n">eva</span><span class="o">.</span><span class="n">Recall</span><span class="p">()])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">Report</span><span class="p">()</span><span class="o">.</span><span class="n">yaml</span><span class="p">(</span><span class="n">original_ratings</span><span class="o">=</span><span class="n">ratings</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                 <span class="n">partitioning_technique</span><span class="o">=</span><span class="n">pt</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                 <span class="n">recsys</span><span class="o">=</span><span class="n">cbrs</span><span class="p">,</span>
@@ -2335,7 +2384,7 @@ evaluation run will be documented. If no evaluation is run, then an exception is
 <span class="sd">        &gt;&gt;&gt; rank = cbrs.fit_rank(test, n_recs=10)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # Evaluate recommendations and generate report</span>
-<span class="sd">        &gt;&gt;&gt; em = EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])</span>
+<span class="sd">        &gt;&gt;&gt; em = eva.EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])</span>
 <span class="sd">        &gt;&gt;&gt; ut.Report().yaml(original_ratings=ratings,</span>
 <span class="sd">        &gt;&gt;&gt;                  partitioning_technique=pt,</span>
 <span class="sd">        &gt;&gt;&gt;                  recsys=cbrs,</span>

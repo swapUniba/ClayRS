@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1525,12 +1525,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2127,8 +2176,7 @@ rank or make score prediction</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
-<span class="normal">112</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
@@ -2137,7 +2185,8 @@ rank or make score prediction</p>
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">algorithm</span><span class="p">:</span> <span class="n">ContentBasedAlgorithm</span><span class="p">,</span>
              <span class="n">train_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
              <span class="n">items_directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -2183,13 +2232,13 @@ rank or make score prediction</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
-<span class="normal">124</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
-<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">129</span>
+<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The content based algorithm chosen</span>
@@ -2219,8 +2268,7 @@ rank or make score prediction</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
-<span class="normal">153</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
@@ -2256,7 +2304,8 @@ rank or make score prediction</p>
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span>
-<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="normal">189</span>
+<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method which will fit the algorithm chosen for each user in the train set passed in the constructor</span>
 
@@ -2317,8 +2366,8 @@ parameter.
 The Recommender System will first be fit for each user in the train set passed in the constructor.
 If the algorithm can't be fit for some users, a warning message is printed</p>
 <p><strong>BE CAREFUL</strong>: not all algorithms are able to perform <em>score prediction</em></p>
-<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default the
-<code>TestRatingsMethodology()</code> is used, so for each user items in its test set only will be considered for score
+<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default, the
+<code>TestRatingsMethodology()</code> is used: so, for each user, items in its test set only will be considered for score
 prediction</p>
 <p>If the algorithm was not fit for some users, they will be skipped and a warning is printed</p>
 <p>With the <code>save_fit</code> parameter you can decide if you want that you recommender system remains <em>fit</em> even after
@@ -2440,8 +2489,7 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">360</span>
-<span class="normal">361</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span>
 <span class="normal">364</span>
@@ -2532,7 +2580,8 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
-<span class="normal">452</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">452</span>
+<span class="normal">453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
                 <span class="n">save_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2543,8 +2592,8 @@ the number of cpus will be automatically detected.</p>
 
 <span class="sd">    **BE CAREFUL**: not all algorithms are able to perform *score prediction*</span>
 
-<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default the</span>
-<span class="sd">    `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score</span>
+<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default, the</span>
+<span class="sd">    `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score</span>
 <span class="sd">    prediction</span>
 
 <span class="sd">    If the algorithm was not fit for some users, they will be skipped and a warning is printed</span>
@@ -2585,7 +2634,7 @@ the number of cpus will be automatically detected.</p>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">save_fit</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_user_fit_dic</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">return</span>
+            <span class="k">return</span> <span class="n">user_id</span><span class="p">,</span> <span class="p">[]</span>
 
         <span class="n">filter_list</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">methodology</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2636,7 +2685,7 @@ the number of cpus will be automatically detected.</p>
 
 
 <h3 id="clayrs.recsys.recsys.ContentBasedRS.fit_rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit_rank</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">save_fit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit_rank</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">user_id_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">save_fit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2648,9 +2697,9 @@ parameter.
 The Recommender System will first be fit for each user in the train set passed in the constructor.
 If the algorithm can't be fit for some users, a warning message is printed</p>
 <p>If the <code>n_recs</code> is specified, then the rank will contain the top-n items for the users.
-Otherwise the rank will contain all unrated items of the particular users</p>
-<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default the
-<code>TestRatingsMethodology()</code> is used, so for each user items in its test set only will be ranked</p>
+Otherwise, the rank will contain all unrated items of the particular users</p>
+<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default, the
+<code>TestRatingsMethodology()</code> is used: so, for each user, items in its test set only will be ranked</p>
 <p>If the algorithm was not fit for some users, they will be skipped and a warning is printed</p>
 <p>With the <code>save_fit</code> parameter you can decide if you want that you recommender system remains <em>fit</em> even after
 the complete execution of this method, in case you want to compute ranking with other methodologies, or
@@ -2680,8 +2729,8 @@ is disabled</p>
         <tr>
           <td><code>n_recs</code></td>
           <td class="doc-param-details">
-            <p>Number of the top items that will be present in the ranking. If None all candidate items
-will be returned for the user</p>
+            <p>Number of the top items that will be present in the ranking of each user.
+If <code>None</code> all candidate items will be returned for the user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2689,7 +2738,7 @@ will be returned for the user</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>None</code>
+                    <code>10</code>
                 </span>
             </p>
           </td>
@@ -2809,8 +2858,7 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">454</span>
-<span class="normal">455</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">455</span>
 <span class="normal">456</span>
 <span class="normal">457</span>
 <span class="normal">458</span>
@@ -2907,7 +2955,8 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
              <span class="n">save_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2917,10 +2966,10 @@ the number of cpus will be automatically detected.</p>
 <span class="sd">    If the algorithm can&#39;t be fit for some users, a warning message is printed</span>
 
 <span class="sd">    If the `n_recs` is specified, then the rank will contain the top-n items for the users.</span>
-<span class="sd">    Otherwise the rank will contain all unrated items of the particular users</span>
+<span class="sd">    Otherwise, the rank will contain all unrated items of the particular users</span>
 
-<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default the</span>
-<span class="sd">    `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked</span>
+<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default, the</span>
+<span class="sd">    `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked</span>
 
 <span class="sd">    If the algorithm was not fit for some users, they will be skipped and a warning is printed</span>
 
@@ -2931,8 +2980,8 @@ the number of cpus will be automatically detected.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        test_set: Ratings object which represents the ground truth of the split considered</span>
-<span class="sd">        n_recs: Number of the top items that will be present in the ranking. If None all candidate items</span>
-<span class="sd">            will be returned for the user</span>
+<span class="sd">        n_recs: Number of the top items that will be present in the ranking of each user.</span>
+<span class="sd">            If `None` all candidate items will be returned for the user</span>
 <span class="sd">        user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed</span>
 <span class="sd">            for all users of the `test_set`</span>
 <span class="sd">        methodology: `Methodology` object which governs the candidate item selection. Default is</span>
@@ -2965,7 +3014,7 @@ the number of cpus will be automatically detected.</p>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">save_fit</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_user_fit_dic</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">return</span>
+            <span class="k">return</span> <span class="n">user_id</span><span class="p">,</span> <span class="p">[]</span>
 
         <span class="n">filter_list</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">methodology</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3032,12 +3081,12 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
-<span class="normal">139</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
-<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">items_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path of the serialized items by the Content Analyzer</span>
@@ -3064,8 +3113,8 @@ the number of cpus will be automatically detected.</p>
       <p>Method used to calculate score predictions for all users in test set or all users in <code>user_id_list</code> parameter.
 You must first call the <code>fit()</code> method before you can compute score predictions.</p>
 <p><strong>BE CAREFUL</strong>: not all algorithms are able to perform <em>score prediction</em></p>
-<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default the
-<code>TestRatingsMethodology()</code> is used, so for each user items in its test set only will be considered for score
+<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default, the
+<code>TestRatingsMethodology()</code> is used: so, for each user, items in its test set only will be considered for score
 prediction</p>
 <p>If the algorithm was not fit for some users, they will be skipped and a warning is printed</p>
 
@@ -3188,8 +3237,7 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
-<span class="normal">278</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
 <span class="normal">279</span>
 <span class="normal">280</span>
 <span class="normal">281</span>
@@ -3269,7 +3317,8 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
-<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">358</span>
+<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
             <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prediction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -3278,8 +3327,8 @@ the number of cpus will be automatically detected.</p>
 
 <span class="sd">    **BE CAREFUL**: not all algorithms are able to perform *score prediction*</span>
 
-<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default the</span>
-<span class="sd">    `TestRatingsMethodology()` is used, so for each user items in its test set only will be considered for score</span>
+<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default, the</span>
+<span class="sd">    `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score</span>
 <span class="sd">    prediction</span>
 
 <span class="sd">    If the algorithm was not fit for some users, they will be skipped and a warning is printed</span>
@@ -3362,7 +3411,7 @@ the number of cpus will be automatically detected.</p>
 
 
 <h3 id="clayrs.recsys.recsys.ContentBasedRS.rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">user_id_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3372,9 +3421,9 @@ the number of cpus will be automatically detected.</p>
       <p>Method used to calculate ranking for all users in test set or all users in <code>user_id_list</code> parameter.
 You must first call the <code>fit()</code> method before you can compute the ranking.</p>
 <p>If the <code>n_recs</code> is specified, then the rank will contain the top-n items for the users.
-Otherwise the rank will contain all unrated items of the particular users</p>
-<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default the
-<code>TestRatingsMethodology()</code> is used, so for each user items in its test set only will be ranked</p>
+Otherwise, the rank will contain all unrated items of the particular users</p>
+<p>Via the <code>methodology</code> parameter you can perform different candidate item selection. By default, the
+<code>TestRatingsMethodology()</code> is used: so, for each user, items in its test set only will be ranked</p>
 <p>If the algorithm was not fit for some users, they will be skipped and a warning is printed</p>
 
   <table>
@@ -3400,8 +3449,8 @@ Otherwise the rank will contain all unrated items of the particular users</p>
         <tr>
           <td><code>n_recs</code></td>
           <td class="doc-param-details">
-            <p>Number of the top items that will be present in the ranking. If None all candidate items
-will be returned for the user</p>
+            <p>Number of the top items that will be present in the ranking of each user.
+If <code>None</code> all candidate items will be returned for the user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -3409,7 +3458,7 @@ will be returned for the user</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>None</code>
+                    <code>10</code>
                 </span>
             </p>
           </td>
@@ -3512,8 +3561,7 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
-<span class="normal">192</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
@@ -3596,7 +3644,8 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">272</span>
 <span class="normal">273</span>
 <span class="normal">274</span>
-<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">user_id_list</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
          <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
          <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank</span><span class="p">:</span>
 
@@ -3605,17 +3654,17 @@ the number of cpus will be automatically detected.</p>
 <span class="sd">    You must first call the `fit()` method before you can compute the ranking.</span>
 
 <span class="sd">    If the `n_recs` is specified, then the rank will contain the top-n items for the users.</span>
-<span class="sd">    Otherwise the rank will contain all unrated items of the particular users</span>
+<span class="sd">    Otherwise, the rank will contain all unrated items of the particular users</span>
 
-<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default the</span>
-<span class="sd">    `TestRatingsMethodology()` is used, so for each user items in its test set only will be ranked</span>
+<span class="sd">    Via the `methodology` parameter you can perform different candidate item selection. By default, the</span>
+<span class="sd">    `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked</span>
 
 <span class="sd">    If the algorithm was not fit for some users, they will be skipped and a warning is printed</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        test_set: Ratings object which represents the ground truth of the split considered</span>
-<span class="sd">        n_recs: Number of the top items that will be present in the ranking. If None all candidate items</span>
-<span class="sd">            will be returned for the user</span>
+<span class="sd">        n_recs: Number of the top items that will be present in the ranking of each user.</span>
+<span class="sd">            If `None` all candidate items will be returned for the user</span>
 <span class="sd">        user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed</span>
 <span class="sd">            for all users of the `test_set`</span>
 <span class="sd">        methodology: `Methodology` object which governs the candidate item selection. Default is</span>
@@ -3707,12 +3756,12 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
-<span class="normal">132</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
-<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">136</span>
+<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">train_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The train set of the Content Based RecSys</span>
@@ -3744,12 +3793,12 @@ the number of cpus will be automatically detected.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/recsys.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">users_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Path of the serialized users by the Content Analyzer</span>

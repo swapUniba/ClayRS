@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1498,12 +1498,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recsys/experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -1980,10 +2029,10 @@ embeddings).</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">]):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">]):</span>
     <span class="c1"># if isinstance(embedding_source, str):</span>
     <span class="c1">#     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedding_source</span><span class="p">)</span>
@@ -2063,12 +2112,7 @@ while the columns are the hidden dimension of the chosen model</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">471</span>
 <span class="normal">472</span>
 <span class="normal">473</span>
 <span class="normal">474</span>
@@ -2078,7 +2122,12 @@ while the columns are the hidden dimension of the chosen model</p>
 <span class="normal">478</span>
 <span class="normal">479</span>
 <span class="normal">480</span>
-<span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">produce_single_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EmbeddingField</span><span class="p">:</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">produce_single_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EmbeddingField</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produces a single matrix where each row is the embedding representation of each token of the sentence,</span>
 <span class="sd">    while the columns are the hidden dimension of the chosen model</span>
@@ -2189,10 +2238,10 @@ single one, representing the embedding of the whole sentence</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/transformer.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">,</span>
              <span class="n">vec_strategy</span><span class="p">:</span> <span class="n">VectorStrategy</span> <span class="o">=</span> <span class="n">CatStrategy</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
              <span class="n">pooling_strategy</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">vec_strategy</span><span class="p">,</span> <span class="n">pooling_strategy</span><span class="p">)</span>
@@ -2299,10 +2348,10 @@ single one, representing the embedding of the whole sentence</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/transformer.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;t5-small&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;t5-small&#39;</span><span class="p">,</span>
              <span class="n">vec_strategy</span><span class="p">:</span> <span class="n">VectorStrategy</span> <span class="o">=</span> <span class="n">CatStrategy</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
              <span class="n">pooling_strategy</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">vec_strategy</span><span class="p">,</span> <span class="n">pooling_strategy</span><span class="p">)</span>

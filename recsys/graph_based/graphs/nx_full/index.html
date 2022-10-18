@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1485,12 +1485,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2106,11 +2155,7 @@ to load from specific representations</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/graphs/nx_implementation/nx_full_graphs.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
@@ -2118,7 +2163,18 @@ to load from specific representations</p>
 <span class="normal">103</span>
 <span class="normal">104</span>
 <span class="normal">105</span>
-<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_frame</span><span class="p">:</span> <span class="n">Ratings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_frame</span><span class="p">:</span> <span class="n">Ratings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">item_exo_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">item_contents_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">user_exo_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2127,7 +2183,14 @@ to load from specific representations</p>
 
     <span class="n">NXTripartiteGraph</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_frame</span><span class="p">,</span> <span class="n">item_exo_properties</span><span class="p">,</span> <span class="n">item_contents_dir</span><span class="p">,</span> <span class="n">link_label</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">source_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user_contents_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_exo_properties</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">user_contents_dir</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;`user_exo_properties` parameter set but `user_contents_dir` is None! &quot;</span>
+                       <span class="s2">&quot;No property will be loaded&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">user_exo_properties</span> <span class="ow">and</span> <span class="n">user_contents_dir</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;`user_contents_dir` parameter set but `user_exo_properties` is None! &quot;</span>
+                       <span class="s2">&quot;No property will be loaded&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">source_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user_contents_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user_exo_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_node_with_prop</span><span class="p">([</span><span class="n">UserNode</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">source_frame</span><span class="o">.</span><span class="n">user_id_column</span><span class="p">)],</span>
                                 <span class="n">user_exo_properties</span><span class="p">,</span>
                                 <span class="n">user_contents_dir</span><span class="p">)</span>
@@ -2232,18 +2295,7 @@ will be used.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/graphs/nx_implementation/nx_full_graphs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
@@ -2265,7 +2317,18 @@ will be used.</p>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
-<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span> <span class="n">final_node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span> <span class="n">final_node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span>
              <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a weighted link connecting the &#39;start_node&#39; to the &#39;final_node&#39;</span>
@@ -2347,21 +2410,21 @@ Since this is a Full Graph, any category of node is allowed</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/graphs/nx_implementation/nx_full_graphs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]):</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds one or multiple Node objects to the graph.</span>
 <span class="sd">    Since this is a Full Graph, any category of node is allowed</span>
@@ -2510,18 +2573,7 @@ an ItemNode</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/graphs/nx_implementation/nx_full_graphs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
@@ -2589,7 +2641,21 @@ an ItemNode</p>
 <span class="normal">235</span>
 <span class="normal">236</span>
 <span class="normal">237</span>
-<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_node_with_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span> <span class="n">exo_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">],</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_node_with_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]],</span> <span class="n">exo_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">],</span>
                        <span class="n">contents_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                        <span class="n">content_filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2643,12 +2709,15 @@ an ItemNode</p>
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">progbar</span><span class="p">,</span> <span class="n">content_filename</span><span class="p">):</span>
             <span class="n">item</span><span class="p">:</span> <span class="n">Content</span> <span class="o">=</span> <span class="n">loaded_items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
-            <span class="n">exo_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_exo_props</span><span class="p">(</span><span class="n">exo_properties</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">exo_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_exo_props</span><span class="p">(</span><span class="n">exo_properties</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 
-            <span class="n">single_item_prop_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">n</span><span class="p">,</span>
-                                       <span class="n">PropertyNode</span><span class="p">(</span><span class="n">prop_dict</span><span class="p">[</span><span class="n">prop</span><span class="p">]),</span>
-                                       <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">prop</span><span class="p">})</span>
-                                      <span class="k">for</span> <span class="n">prop_dict</span> <span class="ow">in</span> <span class="n">exo_props</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">prop_dict</span><span class="p">]</span>
+                <span class="n">single_item_prop_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">n</span><span class="p">,</span>
+                                           <span class="n">PropertyNode</span><span class="p">(</span><span class="n">prop_dict</span><span class="p">[</span><span class="n">prop</span><span class="p">]),</span>
+                                           <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">prop</span><span class="p">})</span>
+                                          <span class="k">for</span> <span class="n">prop_dict</span> <span class="ow">in</span> <span class="n">exo_props</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">prop_dict</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">single_item_prop_edges</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">yield from</span> <span class="n">single_item_prop_edges</span>
 

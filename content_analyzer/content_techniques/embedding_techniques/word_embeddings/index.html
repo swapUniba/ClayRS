@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1506,12 +1506,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recsys/experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -2016,10 +2065,10 @@
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WordEmbeddingLoader</span><span class="p">,</span> <span class="n">WordEmbeddingLearner</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WordEmbeddingLoader</span><span class="p">,</span> <span class="n">WordEmbeddingLearner</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
     <span class="c1"># if isinstance(embedding_source, str):</span>
     <span class="c1">#     embedding_source = self.from_str_to_embedding_source(embedding_source, WordEmbeddingLoader)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedding_source</span><span class="p">)</span>
@@ -2095,8 +2144,8 @@
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/gensim.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;glove-twitter-25&#39;</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;glove-twitter-25&#39;</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2136,9 +2185,9 @@
         Bases: <code><span title="clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner.GensimWordEmbeddingLearner">GensimWordEmbeddingLearner</span></code></p>
 
   
-      <p>Class that implements Doc2Vec model thanks to the the Gensim library.</p>
+      <p>Class that implements Doc2Vec model thanks to the Gensim library.</p>
 <p>If a pre-trained local Word2Vec model must be loaded, put its path in the <code>reference</code> parameter.
-Otherwise a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
+Otherwise, a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
 represent</p>
 <p>If you'd like to save the model once trained, set the path in the <code>reference</code> parameter and set
 <code>auto_save=True</code>. If <code>reference</code> is None, trained model won't be saved after training and will only be used to
@@ -2234,9 +2283,9 @@ trained model won't be saved after training and will only be used to produce con
         Bases: <code><span title="clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner.GensimWordEmbeddingLearner">GensimWordEmbeddingLearner</span></code></p>
 
   
-      <p>Class that implements FastText model thanks to the the Gensim library.</p>
+      <p>Class that implements FastText model thanks to the Gensim library.</p>
 <p>If a pre-trained local Word2Vec model must be loaded, put its path in the <code>reference</code> parameter.
-Otherwise a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
+Otherwise, a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
 represent</p>
 <p>If you'd like to save the model once trained, set the path in the <code>reference</code> parameter and set
 <code>auto_save=True</code>. If <code>reference</code> is None, trained model won't be saved after training and will only be used to
@@ -2332,9 +2381,9 @@ trained model won't be saved after training and will only be used to produce con
         Bases: <code><span title="clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner.GensimDocumentEmbeddingLearner">GensimDocumentEmbeddingLearner</span></code></p>
 
   
-      <p>Class that implements RandomIndexing model thanks to the the Gensim library.</p>
+      <p>Class that implements RandomIndexing model thanks to the Gensim library.</p>
 <p>If a pre-trained local Word2Vec model must be loaded, put its path in the <code>reference</code> parameter.
-Otherwise a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
+Otherwise, a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
 represent</p>
 <p>If you'd like to save the model once trained, set the path in the <code>reference</code> parameter and set
 <code>auto_save=True</code>. If <code>reference</code> is None, trained model won't be saved after training and will only be used to
@@ -2389,8 +2438,8 @@ trained model won't be saved after training and will only be used to produce con
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_learner/random_indexing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">auto_save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">auto_save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">auto_save</span><span class="p">,</span> <span class="s2">&quot;.model&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2430,9 +2479,9 @@ trained model won't be saved after training and will only be used to produce con
         Bases: <code><span title="clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner.GensimWordEmbeddingLearner">GensimWordEmbeddingLearner</span></code></p>
 
   
-      <p>Class that implements Word2Vec model thanks to the the Gensim library.</p>
+      <p>Class that implements Word2Vec model thanks to the Gensim library.</p>
 <p>If a pre-trained local Word2Vec model must be loaded, put its path in the <code>reference</code> parameter.
-Otherwise a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
+Otherwise, a Word2Vec model will be trained from scratch based on the preprocessed corpus of the contents to complexly
 represent</p>
 <p>If you'd like to save the model once trained, set the path in the <code>reference</code> parameter and set
 <code>auto_save=True</code>. If <code>reference</code> is None, trained model won't be saved after training and will only be used to

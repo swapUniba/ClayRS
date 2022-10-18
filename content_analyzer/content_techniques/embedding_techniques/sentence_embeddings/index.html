@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
     
     
       
@@ -1492,12 +1492,61 @@
       
       
         <label class="md-nav__link" for="__nav_4_5">
+          Experiment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Experiment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recsys/experiment/" class="md-nav__link">
+        Experiment class
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_6">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_5">
+        <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
         </label>
@@ -1988,10 +2037,10 @@
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/field_content_production_techniques/embedding_technique/embedding_technique.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SentenceEmbeddingLoader</span><span class="p">,</span> <span class="n">SentenceEmbeddingLearner</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
     <span class="c1"># if isinstance(embedding_source, str):</span>
     <span class="c1">#     embedding_source = self.from_str_to_embedding_source(embedding_source, SentenceEmbeddingLoader)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedding_source</span><span class="p">)</span>
@@ -2099,10 +2148,10 @@ single one, representing the embedding of the whole sentence</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/transformer.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">,</span>
              <span class="n">vec_strategy</span><span class="p">:</span> <span class="n">VectorStrategy</span> <span class="o">=</span> <span class="n">CatStrategy</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
              <span class="n">pooling_strategy</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">vec_strategy</span><span class="p">,</span> <span class="n">pooling_strategy</span><span class="p">)</span>
@@ -2178,8 +2227,8 @@ locally</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/sbert.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name_or_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;paraphrase-distilroberta-base-v1&#39;</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name_or_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;paraphrase-distilroberta-base-v1&#39;</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name_or_file_path</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2284,10 +2333,10 @@ single one, representing the embedding of the whole sentence</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/embeddings/embedding_loader/transformer.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;t5-small&#39;</span><span class="p">,</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;t5-small&#39;</span><span class="p">,</span>
              <span class="n">vec_strategy</span><span class="p">:</span> <span class="n">VectorStrategy</span> <span class="o">=</span> <span class="n">CatStrategy</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
              <span class="n">pooling_strategy</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">vec_strategy</span><span class="p">,</span> <span class="n">pooling_strategy</span><span class="p">)</span>
