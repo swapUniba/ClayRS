@@ -1,5 +1,5 @@
 class FeatureSelectionException(Exception):
     """
-    Generic exception used inside of the FeatureSelectionAlgorithm
+    Generic exception used inside the FeatureSelectionAlgorithm
     """
     pass

@@ -3,7 +3,7 @@ from functools import wraps
 
 def Handler_ScoreNotFloat(func):
     """
-    Handler that catches the above exceptions.
+    Handler that catches the above exception.
 
     Tries to run the functions normally, if one of the above exceptions is caught then it must return
     an empty frame for the user since predictions can't be calculated for it.
