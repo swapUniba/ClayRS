@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-VERSION = "0.2.1"
+VERSION = "0.3.0"
 
 setup(name='clayrs',
       version=VERSION,
