@@ -1,16 +1,21 @@
+from __future__ import annotations
 from collections import defaultdict
-from typing import List, Union, Optional, Dict
+from typing import List, Union, Optional, TYPE_CHECKING
+import numpy as np
 
-from clayrs.content_analyzer.content_representation.content import Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_representation.content import Content
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+    from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
+
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique, Centroid
+    Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
-from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
-import numpy as np
 
 
 class CentroidVector(ContentBasedAlgorithm):
@@ -64,7 +69,7 @@ class CentroidVector(ContentBasedAlgorithm):
             as positive. If the threshold is not specified, the average score of all items liked by the user is used.
         embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
             matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
-            vector for each word). By default the `Centroid` of the rows of the matrix is computed
+            vector for each word). By default, the `Centroid` of the rows of the matrix is computed
     """
     __slots__ = ('_similarity', '_emb_combiner', '_centroid', '_positive_rated_list')
 

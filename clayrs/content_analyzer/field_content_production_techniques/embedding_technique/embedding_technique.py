@@ -1,24 +1,30 @@
+from __future__ import annotations
 from abc import abstractmethod
 
 import numpy as np
+from typing import Union, List, Type, TYPE_CHECKING
 
-from clayrs.content_analyzer.content_representation.content import EmbeddingField, FieldRepresentation
-from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner, \
-    WordEmbeddingLearner, SentenceEmbeddingLearner, DocumentEmbeddingLearner
-from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique
-from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
-    WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader, EmbeddingLoader, EmbeddingSource
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner, \
+        WordEmbeddingLearner, SentenceEmbeddingLearner, DocumentEmbeddingLearner
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
+        WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader
+    from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingSource
+    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
+from clayrs.content_analyzer.content_representation.content import EmbeddingField
+
+from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingLoader, EmbeddingSource
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     SingleContentTechnique
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from clayrs.utils.class_utils import get_all_implemented_subclasses
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
-
-from typing import Union, List, Type
 
 
 class EmbeddingTechnique(SingleContentTechnique):
@@ -39,8 +45,7 @@ class EmbeddingTechnique(SingleContentTechnique):
         self.__embedding_source = embedding_source
 
     @staticmethod
-    def from_str_to_embedding_source(embedding_source_str: str, loader_class: Type[EmbeddingLoader]) \
-            -> EmbeddingSource:
+    def from_str_to_embedding_source(embedding_source_str: str, loader_class: Type[EmbeddingLoader]) -> EmbeddingSource:
         """
         Method used to convert a string (which represents a model name) to a corresponding Embedding Source that can
         use the defined model

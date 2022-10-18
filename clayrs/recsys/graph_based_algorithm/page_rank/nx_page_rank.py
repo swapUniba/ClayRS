@@ -1,15 +1,18 @@
+from __future__ import annotations
 import itertools
-from typing import List, Set, Any, Union
+from typing import List, Set, Any, Union, TYPE_CHECKING
 
 import networkx as nx
-import distex
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
-from clayrs.recsys.graphs import NXBipartiteGraph
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
+    from clayrs.recsys.graphs import NXBipartiteGraph
+    from clayrs.recsys.methodology import Methodology
 
+from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode
-from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
+from clayrs.recsys.methodology import TestRatingsMethodology
 from clayrs.utils.context_managers import get_iterator_parallel
 
 

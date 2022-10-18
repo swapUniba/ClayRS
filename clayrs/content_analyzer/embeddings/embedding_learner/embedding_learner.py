@@ -1,14 +1,16 @@
+from __future__ import annotations
 from abc import abstractmethod
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
 
 import numpy as np
 from gensim.models import KeyedVectors
 
-from clayrs.content_analyzer.embeddings.embedding_source import \
-    EmbeddingSource
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
+from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
 

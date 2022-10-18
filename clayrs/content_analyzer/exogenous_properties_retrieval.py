@@ -1,18 +1,20 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, TYPE_CHECKING
 from SPARQLWrapper import SPARQLWrapper, JSON, POST, POSTDIRECTLY
+from babelpy.babelfy import BabelfyClient
 
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.content_representation.content import ExogenousPropertiesRepresentation
 
-from clayrs.content_analyzer.content_representation.content import PropertiesDict, \
-    ExogenousPropertiesRepresentation, EntitiesProp
+from clayrs.content_analyzer.content_representation.content import PropertiesDict, EntitiesProp
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
-from babelpy.babelfy import BabelfyClient
-from clayrs.utils.check_tokenization import check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 
 class ExogenousPropertiesRetrieval(ABC):

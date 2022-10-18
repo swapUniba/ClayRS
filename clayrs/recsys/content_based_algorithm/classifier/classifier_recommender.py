@@ -1,13 +1,18 @@
+from __future__ import annotations
 from collections import defaultdict
-from typing import List, Union, Optional
+from typing import List, Union, Optional, TYPE_CHECKING
 
-from clayrs.content_analyzer import Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Content
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
+    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
+
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique, Centroid
+    Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from clayrs.recsys.content_based_algorithm.classifier.classifiers import Classifier
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
     OnlyNegativeItems, NotPredictionAlg, EmptyUserRatings
 

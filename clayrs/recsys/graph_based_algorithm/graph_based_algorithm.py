@@ -1,11 +1,15 @@
+from __future__ import annotations
 import abc
-from typing import Dict, List, Set, Union
+from typing import Dict, List, Set, Union, TYPE_CHECKING
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+    from clayrs.recsys.graphs.graph import UserNode, Node, Graph, BipartiteDiGraph
+    from clayrs.recsys.methodology import Methodology
+
+from clayrs.recsys.graphs.graph import ItemNode
+from clayrs.recsys.methodology import TestRatingsMethodology
 from clayrs.recsys.algorithm import Algorithm
-
-from clayrs.recsys.graphs.graph import UserNode, Node, Graph, ItemNode, BipartiteDiGraph
-from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
 
 
 class GraphBasedAlgorithm(Algorithm):

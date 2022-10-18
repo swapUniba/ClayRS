@@ -1,11 +1,14 @@
-from typing import List, Set
+from __future__ import annotations
+from typing import List, Set, TYPE_CHECKING
 
 import pandas as pd
 import numpy as np
 from sklearn.metrics import ndcg_score
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.partitioning import Split
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+    from clayrs.recsys.partitioning import Split
+
 from clayrs.evaluation.metrics.metrics import Metric
 
 

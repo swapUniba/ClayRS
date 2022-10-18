@@ -1,12 +1,14 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import List, Set, Union, Dict
+from typing import List, Set, Union, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings, Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings, Content
+    from clayrs.recsys.graphs.graph import Node
+
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.graphs.nx_implementation.nx_bipartite_graphs import NXBipartiteGraph
-
-from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, Node, UserNode
-
+from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, UserNode
 from clayrs.recsys.graphs.graph import PropertyNode
 from clayrs.utils.context_managers import get_progbar
 

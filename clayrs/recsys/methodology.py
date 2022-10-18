@@ -1,9 +1,12 @@
+from __future__ import annotations
 import abc
 from abc import ABC
-from typing import Set, Union, Optional, Generator, Dict
+from typing import Set, Union, Optional, Generator, Dict, TYPE_CHECKING
 import pandas as pd
 
-from clayrs.content_analyzer import Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+
 from clayrs.utils.context_managers import get_progbar
 
 

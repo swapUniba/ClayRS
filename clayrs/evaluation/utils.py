@@ -1,8 +1,10 @@
+from __future__ import annotations
 import itertools
-from typing import Set, Dict, List
+from typing import Set, Dict, List, TYPE_CHECKING
 from collections import Counter
 
-from clayrs.content_analyzer import Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
 
 
 def get_item_popularity(original_ratings: Ratings) -> Dict:

@@ -1,13 +1,16 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import List, Union, Callable, Optional
+from typing import List, Union, Callable, Optional, TYPE_CHECKING
 
 from scipy.sparse import csr_matrix
 
-from clayrs.content_analyzer.content_representation.content import FieldRepresentation, FeaturesBagField, \
-    SimpleField
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
+
+from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 
 class FieldContentProductionTechnique(ABC):

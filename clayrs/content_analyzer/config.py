@@ -1,14 +1,19 @@
+from __future__ import annotations
 import abc
 import re
 from abc import ABC
-from typing import List, Dict, Union
+from typing import List, Dict, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+        FieldContentProductionTechnique
+    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
+    from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
-    FieldContentProductionTechnique, OriginalData
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
-from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    OriginalData
 
 
 class FieldConfig:

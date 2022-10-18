@@ -1,7 +1,8 @@
+from __future__ import annotations
 from collections import defaultdict
 
 import pandas as pd
-from typing import Set, List, Tuple
+from typing import Set, List, Tuple, TYPE_CHECKING
 
 import abc
 from abc import ABC
@@ -9,8 +10,10 @@ from abc import ABC
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.utils import resample
 
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
 

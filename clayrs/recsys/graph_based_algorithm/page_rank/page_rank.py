@@ -1,11 +1,14 @@
-from typing import List, Set
+from __future__ import annotations
+from typing import List, Set, TYPE_CHECKING
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
-from clayrs.recsys.graphs import NXBipartiteGraph
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+    from clayrs.recsys.graphs import NXBipartiteGraph
+    from clayrs.recsys.methodology import Methodology
 
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
-from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
+from clayrs.recsys.methodology import TestRatingsMethodology
 
 
 class PageRank(GraphBasedAlgorithm):

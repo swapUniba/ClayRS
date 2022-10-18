@@ -1,8 +1,12 @@
-from typing import List, Tuple, Union
+from __future__ import annotations
+from typing import List, Tuple, Union, TYPE_CHECKING
 
-from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
-from clayrs.recsys.partitioning import Split
-from clayrs.evaluation.metrics.metrics import Metric
+import pandas as pd
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
+    from clayrs.evaluation.metrics.metrics import Metric
+
 from clayrs.utils.context_managers import get_progbar
 
 import pandas as pd

@@ -1,17 +1,18 @@
 from __future__ import annotations
-
 import functools
 import itertools
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Iterator
+from typing import Dict, Union, List, Iterable, Iterator, TYPE_CHECKING
 
 import pandas as pd
 
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
 from clayrs.content_analyzer.exceptions import Handler_ScoreNotFloat
-from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 

@@ -1,11 +1,13 @@
-from typing import List, Union, Dict
+from __future__ import annotations
+from typing import List, Union, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings, Content
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings, Content
+    from clayrs.recsys.graphs.graph import Node
+
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.graphs.nx_implementation import NXTripartiteGraph
-from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, PropertyNode, Node
-import pandas as pd
-
+from clayrs.recsys.graphs.graph import FullDiGraph, UserNode, PropertyNode
 from clayrs.utils.context_managers import get_progbar
 
 

@@ -1,20 +1,22 @@
+from __future__ import annotations
 import abc
 import gc
 import itertools
 from copy import deepcopy
-from typing import Union, Dict, List, Optional
+from typing import Union, Dict, List, Optional, TYPE_CHECKING
 
 from abc import ABC
 
-from clayrs.content_analyzer import Ratings
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings
+    from clayrs.recsys.graphs.graph import FullDiGraph
+    from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+    from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+    from clayrs.recsys.methodology import Methodology
+
 from clayrs.content_analyzer.ratings_manager.ratings import Rank, Prediction
 from clayrs.recsys.methodology import TestRatingsMethodology
-from clayrs.recsys.graphs.graph import FullDiGraph
-
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
 from clayrs.recsys.content_based_algorithm.exceptions import UserSkipAlgFit, NotFittedAlg
-from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
-from clayrs.recsys.methodology import Methodology
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_iterator_parallel
 

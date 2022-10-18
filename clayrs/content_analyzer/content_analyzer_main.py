@@ -1,3 +1,4 @@
+from __future__ import annotations
 import gc
 import json
 import pickle
@@ -6,14 +7,16 @@ import lzma
 import os
 import shutil
 
-from typing import List, Dict
+from typing import List, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer.config import ContentAnalyzerConfig
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.config import ContentAnalyzerConfig
+    from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
+
 from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
-from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
-from clayrs.utils.id_merger import id_merger
+from clayrs.content_analyzer.utils.id_merger import id_merger
 
 
 class ContentAnalyzer:

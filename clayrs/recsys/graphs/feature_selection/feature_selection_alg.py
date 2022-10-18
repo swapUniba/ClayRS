@@ -1,9 +1,14 @@
+from __future__ import annotations
 import networkx as nx
 from abc import ABC, abstractmethod
-from typing import List, Union, Any
+from typing import List, Union, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.recsys.graphs.graph import FullDiGraph
+    from clayrs.recsys.graphs.graph import UserNode, ItemNode
 
 from clayrs.recsys.graphs.feature_selection.exceptions import FeatureSelectionException
-from clayrs.recsys.graphs.graph import FullDiGraph, PropertyNode, Node, UserNode, ItemNode
+from clayrs.recsys.graphs.graph import PropertyNode
 
 
 class FeatureSelectionAlgorithm(ABC):
