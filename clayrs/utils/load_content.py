@@ -5,8 +5,9 @@ import pickle
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.content_representation.content import Content
     from clayrs.content_analyzer.content_representation.representation_container import RepresentationContainer
+
+from clayrs.content_analyzer.content_representation.content import Content
 
 
 def load_content_instance(directory: str, content_id: str, only_field_representations: dict = None) -> Content:

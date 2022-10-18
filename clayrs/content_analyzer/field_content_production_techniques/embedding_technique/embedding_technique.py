@@ -6,8 +6,8 @@ from typing import Union, List, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner, \
-        WordEmbeddingLearner, SentenceEmbeddingLearner, DocumentEmbeddingLearner
+    from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import WordEmbeddingLearner, \
+        SentenceEmbeddingLearner, DocumentEmbeddingLearner
     from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
         CombiningTechnique
     from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
+from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
 from clayrs.content_analyzer.content_representation.content import EmbeddingField
-
 from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingLoader, EmbeddingSource
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     SingleContentTechnique
