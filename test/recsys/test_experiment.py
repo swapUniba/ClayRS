@@ -7,7 +7,7 @@ from clayrs.evaluation import Precision, Recall
 from clayrs.recsys import HoldOutPartitioning, CentroidVector, CosineSimilarity, SkKNN, ClassifierRecommender, \
     LinearPredictor, SkLinearRegression, SkSVC, KFoldPartitioning, NXPageRank
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
-from clayrs.utils.experiment import ContentBasedExperiment, GraphBasedExperiment
+from clayrs.recsys.experiment import ContentBasedExperiment, GraphBasedExperiment
 from test import dir_test_files
 
 rat_path = os.path.join(dir_test_files, "new_ratings.csv")

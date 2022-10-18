@@ -6,22 +6,23 @@ import sys
 from abc import ABC
 from typing import List, Union, Dict, Callable, TYPE_CHECKING
 
-# fix circular import, for the future: move Ratings class to the RecSys module and better organization
-# for both report and experiment class
+# fix circular import, for the future: move Ratings class to the RecSys module
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings
-    from clayrs.evaluation import EvalModel
     from clayrs.evaluation.metrics.metrics import Metric
-    from clayrs.recsys import ContentBasedRS, GraphBasedRS, NXFullGraph, UserNode, ItemNode
     from clayrs.recsys.algorithm import Algorithm
     from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-    from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
     from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
-    from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
     from clayrs.recsys.partitioning import Partitioning
-    from clayrs.utils import Report
-    from clayrs.utils.const import logger
-    from clayrs.utils.save_content import get_valid_dirname
+    from clayrs.recsys.methodology import Methodology
+
+from clayrs.evaluation import EvalModel
+from clayrs.recsys import ContentBasedRS, GraphBasedRS, NXFullGraph, UserNode, ItemNode
+from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
+from clayrs.utils import Report
+from clayrs.utils.const import logger
+from clayrs.utils.save_content import get_valid_dirname
+from clayrs.recsys.methodology import TestRatingsMethodology
 
 
 class Experiment(ABC):
