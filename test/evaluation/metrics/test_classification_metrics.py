@@ -6,7 +6,7 @@ import numpy as np
 from clayrs.content_analyzer import Ratings
 from clayrs.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
     RPrecision, RecallAtK, FMeasureAtK
-from clayrs.recsys.partitioning import Split
+from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],
