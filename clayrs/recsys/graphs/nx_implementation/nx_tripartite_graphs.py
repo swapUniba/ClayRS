@@ -2,6 +2,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import List, Set, Union, Dict, TYPE_CHECKING
 
+from clayrs.utils.const import logger
+
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings, Content
     from clayrs.recsys.graphs.graph import Node
@@ -99,7 +101,14 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
 
         NXBipartiteGraph.__init__(self, source_frame, link_label)
 
-        if source_frame is not None and item_contents_dir is not None:
+        if item_exo_properties and not item_contents_dir:
+            logger.warning("`item_exo_properties` parameter set but `item_contents_dir` is None! "
+                           "No property will be loaded")
+        elif not item_exo_properties and item_contents_dir:
+            logger.warning("`item_contents_dir` parameter set but `item_exo_properties` is None! "
+                           "No property will be loaded")
+
+        if source_frame is not None and item_contents_dir is not None and item_exo_properties is not None:
             self.add_node_with_prop([ItemNode(item_id) for item_id in set(source_frame.item_id_column)],
                                     item_exo_properties,
                                     item_contents_dir)

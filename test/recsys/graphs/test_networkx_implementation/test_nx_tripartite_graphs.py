@@ -4,7 +4,8 @@ import os
 
 from clayrs.utils import load_content_instance
 from test import dir_test_files
-from test.recsys.graphs.test_networkx_implementation.test_nx_bipartite_graphs import TestNXBipartiteGraph, rat, rat_timestamp
+from test.recsys.graphs.test_networkx_implementation.test_nx_bipartite_graphs import TestNXBipartiteGraph, rat, \
+    rat_timestamp
 
 ratings_filename = os.path.join(dir_test_files, 'new_ratings_small.csv')
 movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
@@ -34,6 +35,13 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
         self.empty_graph: NXTripartiteGraph = NXTripartiteGraph(item_contents_dir=movies_dir,
                                                                 item_exo_properties={'dbpedia'})
 
+        # item_exo_properties set but no item_contents_dir specified
+        self.graph_missing_item_dir_parameter = NXTripartiteGraph(rat, item_exo_properties={'dbpedia': ['film director',
+                                                                                                        'runtime (m)']})
+
+        # item_contents_dir set but no item_exo_properties_specified specified
+        self.graph_missing_item_prop_parameter = NXTripartiteGraph(rat, item_contents_dir=movies_dir)
+
     def test_graph_creation(self):
         # the super class test will check if every user and item have a link
         # as they are present in the ratings frame
@@ -53,7 +61,6 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
                 runtime_prop_expected = [runtime_prop_expected]
 
             for director in director_prop_expected:
-
                 self.assertTrue(PropertyNode(director) in self.g.property_nodes)
                 result_link_data = self.g.get_link_data(item_node, PropertyNode(director))
                 expected_link_data = {'label': 'film director'}
@@ -66,6 +73,18 @@ class TestNXTripartiteGraph(TestNXBipartiteGraph):
                 expected_link_data = {'label': 'runtime (m)'}
 
                 self.assertEqual(expected_link_data, result_link_data)
+
+    def test_graph_creation_missing_parameter(self):
+
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.user_nodes) != 0)
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.item_nodes) != 0)
+        # warning is printed and no prop will be loaded
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.property_nodes) == 0)
+
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.user_nodes) != 0)
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.item_nodes) != 0)
+        # warning is printed and no prop will be loaded
+        self.assertTrue(len(self.graph_missing_item_dir_parameter.property_nodes) == 0)
 
     def test_graph_creation_empty(self):
         super().test_graph_creation_empty()
