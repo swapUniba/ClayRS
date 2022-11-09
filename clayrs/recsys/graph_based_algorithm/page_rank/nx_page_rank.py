@@ -47,7 +47,7 @@ class NXPageRank(PageRank):
 
     def rank(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
              recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0) -> List[Interaction]:
+             num_cpus: int = 1) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
