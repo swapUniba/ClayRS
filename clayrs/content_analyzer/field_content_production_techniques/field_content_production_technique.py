@@ -1,13 +1,34 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
-from typing import List, Union, Callable, Optional, TYPE_CHECKING
 
+import concurrent
+import concurrent.futures
+import inspect
+import io
+import os
+import time
+from abc import ABC, abstractmethod
+from concurrent.futures import as_completed
+from typing import List, Union, Callable, Optional, Tuple, TYPE_CHECKING
+
+import PIL
+import bdownload
+import requests
+import httpx
+import timm
+import validators
+from PIL import Image
 from scipy.sparse import csr_matrix
+from skimage.feature import hog
+from torch.utils.data import Dataset, DataLoader
+
+from clayrs.utils.const import logger
+from utils.automatic_methods import autorepr
+from utils.context_managers import get_progbar, get_iterator_thread
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
 
-from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField
+from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
@@ -89,6 +110,221 @@ class FieldContentProductionTechnique(ABC):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
+
+
+
+import numpy as np
+import torch
+
+
+class ClasslessImageFolder(Dataset):
+    def __init__(self, root, resize_size: tuple, transformer=None):
+        self.image_paths = [os.path.join(root, file_name) for file_name in os.listdir(root) if
+                            os.path.isfile(os.path.join(root, file_name))]
+        self.transformer = transformer
+        self.resize_size = resize_size
+
+    def __getitem__(self, index):
+        image_path = self.image_paths[index]
+
+        x = torch.Tensor(np.array(Image.open(image_path).resize(self.resize_size)))
+        if self.transformer is not None:
+            x = self.transformer(x)
+        y = 0
+
+        return x, y
+
+    def __len__(self):
+        return len(self.image_paths)
+
+
+class VisualContentTechnique(FieldContentProductionTechnique):
+
+    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, resize_size: Tuple[int, int] = (32, 32)):
+
+        self.imgs_dirs = imgs_dirs
+        self.max_timeout = max_timeout
+        self.max_retries = max_retries
+        self.max_workers = max_workers
+        self.resize_size = resize_size
+
+    def _retrieve_images(self, field_name: str, raw_source: RawInformationSource):
+        def dl_and_save_images(url_or_path):
+            if validators.url(url_or_path):
+
+                n_retry = 0
+
+                while True:
+                    try:
+                        byte_img = requests.get(url_or_path, timeout=self.max_timeout).content
+                        img = PIL.Image.open(io.BytesIO(byte_img))
+                        img_path = os.path.join(self.imgs_dirs, field_name, url_or_path.split("/")[-1])
+
+                        img.save(img_path)
+
+                        return img_path
+
+                    except PIL.UnidentifiedImageError:
+                        logger.warning(f"Found a Url which is not an image! URL: {url_or_path}")
+                        return None
+
+                    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+                        if n_retry < self.max_retries:
+                            n_retry += 1
+                        else:
+                            logger.warning(f"Max number of retries reached ({n_retry + 1}/{self.max_retries}) for URL: "
+                                           f"{url_or_path}\nThe image will be skipped")
+                            return None
+            else:
+                return None
+
+        field_imgs_dir = os.path.join(self.imgs_dirs, field_name)
+        try:
+            os.makedirs(field_imgs_dir)
+        except OSError:
+            raise FileExistsError(f'{field_imgs_dir} already exists') from None
+
+        url_images = (content[field_name] for content in raw_source)
+
+        error_count = 0
+        with get_iterator_thread(self.max_workers, dl_and_save_images, url_images,
+                                 progress_bar=True, total=len(raw_source)) as pbar:
+
+            pbar.set_description("Downloading images")
+
+            for future in pbar:
+                if not future:
+                    error_count += 1
+
+        if error_count != 0:
+            logger.warning(f"Failed requests: {error_count}")
+
+    def get_data_loader(self, field_name: str, raw_source: RawInformationSource):
+        field_images_dir = os.path.join(self.imgs_dirs, field_name)
+
+        if not os.path.isdir(field_images_dir):
+            self._retrieve_images(field_name, raw_source)
+
+        ds = ClasslessImageFolder(root=field_images_dir, resize_size=self.resize_size)
+        dl = DataLoader(ds, batch_size=32)
+
+        return dl
+
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+        pass
+
+    def __repr__(self):
+        pass
+
+
+class LowLevelVisual(VisualContentTechnique):
+
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+
+        dl = self.get_data_loader(field_name, source)
+
+        representation_list: [FieldRepresentation] = []
+
+        with get_progbar(dl) as pbar:
+
+            for (data_batch, _) in pbar:
+                pbar.set_description(f"Processing and producing contents with {self}")
+
+                for content_data in data_batch:
+                    processed_data = self.process_data(content_data, preprocessor_list)
+                    representation_list.append(self.produce_single_repr(processed_data))
+
+        return representation_list
+
+    @abstractmethod
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> FieldRepresentation:
+        raise NotImplementedError
+
+
+class HighLevelVisual(VisualContentTechnique):
+
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+
+        dl = self.get_data_loader(field_name, source)
+
+        representation_list: [FieldRepresentation] = []
+
+        with get_progbar(dl) as pbar:
+
+            for (data_batch, _) in pbar:
+                pbar.set_description(f"Processing and producing contents with {self}")
+
+                processed_data = self.process_data(data_batch, preprocessor_list)
+                representation_list.extend(self.produce_batch_repr(processed_data))
+
+        return representation_list
+
+    @abstractmethod
+    def produce_batch_repr(self, field_data: Union[List[str], str]) -> List[FieldRepresentation]:
+        raise NotImplementedError
+
+
+class PytorchImageModels(HighLevelVisual):
+
+    def __init__(self, model_name: str):
+        import timm
+        super().__init__()
+        self.model = timm.create_model(model_name, pretrained=True, num_classes=0, global_pool='')
+
+    def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
+        return list(map(lambda x: EmbeddingField(x.detach().numpy()), self.model(field_data.permute(0, 3, 1, 2)).squeeze()))
+
+
+class SkImageHogDescriptor(LowLevelVisual):
+
+    def __init__(self, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3), block_norm='L2-Hys',
+                 transform_sqrt=False, feature_vector=True, channel_axis=None):
+        from skimage.feature import hog
+        self.hog = lambda x: hog(image=x, orientations=orientations, pixels_per_cell=pixels_per_cell,
+                                 cells_per_block=cells_per_block, block_norm=block_norm,
+                                 transform_sqrt=transform_sqrt, feature_vector=feature_vector,
+                                 channel_axis=channel_axis)
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        hog_features = self.hog(field_data)
+        return EmbeddingField(hog_features.detach().numpy())
+
+    def __str__(self):
+        return "SkImageHogDescriptor"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkImageCannyEdgeDetector(LowLevelVisual):
+
+    def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
+                 mode='constant', cval=0.0):
+        from skimage.feature import canny
+        self.canny = lambda x: canny(image=x, sigma=sigma, low_threshold=low_threshold,
+                                     high_threshold=high_threshold, mask=mask,
+                                     use_quantiles=use_quantiles, mode=mode, cval=cval)
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+        from torchvision.transforms.functional import rgb_to_grayscale
+
+        canny_features = self.canny(rgb_to_grayscale(field_data.permute(2, 0, 1)).squeeze().numpy()).flatten()
+        return EmbeddingField(canny_features.detach().numpy().astype(int))
+
+    def __str__(self):
+        return "SkImageCannyEdgeDetector"
+
+    def __repr__(self):
+        return self._repr_string
 
 
 class SingleContentTechnique(FieldContentProductionTechnique):
@@ -245,6 +481,7 @@ class OriginalData(FieldContentProductionTechnique):
     def __repr__(self):
         return f'OriginalData(dtype={self.__dtype})'
 
+
 # DECODE POSSIBLE REPRESENTATION: Not implemented for now
 #
 # class DefaultTechnique(FieldContentProductionTechnique):
@@ -362,6 +599,7 @@ class SynsetDocumentFrequency(CollectionBasedTechnique):
     """
     Abstract class that generalizes implementations that use synsets
     """
+
     def __init__(self):
         self._synset_matrix: Optional[csr_matrix] = None
         self._synset_names: Optional[List[str]] = None
