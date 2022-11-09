@@ -30,7 +30,7 @@ class PageRank(GraphBasedAlgorithm):
 
     def predict(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
                 methodology: Methodology = TestRatingsMethodology(),
-                num_cpus: int = 0) -> List[Interaction]:
+                num_cpus: int = 1) -> List[Interaction]:
         """
         PageRank is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised

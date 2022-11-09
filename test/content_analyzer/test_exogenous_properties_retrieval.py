@@ -2,8 +2,8 @@ import os
 from unittest import TestCase
 
 from clayrs.content_analyzer import JSONFile
-from clayrs.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, \
-    PropertiesFromDataset, BabelPyEntityLinking
+from clayrs.content_analyzer.exogenous_properties_retrieval import DBPediaMappingTechnique, PropertiesFromDataset, \
+    BabelPyEntityLinking
 from test import dir_test_files
 
 source_path = os.path.join(dir_test_files, 'test_dbpedia', 'movies_info_reduced.json')

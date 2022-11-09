@@ -191,7 +191,7 @@ class ContentBasedRS(RecSys):
 
     def rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0) -> Rank:
+             num_cpus: int = 1) -> Rank:
 
         """
         Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
@@ -277,7 +277,7 @@ class ContentBasedRS(RecSys):
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0) -> Prediction:
+                num_cpus: int = 1) -> Prediction:
         """
         Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
         You must first call the `fit()` method before you can compute score predictions.
@@ -360,7 +360,7 @@ class ContentBasedRS(RecSys):
 
     def fit_predict(self, test_set: Ratings, user_id_list: List = None,
                     methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                    save_fit: bool = False, num_cpus: int = 0) -> Prediction:
+                    save_fit: bool = False, num_cpus: int = 1) -> Prediction:
         """
         Method used to both fit and calculate score prediction for all users in test set or all users in `user_id_list`
         parameter.
@@ -454,7 +454,7 @@ class ContentBasedRS(RecSys):
 
     def fit_rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
                  methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                 save_fit: bool = False, num_cpus: int = 0) -> Rank:
+                 save_fit: bool = False, num_cpus: int = 1) -> Rank:
         """
         Method used to both fit and calculate ranking for all users in test set or all users in `user_id_list`
         parameter.
@@ -642,7 +642,7 @@ class GraphBasedRS(RecSys):
 
     def predict(self, test_set: Ratings, user_id_list: List = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0) -> Prediction:
+                num_cpus: int = 1) -> Prediction:
         """
         Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
 
@@ -682,7 +682,7 @@ class GraphBasedRS(RecSys):
 
     def rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0) -> Rank:
+             num_cpus: int = 1) -> Rank:
         """
         Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
         You must first call the `fit()` method before you can compute the ranking.
