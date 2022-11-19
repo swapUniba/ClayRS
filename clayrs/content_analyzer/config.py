@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
     from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
 
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     OriginalData
@@ -80,22 +81,30 @@ class FieldConfig:
     def __init__(self,
                  content_technique: FieldContentProductionTechnique = OriginalData(),
                  preprocessing: Union[InformationProcessor, List[InformationProcessor]] = None,
+                 postprocessing: Union[VisualPostProcessor, List[VisualPostProcessor]] = None,
                  memory_interface: InformationInterface = None,
                  id: str = None):
 
         if preprocessing is None:
             preprocessing = []
 
+        if postprocessing is None:
+            postprocessing = []
+
         if id is not None:
             self._check_custom_id(id)
 
         self.__content_technique = content_technique
         self.__preprocessing = preprocessing
+        self.__postprocessing = postprocessing
         self.__memory_interface = memory_interface
         self.__id = id
 
         if not isinstance(self.__preprocessing, list):
             self.__preprocessing = [self.__preprocessing]
+
+        if not isinstance(self.__postprocessing, list):
+            self.__postprocessing = [self.__postprocessing]
 
     @property
     def memory_interface(self):
@@ -117,6 +126,13 @@ class FieldConfig:
         Getter for the list of preprocessor of the field config
         """
         return self.__preprocessing
+
+    @property
+    def postprocessing(self):
+        """
+        Getter for the list of postprocessor of the field config
+        """
+        return self.__postprocessing
 
     @property
     def id(self):

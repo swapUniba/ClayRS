@@ -1,32 +1,30 @@
 from __future__ import annotations
 
-import concurrent
-import concurrent.futures
 import inspect
 import io
 import os
-import time
 from abc import ABC, abstractmethod
-from concurrent.futures import as_completed
 from typing import List, Union, Callable, Optional, Tuple, TYPE_CHECKING
 
 import PIL
-import bdownload
 import requests
-import httpx
 import timm
+import torchvision.transforms.functional as TF
 import validators
 from PIL import Image
 from scipy.sparse import csr_matrix
-from skimage.feature import hog
+from skimage.feature import hog, canny
 from torch.utils.data import Dataset, DataLoader
+import numpy as np
+import torch
 
 from clayrs.utils.const import logger
-from utils.automatic_methods import autorepr
-from utils.context_managers import get_progbar, get_iterator_thread
+from clayrs.utils.automatic_methods import autorepr
+from clayrs.utils.context_managers import get_progbar, get_iterator_thread
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
 
 from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
@@ -63,8 +61,17 @@ class FieldContentProductionTechnique(ABC):
 
         return processed_data
 
+    @staticmethod
+    def postprocess_representations(representations: List[FieldRepresentation], postprocessor_list: List[VisualPostProcessor]) -> List[FieldRepresentation]:
+        processed_list = representations
+        for postprocessor in postprocessor_list:
+            processed_list = postprocessor.process(processed_list)
+
+        return processed_list
+
     @abstractmethod
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         Abstract method that defines the methodology used by a technique to produce a list of FieldRepresentation.
@@ -112,24 +119,23 @@ class FieldContentProductionTechnique(ABC):
         raise NotImplementedError
 
 
-
-import numpy as np
-import torch
-
-
 class ClasslessImageFolder(Dataset):
-    def __init__(self, root, resize_size: tuple, transformer=None):
-        self.image_paths = [os.path.join(root, file_name) for file_name in os.listdir(root) if
-                            os.path.isfile(os.path.join(root, file_name))]
+    def __init__(self, root, resize_size: List[int], transformer=None, all_images_list: list = None):
+        self.image_paths = [os.path.join(root, file_name) for file_name in all_images_list]
         self.transformer = transformer
         self.resize_size = resize_size
 
     def __getitem__(self, index):
         image_path = self.image_paths[index]
 
-        x = torch.Tensor(np.array(Image.open(image_path).resize(self.resize_size)))
-        if self.transformer is not None:
-            x = self.transformer(x)
+        try:
+            x = Image.open(image_path)
+            x = TF.to_tensor(x)
+            x = TF.resize(x, self.resize_size)
+            if self.transformer is not None:
+                x = self.transformer(x)
+        except FileNotFoundError:
+            x = torch.Tensor(np.zeros(self.resize_size))
         y = 0
 
         return x, y
@@ -147,7 +153,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         self.max_timeout = max_timeout
         self.max_retries = max_retries
         self.max_workers = max_workers
-        self.resize_size = resize_size
+        self.resize_size = list(resize_size)
 
     def _retrieve_images(self, field_name: str, raw_source: RawInformationSource):
         def dl_and_save_images(url_or_path):
@@ -206,12 +212,15 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         if not os.path.isdir(field_images_dir):
             self._retrieve_images(field_name, raw_source)
 
-        ds = ClasslessImageFolder(root=field_images_dir, resize_size=self.resize_size)
+        ds = ClasslessImageFolder(root=field_images_dir,
+                                  all_images_list=[content[field_name].split('/')[-1] for content in raw_source],
+                                  resize_size=self.resize_size)
         dl = DataLoader(ds, batch_size=32)
 
         return dl
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         pass
 
@@ -222,6 +231,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 class LowLevelVisual(VisualContentTechnique):
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
 
         dl = self.get_data_loader(field_name, source)
@@ -237,6 +247,8 @@ class LowLevelVisual(VisualContentTechnique):
                     processed_data = self.process_data(content_data, preprocessor_list)
                     representation_list.append(self.produce_single_repr(processed_data))
 
+        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
+
         return representation_list
 
     @abstractmethod
@@ -247,6 +259,7 @@ class LowLevelVisual(VisualContentTechnique):
 class HighLevelVisual(VisualContentTechnique):
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
 
         dl = self.get_data_loader(field_name, source)
@@ -271,7 +284,6 @@ class HighLevelVisual(VisualContentTechnique):
 class PytorchImageModels(HighLevelVisual):
 
     def __init__(self, model_name: str):
-        import timm
         super().__init__()
         self.model = timm.create_model(model_name, pretrained=True, num_classes=0, global_pool='')
 
@@ -283,7 +295,6 @@ class SkImageHogDescriptor(LowLevelVisual):
 
     def __init__(self, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3), block_norm='L2-Hys',
                  transform_sqrt=False, feature_vector=True, channel_axis=None):
-        from skimage.feature import hog
         self.hog = lambda x: hog(image=x, orientations=orientations, pixels_per_cell=pixels_per_cell,
                                  cells_per_block=cells_per_block, block_norm=block_norm,
                                  transform_sqrt=transform_sqrt, feature_vector=feature_vector,
@@ -294,7 +305,7 @@ class SkImageHogDescriptor(LowLevelVisual):
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
         hog_features = self.hog(field_data)
-        return EmbeddingField(hog_features.detach().numpy())
+        return EmbeddingField(hog_features)
 
     def __str__(self):
         return "SkImageHogDescriptor"
@@ -307,7 +318,6 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
 
     def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
                  mode='constant', cval=0.0):
-        from skimage.feature import canny
         self.canny = lambda x: canny(image=x, sigma=sigma, low_threshold=low_threshold,
                                      high_threshold=high_threshold, mask=mask,
                                      use_quantiles=use_quantiles, mode=mode, cval=cval)
@@ -315,9 +325,8 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
         super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
-        from torchvision.transforms.functional import rgb_to_grayscale
 
-        canny_features = self.canny(rgb_to_grayscale(field_data.permute(2, 0, 1)).squeeze().numpy()).flatten()
+        canny_features = self.canny(TF.rgb_to_grayscale(field_data.permute(2, 0, 1)).squeeze().numpy()).flatten()
         return EmbeddingField(canny_features.detach().numpy().astype(int))
 
     def __str__(self):
@@ -335,6 +344,7 @@ class SingleContentTechnique(FieldContentProductionTechnique):
     """
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         This method creates a list of FieldRepresentation objects, where each object is associated to a content
@@ -350,6 +360,8 @@ class SingleContentTechnique(FieldContentProductionTechnique):
         for content_data in source:
             processed_data = self.process_data(content_data[field_name], preprocessor_list)
             representation_list.append(self.produce_single_repr(processed_data))
+
+        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         return representation_list
 
@@ -376,6 +388,7 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
     """
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         This method creates a list of FieldRepresentation objects, where each object is associated to a content
@@ -453,7 +466,7 @@ class OriginalData(FieldContentProductionTechnique):
     data of the contents
 
     Args:
-        dtype: If specified, data will be casted to the chosen dtype
+        dtype: If specified, data will be cast to the chosen dtype
 
     """
 
@@ -462,6 +475,7 @@ class OriginalData(FieldContentProductionTechnique):
         self.__dtype = dtype
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[SimpleField]:
         """
         The contents' raw data in the given field_name is extracted and stored in a SimpleField object.
@@ -470,11 +484,12 @@ class OriginalData(FieldContentProductionTechnique):
         Because of that the preprocessor_list is ignored and not used by this technique
         """
 
-        representation_list: List[SimpleField] = []
+        representation_list = []
 
         for content_data in source:
             processed_data = self.process_data(content_data[field_name], preprocessor_list)
             representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
+            representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         return representation_list
 

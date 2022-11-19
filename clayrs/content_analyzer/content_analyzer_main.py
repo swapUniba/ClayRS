@@ -7,7 +7,7 @@ import lzma
 import os
 import shutil
 
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.config import ContentAnalyzerConfig
@@ -138,7 +138,7 @@ class ContentsProducer:
         return ContentsProducer.__instance
 
     def __init__(self):
-        self.__config: ContentAnalyzerConfig = None
+        self.__config: Optional[ContentAnalyzerConfig] = None
         # dictionary of memory interfaces defined in the FieldConfigs. The key is the directory of the memory interface
         # and the value is the memory interface itself (only one memory interface can be defined for each directory)
         # if a memory interface has an already defined directory, the memory interface associated to said directory
@@ -195,7 +195,7 @@ class ContentsProducer:
                 # each field repr in the list will refer to a content
                 # technique_result[0] -> contents_list[0]
                 technique_result = field_config.content_technique.produce_content(
-                    field_name, field_config.preprocessing, self.__config.source)
+                    field_name, field_config.preprocessing, field_config.postprocessing, self.__config.source)
 
                 if field_config.memory_interface is not None:
                     memory_interface = field_config.memory_interface
