@@ -1,4 +1,7 @@
 from .nltk_processor import NLTK
 from .spacy_processor import Spacy
 from .ekphrasis_processor import Ekphrasis
-from .visualpostprocessor import SkLearnPCA
+
+
+from .visual_preprocessors import *
+from .visual_postprocessors import *
