@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+import torch
+
 
 class InformationProcessor(ABC):
     """
@@ -24,13 +26,16 @@ class InformationProcessor(ABC):
         raise NotImplementedError
 
 
-class ImageProcessor(InformationProcessor):
+class ImageProcessor(InformationProcessor, torch.nn.Module):
     """
     Abstract class for image processing.
     """
     @abstractmethod
-    def process(self, field_data):
+    def forward(self, field_data):
         raise NotImplementedError
+
+    def process(self, field_data):
+        return self.forward(field_data)
 
 
 class AudioProcessor(InformationProcessor):
