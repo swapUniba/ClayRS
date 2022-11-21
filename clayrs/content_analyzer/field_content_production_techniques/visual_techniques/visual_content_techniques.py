@@ -80,8 +80,6 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         """
         transformers_seq = torch.nn.Sequential(*preprocessor_list)
         processed_data = transformers_seq(data)
-        if not isinstance(processed_data, torch.Tensor):
-            processed_data = TF.to_tensor(processed_data)
 
         return processed_data
 

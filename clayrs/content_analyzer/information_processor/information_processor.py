@@ -37,6 +37,9 @@ class ImageProcessor(InformationProcessor, torch.nn.Module):
     def process(self, field_data):
         return self.forward(field_data)
 
+    def __eq__(self, other):
+        return torch.nn.Module.__eq__(self, other)
+
 
 class AudioProcessor(InformationProcessor):
     """
