@@ -1,7 +1,8 @@
 import inspect
 from abc import ABC, abstractmethod
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, FeatureAgglomeration
+from sklearn.random_projection import GaussianRandomProjection
 from typing import List, Any
 import numpy as np
 
@@ -44,7 +45,8 @@ class SkLearnKMeans(VisualPostProcessor):
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def process(self, field_repr_list: List[FieldRepresentation]) -> List[FieldRepresentation]:
-        return self.k_means.fit_transform(np.stack(field_repr_list, axis=0))
+        k_means_arrays = self.k_means.fit_transform(np.stack(field_repr_list, axis=0))
+        return [EmbeddingField(k_means_array) for k_means_array in k_means_arrays]
 
     def __str__(self):
         return "SkLearnKMeans"
@@ -63,10 +65,53 @@ class SkLearnPCA(DimensionalityReduction):
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
-        return self.pca.fit_transform(np.stack([e.value for e in field_repr_list], axis=0))
+        pca_arrays = self.pca.fit_transform(np.stack(field_repr_list, axis=0))
+        return [EmbeddingField(pca_array) for pca_array in pca_arrays]
 
     def __str__(self):
         return 'SkLearnPca'
 
     def __repr__(self):
         return self._repr_string
+
+
+class SkLearnRandomProjections(DimensionalityReduction):
+
+    def __init__(self, n_components='auto', eps=0.1):
+        super().__init__()
+        self.random_proj = GaussianRandomProjection(n_components=n_components, eps=eps)
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+        random_proj_arrays = self.random_proj.fit_transform(np.stack(field_repr_list, axis=0))
+        return [EmbeddingField(random_proj_array) for random_proj_array in random_proj_arrays]
+
+    def __str__(self):
+        return 'SkLearnRandomProjections'
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkLearnFeatureAgglomeration(DimensionalityReduction):
+
+    def __init__(self, n_clusters=2, affinity='euclidean', memory=None, connectivity=None, compute_full_tree='auto',
+                 linkage='ward', pooling_func=np.mean, distance_threshold=None, compute_distances=False):
+        super().__init__()
+        self.feature_agg = FeatureAgglomeration(n_clusters=n_clusters, affinity=affinity, memory=memory,
+                                                connectivity=connectivity, compute_full_tree=compute_full_tree,
+                                                linkage=linkage, pooling_func=pooling_func,
+                                                distance_threshold=distance_threshold,
+                                                compute_distances=compute_distances)
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+        feature_agg_arrays = self.feature_agg.fit_transform(np.stack(field_repr_list, axis=0))
+        return [EmbeddingField(feature_agg_array) for feature_agg_array in feature_agg_arrays]
+
+    def __str__(self):
+        return 'SkLearnFeatureAgglomeration'
+
+    def __repr__(self):
+        return self._repr_string
+
