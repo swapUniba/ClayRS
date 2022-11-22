@@ -15,12 +15,10 @@ jobs:
     steps:
       -
         name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v3
       -
         name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
       -
@@ -35,7 +33,7 @@ jobs:
           pytest --color=yes --cov-report xml:codecoverage.xml --cov=clayrs test/
       -
         name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v3
         with: # no token required for public repos
           fail_ci_if_error: true
           files: ./codecoverage.xml

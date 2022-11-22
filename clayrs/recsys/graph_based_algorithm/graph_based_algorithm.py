@@ -59,7 +59,7 @@ class GraphBasedAlgorithm(Algorithm):
     @abc.abstractmethod
     def predict(self, all_users: Set[str], graph: Graph, test_set: Ratings,
                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0) -> List[Interaction]:
+                num_cpus: int = 1) -> List[Interaction]:
         """
         Abstract method that predicts how much a user will like unrated items.
         If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -90,7 +90,7 @@ class GraphBasedAlgorithm(Algorithm):
     @abc.abstractmethod
     def rank(self, all_users: Set[str], graph: Graph, test_set: Ratings,
              recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0) -> List[Interaction]:
+             num_cpus: int = 1) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
