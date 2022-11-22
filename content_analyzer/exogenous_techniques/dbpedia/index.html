@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.16">
     
     
       
@@ -1922,7 +1922,7 @@
 
 
 <h2 id="clayrs.content_analyzer.DBPediaMappingTechnique" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">DBPediaMappingTechnique</span><span class="p">(</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">label_field</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;EN&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;only_retrieved_evaluated&#39;</span><span class="p">,</span> <span class="n">return_prop_as_uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">DBPediaMappingTechnique</span><span class="p">(</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">label_field</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;EN&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;only_retrieved_evaluated&#39;</span><span class="p">,</span> <span class="n">return_prop_as_uri</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1990,7 +1990,7 @@ property <strong>rdfs:label equal</strong> to specified field value will be retr
         <tr>
           <td><code>lang</code></td>
           <td class="doc-param-details">
-            <p>Language of the properties to retrieve</p>
+            <p>Language of the <code>rdfs:label</code> that should match with <code>label_field</code> in the raw source</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2045,41 +2045,59 @@ rdfs:label form (e.g. "http://dbpedia.org/ontology/director" rather than "film d
             </p>
           </td>
         </tr>
+        <tr>
+          <td><code>max_timeout</code></td>
+          <td class="doc-param-details">
+            <p>Sometimes when mapping content to dbpedia, a batch of query may take longer than the max time
+allowed by the server due to internet issues: the framework will re-try the exact query <code>max_timeout</code> times
+before raising a <code>TimeoutError</code></p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>5</code>
+                </span>
+            </p>
+          </td>
+        </tr>
     </tbody>
   </table>
 
 
           <details class="quote">
             <summary>Source code in <code>clayrs/content_analyzer/exogenous_properties_retrieval.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
-<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;EN&#39;</span><span class="p">,</span>
-             <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;only_retrieved_evaluated&#39;</span><span class="p">,</span> <span class="n">return_prop_as_uri</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;EN&#39;</span><span class="p">,</span>
+             <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;only_retrieved_evaluated&#39;</span><span class="p">,</span> <span class="n">return_prop_as_uri</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="n">max_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">__entity_type</span> <span class="o">=</span> <span class="n">entity_type</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__label_field</span> <span class="o">=</span> <span class="n">label_field</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__prop_as_uri</span> <span class="o">=</span> <span class="n">return_prop_as_uri</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__lang</span> <span class="o">=</span> <span class="n">lang</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_entity_type</span> <span class="o">=</span> <span class="n">entity_type</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_label_field</span> <span class="o">=</span> <span class="n">label_field</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_prop_as_uri</span> <span class="o">=</span> <span class="n">return_prop_as_uri</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lang</span> <span class="o">=</span> <span class="n">lang</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_timeout</span> <span class="o">=</span> <span class="n">max_timeout</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">__sparql</span> <span class="o">=</span> <span class="n">SPARQLWrapper</span><span class="p">(</span><span class="s2">&quot;http://factforge.net/repositories/ff-news&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__sparql</span><span class="o">.</span><span class="n">setMethod</span><span class="p">(</span><span class="n">POST</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__sparql</span><span class="o">.</span><span class="n">setRequestMethod</span><span class="p">(</span><span class="n">POSTDIRECTLY</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__sparql</span><span class="o">.</span><span class="n">setReturnFormat</span><span class="p">(</span><span class="n">JSON</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sparql</span> <span class="o">=</span> <span class="n">SPARQLWrapper</span><span class="p">(</span><span class="s2">&quot;https://dbpedia.org/sparql&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sparql</span><span class="o">.</span><span class="n">setReturnFormat</span><span class="p">(</span><span class="n">JSON</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">__class_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_properties_class</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_class_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_properties_class</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
           </details>
 

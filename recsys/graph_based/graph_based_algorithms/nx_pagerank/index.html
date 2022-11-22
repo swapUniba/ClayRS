@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.16">
     
     
       
@@ -2114,7 +2114,7 @@ Default is True</p>
 
 
 <h3 id="clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank.NXPageRank.rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">all_users</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">recs_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">all_users</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">recs_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2232,7 +2232,7 @@ the number of cpus will be automatically detected.</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>0</code>
+                    <code>1</code>
                 </span>
             </p>
           </td>
@@ -2362,7 +2362,7 @@ a single user</p>
 <span class="normal">143</span>
 <span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_users</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">NXBipartiteGraph</span><span class="p">,</span> <span class="n">test_set</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span>
          <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
-         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
+         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rank the top-n recommended items for the user. If the recs_number parameter isn&#39;t specified,</span>
 <span class="sd">    All unrated items for the user will be ranked (or only items in the filter list, if specified).</span>
