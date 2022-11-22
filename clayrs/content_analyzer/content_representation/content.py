@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Union, List, Tuple, TYPE_CHECKING
 import numpy as np
 import json
+from numbers import Number
 
 from scipy import sparse
 
@@ -46,7 +47,7 @@ class FeaturesBagField(FieldRepresentation):
     this representation is produced by the EntityLinking and tf-idf techniques
 
     Args:
-        features (dict<str, object>): the dictionary where features are stored
+        sparse_scores: the sparse matrix where features are stored
     """
     __slots__ = ('__scores', '__pos_feature_tuples')
 
@@ -105,7 +106,7 @@ class SimpleField(FieldRepresentation):
         return self.__value == other.__value
 
 
-class EmbeddingField(FieldRepresentation):
+class EmbeddingField(FieldRepresentation, np.lib.mixins.NDArrayOperatorsMixin):
     """
     Class for field representation using embeddings (dense numeric vectors)
     this representation is produced by the EmbeddingTechnique.
@@ -132,7 +133,24 @@ class EmbeddingField(FieldRepresentation):
         return np.array2string(self.__dense_array, threshold=np.inf, separator=',')
 
     def __eq__(self, other):
-        return self.__dense_array == other.__sparse_array
+        return self.__dense_array == other.__dense_array
+
+    def __array__(self, dtype=None):
+        return self.__dense_array.astype(dtype)
+
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        if method == '__call__':
+            scalars = []
+            for input in inputs:
+                if isinstance(input, Number):
+                    scalars.append(input)
+                elif isinstance(input, self.__class__):
+                    scalars.append(input.value)
+                else:
+                    return NotImplemented
+            return self.__class__(ufunc(*scalars, **kwargs))
+        else:
+            return NotImplemented
 
 
 class IndexField(FieldRepresentation):
