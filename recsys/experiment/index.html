@@ -2278,7 +2278,7 @@ it will be deleted and replaced by the folder containing the experiment results<
 
 
 <h3 id="clayrs.recsys.experiment.ContentBasedExperiment.predict" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_alg_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skip_alg_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2338,7 +2338,7 @@ the number of cpus will be automatically detected.</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>0</code>
+                    <code>1</code>
                 </span>
             </p>
           </td>
@@ -2437,7 +2437,7 @@ with the following algorithm. Otherwise, the <code>NotPredictionAlg</code> excep
 <span class="normal">362</span>
 <span class="normal">363</span>
 <span class="normal">364</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
-            <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">skip_alg_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method used to perform an experiment which involves ***score predictions***.</span>
@@ -2497,7 +2497,7 @@ with the following algorithm. Otherwise, the <code>NotPredictionAlg</code> excep
 
 
 <h3 id="clayrs.recsys.experiment.ContentBasedExperiment.rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2567,7 +2567,7 @@ the number of cpus will be automatically detected</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>0</code>
+                    <code>1</code>
                 </span>
             </p>
           </td>
@@ -2617,7 +2617,7 @@ the number of cpus will be automatically detected</p>
 <span class="normal">403</span>
 <span class="normal">404</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
          <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
-         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method used to perform an experiment which involves ***rankings***.</span>
 
@@ -3010,7 +3010,7 @@ it will be deleted and replaced by the folder containing the experiment results<
 
 
 <h3 id="clayrs.recsys.experiment.GraphBasedExperiment.predict" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_alg_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skip_alg_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3072,7 +3072,7 @@ the number of cpus will be automatically detected.</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>0</code>
+                    <code>1</code>
                 </span>
             </p>
           </td>
@@ -3182,7 +3182,7 @@ and <code>skip_alg_error</code> == False</p>
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
-            <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">skip_alg_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method used to perform an experiment which involves ***score predictions***.</span>
@@ -3253,7 +3253,7 @@ and <code>skip_alg_error</code> == False</p>
 
 
 <h3 id="clayrs.recsys.experiment.GraphBasedExperiment.rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">methodology</span><span class="o">=</span><span class="n">TestRatingsMethodology</span><span class="p">(),</span> <span class="n">num_cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3324,7 +3324,7 @@ the number of cpus will be automatically detected.</p>
                 </span>
                 <span class="doc-param-default">
                   <b>DEFAULT:</b> 
-                    <code>0</code>
+                    <code>1</code>
                 </span>
             </p>
           </td>
@@ -3385,7 +3385,7 @@ the number of cpus will be automatically detected.</p>
 <span class="normal">645</span>
 <span class="normal">646</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_recs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
          <span class="n">methodology</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Methodology</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">TestRatingsMethodology</span><span class="p">(),</span>
-         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+         <span class="n">num_cpus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Method used to perform an experiment which involves ***rankings***.</span>
 
