@@ -124,7 +124,7 @@ class Experiment(ABC):
                 shutil.rmtree(self.output_folder)
                 os.makedirs(self.output_folder)
             else:
-                raise FileExistsError(f"Folder {self.overwrite_if_exists} already present!\n"
+                raise FileExistsError(f"Folder {self.output_folder} already present!\n"
                                       "Delete it and run the experiment again or set `overwrite_if_exists` parameter "
                                       "to True!") from None
 
@@ -313,7 +313,7 @@ class ContentBasedExperiment(Experiment):
                          metric_list, report, output_folder, overwrite_if_exists)
 
     def predict(self, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0,
+                num_cpus: int = 1,
                 skip_alg_error: bool = True) -> None:
         """
         Method used to perform an experiment which involves ***score predictions***.
@@ -365,7 +365,7 @@ class ContentBasedExperiment(Experiment):
 
     def rank(self, n_recs: int = 10,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0):
+             num_cpus: int = 1):
         """
         Method used to perform an experiment which involves ***rankings***.
 
@@ -533,7 +533,7 @@ class GraphBasedExperiment(Experiment):
         self.link_label = link_label
 
     def predict(self, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0,
+                num_cpus: int = 1,
                 skip_alg_error: bool = True):
         """
         Method used to perform an experiment which involves ***score predictions***.
@@ -596,7 +596,7 @@ class GraphBasedExperiment(Experiment):
 
     def rank(self, n_recs: int = 10,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0):
+             num_cpus: int = 1):
         """
         Method used to perform an experiment which involves ***rankings***.
 
