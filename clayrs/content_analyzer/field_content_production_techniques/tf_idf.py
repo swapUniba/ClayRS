@@ -119,7 +119,7 @@ class SkLearnTfIdf(TfIdfTechnique):
 
 
 class WhooshTfIdf(TfIdfTechnique):
-    """
+    r"""
     Class that produces a sparse vector for each content representing the tf-idf scores of its terms using Whoosh
 
     The tf-idf computation formula is:
