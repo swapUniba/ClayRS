@@ -3,6 +3,7 @@ import unittest
 from unittest import TestCase
 
 from clayrs.content_analyzer import Ratings
+from clayrs.recsys import ItemNode, PropertyNode
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
 from clayrs.recsys.graph_based_algorithm.page_rank.nx_page_rank import NXPageRank
 from clayrs.recsys.graphs import NXFullGraph
@@ -93,10 +94,14 @@ class TestNXPageRank(TestCase):
 
     def test_rank_personalized_none_weights(self):
 
+        # add relevant prop for active user to test different weighting schema
+        self.graph.add_link(ItemNode("tt0114576"), PropertyNode("Jean-Claude Van Damme"), label="starring")
+
         # test personalized 0.8 relevant items, none to relevant properties, 0.2 to other nodes
         # this means that relevant properties will be treated as 'other nodes' (and so 0.2 prob of being
         # chosen by the random surfer normalized by the total number of 'other nodes')
-        alg = NXPageRank(alpha=0, personalized=True)
+        alg = NXPageRank(alpha=0, personalized=True,
+                         rel_items_weight=0.8, rel_items_prop_weight=None, default_nodes_weight=0.2)
         result_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
 
         # test personalized 0.8 relevant items, 0 to relevant properties, 0.2 to other nodes
