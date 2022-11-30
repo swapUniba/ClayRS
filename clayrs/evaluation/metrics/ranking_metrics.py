@@ -383,6 +383,9 @@ class MAP(RankingMetric):
     def __str__(self):
         return "MAP"
 
+    def __repr__(self):
+        return f"MAP(relevant_threshold={self.relevant_threshold})"
+
 
 class MAPAtK(MAP):
     r"""
@@ -425,6 +428,12 @@ class MAPAtK(MAP):
         user_predictions = user_predictions[:self.k]
 
         return super()._compute_ap(user_predictions, user_truth_relevant_items)
+
+    def __str__(self):
+        return "MAPAtK"
+
+    def __repr__(self):
+        return f"MAPAtK(k={self.k}, relevant_threshold={self.relevant_threshold})"
 
 
 class Correlation(RankingMetric):
