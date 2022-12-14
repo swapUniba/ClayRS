@@ -7,7 +7,7 @@ from scipy.sparse import csr_matrix
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import VisualPostProcessor
+    from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import PostProcessor
 
 from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
@@ -46,7 +46,7 @@ class FieldContentProductionTechnique(ABC):
 
     @staticmethod
     def postprocess_representations(representations: List[FieldRepresentation],
-                                    postprocessor_list: List[VisualPostProcessor]) -> List[FieldRepresentation]:
+                                    postprocessor_list: List[PostProcessor]) -> List[FieldRepresentation]:
         processed_list = representations
         for postprocessor in postprocessor_list:
             processed_list = postprocessor.process(processed_list)
@@ -55,7 +55,7 @@ class FieldContentProductionTechnique(ABC):
 
     @abstractmethod
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[PostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         Abstract method that defines the methodology used by a technique to produce a list of FieldRepresentation.
@@ -111,7 +111,7 @@ class SingleContentTechnique(FieldContentProductionTechnique):
     """
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[PostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         This method creates a list of FieldRepresentation objects, where each object is associated to a content
@@ -155,7 +155,7 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
     """
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[PostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         """
         This method creates a list of FieldRepresentation objects, where each object is associated to a content
@@ -175,6 +175,8 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
 
         for i in range(0, dataset_len):
             representation_list.append(self.produce_single_repr(i))
+
+        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         # once the operation is complete the refactored collection is deleted
         self.delete_refactored()
@@ -242,8 +244,8 @@ class OriginalData(FieldContentProductionTechnique):
         self.__dtype = dtype
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
-                        source: RawInformationSource) -> List[SimpleField]:
+                        postprocessor_list: List[PostProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
         """
         The contents' raw data in the given field_name is extracted and stored in a SimpleField object.
         The SimpleField objects created are stored in a list which is then returned.
@@ -256,7 +258,8 @@ class OriginalData(FieldContentProductionTechnique):
         for content_data in source:
             processed_data = self.process_data(content_data[field_name], preprocessor_list)
             representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
-            representation_list = self.postprocess_representations(representation_list, postprocessor_list)
+
+        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         return representation_list
 
