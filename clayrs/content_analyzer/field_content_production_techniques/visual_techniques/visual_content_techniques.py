@@ -3,24 +3,28 @@ from __future__ import annotations
 import inspect
 import io
 import os
-from typing import Tuple, List, Union, TYPE_CHECKING
+from typing import Tuple, List, Union, TYPE_CHECKING, Any
 
 from abc import abstractmethod
 import PIL.Image
 import requests
 import validators
 import timm
-from skimage.feature import hog, canny
+from skimage.feature import hog, canny, SIFT, local_binary_pattern
+from sklearn.cluster import KMeans
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 import torch
+import numpy as np
 import torchvision.transforms.functional as TF
+from scipy.ndimage.filters import convolve
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
     from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor, ImageProcessor
-    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
+    from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import \
+        EmbeddingInputPostProcessor
 
 from clayrs.content_analyzer.content_representation.content import EmbeddingField
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
@@ -148,7 +152,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         return dl
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[EmbeddingInputPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         pass
 
@@ -159,7 +163,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 class LowLevelVisual(VisualContentTechnique):
 
     def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[EmbeddingInputPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
 
         dl = self.get_data_loader(field_name, source)
@@ -187,7 +191,7 @@ class LowLevelVisual(VisualContentTechnique):
 class HighLevelVisual(VisualContentTechnique):
 
     def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
+                        postprocessor_list: List[EmbeddingInputPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         dl = self.get_data_loader(field_name, source)
 
@@ -209,16 +213,18 @@ class HighLevelVisual(VisualContentTechnique):
 
 class PytorchImageModels(HighLevelVisual):
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, feature_layer: int = -1):
         super().__init__()
-        self.model = timm.create_model(model_name, pretrained=True, num_classes=0, global_pool='')
+        self.model = timm.create_model(model_name, pretrained=True, features_only=True)
+        self.feature_layer = feature_layer
 
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
 
         if len(field_data.shape) == 3:
             field_data = field_data.unsqueeze(dim=1)
 
-        return list(map(lambda x: EmbeddingField(x.detach().numpy()), self.model(field_data.squeeze())))
+        return list(map(lambda x: EmbeddingField(x.detach().numpy()),
+                        self.model(field_data.squeeze())[self.feature_layer]))
 
     def __str__(self):
         return "PytorchImageModels"
@@ -227,11 +233,12 @@ class PytorchImageModels(HighLevelVisual):
 class SkImageHogDescriptor(LowLevelVisual):
 
     def __init__(self, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3), block_norm='L2-Hys',
-                 transform_sqrt=False):
+                 transform_sqrt=False, flatten=False):
         self.hog = lambda x, channel_axis: hog(x, orientations=orientations, pixels_per_cell=pixels_per_cell,
                                                cells_per_block=cells_per_block, block_norm=block_norm,
                                                transform_sqrt=transform_sqrt, feature_vector=True,
                                                channel_axis=channel_axis)
+        self.flatten = flatten
 
         self._repr_string = autorepr(self, inspect.currentframe())
         super().__init__()
@@ -245,6 +252,7 @@ class SkImageHogDescriptor(LowLevelVisual):
             channel_axis = 0
 
         hog_features = self.hog(field_data.numpy(), channel_axis=channel_axis)
+        hog_features = hog_features.flatten() if self.flatten else hog_features
         return EmbeddingField(hog_features)
 
     def __str__(self):
@@ -257,10 +265,11 @@ class SkImageHogDescriptor(LowLevelVisual):
 class SkImageCannyEdgeDetector(LowLevelVisual):
 
     def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
-                 mode='constant', cval=0.0):
+                 mode='constant', cval=0.0, flatten=False):
         self.canny = lambda x: canny(image=x, sigma=sigma, low_threshold=low_threshold,
                                      high_threshold=high_threshold, mask=mask,
                                      use_quantiles=use_quantiles, mode=mode, cval=cval)
+        self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
         super().__init__()
 
@@ -271,7 +280,8 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
         else:
             field_data = TF.rgb_to_grayscale(field_data).squeeze()
 
-        canny_features = self.canny(field_data.numpy()).flatten()
+        canny_features = self.canny(field_data.numpy())
+        canny_features = canny_features.flatten() if self.flatten else canny_features
         return EmbeddingField(canny_features.astype(int))
 
     def __str__(self):
@@ -279,3 +289,148 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
 
     def __repr__(self):
         return self._repr_string
+
+
+class CustomFilterConvolution(LowLevelVisual):
+
+    def __init__(self, weights, mode='reflect', cval=0.0, origin=0, flatten=False):
+        self.convolve = lambda x: convolve(x, weights=weights, mode=mode, cval=cval, origin=origin)
+        self.flatten = flatten
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        if field_data.shape[0] == 1:
+            field_data = field_data.squeeze()
+        else:
+            field_data = TF.rgb_to_grayscale(field_data).squeeze()
+
+        convolution_result = self.convolve(field_data.numpy())
+        convolution_result = convolution_result.flatten() if self.flatten else convolution_result
+        return EmbeddingField(convolution_result.astype(int))
+
+    def __str__(self):
+        return "CustomFilterConvolution"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkImageMainColors(LowLevelVisual):
+
+    def __init__(self):
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        if field_data.shape[0] == 1:
+            field_data = field_data.squeeze()
+
+        if field_data.shape[0] != 3:
+            raise Exception('Image not in RGB')
+
+        numpy_field_data = field_data.numpy() * 255
+        colors = np.array([numpy_field_data[0, :, :].flatten(),
+                           numpy_field_data[1, :, :].flatten(),
+                           numpy_field_data[2, :, :].flatten()])
+        return EmbeddingField(colors.astype(int))
+
+    def __str__(self):
+        return "SkImageMainColors"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkImageColorQuantization(LowLevelVisual):
+
+    def __init__(self, n_colors: Any = 3, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
+                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
+                 flatten=False):
+        self.k_means = KMeans(n_clusters=n_colors, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
+                              random_state=random_state, copy_x=copy_x, algorithm=algorithm)
+        self.flatten = flatten
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        if field_data.shape[0] == 1:
+            field_data = field_data.squeeze()
+
+        if field_data.shape[0] != 3:
+            raise Exception('Image in grey scale')
+
+        numpy_field_data = field_data.numpy() * 255
+        numpy_field_data = numpy_field_data.reshape((numpy_field_data.shape[1] * numpy_field_data.shape[2], 3))
+        self.k_means.fit(numpy_field_data)
+        dominant_colors = self.k_means.cluster_centers_
+        dominant_colors = dominant_colors.flatten() if self.flatten else dominant_colors
+        return EmbeddingField(dominant_colors.astype(int))
+
+    def __str__(self):
+        return "SkImageColorQuantization"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkImageSIFT(LowLevelVisual):
+
+    def __init__(self, upsampling=2, n_octaves=8, n_scales=3, sigma_min=1.6, sigma_in=0.5, c_dog=0.013333333333333334,
+                 c_edge=10, n_bins=36, lambda_ori=1.5, c_max=0.8, lambda_descr=6, n_hist=4, n_ori=8,
+                 flatten=False):
+        self.sift = SIFT(upsampling=upsampling, n_octaves=n_octaves, n_scales=n_scales, sigma_min=sigma_min,
+                         sigma_in=sigma_in, c_dog=c_dog, c_edge=c_edge, n_bins=n_bins, lambda_ori=lambda_ori,
+                         c_max=c_max, lambda_descr=lambda_descr, n_hist=n_hist, n_ori=n_ori)
+        self.flatten = flatten
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        if field_data.shape[0] == 1:
+            field_data = field_data.squeeze()
+        else:
+            field_data = TF.rgb_to_grayscale(field_data).squeeze()
+
+        self.sift.detect_and_extract(field_data.numpy())
+        descriptors = self.sift.descriptors
+        descriptors = descriptors.flatten() if self.flatten else descriptors
+        return EmbeddingField(descriptors.astype(int))
+
+    def __str__(self):
+        return "SkImageSIFT"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class SkImageLBP(LowLevelVisual):
+
+    def __init__(self, p: int, r: float, method='default', flatten=False):
+        self.lbp = lambda x: local_binary_pattern(x, P=p, R=r, method=method)
+        self.flatten = flatten
+        self._repr_string = autorepr(self, inspect.currentframe())
+        super().__init__()
+
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+
+        if field_data.shape[0] == 1:
+            field_data = field_data.squeeze()
+        else:
+            field_data = TF.rgb_to_grayscale(field_data).squeeze()
+
+        patterns = self.lbp(field_data.numpy())
+        patterns = patterns.flatten() if self.flatten else patterns
+        return EmbeddingField(patterns.astype(int))
+
+    def __str__(self):
+        return "SkImageLBP"
+
+    def __repr__(self):
+        return self._repr_string
+
+
