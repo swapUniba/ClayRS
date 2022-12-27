@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import List
 
 from clayrs.content_analyzer import Rank, Ratings
-from clayrs.recsys import NXFullGraph, ItemNode, PropertyNode
+from clayrs.recsys import NXFullGraph, ItemNode, PropertyNode, NXPageRank, TestRatingsMethodology
 
 
 def explain(film_piaciuti, film_raccomandati):
@@ -19,7 +19,9 @@ def explain(film_piaciuti, film_raccomandati):
     profile, numero_film1 = mapping_profilo(film_piaciuti)  # dizionario(titolo, uri) dei film contenuti nel profilo, |profile|
     recommendation, numero_film2 = mapping_profilo(film_raccomandati)  # dictionary (title, uri), len recommendation
     G, common_properties, numero_proprieta = costruisci_grafo(profile, recommendation) #graph, list common prop, num properties
-
+    pagR=NXPageRank(alpha=0.85, personalized=False, max_iter=100, tol=1e-06, nstart=None, weight=True,
+               relevance_threshold=None, rel_items_weight=0.8, rel_items_prop_weight=None, default_nodes_weight=0.2)
+    pagR.rank({a}, G, test_set, recs_number=None, methodology=TestRatingsMethodology(), num_cpus=1)
     """for user_id in set(recs.user_id_column):
 
         #user_explanation = []
