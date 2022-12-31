@@ -150,42 +150,16 @@ class ContentBasedRS(RecSys):
         """
         return self.__users_directory
 
-    def fit(self, num_cpus: int = 0):
+    def fit(self, num_cpus: int = 1):
         """
         Method which will fit the algorithm chosen for each user in the train set passed in the constructor
 
         If the algorithm can't be fit for some users, a warning message is printed
         """
-        def compute_single_fit(user_id):
-            user_train = self.train_set.get_user_interactions(user_id)
-            user_alg = deepcopy(self.algorithm)
 
-            try:
-                user_alg.process_rated(user_train, loaded_items_interface)
-                user_alg.fit()
-            except UserSkipAlgFit as e:
-                warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
-                logger.warning(warning_message)
-                user_alg = None
-
-            return user_id, user_alg
-
-        items_to_load = set(self.train_set.item_id_column)
-        all_users = set(self.train_set.user_id_column)
-        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, items_to_load)
-
-        with get_iterator_parallel(num_cpus,
-                                   compute_single_fit, all_users,
-                                   progress_bar=True, total=len(all_users)) as pbar:
-
-            pbar.set_description("Fitting algorithm")
-
-            for user_id, fitted_user_alg in pbar:
-                self._user_fit_dic[user_id] = fitted_user_alg
-
-        # we force the garbage collector after freeing loaded items
-        del loaded_items_interface
-        gc.collect()
+        self._user_fit_dic = self.algorithm.fit(train_set=self.train_set,
+                                                items_directory=self.items_directory,
+                                                num_cpus=num_cpus)
 
         return self
 
@@ -223,53 +197,18 @@ class ContentBasedRS(RecSys):
             Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
 
         """
-        def compute_single_rank(user_id):
-            user_id = str(user_id)
-            user_train = self.train_set.get_user_interactions(user_id)
-
-            filter_list = None
-            if methodology is not None:
-                filter_list = set(methodology.filter_single(user_id, self.train_set, test_set))
-
-            user_fitted_alg = self._user_fit_dic.get(user_id)
-            if user_fitted_alg is not None:
-                user_rank = user_fitted_alg.rank(user_train, loaded_items_interface,
-                                                 n_recs, filter_list=filter_list)
-            else:
-                user_rank = []
-                logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
-
-            return user_id, user_rank
-
-        if len(self._user_fit_dic) == 0:
-            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
 
         all_users = set(test_set.user_id_column)
         if user_id_list is not None:
             all_users = set(user_id_list)
 
-        loaded_items_interface = self.algorithm._load_available_contents(self.items_directory, set())
-
-        rank = []
-
-        logger.info("Don't worry if it looks stuck at first")
-        logger.info("First iterations will stabilize the estimated remaining time")
-
-        with get_iterator_parallel(num_cpus,
-                                   compute_single_rank, all_users,
-                                   progress_bar=True, total=len(all_users)) as pbar:
-
-            pbar.set_description(f"Loading first items from memory...")
-            for user_id, user_rank in pbar:
-                pbar.set_description(f"Computing rank for user {user_id}")
-                rank.append(user_rank)
-
-        rank = itertools.chain.from_iterable(rank)
+        rank = self.algorithm.rank(self._user_fit_dic, self.train_set, test_set,
+                                   user_id_list=all_users,
+                                   items_directory=self.items_directory, n_recs=n_recs,
+                                   methodology=methodology, num_cpus=num_cpus)
         rank = Rank.from_list(rank)
-
-        # we force the garbage collector after freeing loaded items
-        del loaded_items_interface
-        gc.collect()
 
         self._yaml_report = {'mode': 'rank', 'n_recs': repr(n_recs), 'methodology': repr(methodology)}
 
@@ -307,6 +246,7 @@ class ContentBasedRS(RecSys):
                 `user_id_list`
 
         """
+
         def compute_single_predict(user_id):
             user_id = str(user_id)
             user_train = self.train_set.get_user_interactions(user_id)
@@ -394,6 +334,7 @@ class ContentBasedRS(RecSys):
         Returns:
             Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
         """
+
         def compute_single_fit_predict(user_id):
             user_train = self.train_set.get_user_interactions(user_id)
 
@@ -493,6 +434,7 @@ class ContentBasedRS(RecSys):
         Returns:
             Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
         """
+
         def compute_single_fit_rank(user_id):
             user_train = self.train_set.get_user_interactions(user_id)
 

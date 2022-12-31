@@ -1,8 +1,10 @@
 from __future__ import annotations
 import abc
+import gc
+import itertools
 from copy import deepcopy
 from itertools import chain
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Optional, Any, Set
 import pandas as pd
 
 from scipy import sparse
@@ -11,13 +13,17 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
 import numpy as np
 
+from clayrs.recsys.content_based_algorithm.exceptions import NotFittedAlg, UserSkipAlgFit
+from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_iterator_parallel
+
 if TYPE_CHECKING:
     from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
         CombiningTechnique
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank
+    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank, Ratings
     from clayrs.content_analyzer.content_representation.content import Content
     from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface
-
 
 from clayrs.recsys.algorithm import Algorithm
 
@@ -192,31 +198,14 @@ class ContentBasedAlgorithm(Algorithm):
         return X_vectorized
 
     @abc.abstractmethod
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
-        """
-        Abstract method that processes rated items for the user.
-
-        Every content-based algorithm processes rated items differently, it may be needed to extract features
-        from the rated items and label them, extract features only from the positive ones, etc.
-
-        The rated items processed must be stored into a private attribute of the algorithm, later used
-        by the fit() method.
-
-        Args:
-            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
-            available_loaded_items (LoadedContentsDict): loaded contents interface point to the items directory
-        """
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def fit(self):
+    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0) -> Any:
         """
         Abstract method that fits the content-based algorithm.
 
         Every content based algorithm has a different fit process, it may be needed to fit a classifier,
         to build the centroid of the positive items, to build a query for the index, etc.
 
-        It must be called after the the process_rated() method since it uses private attributes calculated
+        It must be called after the process_rated() method since it uses private attributes calculated
         by said method to fit the algorithm.
 
         The fitted object will also be stored in a private attribute.
@@ -224,8 +213,9 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> Prediction:
+    def predict(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
+                user_id_list: Set, n_recs: Optional[int] = None,
+                methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
         """
         |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -249,8 +239,9 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
-             recs_number: int = None, filter_list: List[str] = None) -> Rank:
+    def rank(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
+             user_id_list: Set, n_recs: Optional[int] = None,
+             methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -296,3 +287,170 @@ class ContentBasedAlgorithm(Algorithm):
 
         # Return updated instance
         return result
+
+
+class PerUserCBAlgorithm(ContentBasedAlgorithm):
+    __slots__ = ()
+
+    @abc.abstractmethod
+    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
+        """
+        Abstract method that processes rated items for the user.
+
+        Every content-based algorithm processes rated items differently, it may be needed to extract features
+        from the rated items and label them, extract features only from the positive ones, etc.
+
+        The rated items processed must be stored into a private attribute of the algorithm, later used
+        by the fit() method.
+
+        Args:
+            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
+            available_loaded_items (LoadedContentsDict): loaded contents interface point to the items directory
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def fit_single_user(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str] = None) -> Prediction:
+        """
+        |  Abstract method that predicts the rating which a user would give to items
+        |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
+
+        def predict():
+            raise NotPredictionAlg
+
+        One can specify which items must be predicted with the filter_list parameter,
+        in this case ONLY items in the filter_list will be predicted.
+        One can also pass items already seen by the user with the filter_list parameter.
+        Otherwise, ALL unrated items will be predicted.
+
+        Args:
+            user_ratings (pd.DataFrame): DataFrame containing ratings of a single user
+            available_loaded_items (LoadedContentsDict): loaded contents interface point to the items directory
+            filter_list (list): list of the items to predict, if None all unrated items will be score predicted
+        Returns:
+            pd.DataFrame: DataFrame containing one column with the items name,
+                one column with the score predicted
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
+                         recs_number: int = None, filter_list: List[str] = None) -> Rank:
+        """
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
+        One can also pass items already seen by the user with the filter_list parameter.
+        Otherwise, **ALL** unrated items will be ranked.
+
+        Args:
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
+        Returns:
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+            a single user
+        """
+        raise NotImplementedError
+
+    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 1) -> Any:
+        """
+        Method which will fit the algorithm chosen for each user in the train set passed in the constructor
+
+        If the algorithm can't be fit for some users, a warning message is printed
+        """
+
+        def compute_single_fit(user_id):
+            user_train = train_set.get_user_interactions(user_id)
+
+            try:
+                self.process_rated(user_train, loaded_items_interface)
+                self.fit_single_user()
+                user_fit_rank = self.rank_single_user
+            except UserSkipAlgFit as e:
+                warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
+                logger.warning(warning_message)
+                user_fit_rank = None
+
+            return user_id, user_fit_rank
+
+        items_to_load = set(train_set.item_id_column)
+        all_users = set(train_set.user_id_column)
+        loaded_items_interface = self._load_available_contents(items_directory, items_to_load)
+
+        users_fit_dict = {}
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit, all_users,
+                                   progress_bar=True, total=len(all_users)) as pbar:
+
+            pbar.set_description("Fitting algorithm")
+
+            for user_id, fitted_user_alg in pbar:
+                users_fit_dict[user_id] = fitted_user_alg
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return users_fit_dict
+
+    def rank(self, users_fit_dict: dict, train_set: Ratings, test_set: Ratings, items_directory: str,
+             user_id_list: Set, n_recs: Optional[int] = None,
+             methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
+
+        def compute_single_rank(user_id):
+            user_id = str(user_id)
+            user_train = train_set.get_user_interactions(user_id)
+
+            filter_list = None
+            if methodology is not None:
+                filter_list = set(methodology.filter_single(user_id, train_set, test_set))
+
+            user_fit_alg_rank = users_fit_dict.get(user_id)
+            if user_fit_alg_rank is not None:
+                user_rank = user_fit_alg_rank(user_train, loaded_items_interface,
+                                              n_recs, filter_list=filter_list)
+            else:
+                user_rank = []
+                logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
+
+            return user_id, user_rank
+
+        if len(users_fit_dict) == 0:
+            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+
+        loaded_items_interface = self._load_available_contents(items_directory, set())
+
+        rank = []
+
+        logger.info("Don't worry if it looks stuck at first")
+        logger.info("First iterations will stabilize the estimated remaining time")
+
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_rank, user_id_list,
+                                   progress_bar=True, total=len(user_id_list)) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_id, user_rank in pbar:
+                pbar.set_description(f"Computing rank for user {user_id}")
+                rank.append(user_rank)
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return list(itertools.chain.from_iterable(rank))
+
+    def predict(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
+                user_id_list: Set, n_recs: Optional[int] = None,
+                methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> Prediction:
+        pass
