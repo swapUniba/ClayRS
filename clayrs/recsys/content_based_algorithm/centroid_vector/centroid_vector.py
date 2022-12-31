@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
 
 
-class CentroidVector(ContentBasedAlgorithm):
+class CentroidVector(PerUserCBAlgorithm):
     """
     Class that implements a centroid-like recommender. It first gets the centroid of the items that the user liked.
     Then computes the similarity between the centroid and the item of which the ranking score must be predicted.
@@ -134,7 +134,7 @@ class CentroidVector(ContentBasedAlgorithm):
 
         self._positive_rated_list = positive_rated_list
 
-    def fit(self):
+    def fit_single_user(self):
         """
         The fit process for the CentroidVector consists in calculating the centroid of the features
         of the positive items ONLY.
@@ -151,8 +151,8 @@ class CentroidVector(ContentBasedAlgorithm):
         # we delete variable used to fit since will no longer be used
         self._positive_rated_list = None
 
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str] = None) -> List[Interaction]:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
         the `NotPredictionAlg` exception!
@@ -162,8 +162,8 @@ class CentroidVector(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).

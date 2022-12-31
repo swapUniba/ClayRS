@@ -13,10 +13,10 @@ from clayrs.content_analyzer.field_content_production_techniques.embedding_techn
     Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 
 
-class LinearPredictor(ContentBasedAlgorithm):
+class LinearPredictor(PerUserCBAlgorithm):
     """
     Class that implements recommendation through a specified linear predictor.
     It's a score prediction algorithm, so it can predict what rating a user would give to an unseen item.
@@ -131,7 +131,7 @@ class LinearPredictor(ContentBasedAlgorithm):
         self._labels = labels
         self._items_features = items_features
 
-    def fit(self):
+    def fit_single_user(self):
         """
         Fit the regressor specified in the constructor with the features and labels (rating scores)
         extracted with the process_rated() method.
@@ -181,8 +181,8 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         return id_items_to_predict, score_labels
 
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str] = None) -> List[Interaction]:
         """
         Predicts how much a user will like unrated items.
 
@@ -213,8 +213,8 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         return pred_interaction_list
 
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).

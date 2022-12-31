@@ -3,12 +3,12 @@ from typing import List, Optional
 import re
 
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, EmptyUserRatings
 
 
-class IndexQuery(ContentBasedAlgorithm):
+class IndexQuery(PerUserCBAlgorithm):
     """
     Class for the search engine recommender using an index.
     It firsts builds a query using the representation(s) specified of the positive items, then uses the mentioned query
@@ -74,6 +74,7 @@ class IndexQuery(ContentBasedAlgorithm):
         Args:
             index_representations (dict): representations for an item extracted from the index
         """
+
         def find_valid(pattern: str):
             field_index_retrieved = [field_index for field_index in index_representations
                                      if re.match(pattern, field_index)]
@@ -161,7 +162,7 @@ class IndexQuery(ContentBasedAlgorithm):
         self._positive_user_docs = positive_user_docs
         self._scores = scores
 
-    def fit(self):
+    def fit_single_user(self):
         """
         The fit process for the IndexQuery consists in building a query using the features of the positive items ONLY
         (items that the user liked). The terms relative to these 'positive' items are boosted by the
@@ -212,8 +213,8 @@ class IndexQuery(ContentBasedAlgorithm):
 
         return masked_list
 
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
-                filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
+                            filter_list: List[str] = None) -> List[Interaction]:
         """
         IndexQuery is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
@@ -223,8 +224,8 @@ class IndexQuery(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
-             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
+                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).

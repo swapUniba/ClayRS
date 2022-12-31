@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     Centroid
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyPositiveItems, \
     OnlyNegativeItems, NotPredictionAlg, EmptyUserRatings
 
 
-class ClassifierRecommender(ContentBasedAlgorithm):
+class ClassifierRecommender(PerUserCBAlgorithm):
     """
     Class that implements recommendation through a specified `Classifier`.
     It's a ranking algorithm so it can't do score prediction.
@@ -149,7 +149,7 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._labels = labels
         self._items_features = items_features
 
-    def fit(self):
+    def fit_single_user(self):
         """
         Fit the classifier specified in the constructor with the features and labels
         extracted with the `process_rated()` method.
@@ -166,8 +166,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         self._items_features = None
         self._labels = None
 
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str] = None) -> List[Interaction]:
         """
         ClassifierRecommender is not a score prediction algorithm, calling this method will raise
         the `NotPredictionAlg` exception!
@@ -177,8 +177,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
+                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -223,7 +223,8 @@ class ClassifierRecommender(ContentBasedAlgorithm):
 
         if len(id_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
-            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict, self._embedding_combiner)
+            fused_features_items_to_pred = self.fuse_representations(features_items_to_predict,
+                                                                     self._embedding_combiner)
 
             class_prob = self._classifier.predict_proba(fused_features_items_to_pred)
         else:
