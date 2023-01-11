@@ -12,6 +12,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.utils.validation import check_is_fitted
 import numpy as np
+import torch
 
 from clayrs.recsys.content_based_algorithm.exceptions import NotFittedAlg, UserSkipAlgFit
 from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
@@ -144,7 +145,7 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             X fused and vectorized
         """
-        if any(not isinstance(rep, (dict, np.ndarray, (int, float), sparse.csc_matrix)) for rep in X[0]):
+        if any(not isinstance(rep, (dict, np.ndarray, (int, float), sparse.csc_matrix, torch.Tensor)) for rep in X[0]):
             raise ValueError("You can only use representations of type: {numeric, embedding, tfidf}")
 
         # We check if there are dicts as representation in the first element of X,
@@ -169,6 +170,13 @@ class ContentBasedAlgorithm(Algorithm):
                         item_repr = self._transformer.transform(item_repr)
                         single_arr.append(item_repr.flatten())
                     elif isinstance(item_repr, np.ndarray):
+                        if item_repr.ndim > 1:
+                            item_repr = embedding_combiner.combine(item_repr)
+
+                        single_arr.append(item_repr.flatten())
+                    elif isinstance(item_repr, torch.Tensor):
+                        item_repr = item_repr.numpy()
+
                         if item_repr.ndim > 1:
                             item_repr = embedding_combiner.combine(item_repr)
 
