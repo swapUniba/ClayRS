@@ -1,5 +1,6 @@
 import itertools
 import gc
+import os
 from typing import Any, Set, Optional, List, Type, Dict, Callable, Union
 
 from clayrs.content_analyzer import Ratings, Content, Centroid
@@ -23,12 +24,14 @@ from clayrs.utils.context_managers import get_iterator_parallel
 
 class TriplesDataset(data.Dataset):
 
-    def __init__(self, ratings: Ratings, user_map: Dict[str, int], item_map: Dict[str, int]):
+    def __init__(self, ratings: Ratings,
+                 user_map: Dict[str, int], item_map: Dict[str, int], item_repr_map: Dict[int, str]):
         self.ratings = ratings
         self.n_items = len(set(self.ratings.item_id_column))
 
         self.user_map = user_map
         self.item_map = item_map
+        self.item_repr_map = item_repr_map
 
     def __len__(self):
         return len(self.ratings)
@@ -40,24 +43,25 @@ class TriplesDataset(data.Dataset):
         neg_item = np.random.choice(self.n_items)
         while neg_item in pos_items:
             neg_item = np.random.choice(self.n_items)
-        return self.user_map[user], self.item_map[pos_item], neg_item
+        return self.user_map[user], \
+               torch.from_numpy(np.load(self.item_repr_map[pos_item])), \
+               torch.from_numpy(np.load(self.item_repr_map[neg_item]))
 
 
 class VBPRNetwork(torch.nn.Module):
 
-    def __init__(self, features: torch.Tensor, n_users, n_items, gamma_dim, theta_dim):
+    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim):
 
         super().__init__()
-        self.features = nn.Embedding.from_pretrained(features)
 
         self.gamma_users = nn.Embedding(n_users, gamma_dim)
         self.gamma_items = nn.Embedding(n_items, gamma_dim)
 
         self.theta_users = nn.Embedding(n_users, theta_dim)
-        self.E = nn.Embedding(features.size(1), theta_dim)
+        self.E = nn.Embedding(features_dim, theta_dim)
 
         self.beta_items = nn.Embedding(n_items, 1)
-        self.beta_prime = nn.Embedding(features.size(1), 1)
+        self.beta_prime = nn.Embedding(features_dim, 1)
 
         self._init_weights()
 
@@ -77,7 +81,7 @@ class VBPRNetwork(torch.nn.Module):
         pos_items = x[1]
         neg_items = x[2]
 
-        feature_diff = self.features(pos_items) - self.features(neg_items)
+        feature_diff = pos_items - neg_items
         beta_diff = self.beta_items(pos_items) - self.beta_items(neg_items)
 
         user_gamma = self.gamma_users(users)
@@ -157,41 +161,54 @@ class VBPR(ContentBasedAlgorithm):
 
     def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0):
 
+        this = os.path.dirname(os.path.abspath(__file__))
+
         items_to_load = set(train_set.item_id_column)
         all_users = set(train_set.user_id_column)
 
         for user in all_users:
             self.user_id_to_idx_map[user] = len(self.user_id_to_idx_map)
 
-        loaded_items_interface = self._load_available_contents(items_directory, items_to_load)
-
-        loaded_rated_items: List[Union[Content, None]] = loaded_items_interface.get_list([item_id
-                                                                                          for item_id
-                                                                                          in items_to_load])
+        loaded_items_interface = self._load_available_contents(items_directory, set())
 
         logger.info("Loading items features")
 
         items_features = {}
         missing_items = []
-        for i, (item_id, item) in enumerate(zip(items_to_load, loaded_rated_items)):
+
+        # note: use library for default tmp dir instead
+        tmp_path = os.path.join(this, "temp_features_dir")
+        os.makedirs(tmp_path, exist_ok=True)
+
+        shape = None
+
+        for i, item_id in enumerate(items_to_load):
+
+            item = loaded_items_interface.get(item_id, self.item_field)
 
             self.item_id_to_idx_map[item_id] = i
             self.item_idx_to_id_map[i] = item_id
 
             if item is not None:
-                items_features[self.item_id_to_idx_map[item.content_id]] = self.fuse_representations(
-                    [self.extract_features_item(item)], self._embedding_combiner)
+                repr = self.fuse_representations([self.extract_features_item(item)], self._embedding_combiner)
+                tmp_file_path = os.path.join(tmp_path, f"{item_id}.npy")
+                np.save(tmp_file_path, repr)
+                items_features[i] = tmp_file_path
 
+                if shape is None:
+                    shape = repr.shape
             else:
                 missing_items.append(item_id)
 
         # temporary(?) solution for items that appear in the ratings but are not stored locally
         if len(missing_items) > 0:
-            if len(items_features) == 0:
+            if shape is None:
                 raise Exception("No items were loaded")
-            shape = next(iter(items_features.values())).shape
             for item_id in missing_items:
-                items_features[self.item_id_to_idx_map[item_id]] = np.zeros(shape)
+                repr = np.zeros(shape)
+                tmp_file_path = os.path.join(tmp_path, f"{item_id}.npy")
+                np.save(tmp_file_path, repr)
+                items_features[self.item_id_to_idx_map[item_id]] = tmp_file_path
 
         del loaded_items_interface
         gc.collect()
@@ -199,15 +216,11 @@ class VBPR(ContentBasedAlgorithm):
         torch.cuda.empty_cache()
 
         n_items = len(items_features)
-        items_features = torch.from_numpy(np.vstack(list(items_features.values()))).to(torch.float32)
 
-        model = VBPRNetwork(items_features,
-                            len(all_users), n_items,
-                            self.gamma_dim, self.theta_dim).to(self.device)
-
+        model = VBPRNetwork(len(all_users), n_items, shape[1], self.gamma_dim, self.theta_dim).to(self.device)
         train_optimizer = self.train_optimizer(model.parameters(), **self.train_optimizer_parameters)
 
-        train_dataset = TriplesDataset(train_set, self.user_id_to_idx_map, self.item_id_to_idx_map)
+        train_dataset = TriplesDataset(train_set, self.user_id_to_idx_map, self.item_id_to_idx_map, items_features)
         sampler = data.RandomSampler(train_dataset)
         train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=self.train_batch_size, sampler=sampler)
 
@@ -236,8 +249,10 @@ class VBPR(ContentBasedAlgorithm):
                     logger.info(f'[Epoch {epoch + 1}, Batch {i + 1:5d}] Loss: {train_loss / 100:.3f}')
                     train_loss = 0.0
 
-        model.theta_items = torch.mm(model.features.weight, model.E.weight)
-        model.visual_bias = torch.mm(model.features.weight, model.beta_prime.weight)
+        os.remove(tmp_path)
+        # feature_matirx = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()]))
+        model.theta_items = torch.mm(feature_matrix, model.E.weight)
+        model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight)
 
         return model
 
