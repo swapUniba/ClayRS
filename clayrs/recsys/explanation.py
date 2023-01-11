@@ -19,9 +19,13 @@ def explain(film_piaciuti, film_raccomandati):
     profile, numero_film1 = mapping_profilo(film_piaciuti)  # dizionario(titolo, uri) dei film contenuti nel profilo, |profile|
     recommendation, numero_film2 = mapping_profilo(film_raccomandati)  # dictionary (title, uri), len recommendation
     G, common_properties, numero_proprieta = costruisci_grafo(profile, recommendation) #graph, list common prop, num properties
-    pagR=NXPageRank(alpha=0.85, personalized=False, max_iter=100, tol=1e-06, nstart=None, weight=True,
+
+    """pagR=NXPageRank(alpha=0.85, personalized=False, max_iter=100, tol=1e-06, nstart=None, weight=True,
                relevance_threshold=None, rel_items_weight=0.8, rel_items_prop_weight=None, default_nodes_weight=0.2)
-    pagR.rank({a}, G, test_set, recs_number=None, methodology=TestRatingsMethodology(), num_cpus=1)
+    test_set= ()
+    pagR.rank({a}, G, test_set, recs_number=None, methodology=None, num_cpus=1)"""
+    ranked_prop = ranking_proprieta(G, common_properties, profile, recommendation, idf)
+    sorted_prop = proprieta_da_considerare(ranked_prop, numero_prop_considerate)
     """for user_id in set(recs.user_id_column):
 
         #user_explanation = []
@@ -118,3 +122,26 @@ def costruisci_grafo(profile, recommendation):
         G.add_edge(key, value)                            # collego i nodi attraverso le proprieta in comune con archi
 
     return G, common_properties, numero_proprieta
+
+# Funzione che prende in input il grafo costruito, le proprieta in comune e i due dizionari di film piaciuti e
+# raccomandati  ed effettua il ranking delle proprieta in comune in ordine di
+# influenza attraverso il calcolo di un punteggio (in ordine decrescente)
+def ranking_proprieta(G, proprieta_comuni, item_piaciuti, item_raccom, idf):
+    alfa = 0.5
+    beta = 0.5
+    score_prop = {}
+
+    #if idf:
+    for prop in proprieta_comuni:               # per ogni proprieta in comune, calcolo il numero di archi entranti
+        if prop in G.nodes():                   # ed uscenti e li uso nella formula, insieme al rispettivo IDF
+            num_in_edges = G.in_degree(prop)    # per calcolare il punteggio
+            num_out_edges = G.out_degree(prop)
+            score_prop[prop] = ((alfa * num_in_edges / len(item_piaciuti)) + (beta * num_out_edges / len(item_raccom)))
+            if idf:
+                score_prop[prop] = score_prop[prop] * calcola_IDF(prop)
+
+        sorted_prop = dict((sorted(score_prop.items(), key=lambda item: item[1],  reverse=True)))  # ordino la lista di punteggi in ordine decrescente
+
+    print("Le proprieta sono state rankate e ordinate con successo!\n")
+
+    return sorted_prop
