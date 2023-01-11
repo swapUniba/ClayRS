@@ -1,9 +1,10 @@
 import itertools
 import gc
 import os
-from typing import Any, Set, Optional, List, Type, Dict, Callable, Union
+import shutil
+from typing import Any, Set, Optional, List, Type, Dict, Callable
 
-from clayrs.content_analyzer import Ratings, Content, Centroid
+from clayrs.content_analyzer import Ratings, Centroid
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     CombiningTechnique
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
@@ -38,14 +39,16 @@ class TriplesDataset(data.Dataset):
 
     def __getitem__(self, idx):
         user = self.ratings.user_id_column[idx]
-        pos_item = self.ratings.item_id_column[idx]
+        pos_item = self.item_map[self.ratings.item_id_column[idx]]
         pos_items = [self.item_map[content.item_id] for content in self.ratings.get_user_interactions(user)]
         neg_item = np.random.choice(self.n_items)
         while neg_item in pos_items:
             neg_item = np.random.choice(self.n_items)
         return self.user_map[user], \
-               torch.from_numpy(np.load(self.item_repr_map[pos_item])), \
-               torch.from_numpy(np.load(self.item_repr_map[neg_item]))
+               pos_item, \
+               neg_item, \
+               torch.from_numpy(np.load(self.item_repr_map[pos_item])).squeeze().float(), \
+               torch.from_numpy(np.load(self.item_repr_map[neg_item])).squeeze().float(),
 
 
 class VBPRNetwork(torch.nn.Module):
@@ -80,8 +83,10 @@ class VBPRNetwork(torch.nn.Module):
         users = x[0]
         pos_items = x[1]
         neg_items = x[2]
+        pos_items_features = x[3]
+        neg_items_features = x[4]
 
-        feature_diff = pos_items - neg_items
+        feature_diff = pos_items_features - neg_items_features
         beta_diff = self.beta_items(pos_items) - self.beta_items(neg_items)
 
         user_gamma = self.gamma_users(users)
@@ -161,8 +166,6 @@ class VBPR(ContentBasedAlgorithm):
 
     def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0):
 
-        this = os.path.dirname(os.path.abspath(__file__))
-
         items_to_load = set(train_set.item_id_column)
         all_users = set(train_set.user_id_column)
 
@@ -177,7 +180,7 @@ class VBPR(ContentBasedAlgorithm):
         missing_items = []
 
         # note: use library for default tmp dir instead
-        tmp_path = os.path.join(this, "temp_features_dir")
+        tmp_path = os.path.join(os.getcwd(), "temp_features_dir")
         os.makedirs(tmp_path, exist_ok=True)
 
         shape = None
@@ -236,6 +239,8 @@ class VBPR(ContentBasedAlgorithm):
                 batch[0] = batch[0].to(self.device)
                 batch[1] = batch[1].to(self.device)
                 batch[2] = batch[2].to(self.device)
+                batch[3] = batch[3].to(self.device)
+                batch[4] = batch[4].to(self.device)
 
                 train_optimizer.zero_grad()
                 outputs = model(batch)
@@ -249,10 +254,11 @@ class VBPR(ContentBasedAlgorithm):
                     logger.info(f'[Epoch {epoch + 1}, Batch {i + 1:5d}] Loss: {train_loss / 100:.3f}')
                     train_loss = 0.0
 
-        os.remove(tmp_path)
-        # feature_matirx = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()]))
-        model.theta_items = torch.mm(feature_matrix, model.E.weight)
-        model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight)
+        # feature_matrix = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()])).float()
+        # model.theta_items = torch.mm(feature_matrix, model.E.weight).to(self.device)
+        # model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight).to(self.device)
+
+        shutil.rmtree(tmp_path)
 
         return model
 
