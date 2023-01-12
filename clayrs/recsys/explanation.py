@@ -16,6 +16,8 @@ def explain(film_piaciuti, film_raccomandati):
     6 creo le spiegazioni
     """
     explanation = {}
+    #film_piaciuti=["I:11033","I:8360","I:1661","I:8487"]
+    #film_raccomandati=["I:11768","I:69"]
     profile, numero_film1 = mapping_profilo(film_piaciuti)  # dizionario(titolo, uri) dei film contenuti nel profilo, |profile|
     recommendation, numero_film2 = mapping_profilo(film_raccomandati)  # dictionary (title, uri), len recommendation
     G, common_properties, numero_proprieta = costruisci_grafo(profile, recommendation) #graph, list common prop, num properties
@@ -24,8 +26,9 @@ def explain(film_piaciuti, film_raccomandati):
                relevance_threshold=None, rel_items_weight=0.8, rel_items_prop_weight=None, default_nodes_weight=0.2)
     test_set= ()
     pagR.rank({a}, G, test_set, recs_number=None, methodology=None, num_cpus=1)"""
-    ranked_prop = ranking_proprieta(G, common_properties, profile, recommendation, idf)
-    sorted_prop = proprieta_da_considerare(ranked_prop, numero_prop_considerate)
+    ranked_prop = ranking_proprieta(G, common_properties, profile, recommendation, idf=True)
+    sorted_prop = proprieta_da_considerare(ranked_prop, 5)
+    stampa_proprieta(ranked_prop)
     """for user_id in set(recs.user_id_column):
 
         #user_explanation = []
@@ -115,11 +118,11 @@ def costruisci_grafo(profile, recommendation):
             recomm_common_prop[key] = recommendation_properties[key]
 
     common_properties = list(profile_common_prop.keys())           # creo una lista con solo le proprieta in comune
-    G = NXFullGraph()                                     # creo un grafo orientato
+    G = NXFullGraph()      # creo un grafo orientato
     for key, value in profile_common_prop.items():
-        G.add_edge(value, key)                            # aggiungo come nodi i film piaciuti e i film raccomandati
+        G.add_link(value, key)                            # aggiungo come nodi i film piaciuti e i film raccomandati
     for key, value in recomm_common_prop.items():            # aggiungo come nodi le proprieta in comune
-        G.add_edge(key, value)                            # collego i nodi attraverso le proprieta in comune con archi
+        G.add_link(key, value)                            # collego i nodi attraverso le proprieta in comune con archi
 
     return G, common_properties, numero_proprieta
 
@@ -145,3 +148,28 @@ def ranking_proprieta(G, proprieta_comuni, item_piaciuti, item_raccom, idf):
     print("Le proprieta sono state rankate e ordinate con successo!\n")
 
     return sorted_prop
+
+def proprieta_da_considerare(prop_rankate, numero_prop_considerate):
+    prop_considerate = {}
+    for prop, score in prop_rankate.items():
+        prop_considerate[prop] = score
+        if len(prop_considerate) == numero_prop_considerate:
+            break
+    return prop_considerate
+
+def stampa_proprieta(proprieta):
+    print("\nEcco le proprieta in comune dei film in ordine decrescente per influenza:\n")
+    for key, value in proprieta.items():
+        print(value, "\t", key)
+    print("\n")
+
+def calcola_IDF(prop):
+    IDF = ''
+    with open("list_idf_prop_movies", 'r') as f:    # scorre il file riga per riga
+        for line in f:
+            line = line.rstrip().split('\t')
+            if prop == line[0]:                     # quando trova la proprieta restituisce il rispettivo IDF
+                IDF = line[1]
+                IDF = float(IDF)
+                break
+    return IDF
