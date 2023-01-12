@@ -1,7 +1,5 @@
 import itertools
 import gc
-import os
-import shutil
 from typing import Any, Set, Optional, List, Type, Dict, Callable
 
 from clayrs.content_analyzer import Ratings, Centroid
@@ -26,9 +24,9 @@ from clayrs.utils.context_managers import get_iterator_parallel
 class TriplesDataset(data.Dataset):
 
     def __init__(self, ratings: Ratings,
-                 user_map: Dict[str, int], item_map: Dict[str, int], item_repr_map: Dict[int, str]):
+                 user_map: Dict[str, int], item_map: Dict[str, int], item_repr_map: Dict[int, np.array]):
         self.ratings = ratings
-        self.n_items = len(set(self.ratings.item_id_column))
+        self.n_items = len(item_repr_map)
 
         self.user_map = user_map
         self.item_map = item_map
@@ -47,8 +45,8 @@ class TriplesDataset(data.Dataset):
         return self.user_map[user], \
                pos_item, \
                neg_item, \
-               torch.from_numpy(np.load(self.item_repr_map[pos_item])).squeeze().float(), \
-               torch.from_numpy(np.load(self.item_repr_map[neg_item])).squeeze().float(),
+               torch.from_numpy(self.item_repr_map[pos_item]).squeeze().float(), \
+               torch.from_numpy(self.item_repr_map[neg_item]).squeeze().float(),
 
 
 class VBPRNetwork(torch.nn.Module):
@@ -179,10 +177,6 @@ class VBPR(ContentBasedAlgorithm):
         items_features = {}
         missing_items = []
 
-        # note: use library for default tmp dir instead
-        tmp_path = os.path.join(os.getcwd(), "temp_features_dir")
-        os.makedirs(tmp_path, exist_ok=True)
-
         shape = None
 
         for i, item_id in enumerate(items_to_load):
@@ -194,9 +188,7 @@ class VBPR(ContentBasedAlgorithm):
 
             if item is not None:
                 repr = self.fuse_representations([self.extract_features_item(item)], self._embedding_combiner)
-                tmp_file_path = os.path.join(tmp_path, f"{item_id}.npy")
-                np.save(tmp_file_path, repr)
-                items_features[i] = tmp_file_path
+                items_features[i] = repr
 
                 if shape is None:
                     shape = repr.shape
@@ -209,9 +201,7 @@ class VBPR(ContentBasedAlgorithm):
                 raise Exception("No items were loaded")
             for item_id in missing_items:
                 repr = np.zeros(shape)
-                tmp_file_path = os.path.join(tmp_path, f"{item_id}.npy")
-                np.save(tmp_file_path, repr)
-                items_features[self.item_id_to_idx_map[item_id]] = tmp_file_path
+                items_features[self.item_id_to_idx_map[item_id]] = repr
 
         del loaded_items_interface
         gc.collect()
@@ -254,12 +244,9 @@ class VBPR(ContentBasedAlgorithm):
                     logger.info(f'[Epoch {epoch + 1}, Batch {i + 1:5d}] Loss: {train_loss / 100:.3f}')
                     train_loss = 0.0
 
-        # feature_matrix = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()])).float()
-        # model.theta_items = torch.mm(feature_matrix, model.E.weight).to(self.device)
-        # model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight).to(self.device)
-
-        shutil.rmtree(tmp_path)
-
+        feature_matrix = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()])).float()
+        model.theta_items = torch.mm(feature_matrix, model.E.weight.cpu()).to(self.device)
+        model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight.cpu()).to(self.device)
         return model
 
     def rank(self, fit_alg: VBPRNetwork, train_set: Ratings, test_set: Ratings, items_directory: str, user_id_list: Set,
