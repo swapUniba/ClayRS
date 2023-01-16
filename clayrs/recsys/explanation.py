@@ -136,9 +136,12 @@ def ranking_proprieta(G, proprieta_comuni, item_piaciuti, item_raccom, idf):
 
     #if idf:
     for prop in proprieta_comuni:               # per ogni proprieta in comune, calcolo il numero di archi entranti
-        if prop in G.nodes():                   # ed uscenti e li uso nella formula, insieme al rispettivo IDF
-            num_in_edges = G.in_degree(prop)    # per calcolare il punteggio
-            num_out_edges = G.out_degree(prop)
+        if G.node_exists(prop):                   # ed uscenti e li uso nella formula, insieme al rispettivo IDF
+            num_in_edges = len(G.get_predecessors(prop))
+            #G.in_degree(prop)
+            # per calcolare il punteggio
+            num_out_edges = len(G.get_successors(prop))
+                #G.out_degree(prop)
             score_prop[prop] = ((alfa * num_in_edges / len(item_piaciuti)) + (beta * num_out_edges / len(item_raccom)))
             if idf:
                 score_prop[prop] = score_prop[prop] * calcola_IDF(prop)
