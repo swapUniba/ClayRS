@@ -7,17 +7,43 @@ from clayrs.recsys import NXFullGraph, ItemNode, PropertyNode, NXPageRank, TestR
 
 def explain(film_piaciuti, film_raccomandati):
     """
-    1 memorizzo il profilo
-    2 memorizzo i raccomandati
-    3 creo il grafo
-    4 calcolo il ranking delle proprietà
-    4* seleziono il numero di proprietà da considerare
-    5 creo la struttura con le triple usate per generare le spiegazioni (RDF)
-    6 creo le spiegazioni
-    """
     explanation = {}
-    #film_piaciuti=["I:11033","I:8360","I:1661","I:8487"]
-    #film_raccomandati=["I:11768","I:69"]
+    for user_id in set(recs.user_id_column):
+
+            #user_explanation = []
+
+            # calcolare lista item piaciuti (item del profilo con rating > relevance_threshold)
+            # se relevance_threshold None, calcolare voto medio dato dall'utente, gli item piaciuti
+            # sono gli item con rating maggiore del voto medio
+
+            user_relevant_items = []
+
+
+            # i1 -> director-> nolan
+            #    -> starring-> DiCaprio
+            #    -> i2
+            # ottengo il grafo con gli item e le proprietà
+
+            #for relevant_item in user_relevant_items:
+                #succ_item = self.graph.get_successors(ItemNode(relevant_item))
+                #prop_list = [succ for succ in succ_item if isinstance(succ, PropertyNode)]
+
+                # calcolare algoritmo explode
+
+            # usare template di stringhe
+
+
+            #all_explanation[user_id] = user_explanation"""
+
+    """
+       1 memorizzo il profilo
+       2 memorizzo i raccomandati
+       3 creo il grafo
+       4 calcolo il ranking delle proprietà
+       4* seleziono il numero di proprietà da considerare
+       5 creo la struttura con le triple usate per generare le spiegazioni (RDF)
+       6 creo le spiegazioni
+       """
     profile, numero_film1 = mapping_profilo(film_piaciuti)  # dizionario(titolo, uri) dei film contenuti nel profilo, |profile|
     recommendation, numero_film2 = mapping_profilo(film_raccomandati)  # dictionary (title, uri), len recommendation
     G, common_properties, numero_proprieta = costruisci_grafo(profile, recommendation) #graph, list common prop, num properties
@@ -28,33 +54,8 @@ def explain(film_piaciuti, film_raccomandati):
     pagR.rank({a}, G, test_set, recs_number=None, methodology=None, num_cpus=1)"""
     ranked_prop = ranking_proprieta(G, common_properties, profile, recommendation, idf=True)
     sorted_prop = proprieta_da_considerare(ranked_prop, 5)
-    stampa_proprieta(ranked_prop)
-    """for user_id in set(recs.user_id_column):
+    stampa_proprieta(sorted_prop)
 
-        #user_explanation = []
-
-        # calcolare lista item piaciuti (item del profilo con rating > relevance_threshold)
-        # se relevance_threshold None, calcolare voto medio dato dall'utente, gli item piaciuti
-        # sono gli item con rating maggiore del voto medio
-
-        user_relevant_items = []
-
-
-        # i1 -> director-> nolan
-        #    -> starring-> DiCaprio
-        #    -> i2
-        # ottengo il grafo con gli item e le proprietà
-
-        #for relevant_item in user_relevant_items:
-            #succ_item = self.graph.get_successors(ItemNode(relevant_item))
-            #prop_list = [succ for succ in succ_item if isinstance(succ, PropertyNode)]
-
-            # calcolare algoritmo explode
-
-        # usare template di stringhe
-
-
-        #all_explanation[user_id] = user_explanation"""
 
 
 
