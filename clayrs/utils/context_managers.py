@@ -11,10 +11,10 @@ from clayrs.utils.const import logger
 
 
 @contextlib.contextmanager
-def get_progbar(iterator, total=None) -> tqdm:
+def get_progbar(iterator, total=None, **kwargs) -> tqdm:
     bar_format = "{desc} {percentage:.0f}%|{bar}| {n:}/{total_fmt} [{elapsed}<{remaining}]"
     with logging_redirect_tqdm(loggers=[logger]):
-        with tqdm(iterator, bar_format=bar_format, total=total) as pbar:
+        with tqdm(iterator, bar_format=bar_format, total=total, **kwargs) as pbar:
             yield pbar
 
 
