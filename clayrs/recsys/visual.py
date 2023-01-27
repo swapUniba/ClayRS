@@ -1,5 +1,7 @@
+import functools
 import itertools
 import gc
+import os
 from typing import Any, Set, Optional, List, Type, Dict, Callable
 
 from clayrs.content_analyzer import Ratings, Centroid
@@ -7,7 +9,6 @@ from clayrs.content_analyzer.field_content_production_techniques.embedding_techn
     CombiningTechnique
 from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-from clayrs.recsys.content_based_algorithm.exceptions import EmptyUserRatings
 from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
 
 import numpy as np
@@ -18,42 +19,51 @@ import torch.nn.functional as fun
 import torch.utils.data as data
 
 from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_iterator_parallel
+from clayrs.utils.context_managers import get_iterator_parallel, get_progbar
 
 
 class TriplesDataset(data.Dataset):
-
-    def __init__(self, ratings: Ratings,
-                 user_map: Dict[str, int], item_map: Dict[str, int], item_repr_map: Dict[int, np.array]):
-        self.ratings = ratings
-        self.n_items = len(item_repr_map)
-
+    def __init__(self, train_ratings: Ratings,
+                 user_map: Dict[str, int],
+                 item_map: Dict[str, int],
+                 features: np.ndarray,
+                 seed: int):
+        self.train_ratings = train_ratings
         self.user_map = user_map
         self.item_map = item_map
-        self.item_repr_map = item_repr_map
+        self.features = features
+        self.n_items = len(item_map)
+        self.rng = np.random.RandomState(seed)
 
     def __len__(self):
-        return len(self.ratings)
+        return len(self.train_ratings)
 
+    @functools.lru_cache(maxsize=128)
+    def user_positive_interactions(self, user_id) -> Set:
+        return set(self.item_map[interaction.item_id]
+                   for interaction in self.train_ratings.get_user_interactions(user_id))
+    
     def __getitem__(self, idx):
-        user = self.ratings.user_id_column[idx]
-        pos_item = self.item_map[self.ratings.item_id_column[idx]]
-        pos_items = [self.item_map[content.item_id] for content in self.ratings.get_user_interactions(user)]
-        neg_item = np.random.choice(self.n_items)
-        while neg_item in pos_items:
-            neg_item = np.random.choice(self.n_items)
-        return self.user_map[user], \
-               pos_item, \
-               neg_item, \
-               torch.from_numpy(self.item_repr_map[pos_item]).squeeze().float(), \
-               torch.from_numpy(self.item_repr_map[neg_item]).squeeze().float(),
+        user_id: str = self.train_ratings.user_id_column[idx]
+        user_idx: int = self.user_map[user_id]
+
+        pos_item_id: str = self.train_ratings.item_id_column[idx]
+        pos_item_idx: int = self.item_map[pos_item_id]
+
+        neg_item_idx: int = self.rng.choice(self.n_items)
+        while neg_item_idx in self.user_positive_interactions(user_id):
+            neg_item_idx = self.rng.choice(self.n_items)
+
+        return user_idx, pos_item_idx, neg_item_idx, self.features[pos_item_idx], self.features[neg_item_idx]
 
 
 class VBPRNetwork(torch.nn.Module):
 
-    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim):
+    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim, seed=None):
 
         super().__init__()
+
+        self.seed = seed
 
         self.gamma_users = nn.Embedding(n_users, gamma_dim)
         self.gamma_items = nn.Embedding(n_items, gamma_dim)
@@ -70,6 +80,10 @@ class VBPRNetwork(torch.nn.Module):
         self.visual_bias: Optional[torch.Tensor] = None
 
     def _init_weights(self):
+
+        if self.seed:
+            torch.manual_seed(self.seed)
+
         nn.init.zeros_(self.beta_items.weight)
         nn.init.xavier_uniform_(self.gamma_users.weight)
         nn.init.xavier_uniform_(self.gamma_items.weight)
@@ -85,57 +99,84 @@ class VBPRNetwork(torch.nn.Module):
         neg_items_features = x[4]
 
         feature_diff = pos_items_features - neg_items_features
-        beta_diff = self.beta_items(pos_items) - self.beta_items(neg_items)
+
+        beta_items_pos = self.beta_items(pos_items)
+        beta_items_neg = self.beta_items(neg_items)
+        beta_items_diff = beta_items_pos - beta_items_neg
 
         user_gamma = self.gamma_users(users)
         user_theta = self.theta_users(users)
 
-        gamma_item_diff = self.gamma_items(pos_items) - self.gamma_items(neg_items)
+        gamma_items_pos = self.gamma_items(pos_items)
+        gamma_items_neg = self.gamma_items(neg_items)
+        gamma_items_diff = gamma_items_pos - gamma_items_neg
+
         theta_item_diff = torch.mm(feature_diff, self.E.weight)
 
-        x_uij = (
-                beta_diff +
-                (user_gamma * gamma_item_diff).sum(dim=1) +
+        # this is the same of doing inner products!
+        Xuij = (
+                beta_items_diff.squeeze() +
+                (user_gamma * gamma_items_diff).sum(dim=1) +
                 (user_theta * theta_item_diff).sum(dim=1) +
-                (torch.mm(feature_diff, self.beta_prime.weight))
+                torch.mm(feature_diff.float(), self.beta_prime.weight)
         )
 
-        return x_uij
+        return Xuij, (user_gamma, user_theta), (beta_items_pos, beta_items_neg), (gamma_items_pos, gamma_items_neg)
 
-    def get_regularizer(self, batch, lambda_w, lambda_b, lambda_e):
-        pass
+    def return_scores(self, user_idx, item_idx=None):
 
-    def return_scores(self, user_idx, item_idx):
+        if item_idx is not None:
+            items_idx_tensor = torch.tensor(item_idx).to("cuda:0").long()
+            beta_items = self.beta_items(items_idx_tensor)
+            theta_items = self.theta_items[items_idx_tensor]
+            gamma_items = self.gamma_items(items_idx_tensor)
+            visual_bias = self.visual_bias[items_idx_tensor]
+        else:
+            beta_items = self.beta_items.weight
+            gamma_items = self.gamma_items.weight
+            theta_items = self.theta_items
+            visual_bias = self.visual_bias
 
-        gamma_u = self.gamma_users(user_idx)
-        theta_u = self.theta_users(user_idx)
+        user_idx_tensor = torch.tensor(user_idx).to("cuda:0")
 
-        gamma_i = self.gamma_items(item_idx)
+        with torch.no_grad():
+            x_u = (
+                    beta_items.squeeze() +
+                    visual_bias.squeeze() +
+                    torch.matmul(gamma_items, self.gamma_users(user_idx_tensor)) +
+                    torch.matmul(theta_items, self.theta_users(user_idx_tensor))
+            )
 
-        x_ui = (
-                self.beta_items(item_idx)
-                + (gamma_u * gamma_i).sum(dim=1)
-                + (theta_u * self.theta_items[item_idx]).sum(dim=1)
-                + self.visual_bias[item_idx]
-        )
-
-        return x_ui
+        return x_u.cpu().numpy()
 
 
 class VBPR(ContentBasedAlgorithm):
 
     def __init__(self, item_field: dict,
-                 gamma_dim: int, theta_dim: int, train_batch_size: int, train_epochs: int,
-                 lambda_w: float = 0.1, lambda_b: float = 0.1, lambda_e: float = 0,
+                 gamma_dim: int, theta_dim: int, batch_size: int, epochs: int,
+                 learning_rate: float = 0.005,
+                 lambda_w: float = 0.01, lambda_b_pos: float = 0.01, lambda_b_neg: float = 0.001, lambda_e: float = 0,
                  train_loss: Callable[[torch.Tensor], torch.Tensor] = fun.logsigmoid,
                  optimizer_class: Type[torch.optim.Optimizer] = torch.optim.Adam,
-                 optimizer_parameters: Dict[str, Any] = None,
                  device: str = None,
-                 embedding_combiner: CombiningTechnique = Centroid()):
+                 embedding_combiner: CombiningTechnique = Centroid(),
+                 normalize: bool = True,
+                 seed: int = None,
+                 additional_opt_parameters: Dict[str, Any] = None,
+                 additional_dl_parameters: Dict[str, Any] = None,
+                 user_map: Dict[str, int] = None,
+                 item_map: Dict[str, int] = None):
         super().__init__(item_field, None)
 
-        if optimizer_parameters is None:
-            optimizer_parameters = {}
+        if additional_opt_parameters is None:
+            additional_opt_parameters = {}
+
+        if additional_dl_parameters is None:
+            additional_dl_parameters = {}
+
+        additional_opt_parameters["lr"] = learning_rate
+        additional_dl_parameters["batch_size"] = batch_size
+        additional_dl_parameters["shuffle"] = False
 
         if device is None:
             self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -145,108 +186,146 @@ class VBPR(ContentBasedAlgorithm):
         self.gamma_dim = gamma_dim
         self.theta_dim = theta_dim
 
-        self.train_batch_size = train_batch_size
-        self.train_epochs = train_epochs
+        self.epochs = epochs
         self.train_loss = train_loss
         self.train_optimizer = optimizer_class
-        self.train_optimizer_parameters = optimizer_parameters
+        self.train_optimizer_parameters = additional_opt_parameters
+        self.normalize = normalize
         self.lambda_w = lambda_w
-        self.lambda_b = lambda_b
+        self.lambda_b_pos = lambda_b_pos
+        self.lambda_b_neg = lambda_b_neg
         self.lambda_e = lambda_e
 
         self._embedding_combiner = embedding_combiner
 
+        self.seed = seed
+        self.dl_parameters = additional_dl_parameters
+
         # mappers, they are used to map each item id (or user id) to its corresponding tensor in the VBPR parameters
         # for example, an item with index 0 will refer to the first feature vector in the features embedding
-        self.user_id_to_idx_map = {}
-        self.item_id_to_idx_map = {}
-        self.item_idx_to_id_map = {}
+        self.user_id_to_idx_map = user_map if user_map is not None else {}
+        self.item_id_to_idx_map = item_map if item_map is not None else {}
 
     def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0):
 
-        items_to_load = set(train_set.item_id_column)
-        all_users = set(train_set.user_id_column)
+        if len(self.user_id_to_idx_map) == 0:
+            all_users = set(train_set.user_id_column)
+            for user in all_users:
+                self.user_id_to_idx_map[user] = len(self.user_id_to_idx_map)
 
-        for user in all_users:
-            self.user_id_to_idx_map[user] = len(self.user_id_to_idx_map)
+        if len(self.item_id_to_idx_map) == 0:
+            all_items = set(filename.split(".")[0] for filename in os.listdir(items_directory))
+            for item_id in all_items:
+                self.item_id_to_idx_map[item_id] = len(self.item_id_to_idx_map)
 
         loaded_items_interface = self._load_available_contents(items_directory, set())
 
         logger.info("Loading items features")
 
-        items_features = {}
-        missing_items = []
+        items_features = []
 
-        shape = None
+        with get_progbar(self.item_id_to_idx_map) as pbar:
+            pbar.set_description("Loading features from serialized items...")
 
-        for i, item_id in enumerate(items_to_load):
+            for item_id in pbar:
 
-            item = loaded_items_interface.get(item_id, self.item_field)
+                item = loaded_items_interface.get(item_id, self.item_field, throw_away=True)
 
-            self.item_id_to_idx_map[item_id] = i
-            self.item_idx_to_id_map[i] = item_id
+                if item is not None:
+                    item_features = self.fuse_representations([self.extract_features_item(item)],
+                                                              self._embedding_combiner)
 
-            if item is not None:
-                repr = self.fuse_representations([self.extract_features_item(item)], self._embedding_combiner)
-                items_features[i] = repr
-
-                if shape is None:
-                    shape = repr.shape
-            else:
-                missing_items.append(item_id)
+                    items_features.append(item_features)
+                else:
+                    items_features.append(None)
 
         # temporary(?) solution for items that appear in the ratings but are not stored locally
-        if len(missing_items) > 0:
-            if shape is None:
-                raise Exception("No items were loaded")
-            for item_id in missing_items:
-                repr = np.zeros(shape)
-                items_features[self.item_id_to_idx_map[item_id]] = repr
+        if len(items_features) == 0:
+            raise Exception("No items were loaded")
+
+        # there's surely at least one element
+        for i, item_feature in enumerate(items_features):
+            if item_feature is None:
+                first_not_none_element = next(item for item in items_features if item is not None)
+                items_features[i] = np.zeros(shape=first_not_none_element.shape)
+
+        items_features = torch.from_numpy(np.vstack(items_features)).float()
+
+        if self.normalize is True:
+            items_features = items_features - torch.min(items_features)
+            items_features = items_features / (torch.max(items_features) + 1e-10)
 
         del loaded_items_interface
         gc.collect()
 
         torch.cuda.empty_cache()
 
-        n_items = len(items_features)
+        model = VBPRNetwork(n_users=len(self.user_id_to_idx_map),
+                            n_items=len(self.item_id_to_idx_map),
+                            features_dim=items_features.shape[1],
+                            gamma_dim=self.gamma_dim,
+                            theta_dim=self.theta_dim,
+                            seed=self.seed).float().to(self.device)
+        optimizer = self.train_optimizer(model.parameters(), **self.train_optimizer_parameters)
 
-        model = VBPRNetwork(len(all_users), n_items, shape[1], self.gamma_dim, self.theta_dim).to(self.device)
-        train_optimizer = self.train_optimizer(model.parameters(), **self.train_optimizer_parameters)
+        train_dataset = TriplesDataset(train_set, self.user_id_to_idx_map,
+                                       self.item_id_to_idx_map, items_features, self.seed)
 
-        train_dataset = TriplesDataset(train_set, self.user_id_to_idx_map, self.item_id_to_idx_map, items_features)
-        sampler = data.RandomSampler(train_dataset)
-        train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=self.train_batch_size, sampler=sampler)
+        train_dl = torch.utils.data.DataLoader(train_dataset, **self.dl_parameters)
 
         logger.info("STARTING VBPR TRAINING")
 
-        for epoch in range(self.train_epochs):
+        def _l2_loss(*tensors):
+            l2_loss = 0
+            for tensor in tensors:
+                l2_loss += tensor.pow(2).sum()
+            return l2_loss / 2
 
-            train_loss = 0.0
-            model.train()
+        for epoch in range(self.epochs):
 
-            for i, batch in enumerate(train_dl):
+            train_loss = 0
+            n_user_processed = 0
 
-                batch[0] = batch[0].to(self.device)
-                batch[1] = batch[1].to(self.device)
-                batch[2] = batch[2].to(self.device)
-                batch[3] = batch[3].to(self.device)
-                batch[4] = batch[4].to(self.device)
+            with get_progbar(train_dl) as pbar:
+                pbar.set_description("Performing training...")
 
-                train_optimizer.zero_grad()
-                outputs = model(batch)
-                loss = - self.train_loss(outputs).sum()
-                # loss += model.get_regularizer(batch, self.lambda_w, self.lambda_b, self.lambda_e)
-                loss.backward()
-                train_loss += loss.item()
-                train_optimizer.step()
+                for i, batch in enumerate(pbar):
 
-                if i % 100 == 99:
-                    logger.info(f'[Epoch {epoch + 1}, Batch {i + 1:5d}] Loss: {train_loss / 100:.3f}')
-                    train_loss = 0.0
+                    n_user_processed += len(batch[0])
 
-        feature_matrix = torch.from_numpy(np.vstack([np.load(feature) for feature in items_features.values()])).float()
-        model.theta_items = torch.mm(feature_matrix, model.E.weight.cpu()).to(self.device)
-        model.visual_bias = torch.mm(feature_matrix, model.beta_prime.weight.cpu()).to(self.device)
+                    batch[0] = batch[0].to(self.device)
+                    batch[1] = batch[1].to(self.device)
+                    batch[2] = batch[2].to(self.device)
+                    batch[3] = batch[3].float().to(self.device)
+                    batch[4] = batch[4].float().to(self.device)
+
+                    Xuij, (gamma_u, theta_u), (beta_i_pos, beta_i_neg), (gamma_i_pos, gamma_i_neg) = model(batch)
+                    loss = - self.train_loss(Xuij).sum()
+
+                    reg = (
+                            _l2_loss(gamma_u, gamma_i_pos, gamma_i_neg, theta_u) * self.lambda_w
+                            + _l2_loss(beta_i_pos) * self.lambda_b_pos
+                            + _l2_loss(beta_i_neg) * self.lambda_b_neg
+                            + _l2_loss(model.E.weight, model.beta_prime.weight) * self.lambda_e
+                    )
+
+                    loss = loss + reg
+                    train_loss += loss.item()
+
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
+
+                    if (i + 1) % 100 == 0 or (i + 1) == len(train_dl):
+                        pbar.set_description(f'[Epoch {epoch + 1}/{self.epochs}, '
+                                             f'Batch {i + 1}/{len(train_dl)}, '
+                                             f'Loss: {train_loss / n_user_processed:.3f}]')
+
+        model.eval()
+
+        # features_from_item_map = dict(sorted({item_map[id]: f for id, f in zip(item_map.keys(), features)}.items()))
+        model.visual_bias = torch.mm(items_features, model.beta_prime.weight.data.cpu()).to("cuda:0")
+        model.theta_items = torch.mm(items_features, model.E.weight.data.cpu()).to("cuda:0")
         return model
 
     def rank(self, fit_alg: VBPRNetwork, train_set: Ratings, test_set: Ratings, items_directory: str, user_id_list: Set,
@@ -260,36 +339,27 @@ class VBPR(ContentBasedAlgorithm):
             filter_list = None
             if methodology is not None:
                 filter_list = set(methodology.filter_single(user_id, train_set, test_set))
-            try:
-                user_id = user_ratings[0].user_id
-            except IndexError:
-                raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
             # Load items to predict
             if filter_list is None:
                 user_seen_items = set([interaction.item_id for interaction in user_ratings])
-                items_to_predict = [self.item_id_to_idx_map[item_id] for item_id in self.item_id_to_idx_map.keys()
-                                    if item_id not in user_seen_items]
+                items_id_to_predict = list(set(train_set.item_id_column).difference(user_seen_items))
             else:
-                items_to_predict = [self.item_id_to_idx_map[item_id] for item_id in filter_list]
+                items_id_to_predict = list(filter_list)
 
-            items_to_predict = torch.tensor(items_to_predict).to(self.device).long()
+            items_idx_to_predict = [self.item_id_to_idx_map[item_id] for item_id in items_id_to_predict]
 
-            if len(items_to_predict) > 0:
-                user_rank = fit_alg.return_scores(
-                    torch.tensor(self.user_id_to_idx_map[user_id]).to(self.device), items_to_predict)
+            if len(items_idx_to_predict) > 0:
+                user_rank = fit_alg.return_scores(self.user_id_to_idx_map[user_id], items_idx_to_predict)
             else:
                 user_rank = []
 
-            user_rank = [Interaction(user_id, self.item_idx_to_id_map[idx.item()], score)
-                         for idx, score in zip(items_to_predict, user_rank)]
+            user_rank = [Interaction(user_id, item_id, score)
+                         for item_id, score in zip(items_idx_to_predict, user_rank)]
 
             return user_id, user_rank
 
         rank = []
-
-        logger.info("Don't worry if it looks stuck at first")
-        logger.info("First iterations will stabilize the estimated remaining time")
 
         with get_iterator_parallel(num_cpus,
                                    compute_single_rank, user_id_list,
