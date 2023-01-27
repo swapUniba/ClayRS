@@ -56,7 +56,7 @@ class LoadedContentsDict(LoadedContentsInterface):
 
     def get_list(self, key_list: Iterable[str], only_representations: dict = None, throw_away: bool = False):
         contents_to_load = set(key_list) - set(self._contents_dict.keys())
-        if not_throw_away:
+        if not throw_away:
             self._contents_dict.update({content: load_content_instance(self._contents_path,
                                                                        content,
                                                                        only_representations)
