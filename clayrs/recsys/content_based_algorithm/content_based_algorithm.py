@@ -170,12 +170,13 @@ class ContentBasedAlgorithm(Algorithm):
                         item_repr = self._transformer.transform(item_repr)
                         single_arr.append(item_repr.flatten())
                     elif isinstance(item_repr, np.ndarray):
+                        item_repr = item_repr.flatten()
                         if item_repr.ndim > 1:
                             item_repr = embedding_combiner.combine(item_repr)
 
                         single_arr.append(item_repr.flatten())
                     elif isinstance(item_repr, torch.Tensor):
-                        item_repr = item_repr.numpy()
+                        item_repr = item_repr.numpy().flatten()
 
                         if item_repr.ndim > 1:
                             item_repr = embedding_combiner.combine(item_repr)
