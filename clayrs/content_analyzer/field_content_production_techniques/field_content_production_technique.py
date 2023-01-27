@@ -3,13 +3,17 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List, Union, Callable, Optional, TYPE_CHECKING
 
+import numpy as np
 from scipy.sparse import csr_matrix
+
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
     from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import PostProcessor
 
-from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField
+from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
 from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
@@ -121,12 +125,13 @@ class SingleContentTechnique(FieldContentProductionTechnique):
         """
         representation_list: List[FieldRepresentation] = []
 
-        # it iterates over all contents contained in the source in order to retrieve the raw data
-        # the data contained in the field_name is processed using each information processor in the processor_list
-        # the data is passed to the method that will create the single representation
-        for content_data in source:
-            processed_data = self.process_data(content_data[field_name], preprocessor_list)
-            representation_list.append(self.produce_single_repr(processed_data))
+        with get_progbar(list(source)) as pbar:
+            # it iterates over all contents contained in the source in order to retrieve the raw data
+            # the data contained in the field_name is processed using each information processor in the processor_list
+            # the data is passed to the method that will create the single representation
+            for content_data in pbar:
+                processed_data = self.process_data(content_data[field_name], preprocessor_list)
+                representation_list.append(self.produce_single_repr(processed_data))
 
         representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
@@ -224,7 +229,7 @@ class CollectionBasedTechnique(FieldContentProductionTechnique):
         raise NotImplementedError
 
 
-class OriginalData(FieldContentProductionTechnique):
+class OriginalData(SingleContentTechnique):
     """
     Technique used to retrieve the original data within the content's raw source without applying any
     processing operation.
@@ -243,110 +248,60 @@ class OriginalData(FieldContentProductionTechnique):
         super().__init__()
         self.__dtype = dtype
 
-    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[PostProcessor],
-                        source: RawInformationSource) -> List[FieldRepresentation]:
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> SimpleField:
         """
         The contents' raw data in the given field_name is extracted and stored in a SimpleField object.
         The SimpleField objects created are stored in a list which is then returned.
         No further operations are done on the data in order to keep it in the original form.
         Because of that the preprocessor_list is ignored and not used by this technique
         """
-
-        representation_list = []
-
-        for content_data in source:
-            processed_data = self.process_data(content_data[field_name], preprocessor_list)
-            representation_list.append(SimpleField(self.__dtype(check_not_tokenized(processed_data))))
-
-        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
-
-        return representation_list
+        return SimpleField(self.__dtype(check_not_tokenized(field_data)))
 
     def __repr__(self):
         return f'OriginalData(dtype={self.__dtype})'
 
 
-# DECODE POSSIBLE REPRESENTATION: Not implemented for now
-#
-# class DefaultTechnique(FieldContentProductionTechnique):
-#     """
-#     Default technique used when no FieldContentProductionTechnique is defined in the FieldConfig.
-#     """
-#
-#     def __init__(self):
-#         super().__init__()
-#
-#     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-#                         source: RawInformationSource) -> List[FieldRepresentation]:
-#         """
-#         The content's raw data is decoded using the appropriate method (in case the data is not a string).
-#         Each decoded representation is added to a list which is then returned
-#         """
-#         representation_list: List[FieldRepresentation] = []
-#
-#         for content_data in source:
-#             # if a preprocessor is specified, then surely we must import the field data as a string,
-#             # there's no other option
-#             if len(preprocessor_list) != 0:
-#                 representation = SimpleField(check_not_tokenized(self.process_data(str(content_data[field_name]),
-#                                                                                    preprocessor_list)))
-#
-#             # If a preprocessor isn't specified, well maybe it is a complex representation:
-#             # let's decode what kind of complex representation it is and import it accordingly.
-#             else:
-#                 representation = self.__decode_field_data(str(content_data[field_name]))
-#
-#             representation_list.append(representation)
-#
-#         return representation_list
-#
-#     def __decode_field_data(self, field_data: str):
-#         # Decode string into dict or list
-#         try:
-#             loaded = json.loads(field_data)
-#         except json.JSONDecodeError:
-#             # in case the dict is {'foo': 1} json expects {"foo": 1}
-#             reformatted_field_data = field_data.replace("\'", "\"")
-#             try:
-#                 loaded = json.loads(reformatted_field_data)
-#             except json.JSONDecodeError:
-#                 # if it has issues decoding we consider the data as str
-#                 loaded = reformatted_field_data
-#
-#         # By default the representation decoded is what json tells us
-#         decoded = SimpleField(loaded)
-#
-#         # if the decoded is a list, maybe it is an EmbeddingField repr
-#         if isinstance(loaded, list):
-#             arr = np.array(loaded)
-#
-#             # if the array values has can be converted into floats then we consider it as a dense vector
-#             # else it is not and we do nothing
-#             try:
-#                 arr = arr.astype(float)
-#                 decoded = EmbeddingField(arr)
-#
-#             # Can't be converted
-#             except ValueError:
-#                 pass
-#
-#         # if the decoded is a dict, maybe it is a FeaturesBagField
-#         elif isinstance(loaded, dict):
-#             # if all values of the dict are numbers or can be converted into numbers,
-#             # then we consider it as a bag of words
-#             # else it is not and we do nothing
-#             if len(loaded.values()) != 0:
-#                 try:
-#                     dict_converted = {k: float(loaded[k]) for k in loaded}
-#
-#                     decoded = FeaturesBagField(dict_converted)
-#
-#                 # Can't be converted
-#                 except ValueError:
-#                     pass
-#
-#         return decoded
+class FromNPY(SingleContentTechnique):
+
+    def __init__(self, npy_file_path: str):
+
+        self.npy_file_path = npy_file_path
+        self.np_matrix = np.load(npy_file_path)
+
+        if len(self.np_matrix) > 0:
+            self.dim_if_missing = self.np_matrix[0].shape
+        else:
+            raise Exception('Matrix should have at least 1 row')
+
+        self._missing: Optional[int] = None
+
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[PostProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+
+        self._missing = 0
+
+        representation_list = super().produce_content(field_name, preprocessor_list, postprocessor_list, source)
+
+        if self._missing > 0:
+            logger.warning(f"{self._missing} items could not be mapped (non int index). Empty arrays will be used")
+
+        return representation_list
+
+    def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:
+        try:
+            index = int(field_data)
+        except ValueError:
+            self._missing += 1
+            return EmbeddingField(np.zeros(self.dim_if_missing))
+        try:
+            return EmbeddingField(self.np_matrix[index])
+        except IndexError:
+            raise IndexError(f'Specified index ({field_data}) is greater than number of '
+                             f'rows in matrix ({self.np_matrix.shape[0]}') from None
+
+    def __repr__(self):
+        return f'FromNPY(npy_file_path={self.npy_file_path})'
 
 
 class TfIdfTechnique(CollectionBasedTechnique):
