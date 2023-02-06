@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
-from clayrs.content_analyzer.exceptions import Handler_ScoreNotFloat
+from clayrs.content_analyzer.exceptions import handler_scoreNotFloat, handler_emptyMatrix, UserNone, ItemNone
 from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
@@ -123,7 +123,7 @@ class StrIntMap:
 
 class Ratings:
     """
-    Class responsible of importing an interaction frame into the framework
+    Class responsible for importing an interaction frame into the framework
 
     **If** the source file contains users, items and ratings in this order,
     no additional parameters are needed, **otherwise** the mapping must be explicitly specified using:
@@ -204,14 +204,26 @@ class Ratings:
                  item_id_column: Union[str, int] = 1,
                  score_column: Union[str, int] = 2,
                  timestamp_column: Union[str, int] = None,
-                 score_processor: ScoreProcessor = None):
+                 score_processor: ScoreProcessor = None,
+                 item_map: Dict[str, int] = None,
+                 user_map: Dict[str, int] = None):
 
-        self._ratings_dict = self._import_ratings(source, user_id_column, item_id_column, score_column,
-                                                  timestamp_column, score_processor)
+        self._user2rows: Dict
+        self._uir: np.ndarray
+        self.item_map: StrIntMap
+        self.user_map: StrIntMap
+
+        self._import_ratings(source, user_id_column, item_id_column,
+                             score_column, timestamp_column, score_processor, item_map, user_map)
+
+    @property
+    def uir(self):
+        return self._uir
 
     @property
     @functools.lru_cache(maxsize=128)
-    def user_id_column(self) -> list:
+    @handler_emptyMatrix(dtype=int)
+    def user_idx_column(self):
         """
         Getter for the user id column. This will return the user column "as is", so it will contain duplicate users.
         Use set(user_id_column) to get all
@@ -220,11 +232,27 @@ class Ratings:
         Returns:
             Users column with duplicates
         """
-        return [interaction.user_id for interaction in self]
+        return self._uir[:, 0].astype(int)
 
     @property
     @functools.lru_cache(maxsize=128)
-    def item_id_column(self) -> list:
+    def unique_user_idx_column(self):
+        return pd.unique(self.user_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def user_id_column(self):
+        return self.user_map.convert_seq_int2str(self.user_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def unique_user_id_column(self):
+        return self.user_map.convert_seq_int2str(self.unique_user_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    @handler_emptyMatrix(dtype=int)
+    def item_idx_column(self) -> np.ndarray:
         """
         Getter for the user id column. This will return the item column "as is", so it will contain duplicate items.
         Use set(item_id_column) to get all unique users
@@ -232,22 +260,39 @@ class Ratings:
         Returns:
             Items column with duplicates
         """
-        return [interaction.item_id for interaction in self]
+        return self._uir[:, 1].astype(int)
 
     @property
     @functools.lru_cache(maxsize=128)
-    def score_column(self) -> list:
+    def unique_item_idx_column(self):
+        return pd.unique(self.item_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def item_id_column(self):
+        return self.item_map.convert_seq_int2str(self.item_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    def unique_item_id_column(self):
+        return self.item_map.convert_seq_int2str(self.unique_item_idx_column)
+
+    @property
+    @functools.lru_cache(maxsize=128)
+    @handler_emptyMatrix(dtype=float)
+    def score_column(self):
         """
         Getter for the score column. This will return the score column "as is".
 
         Returns:
             Score column
         """
-        return [interaction.score for interaction in self]
+        return self._uir[:, 2].astype(float)
 
     @property
     @functools.lru_cache(maxsize=128)
-    def timestamp_column(self) -> list:
+    @handler_emptyMatrix(dtype=int)
+    def timestamp_column(self):
         """
         Getter for the timestamp column. This will return the score column "as is". If no timestamp is present then an
         empty list is returned
@@ -255,26 +300,32 @@ class Ratings:
         Returns:
             Timestamp column or empty list if no timestamp is present
         """
-        return [interaction.timestamp for interaction in self if interaction.timestamp is not None]
+        return self._uir[:, 3][~np.isnan(self._uir[:, 3])].astype(int)
 
-    @Handler_ScoreNotFloat
+    @handler_scoreNotFloat
     def _import_ratings(self, source: RawInformationSource,
                         user_column: Union[str, int],
                         item_column: Union[str, int],
                         score_column: Union[str, int],
                         timestamp_column: Union[str, int],
-                        score_processor: ScoreProcessor):
-        ratings_dict = defaultdict(list)
+                        score_processor: ScoreProcessor,
+                        item_map: Dict[str, int],
+                        user_map: Dict[str, int]):
+
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
         with get_progbar(source) as pbar:
 
             pbar.set_description(desc="Importing ratings")
-            for row in pbar:
+            for i, row in enumerate(pbar):
 
                 user_id = self._get_field_data(user_column, row)
                 item_id = self._get_field_data(item_column, row)
                 score = self._get_field_data(score_column, row)
-                timestamp = None
+                timestamp = np.nan
 
                 if score_processor is not None:
                     score = score_processor.fit(score)
@@ -282,14 +333,35 @@ class Ratings:
                     score = float(score)
 
                 if timestamp_column is not None:
-                    timestamp = self._get_field_data(timestamp_column, row)
+                    timestamp = int(self._get_field_data(timestamp_column, row))
 
-                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+                tmp_user_id_column.append(user_id)
+                tmp_item_id_column.append(item_id)
+                tmp_score_column.append(score)
+                tmp_timestamp_column.append(timestamp)
 
-        # re-hashing
-        return dict(ratings_dict)
+        if item_map is None:
+            self.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            self.item_map = StrIntMap(item_map)
 
-    def get_user_interactions(self, user_id: str, head: int = None) -> List[Interaction]:
+        if user_map is None:
+            self.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            self.user_map = StrIntMap(user_map)
+
+        self._uir = np.array((
+            self.user_map.convert_seq_str2int(np.array(tmp_user_id_column)),
+            self.item_map.convert_seq_str2int(np.array(tmp_item_id_column)),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        self._user2rows = {
+            user_idx: np.where(self._uir[:, 0] == user_idx)[0]
+            for user_idx in self.unique_user_idx_column
+        }
+
+    def get_user_interactions(self, user_idx: int, head: int = None):
         """
         Method which returns a list of `Interaction` objects for a single user, one for each interaction of the user.
         Then you can easily iterate and extract useful information using list comprehension
@@ -332,9 +404,10 @@ class Ratings:
             List of Interaction objects of a single user
 
         """
-        return self._ratings_dict[user_id][:head]
+        user_rows = self._user2rows.get(user_idx, [])[:head]
+        return self._uir[user_rows]
 
-    def filter_ratings(self, user_list: Iterable[str]) -> Ratings:
+    def filter_ratings(self, user_list: Iterable[int]) -> Ratings:
         """
         Method which will filter the rating frame by keeping only interactions of users appearing in the `user_list`.
         This method will return a new `Ratings` object without changing the original
@@ -368,9 +441,10 @@ class Ratings:
         Returns
             The filtered Ratings object which contains only interactions of selected users
         """
-        filtered_ratings_generator = ((user, self._ratings_dict[user]) for user in user_list)
+        valid_indexes = np.where(np.isin(self.user_idx_column, user_list))
+        new_uir = self._uir[valid_indexes]
 
-        return self.from_dict(filtered_ratings_generator)
+        return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
     def take_head_all(self, head: int) -> Ratings:
         """
@@ -409,39 +483,12 @@ class Ratings:
         Returns:
             The filtered Ratings object which contains only first $k$ interactions for each user
         """
+        gen_cut_rows = (rows[:head] for rows in self._user2rows.values())
+        new_uir = self._uir[np.fromiter(gen_cut_rows, dtype=int)]
 
-        ratings_cut_generator = ((user_id, user_ratings[:head])
-                                 for user_id, user_ratings in
-                                 zip(self._ratings_dict.keys(), self._ratings_dict.values()))
+        return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
-        return self.from_dict(ratings_cut_generator)
-
-    # @Handler_ScoreNotFloat
-    # def add_score_column(self, score_column: Union[str, int], column_name: str,
-    #                      score_processor: ScoreProcessor = None):
-    #
-    #     col_to_add = [self._get_field_data(score_column, row) for row in self._source]
-    #
-    #     if score_processor:
-    #         col_to_add = score_processor.fit(col_to_add)
-    #     else:
-    #         col_to_add = [float(score) for score in col_to_add]
-    #
-    #     self._ratings_frame[column_name] = col_to_add
-    #
-    #     start_ratings_user = 0
-    #     for user_id, user_ratings in zip(self._ratings_dict.keys(), self._ratings_dict.values()):
-    #         first_range_val = start_ratings_user
-    #         second_range_val = start_ratings_user + len(user_ratings)
-    #
-    #         score_to_add = col_to_add[first_range_val:second_range_val]
-    #         new_ratings = [rating_tuple + (added_score,) for rating_tuple, added_score in
-    #                        zip(user_ratings, score_to_add)]
-    #         self._ratings_dict[user_id] = new_ratings
-    #
-    #         start_ratings_user += len(user_ratings)
-
-    def to_dataframe(self) -> pd.DataFrame:
+    def to_dataframe(self, ids_as_str: bool = False) -> pd.DataFrame:
         """
         Method which will convert the `Rating` object to a `pandas DataFrame object`.
 
@@ -453,16 +500,22 @@ class Ratings:
             the 'timestamp' column
 
         """
-        will_be_frame = {'user_id': self.user_id_column,
-                         'item_id': self.item_id_column,
-                         'score': self.score_column}
+        if ids_as_str:
+            will_be_frame = {'user_id': self.user_id_column,
+                             'item_id': self.item_id_column,
+                             'score': self.score_column}
+        else:
+            will_be_frame = {'user_id': self.user_idx_column,
+                             'item_id': self.item_idx_column,
+                             'score': self.score_column}
 
         if len(self.timestamp_column) != 0:
             will_be_frame['timestamp'] = self.timestamp_column
 
         return pd.DataFrame(will_be_frame)
 
-    def to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False):
+    def to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False,
+               ids_as_str: bool = False):
         """
         Method which will save the `Ratings` object to a `csv` file
 
@@ -476,7 +529,7 @@ class Ratings:
 
         file_name = get_valid_filename(output_directory, file_name, 'csv', overwrite)
 
-        frame = self.to_dataframe()
+        frame = self.to_dataframe(ids_as_str=ids_as_str)
         frame.to_csv(os.path.join(output_directory, file_name), index=False, header=True)
 
     @staticmethod
@@ -497,11 +550,14 @@ class Ratings:
         return str(data)
 
     @classmethod
+    @handler_scoreNotFloat
     def from_dataframe(cls, interaction_frame: pd.DataFrame,
                        user_column: Union[str, int] = 0,
                        item_column: Union[str, int] = 1,
                        score_column: Union[str, int] = 2,
-                       timestamp_column: Union[str, int] = None) -> Ratings:
+                       timestamp_column: Union[str, int] = None,
+                       user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
+                       item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing pandas DataFrame
 
@@ -552,22 +608,63 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        ratings_dict = defaultdict(list)
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
-        if not interaction_frame.empty:
-            for row in interaction_frame.to_dict(orient='records'):
-                user_id = get_value_row_df(row, user_column, str)
-                item_id = get_value_row_df(row, item_column, str)
-                score = get_value_row_df(row, score_column, float)
-                timestamp = get_value_row_df(row, timestamp_column, str) if timestamp_column is not None else None
+        for i, row in enumerate(interaction_frame.to_dict(orient='records')):
+            user_id = get_value_row_df(row, user_column, str)
+            item_id = get_value_row_df(row, item_column, str)
+            score = get_value_row_df(row, score_column, float)
+            timestamp = get_value_row_df(row, timestamp_column, int) if timestamp_column is not None else np.nan
 
-                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+            tmp_user_id_column.append(user_id)
+            tmp_item_id_column.append(item_id)
+            tmp_score_column.append(score)
+            tmp_timestamp_column.append(timestamp)
 
-        obj._ratings_dict = dict(ratings_dict)
+        if item_map is None:
+            obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            obj.item_map = StrIntMap(item_map)
+
+        if user_map is None:
+            obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            obj.user_map = StrIntMap(user_map)
+
+        tmp_user_id_column = np.array(tmp_user_id_column)
+
+        if np.any(tmp_user_id_column == None):
+            raise UserNone('User column cannot contain None values') from None
+
+        tmp_item_id_column = np.array(tmp_item_id_column)
+
+        if np.any(tmp_item_id_column == None):
+            raise ItemNone('Item column cannot contain None values') from None
+
+        obj._uir = np.array((
+            obj.user_map.convert_seq_str2int(tmp_user_id_column),
+            obj.item_map.convert_seq_str2int(tmp_item_id_column),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        obj._uir[:, 2] = obj._uir[:, 2].astype(float)
+        obj._uir[:, 3] = obj._uir[:, 3].astype(float)
+
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     @classmethod
-    def from_list(cls, interaction_list: Union[List[Interaction], Iterator]) -> Ratings:
+    @handler_scoreNotFloat
+    def from_list(cls, interaction_list: Union[List[Tuple], Iterator],
+                  user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
+                  item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`
         objects or its generator
@@ -586,225 +683,114 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        ratings_dict = defaultdict(list)
-        for interaction in interaction_list:
-            ratings_dict[interaction.user_id].append(interaction)
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
-        obj._ratings_dict = dict(ratings_dict)
+        for i, interaction in enumerate(interaction_list):
+
+            tmp_user_id_column.append(interaction[0])
+            tmp_item_id_column.append(interaction[1])
+            tmp_score_column.append(interaction[2])
+
+            if len(interaction) == 4:
+                tmp_timestamp_column.append(interaction[3])
+            else:
+                tmp_timestamp_column.append(np.nan)
+
+        if item_map is None:
+            obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            obj.item_map = StrIntMap(item_map)
+
+        if user_map is None:
+            obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            obj.user_map = StrIntMap(user_map)
+
+        tmp_user_id_column = np.array(tmp_user_id_column)
+
+        if np.any(tmp_user_id_column == None):
+            raise UserNone('User column cannot contain None values')
+
+        tmp_item_id_column = np.array(tmp_item_id_column)
+
+        if np.any(tmp_item_id_column == None):
+            raise ItemNone('Item column cannot contain None values')
+
+        obj._uir = np.array((
+            obj.user_map.convert_seq_str2int(tmp_user_id_column),
+            obj.item_map.convert_seq_str2int(tmp_item_id_column),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        obj._uir[:, 2] = obj._uir[:, 2].astype(float)
+        obj._uir[:, 3] = obj._uir[:, 3].astype(float)
+
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     @classmethod
-    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Iterator]) -> Ratings:
-        """
-        Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing
-        user_id as keys and lists of `Interaction` objects as value
-
-        Examples:
-
-            >>> interactions_dict = {'u1': [Interaction('u1', 'i2', 4), Interaction('u1', 'i3', 3)],
-            >>>                      'u2': [Interaction('u2', 'i2', 5)]}
-            >>> Ratings.from_dict(interactions_dict)
-
-        Args:
-            interaction_dict: Dictionary containing user_id as keys and lists of `Interaction` objets as values
-                or its generator
-
-        Returns:
-            `Ratings` object instantiated thanks to an existing dictionary
-        """
+    def from_uir(cls, uir: np.ndarray,
+                 user_map: Union[Dict[str, int], np.ndarray, StrIntMap],
+                 item_map: Union[Dict[str, int], np.ndarray, StrIntMap]):
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        obj._ratings_dict = dict(interaction_dict)
+        if uir.shape[0] > 0 and uir.shape[1] > 0:
+            if uir.shape[1] < 3:
+                raise ValueError('User item ratings matrix should have at least 3 rows '
+                                 '(one for users, one for items and one for ratings scores)')
+            elif uir.shape[1] == 3:
+                uir = np.append(uir, np.full((uir.shape[0], 1), fill_value=np.nan), axis=1)
+
+            if uir.dtype != np.float64:
+                raise TypeError('User id columns and item id columns should be mapped to their respective integer')
+        else:
+            uir = np.array([])
+
+        obj._uir = uir
+
+        obj.user_map = StrIntMap(user_map)
+        obj.item_map = StrIntMap(item_map)
+
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     def __len__(self):
-        # all columns have same length, so only one is needed in order
-        # to check what is the length
-        return len(self.user_id_column)
+        return self._uir.shape[0]
 
     def __str__(self):
-        return str(self.to_dataframe())
+        return str(self.to_dataframe(ids_as_str=False))
 
     def __repr__(self):
-        return repr(self._ratings_dict)
+        return repr(self._uir)
 
     def __iter__(self):
-        """
-        The `Ratings` object can be iterated over and each iteration will return an `Interaction` object
+        yield from iter(self._uir)
 
-        Examples:
+    def __hash__(self):
+        return hash((self._uir.tostring(),
+                     self.user_map,
+                     self.item_map))
 
-            ```title="Rating object to iterate"
-            +---------+---------+-------+
-            | user_id | item_id | score |
-            +---------+---------+-------+
-            | u1      | i1      |     4 |
-            | u2      | i5      |     1 |
-            +---------+---------+-------+
-            ```
+    def __eq__(self, other):
 
-            >>> # for simplicity we stop after the first iteration
-            >>> for interaction in ratings:
-            >>>     first_interaction = interaction
-            >>>     break
-            >>> first_interaction
-            Interaction('u1', 'i1', 4)
-        """
-        yield from itertools.chain.from_iterable(self._ratings_dict.values())
-
-
-class RatingsLowMemory:
-
-    def __init__(self, source: RawInformationSource,
-                 user_id_column: Union[str, int] = 0,
-                 item_id_column: Union[str, int] = 1,
-                 score_column: Union[str, int] = 2,
-                 timestamp_column: Union[str, int] = None,
-                 score_processor: ScoreProcessor = None):
-
-        rat = pd.DataFrame(source, dtype=str)
-        self._ratings_dict = self._import_ratings(rat, user_id_column, item_id_column, score_column,
-                                                  timestamp_column, score_processor)
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def user_id_column(self) -> list:
-        return self._ratings_dict.index.get_level_values('user_id').tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def item_id_column(self) -> list:
-        return self._ratings_dict.index.get_level_values('item_id').tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def score_column(self) -> list:
-        return self._ratings_dict['score'].tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def timestamp_column(self) -> list:
-        timestamp_list = self._ratings_dict['timestamp'].tolist()
-        return timestamp_list if all(timestamp is not None for timestamp in timestamp_list) else []
-
-    @Handler_ScoreNotFloat
-    def _import_ratings(self, rat: pd.DataFrame,
-                        user_column: Union[str, int],
-                        item_column: Union[str, int],
-                        score_column: Union[str, int],
-                        timestamp_column: Union[str, int],
-                        score_processor: ScoreProcessor):
-        """
-        Imports the ratings from the source and stores in a dataframe
-
-        Returns:
-            ratings_frame: pd.DataFrame
-        """
-        if isinstance(user_column, int):
-            user_column = rat.columns[user_column]
-        if isinstance(item_column, int):
-            item_column = rat.columns[item_column]
-        if isinstance(score_column, int):
-            score_column = rat.columns[score_column]
-        if isinstance(timestamp_column, int):
-            timestamp_column = rat.columns[timestamp_column]
-        elif timestamp_column is None:
-            rat['timestamp'] = None
-            timestamp_column = 'timestamp'
-
-        index = pd.MultiIndex.from_tuples(zip(rat[user_column].values, rat[item_column].values),
-                                          names=["user_id", "item_id"])
-
-        rat = rat[[score_column, timestamp_column]].set_index(index)
-
-        rat.columns = ['score', 'timestamp']
-
-        rat['score'] = pd.to_numeric(rat['score'])
-
-        return rat
-
-    def get_user_interactions(self, user_id: str, head: int = None):
-        user_rat = self._ratings_dict.loc[user_id][:head]
-
-        user_rat = [Interaction(user_id, index_item, row[0], row[1])
-                    for index_item, row in zip(user_rat.index, user_rat.values)]
-
-        return user_rat
-
-    def filter_ratings(self, user_list: Iterable[str]):
-        filtered_df = self._ratings_dict.loc[
-            (self._ratings_dict.index.get_level_values('user_id').isin(set(user_list)))]
-
-        filtered_df = filtered_df.reset_index(drop=False)
-
-        return self.from_dataframe(filtered_df, user_column='user_id',
-                                   item_column='item_id',
-                                   score_column='score',
-                                   timestamp_column='timestamp')
-
-    def take_head_all(self, head: int):
-
-        filtered_df = self._ratings_dict.groupby(level='user_id').head(head)
-
-        filtered_df = filtered_df.reset_index(drop=False)
-
-        return self.from_dataframe(filtered_df, user_column='user_id',
-                                   item_column='item_id',
-                                   score_column='score',
-                                   timestamp_column='timestamp')
-
-    @classmethod
-    def from_dataframe(cls, interaction_frame: pd.DataFrame,
-                       user_column: Union[str, int] = 0,
-                       item_column: Union[str, int] = 1,
-                       score_column: Union[str, int] = 2,
-                       timestamp_column: Union[str, int] = None):
-
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        ratings_dict = cls._import_ratings(obj, interaction_frame, user_column, item_column, score_column,
-                                           timestamp_column, None)
-
-        obj._ratings_dict = ratings_dict
-        return obj
-
-    @classmethod
-    def from_list(cls, interaction_list: List[Interaction]):
-
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        user_column_iterator = (interaction.user_id for interaction in interaction_list)
-        item_column_iterator = (interaction.item_id for interaction in interaction_list)
-
-        index = pd.MultiIndex.from_tuples(zip(user_column_iterator, item_column_iterator),
-                                          names=["user_id", "item_id"])
-
-        score_timestamp_iterator = ({'score': interaction.score, 'timestamp': interaction.timestamp}
-                                    for interaction in interaction_list)
-
-        rat = pd.DataFrame(score_timestamp_iterator, index=index)
-
-        obj._ratings_dict = rat
-        return obj
-
-    @classmethod
-    def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        obj._ratings_dict = dict(interaction_dict)
-        return obj
-
-    def __iter__(self):
-        yield from itertools.chain.from_iterable(self.get_user_interactions(user_id)
-                                                 for user_id in
-                                                 self._ratings_dict.index.get_level_values('user_id').unique())
-
-    def __len__(self):
-        return len(self._ratings_dict)
+        if isinstance(other, Ratings):
+            return np.array_equal(self._uir, other._uir, equal_nan=True) and \
+                self.user_map == other.user_map \
+                and self.item_map == other.item_map
+        else:
+            return False
 
 
 # Aliases for the Ratings class
