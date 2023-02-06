@@ -150,6 +150,10 @@ class TestContentBasedExperiment(unittest.TestCase):
         self.assertTrue(os.path.isdir(os.path.join("my_experiment", "ClassifierRecommender_2")))
         self.assertTrue(os.path.isdir(os.path.join("my_experiment", "LinearPredictor_1")))
 
+        # check user_map and item_map have been created
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "user_map.yml")))
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "item_map.yml")))
+
         # check train test splits have been created
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_test_split0.csv")))
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_train_split0.csv")))
@@ -207,6 +211,10 @@ class TestContentBasedExperiment(unittest.TestCase):
         self.assertFalse(os.path.isdir(os.path.join("my_experiment", "ClassifierRecommender_2")))
         self.assertTrue(os.path.isdir(os.path.join("my_experiment", "LinearPredictor_1")))
 
+        # check user_map and item_map have been created
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "user_map.yml")))
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "item_map.yml")))
+
         # check train test splits have been created
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_test_split0.csv")))
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_train_split0.csv")))
@@ -246,12 +254,14 @@ class TestContentBasedExperiment(unittest.TestCase):
 
         self.assertTrue(os.path.isdir("my_experiment"))
 
-        # since no algorithm is a score prediction one, only train and test split will be present
+        # since no algorithm is a score prediction one, only train, test split and item and user map will be present
         # and no other thing
         contents_directory = os.listdir("my_experiment")
 
         contents_directory.remove("HoldOutPartitioning_train_split0.csv")
         contents_directory.remove("HoldOutPartitioning_test_split0.csv")
+        contents_directory.remove("user_map.yml")
+        contents_directory.remove("item_map.yml")
 
         self.assertTrue(len(contents_directory) == 0)
 
@@ -296,6 +306,10 @@ class TestGraphBasedExperiment(unittest.TestCase):
         self.assertTrue(os.path.isdir(os.path.join("my_experiment", "NXPageRank_1")))
         self.assertTrue(os.path.isdir(os.path.join("my_experiment", "NXPageRank_2")))
 
+        # check user_map and item_map have been created
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "user_map.yml")))
+        self.assertTrue(os.path.isfile(os.path.join("my_experiment", "item_map.yml")))
+
         # check train test splits have been created
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_test_split0.csv")))
         self.assertTrue(os.path.isfile(os.path.join("my_experiment", "KFoldPartitioning_train_split0.csv")))
@@ -335,7 +349,7 @@ class TestGraphBasedExperiment(unittest.TestCase):
 
         self.assertTrue(os.path.isdir("my_experiment"))
 
-        # since no algorithm is a score prediction one, only train and test split will be present
+        # since no algorithm is a score prediction one, only train, test split and item and user map will be present
         # and no other thing
         contents_directory = os.listdir("my_experiment")
 
@@ -343,6 +357,8 @@ class TestGraphBasedExperiment(unittest.TestCase):
         contents_directory.remove("KFoldPartitioning_test_split0.csv")
         contents_directory.remove("KFoldPartitioning_train_split1.csv")
         contents_directory.remove("KFoldPartitioning_test_split1.csv")
+        contents_directory.remove("user_map.yml")
+        contents_directory.remove("item_map.yml")
 
         self.assertTrue(len(contents_directory) == 0)
 
