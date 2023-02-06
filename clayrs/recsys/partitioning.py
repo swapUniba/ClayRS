@@ -41,7 +41,7 @@ class Partitioning(ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
         Abstract method in which each partitioning technique must specify how to split data for a single user
 
@@ -160,7 +160,7 @@ class KFoldPartitioning(Partitioning):
 
         super(KFoldPartitioning, self).__init__(skip_user_error)
 
-    def split_single(self, uir_user):
+    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
         Method which splits in $k$ splits both in *train set* and *test set* the ratings of a single user
 
@@ -239,7 +239,7 @@ class HoldOutPartitioning(Partitioning):
 
         super().__init__(skip_user_error)
 
-    def split_single(self, uir_user) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
         Method which splits *train set* and *test set* the ratings of a single user by holding in the train
         set the percentage of data specified in `train_set_size` in the constructor
@@ -298,7 +298,7 @@ class BootstrapPartitioning(Partitioning):
 
         self.__random_state = random_state
 
-    def split_single(self, uir_user):
+    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
         Method which splits *train set* and *test set* the ratings of a single user by performing $n$ extraction with
         replacement of the user interactions, where $n$ is the number of its interactions.
