@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
-from clayrs.content_analyzer.exceptions import handler_scoreNotFloat, handler_emptyMatrix, UserNone, ItemNone
+from clayrs.content_analyzer.exceptions import handler_score_not_float, handler_empty_matrix, UserNone, ItemNone
 from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
@@ -222,7 +222,7 @@ class Ratings:
 
     @property
     @functools.lru_cache(maxsize=128)
-    @handler_emptyMatrix(dtype=int)
+    @handler_empty_matrix(dtype=int)
     def user_idx_column(self):
         """
         Getter for the user id column. This will return the user column "as is", so it will contain duplicate users.
@@ -251,7 +251,7 @@ class Ratings:
 
     @property
     @functools.lru_cache(maxsize=128)
-    @handler_emptyMatrix(dtype=int)
+    @handler_empty_matrix(dtype=int)
     def item_idx_column(self) -> np.ndarray:
         """
         Getter for the user id column. This will return the item column "as is", so it will contain duplicate items.
@@ -279,7 +279,7 @@ class Ratings:
 
     @property
     @functools.lru_cache(maxsize=128)
-    @handler_emptyMatrix(dtype=float)
+    @handler_empty_matrix(dtype=float)
     def score_column(self):
         """
         Getter for the score column. This will return the score column "as is".
@@ -291,7 +291,7 @@ class Ratings:
 
     @property
     @functools.lru_cache(maxsize=128)
-    @handler_emptyMatrix(dtype=int)
+    @handler_empty_matrix(dtype=int)
     def timestamp_column(self):
         """
         Getter for the timestamp column. This will return the score column "as is". If no timestamp is present then an
@@ -302,7 +302,7 @@ class Ratings:
         """
         return self._uir[:, 3][~np.isnan(self._uir[:, 3])].astype(int)
 
-    @handler_scoreNotFloat
+    @handler_score_not_float
     def _import_ratings(self, source: RawInformationSource,
                         user_column: Union[str, int],
                         item_column: Union[str, int],
@@ -550,7 +550,7 @@ class Ratings:
         return str(data)
 
     @classmethod
-    @handler_scoreNotFloat
+    @handler_score_not_float
     def from_dataframe(cls, interaction_frame: pd.DataFrame,
                        user_column: Union[str, int] = 0,
                        item_column: Union[str, int] = 1,
@@ -661,7 +661,7 @@ class Ratings:
         return obj
 
     @classmethod
-    @handler_scoreNotFloat
+    @handler_score_not_float
     def from_list(cls, interaction_list: Union[List[Tuple], Iterator],
                   user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
                   item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
