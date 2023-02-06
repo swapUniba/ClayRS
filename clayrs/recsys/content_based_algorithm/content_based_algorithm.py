@@ -4,7 +4,7 @@ import gc
 import itertools
 from copy import deepcopy
 from itertools import chain
-from typing import List, TYPE_CHECKING, Optional, Any, Set
+from typing import List, TYPE_CHECKING, Optional, Any, Set, Tuple
 import pandas as pd
 
 from scipy import sparse
@@ -14,19 +14,17 @@ from sklearn.utils.validation import check_is_fitted
 import numpy as np
 import torch
 
-from clayrs.recsys.content_based_algorithm.exceptions import NotFittedAlg, UserSkipAlgFit
-from clayrs.recsys.methodology import Methodology, TestRatingsMethodology
+from clayrs.recsys.content_based_algorithm.exceptions import UserSkipAlgFit
+from clayrs.recsys.methodology import Methodology
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_iterator_parallel
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
         CombiningTechnique
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Prediction, Rank, Ratings
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
     from clayrs.content_analyzer.content_representation.content import Content
-    from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsInterface
-
-from clayrs.recsys.algorithm import Algorithm
+    from clayrs.recsys.algorithm import Algorithm
 
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 
@@ -222,9 +220,34 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def rank(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
+             user_idx_list: Set[int], n_recs: Optional[int], methodology: Methodology,
+             num_cpus: int) -> List[np.ndarray]:
+        """
+        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
+        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+
+        One can specify which items must be ranked with the `filter_list` parameter,
+        in this case ONLY items in the `filter_list` parameter will be ranked.
+        One can also pass items already seen by the user with the filter_list parameter.
+        Otherwise, **ALL** unrated items will be ranked.
+
+        Args:
+            user_ratings: List of Interaction objects for a single user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
+            recs_number: number of the top ranked items to return, if None all ranked items will be returned
+            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+
+        Returns:
+            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
+            a single user
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def predict(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
-                user_id_list: Set, n_recs: Optional[int] = None,
-                methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
+                user_idx_list: Set[int], methodology: Methodology,
+                num_cpus: int) -> List[np.ndarray]:
         """
         |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -248,28 +271,15 @@ class ContentBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
-             user_id_list: Set, n_recs: Optional[int] = None,
-             methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
-        """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+    def fit_rank(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
+                 n_recs: Optional[int], methodology: Methodology, num_cpus: int,
+                 save_fit: bool) -> Tuple[Optional[Any], List[np.ndarray]]:
+        raise NotImplementedError
 
-        One can specify which items must be ranked with the `filter_list` parameter,
-        in this case ONLY items in the `filter_list` parameter will be ranked.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, **ALL** unrated items will be ranked.
-
-        Args:
-            user_ratings: List of Interaction objects for a single user
-            available_loaded_items: The LoadedContents interface which contains loaded contents
-            recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
-
-        Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-            a single user
-        """
+    @abc.abstractmethod
+    def fit_predict(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
+                    methodology: Methodology, num_cpus: int,
+                    save_fit: bool) -> Tuple[Optional[Any], List[np.ndarray]]:
         raise NotImplementedError
 
     def _load_available_contents(self, contents_path: str, items_to_load: set = None):
@@ -302,7 +312,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
     __slots__ = ()
 
     @abc.abstractmethod
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict):
         """
         Abstract method that processes rated items for the user.
 
@@ -323,8 +333,8 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                            filter_list: List[str] = None) -> Prediction:
+    def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                            filter_list) -> np.ndarray:
         """
         |  Abstract method that predicts the rating which a user would give to items
         |  If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -348,8 +358,8 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsInterface,
-                         recs_number: int = None, filter_list: List[str] = None) -> Rank:
+    def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                         recs_number, filter_list) -> np.ndarray:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -377,23 +387,25 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         If the algorithm can't be fit for some users, a warning message is printed
         """
+        def compute_single_fit(user_idx):
 
-        def compute_single_fit(user_id):
-            user_train = train_set.get_user_interactions(user_id)
+            nonlocal count_skipped_user
 
             try:
-                self.process_rated(user_train, loaded_items_interface)
+                self.process_rated(user_idx, train_set, loaded_items_interface)
                 self.fit_single_user()
-                user_fit_rank = self.rank_single_user
+                user_fit_fns = (self.rank_single_user, self.predict_single_user)
             except UserSkipAlgFit as e:
-                warning_message = str(e) + f"\nNo algorithm will be fitted for the user {user_id}"
-                logger.warning(warning_message)
-                user_fit_rank = None
+                # warning_message = str(e) + f"\nNo algorithm will be fit for the user {user_id}"
+                # logger.warning(warning_message)
+                user_fit_fns = None
+                count_skipped_user += 1
 
-            return user_id, user_fit_rank
+            return user_idx, user_fit_fns
 
-        items_to_load = set(train_set.item_id_column)
-        all_users = set(train_set.user_id_column)
+        count_skipped_user = 0
+        items_to_load = train_set.unique_item_id_column
+        all_users = train_set.unique_user_idx_column
         loaded_items_interface = self._load_available_contents(items_directory, items_to_load)
 
         users_fit_dict = {}
@@ -403,8 +415,13 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
             pbar.set_description("Fitting algorithm")
 
-            for user_id, fitted_user_alg in pbar:
-                users_fit_dict[user_id] = fitted_user_alg
+            for user_idx, fitted_user_alg in pbar:
+                if fitted_user_alg is not None:
+                    users_fit_dict[user_idx] = fitted_user_alg
+
+        if count_skipped_user > 0:
+            logger.warning(f"{count_skipped_user} users will be skipped because the algorithm chosen "
+                           f"could not be fit for them")
 
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
@@ -413,53 +430,210 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         return users_fit_dict
 
     def rank(self, users_fit_dict: dict, train_set: Ratings, test_set: Ratings, items_directory: str,
-             user_id_list: Set, n_recs: Optional[int] = None,
-             methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> List[Interaction]:
+             user_idx_list: Set[int], n_recs: Optional[int], methodology: Methodology,
+             num_cpus: int) -> List[np.ndarray]:
 
-        def compute_single_rank(user_id):
-            user_id = str(user_id)
-            user_train = train_set.get_user_interactions(user_id)
+        def compute_single_rank(user_idx: int):
 
-            filter_list = None
-            if methodology is not None:
-                filter_list = set(methodology.filter_single(user_id, train_set, test_set))
+            nonlocal count_skipped_user
 
-            user_fit_alg_rank = users_fit_dict.get(user_id)
-            if user_fit_alg_rank is not None:
-                user_rank = user_fit_alg_rank(user_train, loaded_items_interface,
-                                              n_recs, filter_list=filter_list)
+            filter_list = methodology.filter_single(user_idx, train_set, test_set).astype(int)
+            # need to convert back int to str to load serialized items
+            filter_list = train_set.item_map.convert_seq_int2str(filter_list)
+
+            user_fit_alg = users_fit_dict.get(user_idx)
+            if user_fit_alg is not None:
+                # we access [0] since [0] is rank_fn, [1] is pred_fn
+                user_fit_alg_rank_fn = user_fit_alg[0]
+                user_rank = user_fit_alg_rank_fn(user_idx, test_set, loaded_items_interface,
+                                                 recs_number=n_recs, filter_list=filter_list)
             else:
-                user_rank = []
-                logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
+                user_rank = np.array([])
+                count_skipped_user += 1
+                # logger.warning(f"No algorithm fitted for user {user_idx}! It will be skipped")
 
-            return user_id, user_rank
+            return user_idx, user_rank
 
-        if len(users_fit_dict) == 0:
-            raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
+        count_skipped_user = 0
 
         loaded_items_interface = self._load_available_contents(items_directory, set())
 
-        rank = []
-
-        logger.info("Don't worry if it looks stuck at first")
-        logger.info("First iterations will stabilize the estimated remaining time")
+        uir_rank_list = []
 
         with get_iterator_parallel(num_cpus,
-                                   compute_single_rank, user_id_list,
-                                   progress_bar=True, total=len(user_id_list)) as pbar:
+                                   compute_single_rank, user_idx_list,
+                                   progress_bar=True, total=len(user_idx_list)) as pbar:
 
             pbar.set_description(f"Loading first items from memory...")
-            for user_id, user_rank in pbar:
-                pbar.set_description(f"Computing rank for user {user_id}")
-                rank.append(user_rank)
+            for user_idx, user_rank in pbar:
+                pbar.set_description(f"Computing rank for user {user_idx}")
+                uir_rank_list.append(user_rank)
+
+        if count_skipped_user > 0:
+            logger.warning(f"{count_skipped_user} users will be skipped because the algorithm chosen "
+                           f"was not fit for them")
 
         # we force the garbage collector after freeing loaded items
         del loaded_items_interface
         gc.collect()
 
-        return list(itertools.chain.from_iterable(rank))
+        return uir_rank_list
 
-    def predict(self, fit_alg: Any, train_set: Ratings, test_set: Ratings, items_directory: str,
-                user_id_list: Set, n_recs: Optional[int] = None,
-                methodology: Optional[Methodology] = TestRatingsMethodology(), num_cpus: int = 1) -> Prediction:
-        pass
+    def predict(self, users_fit_dict: dict, train_set: Ratings, test_set: Ratings, items_directory: str,
+                user_idx_list: Set[int], methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
+
+        def compute_single_predict(user_idx: int):
+
+            nonlocal count_skipped_user
+
+            filter_list = methodology.filter_single(user_idx, train_set, test_set).astype(int)
+            # need to convert back int to str to load serialized items
+            filter_list = train_set.item_map.convert_seq_int2str(filter_list)
+
+            user_fitted_alg = users_fit_dict.get(user_idx)
+            if user_fitted_alg is not None:
+                # we access [1] since [1] is pred_fn, [0] is rank_fn
+                user_fitted_alg_pred_fn = user_fitted_alg[1]
+                user_pred = user_fitted_alg_pred_fn(user_idx, train_set, loaded_items_interface, filter_list=filter_list)
+            else:
+                user_pred = np.array([])
+                count_skipped_user += 1
+                # logger.warning(f"No algorithm fitted for user {user_id}! It will be skipped")
+
+            return user_idx, user_pred
+
+        count_skipped_user = 0
+
+        loaded_items_interface = self._load_available_contents(items_directory, set())
+
+        uir_pred_list = []
+
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_predict, user_idx_list,
+                                   progress_bar=True, total=len(user_idx_list)) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_idx, user_pred in pbar:
+                pbar.set_description(f"Computing score prediction for user {user_idx}")
+                uir_pred_list.append(user_pred)
+
+        if count_skipped_user > 0:
+            logger.warning(f"{count_skipped_user} users will be skipped because the algorithm chosen "
+                           f"was not fit for them")
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return uir_pred_list
+
+    def fit_rank(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
+                 n_recs: Optional[int], methodology: Methodology, num_cpus: int,
+                 save_fit: bool) -> Tuple[Optional[dict], List[np.ndarray]]:
+
+        def compute_single_fit_rank(user_idx):
+
+            nonlocal count_skipped_user, users_fit_dict
+
+            try:
+                self.process_rated(user_idx, train_set, loaded_items_interface)
+                self.fit_single_user()
+
+                if save_fit:
+                    users_fit_dict[user_idx] = (self.rank_single_user, self.predict_single_user)
+
+            except UserSkipAlgFit as e:
+                # warning_message = str(e) + f"\nThe algorithm can't be fitted for the user {user_id}"
+                # logger.warning(warning_message)
+                count_skipped_user += 1
+                return user_idx, np.array([])
+
+            filter_list = methodology.filter_single(user_idx, train_set, test_set).astype(int)
+            # need to convert back int to str to load serialized items
+            filter_list = train_set.item_map.convert_seq_int2str(filter_list)
+
+            user_rank = self.rank_single_user(user_idx, test_set, loaded_items_interface,
+                                              n_recs, filter_list=filter_list)
+
+            return user_idx, user_rank
+
+        count_skipped_user = 0
+        users_fit_dict = {} if save_fit else None
+
+        loaded_items_interface = self._load_available_contents(items_directory, set())
+
+        uir_rank_list = []
+
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit_rank, user_idx_list,
+                                   progress_bar=True, total=len(user_idx_list)) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_idx, user_rank in pbar:
+                pbar.set_description(f"Computing fit_rank for user {user_idx}")
+                uir_rank_list.append(user_rank)
+
+        if count_skipped_user > 0:
+            logger.warning(f"{count_skipped_user} users will be skipped because the algorithm chosen "
+                           f"could not be fit for them")
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return users_fit_dict, uir_rank_list
+
+    def fit_predict(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
+                    methodology: Methodology, num_cpus: int,
+                    save_fit: bool) -> Tuple[Optional[dict], List[np.ndarray]]:
+
+        count_skipped_user = 0
+        users_fit_dict = {} if save_fit else None
+
+        def compute_single_fit_predict(user_idx):
+
+            nonlocal count_skipped_user, users_fit_dict
+
+            try:
+                self.process_rated(user_idx, train_set, loaded_items_interface)
+                self.fit_single_user()
+
+                if save_fit:
+                    users_fit_dict[user_idx] = (self.rank_single_user, self.predict_single_user)
+
+            except UserSkipAlgFit as e:
+                # warning_message = str(e) + f"\nThe algorithm can't be fitted for the user {user_id}"
+                # logger.warning(warning_message)
+                count_skipped_user += 1
+                return user_idx, np.array([])
+
+            filter_list = methodology.filter_single(user_idx, train_set, test_set).astype(int)
+            # need to convert back int to str to load serialized items
+            filter_list = train_set.item_map.convert_seq_int2str(filter_list)
+
+            user_pred = self.predict_single_user(user_idx, test_set, loaded_items_interface, filter_list=filter_list)
+
+            return user_idx, user_pred
+
+        loaded_items_interface = self._load_available_contents(items_directory, set())
+
+        uir_pred_list = []
+
+        with get_iterator_parallel(num_cpus,
+                                   compute_single_fit_predict, user_idx_list,
+                                   progress_bar=True, total=len(user_idx_list)) as pbar:
+
+            pbar.set_description(f"Loading first items from memory...")
+            for user_idx, user_rank in pbar:
+                pbar.set_description(f"Computing fit_rank for user {user_idx}")
+                uir_pred_list.append(user_rank)
+
+        if count_skipped_user > 0:
+            logger.warning(f"{count_skipped_user} users will be skipped because the algorithm chosen "
+                           f"could not be fit for them")
+
+        # we force the garbage collector after freeing loaded items
+        del loaded_items_interface
+        gc.collect()
+
+        return users_fit_dict, uir_pred_list
