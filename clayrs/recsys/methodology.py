@@ -1,7 +1,8 @@
 from __future__ import annotations
-import abc
-from abc import ABC
-from typing import Set, Union, Optional, Generator, Dict, TYPE_CHECKING
+from abc import ABC, abstractmethod
+from typing import Set, Union, Optional, Dict, TYPE_CHECKING, Sequence
+
+import numpy as np
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -20,16 +21,24 @@ class Methodology(ABC):
     """
 
     def __init__(self, only_greater_eq: float = None):
+
         self._threshold = only_greater_eq
 
-    def _filter_only_greater_eq(self, split_set: Ratings):
-        items_list_greater_eq = [interaction.item_id for interaction in split_set if
-                                 interaction.score >= self._threshold]
+        self._items_arr: Optional[np.ndarray] = None
+        self._query_vector: Optional[np.ndarray] = None
 
-        return items_list_greater_eq
+    @abstractmethod
+    def setup(self, train_set: Ratings, test_set: Ratings):
+        raise NotImplementedError
+
+    def _filter_only_greater_eq(self, split_set: Ratings):
+        items_list_greater_eq = split_set.score_column >= self._threshold
+
+        return pd.unique(split_set.item_idx_column[items_list_greater_eq])
 
     def filter_all(self, train_set: Ratings, test_set: Ratings,
-                   result_as_iter_dict: bool = False) -> Union[pd.DataFrame, Dict[str, Generator]]:
+                   result_as_iter_dict: bool = False,
+                   id_as_string: bool = True) -> Union[pd.DataFrame, Dict[str, np.ndarray]]:
         """
         Concrete method which calculates for all users of the *test set* which items must be used in order to
         generate a recommendation list
@@ -49,33 +58,44 @@ class Methodology(ABC):
             A DataFrame or a generator of a python dictionary which contains all items which must be recommended to
             every user based on the methodology chosen.
         """
-        user_list = set(test_set.user_id_column)
+        user_list = test_set.unique_user_idx_column
+        user_int2str = train_set.user_map.convert_int2str
+        item_seq_int2str = train_set.item_map.convert_seq_int2str
 
         with get_progbar(user_list) as pbar:
             pbar.set_description(f"Filtering items based on {str(self)}")
 
-            filtered = {user_id: self.filter_single(user_id, train_set, test_set)
-                        for user_id in pbar}
+            if id_as_string:
+                filtered = {user_int2str(user_idx): item_seq_int2str(self.filter_single(user_idx, train_set, test_set).astype(int))
+                            for user_idx in pbar}
+            else:
+                filtered = {user_idx: self.filter_single(user_idx, train_set, test_set)
+                            for user_idx in pbar}
 
         if not result_as_iter_dict:
-            generator_expression = ((user_id, item_to_predict)
-                                    for user_id, all_items_to_pred in zip(filtered.keys(), filtered.values())
-                                    for item_to_predict in set(all_items_to_pred))
 
-            filtered = pd.DataFrame(generator_expression,
-                                    columns=['user_id', 'item_id'])
+            will_be_frame = {"user_id": [], "item_id": []}
+            for user_id, filter_list in filtered.items():
+
+                will_be_frame["user_id"].append(np.full(filter_list.shape, user_id))
+                will_be_frame["item_id"].append(filter_list)
+
+            will_be_frame["user_id"] = np.hstack(will_be_frame["user_id"])
+            will_be_frame["item_id"] = np.hstack(will_be_frame["item_id"])
+
+            filtered = pd.DataFrame.from_dict(will_be_frame)
 
         return filtered
 
-    @abc.abstractmethod
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
+    @abstractmethod
+    def filter_single(self, user_idx: int, train_set: Ratings, test_set: Ratings) -> np.ndarray:
         """
         Abstract method in which must be specified how to calculate which items must be part of the recommendation list
         of a single user
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def __str__(self):
         raise NotImplementedError
 
@@ -105,7 +125,10 @@ class TestRatingsMethodology(Methodology):
     def __repr__(self):
         return f"TestRatingsMethodology(only_greater_eq={self._threshold})"
 
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
+    def setup(self, train_set: Ratings, test_set: Ratings):
+        return self
+
+    def filter_single(self, user_idx: int, train_set: Ratings, test_set: Ratings) -> np.ndarray:
         """
         Method that returns items that need to be part of the recommendation list of a single user.
         Since it's the TestRatings Methodology, only items that appear in the *test set* of the user will be returned.
@@ -115,16 +138,15 @@ class TestRatingsMethodology(Methodology):
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
-        user_test = test_set.get_user_interactions(user_id)
+        uir_user = test_set.get_user_interactions(user_idx)
 
         if self._threshold is not None:
-            filtered_items = (interaction.item_id
-                              for interaction in user_test if interaction.score >= self._threshold)
+            result = pd.unique(uir_user[:, 1][np.where(uir_user[:, 2] >= self._threshold)])
         else:
             # TestRatings just returns the test set of the user
-            filtered_items = (interaction.item_id for interaction in user_test)
+            result = pd.unique(uir_user[:, 1])
 
-        return filtered_items
+        return result.astype(int)
 
 
 class TestItemsMethodology(Methodology):
@@ -146,7 +168,7 @@ class TestItemsMethodology(Methodology):
     def __init__(self, only_greater_eq: float = None):
         super(TestItemsMethodology, self).__init__(only_greater_eq)
 
-        self._filtered_test_set_items: Optional[Set] = None
+        self._filtered_test_set_items: Optional[np.ndarray] = None
 
     def __str__(self):
         return "TestItemsMethodology"
@@ -154,7 +176,21 @@ class TestItemsMethodology(Methodology):
     def __repr__(self):
         return f"TestItemsMethodology(only_greater_eq={self._threshold})"
 
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
+    def setup(self, train_set: Ratings, test_set: Ratings):
+
+        if self._threshold is not None:
+            self._filtered_test_set_items = self._filter_only_greater_eq(test_set)
+        else:
+            self._filtered_test_set_items = test_set.unique_item_idx_column
+
+        self._items_arr = np.arange(len(train_set.item_map))
+        self._query_vector = np.zeros(len(test_set.item_map), dtype=bool)
+
+        self._query_vector[self._filtered_test_set_items] = True
+
+        return self
+
+    def filter_single(self, user_idx: int, train_set: Ratings, test_set: Ratings) -> np.ndarray:
         """
         Method that returns items that need to be part of the recommendation list of a single user.
         Since it's the TestItems Methodology, all items that appear in the *test set* of every user will be returned,
@@ -165,18 +201,15 @@ class TestItemsMethodology(Methodology):
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
-        already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
+        already_seen_items_it = pd.unique(train_set.get_user_interactions(user_idx)[:, 1].astype(int))
 
-        filtered_test_set_items = test_set.item_id_column
-        if self._threshold is not None:
-            if self._filtered_test_set_items is None:
-                self._filtered_test_set_items = set(self._filter_only_greater_eq(test_set))
+        self._query_vector[already_seen_items_it] = False
 
-            filtered_test_set_items = self._filtered_test_set_items
+        result = self._items_arr[self._query_vector]
 
-        filtered_items = yield from set(filtered_test_set_items) - set(already_seen_items_it)
+        self._query_vector[self._filtered_test_set_items] = True
 
-        return filtered_items
+        return result.astype(int)
 
 
 class TrainingItemsMethodology(Methodology):
@@ -206,7 +239,21 @@ class TrainingItemsMethodology(Methodology):
     def __repr__(self):
         return f"TrainingItemsMethodology(only_greater_eq={self._threshold})"
 
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
+    def setup(self, train_set: Ratings, test_set: Ratings):
+
+        if self._threshold is not None:
+            self._filtered_train_set_items = self._filter_only_greater_eq(train_set)
+        else:
+            self._filtered_train_set_items = train_set.unique_item_idx_column
+
+        self._items_arr = np.arange(len(train_set.item_map))
+        self._query_vector = np.zeros(len(test_set.item_map), dtype=bool)
+
+        self._query_vector[self._filtered_train_set_items] = True
+
+        return self
+
+    def filter_single(self, user_idx: int, train_set: Ratings, test_set: Ratings) -> np.ndarray:
         """
         Method that returns items that needs to be part of the recommendation list of a single user.
         Since it's the TrainingItems Methodology, all items that appear in the *train set* of every user will be
@@ -217,18 +264,15 @@ class TrainingItemsMethodology(Methodology):
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
-        already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
+        already_seen_items_it = pd.unique(train_set.get_user_interactions(user_idx)[:, 1].astype(int))
 
-        filtered_train_set_items = train_set.item_id_column
-        if self._threshold is not None:
-            if self._filtered_train_set_items is None:
-                self._filtered_train_set_items = set(self._filter_only_greater_eq(train_set))
+        self._query_vector[already_seen_items_it] = False
 
-            filtered_train_set_items = self._filtered_train_set_items
+        result = self._items_arr[self._query_vector]
 
-        filtered_items = yield from set(filtered_train_set_items) - set(already_seen_items_it)
+        self._query_vector[self._filtered_train_set_items] = True
 
-        return filtered_items
+        return result.astype(int)
 
 
 class AllItemsMethodology(Methodology):
@@ -251,9 +295,31 @@ class AllItemsMethodology(Methodology):
         return "AllItemsMethodology"
 
     def __repr__(self):
-        return f"AllItemsMethodology(items_list={self._items_list})"
+        return f"AllItemsMethodology(items_list={list(self.items_list)})"
 
-    def filter_single(self, user_id: str, train_set: Ratings, test_set: Ratings) -> Generator:
+    def setup(self, train_set: Ratings, test_set: Ratings):
+
+        if self.items_list is None:
+            self.items_list = np.array(list(set(train_set.item_idx_column).union(set(test_set.item_idx_column))))
+
+        elif np.issubdtype(self.items_list.dtype, str):
+
+            masked_items_in_map = train_set.item_map.convert_seq_str2int(self.items_list, missing=-1)
+            masked_missing_indices = np.where(masked_items_in_map == -1)
+            masked_missing_items = self.items_list[masked_missing_indices]
+            train_set.item_map.append(masked_missing_items)
+            test_set.item_map.append(masked_missing_items)
+
+            self.items_list = train_set.item_map.convert_seq_str2int(self.items_list)
+
+        self._items_arr = np.arange(len(train_set.item_map))
+        self._query_vector = np.zeros(len(test_set.item_map), dtype=bool)
+
+        self._query_vector[self.items_list] = True
+
+        return self
+
+    def filter_single(self, user_idx: int, train_set: Ratings, test_set: Ratings) -> np.ndarray:
         """
         Method that returns items that needs to be part of the recommendation list of a single user.
         Since it's the AllItems Methodology, all items that appear in the `items_list` parameter of the constructor
@@ -264,8 +330,10 @@ class AllItemsMethodology(Methodology):
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
-        already_seen_items_it = (interaction.item_id for interaction in train_set.get_user_interactions(user_id))
+        already_seen_items_it = pd.unique(train_set.get_user_interactions(user_idx)[:, 1].astype(int))
 
-        filtered_items = yield from set(self._items_list) - set(already_seen_items_it)
+        self._query_vector[already_seen_items_it] = False
+        result = self._items_arr[self._query_vector]
+        self._query_vector[self.items_list] = True
 
-        return filtered_items
+        return result.astype(int)
