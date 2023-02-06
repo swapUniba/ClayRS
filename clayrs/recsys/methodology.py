@@ -287,8 +287,11 @@ class AllItemsMethodology(Methodology):
         items_list: Items set that must appear in the recommendation list of every user
     """
 
-    def __init__(self, items_list: Set[str]):
-        self._items_list = items_list
+    def __init__(self, items_list: Union[Sequence[str], Sequence[int]] = None):
+        self.items_list = items_list
+        if items_list is not None:
+            self.items_list = np.array(items_list)
+
         super(AllItemsMethodology, self).__init__(None)
 
     def __str__(self):
