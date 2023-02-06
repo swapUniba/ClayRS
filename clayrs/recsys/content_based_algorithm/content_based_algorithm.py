@@ -158,24 +158,20 @@ class ContentBasedAlgorithm(Algorithm):
                 single_arr = []
                 for item_repr in item_repr_list:
                     if need_vectorizer and isinstance(item_repr, dict):
-                        item_repr = self._transformer.transform(item_repr)
-                        single_arr.append(item_repr.flatten())
+                        item_repr = self._transformer.transform(item_repr).squeeze()
+
                     elif isinstance(item_repr, np.ndarray):
-                        item_repr = item_repr.flatten()
+                        item_repr = item_repr.squeeze()
                         if item_repr.ndim > 1:
-                            item_repr = embedding_combiner.combine(item_repr)
+                            item_repr = embedding_combiner.combine(item_repr).squeeze()
 
-                        single_arr.append(item_repr.flatten())
                     elif isinstance(item_repr, torch.Tensor):
-                        item_repr = item_repr.numpy().flatten()
+                        item_repr = item_repr.numpy().squeeze()
 
                         if item_repr.ndim > 1:
-                            item_repr = embedding_combiner.combine(item_repr)
+                            item_repr = embedding_combiner.combine(item_repr).squeeze()
 
-                        single_arr.append(item_repr.flatten())
-                    else:
-                        # it's a float
-                        single_arr.append(item_repr)
+                    single_arr.append(item_repr)
 
                 yield single_arr
 
