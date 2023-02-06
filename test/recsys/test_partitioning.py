@@ -179,6 +179,39 @@ class TestBootstrapPartitioning(TestPartitioning):
         self.assertCountEqual(original_list, union_list)  # Count so regardless of order
 
     def test_split_all(self):
+        bs = BootstrapPartitioning(random_state=5)
+
+        [train], [test] = bs.split_all(original_ratings)
+
+        # check that all users have been considered for the train set
+        self.assertTrue("001" in train.user_id_column)
+        self.assertTrue("002" in train.user_id_column)
+        self.assertTrue("003" in train.user_id_column)
+        self.assertTrue("004" in train.user_id_column)
+
+        # check that all users have at least one duplicate in their train set
+        # (with this particular random_state == 5 each user has 2 duplicates in the train set)
+        for user_idx in train.unique_user_idx_column:
+
+            user_unique_interactions = []
+            user_interactions = train.get_user_interactions(user_idx)
+
+            for user_interaction in user_interactions:
+                # we stop (break) as soon as we find a duplicate
+                if any(np.array_equal(user_interaction, unique, equal_nan=True) for unique in user_unique_interactions):
+                    break
+                user_unique_interactions.append(user_interaction)
+
+            # means that a duplicate has been found
+            self.assertTrue(len(user_interactions) != len(user_unique_interactions))
+
+        # all users are present in the test set
+        int_users_list = original_ratings.user_map[['001', '002', '003', '004']]
+        original_002 = original_ratings.filter_ratings(int_users_list)
+
+        self.check_partition_correct(train, test, original_002)
+
+    def test_split_all_only_002(self):
 
         bs = BootstrapPartitioning(random_state=5)
 
