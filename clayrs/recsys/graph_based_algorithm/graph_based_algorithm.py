@@ -1,14 +1,15 @@
 from __future__ import annotations
 import abc
-from typing import Dict, List, Set, Union, TYPE_CHECKING
+from typing import Dict, List, Set, Union, TYPE_CHECKING, Optional, Iterable
+
+import numpy as np
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
     from clayrs.recsys.graphs.graph import UserNode, Node, Graph, BipartiteDiGraph
     from clayrs.recsys.methodology import Methodology
 
 from clayrs.recsys.graphs.graph import ItemNode
-from clayrs.recsys.methodology import TestRatingsMethodology
 from clayrs.recsys.algorithm import Algorithm
 
 
@@ -21,7 +22,7 @@ class GraphBasedAlgorithm(Algorithm):
         # FUTURE WORK: this can be expanded in making the page rank keeping also PropertyNodes, etc.
         self._nodes_to_keep = {ItemNode}
 
-    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[List[Node], None],
+    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[Iterable[Node], None],
                       user_node: UserNode) -> Dict:
         """
         Method which filters and cleans the result dict based on the parameters passed
@@ -57,9 +58,8 @@ class GraphBasedAlgorithm(Algorithm):
         return filtered_result
 
     @abc.abstractmethod
-    def predict(self, all_users: Set[str], graph: Graph, test_set: Ratings,
-                methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 1) -> List[Interaction]:
+    def predict(self, graph: Graph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
+                methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
         Abstract method that predicts how much a user will like unrated items.
         If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -88,9 +88,8 @@ class GraphBasedAlgorithm(Algorithm):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, all_users: Set[str], graph: Graph, test_set: Ratings,
-             recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 1) -> List[Interaction]:
+    def rank(self, graph: Graph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
+             recs_number: Optional[int], methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
