@@ -1,12 +1,12 @@
 from __future__ import annotations
 import functools
-import itertools
 import os
-from collections import defaultdict
+import numpy as np
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Iterator, TYPE_CHECKING
+from typing import Dict, Union, List, Iterable, Iterator, TYPE_CHECKING, Tuple, Sequence, Callable
 
 import pandas as pd
+import numpy_indexed as npi
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
@@ -17,79 +17,108 @@ from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
 
-class Interaction:
-    """
-    Class which models an interaction between a user and an item
+class StrIntMap:
 
-    Each interaction has a score (a numeric value) and an optional timestamp
+    def __init__(self, str_int_map: Union[Dict[str, int], np.ndarray, StrIntMap]):
 
-    Args:
-        user_id: ID of the user
-        item_id: ID of the item
-        score: Numeric value of the interaction
-        timestamp: Optional timestamp of the interaction
-    """
-    __slots__ = ('_user_id', '_item_id', '_score', '_timestamp')
+        if isinstance(str_int_map, dict):
+            # dictionary should contain all numbers starting from 0 without holes
+            sorted_str = []
+            sorted_int = []
+            for str_id, int_idx in sorted(str_int_map.items(), key=lambda item: item[1]):
+                sorted_str.append(str_id)
+                sorted_int.append(int_idx)
+            if sorted_int != list(range(len(str_int_map))):
+                raise LookupError("Mapping dictionary not in the right format! Strings must be mapped to "
+                                  "integers starting from 0 without holes!")
 
-    def __init__(self, user_id: str, item_id: str, score: float, timestamp: str = None):
-        self._user_id = user_id
-        self._item_id = item_id
-        self._score = score
-        self._timestamp = timestamp
+            self.map = np.array(sorted_str)
+        elif isinstance(str_int_map, np.ndarray):
+            self.map = str_int_map
+        elif isinstance(str_int_map, StrIntMap):
+            self.map = str_int_map.map
 
-    @property
-    def user_id(self):
-        """
-        Getter for the `user_id` of the interaction
-        """
-        return self._user_id
+    def convert_seq_int2str(self, idx_list: Sequence[int]):
+        return self.map[idx_list] if len(idx_list) else np.array([], dtype=str)
 
-    @property
-    def item_id(self):
-        """
-        Getter for the `item_id` of the interaction
-        """
-        return self._item_id
+    def convert_seq_str2int(self, id_list: Sequence[str], missing="raise"):
+        return npi.indices(self.map, id_list, missing=missing) if len(id_list) else np.array([], dtype=int)
 
-    @property
-    def score(self):
-        """
-        Getter for the `score` of the interaction
-        """
-        return self._score
+    def convert_int2str(self, idx: int):
+        return self.map[idx]
 
-    @property
-    def timestamp(self):
-        """
-        Getter for the `timestamp` of the interaction. Could be `None`
-        """
-        return self._timestamp
+    def convert_str2int(self, id: str):
+        # first [0] because np.where returns a tuple, second [0] to access first element
+        return np.where(self.map == id)[0][0]
 
-    def __str__(self):
-        if self.timestamp is not None:
-            string = f"(user_id: {self.user_id}, item_id: {self.item_id}, score: {self.score}," \
-                     f" timestamp: {self.timestamp})"
+    def append(self, ids_str_to_append: Union[Sequence[str], str]):
+        self.map = np.hstack((self.map, ids_str_to_append))
+
+    def to_dict(self):
+        return {int_idx: str_idx for int_idx, str_idx in enumerate(self.map)}
+
+    @staticmethod
+    def _check_bound_str(f: Callable, item: Union[str, Sequence[str]]):
+        try:
+            return f(item)
+        except (KeyError, IndexError):
+            if isinstance(item, str):
+                raise KeyError(f"Item {item} not present in the mapping!") from None
+            else:
+                raise KeyError(f"One or more item used as indices are not present in the mapping!") from None
+
+    def _check_bound_int(self, f: Callable, item: Union[int, Sequence[int]]):
+        try:
+            return f(item)
+        except IndexError:
+            if isinstance(item, int):
+                raise IndexError(f"Index {item} is out of bounds for mapping with len={len(self)}") from None
+            else:
+                raise IndexError(f"One or more indices is out of bounds for mapping with len={len(self)}") from None
+
+    # very ugly but very user-friendly: this is only for the end user!!! Inside the framework you should
+    # never call it, it is slow!!.
+    # Please directly use one of the above (convert_int2str, convert_seq_str2int, etc.)
+    def __getitem__(self, item: Union[Sequence[int], Sequence[str], int, str]) -> Union[np.ndarray[int],
+                                                                                        np.ndarray[str],
+                                                                                        int, str]:
+        if isinstance(item, str):
+            return self._check_bound_str(self.convert_str2int, item)
+
+        elif isinstance(item, int):
+            return self._check_bound_int(self.convert_int2str, item)
+
+        elif isinstance(item, Sequence) or (isinstance(item, np.ndarray) and np.squeeze(item).ndim <= 1):
+            arr_iterable = np.array(item)
+
+            if np.issubdtype(arr_iterable.dtype, str):
+                return self._check_bound_str(self.convert_seq_str2int, arr_iterable)
+            elif np.issubdtype(arr_iterable.dtype, int):
+                return self._check_bound_int(self.convert_seq_int2str, arr_iterable)
+            else:
+                raise TypeError("Iterable to convert should only contains numbers or strings!")
+
         else:
-            string = f"(user_id: {self.user_id}, item_id: {self.item_id}, score: {self.score})"
+            raise TypeError("Item not supported! You should use a sequence of str/int or a scalar str/int! "
+                            "Try using a list or a 1d array")
 
-        return string
+    def __len__(self):
+        return len(self.map)
 
     def __repr__(self):
-        return f"Interaction(user_id={self.user_id}, item_id={self.item_id}, score={self.score}, " \
-               f"timestamp={self.timestamp})"
+        return repr(self.to_dict())
 
-    def __eq__(self, other):
-        if isinstance(other, Interaction):
-            timestamp_equal = (self.timestamp is None and other.timestamp is None) or \
-                              (self.timestamp == other.timestamp)
-
-            return self.user_id == other.user_id and self.item_id == other.item_id and \
-                   self.score == other.score and timestamp_equal
-        else:
-            return False
+    def __iter__(self):
+        yield from self.map
 
     def __hash__(self):
-        return hash(self.user_id + self.item_id + str(self.score) + str(self.timestamp))
+        return hash(self.map.tostring())
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return np.array_equal(self.map, other.map)
+        else:
+            return False
 
 
 class Ratings:
