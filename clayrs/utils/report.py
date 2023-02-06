@@ -334,7 +334,7 @@ class Report:
 
         def dump_yaml(output_dir, data):
             with open(output_dir, 'w') as yaml_file:
-                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True)
+                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True,)
 
         # None values will be represented as 'null' in yaml file.
         # without this, they will simply be represented as an empty string
