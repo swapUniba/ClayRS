@@ -112,7 +112,7 @@ class NXFullGraph(NXTripartiteGraph, FullDiGraph):
                            "No property will be loaded")
 
         if source_frame is not None and user_contents_dir is not None and user_exo_properties is not None:
-            self.add_node_with_prop([UserNode(user_id) for user_id in set(source_frame.user_id_column)],
+            self.add_node_with_prop([UserNode(user_id) for user_id in source_frame.unique_user_id_column],
                                     user_exo_properties,
                                     user_contents_dir)
 

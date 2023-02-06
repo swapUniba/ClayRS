@@ -71,22 +71,32 @@ class NXBipartiteGraph(BipartiteDiGraph):
             if link_label is not None:
                 not_none_dict['label'] = link_label
 
-            with get_progbar(source_frame) as progbar:
+            user_column = source_frame.user_id_column
+            item_column = source_frame.item_id_column
+            score_column = source_frame.score_column
+            timestamp_column = source_frame.timestamp_column
+
+            if len(timestamp_column) != 0:
+                frame_iterator = zip(user_column, item_column, score_column, timestamp_column)
+            else:
+                frame_iterator = zip(user_column, item_column, score_column)
+
+            with get_progbar(frame_iterator, total=len(source_frame)) as progbar:
                 progbar.set_description("Creating User->Item links")
 
-                if len(source_frame.timestamp_column) != 0:
-                    edges_with_attributes_gen = ((UserNode(interaction.user_id), ItemNode(interaction.item_id),
+                if len(timestamp_column) != 0:
+                    edges_with_attributes_gen = ((UserNode(interaction[0]), ItemNode(interaction[1]),
 
                                                   # {**x, **y} merges the dicts x and y
-                                                  {**not_none_dict, **{'weight': interaction.score,
-                                                                       'timestamp': interaction.timestamp}}
+                                                  {**not_none_dict, **{'weight': interaction[2],
+                                                                       'timestamp': interaction[3]}}
                                                   )
                                                  for interaction in progbar)
                 else:
-                    edges_with_attributes_gen = ((UserNode(interaction.user_id), ItemNode(interaction.item_id),
+                    edges_with_attributes_gen = ((UserNode(interaction[0]), ItemNode(interaction[1]),
 
                                                   # {**x, **y} merges the dicts x and y
-                                                  {**not_none_dict, **{'weight': interaction.score}})
+                                                  {**not_none_dict, **{'weight': interaction[2]}})
                                                  for interaction in progbar)
 
                 self._graph.add_edges_from(edges_with_attributes_gen)
