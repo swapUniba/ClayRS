@@ -2,6 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import List, Union, Optional, TYPE_CHECKING
 import numpy as np
+from scipy import sparse
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import Content
@@ -150,7 +151,12 @@ class CentroidVector(PerUserCBAlgorithm):
         """
         positive_rated_features_fused = self.fuse_representations(self._positive_rated_list, self._emb_combiner)
         # reshape make the centroid bidimensional of shape (1, h) needed to compute faster similarities
+
         self._centroid = positive_rated_features_fused.mean(axis=0).reshape(1, -1)
+
+        # we maintain original representation
+        if isinstance(positive_rated_features_fused, sparse.csr_matrix):
+            self._centroid = sparse.csr_matrix(self._centroid)
 
         # we delete variable used to fit since will no longer be used
         self._positive_rated_list = None
