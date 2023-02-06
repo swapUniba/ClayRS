@@ -6,6 +6,8 @@ import sys
 from abc import ABC
 from typing import List, Union, Dict, Callable, TYPE_CHECKING
 
+import pyaml
+
 # fix circular import, for the future: move Ratings class to the RecSys module
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings
@@ -127,6 +129,14 @@ class Experiment(ABC):
                 raise FileExistsError(f"Folder {self.overwrite_if_exists} already present!\n"
                                       "Delete it and run the experiment again or set `overwrite_if_exists` parameter "
                                       "to True!") from None
+
+        # save user_map
+        with open(os.path.join(self.output_folder, "user_map.yml"), 'w') as yaml_file:
+            pyaml.dump(self.original_ratings.user_map.to_dict(), yaml_file, sort_dicts=False, safe=True)
+
+        # save item_map
+        with open(os.path.join(self.output_folder, "item_map.yml"), 'w') as yaml_file:
+            pyaml.dump(self.original_ratings.user_map.to_dict(), yaml_file, sort_dicts=False, safe=True)
 
         train_set_list, test_set_list = self.pt.split_all(self.original_ratings)
 
