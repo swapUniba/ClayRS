@@ -131,8 +131,8 @@ class Experiment(ABC):
         train_set_list, test_set_list = self.pt.split_all(self.original_ratings)
 
         for i, (train_set, test_set) in enumerate(zip(train_set_list, test_set_list)):
-            train_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_train_split{i}")
-            test_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_test_split{i}")
+            train_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_train_split{i}", ids_as_str=True)
+            test_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_test_split{i}", ids_as_str=True)
 
         for alg in self.algorithm_list:
 
@@ -352,7 +352,8 @@ class ContentBasedExperiment(Experiment):
 
             predict_alg = cbrs.fit_predict(test_set, methodology=methodology, num_cpus=num_cpus)
 
-            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}")
+            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}",
+                               ids_as_str=True)
 
             if self.report:
                 Report(output_dir=f"{self.output_folder}/{dirname}").yaml(original_ratings=self.original_ratings,
@@ -392,7 +393,8 @@ class ContentBasedExperiment(Experiment):
 
             predict_alg = cbrs.fit_rank(test_set, n_recs=n_recs, methodology=methodology, num_cpus=num_cpus)
 
-            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}")
+            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}",
+                               ids_as_str=True)
 
             if self.report:
                 Report(output_dir=f"{self.output_folder}/{dirname}").yaml(original_ratings=self.original_ratings,
