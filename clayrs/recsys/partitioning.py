@@ -10,9 +10,6 @@ import numpy as np
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.utils import resample
 
-if TYPE_CHECKING:
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-
 from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 from clayrs.utils.const import logger
 from clayrs.utils.context_managers import get_progbar
