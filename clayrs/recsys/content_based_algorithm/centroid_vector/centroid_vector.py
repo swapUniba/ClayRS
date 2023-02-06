@@ -202,12 +202,14 @@ class CentroidVector(PerUserCBAlgorithm):
                 idx_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        if len(id_items_to_predict) > 0:
-            # Calculate predictions, they are the similarity of the new items with the centroid vector
-            features_fused = self.fuse_representations(features_items_to_predict, self._emb_combiner, as_array=True)
-            similarities = [self._similarity.perform(self._centroid, item) for item in features_fused]
-        else:
-            similarities = []
+        if len(idx_items_to_predict) == 0:
+            return np.array([])  # if no item to predict, empty rank is returned
+
+        idx_items_to_predict = train_ratings.item_map.convert_seq_str2int(idx_items_to_predict)
+
+        # Calculate predictions, they are the similarity of the new items with the centroid vector
+        features_fused = self.fuse_representations(features_items_to_predict, self._emb_combiner)
+        similarities = self._similarity.perform(self._centroid, features_fused).reshape(-1)  # 2d to 1d
 
         sorted_scores_idxs = np.argsort(similarities)[::-1][:recs_number]
         sorted_items = np.array(idx_items_to_predict)[sorted_scores_idxs]
