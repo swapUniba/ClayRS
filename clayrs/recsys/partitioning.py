@@ -107,15 +107,15 @@ class Partitioning(ABC):
                         #     train_test_dict[0]['test']['u1'] = u1_interactions_test0
                         # train_test_dict[split_number]['train'][user_id] = single_train
                         # train_test_dict[split_number]['test'][user_id] = single_test
-                        train_test_dict[split_number]['train'].extend(single_train)
-                        train_test_dict[split_number]['test'].extend(single_test)
+                        train_test_dict[split_number]['train'].append(single_train)
+                        train_test_dict[split_number]['test'].append(single_test)
 
                 except ValueError as e:
                     if self.skip_user_error:
                         count += 1
                         continue
                     else:
-                        raise e
+                        raise e from None
 
         if count > 0:
             logger.warning(f"{count} users will be skipped because partitioning couldn't be performed\n"
@@ -173,11 +173,11 @@ class KFoldPartitioning(Partitioning):
 
         user_train_list = []
         user_test_list = []
+
         # split_result contains index of the ratings which must constitutes train set and test set
         for train_set_indexes, test_set_indexes in split_result:
-            user_interactions_train = [uir_user[index] for index in train_set_indexes]
-
-            user_interactions_test = [uir_user[index] for index in test_set_indexes]
+            user_interactions_train = uir_user[train_set_indexes]
+            user_interactions_test = uir_user[test_set_indexes]
 
             user_train_list.append(user_interactions_train)
             user_test_list.append(user_interactions_test)
@@ -315,10 +315,10 @@ class BootstrapPartitioning(Partitioning):
                                       n_samples=len(uir_user[:, 0]),
                                       random_state=self.__random_state)
 
-        interactions_test = [interaction
-                             for interaction in uir_user
-                             if not any(np.array_equal(interaction, interaction_train, equal_nan=True)
-                                        for interaction_train in interactions_train)]
+        interactions_test = np.array([interaction
+                                      for interaction in uir_user
+                                      if not any(np.array_equal(interaction, interaction_train, equal_nan=True)
+                                                 for interaction_train in interactions_train)])
 
         user_train_list = [interactions_train]
         user_test_list = [interactions_test]
