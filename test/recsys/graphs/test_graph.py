@@ -35,8 +35,8 @@ class TestGraph(TestCase):
 
         # check that original ratings and converted ratings are equal
 
-        self.assertEqual(set(rat.user_id_column), set(converted_rat.user_id_column))
-        self.assertEqual(set(rat.item_id_column), set(converted_rat.item_id_column))
+        self.assertEqual(set(rat.unique_user_id_column), set(converted_rat.unique_user_id_column))
+        self.assertEqual(set(rat.unique_item_id_column), set(converted_rat.unique_item_id_column))
         self.assertEqual(set(rat.score_column), set(converted_rat.score_column))
         self.assertEqual(set(rat.timestamp_column), set(converted_rat.timestamp_column))
 
@@ -45,3 +45,21 @@ class TestGraph(TestCase):
             user_converted_rat = converted_rat.get_user_interactions(user)
 
             self.assertCountEqual(user_rat, user_converted_rat)
+
+        self.assertNotEqual(list(rat.user_map), list(converted_rat.user_map))
+        self.assertNotEqual(list(rat.item_map), list(converted_rat.item_map))
+
+        converted_rat_with_user_map = self.g.to_ratings(rat.user_map)
+
+        self.assertEqual(list(rat.user_map), list(converted_rat_with_user_map.user_map))
+        self.assertNotEqual(list(rat.item_map), list(converted_rat_with_user_map.item_map))
+
+        converted_rat_with_item_map = self.g.to_ratings(item_map=rat.item_map)
+
+        self.assertNotEqual(list(rat.user_map), list(converted_rat_with_item_map.user_map))
+        self.assertEqual(list(rat.item_map), list(converted_rat_with_item_map.item_map))
+
+        converted_rat_with_user_item_map = self.g.to_ratings(rat.user_map, rat.item_map)
+
+        self.assertEqual(list(rat.user_map), list(converted_rat_with_user_item_map.user_map))
+        self.assertEqual(list(rat.item_map), list(converted_rat_with_user_item_map.item_map))
