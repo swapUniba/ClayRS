@@ -39,30 +39,47 @@ test2 = pd.DataFrame.from_records([
     ("003", "tt0112453", 2, "54654675")],
     columns=["from_id", "to_id", "score", "timestamp"])
 
-train1_rat = Ratings.from_dataframe(train1)
-test1_rat = Ratings.from_dataframe(test1)
-train2_rat = Ratings.from_dataframe(train2)
-test2_rat = Ratings.from_dataframe(test2)
+# we create manually the mapping since we want a global mapping containing train and test items
+item1_map = {}
+for item_id in train1[["to_id"]].append(test1[["to_id"]])["to_id"]:
+    if item_id not in item1_map:
+        item1_map[item_id] = len(item1_map)
+
+item2_map = {}
+for item_id in train2[["to_id"]].append(test2[["to_id"]])["to_id"]:
+    if item_id not in item2_map:
+        item2_map[item_id] = len(item2_map)
+
+train1_rat = Ratings.from_dataframe(train1, item_map=item1_map)
+test1_rat = Ratings.from_dataframe(test1, item_map=item1_map)
+train2_rat = Ratings.from_dataframe(train2, item_map=item2_map)
+test2_rat = Ratings.from_dataframe(test2, item_map=item2_map)
 
 
-def _unpack_result_w_iter(result_list_w_iter):
-    result_list = []
-    for result_w_iter in result_list_w_iter:
-        result_unpacked = {}
-        for user, items_iterator in result_w_iter.items():
-            result_unpacked[user] = set(items_iterator)
+class TestMethodology(TestCase):
 
-        result_list.append(result_unpacked)
+    def assertDictListCountEqual(self, dict1, dict2):
 
-    return result_list
+        user_list_dict1 = list(dict1.keys())
+        user_list_dict2 = list(dict2.keys())
+        self.assertCountEqual(user_list_dict1, user_list_dict2)
+
+        for user in user_list_dict1:
+            self.assertCountEqual(dict1[user], dict2[user])
 
 
-class TestTestRatingsMethodology(TestCase):
+class TestTestRatingsMethodology(TestMethodology):
 
     def test_filter_all(self):
 
-        result_list = [TestRatingsMethodology().filter_all(train1_rat, test1_rat),
-                       TestRatingsMethodology().filter_all(train2_rat, test2_rat)]
+        ratings_1 = TestRatingsMethodology()
+        ratings_2 = TestRatingsMethodology()
+
+        ratings_1.setup(train1_rat, test1_rat)
+        ratings_2.setup(train2_rat, test2_rat)
+
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, id_as_string=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
 
         # for every user get the items in its test_set1
         expected_list = [test1[['from_id', 'to_id']], test2[['from_id', 'to_id']]]
@@ -80,8 +97,14 @@ class TestTestRatingsMethodology(TestCase):
 
     def test_filter_all_only_greater_eq(self):
 
-        result_list = [TestRatingsMethodology(only_greater_eq=3).filter_all(train1_rat, test1_rat),
-                       TestRatingsMethodology(only_greater_eq=3).filter_all(train2_rat, test2_rat)]
+        ratings_1 = TestRatingsMethodology(only_greater_eq=3)
+        ratings_2 = TestRatingsMethodology(only_greater_eq=3)
+
+        ratings_1.setup(train1_rat, test1_rat)
+        ratings_2.setup(train2_rat, test2_rat)
+
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, id_as_string=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
 
         # for every user get the items in its test_set1 with score >= 3
         expected_split_1 = pd.DataFrame({
@@ -113,32 +136,49 @@ class TestTestRatingsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict_iter(self):
-        result_list_iter = [TestRatingsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                            TestRatingsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        ratings_1 = TestRatingsMethodology()
+        ratings_2 = TestRatingsMethodology()
+
+        ratings_1.setup(train1_rat, test1_rat)
+        ratings_2.setup(train2_rat, test2_rat)
+
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True, id_as_string=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True, id_as_string=True)]
+
+        # convert numpy to list for dict equal assertion
+        result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
+        result_list[1] = dict((user, list(filter_list)) for user, filter_list in result_list[1].items())
 
         # for every user get the items in its test_set1
-        expected_list = [{'001': {"tt0112641", "tt0112760"},
-                          '002': {"tt0112641", "tt0112896"},
-                          '003': {"tt0113041", "tt0112281"}},
-                         {'001': {"tt0112281", "tt0112302"},
-                          '002': {"tt0112346"},
-                          '003': {"tt0112453"}}
-                         ]
+        expected_list = [{'001': ["tt0112641", "tt0112760"],
+                          '002': ["tt0112641", "tt0112896"],
+                          '003': ["tt0113041", "tt0112281"]},
 
-        result_list = _unpack_result_w_iter(result_list_iter)
+                         {'001': ["tt0112281", "tt0112302"],
+                          '002': ["tt0112346"],
+                          '003': ["tt0112453"]}
+                         ]
 
         self.assertTrue(len(expected_list), len(result_list))
 
-        self.assertCountEqual(result_list, expected_list)
+        self.assertDictListCountEqual(expected_list[0], result_list[0])
+        self.assertDictListCountEqual(expected_list[1], result_list[1])
 
 
 # poor choice of words sadly
-class TestTestItemsMethodology(TestCase):
+class TestTestItemsMethodology(TestMethodology):
 
     def test_filter_all(self):
 
-        result_list = [TestItemsMethodology().filter_all(train1_rat, test1_rat),
-                       TestItemsMethodology().filter_all(train2_rat, test2_rat)]
+        test_1 = TestItemsMethodology()
+        test_2 = TestItemsMethodology()
+
+        test_1.setup(train1_rat, test1_rat)
+        test_2.setup(train2_rat, test2_rat)
+
+        result_list = [test_1.filter_all(train1_rat, test1_rat, id_as_string=True),
+                       test_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
 
         # for every user get the all items present in test_set1 except the items
         # present in the training_set1 of the user
@@ -176,8 +216,15 @@ class TestTestItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_filter_all_only_greater_eq(self):
-        result_list = [TestItemsMethodology(only_greater_eq=3).filter_all(train1_rat, test1_rat),
-                       TestItemsMethodology(only_greater_eq=3).filter_all(train2_rat, test2_rat)]
+
+        test_1 = TestItemsMethodology(only_greater_eq=3)
+        test_2 = TestItemsMethodology(only_greater_eq=3)
+
+        test_1.setup(train1_rat, test1_rat)
+        test_2.setup(train2_rat, test2_rat)
+
+        result_list = [test_1.filter_all(train1_rat, test1_rat, id_as_string=True),
+                       test_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
 
         # for every user get the all items present in test_set1 with score >= 3 except the items
         # present in the training_set1 of the user
@@ -215,8 +262,19 @@ class TestTestItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list_iter = [TestItemsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                            TestItemsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        test_1 = TestItemsMethodology()
+        test_2 = TestItemsMethodology()
+
+        test_1.setup(train1_rat, test1_rat)
+        test_2.setup(train2_rat, test2_rat)
+
+        result_list = [test_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                       test_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        # convert numpy to list for dict equal assertion
+        result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
+        result_list[1] = dict((user, list(filter_list)) for user, filter_list in result_list[1].items())
 
         expected_split_1 = {
             '001': ["tt0112641", "tt0112760", "tt0112896", "tt0113041"],
@@ -231,20 +289,25 @@ class TestTestItemsMethodology(TestCase):
         }
 
         expected_list = [expected_split_1, expected_split_2]
-        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
-        self.assertCountEqual(expected_list[0], result_list[0])
-        self.assertCountEqual(expected_list[1], result_list[1])
+        self.assertDictListCountEqual(expected_list[0], result_list[0])
+        self.assertDictListCountEqual(expected_list[1], result_list[1])
 
 
-class TestTrainingItemsMethodology(TestCase):
+class TestTrainingItemsMethodology(TestMethodology):
 
     def test_filter_all(self):
 
-        result_list = [TrainingItemsMethodology().filter_all(train1_rat, test1_rat),
-                       TrainingItemsMethodology().filter_all(train2_rat, test2_rat)]
+        train_1 = TrainingItemsMethodology()
+        train_2 = TrainingItemsMethodology()
+
+        train_1.setup(train1_rat, test1_rat)
+        train_2.setup(train2_rat, test2_rat)
+
+        result_list = [train_1.filter_all(train1_rat, test1_rat, id_as_string=True),
+                       train_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
 
         # for every user get the all items present in training_set1 except the items
         # present in the training_set1 of the user
@@ -282,8 +345,15 @@ class TestTrainingItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_filter_all_only_greater_eq(self):
-        result_list = [TrainingItemsMethodology(only_greater_eq=3).filter_all(train1_rat, test1_rat),
-                       TrainingItemsMethodology(only_greater_eq=3).filter_all(train2_rat, test2_rat)]
+
+        train_1 = TrainingItemsMethodology(only_greater_eq=3)
+        train_2 = TrainingItemsMethodology(only_greater_eq=3)
+
+        train_1.setup(train1_rat, test1_rat)
+        train_2.setup(train2_rat, test2_rat)
+
+        result_list = [train_1.filter_all(train1_rat, test1_rat),
+                       train_2.filter_all(train2_rat, test2_rat)]
 
         # for every user get the all items present in training_set1 with score >= 3 except the items
         # present in the training_set1 of the user
@@ -321,8 +391,19 @@ class TestTrainingItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list_iter = [TrainingItemsMethodology().filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                            TrainingItemsMethodology().filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        train_1 = TrainingItemsMethodology()
+        train_2 = TrainingItemsMethodology()
+
+        train_1.setup(train1_rat, test1_rat)
+        train_2.setup(train2_rat, test2_rat)
+
+        result_list = [train_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                       train_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        # convert numpy to list for dict equal assertion
+        result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
+        result_list[1] = dict((user, list(filter_list)) for user, filter_list in result_list[1].items())
 
         expected_split_1 = {
             '001': ["tt0112346", "tt0112453"],
@@ -337,15 +418,14 @@ class TestTrainingItemsMethodology(TestCase):
         }
 
         expected_list = [expected_split_1, expected_split_2]
-        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
-        self.assertCountEqual(expected_list[0], result_list[0])
-        self.assertCountEqual(expected_list[1], result_list[1])
+        self.assertDictListCountEqual(expected_list[0], result_list[0])
+        self.assertDictListCountEqual(expected_list[1], result_list[1])
 
 
-class TestAllItemsMethodology(TestCase):
+class TestAllItemsMethodology(TestMethodology):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -353,31 +433,37 @@ class TestAllItemsMethodology(TestCase):
                          "tt0112302",
                          "tt0112346",
                          "tt0112453",
-                         "iall1",
-                         "iall2",
-                         "iall3",
-                         "iall4"]
+                         "inew1",
+                         "inew2",
+                         "inew3",
+                         "inew4"]
 
     def test_filter_all(self):
-        result_list = [AllItemsMethodology(set(self.all_items)).filter_all(train1_rat, test1_rat),
-                       AllItemsMethodology(set(self.all_items)).filter_all(train2_rat, test2_rat)]
+        all_1 = AllItemsMethodology()
+        all_2 = AllItemsMethodology()
+
+        all_1.setup(train1_rat, test1_rat)
+        all_2.setup(train2_rat, test2_rat)
+
+        result_list = [all_1.filter_all(train1_rat, test1_rat),
+                       all_2.filter_all(train2_rat, test2_rat)]
 
         expected_split_1 = pd.DataFrame({
             'from_id': ["001", "001", "001", "001", "001", "001",
                         "002", "002", "002", "002", "002", "002", "002",
                         "003", "003", "003", "003", "003", "003", "003"],
-            'to_id': ["tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4",
-                      "tt0112281", "tt0112302", "tt0112453", "iall1", "iall2", "iall3", "iall4",
-                      "tt0112281", "tt0112302", "tt0112346", "iall1", "iall2", "iall3", "iall4", ]
+            'to_id': ["tt0112346", "tt0112453", "tt0112641", "tt0112760", "tt0112896", "tt0113041",
+                      "tt0112281", "tt0112302", "tt0112453", "tt0112641", "tt0112760", "tt0112896", "tt0113041",
+                      "tt0112281", "tt0112302", "tt0112346", "tt0112641", "tt0112760", "tt0112896", "tt0113041"]
         })
 
         expected_split_2 = pd.DataFrame({
-            'from_id': ["001", "001", "001", "001", "001", "001", "001", "001",
-                        "002", "002", "002", "002", "002", "002", "002", "002",
-                        "003", "003", "003", "003", "003", "003", "003"],
-            'to_id': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4",
-                      "tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4",
-                      "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4"]
+            'from_id': ["001", "001", "001", "001", "001", "001",
+                        "002", "002", "002", "002", "002", "002",
+                        "003", "003", "003", "003", "003", "003"],
+            'to_id': ["tt0112896", "tt0113041", "tt0112281", "tt0112302", "tt0112346", "tt0112453",
+                      "tt0112760", "tt0113041", "tt0112281", "tt0112302", "tt0112346", "tt0112453",
+                      "tt0112641", "tt0112760", "tt0112896", "tt0112302", "tt0112346", "tt0112453"]
         })
 
         expected_list = [expected_split_1, expected_split_2]
@@ -394,30 +480,70 @@ class TestAllItemsMethodology(TestCase):
             self.assertTrue(np.array_equal(expected, result))
 
     def test_result_as_dict(self):
-        result_list_iter = [AllItemsMethodology(set(self.all_items)).filter_all(train1_rat, test1_rat,
-                                                                                result_as_iter_dict=True),
-                            AllItemsMethodology(set(self.all_items)).filter_all(train2_rat, test2_rat,
-                                                                                result_as_iter_dict=True)]
+        all_1 = AllItemsMethodology()
+        all_2 = AllItemsMethodology()
+
+        all_1.setup(train1_rat, test1_rat)
+        all_2.setup(train2_rat, test2_rat)
+
+        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                       all_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        # convert numpy to list for dict equal assertion
+        result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
+        result_list[1] = dict((user, list(filter_list)) for user, filter_list in result_list[1].items())
 
         expected_split_1 = {
-            '001': ["tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4"],
-            '002': ["tt0112281", "tt0112302", "tt0112453", "iall1", "iall2", "iall3", "iall4"],
-            '003': ["tt0112281", "tt0112302", "tt0112346", "iall1", "iall2", "iall3", "iall4"]
+            "001": ["tt0112346", "tt0112453", "tt0112641", "tt0112760", "tt0112896", "tt0113041"],
+            "002": ["tt0112281", "tt0112302", "tt0112453", "tt0112641", "tt0112760", "tt0112896", "tt0113041"],
+            "003": ["tt0112281", "tt0112302", "tt0112346", "tt0112641", "tt0112760", "tt0112896", "tt0113041"]
         }
 
         expected_split_2 = {
-            '001': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4", ],
-            '002': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4", ],
-            '003': ["tt0112302", "tt0112346", "tt0112453", "iall1", "iall2", "iall3", "iall4"]
+            "001": ["tt0112896", "tt0113041", "tt0112281", "tt0112302", "tt0112346", "tt0112453"],
+            "002": ["tt0112760", "tt0113041", "tt0112281", "tt0112302", "tt0112346", "tt0112453"],
+            "003": ["tt0112641", "tt0112760", "tt0112896", "tt0112302", "tt0112346", "tt0112453"]
         }
 
         expected_list = [expected_split_1, expected_split_2]
-        result_list = _unpack_result_w_iter(result_list_iter)
 
         self.assertTrue(len(expected_list), len(result_list))
 
-        self.assertCountEqual(expected_list[0], result_list[0])
-        self.assertCountEqual(expected_list[1], result_list[1])
+        self.assertDictListCountEqual(expected_list[0], result_list[0])
+        self.assertDictListCountEqual(expected_list[1], result_list[1])
+
+    def test_items_new(self):
+        all_1 = AllItemsMethodology(items_list=self.all_items)
+        all_2 = AllItemsMethodology(items_list=self.all_items)
+
+        all_1.setup(train1_rat, test1_rat)
+        all_2.setup(train2_rat, test2_rat)
+
+        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
+                       all_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+
+        # convert numpy to list for dict equal assertion
+        result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
+        result_list[1] = dict((user, list(filter_list)) for user, filter_list in result_list[1].items())
+
+        expected_split_1 = {
+            '001': ["tt0112346", "tt0112453", "inew1", "inew2", "inew3", "inew4"],
+            '002': ["tt0112281", "tt0112302", "tt0112453", "inew1", "inew2", "inew3", "inew4"],
+            '003': ["tt0112281", "tt0112302", "tt0112346", "inew1", "inew2", "inew3", "inew4"]
+        }
+
+        expected_split_2 = {
+            '001': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "inew1", "inew2", "inew3", "inew4"],
+            '002': ["tt0112281", "tt0112302", "tt0112346", "tt0112453", "inew1", "inew2", "inew3", "inew4"],
+            '003': ["tt0112302", "tt0112346", "tt0112453", "inew1", "inew2", "inew3", "inew4"]
+        }
+
+        expected_list = [expected_split_1, expected_split_2]
+
+        self.assertTrue(len(expected_list), len(result_list))
+
+        self.assertDictListCountEqual(expected_list[0], result_list[0])
+        self.assertDictListCountEqual(expected_list[1], result_list[1])
 
 
 if __name__ == "__main__":
