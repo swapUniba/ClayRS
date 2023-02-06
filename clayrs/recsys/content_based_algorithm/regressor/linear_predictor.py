@@ -2,16 +2,18 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import List, Union, Optional, TYPE_CHECKING
 
+import numpy as np
+
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Content
     from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
         CombiningTechnique
     from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
     from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 
@@ -78,7 +80,7 @@ class LinearPredictor(PerUserCBAlgorithm):
         self._items_features: Optional[list] = None
         self._embedding_combiner = embedding_combiner
 
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.
         The extracted features will be later used to fit the classifier.
@@ -95,17 +97,22 @@ class LinearPredictor(PerUserCBAlgorithm):
             NoRatedItems: Exception raised when there isn't any item available locally
                 rated by the user
         """
+
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        rated_items_id = train_ratings.item_map.convert_seq_int2str(uir_user[:, 1].astype(int))
+
         # a list since there could be duplicate interaction (eg bootstrap partitioning)
         items_scores_dict = defaultdict(list)
-        for interaction in user_ratings:
-            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        for item_id, score in zip(rated_items_id, uir_user[:, 2]):
+            items_scores_dict[item_id].append(score)
 
         items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Create list of all the available items that are useful for the user
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
                                                                                           for item_id
-                                                                                          in items_scores_dict.keys()])
+                                                                                          in rated_items_id])
 
         # Assign label and extract features from the rated items
         labels = []
@@ -121,12 +128,11 @@ class LinearPredictor(PerUserCBAlgorithm):
                         items_features.append(self.extract_features_item(item))
                         labels.append(score)
 
-        if len(user_ratings) == 0:
+        if len(uir_user[:, 1]) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings[0].user_id
         if len(items_features) == 0:
-            raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
+            raise NoRatedItems("User {} - No rated item available locally!".format(user_idx))
 
         self._labels = labels
         self._items_features = items_features
@@ -148,29 +154,28 @@ class LinearPredictor(PerUserCBAlgorithm):
         self._labels = None
         self._items_features = None
 
-    def _common_prediction_process(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                                   filter_list: List[str] = None):
+    def _common_prediction_process(self, user_idx: int, train_ratings: Ratings,
+                                   available_loaded_items: LoadedContentsDict, filter_list: List[str] = None):
 
-        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        if len(uir_user) == 0:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         # Load items to predict
-        if filter_list is None:
-            items_to_predict = available_loaded_items.get_list([item_id
-                                                                for item_id in available_loaded_items
-                                                                if item_id not in user_seen_items])
-        else:
-            items_to_predict = available_loaded_items.get_list(filter_list)
+        items_to_predict = available_loaded_items.get_list(filter_list)
 
         # Extract features of the items to predict
-        id_items_to_predict = []
+        idx_items_to_predict = []
         features_items_to_predict = []
         for item in items_to_predict:
             if item is not None:
                 # raises AttributeError if items are not present locally
-                id_items_to_predict.append(item.content_id)
+                idx_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        if len(id_items_to_predict) > 0:
+        idx_items_to_predict = train_ratings.item_map.convert_seq_str2int(idx_items_to_predict)
+
+        if len(idx_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict,
                                                                      self._embedding_combiner)
@@ -179,10 +184,10 @@ class LinearPredictor(PerUserCBAlgorithm):
         else:
             score_labels = []
 
-        return id_items_to_predict, score_labels
+        return idx_items_to_predict, score_labels
 
-    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                            filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str]) -> np.ndarray:
         """
         Predicts how much a user will like unrated items.
 
@@ -199,22 +204,21 @@ class LinearPredictor(PerUserCBAlgorithm):
         Returns:
             List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
-            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        id_items_to_predict, score_labels = self._common_prediction_process(user_ratings, available_loaded_items,
-                                                                            filter_list)
+        idx_items_to_predict, score_labels = self._common_prediction_process(user_idx, train_ratings,
+                                                                             available_loaded_items,
+                                                                             filter_list)
+        if len(score_labels) != 0:
+            # Build the output data
+            uir_pred = np.array(
+                [[user_idx, item_idx, score] for item_idx, score in zip(idx_items_to_predict, score_labels)])
+        else:
+            uir_pred = np.array([])
 
-        # Build the output data
-        pred_interaction_list = [Interaction(user_id, item_id, score)
-                                 for item_id, score in zip(id_items_to_predict, score_labels)]
+        return uir_pred
 
-        return pred_interaction_list
-
-    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                         recs_number: Optional[int], filter_list: List[str]) -> np.ndarray:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -234,29 +238,23 @@ class LinearPredictor(PerUserCBAlgorithm):
             List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
                 a single user
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
-            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         # Predict the rating for the items and sort them in descending order
-        id_items_to_predict, score_labels = self._common_prediction_process(user_ratings, available_loaded_items,
-                                                                            filter_list)
+        idx_items_to_predict, score_labels = self._common_prediction_process(user_idx, train_ratings,
+                                                                             available_loaded_items,
+                                                                             filter_list)
 
-        # Build the item_score dict (key is item_id, value is rank score predicted)
-        # and order the keys in descending order
-        item_score_dict = dict(zip(id_items_to_predict, score_labels))
-        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
+        if len(score_labels) != 0:
+            sorted_scores_idxs = np.argsort(score_labels)[::-1][:recs_number]
+            sorted_items = np.array(idx_items_to_predict)[sorted_scores_idxs]
+            sorted_scores = score_labels[sorted_scores_idxs]
 
-        # we only save the top-n items_ids corresponding to top-n recommendations
-        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
-        ordered_item_ids = ordered_item_ids[:recs_number]
+            # we construct the output data
+            uir_rank = np.array([[user_idx, item_idx, score] for item_idx, score in zip(sorted_items, sorted_scores)])
+        else:
+            uir_rank = np.array([])
 
-        # we construct the output data
-        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
-                                 for item_id in ordered_item_ids]
-
-        return rank_interaction_list
+        return uir_rank
 
     def __str__(self):
         return "LinearPredictor"

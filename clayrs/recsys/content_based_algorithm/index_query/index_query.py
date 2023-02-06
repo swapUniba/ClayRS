@@ -1,10 +1,14 @@
+from __future__ import annotations
 from collections import defaultdict
-from typing import List, Optional
+from typing import List, Optional, Set, TYPE_CHECKING
 import re
+import numpy as np
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
+
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex, LoadedContentsDict
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, EmptyUserRatings
 
 
@@ -106,7 +110,7 @@ class IndexQuery(PerUserCBAlgorithm):
     def _load_available_contents(self, index_path: str, items_to_load: set = None):
         return LoadedContentsIndex(index_path)
 
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex):
+    def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the query).
@@ -117,16 +121,21 @@ class IndexQuery(PerUserCBAlgorithm):
             user_ratings: List of Interaction objects for a single user
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
+
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        rated_items_id = train_ratings.item_map.convert_seq_int2str(uir_user[:, 1].astype(int))
+
         # a list since there could be duplicate interaction (eg bootstrap partitioning)
         items_scores_dict = defaultdict(list)
-        for interaction in user_ratings:
-            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        for item_id, score in zip(rated_items_id, uir_user[:, 2]):
+            items_scores_dict[item_id].append(score)
 
         items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         threshold = self.threshold
         if threshold is None:
-            threshold = self._calc_mean_user_threshold(user_ratings)
+            threshold = np.nanmean(uir_user[:, 2])
 
         # Initializes positive_user_docs which is a list that has tuples with document_id as first element and
         # a dictionary as second. The dictionary value has the name of the field as key
@@ -138,7 +147,8 @@ class IndexQuery(PerUserCBAlgorithm):
         ix = available_loaded_items.get_contents_interface()
 
         # we extract feature of each item sorted based on its key: IMPORTANT for reproducibility!!
-        for item_id, score_list in items_scores_dict.items():
+        # we must convert keys (which are strings) to the respective int idx to build the uir
+        for (item_id, (item_idx, score_list)) in zip(rated_items_id, items_scores_dict.items()):
 
             score_assigned = map(float, score_list)
 
@@ -149,14 +159,13 @@ class IndexQuery(PerUserCBAlgorithm):
                     if len(item_query) != 0:
                         item = item_query.pop(item_id).get('item')
                         scores.append(score)
-                        positive_user_docs.append((item_id, self._get_representations(item)))
+                        positive_user_docs.append((item_idx, self._get_representations(item)))
 
-        if len(user_ratings) == 0:
+        if len(uir_user[:, 1]) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings[0].user_id
         if len(positive_user_docs) == 0:
-            raise OnlyNegativeItems(f"User {user_id} - There are no rated items available locally or there are only "
+            raise OnlyNegativeItems(f"User {user_idx} - There are no rated items available locally or there are only "
                                     f"negative items available locally!")
 
         self._positive_user_docs = positive_user_docs
@@ -193,7 +202,7 @@ class IndexQuery(PerUserCBAlgorithm):
 
         self._string_query = string_query
 
-    def _build_mask_list(self, user_seen_items: set, filter_list: List[str] = None):
+    def _build_mask_list(self, user_seen_items: Set[str], filter_list: List[str] = None):
         """
         Private function that calculate the mask query and the filter query for whoosh to use:
 
@@ -213,8 +222,8 @@ class IndexQuery(PerUserCBAlgorithm):
 
         return masked_list
 
-    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
-                            filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex,
+                            filter_list: List[str] = None) -> np.ndarray:
         """
         IndexQuery is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
@@ -224,8 +233,8 @@ class IndexQuery(PerUserCBAlgorithm):
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
-    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsIndex,
-                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex,
+                         recs_number: Optional[int], filter_list: List[str]) -> np.ndarray:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -246,23 +255,24 @@ class IndexQuery(PerUserCBAlgorithm):
             List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
                 a single user
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        if len(uir_user) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_seen_items = set([interaction.item_id for interaction in user_ratings])
-
+        user_seen_items = train_ratings.item_map.convert_seq_int2str(uir_user[:, 1].astype(int))
         mask_list = self._build_mask_list(user_seen_items, filter_list)
 
         ix = available_loaded_items.get_contents_interface()
         score_docs = ix.query(self._string_query, recs_number, mask_list, filter_list, self._classic_similarity)
 
-        # we construct the output data
-        rank_interaction_list = [Interaction(user_id, item_id, score_docs[item_id]['score'])
-                                 for item_id in score_docs]
+        # we must convert keys (which are strings) to the respective int idx to build the uir
+        score_list_idxs = train_ratings.item_map.convert_seq_str2int(list(score_docs.keys()))
 
-        return rank_interaction_list
+        # we construct the output data
+        uir_rank = np.array([[user_idx, item_idx, score_docs[item_id]['score']]
+                             for item_idx, item_id in zip(score_list_idxs, score_docs)])
+
+        return uir_rank
 
     def __str__(self):
         return "IndexQuery"
