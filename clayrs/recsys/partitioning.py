@@ -212,11 +212,28 @@ class HoldOutPartitioning(Partitioning):
             calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
     """
 
-    def __init__(self, train_set_size: float = 0.8, shuffle: bool = True, random_state: int = None,
+    def __init__(self, train_set_size: Union[float, int, None] = None, test_set_size: Union[float, int, None] = None,
+                 shuffle: bool = True, random_state: int = None,
                  skip_user_error: bool = True):
-        self._check_percentage(train_set_size)
+
+        if train_set_size is not None and train_set_size < 0:
+            raise ValueError("train_set_size must be a positive number")
+
+        if test_set_size is not None and test_set_size < 0:
+            raise ValueError("test_set_size must be a positive number")
+
+        if isinstance(train_set_size, float) and train_set_size > 1.0:
+            raise ValueError("train_set_size must be between 0.0 and 1.0")
+
+        if isinstance(test_set_size, float) and test_set_size > 1.0:
+            raise ValueError("test_set_size must be between 0.0 and 1.0")
+
+        if isinstance(train_set_size, float) and isinstance(test_set_size, float) and \
+                (train_set_size + test_set_size) > 1.0:
+            raise ValueError("train_set_size and test_set_size percentages must not sum to a value greater than 1.0")
+
         self.__train_set_size = train_set_size
-        self.__test_set_size = (1 - train_set_size)
+        self.__test_set_size = test_set_size
         self.__random_state = random_state
         self.__shuffle = shuffle
 
@@ -250,8 +267,8 @@ class HoldOutPartitioning(Partitioning):
         return "HoldOutPartitioning"
 
     def __repr__(self):
-        return f"HoldOutPartitioning(train_set_size={self.__train_set_size}, shuffle={self.__shuffle}, " \
-               f"random_state={self.__random_state}, skip_user_error={self.skip_user_error})"
+        return f"HoldOutPartitioning(train_set_size={self.__train_set_size}, test_set_size={self.__test_set_size}, " \
+               f"shuffle={self.__shuffle}, random_state={self.__random_state}, skip_user_error={self.skip_user_error})"
 
 
 class BootstrapPartitioning(Partitioning):
