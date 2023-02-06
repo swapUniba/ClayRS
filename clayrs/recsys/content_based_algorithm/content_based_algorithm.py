@@ -23,8 +23,8 @@ if TYPE_CHECKING:
         CombiningTechnique
     from clayrs.content_analyzer.ratings_manager.ratings import Ratings
     from clayrs.content_analyzer.content_representation.content import Content
-    from clayrs.recsys.algorithm import Algorithm
 
+from clayrs.recsys.algorithm import Algorithm
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 
 
