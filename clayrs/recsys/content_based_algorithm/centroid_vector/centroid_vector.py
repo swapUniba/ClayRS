@@ -9,10 +9,10 @@ if TYPE_CHECKING:
         CombiningTechnique
     from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
     from clayrs.recsys.content_based_algorithm.centroid_vector.similarities import Similarity
+    from clayrs.content_analyzer import Ratings
 
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyNegativeItems, \
     NotPredictionAlg, EmptyUserRatings
@@ -82,7 +82,7 @@ class CentroidVector(PerUserCBAlgorithm):
         self._centroid: Optional[np.ndarray] = None
         self._positive_rated_list: Optional[List] = None
 
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from positive rated items ONLY!
         The extracted features will be used to fit the algorithm (build the centroid).
@@ -94,22 +94,27 @@ class CentroidVector(PerUserCBAlgorithm):
             available_loaded_items: The LoadedContents interface which contains loaded contents
         """
         # a list since there could be duplicate interaction (eg bootstrap partitioning)
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        rated_items_id = train_ratings.item_map.convert_seq_int2str(uir_user[:, 1].astype(int))
+
+        # a list since there could be duplicate interaction (eg bootstrap partitioning)
         items_scores_dict = defaultdict(list)
-        for interaction in user_ratings:
-            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        for item_id, score in zip(rated_items_id, uir_user[:, 2]):
+            items_scores_dict[item_id].append(score)
 
         items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
-        # Load rated items from the path
+        # Create list of all the available items that are useful for the user
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
-                                                                                          for item_id in
-                                                                                          items_scores_dict.keys()])
+                                                                                          for item_id
+                                                                                          in rated_items_id])
 
         # If threshold wasn't passed in the constructor, then we take the mean rating
         # given by the user as its threshold
         threshold = self.threshold
         if threshold is None:
-            threshold = self._calc_mean_user_threshold(user_ratings)
+            threshold = np.nanmean(uir_user[:, 2])
 
         # we extract feature of each POSITIVE item sorted based on its key: IMPORTANT for reproducibility!!
         # otherwise the matrix we feed to sklearn will have input item in different rows each run!
@@ -117,18 +122,17 @@ class CentroidVector(PerUserCBAlgorithm):
         for item in loaded_rated_items:
             if item is not None:
 
-                score_assigned = map(float, items_scores_dict[item.content_id])
+                score_assigned = items_scores_dict[item.content_id]
 
                 for score in score_assigned:
                     if score >= threshold:
                         positive_rated_list.append(self.extract_features_item(item))
 
-        if len(user_ratings) == 0:
+        if len(uir_user) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings[0].user_id
         if len(loaded_rated_items) == 0 or (loaded_rated_items.count(None) == len(loaded_rated_items)):
-            raise NoRatedItems("User {} - No rated items available locally!".format(user_id))
+            raise NoRatedItems("User {} - No rated items available locally!".format(user_idx))
         if len(positive_rated_list) == 0:
             raise OnlyNegativeItems("User {} - There are only negative items available locally!")
 
@@ -144,15 +148,15 @@ class CentroidVector(PerUserCBAlgorithm):
 
         The built centroid will also be stored in a private attribute.
         """
-        positive_rated_features_fused = self.fuse_representations(self._positive_rated_list, self._emb_combiner,
-                                                                  as_array=True)
-        self._centroid = positive_rated_features_fused.mean(axis=0)
+        positive_rated_features_fused = self.fuse_representations(self._positive_rated_list, self._emb_combiner)
+        # reshape make the centroid bidimensional of shape (1, h) needed to compute faster similarities
+        self._centroid = positive_rated_features_fused.mean(axis=0).reshape(1, -1)
 
         # we delete variable used to fit since will no longer be used
         self._positive_rated_list = None
 
-    def predict_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                            filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str]) -> np.ndarray:
         """
         CentroidVector is not a score prediction algorithm, calling this method will raise
         the `NotPredictionAlg` exception!
@@ -162,8 +166,8 @@ class CentroidVector(PerUserCBAlgorithm):
         """
         raise NotPredictionAlg("CentroidVector is not a Score Prediction Algorithm!")
 
-    def rank_single_user(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                         recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                         recs_number, filter_list: List[str]) -> np.ndarray:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -183,26 +187,19 @@ class CentroidVector(PerUserCBAlgorithm):
             List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
                 a single user
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        if len(uir_user) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_seen_items = set([interaction.item_id for interaction in user_ratings])
-
         # Load items to predict
-        if filter_list is None:
-            items_to_predict = available_loaded_items.get_list([item_id for item_id in available_loaded_items
-                                                                if item_id not in user_seen_items])
-        else:
-            items_to_predict = available_loaded_items.get_list(filter_list)
+        items_to_predict = available_loaded_items.get_list(filter_list)
 
         # Extract features of the items to predict
-        id_items_to_predict = []
+        idx_items_to_predict = []
         features_items_to_predict = []
         for item in items_to_predict:
             if item is not None:
-                id_items_to_predict.append(item.content_id)
+                idx_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
         if len(id_items_to_predict) > 0:
@@ -212,20 +209,15 @@ class CentroidVector(PerUserCBAlgorithm):
         else:
             similarities = []
 
-        # Build the item_score dict (key is item_id, value is rank score predicted)
-        # and order the keys in descending order
-        item_score_dict = dict(zip(id_items_to_predict, similarities))
-        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
-
-        # we only save the top-n items_ids corresponding to top-n recommendations
-        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
-        ordered_item_ids = ordered_item_ids[:recs_number]
+        sorted_scores_idxs = np.argsort(similarities)[::-1][:recs_number]
+        sorted_items = np.array(idx_items_to_predict)[sorted_scores_idxs]
+        sorted_scores = similarities[sorted_scores_idxs]
 
         # we construct the output data
-        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
-                                 for item_id in ordered_item_ids]
+        uir_rank = np.array([[user_idx, item_idx, score]
+                             for item_idx, score in zip(sorted_items, sorted_scores)])
 
-        return rank_interaction_list
+        return uir_rank
 
     def __str__(self):
         return "CentroidVector"
