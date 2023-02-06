@@ -77,13 +77,6 @@ class ContentBasedAlgorithm(Algorithm):
 
         return item_field
 
-    @staticmethod
-    def _calc_mean_user_threshold(user_ratings: List[Interaction]):
-        """
-        Private method which simply calculates the average rating by the user given its ratings
-        """
-        return np.nanmean([interaction.score for interaction in user_ratings])
-
     def extract_features_item(self, item: Content):
         """
         Function that extracts the feature of a loaded item using the item_field parameter passed in the
