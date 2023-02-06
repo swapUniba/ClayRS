@@ -94,6 +94,7 @@ class Partitioning(ABC):
         #       'test': [u1_uir, u2_uir]
         #  }
         train_test_dict = defaultdict(lambda: defaultdict(list))
+        count = 0
 
         with get_progbar(user_list) as pbar:
 
@@ -114,12 +115,17 @@ class Partitioning(ABC):
 
                 except ValueError as e:
                     if self.skip_user_error:
-                        logger.warning(str(e) + "\nThe user {} will be skipped".format(user_id))
+                        count += 1
                         continue
                     else:
                         raise e
 
-        train_list = [Ratings.from_list(train_test_dict[split]['train'])
+        if count > 0:
+            logger.warning(f"{count} users will be skipped because partitioning couldn't be performed\n"
+                           f"Change this behavior by setting `skip_user_error` to True")
+
+        train_list = [Ratings.from_uir(np.vstack(train_test_dict[split]['train']),
+                                       ratings_to_split.user_map, ratings_to_split.item_map)
                       for split in train_test_dict]
 
         test_list = [Ratings.from_uir(np.vstack(train_test_dict[split]['test']),
