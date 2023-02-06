@@ -1,11 +1,12 @@
 from __future__ import annotations
 from collections import defaultdict
 
-from typing import Set, List, Tuple, TYPE_CHECKING
+from typing import Set, List, Tuple, TYPE_CHECKING, Union
 
 import abc
 from abc import ABC
 
+import numpy as np
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.utils import resample
 
@@ -54,8 +55,7 @@ class Partitioning(ABC):
         """
         raise NotImplementedError
 
-    def split_all(self, ratings_to_split: Ratings, user_id_list: Set[str] = None) -> Tuple[List[Ratings],
-                                                                                           List[Ratings]]:
+    def split_all(self, ratings_to_split: Ratings, user_list: Set[int] = None) -> Tuple[List[Ratings], List[Ratings]]:
         """
         Concrete method that splits, for every user in the `ratings_to_split` parameter, the original ratings
         into *train set* and *test set*.
@@ -83,23 +83,23 @@ class Partitioning(ABC):
             ValueError: if `skip_user_error=True` in the constructor and for some users splitting can't be performed
         """
 
-        if user_id_list is None:
-            user_id_list = set(ratings_to_split.user_id_column)
+        if user_list is None:
+            user_list = ratings_to_split.unique_user_idx_column
 
         # {
-        #   0: {'train': {'u1': u1_interactions_train0, 'u2': u2_interactions_train0}},
-        #       'test': {'u1': u1_interactions_test0, 'u2': u2_interactions_test0}},
+        #   0: {'train': [u1_uir, u2_uir]},
+        #       'test': [u1_uir, u2_uir]},
         #
-        #   1: {'train': {'u1': u1_interactions_train1, 'u2': u2_interactions_train1}},
-        #       'test': {'u1': u1_interactions_test1, 'u2': u2_interactions_test1}
+        #   1: {'train': [u1_uir, u2_uir]},
+        #       'test': [u1_uir, u2_uir]
         #  }
         train_test_dict = defaultdict(lambda: defaultdict(list))
 
-        with get_progbar(user_id_list) as pbar:
+        with get_progbar(user_list) as pbar:
 
             pbar.set_description("Performing {}".format(str(self)))
-            for user_id in pbar:
-                user_ratings = ratings_to_split.get_user_interactions(user_id)
+            for user_idx in pbar:
+                user_ratings = ratings_to_split.get_user_interactions(user_idx)
                 try:
                     user_train_list, user_test_list = self.split_single(user_ratings)
                     for split_number, (single_train, single_test) in enumerate(zip(user_train_list, user_test_list)):
@@ -122,7 +122,8 @@ class Partitioning(ABC):
         train_list = [Ratings.from_list(train_test_dict[split]['train'])
                       for split in train_test_dict]
 
-        test_list = [Ratings.from_list(train_test_dict[split]['test'])
+        test_list = [Ratings.from_uir(np.vstack(train_test_dict[split]['test']),
+                                      ratings_to_split.user_map, ratings_to_split.item_map)
                      for split in train_test_dict]
 
         return train_list, test_list
@@ -153,7 +154,7 @@ class KFoldPartitioning(Partitioning):
 
         super(KFoldPartitioning, self).__init__(skip_user_error)
 
-    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+    def split_single(self, uir_user):
         """
         Method which splits in $k$ splits both in *train set* and *test set* the ratings of a single user
 
@@ -165,15 +166,15 @@ class KFoldPartitioning(Partitioning):
                 constitute the *train set* of the user, the second contains one list of `Interaction` objects for each split
                 that will constitute the *test set* for the user
         """
-        split_result = self.__kf.split(user_ratings)
+        split_result = self.__kf.split(uir_user)
 
         user_train_list = []
         user_test_list = []
         # split_result contains index of the ratings which must constitutes train set and test set
         for train_set_indexes, test_set_indexes in split_result:
-            user_interactions_train = [user_ratings[index] for index in train_set_indexes]
+            user_interactions_train = [uir_user[index] for index in train_set_indexes]
 
-            user_interactions_test = [user_ratings[index] for index in test_set_indexes]
+            user_interactions_test = [uir_user[index] for index in test_set_indexes]
 
             user_train_list.append(user_interactions_train)
             user_test_list.append(user_interactions_test)
@@ -215,12 +216,7 @@ class HoldOutPartitioning(Partitioning):
 
         super().__init__(skip_user_error)
 
-    @staticmethod
-    def _check_percentage(percentage: float):
-        if (percentage <= 0) or (percentage >= 1):
-            raise ValueError("The train set size must be a float in the (0, 1) interval")
-
-    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+    def split_single(self, uir_user) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
         """
         Method which splits *train set* and *test set* the ratings of a single user by holding in the train
         set the percentage of data specified in `train_set_size` in the constructor
@@ -233,14 +229,14 @@ class HoldOutPartitioning(Partitioning):
                 constitute the *train set* of the user, the second contains one list of `Interaction` objects
                 that will constitute the *test set* for the user
         """
-        interactions_train, interactions_test = train_test_split(user_ratings,
-                                                                 train_size=self.__train_set_size,
-                                                                 test_size=self.__test_set_size,
-                                                                 shuffle=self.__shuffle,
-                                                                 random_state=self.__random_state)
+        uir_train, uir_test = train_test_split(uir_user,
+                                               train_size=self.__train_set_size,
+                                               test_size=self.__test_set_size,
+                                               shuffle=self.__shuffle,
+                                               random_state=self.__random_state)
 
-        user_train_list = [interactions_train]
-        user_test_list = [interactions_test]
+        user_train_list = [uir_train]
+        user_test_list = [uir_test]
 
         return user_train_list, user_test_list
 
@@ -279,7 +275,7 @@ class BootstrapPartitioning(Partitioning):
 
         self.__random_state = random_state
 
-    def split_single(self, user_ratings: List[Interaction]) -> Tuple[List[List[Interaction]], List[List[Interaction]]]:
+    def split_single(self, uir_user):
         """
         Method which splits *train set* and *test set* the ratings of a single user by performing $n$ extraction with
         replacement of the user interactions, where $n$ is the number of its interactions.
@@ -294,13 +290,15 @@ class BootstrapPartitioning(Partitioning):
                 that will constitute the *test set* for the user
         """
 
-        interactions_train = resample(user_ratings,
+        interactions_train = resample(uir_user,
                                       replace=True,
-                                      n_samples=len(user_ratings),
+                                      n_samples=len(uir_user[:, 0]),
                                       random_state=self.__random_state)
 
-        interactions_test = [interaction for interaction in user_ratings
-                             if interaction not in interactions_train]
+        interactions_test = [interaction
+                             for interaction in uir_user
+                             if not any(np.array_equal(interaction, interaction_train, equal_nan=True)
+                                        for interaction_train in interactions_train)]
 
         user_train_list = [interactions_train]
         user_test_list = [interactions_test]
