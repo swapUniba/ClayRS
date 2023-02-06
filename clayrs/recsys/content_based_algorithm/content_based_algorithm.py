@@ -1,7 +1,6 @@
 from __future__ import annotations
 import abc
 import gc
-import itertools
 from copy import deepcopy
 from itertools import chain
 from typing import List, TYPE_CHECKING, Optional, Any, Set, Tuple
