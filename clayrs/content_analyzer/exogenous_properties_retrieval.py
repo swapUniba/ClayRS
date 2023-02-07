@@ -250,7 +250,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                     if timeout_counter >= self._max_timeout:
                         raise TimeoutError("Maximum number of trials reached!")
 
-                    logger.warning(f"Timeout occured! - {timeout_counter + 1} out of {self._max_timeout} possible \n"
+                    logger.warning(f"Timeout occurred! - {timeout_counter + 1} out of {self._max_timeout} possible \n"
                                    f"The timeout counter will be reset as soon as the request goes through")
                     timeout_counter += 1
                     query += '\n'  # add space to avoid query plan cache so that we perform a new request

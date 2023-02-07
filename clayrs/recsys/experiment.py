@@ -4,7 +4,7 @@ import os
 import shutil
 import sys
 from abc import ABC
-from typing import List, Union, Dict, Callable, TYPE_CHECKING
+from typing import List, Union, Dict, Callable, TYPE_CHECKING, Optional
 
 import pyaml
 
@@ -126,7 +126,7 @@ class Experiment(ABC):
                 shutil.rmtree(self.output_folder)
                 os.makedirs(self.output_folder)
             else:
-                raise FileExistsError(f"Folder {self.overwrite_if_exists} already present!\n"
+                raise FileExistsError(f"Folder {self.output_folder} already present!\n"
                                       "Delete it and run the experiment again or set `overwrite_if_exists` parameter "
                                       "to True!") from None
 
@@ -322,8 +322,10 @@ class ContentBasedExperiment(Experiment):
         super().__init__(original_ratings, partitioning_technique, algorithm_list, items_directory, users_directory,
                          metric_list, report, output_folder, overwrite_if_exists)
 
-    def predict(self, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0,
+    def predict(self,
+                user_id_list: Optional[Union[List[str], List[int]]] = None,
+                methodology: Optional[Methodology] = TestRatingsMethodology(),
+                num_cpus: int = 1,
                 skip_alg_error: bool = True) -> None:
         """
         Method used to perform an experiment which involves ***score predictions***.
@@ -346,6 +348,8 @@ class ContentBasedExperiment(Experiment):
         prediction
 
         Args:
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -360,7 +364,8 @@ class ContentBasedExperiment(Experiment):
         def cb_fit_predict(split_num, alg, train_set, test_set, dirname):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
-            predict_alg = cbrs.fit_predict(test_set, methodology=methodology, num_cpus=num_cpus)
+            predict_alg = cbrs.fit_predict(test_set, methodology=methodology, num_cpus=num_cpus,
+                                           user_id_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}",
                                ids_as_str=True)
@@ -374,9 +379,11 @@ class ContentBasedExperiment(Experiment):
 
         self.main_experiment(cb_fit_predict, skip_alg_error=skip_alg_error)
 
-    def rank(self, n_recs: int = 10,
-             methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0):
+    def rank(self,
+             n_recs: Optional[int] = 10,
+             user_id_list: Optional[Union[List[str], List[int]]] = None,
+             methodology: Optional[Methodology] = TestRatingsMethodology(),
+             num_cpus: int = 1):
         """
         Method used to perform an experiment which involves ***rankings***.
 
@@ -392,6 +399,8 @@ class ContentBasedExperiment(Experiment):
         Args:
             n_recs: Number of the top items that will be present in the ranking of each user.
                 If `None` all candidate items will be returned for the user
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -401,7 +410,8 @@ class ContentBasedExperiment(Experiment):
         def cb_fit_rank(split_num, alg, train_set, test_set, dirname):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
-            predict_alg = cbrs.fit_rank(test_set, n_recs=n_recs, methodology=methodology, num_cpus=num_cpus)
+            predict_alg = cbrs.fit_rank(test_set, n_recs=n_recs, methodology=methodology,
+                                        user_id_list=user_id_list, num_cpus=num_cpus)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}",
                                ids_as_str=True)
@@ -544,8 +554,10 @@ class GraphBasedExperiment(Experiment):
         self.user_exo_properties = user_exo_properties
         self.link_label = link_label
 
-    def predict(self, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 0,
+    def predict(self,
+                user_id_list: Optional[Union[List[str], List[int]]] = None,
+                methodology: Optional[Methodology] = TestRatingsMethodology(),
+                num_cpus: int = 1,
                 skip_alg_error: bool = True):
         """
         Method used to perform an experiment which involves ***score predictions***.
@@ -568,6 +580,8 @@ class GraphBasedExperiment(Experiment):
         prediction
 
         Args:
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -593,7 +607,8 @@ class GraphBasedExperiment(Experiment):
 
             gbrs = GraphBasedRS(alg, graph)
 
-            predict_alg = gbrs.predict(test_set, methodology=methodology, num_cpus=num_cpus)
+            predict_alg = gbrs.predict(test_set, methodology=methodology,
+                                       num_cpus=num_cpus, user_id_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}")
 
@@ -606,9 +621,11 @@ class GraphBasedExperiment(Experiment):
 
         self.main_experiment(gb_fit_predict, skip_alg_error=skip_alg_error)
 
-    def rank(self, n_recs: int = 10,
-             methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 0):
+    def rank(self,
+             n_recs: Optional[int] = 10,
+             user_id_list: Optional[Union[List[str], List[int]]] = None,
+             methodology: Optional[Methodology] = TestRatingsMethodology(),
+             num_cpus: int = 1):
         """
         Method used to perform an experiment which involves ***rankings***.
 
@@ -624,6 +641,8 @@ class GraphBasedExperiment(Experiment):
         Args:
             n_recs: Number of the top items that will be present in the ranking of each user.
                 If `None` all candidate items will be returned for the user
+            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
+                for all users of the `test_set`
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -644,7 +663,8 @@ class GraphBasedExperiment(Experiment):
 
             gbrs = GraphBasedRS(alg, graph)
 
-            predict_alg = gbrs.rank(test_set, n_recs=n_recs, methodology=methodology, num_cpus=num_cpus)
+            predict_alg = gbrs.rank(test_set, n_recs=n_recs, methodology=methodology,
+                                    num_cpus=num_cpus, user_id_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}")
 
