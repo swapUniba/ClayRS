@@ -147,15 +147,14 @@ class NXPageRank(PageRank):
             # run the pageRank
             if self._personalized is True:
 
-                user_ratings = train_set.get_user_interactions(user_id)
-                user_relevance_threshold = self._relevance_threshold or np.nanmean([interaction.score
-                                                                                    for interaction in user_ratings])
+                user_ratings = train_set.get_user_interactions(user_idx)
+                user_relevance_threshold = self._relevance_threshold or np.nanmean(user_ratings[:, 2])
 
                 pers_dict = {}
 
-                relevant_items = [ItemNode(interaction.item_id)
-                                  for interaction in user_ratings
-                                  if interaction.score >= user_relevance_threshold]
+                relevant_items = user_ratings[np.where(user_ratings[:, 2] >= user_relevance_threshold)][:, 1]
+                relevant_items = [ItemNode(item_node)
+                                  for item_node in train_set.item_map.convert_seq_int2str(relevant_items.astype(int))]
 
                 # If the prob is > 0 then add relevant nodes to personalization vector. (rel_items_weight True)
                 # But also if the prob is 0 and the user explicitly set this prob to 0, add relevant nodes to
@@ -183,10 +182,10 @@ class NXPageRank(PageRank):
 
                 # all nodes that are not present up until now in the personalization vector, will be added
                 # with probability 'default_nodes_weight'
-                other_nodes = nx_graph.nodes - pers_dict.keys()
+                other_nodes = networkx_graph.nodes - pers_dict.keys()
                 pers_dict.update({node: self._default_nodes_weight / len(other_nodes) for node in other_nodes})
 
-                scores = nx.pagerank(nx_graph, personalization=pers_dict, alpha=self.alpha,
+                scores = nx.pagerank(networkx_graph, personalization=pers_dict, alpha=self.alpha,
                                      max_iter=self.max_iter, tol=self.tol, nstart=self.nstart, weight=weight)
 
             # if scores is None it means this is the first time we are running normal pagerank

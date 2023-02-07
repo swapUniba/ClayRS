@@ -126,21 +126,30 @@ class TestNXPageRank(TestCase):
 
         # result classic pagerank
         alg = NXPageRank(alpha=0)
-        result_not_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_not_personalized] = alg.rank(self.graph, train_ratings, test_ratings,
+                                             num_cpus=1, user_id_list={'A000'},
+                                             methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                             recs_number=None)
 
         # test personalized 0.8 relevant items, 0.2 other nodes
         alg = NXPageRank(alpha=0, personalized=True)
-        result_personalized_08 = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized_08] = alg.rank(self.graph, train_ratings, test_ratings,
+                                            num_cpus=1, user_id_list={'A000'},
+                                            methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                            recs_number=None)
 
-        self.assertNotEqual(result_personalized_08, result_not_personalized)
+        self.assertFalse(np.array_equal(result_personalized_08, result_not_personalized))
 
         # test personalized 0.4 relevant items, 0.4 relevant properties, 0.2 other nodes
         alg = NXPageRank(alpha=0, personalized=True,
                          rel_items_weight=0.4, rel_items_prop_weight=0.4, default_nodes_weight=0.2)
-        result_personalized_04 = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized_04] = alg.rank(self.graph, train_ratings, test_ratings,
+                                            num_cpus=1, user_id_list={'A000'},
+                                            methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                            recs_number=None)
 
-        self.assertNotEqual(result_personalized_04, result_not_personalized)
-        self.assertNotEqual(result_personalized_04, result_personalized_08)
+        self.assertFalse(np.array_equal(result_personalized_04, result_not_personalized))
+        self.assertFalse(np.array_equal(result_personalized_04, result_personalized_08))
 
     def test_rank_personalized_none_weights(self):
 
@@ -152,32 +161,44 @@ class TestNXPageRank(TestCase):
         # chosen by the random surfer normalized by the total number of 'other nodes')
         alg = NXPageRank(alpha=0, personalized=True,
                          rel_items_weight=0.8, rel_items_prop_weight=None, default_nodes_weight=0.2)
-        result_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized] = alg.rank(self.graph, train_ratings, test_ratings,
+                                         num_cpus=1, user_id_list={'A000'},
+                                         methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                         recs_number=None)
 
         # test personalized 0.8 relevant items, 0 to relevant properties, 0.2 to other nodes
         # this means that relevant properties will be NOT treated as 'other nodes', but will have 0 prob
         # of being chosen by the random surfer
         alg = NXPageRank(alpha=0, personalized=True,
                          rel_items_weight=0.8, rel_items_prop_weight=0, default_nodes_weight=0.2)
-        result_personalized_strict = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized_strict] = alg.rank(self.graph, train_ratings, test_ratings,
+                                                num_cpus=1, user_id_list={'A000'},
+                                                methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                                recs_number=None)
 
-        self.assertNotEqual(result_personalized, result_personalized_strict)
+        self.assertFalse(np.array_equal(result_personalized, result_personalized_strict))
 
         # test personalized none relevant items, 0.8 to relevant properties, 0.2 to other nodes
         # this means that relevant items will be treated as 'other nodes' (and so 0.2 prob of being
         # chosen by the random surfer normalized by the total number of 'other nodes')
         alg = NXPageRank(alpha=0, personalized=True,
                          rel_items_weight=None, rel_items_prop_weight=0.8, default_nodes_weight=0.2)
-        result_personalized = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized] = alg.rank(self.graph, train_ratings, test_ratings,
+                                         num_cpus=1, user_id_list={'A000'},
+                                         methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                         recs_number=None)
 
         # test personalized 0 relevant items, 0.8 to relevant properties, 0.2 to other nodes
         # this means that relevant items will be NOT treated as 'other nodes', but will have 0 prob
         # of being chosen by the random surfer
         alg = NXPageRank(alpha=0, personalized=True,
                          rel_items_weight=0, rel_items_prop_weight=0.8, default_nodes_weight=0.2)
-        result_personalized_strict = alg.rank({'A000'}, self.graph, test_set, num_cpus=1)
+        [result_personalized_strict] = alg.rank(self.graph, train_ratings, test_ratings,
+                                                num_cpus=1, user_id_list={'A000'},
+                                                methodology=TestRatingsMethodology().setup(train_ratings, test_ratings),
+                                                recs_number=None)
 
-        self.assertNotEqual(result_personalized, result_personalized_strict)
+        self.assertFalse(np.array_equal(result_personalized, result_personalized_strict))
 
 
 if __name__ == "__main__":
