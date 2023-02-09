@@ -61,6 +61,29 @@ class EmbeddingFeaturesInputPostProcessor(PostProcessor):
 
 
 class VisualBagOfWords(EmbeddingInputPostProcessor):
+    """
+    Technique which mirrors the Bag Of Words approach in NLP but extends it to images.
+    The idea is to represent the target image as a collection of features.
+
+    To do so, the algorithm performs the following steps sequentially:
+
+        - Codebook construction: builds the vocabulary from which features will be retrieved for the images, this is
+            done by applying k-means clustering on the input feature vectors;
+
+        - Vector quantization: given the features for an image, find the ones that are closest to them in the
+            vocabulary produced at the previous step and apply a weighting scema to produce the final representation
+            (that is, for example, a particular visual word appears two times in an image, if using a "count" weighting
+            schema the final representation will have a value of 2 associated to this visual word)
+
+    If you want to know more about the approach or have more details, the following tutorial is suggested:
+    https://customers.pyimagesearch.com/the-bag-of-visual-words-model/
+
+    Args:
+        arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+        arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+
+    NOTE: for this technique it is mandatory that for "with_std" to be set to True
+    """
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
