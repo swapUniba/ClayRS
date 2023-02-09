@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from unittest import TestCase
 import lzma
@@ -216,9 +217,9 @@ class TestContentAnalyzer(TestCase):
             self.assertIn('Plot#1', processed_content)
             self.assertIn('imdbRating#0', processed_content)
 
-    # def doCleanups(self) -> None:
-    #     if os.path.isdir(self.out_dir):
-    #         shutil.rmtree(self.out_dir)
+    def doCleanups(self) -> None:
+        if os.path.isdir(self.out_dir):
+            shutil.rmtree(self.out_dir)
 
 
 if __name__ == "__main__":
