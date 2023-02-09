@@ -486,6 +486,8 @@ class TestDeltaGap(unittest.TestCase):
         expected_result_list = []
 
         for group_name, valid_group in valid_groups_splitted.items():
+            valid_group_idx = self.original_ratings.user_map.convert_seq_str2int(list(valid_group))
+
             # *******************************************************************************************
             # *** For every user in the group calculate the average popularity of the recommendations ***
             # *******************************************************************************************
@@ -493,17 +495,18 @@ class TestDeltaGap(unittest.TestCase):
             # compute for each user of the group the popularity sum in the recommendations
             # (cut the ranking list if top_n != None)
             RECS_sum_pop_group = {
-                user: sum([pop_by_item.get(interaction.item_id)
-                           for interaction in self.split.pred.get_user_interactions(user)][:top_n])
+                user_idx: sum([pop_by_item.get(self.split.pred.item_id_column[interaction_idx])
+                               for interaction_idx in self.split.pred.get_user_interactions(user_idx,
+                                                                                            as_indices=True)][:top_n])
 
-                for user in valid_group
+                for user_idx in valid_group_idx
             }
 
             # compute for each user of the group the average popularity in the recommendations
             # (sum_pop_item_recommended / n_item_recommended)
             # (cut the ranking list if top_n != None)
-            RECS_avg_pop_group = {user: sum_pop / len(self.split.pred.get_user_interactions(user)[:top_n])
-                                  for user, sum_pop in RECS_sum_pop_group.items()}
+            RECS_avg_pop_group = {user_idx: sum_pop / len(self.split.pred.get_user_interactions(user_idx)[:top_n])
+                                  for user_idx, sum_pop in RECS_sum_pop_group.items()}
 
             # ************************************************************************************
             # *** For every user in the group calculate the average popularity of the profiles ***
@@ -511,16 +514,16 @@ class TestDeltaGap(unittest.TestCase):
 
             # compute for each user of the group the popularity sum in the recommendations
             PROFILE_sum_pop_group = {
-                user: sum([pop_by_item.get(interaction.item_id)
-                           for interaction in self.train.get_user_interactions(user)])
+                user_idx: sum([pop_by_item.get(self.train.item_id_column[interaction_idx])
+                               for interaction_idx in self.train.get_user_interactions(user_idx, as_indices=True)])
 
-                for user in valid_group
+                for user_idx in valid_group_idx
             }
 
             # compute for each user of the group the average popularity in the recommendations
             # (sum_pop_item_recommended / n_item_recommended)
-            PROFILE_avg_pop_group = {user: sum_pop / len(self.train.get_user_interactions(user))
-                                     for user, sum_pop in PROFILE_sum_pop_group.items()}
+            PROFILE_avg_pop_group = {user_idx: sum_pop / len(self.train.get_user_interactions(user_idx))
+                                     for user_idx, sum_pop in PROFILE_sum_pop_group.items()}
 
             # ************************
             # *** Compute DeltaGAP ***
