@@ -35,6 +35,10 @@ from clayrs.utils.context_managers import get_iterator_thread, get_progbar
 
 
 class ClasslessImageFolder(Dataset):
+    """
+    Dataset which is used by torch dataloaders to efficiently handle images.
+    In this case, since labels are not of interest, only the image in the form of a Torch tensor will be returned.
+    """
     def __init__(self, root, resize_size: Tuple[int, int], all_images_list: list = None):
         self.image_paths = [os.path.join(root, file_name) for file_name in all_images_list]
         self.resize_size = list(resize_size)
@@ -58,6 +62,41 @@ class ClasslessImageFolder(Dataset):
 
 
 class VisualContentTechnique(FieldContentProductionTechnique):
+    """
+    Class which encapsulates the logic for techniques which use images as input
+
+    In order for the framework to process images, the input source (a CSV file, for example) should contain
+    for a field all values of a certain type, that are either:
+
+        - paths to images stored locally;
+        - links to images.
+
+    In the case of file paths, the images will simply be loaded. In the case of links, the images will first be
+    downloaded locally and then loaded.
+
+    The Visual techniques will then be extended into two different kinds of techniques:
+
+        - Low Level: low level processing techniques which require analyzing each image separately;
+        - High Level: high level processing techniques which can efficiently compute batches of images.
+
+    IMPORTANT NOTE: if the technique can't properly load some images (because the download links are not working or
+    because it is not available locally) they will be replaced with a 3dimensional Torch Tensor consisting of zeros
+    only
+
+    Args:
+
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+
+        max_timeout:
+        max_retries:
+        max_workers:
+
+        batch_size: batch size for the images dataloader
+
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size.
+    """
 
     def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
                  max_workers: int = 0, resize_size: Tuple[int, int] = (100, 100)):
@@ -88,6 +127,10 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         return processed_data
 
     def _retrieve_images(self, field_name: str, raw_source: RawInformationSource):
+        """
+        Method which retrieves all the images for the specified field name in the raw source in case images are not
+        paths but links.
+        """
         def dl_and_save_images(url_or_path):
             if validators.url(url_or_path):
 
@@ -139,6 +182,11 @@ class VisualContentTechnique(FieldContentProductionTechnique):
             logger.warning(f"Failed requests: {error_count}")
 
     def get_data_loader(self, field_name: str, raw_source: RawInformationSource):
+        """
+        Method to retrieve the dataloader for the images in the specified field name of the raw source.
+
+        If the images are organized as paths, the
+        """
         field_images_dir = os.path.join(self.imgs_dirs, field_name)
 
         if not os.path.isdir(field_images_dir):
@@ -161,6 +209,15 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 
 
 class LowLevelVisual(VisualContentTechnique):
+    """
+    Technique which encapsulates the logic for all visual techniques that work on a low level, that is instead of
+    working on batches of images in an efficient way, these techniques require to process each image separately
+    (because, for example, they need to analyze the single pixels of the images).
+    """
+
+    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
 
     def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor],
                         postprocessor_list: List[EmbeddingInputPostProcessor],
@@ -189,6 +246,15 @@ class LowLevelVisual(VisualContentTechnique):
 
 
 class HighLevelVisual(VisualContentTechnique):
+    """
+    Technique which encapsulates the logic for all visual techniques that work on a high level, that is instead of
+    working on batches of images in an efficient way, these techniques require to process each image separately
+    (because, for example, they need to analyze the single pixels of the images).
+    """
+
+    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
 
     def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor],
                         postprocessor_list: List[EmbeddingInputPostProcessor],
@@ -212,6 +278,16 @@ class HighLevelVisual(VisualContentTechnique):
 
 
 class PytorchImageModels(HighLevelVisual):
+    """
+    High level technique which uses the [timm library] (https://timm.fast.ai/) for feature extraction from images.
+
+    Args:
+        model_name: a model name supported by the timm library
+        feature_layer: the layer index from which the features will be retrieved
+            NOTE: the model is loaded from the timm library with the parameter "features_only" set at True, meaning
+            that only feature layers of the model will be available and accessible through the index
+        flatten: whether the features obtained from the model should be flattened or not
+    """
 
     def __init__(self, model_name: str, feature_layer: int = -1):
         super().__init__()
