@@ -1,15 +1,14 @@
 from __future__ import annotations
-from typing import List, Set, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import pandas as pd
 import numpy as np
-from sklearn.metrics import ndcg_score
+import numpy_indexed as npi
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
     from clayrs.recsys.partitioning import Split
 
-from clayrs.evaluation.metrics.metrics import Metric
+from clayrs.evaluation.metrics.metrics import Metric, handler_different_users
 
 
 class RankingMetric(Metric):
@@ -40,6 +39,16 @@ class NDCG(RankingMetric):
 
     The system average excludes NaN values.
     """
+    def __init__(self, gains="linear", discount_log=np.log2):
+        self.gains = gains
+        self.discount_log = discount_log
+
+        if self.gains == "exponential":
+            self.gains_fn = lambda r: 2 ** r - 1
+        elif self.gains == "linear":
+            self.gains_fn = lambda r: r
+        else:
+            raise ValueError("Invalid gains option.")
 
     def __str__(self):
         return "NDCG"
@@ -47,35 +56,39 @@ class NDCG(RankingMetric):
     def __repr__(self):
         return "NDCG()"
 
-    def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
+    def _dcg_score(self, r: np.ndarray):
+        """Discounted cumulative gain (DCG) at rank k
+        Parameters
+        ----------
+        r: Relevance scores (list or numpy) in rank order
+            (first element is the first item)
+        Returns
+        -------
+        DCG : float
         """
-        Private method which calculates the NDCG for a single user using sklearn implementation
+        dcg = np.nan
+        if len(r) != 0:
+
+            gains = self.gains_fn(r)
+            discounts = self.discount_log(np.arange(2, len(r) + 2))
+
+            dcg = np.sum(gains / discounts)
+
+        return dcg
+
+    def _calc_ndcg(self, r: np.ndarray):
+        """Normalized discounted cumulative gain (NDCG) at rank k
+        Parameters
+        ----------
+        r: Relevance scores (list or numpy) in rank order
+            (first element is the first item)
+        Returns
+        -------
+        NDCG @k : float
         """
-        return ndcg_score(ideal_rank, actual_rank)
-
-    def _get_ideal_actual_rank(self, user_predictions: List[Interaction], user_truth: List[Interaction]):
-        """
-        Private method which calculates two lists, actual_rank list and ideal_rank list.
-
-        actual_rank - given the ranking of the user, for every item 'i' in the ranking it extracts the rating
-        that the user has effectively given to 'i' and adds it to the actual_rank list.
-        If the item is not present in the truth, a 0 is added to the list.
-
-        ideal_rank - it's the actual_rank list ordered from the highest rating to the lowest one. It represents the
-        perfect ranking for the user
-
-        Args:
-            user_predictions: list of Interactions object of the recommendation list for the user
-            user_truth: list of Interactions object of the truth set for the user
-        """
-        # important that predicted items is a list, we must maintain the order
-        predicted_items = [interaction.item_id for interaction in user_predictions]
-        item_score_truth = {interaction.item_id: interaction.score for interaction in user_truth}
-
-        actual_rank = [item_score_truth.get(item_id)
-                       if item_score_truth.get(item_id) is not None
-                       else 0
-                       for item_id in predicted_items]
+        actual = self._dcg_score(r)
+        ideal = self._dcg_score(np.sort(r)[::-1])
+        return actual / ideal
 
         ideal_rank = sorted(actual_rank, reverse=True)
         return ideal_rank, actual_rank
@@ -139,17 +152,33 @@ class NDCGAtK(NDCG):
         k (int): the cutoff parameter
     """
 
-    def __init__(self, k: int):
-        self.__k = k
+    def __init__(self, k: int, gains="linear", discount_log=np.log2):
+        super().__init__(gains, discount_log)
+
+        self._k = k
 
     def __str__(self):
-        return "NDCG@{}".format(self.__k)
+        return "NDCG@{}".format(self._k)
 
     def __repr__(self):
-        return f'NDCGAtK(k={self.__k})'
+        return f'NDCGAtK(k={self._k})'
 
-    def _calc_ndcg(self, ideal_rank: np.array, actual_rank: np.array):
-        return ndcg_score(ideal_rank, actual_rank, k=self.__k)
+    def _calc_ndcg(self, r: np.ndarray):
+        """Normalized discounted cumulative gain (NDCG) at rank k
+        Parameters
+        ----------
+        r: Relevance scores (list or numpy) in rank order
+            (first element is the first item)
+        Returns
+        -------
+        NDCG @k : float
+        """
+        ideal_r = np.sort(r)[::-1][:self._k]
+        actual_r = r[:self._k]
+
+        actual = self._dcg_score(actual_r)
+        ideal = self._dcg_score(ideal_r)
+        return actual / ideal
 
 
 class MRR(RankingMetric):
