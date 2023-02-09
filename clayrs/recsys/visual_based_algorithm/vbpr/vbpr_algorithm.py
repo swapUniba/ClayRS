@@ -75,13 +75,20 @@ class VBPR(ContentBasedAlgorithm):
 
     def _build_only_positive_ratings(self, train_set: Ratings) -> Ratings:
 
+        logger.info("Filtering only positive interactions...")
         # constant threshold for all users
         if self.threshold is not None:
 
-            positive_items_idxs = np.where(train_set.score_column >= self.threshold)
-            positive_train_set = train_set.uir[positive_items_idxs]
+            positive_items_idxs = train_set.score_column >= self.threshold
 
-            positive_train_set = Ratings.from_uir(positive_train_set, train_set.user_map, train_set.item_map)
+            if np.count_nonzero(positive_items_idxs) != len(train_set):
+
+                positive_train_set = train_set.uir[positive_items_idxs]
+                positive_train_set = Ratings.from_uir(positive_train_set, train_set.user_map, train_set.item_map)
+            else:
+                positive_train_set = train_set
+                logger.info(f"All interactions have score >= than threshold={self.threshold}, "
+                            f"no filtering is performed")
 
         # the threshold will vary for each user (its mean rating will be used)
         else:
@@ -106,7 +113,7 @@ class VBPR(ContentBasedAlgorithm):
         #   check if some users are missing because no positive items remains for them, warning is issued
 
         if len(positive_train_set) == 0:
-            raise ValueError("Filtering for positive interactions didn't leave any rating at all")
+            raise ValueError("Filtering for positive interactions didn't leave any rating at all!")
 
         diff_len_train = len(train_set.unique_user_idx_column) - len(positive_train_set.unique_user_idx_column)
 
@@ -119,8 +126,6 @@ class VBPR(ContentBasedAlgorithm):
     def _load_items_features(self, train_set: Ratings, items_directory: str) -> torch.Tensor:
 
         loaded_items_interface = self._load_available_contents(items_directory, set())
-
-        logger.info("Loading items features")
 
         items_features = []
 
@@ -159,7 +164,7 @@ class VBPR(ContentBasedAlgorithm):
 
         return items_features
 
-    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0) -> VBPRNetwork:
+    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = -1) -> VBPRNetwork:
 
         def _l2_loss(*tensors):
             l2_loss = 0
@@ -201,18 +206,22 @@ class VBPR(ContentBasedAlgorithm):
 
                 for i, batch in enumerate(pbar):
 
-                    user_idx, pos_idx, neg_idx = batch
+                    user_idx = batch[0].long()
+                    pos_idx = batch[1].long()
+                    neg_idx = batch[2].long()
 
                     n_user_processed += len(user_idx)
 
-                    user_idx = user_idx.long().to(self.device)
-                    pos_idx = pos_idx.long().to(self.device)
-                    neg_idx = neg_idx.long().to(self.device)
+                    positive_features = items_features[pos_idx]
+                    negative_features = items_features[neg_idx]
 
-                    positive_features = items_features[pos_idx].float().to(self.device)
-                    negative_features = items_features[neg_idx].float().to(self.device)
-
-                    model_input = (user_idx, pos_idx, neg_idx, positive_features, negative_features)
+                    model_input = (
+                        user_idx.to(self.device),
+                        pos_idx.to(self.device),
+                        neg_idx.to(self.device),
+                        positive_features.to(self.device),
+                        negative_features.to(self.device)
+                    )
 
                     Xuij, (gamma_u, theta_u), (beta_i_pos, beta_i_neg), (gamma_i_pos, gamma_i_neg) = model(model_input)
                     loss = - self.train_loss(Xuij).sum()

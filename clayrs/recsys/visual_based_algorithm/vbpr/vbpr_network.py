@@ -23,7 +23,7 @@ class TriplesDataset(data.Dataset):
 
     @functools.lru_cache(maxsize=128)
     def user_positive_interactions(self, user_idx: int) -> Set:
-        return set(self.train_ratings.get_user_interactions(user_idx)[:, 1])
+        return set(self.train_ratings.get_user_interactions(user_idx)[:, 1].astype(int))
 
     def __getitem__(self, idx):
 
