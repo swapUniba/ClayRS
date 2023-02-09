@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 import torch
 from torchvision import transforms
@@ -144,7 +144,7 @@ class TorchRandomVerticalFlip(TorchBuiltInTransformer):
 
 
 class TorchRandomResizedCrop(TorchBuiltInTransformer):
-    def __init__(self, size: int, scale: tuple[float] = (0.08, 1.0), ratio: tuple[float] = (3.0 / 4.0, 4.0 / 3.0),
+    def __init__(self, size: int, scale: Tuple[float] = (0.08, 1.0), ratio: Tuple[float] = (3.0 / 4.0, 4.0 / 3.0),
                  interpolation: InterpolationMode = InterpolationMode.BILINEAR, antialias: Optional[bool] = None):
         super().__init__(transforms.RandomResizedCrop(size, scale, ratio, interpolation, antialias))
 
@@ -191,8 +191,8 @@ class TorchRandomPerspective(TorchBuiltInTransformer):
 
 
 class TorchRandomErasing(TorchBuiltInTransformer):
-    def __init__(self, p: float = 0.5, scale: tuple[float, float] = (0.02, 0.33),
-                 ratio: tuple[float, float] = (0.3, 3.3), value: int = 0, inplace: bool = False):
+    def __init__(self, p: float = 0.5, scale: Tuple[float, float] = (0.02, 0.33),
+                 ratio: Tuple[float, float] = (0.3, 3.3), value: int = 0, inplace: bool = False):
         super().__init__(transforms.RandomErasing(p, scale, ratio, value, inplace))
 
 
