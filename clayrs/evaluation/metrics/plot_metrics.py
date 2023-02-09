@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.ticker as plticker
-from sklearn.metrics import roc_curve, auc
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings
@@ -585,47 +584,3 @@ class PopRecsCorrelation(PlotMetric):
             self.build_no_zeros_plot(popularities_no_zeros, recommendations_no_zeros)
 
         return pd.DataFrame(columns=['user_id', 'item_id', 'score'])
-
-
-class RocCurveAucScore(PlotMetric):
-
-    def __init__(self, out_dir: str = '.', file_name: str = 'roc_curve_plot',
-                 format: str = 'png', overwrite: bool = False,
-                 pos_label: Union[int, str] = None,
-                 drop_itermediate: bool = True):
-        super().__init__(out_dir, file_name, format, overwrite)
-
-        self.pos_label = pos_label
-        self.drop_intermediate = drop_itermediate
-
-    def __str__(self):
-        return "ROC Curve with AUC Score"
-
-    def __repr__(self):
-        return f'ROC(out_dir={self.output_directory}, ' \
-               f'file_name={self.file_name}, ' \
-               f'format={self.format}, ' \
-               f'overwrite={self.overwrite}, ' \
-               f'positive_label={self.pos_label}, ' \
-               f'drop_intermediate={self.drop_intermediate})'
-
-    def perform(self, split: Split) -> pd.DataFrame:
-
-        fpr, tpr, thresholds = roc_curve(split.truth, split.pred, pos_label=self.pos_label)
-        auc_value = auc(fpr, tpr)
-
-        fig = plt.figure()
-        plt.title('Receiver Operating Characteristic')
-        plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % auc_value)
-        plt.plot([0, 1], [0, 1], 'r--', label='Random guess')
-        plt.legend(loc='lower right')
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.ylabel('True Positive Rate')
-        plt.xlabel('False Positive Rate')
-
-        file_name = self.file_name
-
-        self.save_figure(fig, file_name=file_name)
-
-        return pd.DataFrame({"fpr": [fpr], "tpr": [tpr], "thresholds": [thresholds], "auc": [auc_value]})
