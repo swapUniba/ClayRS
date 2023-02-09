@@ -362,7 +362,7 @@ class ScipyVQ(EmbeddingInputPostProcessor):
         return self._repr_string
 
 
-class DimensionalityReduction(EmbeddingInputPostProcessor):
+class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
     """
     Abstract class that encapsulates the logic for dimensionality reduction techniques.
     It contains the methods to manage two different kinds of embedding representations:
