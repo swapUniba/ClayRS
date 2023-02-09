@@ -568,41 +568,42 @@ class Correlation(RankingMetric):
         truth = split.truth
 
         split_result = {'user_id': [], str(self): []}
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
 
-            ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
 
-            if len(actual) < 2:
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_predictions_idxs = pred.get_user_interactions(uidx_pred, as_indices=True, head=self.__top_n)
+            user_truth_idxs = truth.get_user_interactions(uidx_truth, as_indices=True)
+
+            user_prediction_items = pred.item_id_column[user_predictions_idxs]
+            user_prediction_scores = pred.score_column[user_predictions_idxs]
+
+            user_truth_items = truth.item_id_column[user_truth_idxs]
+
+            idx_truth_in_pred = npi.indices(user_prediction_items, user_truth_items, missing=-1)
+            idx_truth_not_in_pred = np.where(idx_truth_in_pred == -1)
+
+            user_pred_common_idxs = np.delete(idx_truth_in_pred, idx_truth_not_in_pred)
+            user_truth_common_idxs = np.delete(user_truth_idxs, idx_truth_not_in_pred)
+
+            common_truth_scores = truth.score_column[user_truth_common_idxs]
+            common_prediction_scores = user_prediction_scores[user_pred_common_idxs]
+
+            if len(common_truth_scores) < 2:
                 coef = np.nan
             else:
-                ideal_ranking = pd.Series(ideal)
-                actual_ranking = pd.Series(actual)
-                coef = actual_ranking.corr(ideal_ranking, method=self.__method)
+                truth_scores = pd.Series(common_truth_scores)
+                rank_scores = pd.Series(common_prediction_scores)
+                coef = rank_scores.corr(truth_scores, method=self.__method)
 
-            split_result['user_id'].append(user)
+            split_result['user_id'].append(uidx_truth)
             split_result[str(self)].append(coef)
+
+        split_result['user_id'] = list(truth.user_map.convert_seq_int2str(split_result['user_id']))
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
 
         return pd.DataFrame(split_result)
-
-    def _get_ideal_actual_rank(self, user_predictions: List[Interaction], user_truth: List[Interaction]):
-
-        if self.__top_n is not None:
-            user_predictions = user_predictions[:self.__top_n]
-
-        # sorting truth on score values
-        user_truth_ordered = sorted(user_truth, key=lambda interaction: interaction.score, reverse=True)
-        ideal_rank = [interaction.item_id for interaction in user_truth_ordered]
-
-        predicted_items = [interaction.item_id for interaction in user_predictions]
-
-        actual_rank = [predicted_items.index(item)
-                       for item in ideal_rank
-                       if item in set(predicted_items)]
-
-        # the ideal rank is basically 0, 1, 2, 3 etc.
-        return [i for i in range(len(ideal_rank))], actual_rank
