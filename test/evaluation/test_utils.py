@@ -58,28 +58,38 @@ class TestUtils(TestCase):
         # Expected result are item_popularity rated by user / n_item rated by user
         # item_popularity is the number of occurrences of the item in the 'to_id' column
 
-        u1_items = [interaction.item_id for interaction in self.custom_rat.get_user_interactions('u1')]
-        result_u1 = get_avg_pop(u1_items, counter_popularity)
+        u1_idx = self.custom_rat.user_map["u1"]
+        u1_items_idx = self.custom_rat.get_user_interactions(u1_idx)[:, 1].astype(int)
+        u1_items_str = self.custom_rat.item_map[u1_items_idx]
+        result_u1 = get_avg_pop(u1_items_str, counter_popularity)
         expected_u1 = (counter_popularity['i1'] + counter_popularity['i2']) / 2
         self.assertAlmostEqual(expected_u1, result_u1)
 
-        u2_items = [interaction.item_id for interaction in self.custom_rat.get_user_interactions('u2')]
-        result_u2 = get_avg_pop(u2_items, counter_popularity)
+        u2_idx = self.custom_rat.user_map["u2"]
+        u2_items_idx = self.custom_rat.get_user_interactions(u2_idx)[:, 1].astype(int)
+        u2_items_str = self.custom_rat.item_map[u2_items_idx]
+        result_u2 = get_avg_pop(u2_items_str, counter_popularity)
         expected_u2 = (counter_popularity['i1'] + counter_popularity['i50']) / 2
         self.assertAlmostEqual(expected_u2, result_u2)
 
-        u3_items = [interaction.item_id for interaction in self.custom_rat.get_user_interactions('u3')]
-        result_u3 = get_avg_pop(u3_items, counter_popularity)
+        u3_idx = self.custom_rat.user_map["u3"]
+        u3_items_idx = self.custom_rat.get_user_interactions(u3_idx)[:, 1].astype(int)
+        u3_items_str = self.custom_rat.item_map[u3_items_idx]
+        result_u3 = get_avg_pop(u3_items_str, counter_popularity)
         expected_u3 = (counter_popularity['i1'] + counter_popularity['i2']) / 2
         self.assertAlmostEqual(expected_u3, result_u3)
 
-        u4_items = [interaction.item_id for interaction in self.custom_rat.get_user_interactions('u4')]
-        result_u4 = get_avg_pop(u4_items, counter_popularity)
+        u4_idx = self.custom_rat.user_map["u4"]
+        u4_items_idx = self.custom_rat.get_user_interactions(u4_idx)[:, 1].astype(int)
+        u4_items_str = self.custom_rat.item_map[u4_items_idx]
+        result_u4 = get_avg_pop(u4_items_str, counter_popularity)
         expected_u4 = (counter_popularity['i1'] + counter_popularity['i50']) / 2
         self.assertAlmostEqual(expected_u4, result_u4)
 
-        u5_items = [interaction.item_id for interaction in self.custom_rat.get_user_interactions('u5')]
-        result_u5 = get_avg_pop(u5_items, counter_popularity)
+        u5_idx = self.custom_rat.user_map["u5"]
+        u5_items_idx = self.custom_rat.get_user_interactions(u5_idx)[:, 1].astype(int)
+        u5_items_str = self.custom_rat.item_map[u5_items_idx]
+        result_u5 = get_avg_pop(u5_items_str, counter_popularity)
         expected_u5 = (counter_popularity['i2'] + counter_popularity['i70']) / 2
         self.assertAlmostEqual(expected_u5, result_u5)
 
