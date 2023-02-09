@@ -87,21 +87,27 @@ class NDCG(RankingMetric):
 
         split_result = {'user_id': [], str(self): []}
 
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
 
-            ideal, actual = self._get_ideal_actual_rank(user_predictions, user_truth)
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_prediction_idxs = pred.get_user_interactions(uidx_pred, as_indices=True)
+            user_truth_idxs = truth.get_user_interactions(uidx_truth, as_indices=True)
 
-            if len(ideal) == 1:
-                user_ndcg = 1
-            else:
-                ideal_rank = np.array([ideal])
-                actual_rank = np.array([actual])
-                user_ndcg = self._calc_ndcg(ideal_rank, actual_rank)
+            user_prediction_items = pred.item_id_column[user_prediction_idxs]
+            user_truth_items = truth.item_id_column[user_truth_idxs]
 
-            split_result['user_id'].append(user)
+            idx_pred_in_truth = npi.indices(user_truth_items, user_prediction_items, missing=-1)
+            common_idx_pred_in_truth = idx_pred_in_truth[idx_pred_in_truth != -1]
+            common_truth_scores = truth.score_column[user_truth_idxs][common_idx_pred_in_truth]
+
+            user_ndcg = self._calc_ndcg(common_truth_scores)
+
+            split_result['user_id'].append(uidx_truth)
             split_result[str(self)].append(user_ndcg)
+
+        split_result['user_id'] = list(truth.user_map.convert_seq_int2str(split_result['user_id']))
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
@@ -184,7 +190,7 @@ class MRR(RankingMetric):
     def __repr__(self):
         return f'MRR(relevant_threshold={self.relevant_threshold})'
 
-    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction]):
+    def calc_reciprocal_rank(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
 
@@ -193,14 +199,12 @@ class MRR(RankingMetric):
             user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
         """
 
-        reciprocal_rank = 0
-        i = 1
-        for interaction_pred in user_predictions:
-            if interaction_pred.item_id in user_truth_relevant_items:
-                reciprocal_rank = 1 / i
-                break  # We only need the first relevant item position in the rank
+        common_idxs = npi.indices(user_truth_relevant_items, user_predictions_items, missing=-1)
+        non_missing_idxs = np.where(common_idxs != -1)[0]
 
-            i += 1
+        reciprocal_rank = 0
+        if len(non_missing_idxs) != 0:
+            reciprocal_rank = 1 / (non_missing_idxs[0] + 1)  # [0][0] because where returns a tuple
 
         return reciprocal_rank
 
@@ -210,20 +214,27 @@ class MRR(RankingMetric):
 
         split_result = {'user_id': [], str(self): []}
 
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
+
         rr_list = []
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_predictions_idxs = pred.get_user_interactions(uidx_pred, as_indices=True)
+            user_truth_idxs = truth.get_user_interactions(uidx_truth, as_indices=True)
+
+            user_truth_scores = truth.score_column[user_truth_idxs]
+            user_truth_items = truth.item_id_column[user_truth_idxs]
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = np.nanmean([interaction.score for interaction in user_truth])
+                relevant_threshold = np.nanmean(user_truth_scores)
 
-            user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
-                                            if interaction.score >= relevant_threshold)
+            user_predictions_items = pred.item_id_column[user_predictions_idxs]
+            user_truth_relevant_items = user_truth_items[np.where(user_truth_scores >= relevant_threshold)]
 
             if len(user_truth_relevant_items) != 0:
-                user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions, user_truth_relevant_items)
+                user_reciprocal_rank = self.calc_reciprocal_rank(user_predictions_items, user_truth_relevant_items)
             else:
                 user_reciprocal_rank = np.nan
 
@@ -283,7 +294,7 @@ class MRRAtK(MRR):
     def __repr__(self):
         return f'MRRAtK(relevant_threshold={self.relevant_threshold})'
 
-    def calc_reciprocal_rank(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[Interaction]):
+    def calc_reciprocal_rank(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
         """
         Method which calculates the RR (Reciprocal Rank) for a single user
 
@@ -291,7 +302,7 @@ class MRRAtK(MRR):
             user_predictions: list of Interactions object of the recommendation list for the user
             user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
         """
-        user_predictions_cut = user_predictions[:self.k]
+        user_predictions_cut = user_predictions_items[:self.k]
 
         return super().calc_reciprocal_rank(user_predictions_cut, user_truth_relevant_items)
 
@@ -331,15 +342,21 @@ class MAP(RankingMetric):
     def __init__(self, relevant_threshold: float = None):
         self.relevant_threshold = relevant_threshold
 
-    def _compute_ap(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[str]):
-        tp = 0
-        cumulative_precision = 0
-        for position, interaction in enumerate(user_predictions, start=1):
+    def _compute_ap(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
 
-            # this 'if' acts as the relevance indicator in the AP formula
-            if interaction.item_id in user_truth_relevant_items:
-                tp += 1
-                cumulative_precision += tp / position
+        # all items both in prediction and relevant truth are retrieved, if an item only appears in prediction it is
+        # marked with a -1, we then retrieve only the indexes of items that appear in both
+        common_idxs = npi.indices(user_truth_relevant_items, user_predictions_items, missing=-1)
+        non_missing_idxs = np.where(common_idxs != -1)[0]
+
+        # we initialize an array for true positives. True positive is incremented by 1 each time a relevant item
+        # is found, therefore this array will be as long as the array containing the indices of items both in
+        # prediction and relevant truth (and values will be as such [1, 2, 3, ...])
+        tp_array = np.arange(start=1, stop=len(non_missing_idxs) + 1)
+
+        # finally, precision is computed by dividing each true positive value to each corresponding position
+        precision_array = tp_array / (non_missing_idxs + 1)
+        cumulative_precision = np.sum(precision_array)
 
         user_ap = (1 / len(user_truth_relevant_items)) * cumulative_precision
 
@@ -351,25 +368,33 @@ class MAP(RankingMetric):
 
         split_result = {'user_id': [], 'AP': []}
 
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
+
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_predictions_idxs = pred.get_user_interactions(uidx_pred, as_indices=True)
+            user_truth_idxs = truth.get_user_interactions(uidx_truth, as_indices=True)
+
+            user_truth_scores = truth.score_column[user_truth_idxs]
+            user_truth_items = truth.item_id_column[user_truth_idxs]
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = np.nanmean([interaction.score for interaction in user_truth])
+                relevant_threshold = np.nanmean(user_truth_scores)
 
-            user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
-                                            if interaction.score >= relevant_threshold)
+            user_predictions_items = pred.item_id_column[user_predictions_idxs]
+            user_truth_relevant_items = user_truth_items[np.where(user_truth_scores >= relevant_threshold)]
 
             if len(user_truth_relevant_items) != 0:
-                user_ap = self._compute_ap(user_predictions, user_truth_relevant_items)
+                user_ap = self._compute_ap(user_predictions_items, user_truth_relevant_items)
             else:
                 user_ap = np.nan
 
-            split_result['user_id'].append(user)
+            split_result['user_id'].append(uidx_truth)
             split_result['AP'].append(user_ap)  # for users we are computing Average Precision
 
+        split_result['user_id'] = list(truth.user_map.convert_seq_int2str(split_result['user_id']))
         df_users = pd.DataFrame(split_result)
 
         # for the system we are computing Mean Average Precision
@@ -424,10 +449,10 @@ class MAPAtK(MAP):
         super().__init__(relevant_threshold)
         self.k = k
 
-    def _compute_ap(self, user_predictions: List[Interaction], user_truth_relevant_items: Set[str]):
-        user_predictions = user_predictions[:self.k]
+    def _compute_ap(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        user_predictions_items = user_predictions_items[:self.k]
 
-        return super()._compute_ap(user_predictions, user_truth_relevant_items)
+        return super()._compute_ap(user_predictions_items, user_truth_relevant_items)
 
     def __str__(self):
         return "MAPAtK"
