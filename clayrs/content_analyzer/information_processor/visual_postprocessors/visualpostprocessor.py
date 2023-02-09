@@ -21,6 +21,10 @@ from clayrs.content_analyzer.content_representation.content import FieldRepresen
 class PostProcessor(ABC):
     """
     Abstract class that generalizes data post-processing
+
+    The class is then extended by specifying the input representation types.
+    So, for example, if the post-processing technique takes embeddings as input it will be extended as
+    EmbeddingPostProcessor
     """
 
     @abstractmethod
@@ -37,6 +41,9 @@ class PostProcessor(ABC):
 
 
 class EmbeddingInputPostProcessor(PostProcessor):
+    """
+    Abstract class to represent post-processors which take an embedding as input
+    """
 
     @abstractmethod
     def process(self, field_repr_list: List[EmbeddingField]) -> List[FieldRepresentation]:
@@ -129,7 +136,36 @@ class VisualBagOfWords(EmbeddingInputPostProcessor):
         raise NotImplementedError
 
 
-class CountVisualBagOfFeatures(VisualBagOfFeatures):
+class CountVisualBagOfWords(VisualBagOfWords):
+    """
+    Class which implements the count weighting schema, which means that the final representation will contain counts
+    of each visual word appearing from the codebook
+
+    Example:
+
+        codebook = [[0.6, 1.7, 0.3],
+                    [0.2, 0.7, 1.8]]
+
+        repr = [[0.6, 1.7, 0.3],
+                [0.6, 1.7, 0.3]]
+
+        output of weighting schema = [2, 0]
+
+    NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
+    visual techniques and setting this as postprocessor for the output of that technique as follows:
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.CountVisualBagOfWords()])
+
+    ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
+    Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
+
+    Args:
+        arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+        arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+
+    NOTE: for this technique it is mandatory that for "with_std" to be set to True
+    """
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
@@ -155,7 +191,40 @@ class CountVisualBagOfFeatures(VisualBagOfFeatures):
         return self._repr_string
 
 
-class TfIdfVisualBagOfFeatures(VisualBagOfFeatures):
+class TfIdfVisualBagOfWords(VisualBagOfWords):
+    """
+    Class which implements the tf-idf weighting schema, which means that the final representation will contain tf-idf
+    scores of each visual word appearing from the codebook
+
+    Example:
+
+        codebook = [[0.6, 1.7, 0.3],
+                    [0.2, 0.7, 1.8]]
+
+        repr1 = [[0.6, 1.7, 0.3],
+                 [0.6, 1.7, 0.3]]
+
+        repr2 = [[0.6, 1.7, 0.3],
+                 [0.2, 0.7, 1.8]]
+
+        output of weighting schema = [[2, 0], [1, 1.69]]
+
+    NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
+    visual techniques and setting this as postprocessor for the output of that technique as follows:
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.TfIdfVisualBagOfWords()])
+
+    ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
+    Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
+
+    Args:
+        arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+        arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+        arguments for [SkLearn TfIdf Transformer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfTransformer.html)
+
+    NOTE: for this technique it is mandatory that for "with_std" to be set to True
+    """
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
@@ -190,6 +259,23 @@ class TfIdfVisualBagOfFeatures(VisualBagOfFeatures):
 
 
 class ScipyVQ(EmbeddingInputPostProcessor):
+    """
+    Vector quantization using Scipy implementation and SkLearn KMeans.
+    The idea behind this technique is to "approximate" feature vectors, using only a finite set of prototype vectors
+    from a codebook.
+    The codebook is computed using the SkLearn KMeans implementation. After that, for each feature in the
+    representation, the closest one from the codebook is found using the Vector Quantization implementation from
+    scipy and the retrieved vector is replaced to the original one in the final representation.
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.ScipyVQ()])
+
+    Args:
+        arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+        arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+
+    NOTE: for this technique it is mandatory that for "with_std" to be set to True
+    """
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
@@ -254,9 +340,26 @@ class ScipyVQ(EmbeddingInputPostProcessor):
 
 
 class DimensionalityReduction(EmbeddingInputPostProcessor):
+    """
+    Abstract class that encapsulates the logic for dimensionality reduction techniques.
+    It contains the methods to manage two different kinds of embedding representations:
+
+        - All embedding representations are 1 dimensional: in this case the embeddings from all items are vertically
+            stacked into a matrix and, after reducing the dimensions of its rows, each row is returned separately
+
+        - All embedding representations are 2 dimensional: in this case, each field representation is vertically
+            stacked into a matrix and, after reducing the dimensions of its rows, the 2 dimensional arrays are
+            re-created from the processed matrix
+
+    NOTE: embeddings of dimensionality greater than 2 are not supported
+
+    Extending this class and implementing the "apply_processing" method allows to implement a new dimensionality
+    reduction technique
+    """
 
     @staticmethod
     def vstack(field_values_repr_list: Union[List[csc_matrix], List[np.ndarray]]) -> np.ndarray:
+        """method for vertically stacking"""
         if isinstance(field_values_repr_list[0], csc_matrix):
             return vstack(field_values_repr_list).A
         else:
@@ -296,6 +399,17 @@ class DimensionalityReduction(EmbeddingInputPostProcessor):
 
 
 class SkLearnPCA(DimensionalityReduction):
+    """
+    Dimensionality reduction using the PCA implementation from SkLearn
+
+    Usage example:
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnPCA()])
+
+    Args:
+        arguments for [SkLearn PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html)
+    """
 
     def __init__(self, n_components=None, copy=True, whiten=False, svd_solver='auto', tol=0.0,
                  iterated_power='auto', random_state=None):
@@ -314,9 +428,20 @@ class SkLearnPCA(DimensionalityReduction):
         return self._repr_string
 
 
-class SkLearnRandomProjections(DimensionalityReduction):
+class SkLearnGaussianRandomProjections(DimensionalityReduction):
+    """
+    Dimensionality reduction using the Gaussian Random Projections implementation from SkLearn
 
-    def __init__(self, n_components='auto', eps=0.1):
+    Usage example:
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnGaussianRandomProjections()])
+
+    Args:
+        arguments for [SkLearn Gaussian Random Projection](https://scikit-learn.org/stable/modules/generated/sklearn.random_projection.GaussianRandomProjection.html)
+    """
+
+    def __init__(self, n_components='auto', eps=0.1, random_state=None):
         super().__init__()
         self.random_proj = GaussianRandomProjection(n_components=n_components, eps=eps, random_state=random_state)
         self._repr_string = autorepr(self, inspect.currentframe())
@@ -332,6 +457,17 @@ class SkLearnRandomProjections(DimensionalityReduction):
 
 
 class SkLearnFeatureAgglomeration(DimensionalityReduction):
+    """
+    Dimensionality reduction using the Feature Agglomeration implementation from SkLearn
+
+    Usage example:
+
+    >>> import clayrs.content_analyzer as ca
+    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnFeatureAgglomeration()])
+
+    Args:
+        arguments for [SkLearn Feature Agglomeration](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.FeatureAgglomeration.html)
+    """
 
     def __init__(self, n_clusters=2, affinity='euclidean', memory=None, connectivity=None, compute_full_tree='auto',
                  linkage='ward', pooling_func=np.mean, distance_threshold=None, compute_distances=False):
