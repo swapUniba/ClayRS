@@ -287,6 +287,7 @@ class PopRatioProfileVsRecs(GroupFairnessMetric, PlotMetric):
                                f"for any user of said group!")
                 continue
 
+            valid_group = predictions.user_map.convert_seq_str2int(list(valid_group))
             profile_group_ratings = split_user_profile.filter_ratings(user_list=valid_group)
             pred_group_recommendations = predictions.filter_ratings(user_list=valid_group)
 
