@@ -6,10 +6,12 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, FeatureAgglomeration
 from sklearn.random_projection import GaussianRandomProjection
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.preprocessing import StandardScaler
 from scipy.cluster.vq import vq
 from scipy.sparse import csc_matrix, vstack
-from typing import List, Any, Union
+from typing import List, Any, Union, Optional
 import numpy as np
+import pandas as pd
 
 from clayrs.utils.automatic_methods import autorepr
 
@@ -41,59 +43,113 @@ class EmbeddingInputPostProcessor(PostProcessor):
         raise NotImplementedError
 
 
-class VisualBagOfFeatures(EmbeddingInputPostProcessor):
+class EmbeddingFeaturesInputPostProcessor(PostProcessor):
+    """
+    Abstract class to represent post-processors which take an embedding or a features bag as input
+    """
+
+    @abstractmethod
+    def process(self, field_repr_list: Union[List[FeaturesBagField], List[EmbeddingField]]) -> List[FieldRepresentation]:
+        raise NotImplementedError
+
+
+class VisualBagOfWords(EmbeddingInputPostProcessor):
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
-                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto"):
+                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
+                 with_mean: bool = True, with_std: bool = True):
         self.clustering_algorithm = KMeans(n_clusters=n_clusters, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
                                            random_state=random_state, copy_x=copy_x, algorithm=algorithm)
+        self.with_mean = with_mean
+        self.with_std = with_std
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def process(self, field_repr_list: List[EmbeddingField]) -> List[FeaturesBagField]:
         first_inst = field_repr_list[0].value
+
+        # extract features from the representations and apply clustering to them
         if len(first_inst.shape) == 2:
-            descriptors = [feature for field_repr in field_repr_list for feature in field_repr.value]
-            self.clustering_algorithm.fit(np.vstack(descriptors))
-            codewords = self.clustering_algorithm.cluster_centers_
-            new_field_repr_list = []
-            indptr = [0]
-            indices = []
-            data = []
-            for field_repr in field_repr_list:
-                code, _ = vq(field_repr.value, codewords)
-                for codeword in code:
-                    index = codeword
-                    indices.append(index)
-                    data.append(1)
-                indptr.append(len(indices))
-            sparse_repr = scipy.sparse.csr_matrix((data, indices, indptr))
-            sparse_repr = self.apply_weights(sparse_repr)
-            for single_repr in sparse_repr:
-                new_field_repr_list.append(
-                    FeaturesBagField(single_repr.tocsc(),
-                                     [(index, str(codewords[index])) for index in np.unique(single_repr.nonzero()[1])]))
-            return new_field_repr_list
+            descriptors = np.vstack([feature for field_repr in field_repr_list for feature in field_repr.value])
         else:
-            raise Exception('Unsupported dimensionality')
+            raise ValueError(f'Unsupported dimensionality for technique {self}, '
+                             f'only two dimensional arrays are supported')
+
+        scaler = None
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        self.clustering_algorithm.fit(descriptors)
+        codewords = self.clustering_algorithm.cluster_centers_
+
+        new_field_repr_list = []
+        indptr = [0]
+        indices = []
+        data = []
+
+        # apply vector quantization to each representation w.r.t. the codewords
+        # dictionary created at the previous step
+        for field_repr in field_repr_list:
+
+            if scaler is not None:
+                code, _ = vq(scaler.transform(field_repr.value), codewords)
+            else:
+                code, _ = vq(field_repr.value, codewords)
+
+            for codeword in code:
+                index = codeword
+                indices.append(index)
+                data.append(1)
+            indptr.append(len(indices))
+
+        # instantiate the visual bag of features as sparse matrix and apply a weighting schema to it
+        sparse_repr = scipy.sparse.csr_matrix((data, indices, indptr))
+        sparse_repr = self.apply_weights(sparse_repr)
+        for single_repr in sparse_repr:
+            new_field_repr_list.append(
+                FeaturesBagField(single_repr.tocsc(),
+                                 [(index, str(codewords[index])) for index in pd.unique(single_repr.nonzero()[1])]))
+        return new_field_repr_list
 
     @abstractmethod
     def apply_weights(self, sparse_matrix: scipy.sparse.csr_matrix) -> scipy.sparse.csr_matrix:
+        """
+        Apply a weighting schema to the representations obtained from the vector quantization step
+
+        Args:
+            sparse_matrix: scipy sparse csr matrix containing the count of occurrences of each visual word
+        """
+        raise NotImplementedError
+
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
         raise NotImplementedError
 
 
 class CountVisualBagOfFeatures(VisualBagOfFeatures):
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
-                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto"):
+                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
+                 with_mean: bool = True, with_std: bool = True):
         super().__init__(n_clusters=n_clusters, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
-                         random_state=random_state, copy_x=copy_x, algorithm=algorithm)
+                         random_state=random_state, copy_x=copy_x, algorithm=algorithm, with_mean=with_mean,
+                         with_std=with_std)
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def apply_weights(self, sparse_repr: scipy.sparse.csr_matrix) -> scipy.sparse.csr_matrix:
-        return sparse_repr
+    def apply_weights(self, sparse_matrix: scipy.sparse.csr_matrix) -> scipy.sparse.csr_matrix:
+        """
+        Apply a count wight schema to the representations obtained from the vector quantization step
+
+        Args:
+            sparse_matrix: scipy sparse csr matrix containing the count of occurrences of each visual word
+        """
+        return sparse_matrix
 
     def __str__(self):
-        return "CountVisualBagOfFeatures"
+        return "Count Visual Bag of Words"
 
     def __repr__(self):
         return self._repr_string
@@ -102,16 +158,32 @@ class CountVisualBagOfFeatures(VisualBagOfFeatures):
 class TfIdfVisualBagOfFeatures(VisualBagOfFeatures):
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
-                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto"):
+                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
+                 with_mean: bool = True, with_std: bool = True,
+                 norm: Optional[str] = "l2", use_idf: bool = True,
+                 smooth_idf: bool = True, sublinear_tf: bool = False):
         super().__init__(n_clusters=n_clusters, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
-                         random_state=random_state, copy_x=copy_x, algorithm=algorithm)
+                         random_state=random_state, copy_x=copy_x, algorithm=algorithm, with_mean=with_mean,
+                         with_std=with_std)
+
+        self.tf_idf_params = {"norm": norm,
+                              "use_idf": use_idf,
+                              "smooth_idf": smooth_idf,
+                              "sublinear_tf": sublinear_tf}
+
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def apply_weights(self, sparse_repr: scipy.sparse.csr_matrix) -> scipy.sparse.csr_matrix:
-        return TfidfTransformer().fit_transform(sparse_repr)
+    def apply_weights(self, sparse_matrix: scipy.sparse.csr_matrix) -> scipy.sparse.csr_matrix:
+        """
+        Apply a tf-idf weighting schema to the representations obtained from the vector quantization step
+
+        Args:
+            sparse_matrix: scipy sparse csr matrix containing the count of occurrences of each visual word
+        """
+        return TfidfTransformer(**self.tf_idf_params).fit_transform(sparse_matrix.todok())
 
     def __str__(self):
-        return "TfIdfVisualBagOfFeatures"
+        return "Tf-Idf Visual Bag of Features"
 
     def __repr__(self):
         return self._repr_string
@@ -120,34 +192,62 @@ class TfIdfVisualBagOfFeatures(VisualBagOfFeatures):
 class ScipyVQ(EmbeddingInputPostProcessor):
 
     def __init__(self, n_clusters: Any = 8, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
-                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto"):
+                 tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
+                 with_mean: bool = True, with_std: bool = True):
         self.k_means = KMeans(n_clusters=n_clusters, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
                               random_state=random_state, copy_x=copy_x, algorithm=algorithm)
+        self.with_mean = with_mean
+        self.with_std = with_std
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
         first_inst = field_repr_list[0].value
-        if len(first_inst.shape) == 1:
-            features = [feature.value for feature in field_repr_list]
-        elif len(first_inst.shape) == 2:
-            features = [feature for field_repr in field_repr_list for feature in field_repr.value]
+
+        # stack the representations from all fields
+
+        if len(first_inst.shape) == 2:
+            descriptors = np.vstack([feature for field_repr in field_repr_list for feature in field_repr.value])
+        elif len(first_inst.shape) == 1:
+            descriptors = np.vstack([field_repr.value for field_repr in field_repr_list])
         else:
-            raise Exception('Unsupported granularity')
-        self.k_means.fit(np.vstack(features))
+            raise ValueError(f'Unsupported dimensionality for technique {self}, '
+                             f'only one and two dimensional arrays are supported')
+
+        scaler = None
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        # learn clusters using kmeans
+        self.k_means.fit(descriptors)
         codewords = self.k_means.cluster_centers_
         new_field_repr_list = []
+
+        # replace the old representations with the new ones (which will be the most similar codeword from the
+        # codebook)
         if len(first_inst.shape) == 1:
             for field_repr in field_repr_list:
-                code, _ = vq(np.matrix(field_repr.value), codewords)
+
+                if scaler is not None:
+                    code, _ = vq(scaler.transform(np.expand_dims(field_repr.value, axis=0)), codewords)
+                else:
+                    code, _ = vq(np.expand_dims(field_repr.value, axis=0), codewords)
+
                 new_field_repr_list.append(EmbeddingField(codewords[code]))
         else:
             for field_repr in field_repr_list:
-                code, _ = vq(field_repr.value, codewords)
+
+                if scaler is not None:
+                    code, _ = vq(scaler.transform(field_repr.value), codewords)
+                else:
+                    code, _ = vq(field_repr.value, codewords)
+
                 new_field_repr_list.append(EmbeddingField(codewords[code]))
         return new_field_repr_list
 
     def __str__(self):
-        return "ScipyVQ"
+        return "Scipy Vector Quantization"
 
     def __repr__(self):
         return self._repr_string
@@ -164,11 +264,13 @@ class DimensionalityReduction(EmbeddingInputPostProcessor):
 
     def process(self, field_repr_list: Union[List[EmbeddingField], List[FeaturesBagField]]) -> List[EmbeddingField]:
         first_inst = field_repr_list[0].value
+
         # single array containing the whole embedding (document embedding, for example)
         # or 1 dimensional sparse array
         if len(first_inst.shape) == 1 or (len(first_inst.shape) == 2 and first_inst.shape[0] == 1):
             processed_arrays = self.apply_processing(self.vstack([field.value for field in field_repr_list]))
             return [EmbeddingField(array) for array in processed_arrays]
+
         # array of word embeddings (330 word embeddings with 100 as dimensionality, for example)
         # this code applies the post-processing to each single word embedding
         elif len(first_inst.shape) == 2:
@@ -182,9 +284,11 @@ class DimensionalityReduction(EmbeddingInputPostProcessor):
                 next_instance_index = num_of_elements+next_instance_index
                 new_field_repr_list.append(EmbeddingField(new_embedding_repr))
             return new_field_repr_list
+
         # other cases (?)
         else:
-            raise Exception('Unsupported dimensionality')
+            raise ValueError(f'Unsupported dimensionality for technique {self}, '
+                             f'only one dimensional and two dimensional arrays are supported')
 
     @abstractmethod
     def apply_processing(self, field_repr_array: np.ndarray) -> np.ndarray:
@@ -204,7 +308,7 @@ class SkLearnPCA(DimensionalityReduction):
         return self.pca.fit_transform(field_repr_array)
 
     def __str__(self):
-        return 'SkLearnPCA'
+        return 'SkLearn PCA'
 
     def __repr__(self):
         return self._repr_string
@@ -214,14 +318,14 @@ class SkLearnRandomProjections(DimensionalityReduction):
 
     def __init__(self, n_components='auto', eps=0.1):
         super().__init__()
-        self.random_proj = GaussianRandomProjection(n_components=n_components, eps=eps)
+        self.random_proj = GaussianRandomProjection(n_components=n_components, eps=eps, random_state=random_state)
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def apply_processing(self, field_repr_array: np.ndarray) -> np.ndarray:
         return self.random_proj.fit_transform(field_repr_array)
 
     def __str__(self):
-        return 'SkLearnRandomProjections'
+        return 'SkLearn Random Projections'
 
     def __repr__(self):
         return self._repr_string
@@ -243,7 +347,7 @@ class SkLearnFeatureAgglomeration(DimensionalityReduction):
         return self.feature_agg.fit_transform(field_repr_array)
 
     def __str__(self):
-        return 'SkLearnFeatureAgglomeration'
+        return 'SkLearn Feature Agglomeration'
 
     def __repr__(self):
         return self._repr_string
