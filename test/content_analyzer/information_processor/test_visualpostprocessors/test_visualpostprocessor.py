@@ -5,6 +5,7 @@ from clayrs.content_analyzer.information_processor.visual_postprocessors import 
 from clayrs.content_analyzer.content_representation.content import EmbeddingField, FeaturesBagField
 
 import numpy as np
+import scipy.sparse as sp
 
 
 class TestVisualPostProcessing(TestCase):
@@ -181,5 +182,35 @@ class TestVisualPostProcessing(TestCase):
         self.assertEqual(output[0].value.shape, (2, 2))
         self.assertEqual(output[1].value.shape, (2, 2))
         self.assertEqual(output[2].value.shape, (2, 2))
+
+        # 1 dimensional sparse csc case
+        # in the case of bags of features only the 1 dimensional case makes sense
+
+        input = [
+            FeaturesBagField(sp.csr_matrix(np.array([10, 10, 9, 9, 10])).tocsc(), pos_feature_tuples=[]),
+            FeaturesBagField(sp.csr_matrix(np.array([10, 9, 10, 6, 8])).tocsc(), pos_feature_tuples=[]),
+            FeaturesBagField(sp.csr_matrix(np.array([12, 7, 10, 5, 2])).tocsc(), pos_feature_tuples=[])
+        ]
+
+        output = SkLearnPCA(n_components=2, random_state=42).process(input)
+
+        self.assertIsInstance(output[0], EmbeddingField)
+        self.assertEqual(len(output[0].value), 2)
+        self.assertEqual(len(output[1].value), 2)
+        self.assertEqual(len(output[2].value), 2)
+
+        output = SkLearnGaussianRandomProjections(n_components=2, random_state=42).process(input)
+
+        self.assertIsInstance(output[0], EmbeddingField)
+        self.assertEqual(len(output[0].value), 2)
+        self.assertEqual(len(output[1].value), 2)
+        self.assertEqual(len(output[2].value), 2)
+
+        output = SkLearnFeatureAgglomeration().process(input)
+
+        self.assertIsInstance(output[0], EmbeddingField)
+        self.assertEqual(len(output[0].value), 2)
+        self.assertEqual(len(output[1].value), 2)
+        self.assertEqual(len(output[2].value), 2)
 
 
