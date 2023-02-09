@@ -212,49 +212,42 @@ class TestStrIntMap(TestCase):
         map2 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
 
         self.assertEqual(map1, map2)
-        self.assertEqual(hash(map1), hash(map2))
 
         # test equal map with only different intial dict order
         map1 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
         map2 = StrIntMap({"i2": 1, "i3": 2, "i1": 0})
 
         self.assertEqual(map1, map2)
-        self.assertEqual(hash(map1), hash(map2))
 
         # test different map disordered but with same elements
         map1 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
         map2 = StrIntMap({"i1": 1, "i2": 2, "i3": 0})
 
         self.assertNotEqual(map1, map2)
-        self.assertNotEqual(hash(map1), hash(map2))
 
         # test completely different map but with same elements
         map1 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
         map2 = StrIntMap({"i10": 0, "i11": 1, "i12": 2})
 
         self.assertNotEqual(map1, map2)
-        self.assertNotEqual(hash(map1), hash(map2))
 
         # test different map with only almost all elements in common
         map1 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
         map2 = StrIntMap({"i1": 0, "i2": 1, "i3": 2, "i4": 3})
 
         self.assertNotEqual(map1, map2)
-        self.assertNotEqual(hash(map1), hash(map2))
 
         # test completely different map
         map1 = StrIntMap({"i1": 0, "i2": 1, "i3": 2})
         map2 = StrIntMap({"i11": 0, "i222": 1, "i33": 2, "i45": 3})
 
         self.assertNotEqual(map1, map2)
-        self.assertNotEqual(hash(map1), hash(map2))
 
         # test empty map
         map1 = StrIntMap({})
         map2 = StrIntMap({})
 
         self.assertEqual(map1, map2)
-        self.assertEqual(hash(map1), hash(map2))
 
 
 class TestRatings(TestCase):
@@ -916,12 +909,12 @@ class TestRatings(TestCase):
 
         rat = Ratings.from_dataframe(df_ratings)
 
-        # take first element for all users
-        head_rat = rat.take_head_all(1)
+        # take first 2 elements for all users
+        head_rat = rat.take_head_all(2)
 
-        self.assertEqual(['u1', 'u2', 'u3', 'u4'], list(head_rat.user_id_column))
-        self.assertEqual(['i1', 'i3', 'i82', 'i84'], list(head_rat.item_id_column))
-        self.assertEqual([2.0, 4.0, 2.0, 5.0], list(head_rat.score_column))
+        self.assertEqual(['u1', 'u1', 'u2', 'u2', 'u3', 'u4'], list(head_rat.user_id_column))
+        self.assertEqual(['i1', 'i2', 'i3', 'i80', 'i82', 'i84'], list(head_rat.item_id_column))
+        self.assertEqual([2.0, 3.0, 4.0, 1.0, 2.0, 5.0], list(head_rat.score_column))
 
     def test_exception_import_ratings(self):
         # Test exception column name not present in raw source
@@ -990,7 +983,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertEqual(rat1, rat2)
-        self.assertEqual(hash(rat1), hash(rat2))
 
         # test equal ratings with timestamp
         uir1 = [[0, 0, 2.0, 123],
@@ -1008,7 +1000,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertEqual(rat1, rat2)
-        self.assertEqual(hash(rat1), hash(rat2))
 
         # test different ratings where rows are in different order
         uir1 = [[0, 1, 3.0],
@@ -1026,7 +1017,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertNotEqual(rat1, rat2)
-        self.assertNotEqual(hash(rat1), hash(rat2))
 
         # test different ratings where both mappings are different
         uir1 = [[0, 0, 2.0],
@@ -1044,7 +1034,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertNotEqual(rat1, rat2)
-        self.assertNotEqual(hash(rat1), hash(rat2))
 
         # test different ratings where only user map is different
         uir1 = [[0, 0, 2.0],
@@ -1062,7 +1051,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertNotEqual(rat1, rat2)
-        self.assertNotEqual(hash(rat1), hash(rat2))
 
         # test different ratings where only item map is different
         uir1 = [[0, 0, 2.0],
@@ -1080,7 +1068,6 @@ class TestRatings(TestCase):
         rat2 = Ratings.from_uir(uir2, {'u1': 0, 'u2': 1, 'u3': 2}, {'i1': 0, 'i2': 1, 'i3': 2})
 
         self.assertNotEqual(rat1, rat2)
-        self.assertNotEqual(hash(rat1), hash(rat2))
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ import functools
 import os
 import numpy as np
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Iterator, TYPE_CHECKING, Tuple, Sequence, Callable
+from typing import Dict, Union, List, Iterator, TYPE_CHECKING, Tuple, Sequence, Callable
 
 import pandas as pd
 import numpy_indexed as npi
@@ -220,8 +220,7 @@ class Ratings:
     def uir(self):
         return self._uir
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     @handler_empty_matrix(dtype=int)
     def user_idx_column(self):
         """
@@ -234,23 +233,19 @@ class Ratings:
         """
         return self._uir[:, 0].astype(int)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def unique_user_idx_column(self):
         return pd.unique(self.user_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def user_id_column(self):
         return self.user_map.convert_seq_int2str(self.user_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def unique_user_id_column(self):
         return self.user_map.convert_seq_int2str(self.unique_user_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     @handler_empty_matrix(dtype=int)
     def item_idx_column(self) -> np.ndarray:
         """
@@ -262,23 +257,19 @@ class Ratings:
         """
         return self._uir[:, 1].astype(int)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def unique_item_idx_column(self):
         return pd.unique(self.item_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def item_id_column(self):
         return self.item_map.convert_seq_int2str(self.item_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     def unique_item_id_column(self):
         return self.item_map.convert_seq_int2str(self.unique_item_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     @handler_empty_matrix(dtype=float)
     def score_column(self):
         """
@@ -289,8 +280,7 @@ class Ratings:
         """
         return self._uir[:, 2].astype(float)
 
-    @property
-    @functools.lru_cache(maxsize=128)
+    @functools.cached_property
     @handler_empty_matrix(dtype=int)
     def timestamp_column(self):
         """
@@ -361,7 +351,7 @@ class Ratings:
             for user_idx in self.unique_user_idx_column
         }
 
-    def get_user_interactions(self, user_idx: int, head: int = None):
+    def get_user_interactions(self, user_idx: int, head: int = None, as_indices: bool = False):
         """
         Method which returns a list of `Interaction` objects for a single user, one for each interaction of the user.
         Then you can easily iterate and extract useful information using list comprehension
@@ -405,9 +395,9 @@ class Ratings:
 
         """
         user_rows = self._user2rows.get(user_idx, [])[:head]
-        return self._uir[user_rows]
+        return user_rows if as_indices else self._uir[user_rows]
 
-    def filter_ratings(self, user_list: Iterable[int]) -> Ratings:
+    def filter_ratings(self, user_list: Sequence[int]) -> Ratings:
         """
         Method which will filter the rating frame by keeping only interactions of users appearing in the `user_list`.
         This method will return a new `Ratings` object without changing the original
@@ -483,8 +473,8 @@ class Ratings:
         Returns:
             The filtered Ratings object which contains only first $k$ interactions for each user
         """
-        gen_cut_rows = (rows[:head] for rows in self._user2rows.values())
-        new_uir = self._uir[np.fromiter(gen_cut_rows, dtype=int)]
+        cut_rows = np.hstack((rows[:head] for rows in self._user2rows.values()))
+        new_uir = self._uir[cut_rows]
 
         return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
@@ -770,18 +760,13 @@ class Ratings:
         return self._uir.shape[0]
 
     def __str__(self):
-        return str(self.to_dataframe(ids_as_str=False))
+        return str(self.to_dataframe(ids_as_str=True))
 
     def __repr__(self):
         return repr(self._uir)
 
     def __iter__(self):
         yield from iter(self._uir)
-
-    def __hash__(self):
-        return hash((self._uir.tostring(),
-                     self.user_map,
-                     self.item_map))
 
     def __eq__(self, other):
 
