@@ -8,7 +8,7 @@ import scipy.sparse
 
 from clayrs.content_analyzer.exogenous_properties_retrieval import PropertiesFromDataset
 from clayrs.content_analyzer import ContentAnalyzer, FieldConfig, ExogenousConfig, ItemAnalyzerConfig
-from clayrs.content_analyzer.content_representation.content import SimpleField, FeaturesBagField, \
+from clayrs.content_analyzer.content_representation.content import FeaturesBagField, \
     EmbeddingField, IndexField, PropertiesDict
 from clayrs.content_analyzer.field_content_production_techniques import OriginalData
 from clayrs.content_analyzer.embeddings.embedding_loader.gensim import Gensim
@@ -161,14 +161,14 @@ class TestContentsProducer(TestCase):
         movies_ca_config.add_multiple_config(
             field_name='Title',
             config_list=[FieldConfig(OriginalData(), NLTK(lemmatization=True, stopwords_removal=True),
-                         SearchIndex(os.path.join(output_dir, "index")), "test_search"),
+                         memory_interface=SearchIndex(os.path.join(output_dir, "index")), id="test_search"),
 
                          FieldConfig(SkLearnTfIdf(), NLTK(),
-                                     KeywordIndex(os.path.join(output_dir, "index1")),
-                                     "test_keyword"),
+                                     memory_interface=KeywordIndex(os.path.join(output_dir, "index1")),
+                                     id="test_keyword"),
 
                          FieldConfig(OriginalData(), NLTK(),
-                                     SearchIndex(os.path.join(output_dir, "index")))
+                                     memory_interface=SearchIndex(os.path.join(output_dir, "index")))
                          ])
 
         content_analyzer = ContentAnalyzer(movies_ca_config)
