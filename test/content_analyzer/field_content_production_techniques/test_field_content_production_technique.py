@@ -18,7 +18,7 @@ class TestOriginalData(TestCase):
     def test_produce_content(self):
         technique = OriginalData()
 
-        data_list = technique.produce_content("Title", [], JSONFile(file_path))
+        data_list = technique.produce_content("Title", [], [], JSONFile(file_path))
 
         self.assertEqual(len(data_list), 20)
         self.assertIsInstance(data_list[0], SimpleField)
@@ -30,7 +30,7 @@ class TestOriginalData(TestCase):
         with open(self.file_name, 'w') as f:
             f.write(source)
 
-        result = technique.produce_content("0", [], DATFile(self.file_name))
+        result = technique.produce_content("0", [], [], DATFile(self.file_name))
 
         self.assertIsInstance(result[0], SimpleField)
         self.assertIsInstance(result[0].value, int)
@@ -43,7 +43,7 @@ class TestOriginalData(TestCase):
             f.write(source)
 
         with self.assertRaises(ValueError):
-            technique.produce_content("0", [], DATFile(self.file_name))
+            technique.produce_content("0", [], [], DATFile(self.file_name))
 
     def doCleanups(self) -> None:
         if os.path.isfile(self.file_name):
