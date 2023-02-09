@@ -18,6 +18,7 @@ class ErrorMetric(Metric):
     An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
     """
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred
         truth = split.truth

@@ -90,9 +90,7 @@ class NDCG(RankingMetric):
         ideal = self._dcg_score(np.sort(r)[::-1])
         return actual / ideal
 
-        ideal_rank = sorted(actual_rank, reverse=True)
-        return ideal_rank, actual_rank
-
+    @handler_different_users
     def perform(self, split: Split):
 
         pred = split.pred
@@ -237,6 +235,7 @@ class MRR(RankingMetric):
 
         return reciprocal_rank
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred
         truth = split.truth
@@ -391,6 +390,7 @@ class MAP(RankingMetric):
 
         return user_ap
 
+    @handler_different_users
     def perform(self, split: Split):
         pred = split.pred
         truth = split.truth
@@ -562,6 +562,7 @@ class Correlation(RankingMetric):
     def __repr__(self):
         return f'Correlation(method={self.__method}, top_n={self.__top_n})'
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred
         truth = split.truth

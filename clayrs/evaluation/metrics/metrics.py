@@ -1,6 +1,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from functools import wraps
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 if TYPE_CHECKING:
     from clayrs.recsys.partitioning import Split
@@ -25,3 +28,21 @@ class Metric(ABC):
     @abstractmethod
     def perform(self, split: Split):
         raise NotImplementedError
+
+
+def handler_different_users(func):
+    """
+    Handler that catches the above exception.
+
+    Tries to run the functions normally, if one of the above exceptions is caught then it must return
+    an empty frame for the user since predictions can't be calculated for it.
+    """
+    @wraps(func)
+    def inner_function(self, split, *args, **kwargs):
+
+        if not np.array_equal(split.pred.unique_user_id_column, split.truth.unique_user_id_column):
+            raise ValueError("Predictions and truths must contain the same users!")
+
+        return func(self, split, *args, **kwargs)
+
+    return inner_function

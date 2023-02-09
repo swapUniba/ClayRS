@@ -48,6 +48,7 @@ class ClassificationMetric(Metric):
     def precision(self):
         return self.__precision
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         # This method will calculate for every split true positive, false positive, true negative, false negative items
         # so that every metric must simply implement the method _calc_metric(...).
