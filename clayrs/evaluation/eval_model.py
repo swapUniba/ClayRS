@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import List, Union, Tuple, TYPE_CHECKING
+from typing import List, Union, Tuple, TYPE_CHECKING, Optional
 
+import numpy as np
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -106,7 +107,7 @@ class EvalModel:
         """
         self._metric_list.append(metric)
 
-    def fit(self, user_id_list: list = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def fit(self, user_id_list: Optional[List[str]] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         This method performs the actual evaluation of the recommendation frames passed as input in the constructor of
         the class
@@ -135,16 +136,29 @@ class EvalModel:
         """
         logger.info('Performing evaluation on metrics chosen')
 
-        pred_list = self._pred_list
-        truth_list = self._truth_list
+        final_pred_list = []
+        final_truth_list = []
 
+        # if user id list is passed, convert it to int if necessary and append the new ratings filtered with
+        # only the users of interest
         if user_id_list is not None:
-            user_id_list_set = set([str(user_id) for user_id in user_id_list])
 
-            pred_list = [pred.filter_ratings(user_id_list_set) for pred in self._pred_list]
-            truth_list = [truth.filter_ratings(user_id_list_set) for truth in self._truth_list]
+            for pred, truth in zip(self._pred_list, self._truth_list):
 
-        sys_result, users_result = MetricEvaluator(pred_list, truth_list).eval_metrics(self.metric_list)
+                split_users = user_id_list
+                split_truth_users = set(truth.user_map.convert_seq_str2int(split_users))
+                split_pred_users = set(pred.user_map.convert_seq_str2int(split_users))
+
+                final_pred_list.append(pred.filter_ratings(list(split_pred_users)))
+                final_truth_list.append(truth.filter_ratings(list(split_truth_users)))
+
+        # otherwise the original lists are kept
+        else:
+
+            final_pred_list = self._pred_list
+            final_truth_list = self._truth_list
+
+        sys_result, users_result = MetricEvaluator(final_pred_list, final_truth_list).eval_metrics(self.metric_list)
 
         # we save the sys result for report yaml
         self._yaml_report_result = sys_result.to_dict(orient='index')
