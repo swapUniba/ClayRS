@@ -3,7 +3,6 @@ from typing import List, Optional
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode, AutoAugmentPolicy
 
-from clayrs.content_analyzer.information_processor.information_processor import ImageProcessor
 from clayrs.content_analyzer.information_processor.visual_preprocessors.torch_builtin_transformer import \
     TorchBuiltInTransformer
 
