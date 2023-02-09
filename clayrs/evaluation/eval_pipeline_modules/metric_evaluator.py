@@ -76,9 +76,18 @@ class MetricEvaluator:
 
                 for pred, truth in zip(self._pred_list, self._truth_list):
                     if len(pred) != 0 and len(truth) != 0:
-                        user_id_valid = set(pred.user_id_column)
-                        # Remove from truth users of which we do not have predictions
-                        truth = truth.filter_ratings(user_id_valid)
+
+                        # users can be different between predictions and truth, we only consider those
+                        # who are in both
+                        common_user_ids = list(
+                            set(pred.unique_user_id_column).intersection(set(truth.unique_user_id_column))
+                        )
+
+                        prediction_user_idxs = pred.user_map.convert_seq_str2int(common_user_ids)
+                        truth_user_idxs = truth.user_map.convert_seq_str2int(common_user_ids)
+
+                        pred = pred.filter_ratings(prediction_user_idxs)
+                        truth = truth.filter_ratings(truth_user_idxs)
 
                         metric_result = metric.perform(Split(pred, truth))
 
