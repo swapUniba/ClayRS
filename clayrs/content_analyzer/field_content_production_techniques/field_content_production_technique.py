@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import PostProcessor
 
 from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 

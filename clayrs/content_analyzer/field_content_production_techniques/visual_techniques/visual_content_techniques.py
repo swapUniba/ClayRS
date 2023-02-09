@@ -22,7 +22,7 @@ from scipy.ndimage.filters import convolve
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor, ImageProcessor
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, ImageProcessor
     from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import \
         EmbeddingInputPostProcessor
 
