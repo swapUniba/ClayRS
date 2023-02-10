@@ -107,7 +107,20 @@ class FieldContentProductionTechnique(ABC):
         raise NotImplementedError
 
 
-class SingleContentTechnique(FieldContentProductionTechnique):
+class TextualContentTechnique(FieldContentProductionTechnique):
+
+    @abstractmethod
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[PostProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class SingleContentTechnique(TextualContentTechnique):
     """
     Technique specialized in the production of representations that don't need any external information in order
     to be processed. This type of technique only considers the raw data within the content's field to create
@@ -152,7 +165,7 @@ class SingleContentTechnique(FieldContentProductionTechnique):
         raise NotImplementedError
 
 
-class CollectionBasedTechnique(FieldContentProductionTechnique):
+class CollectionBasedTechnique(TextualContentTechnique):
     """
     Technique specialized in the production of representations that are in need of the entire collection in order
     to be processed. This type of technique performs a refactoring operation on the original dataset,
@@ -261,7 +274,7 @@ class OriginalData(SingleContentTechnique):
         return f'OriginalData(dtype={self.__dtype})'
 
 
-class FromNPY(SingleContentTechnique):
+class FromNPY(FieldContentProductionTechnique):
 
     def __init__(self, npy_file_path: str):
 
@@ -271,7 +284,7 @@ class FromNPY(SingleContentTechnique):
         if len(self.np_matrix) > 0:
             self.dim_if_missing = self.np_matrix[0].shape
         else:
-            raise Exception('Matrix should have at least 1 row')
+            raise ValueError('Matrix should have at least 1 row')
 
         self._missing: Optional[int] = None
 
@@ -281,7 +294,17 @@ class FromNPY(SingleContentTechnique):
 
         self._missing = 0
 
-        representation_list = super().produce_content(field_name, preprocessor_list, postprocessor_list, source)
+        representation_list: List[FieldRepresentation] = []
+
+        with get_progbar(list(source)) as pbar:
+            # it iterates over all contents contained in the source in order to retrieve the raw data
+            # the data contained in the field_name is processed using each information processor in the processor_list
+            # the data is passed to the method that will create the single representation
+            for content_data in pbar:
+                processed_data = self.process_data(content_data[field_name], preprocessor_list)
+                representation_list.append(self.produce_single_repr(processed_data))
+
+        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         if self._missing > 0:
             logger.warning(f"{self._missing} items could not be mapped (non int index). Empty arrays will be used")
@@ -292,8 +315,7 @@ class FromNPY(SingleContentTechnique):
         try:
             index = int(field_data)
         except ValueError:
-            self._missing += 1
-            return EmbeddingField(np.zeros(self.dim_if_missing))
+            raise ValueError(f'Values should be integers but {field_data} was found of type {type(field_data)}!')
         try:
             return EmbeddingField(self.np_matrix[index])
         except IndexError:
