@@ -154,7 +154,10 @@ class PairedTest(StatisticalTest):
                 formatted_data[(metric_column, "statistic")].append(stat)
                 formatted_data[(metric_column, "pvalue")].append(pval)
 
-        return pd.DataFrame(formatted_data, index=index)
+        res = pd.DataFrame(formatted_data, index=index)
+        res.index.rename("sys_pair", inplace=True)
+
+        return res
 
     @abstractmethod
     def _perform_test(self, score_metric_system1: list, score_metric_system2: list):
