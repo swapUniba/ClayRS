@@ -47,7 +47,7 @@ class TorchBuiltInTransformer(ImageProcessor):
 
         self.transformer = torch_builtin_transformer
 
-    def forward(self, field_data):
+    def forward(self, field_data: torch.Tensor) -> torch.Tensor:
         return self.transformer(field_data)
 
     def __str__(self):
