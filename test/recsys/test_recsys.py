@@ -89,7 +89,7 @@ class TestContentBasedRS(TestCase):
 
         # we just check that the call to the cb algorithm is successful at the recsys level
         # further tests can be found for each cb algorithm
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
     def test_raise_error_without_fit(self):
         alg = LinearPredictor({'Plot': ['tfidf', 'embedding']}, SkLinearRegression())
@@ -225,7 +225,7 @@ class TestContentBasedRS(TestCase):
             self.assertEqual(expected_ranked_items, items_ranked)
         
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
         
         # test ranking with the cbrs algorithm on unspecified user list
         # all users of the test set will be used
@@ -235,7 +235,7 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(test_ratings.user_idx_column, result_rank_all.user_idx_column)
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # test ranking with the cbrs algorithm on specified STRING user list
         result_rank_str_specified = cbrs.rank(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
@@ -244,7 +244,7 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(["A000", "A003"], list(result_rank_str_specified.unique_user_id_column))
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # test ranking with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
@@ -254,7 +254,7 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(user_idx_list, result_rank_int_specified.unique_user_idx_column)
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # covering the case in which no item is recommended for any user
         result_rank_all = cbrs.fit_rank(test_ratings,
@@ -273,7 +273,7 @@ class TestContentBasedRS(TestCase):
         self.assertTrue(len(result_rank_all) != 0)
 
         # save_fit == False, so check that algorithm is NOT fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
     def test_fit_predict_save_fit(self):
         # Test fit with the cbrs algorithm
@@ -297,7 +297,7 @@ class TestContentBasedRS(TestCase):
             self.assertEqual(expected_ranked_items, items_ranked)
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # test predict with the cbrs algorithm on unspecified user list
         # all users of the test set will be used
@@ -307,7 +307,7 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(test_ratings.user_idx_column, result_predict_all.user_idx_column)
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # test predict with the cbrs algorithm on specified STRING user list
         result_predict_str_specified = cbrs.predict(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
@@ -316,7 +316,7 @@ class TestContentBasedRS(TestCase):
         self.assertEqual(["A000", "A003"], list(result_predict_str_specified.unique_user_id_column))
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # test predict with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
@@ -326,7 +326,7 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(user_idx_list, result_predict_int_specified.unique_user_idx_column)
 
         # save_fit == True, so check that algorithm is fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
         # covering the case in which no item is recommended for any user
         result_predict_all = cbrs.fit_predict(test_ratings,
@@ -345,7 +345,7 @@ class TestContentBasedRS(TestCase):
         self.assertTrue(len(result_predict_all) != 0)
 
         # save_fit == False, so check that algorithm is NOT fit
-        self.assertIsNotNone(cbrs._fit_alg)
+        self.assertIsNotNone(cbrs.fit_alg)
 
 
 class TestGraphBasedRS(TestCase):
