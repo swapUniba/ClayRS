@@ -117,7 +117,7 @@ class ContentBasedRS(RecSys):
         self.__train_set = train_set
         self.__items_directory = items_directory
         self.__users_directory = users_directory
-        self._fit_alg = None
+        self.fit_alg = None
 
     @property
     def algorithm(self):
@@ -155,9 +155,9 @@ class ContentBasedRS(RecSys):
         If the algorithm can't be fit for some users, a warning message is printed
         """
 
-        self._fit_alg = self.algorithm.fit(train_set=self.train_set,
-                                           items_directory=self.items_directory,
-                                           num_cpus=num_cpus)
+        self.fit_alg = self.algorithm.fit(train_set=self.train_set,
+                                          items_directory=self.items_directory,
+                                          num_cpus=num_cpus)
 
         return self
 
@@ -196,7 +196,7 @@ class ContentBasedRS(RecSys):
 
         """
 
-        if self._fit_alg is None:
+        if self.fit_alg is None:
             raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
 
         logger.info("Don't worry if it looks stuck at first")
@@ -215,7 +215,7 @@ class ContentBasedRS(RecSys):
 
         methodology.setup(self.train_set, test_set)
 
-        rank = self.algorithm.rank(self._fit_alg, self.train_set, test_set,
+        rank = self.algorithm.rank(self.fit_alg, self.train_set, test_set,
                                    user_idx_list=all_users,
                                    items_directory=self.items_directory, n_recs=n_recs,
                                    methodology=methodology, num_cpus=num_cpus)
@@ -267,7 +267,7 @@ class ContentBasedRS(RecSys):
 
         """
 
-        if self._fit_alg is None:
+        if self.fit_alg is None:
             raise NotFittedAlg("Algorithm not fit! You must call the fit() method first, or fit_rank().")
 
         logger.info("Don't worry if it looks stuck at first")
@@ -286,7 +286,7 @@ class ContentBasedRS(RecSys):
 
         methodology.setup(self.train_set, test_set)
 
-        pred = self.algorithm.predict(self._fit_alg, self.train_set, test_set,
+        pred = self.algorithm.predict(self.fit_alg, self.train_set, test_set,
                                       user_idx_list=all_users,
                                       items_directory=self.items_directory,
                                       methodology=methodology, num_cpus=num_cpus)
@@ -367,7 +367,7 @@ class ContentBasedRS(RecSys):
                                                 items_directory=self.items_directory, n_recs=n_recs,
                                                 methodology=methodology, num_cpus=num_cpus, save_fit=save_fit)
 
-        self._fit_alg = fit_alg
+        self.fit_alg = fit_alg
 
         # we should remove empty uir matrices otherwise vstack won't work due to dimensions mismatch
         rank = [uir_rank for uir_rank in rank if len(uir_rank) != 0]
@@ -440,7 +440,7 @@ class ContentBasedRS(RecSys):
                                                    items_directory=self.items_directory,
                                                    methodology=methodology, num_cpus=num_cpus, save_fit=save_fit)
 
-        self._fit_alg = fit_alg
+        self.fit_alg = fit_alg
 
         # we should remove empty uir matrices otherwise vstack won't work due to dimensions mismatch
         pred = [uir_pred for uir_pred in pred if len(uir_pred) != 0]
