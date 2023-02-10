@@ -25,16 +25,21 @@ class StrIntMap:
             # dictionary should contain all numbers starting from 0 without holes
             sorted_str = []
             sorted_int = []
-            for str_id, int_idx in sorted(str_int_map.items(), key=lambda item: item[1]):
-                sorted_str.append(str_id)
-                sorted_int.append(int_idx)
+            try:
+                for str_id, int_idx in sorted(str_int_map.items(), key=lambda item: item[1]):
+                    sorted_str.append(str(str_id))
+                    sorted_int.append(int(int_idx))
+            except ValueError:
+                raise LookupError("Mapping dictionary not in the right format! Strings must be mapped to "
+                                  "integers starting from 0 without holes!") from None
+
             if sorted_int != list(range(len(str_int_map))):
                 raise LookupError("Mapping dictionary not in the right format! Strings must be mapped to "
                                   "integers starting from 0 without holes!")
 
             self.map = np.array(sorted_str)
         elif isinstance(str_int_map, np.ndarray):
-            self.map = str_int_map
+            self.map = str_int_map.astype(str)
         elif isinstance(str_int_map, StrIntMap):
             self.map = str_int_map.map
 

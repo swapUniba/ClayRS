@@ -36,8 +36,22 @@ class TestStrIntMap(TestCase):
 
         # test initialization with a StrIntMap
         new_strint_map = StrIntMap(from_dict_map)
-
         np.testing.assert_array_equal(from_dict_map.map, new_strint_map.map)
+
+        # test initialization with an int array astype
+        array_map = np.array([1, 2, 3])
+        from_array_map = StrIntMap(array_map)
+
+        self.assertTrue(np.issubdtype(from_array_map.map.dtype, str))
+
+        # test initialization with a dict[int, int] as type
+        dict_map = {10: 0, 11: 1, 12: 2}
+        from_dict_map = StrIntMap(dict_map)
+
+        self.assertTrue(np.issubdtype(from_dict_map.map.dtype, str))
+        for expected, result in zip(dict_map, from_dict_map.map):
+
+            self.assertEqual(str(expected), result)
 
     def test_init_exception(self):
         wrong_dict_map = {"i0": 10, "i1": 11, "i2": 12}
