@@ -100,7 +100,8 @@ class TestVisualProcessingTechniques(TestCase):
 
         source = JSONFile(raw_source_path_online)
 
-        dl = SkImageHogDescriptor(batch_size=1).get_data_loader('imageUrl', source)
+        dl = SkImageHogDescriptor(imgs_dirs=os.path.join(this_file_path, 'imgs_dirs'),
+                                  batch_size=1).get_data_loader('imageUrl', source)
 
         self.assertTrue(os.path.isdir(os.path.join(this_file_path, 'imgs_dirs')))
         self.assertTrue(os.path.isdir(os.path.join(this_file_path, 'imgs_dirs', 'imageUrl')))
@@ -116,12 +117,11 @@ class TestVisualProcessingTechniques(TestCase):
 
         source_with_new_paths = JSONFile(self.new_source_path)
 
-        dl = SkImageHogDescriptor(resize_size=resize_size, batch_size=1).get_data_loader('imagePath',
+        dl = SkImageHogDescriptor(imgs_dirs=ds_path_without_field_name,
+                                  resize_size=resize_size, batch_size=1).get_data_loader('imagePath',
                                                                                          source_with_new_paths)
         images_in_dl = [image for image in dl]
 
-        self.assertTrue(os.path.isdir(os.path.join(this_file_path, 'imgs_dirs')))
-        self.assertTrue(os.path.isdir(os.path.join(this_file_path, 'imgs_dirs', 'imagePath')))
         self.assertTrue(not all(torch.all(image == 0) for image in images_in_dl))
         self.assertTrue(all(image.shape == (1, 3, 100, 100) for image in images_in_dl))
         self.assertEqual(5, len(images_in_dl))
@@ -134,8 +134,6 @@ class TestVisualProcessingTechniques(TestCase):
         test_image = test_image.unsqueeze(0)
 
         self.assertTrue(any(torch.equal(test_image, image_in_dl) for image_in_dl in images_in_dl))
-
-        shutil.rmtree(os.path.join(this_file_path, 'imgs_dirs'))
 
     def test_pytorch_image_models(self):
 
