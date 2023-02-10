@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import io
 import os
-from typing import Tuple, List, Union, TYPE_CHECKING, Any
+from typing import Tuple, List, TYPE_CHECKING, Any
 
 from abc import abstractmethod
 import PIL.Image
@@ -22,7 +22,8 @@ from scipy.ndimage.filters import convolve
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, ImageProcessor
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
+        ImageProcessor
     from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import \
         EmbeddingInputPostProcessor
 
@@ -249,7 +250,7 @@ class LowLevelVisual(VisualContentTechnique):
         return representation_list
 
     @abstractmethod
-    def produce_single_repr(self, field_data: Union[List[str], str]) -> FieldRepresentation:
+    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
         raise NotImplementedError
 
 
@@ -283,7 +284,7 @@ class HighLevelVisual(VisualContentTechnique):
         return representation_list
 
     @abstractmethod
-    def produce_batch_repr(self, field_data: Union[List[str], str]) -> List[FieldRepresentation]:
+    def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
         raise NotImplementedError
 
 
@@ -310,15 +311,12 @@ class PytorchImageModels(HighLevelVisual):
 
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
 
-        if len(field_data.shape) == 3:
-            field_data = field_data.unsqueeze(dim=1)
-
         if self.flatten:
             return list(map(lambda x: EmbeddingField(x.detach().numpy().flatten()),
-                            self.model(field_data.squeeze())[self.feature_layer]))
+                            self.model(field_data)[self.feature_layer]))
         else:
             return list(map(lambda x: EmbeddingField(x.detach().numpy()),
-                            self.model(field_data.squeeze())[self.feature_layer]))
+                            self.model(field_data)[self.feature_layer]))
 
     def __str__(self):
         return "Pytorch Image Models"
@@ -363,13 +361,16 @@ class SkImageHogDescriptor(LowLevelVisual):
 class SkImageCannyEdgeDetector(LowLevelVisual):
 
     def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
-                 mode='constant', cval=0.0, flatten=False):
+                 mode='constant', cval=0.0, flatten=False,
+                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.canny = lambda x: canny(image=x, sigma=sigma, low_threshold=low_threshold,
                                      high_threshold=high_threshold, mask=mask,
                                      use_quantiles=use_quantiles, mode=mode, cval=cval)
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -391,11 +392,14 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
 
 class CustomFilterConvolution(LowLevelVisual):
 
-    def __init__(self, weights, mode='reflect', cval=0.0, origin=0, flatten=False):
+    def __init__(self, weights, mode='reflect', cval=0.0, origin=0, flatten=False,
+                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.convolve = lambda x: convolve(x, weights=weights, mode=mode, cval=cval, origin=origin)
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -415,11 +419,13 @@ class CustomFilterConvolution(LowLevelVisual):
         return self._repr_string
 
 
-class SkImageMainColors(LowLevelVisual):
+class ColorsHist(LowLevelVisual):
 
-    def __init__(self):
+    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -428,6 +434,8 @@ class SkImageMainColors(LowLevelVisual):
 
         if field_data.shape[0] != 3:
             field_data = field_data.repeat(3, 1, 1)
+            logger.warning(f'Grayscale images were detected, {self} only accepts RGB images! '
+                           'The images will be converted to RGB')
 
         numpy_field_data = field_data.numpy() * 255
         colors = np.array([numpy_field_data[0, :, :].flatten(),
@@ -442,16 +450,18 @@ class SkImageMainColors(LowLevelVisual):
         return self._repr_string
 
 
-class SkImageColorQuantization(LowLevelVisual):
+class ColorQuantization(LowLevelVisual):
 
     def __init__(self, n_colors: Any = 3, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
-                 flatten=False):
+                 flatten=False, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.k_means = KMeans(n_clusters=n_colors, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
                               random_state=random_state, copy_x=copy_x, algorithm=algorithm)
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -459,7 +469,9 @@ class SkImageColorQuantization(LowLevelVisual):
             field_data = field_data.squeeze()
 
         if field_data.shape[0] != 3:
-            raise ValueError('Image in grey scale')
+            field_data = field_data.repeat(3, 1, 1)
+            logger.warning(f'Grayscale images were detected, {self} only accepts RGB images! '
+                           'The images will be converted to RGB')
 
         numpy_field_data = field_data.numpy() * 255
         numpy_field_data = numpy_field_data.reshape((numpy_field_data.shape[1] * numpy_field_data.shape[2], 3))
@@ -479,13 +491,15 @@ class SkImageSIFT(LowLevelVisual):
 
     def __init__(self, upsampling=2, n_octaves=8, n_scales=3, sigma_min=1.6, sigma_in=0.5, c_dog=0.013333333333333334,
                  c_edge=10, n_bins=36, lambda_ori=1.5, c_max=0.8, lambda_descr=6, n_hist=4, n_ori=8,
-                 flatten=False):
+                 flatten=False, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.sift = SIFT(upsampling=upsampling, n_octaves=n_octaves, n_scales=n_scales, sigma_min=sigma_min,
                          sigma_in=sigma_in, c_dog=c_dog, c_edge=c_edge, n_bins=n_bins, lambda_ori=lambda_ori,
                          c_max=c_max, lambda_descr=lambda_descr, n_hist=n_hist, n_ori=n_ori)
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -497,7 +511,7 @@ class SkImageSIFT(LowLevelVisual):
         self.sift.detect_and_extract(field_data.numpy())
         descriptors = self.sift.descriptors
         descriptors = descriptors.flatten() if self.flatten else descriptors
-        return EmbeddingField(descriptors.astype(int))
+        return EmbeddingField(descriptors)
 
     def __str__(self):
         return "SkImageSIFT"
@@ -508,11 +522,15 @@ class SkImageSIFT(LowLevelVisual):
 
 class SkImageLBP(LowLevelVisual):
 
-    def __init__(self, p: int, r: float, method='default', flatten=False):
+    def __init__(self, p: int, r: float, method='default', flatten=False, as_image=False,
+                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.lbp = lambda x: local_binary_pattern(x, P=p, R=r, method=method)
         self.flatten = flatten
+        self.as_image = as_image
         self._repr_string = autorepr(self, inspect.currentframe())
-        super().__init__()
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
@@ -521,9 +539,13 @@ class SkImageLBP(LowLevelVisual):
         else:
             field_data = TF.rgb_to_grayscale(field_data).squeeze()
 
-        patterns = self.lbp(field_data.numpy())
-        patterns = patterns.flatten() if self.flatten else patterns
-        return EmbeddingField(patterns.astype(int))
+        lbp_image = self.lbp(field_data.numpy())
+
+        if self.as_image:
+            return EmbeddingField(lbp_image.flatten()) if self.flatten else EmbeddingField(lbp_image)
+
+        _, occurrences = np.unique(lbp_image, return_counts=True)
+        return EmbeddingField(occurrences)
 
     def __str__(self):
         return "SkImageLBP"
