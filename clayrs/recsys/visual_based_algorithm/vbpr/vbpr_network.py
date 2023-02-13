@@ -57,14 +57,13 @@ class VBPRNetwork(torch.nn.Module):
 
         self.beta_prime = nn.Parameter(torch.zeros(size=(features_dim, 1), dtype=torch.float), requires_grad=True)
 
-        self._init_weights()
         self._seed_all()
+        self._init_weights()
 
         self.to(device)
 
         self.theta_items: Optional[torch.Tensor] = None
         self.visual_bias: Optional[torch.Tensor] = None
-
 
     def _init_weights(self):
         nn.init.zeros_(self.beta_items)
@@ -84,6 +83,8 @@ class VBPRNetwork(torch.nn.Module):
             torch.use_deterministic_algorithms(True)
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
+            # most probably these 2 need to be set BEFORE
+            # in the environment manually
             os.environ["PYTHONHASHSEED"] = str(self.seed)
             os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
@@ -114,7 +115,7 @@ class VBPRNetwork(torch.nn.Module):
                 beta_items_diff +
                 (user_gamma * gamma_items_diff).sum(dim=1) +
                 (user_theta * theta_item_diff).sum(dim=1) +
-                torch.mm(feature_diff.float(), self.beta_prime.data)
+                torch.mm(feature_diff, self.beta_prime)
         )
 
         return Xuij, (user_gamma, user_theta), (beta_items_pos, beta_items_neg), (gamma_items_pos, gamma_items_neg)
@@ -146,4 +147,4 @@ class VBPRNetwork(torch.nn.Module):
                     torch.matmul(theta_items, self.theta_users[user_idx_tensor])
             )
 
-        return x_u
+        return x_u.cpu()

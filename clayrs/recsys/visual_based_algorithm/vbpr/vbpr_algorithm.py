@@ -249,8 +249,8 @@ class VBPR(ContentBasedAlgorithm):
 
         logger.info("Computing visual bias and theta items for faster ranking...")
         with torch.no_grad():
-            model.theta_items = torch.mm(items_features, model.E.data.cpu()).to(self.device)
             model.visual_bias = torch.mm(items_features, model.beta_prime.data.cpu()).to(self.device).squeeze()
+            model.theta_items = torch.mm(items_features, model.E.data.cpu()).to(self.device)
 
         logger.info("Done!")
 
