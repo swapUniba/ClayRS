@@ -1,5 +1,7 @@
 from __future__ import annotations
 import functools
+import os
+import random
 from typing import Set, Optional, TYPE_CHECKING
 
 import torch
@@ -44,6 +46,7 @@ class VBPRNetwork(torch.nn.Module):
         super().__init__()
 
         self.seed = seed
+        self.device = device
 
         self.beta_items = nn.Parameter(torch.zeros(size=(n_items,), dtype=torch.float), requires_grad=True)
         self.gamma_users = nn.Parameter(torch.zeros(size=(n_users, gamma_dim), dtype=torch.float), requires_grad=True)
@@ -55,24 +58,34 @@ class VBPRNetwork(torch.nn.Module):
         self.beta_prime = nn.Parameter(torch.zeros(size=(features_dim, 1), dtype=torch.float), requires_grad=True)
 
         self._init_weights()
+        self._seed_all()
+
+        self.to(device)
 
         self.theta_items: Optional[torch.Tensor] = None
         self.visual_bias: Optional[torch.Tensor] = None
 
-        self.device = device
-        self.to(device)
 
     def _init_weights(self):
-
-        if self.seed:
-            torch.manual_seed(self.seed)
-
         nn.init.zeros_(self.beta_items)
         nn.init.xavier_uniform_(self.gamma_users)
         nn.init.xavier_uniform_(self.gamma_items)
         nn.init.xavier_uniform_(self.theta_users)
         nn.init.xavier_uniform_(self.E)
         nn.init.xavier_uniform_(self.beta_prime)
+
+    def _seed_all(self):
+
+        if self.seed is not None:
+            np.random.seed(self.seed)
+            random.seed(self.seed)
+            torch.manual_seed(self.seed)
+            torch.cuda.manual_seed_all(self.seed)
+            torch.use_deterministic_algorithms(True)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+            os.environ["PYTHONHASHSEED"] = str(self.seed)
+            os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
     def forward(self, x):
         users = x[0]
@@ -110,7 +123,7 @@ class VBPRNetwork(torch.nn.Module):
 
         with torch.no_grad():
 
-            items_idx_tensor = torch.tensor(item_idx, dtype=torch.long).to(self.device)
+            items_idx_tensor = torch.tensor(item_idx).to(self.device).long()
             beta_items = self.beta_items[items_idx_tensor]
             theta_items = self.theta_items[items_idx_tensor]
             gamma_items = self.gamma_items[items_idx_tensor]
