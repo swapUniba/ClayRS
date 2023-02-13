@@ -230,7 +230,7 @@ class VBPR(ContentBasedAlgorithm):
                             _l2_loss(gamma_u, gamma_i_pos, gamma_i_neg, theta_u) * self.lambda_w
                             + _l2_loss(beta_i_pos) * self.lambda_b_pos
                             + _l2_loss(beta_i_neg) * self.lambda_b_neg
-                            + _l2_loss(model.E.weight, model.beta_prime.weight) * self.lambda_e
+                            + _l2_loss(model.E, model.beta_prime) * self.lambda_e
                     )
 
                     loss = loss + reg
@@ -249,8 +249,8 @@ class VBPR(ContentBasedAlgorithm):
 
         logger.info("Computing visual bias and theta items for faster ranking...")
         with torch.no_grad():
-            model.visual_bias = torch.mm(items_features, model.beta_prime.weight.data.cpu()).to(self.device)
-            model.theta_items = torch.mm(items_features, model.E.weight.data.cpu()).to(self.device)
+            model.theta_items = torch.mm(items_features, model.E.data.cpu()).to(self.device)
+            model.visual_bias = torch.mm(items_features, model.beta_prime.data.cpu()).to(self.device).squeeze()
 
         logger.info("Done!")
 
