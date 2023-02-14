@@ -186,7 +186,14 @@ class VBPR(ContentBasedAlgorithm):
                             device=self.device,
                             seed=self.seed).float()
 
-        optimizer = self.train_optimizer(model.parameters(), **self.train_optimizer_parameters)
+        optimizer = self.train_optimizer([
+            model.beta_items,
+            model.gamma_users,
+            model.gamma_items,
+            model.theta_users,
+            model.E,
+            model.beta_prime
+        ], **self.train_optimizer_parameters)
 
         train_dataset = TriplesDataset(train_set, self.seed)
 
