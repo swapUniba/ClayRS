@@ -140,46 +140,44 @@ class VBPR(ContentBasedAlgorithm):
 
         return positive_train_set
 
-    def _load_items_features(self, train_set: Ratings, items_directory: str) -> torch.Tensor:
+    def _load_items_features(self, train_set: Ratings, items_directory: str) -> np.ndarray:
 
-        # loaded_items_interface = self._load_available_contents(items_directory, set())
-        #
-        # items_features = []
-        #
-        # with get_progbar(train_set.item_map) as pbar:
-        #     pbar.set_description("Loading features from serialized items...")
-        #
-        #     for i, item_id in enumerate(pbar):
-        #
-        #         item = loaded_items_interface.get(item_id, self.item_field, throw_away=True)
-        #
-        #         if item is not None:
-        #             item_features = self.fuse_representations([self.extract_features_item(item)],
-        #                                                       self._embedding_combiner, as_array=True)
-        #
-        #             items_features.append(item_features)
-        #         else:
-        #             items_features.append(None)
-        #
-        # try:
-        #     first_not_none_element = next(item for item in items_features if item is not None)
-        # except StopIteration:
-        #     raise FileNotFoundError("No items were loaded!") from None
-        #
-        # for i, item_feature in enumerate(items_features):
-        #     if item_feature is None:
-        #         items_features[i] = np.zeros(shape=first_not_none_element.shape)
-        #
-        # items_features = torch.from_numpy(np.vstack(items_features)).float()
-        #
-        # if self.normalize is True:
-        #     items_features = items_features - torch.min(items_features)
-        #     items_features = items_features / (torch.max(items_features) + 1e-10)
-        #
-        # del loaded_items_interface
-        # gc.collect()
+        loaded_items_interface = self._load_available_contents(items_directory, set())
 
-        items_features = torch.from_numpy(np.load("features.npy")).float()
+        items_features = []
+
+        with get_progbar(train_set.item_map) as pbar:
+            pbar.set_description("Loading features from serialized items...")
+
+            for i, item_id in enumerate(pbar):
+
+                item = loaded_items_interface.get(item_id, self.item_field, throw_away=True)
+
+                if item is not None:
+                    item_features = self.fuse_representations([self.extract_features_item(item)],
+                                                              self._embedding_combiner, as_array=True)
+
+                    items_features.append(item_features)
+                else:
+                    items_features.append(None)
+
+        try:
+            first_not_none_element = next(item for item in items_features if item is not None)
+        except StopIteration:
+            raise FileNotFoundError("No items were loaded!") from None
+
+        for i, item_feature in enumerate(items_features):
+            if item_feature is None:
+                items_features[i] = np.zeros(shape=first_not_none_element.shape)
+
+        if self.normalize is True:
+            items_features = items_features - np.min(items_features)
+            items_features = items_features / (np.max(items_features) + 1e-10)
+
+        items_features = items_features.astype(np.float32)
+
+        del loaded_items_interface
+        gc.collect()
 
         return items_features
 
@@ -191,11 +189,13 @@ class VBPR(ContentBasedAlgorithm):
                 l2_loss += tensor.pow(2).sum()
             return l2_loss / 2
 
-        self._seed_all()
-
         train_set = self._build_only_positive_ratings(train_set)
 
         items_features = self._load_items_features(train_set, items_directory)
+
+        self._seed_all()
+
+        items_features = torch.tensor(items_features, device=self.device, dtype=torch.float)
 
         model = VBPRNetwork(n_users=len(train_set.user_map),
                             n_items=len(train_set.item_map),
@@ -274,8 +274,8 @@ class VBPR(ContentBasedAlgorithm):
 
         logger.info("Computing visual bias and theta items for faster ranking...")
         with torch.no_grad():
-            model.visual_bias = torch.mm(items_features, model.beta_prime.data.cpu()).to(self.device).squeeze()
-            model.theta_items = torch.mm(items_features, model.E.data.cpu()).to(self.device)
+            model.theta_items = items_features.mm(model.E.data).cpu()
+            model.visual_bias = items_features.mm(model.beta_prime.data).squeeze().cpu()
 
         logger.info("Done!")
 

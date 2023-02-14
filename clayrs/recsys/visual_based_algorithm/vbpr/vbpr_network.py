@@ -25,7 +25,8 @@ class TriplesDataset(data.Dataset):
 
     @functools.lru_cache(maxsize=128)
     def user_positive_interactions(self, user_idx: int) -> Set:
-        return set(self.train_ratings.get_user_interactions(user_idx)[:, 1].astype(int))
+        return set(self.train_ratings.item_idx_column[self.train_ratings.get_user_interactions(user_idx,
+                                                                                               as_indices=True)])
 
     def __getitem__(self, idx):
 
@@ -91,37 +92,36 @@ class VBPRNetwork(torch.nn.Module):
         gamma_items_neg = self.gamma_items[neg_items]
         gamma_items_diff = gamma_items_pos - gamma_items_neg
 
-        theta_item_diff = torch.mm(feature_diff, self.E)
+        theta_item_diff = feature_diff.mm(self.E)
 
         # this is the same of doing inner products!
         Xuij = (
                 beta_items_diff +
                 (user_gamma * gamma_items_diff).sum(dim=1) +
                 (user_theta * theta_item_diff).sum(dim=1) +
-                torch.mm(feature_diff, self.beta_prime)
+                feature_diff.mm(self.beta_prime)
         )
 
         return Xuij, (user_gamma, user_theta), (beta_items_pos, beta_items_neg), (gamma_items_pos, gamma_items_neg)
 
     def return_scores(self, user_idx, item_idx):
 
-        items_idx_tensor = torch.tensor(item_idx).to(self.device).long()
-        beta_items = self.beta_items[items_idx_tensor]
-        theta_items = self.theta_items[items_idx_tensor]
-        gamma_items = self.gamma_items[items_idx_tensor]
-        visual_bias = self.visual_bias[items_idx_tensor]
-
-        # in case a score must be returned for each item fitted, set `item_idx = None`
-        # and appropriately check this case. The below is the implementation in case `item_idx is None`
-        #
-        #     beta_items = self.beta_items.weight
-        #     gamma_items = self.gamma_items.weight
-        #     theta_items = self.theta_items
-        #     visual_bias = self.visual_bias
-
-        user_idx_tensor = torch.tensor(user_idx).to(self.device)
-
         with torch.no_grad():
+            items_idx_tensor = torch.tensor(item_idx).long()
+            beta_items = self.beta_items[items_idx_tensor]
+            theta_items = self.theta_items[items_idx_tensor]
+            gamma_items = self.gamma_items[items_idx_tensor]
+            visual_bias = self.visual_bias[items_idx_tensor]
+
+            # in case a score must be returned for each item fitted, set `item_idx = None`
+            # and appropriately check this case. The below is the implementation in case `item_idx is None`
+            #
+            #     beta_items = self.beta_items.weight
+            #     gamma_items = self.gamma_items.weight
+            #     theta_items = self.theta_items
+            #     visual_bias = self.visual_bias
+
+            user_idx_tensor = torch.tensor(user_idx)
 
             x_u = (
                     beta_items +
@@ -130,4 +130,4 @@ class VBPRNetwork(torch.nn.Module):
                     torch.matmul(theta_items, self.theta_users[user_idx_tensor])
             )
 
-        return x_u.cpu().numpy()
+        return x_u.numpy()
