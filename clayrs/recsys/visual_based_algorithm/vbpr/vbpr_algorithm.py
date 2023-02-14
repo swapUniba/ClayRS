@@ -1,5 +1,7 @@
 from __future__ import annotations
 import gc
+import os
+import random
 from typing import Any, Set, Optional, Type, Dict, Callable, TYPE_CHECKING, Tuple, List
 
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg
@@ -73,6 +75,21 @@ class VBPR(ContentBasedAlgorithm):
         self.seed = seed
         self.dl_parameters = additional_dl_parameters
 
+    def _seed_all(self):
+
+        if self.seed is not None:
+            np.random.seed(self.seed)
+            random.seed(self.seed)
+            torch.manual_seed(self.seed)
+            torch.cuda.manual_seed_all(self.seed)
+            torch.use_deterministic_algorithms(True)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+            # most probably these 2 need to be set BEFORE
+            # in the environment manually
+            os.environ["PYTHONHASHSEED"] = str(self.seed)
+            os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+
     def _build_only_positive_ratings(self, train_set: Ratings) -> Ratings:
 
         logger.info("Filtering only positive interactions...")
@@ -125,42 +142,44 @@ class VBPR(ContentBasedAlgorithm):
 
     def _load_items_features(self, train_set: Ratings, items_directory: str) -> torch.Tensor:
 
-        loaded_items_interface = self._load_available_contents(items_directory, set())
+        # loaded_items_interface = self._load_available_contents(items_directory, set())
+        #
+        # items_features = []
+        #
+        # with get_progbar(train_set.item_map) as pbar:
+        #     pbar.set_description("Loading features from serialized items...")
+        #
+        #     for i, item_id in enumerate(pbar):
+        #
+        #         item = loaded_items_interface.get(item_id, self.item_field, throw_away=True)
+        #
+        #         if item is not None:
+        #             item_features = self.fuse_representations([self.extract_features_item(item)],
+        #                                                       self._embedding_combiner, as_array=True)
+        #
+        #             items_features.append(item_features)
+        #         else:
+        #             items_features.append(None)
+        #
+        # try:
+        #     first_not_none_element = next(item for item in items_features if item is not None)
+        # except StopIteration:
+        #     raise FileNotFoundError("No items were loaded!") from None
+        #
+        # for i, item_feature in enumerate(items_features):
+        #     if item_feature is None:
+        #         items_features[i] = np.zeros(shape=first_not_none_element.shape)
+        #
+        # items_features = torch.from_numpy(np.vstack(items_features)).float()
+        #
+        # if self.normalize is True:
+        #     items_features = items_features - torch.min(items_features)
+        #     items_features = items_features / (torch.max(items_features) + 1e-10)
+        #
+        # del loaded_items_interface
+        # gc.collect()
 
-        items_features = []
-
-        with get_progbar(train_set.item_map) as pbar:
-            pbar.set_description("Loading features from serialized items...")
-
-            for i, item_id in enumerate(pbar):
-
-                item = loaded_items_interface.get(item_id, self.item_field, throw_away=True)
-
-                if item is not None:
-                    item_features = self.fuse_representations([self.extract_features_item(item)],
-                                                              self._embedding_combiner, as_array=True)
-
-                    items_features.append(item_features)
-                else:
-                    items_features.append(None)
-
-        try:
-            first_not_none_element = next(item for item in items_features if item is not None)
-        except StopIteration:
-            raise FileNotFoundError("No items were loaded!") from None
-
-        for i, item_feature in enumerate(items_features):
-            if item_feature is None:
-                items_features[i] = np.zeros(shape=first_not_none_element.shape)
-
-        items_features = torch.from_numpy(np.vstack(items_features)).float()
-
-        if self.normalize is True:
-            items_features = items_features - torch.min(items_features)
-            items_features = items_features / (torch.max(items_features) + 1e-10)
-
-        del loaded_items_interface
-        gc.collect()
+        items_features = torch.from_numpy(np.load("features.npy")).float()
 
         return items_features
 
@@ -172,7 +191,7 @@ class VBPR(ContentBasedAlgorithm):
                 l2_loss += tensor.pow(2).sum()
             return l2_loss / 2
 
-        torch.cuda.empty_cache()
+        self._seed_all()
 
         train_set = self._build_only_positive_ratings(train_set)
 
@@ -183,8 +202,7 @@ class VBPR(ContentBasedAlgorithm):
                             features_dim=items_features.shape[1],
                             gamma_dim=self.gamma_dim,
                             theta_dim=self.theta_dim,
-                            device=self.device,
-                            seed=self.seed).float()
+                            device=self.device).float()
 
         optimizer = self.train_optimizer([
             model.beta_items,

@@ -41,11 +41,10 @@ class TriplesDataset(data.Dataset):
 
 class VBPRNetwork(torch.nn.Module):
 
-    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim, device, seed=None):
+    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim, device):
 
         super().__init__()
 
-        self.seed = seed
         self.device = device
 
         self.beta_items = nn.Parameter(torch.zeros(size=(n_items,), dtype=torch.float), requires_grad=True)
@@ -57,7 +56,6 @@ class VBPRNetwork(torch.nn.Module):
 
         self.beta_prime = nn.Parameter(torch.zeros(size=(features_dim, 1), dtype=torch.float), requires_grad=True)
 
-        self._seed_all()
         self._init_weights()
 
         self.to(device)
@@ -72,21 +70,6 @@ class VBPRNetwork(torch.nn.Module):
         nn.init.xavier_uniform_(self.theta_users)
         nn.init.xavier_uniform_(self.E)
         nn.init.xavier_uniform_(self.beta_prime)
-
-    def _seed_all(self):
-
-        if self.seed is not None:
-            np.random.seed(self.seed)
-            random.seed(self.seed)
-            torch.manual_seed(self.seed)
-            torch.cuda.manual_seed_all(self.seed)
-            torch.use_deterministic_algorithms(True)
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-            # most probably these 2 need to be set BEFORE
-            # in the environment manually
-            os.environ["PYTHONHASHSEED"] = str(self.seed)
-            os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
     def forward(self, x):
         users = x[0]
