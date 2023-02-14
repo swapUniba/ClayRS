@@ -169,7 +169,9 @@ class VBPR(ContentBasedAlgorithm):
         for i, item_feature in enumerate(items_features):
             if item_feature is None:
                 items_features[i] = np.zeros(shape=first_not_none_element.shape)
-
+        
+        items_features = np.vstack(items_features)
+        
         if self.normalize is True:
             items_features = items_features - np.min(items_features)
             items_features = items_features / (np.max(items_features) + 1e-10)
@@ -202,7 +204,7 @@ class VBPR(ContentBasedAlgorithm):
                             features_dim=items_features.shape[1],
                             gamma_dim=self.gamma_dim,
                             theta_dim=self.theta_dim,
-                            device=self.device).float()
+                            device=self.device)
 
         optimizer = self.train_optimizer([
             model.beta_items,
@@ -276,6 +278,7 @@ class VBPR(ContentBasedAlgorithm):
         with torch.no_grad():
             model.theta_items = items_features.mm(model.E.data).cpu()
             model.visual_bias = items_features.mm(model.beta_prime.data).squeeze().cpu()
+            model.cpu()
 
         logger.info("Done!")
 
