@@ -37,8 +37,9 @@ class Methodology(ABC):
         return pd.unique(split_set.item_idx_column[items_list_greater_eq])
 
     def filter_all(self, train_set: Ratings, test_set: Ratings,
-                   result_as_iter_dict: bool = False,
-                   id_as_string: bool = True) -> Union[pd.DataFrame, Dict[str, np.ndarray]]:
+                   result_as_dict: bool = False,
+                   ids_as_str: bool = True) -> Union[pd.DataFrame,
+                                                     Union[Dict[str, np.ndarray], Dict[int, np.ndarray]]]:
         """
         Concrete method which calculates for all users of the *test set* which items must be used in order to
         generate a recommendation list
@@ -49,8 +50,11 @@ class Methodology(ABC):
         Args:
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
-            result_as_iter_dict (bool): If True the output of the method will be a generator of a dictionary that,
-                once evaluated, will contains users as a key and list of item that must be predicted as a value.
+            result_as_dict: If True the output of the method will be a generator of a dictionary that contains
+                users as keys and numpy arrays with items as values. If `ids_as_str` is set to True, users and items
+                will be present with their string id, otherwise will be present with their mapped integer
+            ids_as_str: If True, the result will contain users and items represented with their string id. Otherwise,
+                will be present with their mapped integer
 
                     EXAMPLE:
                         `{'u1': ['i1', 'i2', 'i3'], 'u2': ['i1', 'i4'], ...}`
@@ -65,7 +69,7 @@ class Methodology(ABC):
         with get_progbar(user_list) as pbar:
             pbar.set_description(f"Filtering items based on {str(self)}")
 
-            if id_as_string:
+            if ids_as_str:
                 filtered = {user_int2str(user_idx): item_seq_int2str(self.filter_single(user_idx, train_set, test_set).astype(int))
                             for user_idx in pbar}
             else:

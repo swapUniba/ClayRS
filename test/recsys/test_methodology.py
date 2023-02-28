@@ -78,8 +78,8 @@ class TestTestRatingsMethodology(TestMethodology):
         ratings_1.setup(train1_rat, test1_rat)
         ratings_2.setup(train2_rat, test2_rat)
 
-        result_list = [ratings_1.filter_all(train1_rat, test1_rat, id_as_string=True),
-                       ratings_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, ids_as_str=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, ids_as_str=True)]
 
         # for every user get the items in its test_set1
         expected_list = [test1[['from_id', 'to_id']], test2[['from_id', 'to_id']]]
@@ -103,8 +103,8 @@ class TestTestRatingsMethodology(TestMethodology):
         ratings_1.setup(train1_rat, test1_rat)
         ratings_2.setup(train2_rat, test2_rat)
 
-        result_list = [ratings_1.filter_all(train1_rat, test1_rat, id_as_string=True),
-                       ratings_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, ids_as_str=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, ids_as_str=True)]
 
         # for every user get the items in its test_set1 with score >= 3
         expected_split_1 = pd.DataFrame({
@@ -143,8 +143,8 @@ class TestTestRatingsMethodology(TestMethodology):
         ratings_1.setup(train1_rat, test1_rat)
         ratings_2.setup(train2_rat, test2_rat)
 
-        result_list = [ratings_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True, id_as_string=True),
-                       ratings_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True, id_as_string=True)]
+        result_list = [ratings_1.filter_all(train1_rat, test1_rat, result_as_dict=True, ids_as_str=True),
+                       ratings_2.filter_all(train2_rat, test2_rat, result_as_dict=True, ids_as_str=True)]
 
         # convert numpy to list for dict equal assertion
         result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
@@ -177,8 +177,8 @@ class TestTestItemsMethodology(TestMethodology):
         test_1.setup(train1_rat, test1_rat)
         test_2.setup(train2_rat, test2_rat)
 
-        result_list = [test_1.filter_all(train1_rat, test1_rat, id_as_string=True),
-                       test_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
+        result_list = [test_1.filter_all(train1_rat, test1_rat, ids_as_str=True),
+                       test_2.filter_all(train2_rat, test2_rat, ids_as_str=True)]
 
         # for every user get the all items present in test_set1 except the items
         # present in the training_set1 of the user
@@ -223,8 +223,8 @@ class TestTestItemsMethodology(TestMethodology):
         test_1.setup(train1_rat, test1_rat)
         test_2.setup(train2_rat, test2_rat)
 
-        result_list = [test_1.filter_all(train1_rat, test1_rat, id_as_string=True),
-                       test_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
+        result_list = [test_1.filter_all(train1_rat, test1_rat, ids_as_str=True),
+                       test_2.filter_all(train2_rat, test2_rat, ids_as_str=True)]
 
         # for every user get the all items present in test_set1 with score >= 3 except the items
         # present in the training_set1 of the user
@@ -269,8 +269,8 @@ class TestTestItemsMethodology(TestMethodology):
         test_1.setup(train1_rat, test1_rat)
         test_2.setup(train2_rat, test2_rat)
 
-        result_list = [test_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                       test_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+        result_list = [test_1.filter_all(train1_rat, test1_rat, result_as_dict=True),
+                       test_2.filter_all(train2_rat, test2_rat, result_as_dict=True)]
 
         # convert numpy to list for dict equal assertion
         result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
@@ -306,8 +306,8 @@ class TestTrainingItemsMethodology(TestMethodology):
         train_1.setup(train1_rat, test1_rat)
         train_2.setup(train2_rat, test2_rat)
 
-        result_list = [train_1.filter_all(train1_rat, test1_rat, id_as_string=True),
-                       train_2.filter_all(train2_rat, test2_rat, id_as_string=True)]
+        result_list = [train_1.filter_all(train1_rat, test1_rat, ids_as_str=True),
+                       train_2.filter_all(train2_rat, test2_rat, ids_as_str=True)]
 
         # for every user get the all items present in training_set1 except the items
         # present in the training_set1 of the user
@@ -398,8 +398,8 @@ class TestTrainingItemsMethodology(TestMethodology):
         train_1.setup(train1_rat, test1_rat)
         train_2.setup(train2_rat, test2_rat)
 
-        result_list = [train_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                       train_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+        result_list = [train_1.filter_all(train1_rat, test1_rat, result_as_dict=True),
+                       train_2.filter_all(train2_rat, test2_rat, result_as_dict=True)]
 
         # convert numpy to list for dict equal assertion
         result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
@@ -486,8 +486,8 @@ class TestAllItemsMethodology(TestMethodology):
         all_1.setup(train1_rat, test1_rat)
         all_2.setup(train2_rat, test2_rat)
 
-        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                       all_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_dict=True),
+                       all_2.filter_all(train2_rat, test2_rat, result_as_dict=True)]
 
         # convert numpy to list for dict equal assertion
         result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
@@ -519,8 +519,8 @@ class TestAllItemsMethodology(TestMethodology):
         all_1.setup(train1_rat, test1_rat)
         all_2.setup(train2_rat, test2_rat)
 
-        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_iter_dict=True),
-                       all_2.filter_all(train2_rat, test2_rat, result_as_iter_dict=True)]
+        result_list = [all_1.filter_all(train1_rat, test1_rat, result_as_dict=True),
+                       all_2.filter_all(train2_rat, test2_rat, result_as_dict=True)]
 
         # convert numpy to list for dict equal assertion
         result_list[0] = dict((user, list(filter_list)) for user, filter_list in result_list[0].items())
