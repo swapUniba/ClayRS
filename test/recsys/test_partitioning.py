@@ -46,6 +46,19 @@ class TestPartitioning(TestCase):
         union_list = train_list + test_list
         np.testing.assert_array_equal(np.sort(original_list, axis=0), np.sort(union_list, axis=0))
 
+    def test_split_all_str(self):
+
+        # any partitioning technique will work, check that with user list of int and user list of str
+        # we obtain same result
+        ho = HoldOutPartitioning(random_state=42)
+
+        [result_train_int], [result_test_int] = ho.split_all(original_ratings,
+                                                             user_list=original_ratings.user_map[["001"]])
+        [result_train_str], [result_test_str] = ho.split_all(original_ratings,
+                                                             user_list={"001"})
+
+        np.testing.assert_array_equal(result_train_int, result_train_str)
+        np.testing.assert_array_equal(result_test_int, result_test_str)
 
 class TestKFoldPartitioning(TestPartitioning):
 
