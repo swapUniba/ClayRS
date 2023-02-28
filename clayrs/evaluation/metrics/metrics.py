@@ -38,7 +38,8 @@ def handler_different_users(func):
     @wraps(func)
     def inner_function(self, split, *args, **kwargs):
 
-        if not np.array_equal(split.pred.unique_user_id_column, split.truth.unique_user_id_column):
+        if not np.array_equal(np.sort(split.pred.unique_user_id_column.flat),
+                              np.sort(split.truth.unique_user_id_column.flat)):
             raise ValueError("Predictions and truths must contain the same users!")
 
         return func(self, split, *args, **kwargs)
