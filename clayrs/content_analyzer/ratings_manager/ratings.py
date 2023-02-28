@@ -60,7 +60,26 @@ class StrIntMap:
         self.map = np.hstack((self.map, ids_str_to_append))
 
     def to_dict(self):
-        return {int_idx: str_idx for int_idx, str_idx in enumerate(self.map)}
+        """
+        Method to convert the mapping from its numpy representation to a dictionary based one.
+
+        The resulting dictionary will have the following form:
+
+        ```title="Mapping example visualized: array to dictionary"
+        {
+            "i1": 0,
+            "i2": 1,
+            "i3": 2,
+            "i4": 3,
+            "i5": 4,
+            ...
+        }
+        ```
+
+        Note that the dictionary representation might occupy a lot of space in memory depending on the
+        size of the mapping
+        """
+        return {str_idx: int_idx for int_idx, str_idx in enumerate(self.map)}
 
     @staticmethod
     def _check_bound_str(f: Callable, item: Union[str, Sequence[str]]):
