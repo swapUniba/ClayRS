@@ -42,7 +42,7 @@ class TestIndexQuery(TestCase):
 
         # Will raise Exception since it's not a Score Prediction Algorithm
         with self.assertRaises(NotPredictionAlg):
-            alg.predict_single_user(user_idx, self.ratings, self.available_loaded_items)
+            alg.predict_single_user(user_idx, self.ratings, self.available_loaded_items, self.filter_list)
 
     def test_rank_single_representation(self):
         # Test single representation
