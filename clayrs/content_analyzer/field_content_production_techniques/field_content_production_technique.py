@@ -326,8 +326,7 @@ class FromNPY(FieldContentProductionTechnique):
             # the data contained in the field_name is processed using each information processor in the processor_list
             # the data is passed to the method that will create the single representation
             for content_data in pbar:
-                processed_data = self.process_data(content_data[field_name], preprocessor_list)
-                representation_list.append(self.produce_single_repr(processed_data))
+                representation_list.append(self.produce_single_repr(content_data[field_name]))
 
         representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
