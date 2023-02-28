@@ -265,7 +265,7 @@ rank = cbrs.rank(test_set, n_recs=10)
 By default the methodology used is the **TestRatings** methodology
 
 ```python
-rank = cbrs.rank(test_set, methodology=rs.TrainingItems())
+rank = cbrs.rank(test_set, methodology=rs.TrainingItemsMethodology())
 ```
 
 ## Generating score predictions
