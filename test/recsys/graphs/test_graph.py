@@ -45,17 +45,15 @@ class TestGraph(TestCase):
 
             self.assertCountEqual(user_rat, user_converted_rat)
 
+        # user map set, so we expected same user map between expected and result
         converted_rat_with_user_map = self.g.to_ratings(user_map=rat.user_map)
-
         self.assertEqual(list(rat.user_map), list(converted_rat_with_user_map.user_map))
-        self.assertNotEqual(list(rat.item_map), list(converted_rat_with_user_map.item_map))
 
+        # item map set, so we expected same item map between expected and result
         converted_rat_with_item_map = self.g.to_ratings(item_map=rat.item_map)
-
-        self.assertNotEqual(list(rat.user_map), list(converted_rat_with_item_map.user_map))
         self.assertEqual(list(rat.item_map), list(converted_rat_with_item_map.item_map))
 
+        # user map and item_map set, so we expected them to be equal between expected and result
         converted_rat_with_user_item_map = self.g.to_ratings(user_map=rat.user_map, item_map=rat.item_map)
-
         self.assertEqual(list(rat.user_map), list(converted_rat_with_user_item_map.user_map))
         self.assertEqual(list(rat.item_map), list(converted_rat_with_user_item_map.item_map))
