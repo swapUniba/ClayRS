@@ -161,13 +161,14 @@ class ContentBasedRS(RecSys):
 
         return self
 
-    def rank(self, test_set: Ratings, n_recs: Optional[int] = 10, user_id_list: Union[List[str], List[int]] = None,
+    def rank(self, test_set: Ratings, n_recs: Optional[int] = 10, user_list: Union[List[str], List[int]] = None,
              methodology: Optional[Methodology] = TestRatingsMethodology(),
              num_cpus: int = 1) -> Rank:
 
         """
-        Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
-        You must first call the `fit()` method before you can compute the ranking.
+        Method used to calculate ranking for all users in test set or all users in `user_list` parameter.
+        You must first call the `fit()` method ***before*** you can compute the ranking.
+        The `user_list` parameter could contain users with their string id or with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
         Otherwise, the rank will contain all unrated items of the particular users
@@ -180,9 +181,11 @@ class ContentBasedRS(RecSys):
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
             n_recs: Number of the top items that will be present in the ranking of each user.
-                If `None` all candidate items will be returned for the user
-            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
-                for all users of the `test_set`
+                If `None` all candidate items will be returned for the user. Default is 10 (top-10 for each user
+                will be computed)
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -192,8 +195,7 @@ class ContentBasedRS(RecSys):
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
-
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_list`
         """
 
         if self.fit_alg is None:
@@ -203,8 +205,8 @@ class ContentBasedRS(RecSys):
         logger.info("First iterations will stabilize the estimated remaining time")
 
         all_users = test_set.unique_user_idx_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, str):
                 all_users = self.train_set.user_map.convert_seq_str2int(all_users)
 
@@ -234,12 +236,13 @@ class ContentBasedRS(RecSys):
 
         return rank
 
-    def predict(self, test_set: Ratings, user_id_list: List = None,
+    def predict(self, test_set: Ratings, user_list: List = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
                 num_cpus: int = 1) -> Prediction:
         """
-        Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
-        You must first call the `fit()` method before you can compute score predictions.
+        Method used to calculate score predictions for all users in test set or all users in `user_list` parameter.
+        You must first call the `fit()` method ***before*** you can compute score predictions.
+        The `user_list` parameter could contain users with their string id or with their mapped integer
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
@@ -251,8 +254,9 @@ class ContentBasedRS(RecSys):
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
-                will be computed for all users of the `test_set`
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -263,8 +267,7 @@ class ContentBasedRS(RecSys):
 
         Returns:
             Prediction object containing score prediction lists for all users of the test set or for all users in
-                `user_id_list`
-
+                `user_list`
         """
 
         if self.fit_alg is None:
@@ -274,8 +277,8 @@ class ContentBasedRS(RecSys):
         logger.info("First iterations will stabilize the estimated remaining time")
 
         all_users = test_set.unique_user_idx_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, str):
                 all_users = self.train_set.user_map.convert_seq_str2int(all_users)
 
@@ -305,14 +308,15 @@ class ContentBasedRS(RecSys):
 
         return pred
 
-    def fit_rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List[str] = None,
+    def fit_rank(self, test_set: Ratings, n_recs: int = 10, user_list: List[str] = None,
                  methodology: Union[Methodology, None] = TestRatingsMethodology(),
                  save_fit: bool = False, num_cpus: int = 1) -> Rank:
         """
         Method used to both fit and calculate ranking for all users in test set or all users in `user_id_list`
         parameter.
-        The Recommender System will first be fit for each user in the train set passed in the constructor.
-        If the algorithm can't be fit for some users, a warning message is printed
+        The Recommender System will first be fit for each user in the `test_set` parameter or for each
+        user inside the `user_list` parameter: the `user_list` parameter could contain users with their string id or
+        with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
         Otherwise, the rank will contain all unrated items of the particular users
@@ -330,9 +334,11 @@ class ContentBasedRS(RecSys):
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
             n_recs: Number of the top items that will be present in the ranking of each user.
-                If `None` all candidate items will be returned for the user
-            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
-                for all users of the `test_set`
+                If `None` all candidate items will be returned for the user. Default is 10 (top-10 for each user
+                will be computed)
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
@@ -344,15 +350,15 @@ class ContentBasedRS(RecSys):
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_list`
         """
 
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
         all_users = test_set.unique_user_idx_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, str):
                 all_users = self.train_set.user_map.convert_seq_str2int(all_users)
 
@@ -383,14 +389,15 @@ class ContentBasedRS(RecSys):
 
         return rank
 
-    def fit_predict(self, test_set: Ratings, user_id_list: List = None,
+    def fit_predict(self, test_set: Ratings, user_list: List = None,
                     methodology: Union[Methodology, None] = TestRatingsMethodology(),
                     save_fit: bool = False, num_cpus: int = 1) -> Prediction:
         """
-        Method used to both fit and calculate score prediction for all users in test set or all users in `user_id_list`
+        Method used to both fit and calculate score prediction for all users in test set or all users in `user_list`
         parameter.
-        The Recommender System will first be fit for each user in the train set passed in the constructor.
-        If the algorithm can't be fit for some users, a warning message is printed
+        The Recommender System will first be fit for each user in the `test_set` parameter or for each
+        user inside the `user_list` parameter: the `user_list` parameter could contain users with their string id or
+        with their mapped integer
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
@@ -407,8 +414,9 @@ class ContentBasedRS(RecSys):
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
-                will be computed for all users of the `test_set`
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
@@ -417,15 +425,16 @@ class ContentBasedRS(RecSys):
                 the number of cpus will be automatically detected.
 
         Returns:
-            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
+            Prediction object containing score prediction lists for all users of the test set or for all users in
+                `user_list`
         """
 
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
 
         all_users = test_set.unique_user_idx_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, str):
                 all_users = self.train_set.user_map.convert_seq_str2int(all_users)
 
@@ -544,12 +553,12 @@ class GraphBasedRS(RecSys):
         alg: GraphBasedAlgorithm = super().algorithm
         return alg
 
-    def rank(self, test_set: Ratings, n_recs: int = 10, user_id_list: List[str] = None,
+    def rank(self, test_set: Ratings, n_recs: int = 10, user_list: List[str] = None,
              methodology: Union[Methodology, None] = TestRatingsMethodology(),
              num_cpus: int = 1) -> Rank:
         """
-        Method used to calculate ranking for all users in test set or all users in `user_id_list` parameter.
-        You must first call the `fit()` method before you can compute the ranking.
+        Method used to calculate ranking for all users in test set or all users in `user_list` parameter.
+        The `user_list` parameter could contain users with their string id or with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
         Otherwise, the rank will contain all unrated items of the particular users
@@ -562,9 +571,11 @@ class GraphBasedRS(RecSys):
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
             n_recs: Number of the top items that will be present in the ranking of each user.
-                If `None` all candidate items will be returned for the user
-            user_id_list: List of users for which you want to compute the ranking. If None, the ranking will be computed
-                for all users of the `test_set`
+                If `None` all candidate items will be returned for the user. Default is 10 (top-10 for each user
+                will be computed)
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -574,8 +585,7 @@ class GraphBasedRS(RecSys):
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
 
         Returns:
-            Rank object containing recommendation lists for all users of the test set or for all users in `user_id_list`
-
+            Rank object containing recommendation lists for all users of the test set or for all users in `user_list`
         """
 
         train_set = self.graph.to_ratings(user_map=test_set.user_map, item_map=test_set.item_map)
@@ -586,8 +596,8 @@ class GraphBasedRS(RecSys):
         # in the graph recsys, each graph algorithm works with strings,
         # so in case we should convert int to strings
         all_users = test_set.unique_user_id_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, int):
                 all_users = train_set.user_map.convert_seq_int2str(all_users)
 
@@ -632,11 +642,12 @@ class GraphBasedRS(RecSys):
 
         return rank
 
-    def predict(self, test_set: Ratings, user_id_list: List[str] = None,
+    def predict(self, test_set: Ratings, user_list: List[str] = None,
                 methodology: Union[Methodology, None] = TestRatingsMethodology(),
                 num_cpus: int = 1) -> Prediction:
         """
-        Method used to calculate score predictions for all users in test set or all users in `user_id_list` parameter.
+        Method used to calculate score predictions for all users in test set or all users in `user_list` parameter.
+        The `user_list` parameter could contain users with their string id or with their mapped integer
 
         **BE CAREFUL**: not all algorithms are able to perform *score prediction*
 
@@ -648,8 +659,9 @@ class GraphBasedRS(RecSys):
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
-            user_id_list: List of users for which you want to compute score prediction. If None, the ranking
-                will be computed for all users of the `test_set`
+            user_list: List of users for which you want to compute score prediction. If None, the ranking
+                will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
+                mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
             num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
@@ -657,8 +669,7 @@ class GraphBasedRS(RecSys):
 
         Returns:
             Prediction object containing score prediction lists for all users of the test set or for all users in
-                `user_id_list`
-
+                `user_list`
         """
 
         train_set = self.graph.to_ratings(user_map=test_set.user_map, item_map=test_set.item_map)
@@ -669,8 +680,8 @@ class GraphBasedRS(RecSys):
         # in the graph recsys, each graph algorithm works with strings,
         # so in case we should convert int to strings
         all_users = test_set.unique_user_id_column
-        if user_id_list is not None:
-            all_users = np.array(user_id_list)
+        if user_list is not None:
+            all_users = np.array(user_list)
             if np.issubdtype(all_users.dtype, int):
                 all_users = train_set.user_map.convert_seq_int2str(all_users)
 
