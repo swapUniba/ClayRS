@@ -24,38 +24,62 @@ class Methodology(ABC):
 
         self._threshold = only_greater_eq
 
+        # items arr is an array with all items id mapped to their integer
         self._items_arr: Optional[np.ndarray] = None
+        # query vector is the vector with same length of _items_arr used as boolean query vector
+        # position in which a True appears will be taken from _items_arr, position set to False will not
         self._query_vector: Optional[np.ndarray] = None
 
     @abstractmethod
-    def setup(self, train_set: Ratings, test_set: Ratings):
+    def setup(self, train_set: Ratings, test_set: Ratings) -> Methodology:
+        """
+        Method to call before calling `filter_all()` or `filter_single()`.
+        It is used to set up numpy arrays which will filter items according to the methodology chosen.
+
+        This method has side effect, meaning that it will return a `Methodology` object which has been set up but will
+        also change the `Methodology` object that has called this method
+
+        Args:
+            train_set: `Ratings` object which contains the train set of every user
+            test_set: `Ratings` object which contains the test set of every user
+
+        Returns:
+            The set-up Methodology object
+        """
         raise NotImplementedError
 
     def _filter_only_greater_eq(self, split_set: Ratings):
+        """
+        Private method which filter the train set or the test set by considering only interactions
+        which have score greater than set threshold
+        """
         items_list_greater_eq = split_set.score_column >= self._threshold
 
+        # pd.unique faster than np.unique
         return pd.unique(split_set.item_idx_column[items_list_greater_eq])
 
     def filter_all(self, train_set: Ratings, test_set: Ratings,
-                   result_as_iter_dict: bool = False,
-                   id_as_string: bool = True) -> Union[pd.DataFrame, Dict[str, np.ndarray]]:
+                   result_as_dict: bool = False,
+                   ids_as_str: bool = True) -> Union[pd.DataFrame,
+                                                     Union[Dict[str, np.ndarray], Dict[int, np.ndarray]]]:
         """
         Concrete method which calculates for all users of the *test set* which items must be used in order to
         generate a recommendation list
 
-        It takes in input a *train set* and a *test set* and returns a single DataFrame or a generator of a python
+        It takes in input a *train set* and a *test set* and returns a single DataFrame or a python
         dictionary containing, for every user, all items which must be recommended based on the methodology chosen.
 
         Args:
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
-            result_as_iter_dict (bool): If True the output of the method will be a generator of a dictionary that,
-                once evaluated, will contains users as a key and list of item that must be predicted as a value.
+            result_as_dict: If True the output of the method will be a generator of a dictionary that contains
+                users as keys and numpy arrays with items as values. If `ids_as_str` is set to True, users and items
+                will be present with their string id, otherwise will be present with their mapped integer
+            ids_as_str: If True, the result will contain users and items represented with their string id. Otherwise,
+                will be present with their mapped integer
 
-                    EXAMPLE:
-                        `{'u1': ['i1', 'i2', 'i3'], 'u2': ['i1', 'i4'], ...}`
         Returns:
-            A DataFrame or a generator of a python dictionary which contains all items which must be recommended to
+            A DataFrame or a python dictionary which contains all items which must be recommended to
             every user based on the methodology chosen.
         """
         user_list = test_set.unique_user_idx_column
@@ -65,14 +89,14 @@ class Methodology(ABC):
         with get_progbar(user_list) as pbar:
             pbar.set_description(f"Filtering items based on {str(self)}")
 
-            if id_as_string:
+            if ids_as_str:
                 filtered = {user_int2str(user_idx): item_seq_int2str(self.filter_single(user_idx, train_set, test_set).astype(int))
                             for user_idx in pbar}
             else:
                 filtered = {user_idx: self.filter_single(user_idx, train_set, test_set)
                             for user_idx in pbar}
 
-        if not result_as_iter_dict:
+        if not result_as_dict:
 
             will_be_frame = {"user_id": [], "item_id": []}
             for user_id, filter_list in filtered.items():
@@ -134,7 +158,8 @@ class TestRatingsMethodology(Methodology):
         Since it's the TestRatings Methodology, only items that appear in the *test set* of the user will be returned.
 
         Args:
-            user_id: User of which we want to calculate items that must appear in its recommendation list
+            user_idx: User idx (meaning its mapped integer) of which we want to calculate items that must appear in its
+                recommendation list
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
@@ -197,7 +222,8 @@ class TestItemsMethodology(Methodology):
         except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id: User of which we want to calculate items that must appear in its recommendation list
+            user_idx: User idx (meaning its mapped integer) of which we want to calculate items that must appear in its
+                recommendation list
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
@@ -260,7 +286,8 @@ class TrainingItemsMethodology(Methodology):
         returned, except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id: User of which we want to calculate items that must appear in its recommendation list
+            user_idx: User idx (meaning its mapped integer) of which we want to calculate items that must appear in its
+                recommendation list
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """
@@ -280,11 +307,14 @@ class AllItemsMethodology(Methodology):
     Class which, given a *train set* and a *test set*, has the task to calculate which items must be used in
     order to generate a recommendation list
 
-    With AllItemsMethodology, given a user $u$, items to recommend for $u$ are all items that appear in 'items_list'
+    With AllItemsMethodology, given a user $u$, items to recommend for $u$ are all items that appear in `items_list`
     parameter excluding those items that appear in the *train set* of $u$
 
+    If `items_list` is None, then the union of items that appear in the train and test set will be considered
+
     Args:
-        items_list: Items set that must appear in the recommendation list of every user
+        items_list: Items set that must appear in the recommendation list of every user. If None, all items that appear
+            in the train and test set will be considered
     """
 
     def __init__(self, items_list: Union[Sequence[str], Sequence[int]] = None):
@@ -329,7 +359,8 @@ class AllItemsMethodology(Methodology):
         will be returned, except for those that appear in the *train set* of the user passed as parameter
 
         Args:
-            user_id: User of which we want to calculate items that must appear in its recommendation list
+            user_idx: User idx (meaning its mapped integer) of which we want to calculate items that must appear in its
+                recommendation list
             train_set: `Ratings` object which contains the train set of every user
             test_set: `Ratings` object which contains the test set of every user
         """

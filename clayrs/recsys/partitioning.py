@@ -22,8 +22,8 @@ class Partitioning(ABC):
 
     Args:
         skip_user_error:
-            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
-            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged at the
+            end of the split process specifying n° of users skipped. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, skip_user_error: bool = True):
@@ -43,21 +43,22 @@ class Partitioning(ABC):
         Abstract method in which each partitioning technique must specify how to split data for a single user
 
         Args:
-            user_ratings: List of `Interaction` objects of a single user
+            uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains one list of `Interaction` objects for each split that will
-                constitute the *train set* of the user, the second contains one list of `Interaction` objects for each split
-                that will constitute the *test set* for the user
+            Two lists, where the first contains a uir matrix for each split constituting the
+            *train set* of the user, the second contains a uir matrix for each split constituting
+            the *test set* of the user
         """
         raise NotImplementedError
 
-    def split_all(self, ratings_to_split: Ratings, user_list: Set[int] = None) -> Tuple[List[Ratings], List[Ratings]]:
+    def split_all(self, ratings_to_split: Ratings,
+                  user_list: Union[Set[int], Set[str]] = None) -> Tuple[List[Ratings], List[Ratings]]:
         """
-        Concrete method that splits, for every user in the `ratings_to_split` parameter, the original ratings
+        Concrete method that splits, for every user in the user column of `ratings_to_split`, the original ratings
         into *train set* and *test set*.
-        If a `user_id_list` parameter is set, the method will do the splitting only for the users
-        specified inside the list.
+        If a `user_list` parameter is set, the method will do the splitting only for the users
+        specified inside the list (Users can be specified as *strings* or with their mapped *integer*).
 
         The method returns two lists:
 
@@ -70,18 +71,26 @@ class Partitioning(ABC):
         *truth set* at position $i$
 
         Args:
-            ratings_to_split: `Ratings` object which contains the interactions of the users that must be splitted
+            ratings_to_split: `Ratings` object which contains the interactions of the users that must be split
                 into *train set* and *test set*
-            user_id_list: The set of users for which splitting will be done. If set, splitting will be performed only
+            user_list: The Set of users for which splitting will be done. If set, splitting will be performed only
                 for users inside the list. Otherwise, splitting will be performed for all users in `ratings_to_split`
-                parameter
+                parameter. User can be specified with their string id or with their mapped integer
 
         Raises:
-            ValueError: if `skip_user_error=True` in the constructor and for some users splitting can't be performed
+            ValueError: if `skip_user_error=True` in the constructor and for at least one user splitting
+            can't be performed
         """
 
-        if user_list is None:
-            user_list = ratings_to_split.unique_user_idx_column
+        # convert user list to list of int if necessary (strings are passed)
+        if user_list is not None:
+            all_users = np.array(list(user_list))
+            if np.issubdtype(all_users.dtype, str):
+                all_users = ratings_to_split.user_map.convert_seq_str2int(all_users)
+
+            all_users = set(all_users)
+        else:
+            all_users = set(ratings_to_split.unique_user_idx_column)
 
         # {
         #   0: {'train': [u1_uir, u2_uir]},
@@ -91,9 +100,9 @@ class Partitioning(ABC):
         #       'test': [u1_uir, u2_uir]
         #  }
         train_test_dict = defaultdict(lambda: defaultdict(list))
-        count = 0
+        error_count = 0
 
-        with get_progbar(user_list) as pbar:
+        with get_progbar(all_users) as pbar:
 
             pbar.set_description("Performing {}".format(str(self)))
             for user_idx in pbar:
@@ -101,24 +110,19 @@ class Partitioning(ABC):
                 try:
                     user_train_list, user_test_list = self.split_single(user_ratings)
                     for split_number, (single_train, single_test) in enumerate(zip(user_train_list, user_test_list)):
-                        # we set for each split the train_set and test_set of every user u1
-                        # eg.
-                        #     train_test_dict[0]['train']['u1'] = u1_interactions_train0
-                        #     train_test_dict[0]['test']['u1'] = u1_interactions_test0
-                        # train_test_dict[split_number]['train'][user_id] = single_train
-                        # train_test_dict[split_number]['test'][user_id] = single_test
+
                         train_test_dict[split_number]['train'].append(single_train)
                         train_test_dict[split_number]['test'].append(single_test)
 
                 except ValueError as e:
                     if self.skip_user_error:
-                        count += 1
+                        error_count += 1
                         continue
                     else:
                         raise e from None
 
-        if count > 0:
-            logger.warning(f"{count} users will be skipped because partitioning couldn't be performed\n"
+        if error_count > 0:
+            logger.warning(f"{error_count} users will be skipped because partitioning couldn't be performed\n"
                            f"Change this behavior by setting `skip_user_error` to True")
 
         train_list = [Ratings.from_uir(np.vstack(train_test_dict[split]['train']),
@@ -147,8 +151,8 @@ class KFoldPartitioning(Partitioning):
             parameter has no effect.
             Pass an int for reproducible output across multiple function calls.
         skip_user_error:
-            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
-            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged at the
+            end of the split process specifying n° of users skipped. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, n_splits: int = 2, shuffle: bool = True, random_state: int = None,
@@ -162,12 +166,12 @@ class KFoldPartitioning(Partitioning):
         Method which splits in $k$ splits both in *train set* and *test set* the ratings of a single user
 
         Args:
-            user_ratings: List of `Interaction` objects of a single user
+            uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains one list of `Interaction` objects for each split that will
-                constitute the *train set* of the user, the second contains one list of `Interaction` objects for each split
-                that will constitute the *test set* for the user
+            Two lists, where the first contains a uir matrix for each split constituting the
+            *train set* of the user, the second contains a uir matrix for each split constituting
+            the *test set* of the user
         """
         split_result = self.__kf.split(uir_user)
 
@@ -198,15 +202,22 @@ class HoldOutPartitioning(Partitioning):
 
     Args:
         train_set_size: Should be between 0.0 and 1.0 and represent the proportion of the ratings to
-            ***hold*** in the train set for each user.
+            ***hold*** in the train set for each user. If
+            int, represents the absolute number of train samples. If None,
+            the value is automatically set to the complement of the test size.
+        test_set_size: If float, should be between 0.0 and 1.0 and represent the proportion
+            of the dataset to include in the test split. If int, represents the
+            absolute number of test samples. If None, the value is set to the
+            complement of the train size. If `train_size` is also None, it will
+            be set to 0.25.
         random_state:
             Controls the shuffling applied to the data before applying the split.
             Pass an int for reproducible output across multiple function calls.
         shuffle:
-            Whether or not to shuffle the data before splitting.
+            Whether to shuffle the data before splitting.
         skip_user_error:
-            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
-            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged at the
+            end of the split process specifying n° of users skipped. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, train_set_size: Union[float, int, None] = None, test_set_size: Union[float, int, None] = None,
@@ -238,16 +249,16 @@ class HoldOutPartitioning(Partitioning):
 
     def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
-        Method which splits *train set* and *test set* the ratings of a single user by holding in the train
-        set the percentage of data specified in `train_set_size` in the constructor
+        Method which splits *train set* and *test set* the ratings of a single user by holding in the train set of the
+        user interactions accoring to the parameters set in the constructor
 
         Args:
-            user_ratings: List of `Interaction` objects of a single user
+            uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains one list of `Interaction` objects that will
-                constitute the *train set* of the user, the second contains one list of `Interaction` objects
-                that will constitute the *test set* for the user
+            Two lists, where the first contains a uir matrix for each split constituting the
+            *train set* of the user, the second contains a uir matrix for each split constituting
+            the *test set* of the user
         """
         uir_train, uir_test = train_test_split(uir_user,
                                                train_size=self.__train_set_size,
@@ -286,8 +297,8 @@ class BootstrapPartitioning(Partitioning):
             Controls the shuffling applied to the data before applying the split.
             Pass an int for reproducible output across multiple function calls.
         skip_user_error:
-            If set to True, users for which data can't be split will be skipped and only a warning will be logged when
-            calling the `split_all()` method. Otherwise, a `ValueError` exception is raised
+            If set to True, users for which data can't be split will be skipped and only a warning will be logged at the
+            end of the split process specifying n° of users skipped. Otherwise, a `ValueError` exception is raised
     """
 
     def __init__(self, random_state: int = None, skip_user_error: bool = True):
@@ -302,12 +313,12 @@ class BootstrapPartitioning(Partitioning):
         The interactions which are not sampled will be part of the *test set*
 
         Args:
-            user_ratings: List of `Interaction` objects of a single user
+            uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains one list of `Interaction` objects that will
-                constitute the *train set* of the user, the second contains one list of `Interaction` objects
-                that will constitute the *test set* for the user
+            Two lists, where the first contains a uir matrix for each split constituting the
+            *train set* of the user, the second contains a uir matrix for each split constituting
+            the *test set* of the user
         """
 
         interactions_train = resample(uir_user,

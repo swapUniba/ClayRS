@@ -23,7 +23,8 @@ class TriplesDataset(data.Dataset):
 
     @functools.lru_cache(maxsize=128)
     def user_positive_interactions(self, user_idx: int) -> Set:
-        return set(self.train_ratings.get_user_interactions(user_idx)[:, 1].astype(int))
+        return set(self.train_ratings.item_idx_column[self.train_ratings.get_user_interactions(user_idx,
+                                                                                               as_indices=True)])
 
     def __getitem__(self, idx):
 
@@ -39,40 +40,35 @@ class TriplesDataset(data.Dataset):
 
 class VBPRNetwork(torch.nn.Module):
 
-    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim, device, seed=None):
+    def __init__(self, n_users, n_items, features_dim, gamma_dim, theta_dim, device):
 
         super().__init__()
 
-        self.seed = seed
+        self.device = device
 
-        self.gamma_users = nn.Embedding(n_users, gamma_dim)
-        self.gamma_items = nn.Embedding(n_items, gamma_dim)
+        self.beta_items = nn.Parameter(torch.zeros(size=(n_items,), dtype=torch.float), requires_grad=True)
+        self.gamma_users = nn.Parameter(torch.zeros(size=(n_users, gamma_dim), dtype=torch.float), requires_grad=True)
+        self.gamma_items = nn.Parameter(torch.zeros(size=(n_items, gamma_dim), dtype=torch.float), requires_grad=True)
 
-        self.theta_users = nn.Embedding(n_users, theta_dim)
-        self.E = nn.Embedding(features_dim, theta_dim)
+        self.theta_users = nn.Parameter(torch.zeros(size=(n_users, theta_dim), dtype=torch.float), requires_grad=True)
+        self.E = nn.Parameter(torch.zeros(size=(features_dim, theta_dim), dtype=torch.float), requires_grad=True)
 
-        self.beta_items = nn.Embedding(n_items, 1)
-        self.beta_prime = nn.Embedding(features_dim, 1)
+        self.beta_prime = nn.Parameter(torch.zeros(size=(features_dim, 1), dtype=torch.float), requires_grad=True)
 
         self._init_weights()
+
+        self.to(device)
 
         self.theta_items: Optional[torch.Tensor] = None
         self.visual_bias: Optional[torch.Tensor] = None
 
-        self.device = device
-        self.to(device)
-
     def _init_weights(self):
-
-        if self.seed:
-            torch.manual_seed(self.seed)
-
-        nn.init.zeros_(self.beta_items.weight)
-        nn.init.xavier_uniform_(self.gamma_users.weight)
-        nn.init.xavier_uniform_(self.gamma_items.weight)
-        nn.init.xavier_uniform_(self.theta_users.weight)
-        nn.init.xavier_uniform_(self.E.weight)
-        nn.init.xavier_uniform_(self.beta_prime.weight)
+        nn.init.zeros_(self.beta_items)
+        nn.init.xavier_uniform_(self.gamma_users)
+        nn.init.xavier_uniform_(self.gamma_items)
+        nn.init.xavier_uniform_(self.theta_users)
+        nn.init.xavier_uniform_(self.E)
+        nn.init.xavier_uniform_(self.beta_prime)
 
     def forward(self, x):
         users = x[0]
@@ -83,25 +79,25 @@ class VBPRNetwork(torch.nn.Module):
 
         feature_diff = pos_items_features - neg_items_features
 
-        beta_items_pos = self.beta_items(pos_items)
-        beta_items_neg = self.beta_items(neg_items)
+        beta_items_pos = self.beta_items[pos_items]
+        beta_items_neg = self.beta_items[neg_items]
         beta_items_diff = beta_items_pos - beta_items_neg
 
-        user_gamma = self.gamma_users(users)
-        user_theta = self.theta_users(users)
+        user_gamma = self.gamma_users[users]
+        user_theta = self.theta_users[users]
 
-        gamma_items_pos = self.gamma_items(pos_items)
-        gamma_items_neg = self.gamma_items(neg_items)
+        gamma_items_pos = self.gamma_items[pos_items]
+        gamma_items_neg = self.gamma_items[neg_items]
         gamma_items_diff = gamma_items_pos - gamma_items_neg
 
-        theta_item_diff = torch.mm(feature_diff, self.E.weight)
+        theta_item_diff = feature_diff.mm(self.E)
 
         # this is the same of doing inner products!
         Xuij = (
-                beta_items_diff.squeeze() +
+                beta_items_diff +
                 (user_gamma * gamma_items_diff).sum(dim=1) +
                 (user_theta * theta_item_diff).sum(dim=1) +
-                torch.mm(feature_diff.float(), self.beta_prime.weight)
+                feature_diff.mm(self.beta_prime)
         )
 
         return Xuij, (user_gamma, user_theta), (beta_items_pos, beta_items_neg), (gamma_items_pos, gamma_items_neg)
@@ -109,11 +105,10 @@ class VBPRNetwork(torch.nn.Module):
     def return_scores(self, user_idx, item_idx):
 
         with torch.no_grad():
-
-            items_idx_tensor = torch.tensor(item_idx, dtype=torch.long).to(self.device)
-            beta_items = self.beta_items(items_idx_tensor)
+            items_idx_tensor = torch.tensor(item_idx).long()
+            beta_items = self.beta_items[items_idx_tensor]
             theta_items = self.theta_items[items_idx_tensor]
-            gamma_items = self.gamma_items(items_idx_tensor)
+            gamma_items = self.gamma_items[items_idx_tensor]
             visual_bias = self.visual_bias[items_idx_tensor]
 
             # in case a score must be returned for each item fitted, set `item_idx = None`
@@ -124,13 +119,13 @@ class VBPRNetwork(torch.nn.Module):
             #     theta_items = self.theta_items
             #     visual_bias = self.visual_bias
 
-            user_idx_tensor = torch.tensor(user_idx).to(self.device)
+            user_idx_tensor = torch.tensor(user_idx)
 
             x_u = (
-                    beta_items.squeeze() +
-                    visual_bias.squeeze() +
-                    torch.matmul(gamma_items, self.gamma_users(user_idx_tensor)) +
-                    torch.matmul(theta_items, self.theta_users(user_idx_tensor))
+                    beta_items +
+                    visual_bias +
+                    torch.matmul(gamma_items, self.gamma_users[user_idx_tensor]) +
+                    torch.matmul(theta_items, self.theta_users[user_idx_tensor])
             )
 
-        return x_u
+        return x_u.numpy()

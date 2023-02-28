@@ -16,12 +16,27 @@ class PageRank(GraphBasedAlgorithm):
     """
     Abstract class that contains the main methods and attributes for any PageRank algorithm.
 
-    Every PageRank algorithm can be `personalized`, in this case the PageRank will be calculated with a personalization
-    vector made by items in the user profile weighted by the score given to them.
+    Every PageRank algorithm should also offer the possibility to compute the `personalized` page rank with different
+    weights for different types of nodes
 
     Args:
-        personalized (bool): boolean value that specifies if the page rank must be calculated considering the user
-            profile as personalization vector. Default is False
+        personalized: Boolean value that specifies if the page rank must be calculated considering the user profile
+            as personalization vector. Default is False
+        relevance_threshold: Threshold which separates relevant and non-relevant items for a user. Can be set globally,
+            but if None the relevance threshold for each user is computed considering the mean rating given by the user
+            in the train set
+        rel_items_weight: Probability that the random surfer will end up in a relevant item node when not following the
+            out links of a node. This probability will be normalized and divided by the total number of relevant items
+            for the user. If None, the `default_nodes_weight` probability will be assigned
+        rel_items_prop_weight: Probability that the random surfer will end up in a property node linked to a relevant
+            item when not following the out links of a node. This probability will be normalized and divided by the
+            total number of property nodes linked to relevant items. If None, the `default_nodes_weight` probability
+            will be assigned
+        default_nodes_weight: Probability that the random surfer will end up in a node which is not a relevant item
+            or a property linked to a relevant item when not following the out links of a node.
+            If `rel_items_weight` is None, then also relevant item nodes will be considered as *default nodes*.
+            If `rel_items_prop_weight` is None, then also property nodes linked to relevant items will be considered
+            as *default nodes*
     """
 
     def __init__(self,
@@ -46,6 +61,15 @@ class PageRank(GraphBasedAlgorithm):
 
     @staticmethod
     def check_weights(rel_items_weight, rel_items_prop_weight, default_nodes_weight):
+        """
+        Simple static method which checks that the weights respect the following constraints:
+
+        * Each *probability weight* should be between $0$ (included) and $1$ (included)
+        * The sum of all *probability weights* should be exactly one (if all *probability weights* are set)
+
+        If some *probability weights* are None, then they will be set accordingly (so that the sum of all *probability
+        weights* is 1)
+        """
 
         all_probs_weight = [rel_items_weight, rel_items_prop_weight, default_nodes_weight]
 

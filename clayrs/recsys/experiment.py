@@ -365,7 +365,7 @@ class ContentBasedExperiment(Experiment):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
             predict_alg = cbrs.fit_predict(test_set, methodology=methodology, num_cpus=num_cpus,
-                                           user_id_list=user_id_list)
+                                           user_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}",
                                ids_as_str=True)
@@ -411,7 +411,7 @@ class ContentBasedExperiment(Experiment):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
             predict_alg = cbrs.fit_rank(test_set, n_recs=n_recs, methodology=methodology,
-                                        user_id_list=user_id_list, num_cpus=num_cpus)
+                                        user_list=user_id_list, num_cpus=num_cpus)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}",
                                ids_as_str=True)
@@ -608,7 +608,7 @@ class GraphBasedExperiment(Experiment):
             gbrs = GraphBasedRS(alg, graph)
 
             predict_alg = gbrs.predict(test_set, methodology=methodology,
-                                       num_cpus=num_cpus, user_id_list=user_id_list)
+                                       num_cpus=num_cpus, user_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}")
 
@@ -664,7 +664,7 @@ class GraphBasedExperiment(Experiment):
             gbrs = GraphBasedRS(alg, graph)
 
             predict_alg = gbrs.rank(test_set, n_recs=n_recs, methodology=methodology,
-                                    num_cpus=num_cpus, user_id_list=user_id_list)
+                                    num_cpus=num_cpus, user_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}")
 

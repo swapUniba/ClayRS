@@ -21,12 +21,41 @@ class RankingMetric(Metric):
 
 class NDCG(RankingMetric):
     r"""
-    The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the **single user** by using the sklearn
-    implementation, so be sure to check its [documentation][sklearn_link].
+    The NDCG (Normalized Discounted Cumulative Gain) metric is calculated for the **single user** by first computing
+    the DCG score using the following formula:
 
-    [sklearn_link]: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html
+    $$
+    DCG_{u}(truthScores_{u}) = \sum_{r\in truthScores_{u}}{f(r) / log_x(2 + i)}
+    $$
 
-    The NDCG of the **entire system** is calculated instead as such:
+    Where:
+
+    - $truthScores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said
+        items in the ranking for the user $u$
+    - $f$ is a gain function (linear or exponential, in particular)
+    - $x$ is the base of the logarithm
+    - $i$ is the index of the truth score $r$ in the list of scores $truthScores_{u}$
+
+    If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponential" case, the following
+    formula is applied to $r$:
+
+    $$
+    f(r) = 2^{r} - 1
+    $$
+
+    The NDCG for a single user is then calculated using the following formula:
+
+    $$
+    NDCG_u(truthScores_{u}) = \frac{DCG_{u}(truthScores_{u})}{IDCG_{u}(truthScores_{u})}
+    $$
+
+    Where:
+
+    - $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores
+
+    So the basic idea is to compare the actual ranking with the ideal one
+
+    Finally, the NDCG of the **entire system** is calculated instead as such:
 
     $$
     NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
@@ -38,6 +67,13 @@ class NDCG(RankingMetric):
     - $U$ is the set of all users
 
     The system average excludes NaN values.
+
+    Arguments:
+
+        gains: type of gain function to use when calculating the DCG score, the possible options are "linear" or
+            "exponential"
+        discount_log: logarithm function to use when calculating the DCG score, by default numpy logarithm in base 2
+            is used
     """
     def __init__(self, gains="linear", discount_log=np.log2):
         self.gains = gains
@@ -57,7 +93,7 @@ class NDCG(RankingMetric):
         return "NDCG()"
 
     def _dcg_score(self, r: np.ndarray):
-        """Discounted cumulative gain (DCG) at rank k
+        """Discounted cumulative gain (DCG)
         Parameters
         ----------
         r: Relevance scores (list or numpy) in rank order
@@ -77,14 +113,14 @@ class NDCG(RankingMetric):
         return dcg
 
     def _calc_ndcg(self, r: np.ndarray):
-        """Normalized discounted cumulative gain (NDCG) at rank k
+        """Normalized discounted cumulative gain (NDCG)
         Parameters
         ----------
         r: Relevance scores (list or numpy) in rank order
             (first element is the first item)
         Returns
         -------
-        NDCG @k : float
+        NDCG : float
         """
         actual = self._dcg_score(r)
         ideal = self._dcg_score(np.sort(r)[::-1])
@@ -111,6 +147,7 @@ class NDCG(RankingMetric):
 
             idx_pred_in_truth = npi.indices(user_truth_items, user_prediction_items, missing=-1)
             common_idx_pred_in_truth = idx_pred_in_truth[idx_pred_in_truth != -1]
+            # scores in truth of the items for which there is a prediction ordered according to predictions
             common_truth_scores = truth.score_column[user_truth_idxs][common_idx_pred_in_truth]
 
             user_ndcg = self._calc_ndcg(common_truth_scores)

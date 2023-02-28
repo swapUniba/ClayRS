@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 
 from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
-from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex, LoadedContentsDict
+from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsIndex
 from clayrs.recsys.content_based_algorithm.exceptions import NotPredictionAlg, OnlyNegativeItems, EmptyUserRatings
 
 
@@ -16,7 +16,7 @@ class IndexQuery(PerUserCBAlgorithm):
     """
     Class for the search engine recommender using an index.
     It firsts builds a query using the representation(s) specified of the positive items, then uses the mentioned query
-    to do an actual search inside the index: every items will have a score of "closeness" in relation to the
+    to do an actual search inside the index: every item will have a score of "closeness" in relation to the
     query, we use this score to rank every item.
 
     Just be sure to use textual representation(s) to build a significant query and to make a significant search!
@@ -24,13 +24,13 @@ class IndexQuery(PerUserCBAlgorithm):
     Examples:
 
         * Interested in only a field representation, classic tfidf similarity,
-        $threshold = 3$ (Every item with rating $>= 3$ will be considered as positive)
+        `threshold` $= 3$ (Every item with rating $>= 3$ will be considered as positive)
 
         >>> from clayrs import recsys as rs
         >>> alg = rs.IndexQuery({"Plot": 0}, threshold=3)
 
         * Interested in multiple field representations of the items, BM25 similarity,
-        $threshold = None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
+        `threshold` $= None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
 
         >>> alg = rs.IndexQuery(
         >>>                     item_field={"Plot": [0, "original_text"],
@@ -59,7 +59,7 @@ class IndexQuery(PerUserCBAlgorithm):
         classic_similarity: True if you want to use the classic implementation of tfidf in Whoosh,
             False if you want BM25F
         threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-            as positive. If the threshold is not specified, the average score of all items liked by the user is used.
+            as positive. If the threshold is not specified, the average score of all items rated by the user is used.
     """
     __slots__ = ('_string_query', '_scores', '_positive_user_docs', '_classic_similarity')
 
@@ -76,7 +76,7 @@ class IndexQuery(PerUserCBAlgorithm):
         extracted from the index
 
         Args:
-            index_representations (dict): representations for an item extracted from the index
+            index_representations: representations for an item extracted from the index
         """
 
         def find_valid(pattern: str):
@@ -112,14 +112,23 @@ class IndexQuery(PerUserCBAlgorithm):
 
     def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex):
         """
-        Function that extracts features from positive rated items ONLY!
+        Function that extracts features from positive rated items ONLY of a user
         The extracted features will be used to fit the algorithm (build the query).
 
         Features extracted will be stored in private attributes of the class.
 
+        IF there are no rated items available locally or if there are only positive/negative
+        items, an exception is thrown.
+
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user (the user for which we must fit the algorithm)
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
+
+        Raises:
+            EmptyUserRatings: Exception raised when the user does not appear in the train set
+            OnlyNegativeitems: Exception raised when there are only negative items available locally
+                for the user (Items that the user disliked)
         """
 
         uir_user = train_ratings.get_user_interactions(user_idx)
@@ -175,10 +184,10 @@ class IndexQuery(PerUserCBAlgorithm):
         """
         The fit process for the IndexQuery consists in building a query using the features of the positive items ONLY
         (items that the user liked). The terms relative to these 'positive' items are boosted by the
-        rating he/she gave.
+        rating he/she/it gave.
 
         This method uses extracted features of the positive items stored in a private attribute, so
-        process_rated() must be called before this method.
+        `process_rated()` must be called before this method.
 
         The built query will also be stored in a private attribute.
         """
@@ -202,7 +211,7 @@ class IndexQuery(PerUserCBAlgorithm):
 
         self._string_query = string_query
 
-    def _build_mask_list(self, user_seen_items: Set[str], filter_list: List[str] = None):
+    def _build_mask_list(self, user_seen_items: Set[str], filter_list: List[str]):
         """
         Private function that calculate the mask query and the filter query for whoosh to use:
 
@@ -216,44 +225,45 @@ class IndexQuery(PerUserCBAlgorithm):
             user_seen_items: set of items present in the user profile
             filter_list: list of the items to predict, if None all unrated items will be predicted
         """
-        masked_list = list(user_seen_items)
-        if filter_list is not None:
-            masked_list = [item for item in user_seen_items if item not in filter_list]
+        masked_list = [item for item in user_seen_items if item not in filter_list]
 
         return masked_list
 
     def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex,
-                            filter_list: List[str] = None) -> np.ndarray:
+                            filter_list: List[str]) -> np.ndarray:
         """
         IndexQuery is not a Prediction Score Algorithm, so if this method is called,
         a NotPredictionAlg exception is raised
 
         Raises:
-            NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm
+            NotPredictionAlg: exception raised since the IndexQuery algorithm is not a score prediction algorithm
         """
         raise NotPredictionAlg("IndexQuery is not a Score Prediction Algorithm!")
 
     def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex,
                          recs_number: Optional[int], filter_list: List[str]) -> np.ndarray:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+        Rank the top-n recommended items for the active user, where the top-n items to rank are controlled by the
+        `recs_number` and `filter_list` parameter:
 
-        One can specify which items must be ranked with the `filter_list` parameter,
-        in this case ONLY items in the `filter_list` parameter will be ranked.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, **ALL** unrated items will be ranked.
+        * the former one is self-explanatory, the second is a list of items
+        represented with their string ids. Must be necessarily strings and not their mapped integer since items are
+        serialized following their string representation!
+
+        If `recs_number` is `None`, all ranked items will be returned
+
+        The filter list parameter is usually the result of the `filter_single()` method of a `Methodology` object
 
         Args:
-            user_ratings: List of Interaction objects for a single user
-            available_loaded_items: The LoadedContents interface which contains loaded contents. In this case it will
-                be a `LoadedContentsIndex`
+            user_idx: Mapped integer of the active user
+            train_ratings: `Ratings` object which contains the train set of each user
+            available_loaded_items: The LoadedContents interface which contains loaded contents
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+            filter_list: list of the items to rank. Should contain string item ids
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
+            as third dimension sorted in a decreasing order
         """
         uir_user = train_ratings.get_user_interactions(user_idx)
         if len(uir_user) == 0:

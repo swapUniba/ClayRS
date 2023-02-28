@@ -1,6 +1,7 @@
 site_name: ClayRS documentation
 repo_url: https://github.com/swapUniba/ClayRS
 repo_name: swapUniba/ClayRS
+edit_uri: docs/mkdocs/docs
 theme:
   name: material
   logo: images/icon_no_borders.svg
