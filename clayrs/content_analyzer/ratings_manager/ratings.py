@@ -803,7 +803,7 @@ class Ratings:
 
         return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
-    def to_dataframe(self, ids_as_str: bool = False) -> pd.DataFrame:
+    def to_dataframe(self, ids_as_str: bool = True) -> pd.DataFrame:
         """
         Method which will convert the `Rating` object to a `pandas DataFrame object`.
 
@@ -833,7 +833,7 @@ class Ratings:
         return pd.DataFrame(will_be_frame)
 
     def to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False,
-               ids_as_str: bool = False):
+               ids_as_str: bool = True):
         """
         Method which will save the `Ratings` object to a `csv` file
 
