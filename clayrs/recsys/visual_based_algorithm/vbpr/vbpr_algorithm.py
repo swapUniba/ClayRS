@@ -395,7 +395,7 @@ class VBPR(ContentBasedAlgorithm):
 
         def compute_single_rank(user_idx):
             filter_list = methodology.filter_single(user_idx, train_set, test_set)
-            user_rank = fit_alg.return_scores(user_idx, filter_list).cpu().numpy()
+            user_rank = fit_alg.return_scores(user_idx, filter_list)
             user_uir = np.array((
                 np.full(len(user_rank), user_idx),
                 filter_list,

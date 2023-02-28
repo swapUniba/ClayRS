@@ -167,16 +167,16 @@ class TestVBPR(TestCase):
 
             # if is not present then array of zeros is used
             if item_id_to_extract not in items_id_locally_available:
-                expected = torch.zeros(size=first_not_none_element.size())
+                expected = torch.zeros(size=first_not_none_element.shape)
                 result = features[i]
 
-                np.testing.assert_array_equal(expected.numpy(), result.numpy())
+                np.testing.assert_array_equal(expected.numpy(), result)
             # otherwise if it is present obviously we expect that features are different from array of zeros
             else:
-                not_expected = torch.zeros(size=first_not_none_element.size())
+                not_expected = torch.zeros(size=first_not_none_element.shape)
                 result = features[i]
 
-                self.assertFalse(np.array_equal(not_expected.numpy(), result.numpy()))
+                self.assertFalse(np.array_equal(not_expected.numpy(), result))
 
         # ------ Normalization set to True, features are expected to be in the [0, 1] range ------
         alg = VBPR({'Genre': ['embedding']}, gamma_dim=10, theta_dim=10, batch_size=64, epochs=0, device="cpu",
