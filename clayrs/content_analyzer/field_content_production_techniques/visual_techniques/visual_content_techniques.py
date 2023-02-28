@@ -51,6 +51,17 @@ class ClasslessImageFolder(Dataset):
         self.count = 0
 
     def __getitem__(self, index):
+        """
+        open the image from the list of image path of the specified index
+
+        if the image exists at the specified path, it is:
+
+            1. converted to RGB
+            2. converted to tensor
+            3. resized to a default size
+
+        if the image doesn't exist at the specified path, a blank image is created of the specified default size
+        """
         image_path = self.image_paths[index]
 
         try:
@@ -86,22 +97,19 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         - High Level: high level processing techniques which can efficiently compute batches of images.
 
     IMPORTANT NOTE: if the technique can't properly load some images (because the download links are not working or
-    because it is not available locally) they will be replaced with a 3dimensional Torch Tensor consisting of zeros
+    because it is not available locally) they will be replaced with a three-dimensional Torch Tensor consisting of zeros
     only
 
     Args:
 
         imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-
-        max_timeout:
-        max_retries:
-        max_workers:
-
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
         batch_size: batch size for the images dataloader
-
         resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
         to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
-        size specified in the latter will be the final resize size.
+        size specified in the latter will be the final resize size
     """
 
     def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
@@ -136,13 +144,14 @@ class VisualContentTechnique(FieldContentProductionTechnique):
     def _retrieve_images(self, field_name: str, raw_source: RawInformationSource):
         """
         Method which retrieves all the images for the specified field name in the raw source in case images are not
-        paths but links.
+        paths but links
         """
         def dl_and_save_images(url_or_path):
             if validators.url(url_or_path):
 
                 n_retry = 0
 
+                # keep trying to download an image until the max_retries number is reached
                 while True:
                     try:
                         byte_img = requests.get(url_or_path, timeout=self.max_timeout).content
@@ -219,7 +228,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 
 class LowLevelVisual(VisualContentTechnique):
     """
-    Technique which encapsulates the logic for all visual techniques that work on a low level, that is instead of
+    Technique which encapsulates the logic for all visual techniques that work at a low level, that is instead of
     working on batches of images in an efficient way, these techniques require to process each image separately
     (because, for example, they need to analyze the single pixels of the images).
     """
@@ -256,9 +265,8 @@ class LowLevelVisual(VisualContentTechnique):
 
 class HighLevelVisual(VisualContentTechnique):
     """
-    Technique which encapsulates the logic for all visual techniques that work on a high level, that is instead of
-    working on batches of images in an efficient way, these techniques require to process each image separately
-    (because, for example, they need to analyze the single pixels of the images).
+    Technique which encapsulates the logic for all visual techniques that work at a high level, that is they work on
+    batches of images in an efficient way
     """
 
     def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
@@ -285,12 +293,16 @@ class HighLevelVisual(VisualContentTechnique):
 
     @abstractmethod
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
+        """
+        Method that will produce the corresponding complex representations from all field data for the batch
+        """
         raise NotImplementedError
 
 
 class PytorchImageModels(HighLevelVisual):
     """
-    High level technique which uses the [timm library] (https://timm.fast.ai/) for feature extraction from images.
+    High level technique which uses the [timm library] (https://timm.fast.ai/) for feature extraction from images using
+    pre-trained models
 
     Args:
         model_name: a model name supported by the timm library
@@ -298,6 +310,14 @@ class PytorchImageModels(HighLevelVisual):
             NOTE: the model is loaded from the timm library with the parameter "features_only" set at True, meaning
             that only feature layers of the model will be available and accessible through the index
         flatten: whether the features obtained from the model should be flattened or not
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
     """
 
     def __init__(self, model_name: str, feature_layer: int = -1, flatten=True,
@@ -309,7 +329,7 @@ class PytorchImageModels(HighLevelVisual):
         self.feature_layer = feature_layer
         self.flatten = flatten
 
-    def produce_batch_repr(self, field_data: torch.Tensor) -> List[FieldRepresentation]:
+    def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
 
         if self.flatten:
             return list(map(lambda x: EmbeddingField(x.detach().numpy().flatten()),
@@ -326,6 +346,25 @@ class PytorchImageModels(HighLevelVisual):
 
 
 class SkImageHogDescriptor(LowLevelVisual):
+    """
+    Low level technique which implements the Hog Descriptor using the SkImage library
+
+    Parameters are the same ones you would pass to the hog function in SkImage together with some framework specific
+    parameters
+
+    Arguments for [SkImage Hog](https://scikit-image.org/docs/stable/api/skimage.feature.html?highlight=hog#skimage.feature.hog)
+
+    Args:
+        flatten: whether the output of the technique should be flattened or not
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3),
                  block_norm='L2-Hys', transform_sqrt=False, flatten=False,
@@ -340,8 +379,12 @@ class SkImageHogDescriptor(LowLevelVisual):
 
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+    def produce_single_repr(self, field_data: torch.Tensor) -> EmbeddingField:
 
+        # set channel axis for hog method
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed and channel axis is set to None
+        # otherwise, the RGB channel should always be the first one
         channel_axis = None
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
@@ -359,6 +402,25 @@ class SkImageHogDescriptor(LowLevelVisual):
 
 
 class SkImageCannyEdgeDetector(LowLevelVisual):
+    """
+    Low level technique which implements the Canny Edge Detector using the SkImage library
+
+    Parameters are the same ones you would pass to the canny function in SkImage together with some framework specific
+    parameters
+
+    Arguments for [SkImage Canny](https://scikit-image.org/docs/stable/api/skimage.feature.html?highlight=hog#skimage.feature.canny)
+
+    Args:
+        flatten: whether the output of the technique should be flattened or not
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
                  mode='constant', cval=0.0, flatten=False,
@@ -372,8 +434,12 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+    def produce_single_repr(self, field_data: torch.Tensor) -> EmbeddingField:
 
+        # canny edge detector requires grayscale images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # otherwise, the rgb image is converted to grayscale
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
         else:
@@ -391,6 +457,26 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
 
 
 class CustomFilterConvolution(LowLevelVisual):
+    """
+    Low level technique which implements a custom filter for convolution over an image, using the convolve method from
+    the scipy library
+
+    Parameters are the same ones you would pass to the convolve function in scipy together with some framework specific
+    parameters
+
+    Arguments for [Scipy convolve](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.convolve.html)
+
+    Args:
+        flatten: whether the output of the technique should be flattened or not
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, weights, mode='reflect', cval=0.0, origin=0, flatten=False,
                  imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
@@ -401,8 +487,12 @@ class CustomFilterConvolution(LowLevelVisual):
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+    def produce_single_repr(self, field_data: torch.Tensor) -> EmbeddingField:
 
+        # convolution requires grayscale images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # otherwise, the rgb image is converted to grayscale
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
         else:
@@ -420,6 +510,23 @@ class CustomFilterConvolution(LowLevelVisual):
 
 
 class ColorsHist(LowLevelVisual):
+    """
+    Low level technique which generates a color histogram for each channel of each RGB image
+
+    The technique retrieves all the values for each one of the three RGB channels in the image, flattens them and
+    returns an EmbeddingField representation containing a numpy two-dimensional array with three rows (one for each
+    channel)
+
+    Args:
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
                  max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
@@ -427,8 +534,12 @@ class ColorsHist(LowLevelVisual):
         super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
+    def produce_single_repr(self, field_data: torch.Tensor) -> EmbeddingField:
 
+        # color histogram requires RGB images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # then, if the image is in grayscale, it is converted to RGB
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
 
@@ -444,13 +555,28 @@ class ColorsHist(LowLevelVisual):
         return EmbeddingField(colors.astype(int))
 
     def __str__(self):
-        return "SkImageMainColors"
+        return "ColorHist"
 
     def __repr__(self):
         return self._repr_string
 
 
 class ColorQuantization(LowLevelVisual):
+    """
+    Low level technique which returns the colors obtained from applying a clustering technique (in this case KMeans)
+
+    Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
+    Args:
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, n_colors: Any = 3, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
@@ -465,6 +591,10 @@ class ColorQuantization(LowLevelVisual):
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
+        # color quantization requires RGB images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # then, if the image is in grayscale, it is converted to RGB
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
 
@@ -481,13 +611,31 @@ class ColorQuantization(LowLevelVisual):
         return EmbeddingField(dominant_colors.astype(int))
 
     def __str__(self):
-        return "SkImageColorQuantization"
+        return "ColorQuantization"
 
     def __repr__(self):
         return self._repr_string
 
 
 class SkImageSIFT(LowLevelVisual):
+    """
+    Low level technique which allows for SIFT feature detection from SkImage
+
+    Parameters are the same ones you would pass to the SIFT object in SkImage together with some framework specific
+    parameters
+
+    Arguments for [SkImage SIFT](https://scikit-image.org/docs/stable/api/skimage.feature.html?highlight=hog#skimage.feature.SIFT)
+
+    Args:
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, upsampling=2, n_octaves=8, n_scales=3, sigma_min=1.6, sigma_in=0.5, c_dog=0.013333333333333334,
                  c_edge=10, n_bins=36, lambda_ori=1.5, c_max=0.8, lambda_descr=6, n_hist=4, n_ori=8,
@@ -503,6 +651,10 @@ class SkImageSIFT(LowLevelVisual):
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
+        # the SIFT technique requires Grayscale images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # otherwise, if the image is in RGB, it is converted to grayscale
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
         else:
@@ -521,6 +673,28 @@ class SkImageSIFT(LowLevelVisual):
 
 
 class SkImageLBP(LowLevelVisual):
+    """
+    Low level technique which allows for LBP feature detection from SkImage
+
+    Parameters are the same ones you would pass to the local_binary_pattern function in SkImage together with some
+    framework specific parameters
+
+    Furthermore, in this case, there is also an additional parameter, that is 'as_image'
+
+    Arguments for [SkImage lbp](https://scikit-image.org/docs/stable/api/skimage.feature.html?highlight=hog#skimage.feature.draw_multiblock_lbp)
+
+    Args:
+        as_image: if True, the lbp image obtained from SkImage will be returned, otherwise the number of occurences
+            of each binary pattern will be returned (as if it was a feature vector)
+        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (image from link)
+        max_retries: maximum number of retries to retrieve an image from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the images dataloader
+        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
+        to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline, the
+        size specified in the latter will be the final resize size
+    """
 
     def __init__(self, p: int, r: float, method='default', flatten=False, as_image=False,
                  imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
@@ -534,6 +708,10 @@ class SkImageLBP(LowLevelVisual):
 
     def produce_single_repr(self, field_data: torch.Tensor) -> FieldRepresentation:
 
+        # the LBP technique requires Grayscale images
+        # if image is grayscale but has the additional channel specified (for example, (1, 16, 16)) the additional
+        # channel is removed
+        # otherwise, if the image is in RGB, it is converted to grayscale
         if field_data.shape[0] == 1:
             field_data = field_data.squeeze()
         else:

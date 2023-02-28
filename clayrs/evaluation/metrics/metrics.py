@@ -32,10 +32,8 @@ class Metric(ABC):
 
 def handler_different_users(func):
     """
-    Handler that catches the above exception.
-
-    Tries to run the functions normally, if one of the above exceptions is caught then it must return
-    an empty frame for the user since predictions can't be calculated for it.
+    Handler that covers the case in which there are different users between the predictions and the truth of a split: in
+    that case a ValueError exception is raised
     """
     @wraps(func)
     def inner_function(self, split, *args, **kwargs):

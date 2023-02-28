@@ -126,7 +126,7 @@ class TestStrIntMap(TestCase):
             self.from_array_map.convert_seq_str2int(np.array(["i4", "i5"]))
 
     def test_to_dict(self):
-        expected = {0: "i1", 1: "i2", 2: "i3"}
+        expected = {"i1": 0, "i2": 1, "i3": 2}
         result = self.from_array_map.to_dict()
 
         self.assertDictEqual(expected, result)
@@ -140,7 +140,7 @@ class TestStrIntMap(TestCase):
 
         # test append map
         empty_strint_map.append(["inew1", "inew2"])
-        expected = {0: "inew1", 1: "inew2"}
+        expected = {"inew1": 0, "inew2": 1}
         result = empty_strint_map.to_dict()
 
         self.assertDictEqual(expected, result)

@@ -133,14 +133,14 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(test_ratings.user_idx_column, result_rank_all.user_idx_column)
 
         # test ranking with the cbrs algorithm on specified STRING user list
-        result_rank_str_specified = cbrs.rank(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
+        result_rank_str_specified = cbrs.rank(test_ratings, num_cpus=1, user_list=["A000", "A003"])
         self.assertTrue(len(result_rank_all) != 0)
 
         self.assertEqual(["A000", "A003"], list(result_rank_str_specified.unique_user_id_column))
 
         # test ranking with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
-        result_rank_int_specified = cbrs.rank(test_ratings, num_cpus=1, user_id_list=user_idx_list)
+        result_rank_int_specified = cbrs.rank(test_ratings, num_cpus=1, user_list=user_idx_list)
         self.assertTrue(len(result_rank_all) != 0)
 
         np.testing.assert_array_equal(user_idx_list, result_rank_int_specified.unique_user_idx_column)
@@ -175,14 +175,14 @@ class TestContentBasedRS(TestCase):
         np.testing.assert_array_equal(test_ratings.user_idx_column, result_predict_all.user_idx_column)
 
         # test predict with the cbrs algorithm on specified STRING user list
-        result_predict_str_specified = cbrs.predict(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
+        result_predict_str_specified = cbrs.predict(test_ratings, num_cpus=1, user_list=["A000", "A003"])
         self.assertTrue(len(result_predict_all) != 0)
 
         self.assertEqual(["A000", "A003"], list(result_predict_str_specified.unique_user_id_column))
 
         # test predict with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
-        result_predict_int_specified = cbrs.predict(test_ratings, num_cpus=1, user_id_list=user_idx_list)
+        result_predict_int_specified = cbrs.predict(test_ratings, num_cpus=1, user_list=user_idx_list)
         self.assertTrue(len(result_predict_all) != 0)
 
         np.testing.assert_array_equal(user_idx_list, result_predict_int_specified.unique_user_idx_column)
@@ -238,7 +238,7 @@ class TestContentBasedRS(TestCase):
         self.assertIsNotNone(cbrs.fit_alg)
 
         # test ranking with the cbrs algorithm on specified STRING user list
-        result_rank_str_specified = cbrs.rank(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
+        result_rank_str_specified = cbrs.rank(test_ratings, num_cpus=1, user_list=["A000", "A003"])
         self.assertTrue(len(result_rank_all) != 0)
 
         self.assertEqual(["A000", "A003"], list(result_rank_str_specified.unique_user_id_column))
@@ -248,7 +248,7 @@ class TestContentBasedRS(TestCase):
 
         # test ranking with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
-        result_rank_int_specified = cbrs.rank(test_ratings, num_cpus=1, user_id_list=user_idx_list)
+        result_rank_int_specified = cbrs.rank(test_ratings, num_cpus=1, user_list=user_idx_list)
         self.assertTrue(len(result_rank_all) != 0)
 
         np.testing.assert_array_equal(user_idx_list, result_rank_int_specified.unique_user_idx_column)
@@ -310,7 +310,7 @@ class TestContentBasedRS(TestCase):
         self.assertIsNotNone(cbrs.fit_alg)
 
         # test predict with the cbrs algorithm on specified STRING user list
-        result_predict_str_specified = cbrs.predict(test_ratings, num_cpus=1, user_id_list=["A000", "A003"])
+        result_predict_str_specified = cbrs.predict(test_ratings, num_cpus=1, user_list=["A000", "A003"])
         self.assertTrue(len(result_predict_all) != 0)
 
         self.assertEqual(["A000", "A003"], list(result_predict_str_specified.unique_user_id_column))
@@ -320,7 +320,7 @@ class TestContentBasedRS(TestCase):
 
         # test predict with the cbrs algorithm on specified INT user list
         user_idx_list = test_ratings.user_map[["A000", "A003"]]
-        result_predict_int_specified = cbrs.predict(test_ratings, num_cpus=1, user_id_list=user_idx_list)
+        result_predict_int_specified = cbrs.predict(test_ratings, num_cpus=1, user_list=user_idx_list)
         self.assertTrue(len(result_predict_all) != 0)
 
         np.testing.assert_array_equal(user_idx_list, result_predict_int_specified.unique_user_idx_column)
@@ -393,7 +393,7 @@ class TestGraphBasedRS(TestCase):
         self.assertTrue(len(result_rank_all) != 0)
 
         # Test top-n ranking with the gbrs algorithm only for some users
-        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None, user_id_list=["A000", "A003"],
+        result_rank_numbered = gbrs.rank(self.test_ratings, n_recs=2, methodology=None, user_list=["A000", "A003"],
                                          num_cpus=1)
         self.assertEqual(set(result_rank_numbered.user_id_column), {"A000", "A003"})
         for user in {"A000", "A003"}:
