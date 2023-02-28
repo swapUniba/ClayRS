@@ -22,23 +22,23 @@ from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, OnlyP
 
 class ClassifierRecommender(PerUserCBAlgorithm):
     """
-    Class that implements recommendation through a specified `Classifier`.
-    It's a ranking algorithm so it can't do score prediction.
+    Class that implements recommendation through a specified `Classifier` object.
+    It's a ranking algorithm, so it can't do score prediction.
 
     Examples:
-        * Interested in only a field representation, DecisionTree classifier from sklearn,
-        $threshold = 3$ (Every item with rating score $>= 3$ will be considered as *positive*)
+        * Interested in only a field representation, `DecisionTree` classifier from sklearn,
+        `threshold` $= 3$ (Every item with rating score $>= 3$ will be considered as *positive*)
 
         >>> from clayrs import recsys as rs
         >>> alg = rs.ClassifierRecommender({"Plot": 0}, rs.SkDecisionTree(), 3)
 
-        * Interested in only a field representation, KNN classifier with custom parameters from sklearn,
-        $threshold = 3$ (Every item with rating score $>= 3$ will be considered as positive)
+        * Interested in only a field representation, `KNN` classifier with custom parameters from sklearn,
+        `threshold` $= 3$ (Every item with rating score $>= 3$ will be considered as positive)
 
         >>> alg = rs.ClassifierRecommender({"Plot": 0}, rs.SkKNN(n_neighbors=3), 0)
 
-        * Interested in multiple field representations of the items, KNN classifier with custom parameters from
-        sklearn, $threshold = None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
+        * Interested in multiple field representations of the items, `KNN` classifier with custom parameters from
+        sklearn, `threshold` $= None$ (Every item with rating $>=$ mean rating of the user will be considered as positive)
 
         >>> alg = ClassifierRecommender(
         >>>                             item_field={"Plot": [0, "tfidf"],
@@ -49,7 +49,7 @@ class ClassifierRecommender(PerUserCBAlgorithm):
 
         !!! info
 
-            After instantiating the ClassifierRecommender algorithm, pass it in the initialization of
+            After instantiating the ClassifierRecommender` algorithm, pass it in the initialization of
             a CBRS and the use its method to calculate ranking for single user or multiple users:
 
             Examples:
@@ -66,10 +66,10 @@ class ClassifierRecommender(PerUserCBAlgorithm):
             use a list if you want to use multiple representations for a particular field.
         classifier (Classifier): classifier that will be used. Can be one object of the Classifier class.
         threshold: Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-            as positive. If the threshold is not specified, the average score of all items liked by the user is used.
-        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
-            matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
-            vector for each word). By default the `Centroid` of the rows of the matrix is computed
+            as positive. If the threshold is not specified, the average score of all items rated by the user is used.
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used, but they are in a
+            matrix form instead of a single vector (e.g. WordEmbedding representations have one
+            vector for each word). By default, the `Centroid` of the rows of the matrix is computed
     """
     __slots__ = ('_classifier', '_embedding_combiner', '_labels', '_items_features')
 
@@ -89,14 +89,16 @@ class ClassifierRecommender(PerUserCBAlgorithm):
 
         Features and labels will be stored in private attributes of the class.
 
-        IF there are no rated_items available locally or if there are only positive/negative
+        IF there are no rated items available locally or if there are only positive/negative
         items, an exception is thrown.
 
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user (the user for which we must fit the algorithm)
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
 
         Raises:
+            EmptyUserRatings: Exception raised when the user does not appear in the train set
             NoRatedItems: Exception raised when there isn't any item available locally
                 rated by the user
             OnlyPositiveItems: Exception raised when there are only positive items available locally
@@ -181,30 +183,35 @@ class ClassifierRecommender(PerUserCBAlgorithm):
         the `NotPredictionAlg` exception!
 
         Raises:
-            NotPredictionAlg: exception raised since the CentroidVector algorithm is not a score prediction algorithm
+            NotPredictionAlg: exception raised since the ClassifierRecommender algorithm is not a
+                score prediction algorithm
         """
         raise NotPredictionAlg("ClassifierRecommender is not a Score Prediction Algorithm!")
 
     def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
                          recs_number: Optional[int], filter_list: List[str]) -> np.ndarray:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+        Rank the top-n recommended items for the active user, where the top-n items to rank are controlled by the
+        `recs_number` and `filter_list` parameter:
 
-        One can specify which items must be ranked with the `filter_list` parameter,
-        in this case ONLY items in the `filter_list` parameter will be ranked.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, **ALL** unrated items will be ranked.
+        * the former one is self-explanatory, the second is a list of items
+        represented with their string ids. Must be necessarily strings and not their mapped integer since items are
+        serialized following their string representation!
+
+        If `recs_number` is `None`, all ranked items will be returned
+
+        The filter list parameter is usually the result of the `filter_single()` method of a `Methodology` object
 
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+            filter_list: list of the items to rank. Should contain string item ids
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
+            as third dimension sorted in a decreasing order
         """
 
         uir_user = train_ratings.get_user_interactions(user_idx)

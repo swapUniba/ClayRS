@@ -1,6 +1,6 @@
 from __future__ import annotations
 import abc
-from typing import Union, Dict, List, Optional, TYPE_CHECKING
+from typing import Union, Dict, List, Optional, TYPE_CHECKING, Set
 
 from abc import ABC
 
@@ -8,7 +8,7 @@ import numpy as np
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings
-    from clayrs.recsys.graphs.graph import FullDiGraph
+    from clayrs.recsys.graphs.graph import FullDiGraph, UserNode
     from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
     from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
     from clayrs.recsys.methodology import Methodology
@@ -55,7 +55,7 @@ class ContentBasedRS(RecSys):
     Class for recommender systems which use the items' content in order to make predictions,
     some algorithms may also use users' content, so it's an optional parameter.
 
-    Every CBRS differ from each other based the algorithm used.
+    Every *CBRS* differ from each other based the algorithm used.
 
     Examples:
 
@@ -120,7 +120,7 @@ class ContentBasedRS(RecSys):
         self.fit_alg = None
 
     @property
-    def algorithm(self):
+    def algorithm(self) -> ContentBasedAlgorithm:
         """
         The content based algorithm chosen
         """
@@ -128,21 +128,21 @@ class ContentBasedRS(RecSys):
         return alg
 
     @property
-    def train_set(self):
+    def train_set(self) -> Ratings:
         """
         The train set of the Content Based RecSys
         """
         return self.__train_set
 
     @property
-    def items_directory(self):
+    def items_directory(self) -> str:
         """
         Path of the serialized items by the Content Analyzer
         """
         return self.__items_directory
 
     @property
-    def users_directory(self):
+    def users_directory(self) -> str:
         """
         Path of the serialized users by the Content Analyzer
         """
@@ -152,9 +152,14 @@ class ContentBasedRS(RecSys):
         """
         Method which will fit the algorithm chosen for each user in the train set passed in the constructor
 
-        If the algorithm can't be fit for some users, a warning message is printed
-        """
+        If the algorithm can't be fit for some users, a warning message is printed showing the number of users
+        for which the alg couldn't be fit
 
+        Args:
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
+
+        """
         self.fit_alg = self.algorithm.fit(train_set=self.train_set,
                                           items_directory=self.items_directory,
                                           num_cpus=num_cpus)
@@ -171,12 +176,14 @@ class ContentBasedRS(RecSys):
         The `user_list` parameter could contain users with their string id or with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise, the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users.
+        By default the ***top-10*** ranking is computed for each user
 
         Via the `methodology` parameter you can perform different candidate item selection. By default, the
         `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm was not fit for some users, they will be skipped and a warning message is printed showing the
+        number of users for which the alg couldn't produce a ranking
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
@@ -187,9 +194,9 @@ class ContentBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -250,7 +257,8 @@ class ContentBasedRS(RecSys):
         `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score
         prediction
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm was not fit for some users, they will be skipped and a warning message is printed showing the
+        number of users for which the alg couldn't produce a ranking
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
@@ -258,9 +266,9 @@ class ContentBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -312,19 +320,21 @@ class ContentBasedRS(RecSys):
                  methodology: Union[Methodology, None] = TestRatingsMethodology(),
                  save_fit: bool = False, num_cpus: int = 1) -> Rank:
         """
-        Method used to both fit and calculate ranking for all users in test set or all users in `user_id_list`
+        Method used to both fit and calculate ranking for all users in test set or all users in `user_list`
         parameter.
         The Recommender System will first be fit for each user in the `test_set` parameter or for each
         user inside the `user_list` parameter: the `user_list` parameter could contain users with their string id or
         with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise, the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users.
+        By default the ***top-10*** ranking is computed for each user
 
         Via the `methodology` parameter you can perform different candidate item selection. By default, the
         `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm couldn't be fit for some users, they will be skipped and a warning message is printed showing
+        the number of users for which the alg couldn't produce a ranking
 
         With the `save_fit` parameter you can decide if you want that you recommender system remains *fit* even after
         the complete execution of this method, in case you want to compute ranking with other methodologies, or
@@ -340,11 +350,11 @@ class ContentBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
                 complete execution of this method. Default is False
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Raises:
             NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
@@ -405,7 +415,8 @@ class ContentBasedRS(RecSys):
         `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be considered for score
         prediction
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm couldn't be fit for some users, they will be skipped and a warning message is printed showing
+        the number of users for which the alg couldn't produce a ranking
 
         With the `save_fit` parameter you can decide if you want that you recommender system remains *fit* even after
         the complete execution of this method, in case you want to compute ranking/score prediction with other
@@ -418,11 +429,11 @@ class ContentBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
             save_fit: Boolean value which let you choose if the Recommender System should remain fit even after the
                 complete execution of this method. Default is False
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
             Prediction object containing score prediction lists for all users of the test set or for all users in
@@ -491,7 +502,14 @@ class GraphBasedRS(RecSys):
 
         alg = rs.NXPageRank()  # any gb algorithm
 
-        graph = rs.NXBipartiteGraph(train)
+        graph = rs.NXBipartiteGraph(original_rat)
+
+        # remove from the graph interaction of the test set
+        for user, item in zip(test.user_id_column, test.item_id_column):
+            user_node = rs.UserNode(user)
+            item_node = rs.ItemNode(item)
+
+            graph.remove_link(user_node, item_node)
 
         gbrs = rs.GraphBasedRS(alg, graph)
 
@@ -512,7 +530,15 @@ class GraphBasedRS(RecSys):
 
         for train_set, test_set in zip(train_list, test_list):
 
-            graph = rs.NXBipartiteGraph(train_set)
+            graph = rs.NXBipartiteGraph(original_rat)
+
+            # remove from the graph interaction of the test set
+            for user, item in zip(test_set.user_id_column, test_set.item_id_column):
+                user_node = rs.UserNode(user)
+                item_node = rs.ItemNode(item)
+
+                graph.remove_link(user_node, item_node)
+
             gbrs = rs.GraphBasedRS(alg, graph)
             rank_to_append = gbrs.rank(test_set)
 
@@ -524,7 +550,7 @@ class GraphBasedRS(RecSys):
     Args:
         algorithm: the graph based algorithm that will be used in order to
             rank or make score prediction
-        graph: a Graph object containing interactions
+        graph: A graph which models interactions of users and items
     """
 
     def __init__(self,
@@ -535,18 +561,21 @@ class GraphBasedRS(RecSys):
         super().__init__(algorithm)
 
     @property
-    def users(self):
+    def users(self) -> Set[UserNode]:
+        """
+        Set of UserNode objects for each user of the graph
+        """
         return self.__graph.user_nodes
 
     @property
-    def graph(self):
+    def graph(self) -> FullDiGraph:
         """
         The graph containing interactions
         """
         return self.__graph
 
     @property
-    def algorithm(self):
+    def algorithm(self) -> GraphBasedAlgorithm:
         """
         The graph based algorithm chosen
         """
@@ -561,12 +590,14 @@ class GraphBasedRS(RecSys):
         The `user_list` parameter could contain users with their string id or with their mapped integer
 
         If the `n_recs` is specified, then the rank will contain the top-n items for the users.
-        Otherwise, the rank will contain all unrated items of the particular users
+        Otherwise, the rank will contain all unrated items of the particular users.
+        By default the ***top-10*** ranking is computed for each user
 
         Via the `methodology` parameter you can perform different candidate item selection. By default, the
         `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm couldn't produce a ranking for some users, they will be skipped and a warning message is
+        printed showing the number of users for which the alg couldn't produce a ranking
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
@@ -577,12 +608,9 @@ class GraphBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
-
-        Raises:
-            NotFittedAlg: Exception raised when this method is called without first calling the `fit` method
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
             Rank object containing recommendation lists for all users of the test set or for all users in `user_list`
@@ -655,7 +683,8 @@ class GraphBasedRS(RecSys):
         `TestRatingsMethodology()` is used: so for each user items in its test set only will be considered for score
         prediction
 
-        If the algorithm was not fit for some users, they will be skipped and a warning is printed
+        If the algorithm couldn't perform score prediction for some users, they will be skipped and a warning message is
+        printed showing the number of users for which the alg couldn't produce a score prediction
 
         Args:
             test_set: Ratings object which represents the ground truth of the split considered
@@ -663,9 +692,9 @@ class GraphBasedRS(RecSys):
                 will be computed for all users of the `test_set`. The list should contain user id as strings or user ids
                 mapped to their integers
             methodology: `Methodology` object which governs the candidate item selection. Default is
-                `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
             Prediction object containing score prediction lists for all users of the test set or for all users in

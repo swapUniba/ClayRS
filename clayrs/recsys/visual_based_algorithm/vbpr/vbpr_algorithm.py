@@ -29,6 +29,52 @@ __all__ = ["VBPR"]
 
 
 class VBPR(ContentBasedAlgorithm):
+    """
+    Class that implements recommendation through the VBPR algorithm.
+    It's a ranking algorithm, so it can't do score prediction.
+
+    The VBPR algorithm expects features extracted from images and works on implicit feedback, but in theory you could
+    use any embedding representation, and you can use explicit feedback which will be converted into implicit one
+    thanks to the `threshold` parameter:
+
+    * All scores $>= threshold$ are considered positive scores
+
+    For more details on VBPR algorithm, please check the relative paper
+    [here](https://cseweb.ucsd.edu/~jmcauley/pdfs/aaai16.pdf)
+
+    Args:
+        item_field: dict where the key is the name of the field
+            that contains the content to use, value is the representation(s) id(s) that will be
+            used for the said item. The value of a field can be a string or a list,
+            use a list if you want to use multiple representations for a particular field.
+        gamma_dim: dimension of latent factors for non-visual parameters
+        theta_dim: dimension of latent factors for visual parameters
+        batch_size: dimension of each batch of the torch dataloader for the images features
+        epochs: number of training epochs
+        threshold: float value which is used to distinguish positive from negative items. If None, it will vary for each
+            user, and it will be set to the average rating given by it
+        learning_rate: learning rate for the torch optimizer
+        lambda_w:
+        lambda_b_pos:
+        lambda_b_neg:
+        lambda_e:
+        train_loss: loss function for the training phase. Default is logsigmoid
+        optimizer_class: optimizer torch class for the training phase. It will be instantiated using
+            `additional_opt_parameters` if specified
+        device: device on which the training will be run. If None and a GPU is available, then the GPU is automatically
+            selected as device to use. Otherwise, the cpu is used
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used, but they are in a
+            matrix form instead of a single vector (e.g. WordEmbedding representations have one
+            vector for each word). By default, the `Centroid` of the rows of the matrix is computed
+        normalize: Whether to normalize input features or not. If True, the *input feature matrix* is subtracted to its
+            $min$ and divided by its $max + 1e-10$
+        seed: random state which will be used for weight initialization and sampling of the negative example
+        additional_opt_parameters: kwargs for the optimizer. If you specify *learning rate* in this parameter, it will
+            be overwritten by the local `learning_rate` parameter
+        additional_dl_parameters: kwargs for the dataloader. If you specify *batch size* in this parameter, it will
+            be overwritten by the local `batch_size` parameter
+
+    """
 
     def __init__(self, item_field: dict,
                  gamma_dim: int, theta_dim: int, batch_size: int, epochs: int,
@@ -76,6 +122,9 @@ class VBPR(ContentBasedAlgorithm):
         self.dl_parameters = additional_dl_parameters
 
     def _seed_all(self):
+        """
+        Private function which tries to seed all possible RNGs
+        """
 
         if self.seed is not None:
             np.random.seed(self.seed)
@@ -91,6 +140,13 @@ class VBPR(ContentBasedAlgorithm):
             os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
     def _build_only_positive_ratings(self, train_set: Ratings) -> Ratings:
+        """
+        Private function which converts explicit feedback to implicit one and returns a `Ratings` object which
+        contains only positive interactions
+
+        * interactions with `score >= self.threshold` if `threshold` was set, `score >= mean_rating_u` for each user u
+        otherwise
+        """
 
         logger.info("Filtering only positive interactions...")
         # constant threshold for all users
@@ -141,6 +197,10 @@ class VBPR(ContentBasedAlgorithm):
         return positive_train_set
 
     def _load_items_features(self, train_set: Ratings, items_directory: str) -> np.ndarray:
+        """
+        Private function which loads into memory visual features and builds the input features matrix by performing
+        normalization if specified in the constructor
+        """
 
         loaded_items_interface = self._load_available_contents(items_directory, set())
 
@@ -184,6 +244,18 @@ class VBPR(ContentBasedAlgorithm):
         return items_features
 
     def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = -1) -> VBPRNetwork:
+        """
+        Method which will fit the VBPR algorithm via neural training with torch
+
+        Args:
+            train_set: `Ratings` object which contains the train set of each user
+            items_directory: Path where complexly represented items are serialized by the Content Analyzer
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
+
+        Returns:
+            A fit VBPRNetwork object (torch module which implements the VBPR neural network)
+        """
 
         def _l2_loss(*tensors):
             l2_loss = 0
@@ -287,6 +359,39 @@ class VBPR(ContentBasedAlgorithm):
     def rank(self, fit_alg: VBPRNetwork, train_set: Ratings, test_set: Ratings, items_directory: str,
              user_idx_list: Set[int], n_recs: Optional[int], methodology: Methodology,
              num_cpus: int) -> List[np.ndarray]:
+        """
+        Method used to calculate ranking for all users in `user_idx_list` parameter.
+        You must first call the `fit()` method ***before*** you can compute the ranking.
+        The `user_idx_list` parameter should contain users with mapped to their integer!
+
+        The representation of the fit VBPR algorithm is a `VBPRNetwork` object (torch module which implements the
+        VBPR neural network)
+
+        If the `n_recs` is specified, then the rank will contain the top-n items for the users.
+        Otherwise, the rank will contain all unrated items of the particular users.
+
+        Via the `methodology` parameter you can perform different candidate item selection. By default, the
+        `TestRatingsMethodology()` is used: so, for each user, items in its test set only will be ranked
+
+        Args:
+            fit_alg: a fit `VBPRNetwork` object (torch module which implements the VBPR neural network)
+            train_set: `Ratings` object which contains the train set of each user
+            test_set: Ratings object which represents the ground truth of the split considered
+            items_directory: Path where complexly represented items are serialized by the Content Analyzer
+            user_idx_list: Set of user idx (int representation) for which a recommendation list must be generated.
+                Users should be represented with their mapped integer!
+            n_recs: Number of the top items that will be present in the ranking of each user.
+                If `None` all candidate items will be returned for the user. Default is 10 (top-10 for each user
+                will be computed)
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
+
+        Returns:
+            List of uir matrices for each user, where each uir contains predicted interactions between users and unseen
+                items sorted in a descending way w.r.t. the third dimension which is the ranked score
+        """
 
         def compute_single_rank(user_idx):
             filter_list = methodology.filter_single(user_idx, train_set, test_set)
@@ -321,13 +426,50 @@ class VBPR(ContentBasedAlgorithm):
     def predict(self, fit_alg: VBPRNetwork, train_set: Ratings, test_set: Ratings, items_directory: str,
                 user_idx_list: Set[int], methodology: Methodology,
                 num_cpus: int) -> List[np.ndarray]:
+        """
+        VBPR is not a score prediction algorithm, calling this method will raise the `NotPredictionAlg` exception!
+
+        Raises:
+            NotPredictionAlg: exception raised since the VBPR algorithm is not a score prediction algorithm
+        """
 
         raise NotPredictionAlg("VBPR is not a Score Prediction Algorithm!")
 
     def fit_rank(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
                  n_recs: Optional[int], methodology: Methodology,
                  num_cpus: int, save_fit: bool) -> Tuple[Optional[VBPRNetwork], List[np.ndarray]]:
+        """
+        Method used to both fit and calculate ranking for all users in `user_idx_list` parameter.
+        The algorithm will first be fit considering all users in the `user_idx_list` which should contain user id
+        mapped to their integer!
 
+        With the `save_fit` parameter you can specify if you need the function to return the algorithm fit (in case
+        you want to perform multiple calls to the `predict()` or `rank()` function). If set to True, the first value
+        returned by this function will be the fit algorithm and the second will be the list of uir matrices with
+        predictions for each user.
+        Otherwise, if `save_fit` is False, the first value returned by this function will be `None`
+
+        Args:
+            train_set: `Ratings` object which contains the train set of each user
+            test_set: Ratings object which represents the ground truth of the split considered
+            items_directory: Path where complexly represented items are serialized by the Content Analyzer
+            user_idx_list: Set of user idx (int representation) for which a recommendation list must be generated.
+                Users should be represented with their mapped integer!
+            n_recs: Number of the top items that will be present in the ranking of each user.
+                If `None` all candidate items will be returned for the user. Default is 10 (top-10 for each user
+                will be computed)
+            methodology: `Methodology` object which governs the candidate item selection. Default is
+                `TestRatingsMethodology`. If None, AllItemsMethodology() will be used
+            save_fit: Boolean value which let you choose if the fit algorithm should be saved and returned by this
+                function. If True, the first value returned by this function is the fit algorithm. Otherwise, the first
+                value will be None. The second value is always the list of predicted uir matrices
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
+
+        Returns:
+            A tuple where the first value is the fit VBPR algorithm (could be None if `save_fit == False`), the second
+            one is a list of predicted uir matrices all sorted in a decreasing order w.r.t. the ranking scores
+        """
         vbpr_fit = self.fit(train_set, items_directory, num_cpus)
         rank = self.rank(vbpr_fit, train_set, test_set, items_directory, user_idx_list, n_recs, methodology, num_cpus)
 
@@ -338,6 +480,12 @@ class VBPR(ContentBasedAlgorithm):
     def fit_predict(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
                     methodology: Methodology,
                     num_cpus: int, save_fit: bool) -> Tuple[Optional[VBPRNetwork], List[np.ndarray]]:
+        """
+        VBPR is not a score prediction algorithm, calling this method will raise the `NotPredictionAlg` exception!
+
+        Raises:
+            NotPredictionAlg: exception raised since the VBPR algorithm is not a score prediction algorithm
+        """
 
         raise NotPredictionAlg("VBPR is not a Score Prediction Algorithm!")
 

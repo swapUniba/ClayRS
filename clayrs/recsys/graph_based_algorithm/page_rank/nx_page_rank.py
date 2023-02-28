@@ -107,27 +107,28 @@ class NXPageRank(PageRank):
     def rank(self, graph: NXBipartiteGraph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
              recs_number: Optional[int], methodology: Methodology, num_cpus: int):
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+        Rank the top-n recommended items for the user. If the `recs_number` parameter is set to None,
+        All unrated items for the user will be ranked among all those selected by the `methodology` parameter.
 
-        One can specify which items must be ranked for each user with the `filter_dict` parameter,
-        in this case every user is mapped with a list of items for which a ranking score must be computed.
-        Otherwise, **ALL** unrated items will be ranked for each user.
+        The train set contains basically the interactions modelled in the graph, and it is needed by the methodology
+        object
 
         Args:
-            all_users: Set of user id for which a recommendation list must be generated
-            graph: A NX graph previously instantiated
+            graph: A graph which models interactions of users and items
+            train_set: a Ratings object containing interactions between users and items
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
             test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: List of users for which you want to compute ranking. The list should contain user id as
+                strings and NOT user ids mapped to their integers
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            List of uir matrices for each user, where each uir contains predicted interactions between users and unseen
+                items sorted in a descending way w.r.t. the third dimension which is the ranked score
         """
 
         def compute_single_rank(user_tuple):
