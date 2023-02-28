@@ -105,6 +105,10 @@ class FieldContentProductionTechnique(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def __repr__(self):
         raise NotImplementedError
 
@@ -272,6 +276,9 @@ class OriginalData(SingleContentTechnique):
         """
         return SimpleField(self.__dtype(check_not_tokenized(field_data)))
 
+    def __str__(self):
+        return "OriginalData"
+
     def __repr__(self):
         return f'OriginalData(dtype={self.__dtype})'
 
@@ -339,6 +346,9 @@ class FromNPY(FieldContentProductionTechnique):
         except IndexError:
             raise IndexError(f'Specified index ({field_data}) is greater than number of '
                              f'rows in matrix ({self.np_matrix.shape[0]}') from None
+
+    def __str__(self):
+        return "FromNPY"
 
     def __repr__(self):
         return f'FromNPY(npy_file_path={self.npy_file_path})'
