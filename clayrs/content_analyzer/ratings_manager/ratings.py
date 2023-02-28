@@ -18,6 +18,52 @@ from clayrs.utils.save_content import get_valid_filename
 
 
 class StrIntMap:
+    """
+    Class responsible to keep track of the mapping between string ids (from the original source) and integer ids
+    (created by the framework and used instead of the string original ones)
+    This conversion is done for performance reasons, because accessing contents based on an integer id is
+    faster when compared to access using a string id, and also algorithms usually reason based on integer
+    representations for users and items (e.g. VBPR)
+
+    The mapping is organized using a numpy array containing string elements:
+
+    ```title="Mapping example visualized"
+    ["i1", "i2", "i3", "i4", "i5", ...]
+    ```
+
+    The corresponding mapping is obtained by the index that each string id has inside this array:
+
+    ```title="Mapping example visualized: integer mapping"
+    +---------+---------+
+    | idx     | item_id |
+    +---------+---------+
+    | 0       | i1      |
+    | 1       | i2      |
+    | 2       | i3      |
+    | 3       | i4      |
+    | 4       | i5      |
+    +---------+---------+
+    ```
+
+    The mapping is defined as input, and it can be one of three different types:
+
+        - Dict[str, int]: the dictionary should have string ids as keys and their mapping to integers as values.
+            Mapped integers should start from 0 and end with a number X, where X is the number of elements in the
+            dictionary and should have no missing values in between. Otherwise, a LookupError exception will be
+            raised;
+
+            ex: {"i1": 0, "i2": 1, "i3": 2, ...}
+
+        - np.ndarray: the numpy array should contain the elements to map;
+
+            ex: ["i1", "i2", "i3", ...]
+
+        - StrIntMap: the same mapping will be used.
+
+    Args:
+        str_int_map: object containing the mapping between string ids and integers, it can be a dictionary, an array or
+            another StrIntMap object.
+    """
 
     def __init__(self, str_int_map: Union[Dict[str, int], np.ndarray, StrIntMap]):
 
@@ -44,19 +90,92 @@ class StrIntMap:
             self.map = str_int_map.map
 
     def convert_seq_int2str(self, idx_list: Sequence[int]):
+        """
+        Method to convert a sequence of integers to the corresponding string ids in the mapping.
+        In case of an empty sequence, an empty array will be returned.
+
+        If the integer is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            idx_list: sequence object containing integers to convert
+        """
         return self.map[idx_list] if len(idx_list) else np.array([], dtype=str)
 
     def convert_seq_str2int(self, id_list: Sequence[str], missing="raise"):
+        """
+        Method to convert a sequence of strings to the corresponding integer ids in the mapping.
+        In case of an empty sequence, an empty array will be returned.
+
+        If a string is not present in the mapping, a KeyError exception is raised. This behavior can be changed by
+        modifying the "missing" parameter.
+
+        Args:
+            id_list: sequence object containing strings to convert
+            missing: defines the behavior of the method in case a string is not present in the mapping. The possible
+                values for this parameter can be checked [here](https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP/blob/master/numpy_indexed/arraysetops.py#L115)
+        """
         return npi.indices(self.map, id_list, missing=missing) if len(id_list) else np.array([], dtype=int)
 
     def convert_int2str(self, idx: int):
+        """
+        Method to convert a single integer to the corresponding string id in the mapping.
+
+        If the integer is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            idx: integer to convert
+        """
         return self.map[idx]
 
     def convert_str2int(self, id: str):
+        """
+        Method to convert a single string to the corresponding integer id in the mapping.
+
+        If the string is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            id: string to convert
+        """
         # first [0] because np.where returns a tuple, second [0] to access first element
         return np.where(self.map == id)[0][0]
 
     def append(self, ids_str_to_append: Union[Sequence[str], str]):
+        """
+        Method to append new string ids to the mapping.
+
+        Note that no control is carried out to check that the new ids do not already exist in the mapping.
+
+        Example:
+
+            >>> mapping = StrIntMap(np.array(["i1", "i2", "i3"]))
+
+            ```
+            +---------+---------+
+            | idx     | item_id |
+            +---------+---------+
+            | 0       | i1      |
+            | 1       | i2      |
+            | 2       | i3      |
+            +---------+---------+
+            ```
+
+            >>> mapping.append(["i4", "i5"])
+
+            ```
+            +---------+---------+
+            | idx     | item_id |
+            +---------+---------+
+            | 0       | i1      |
+            | 1       | i2      |
+            | 2       | i3      |
+            | 3       | i4      |
+            | 4       | i5      |
+            +---------+---------+
+            ```
+
+        Args:
+            ids_str_to_append: sequence object containing strings (or single string) to append to the mapping
+        """
         self.map = np.hstack((self.map, ids_str_to_append))
 
     def to_dict(self):
@@ -83,6 +202,8 @@ class StrIntMap:
 
     @staticmethod
     def _check_bound_str(f: Callable, item: Union[str, Sequence[str]]):
+        # used to replace an exception raised when the given strings (or string) don't exist in the mapping
+        # this method is used for the __getitem__ magic method
         try:
             return f(item)
         except (KeyError, IndexError):
@@ -92,6 +213,8 @@ class StrIntMap:
                 raise KeyError(f"One or more item used as indices are not present in the mapping!") from None
 
     def _check_bound_int(self, f: Callable, item: Union[int, Sequence[int]]):
+        # used to replace an exception raised when the given integers (or integer) don't exist in the mapping
+        # this method is used for the __getitem__ magic method
         try:
             return f(item)
         except IndexError:
@@ -106,6 +229,13 @@ class StrIntMap:
     def __getitem__(self, item: Union[Sequence[int], Sequence[str], int, str]) -> Union[np.ndarray[int],
                                                                                         np.ndarray[str],
                                                                                         int, str]:
+        """
+        This magic method allows to specify any of the accepted type of inputs (that is, sequences or single elements of
+        type string and integer) and obtain the corresponding matching output (string output if the input is integer,
+        integer output if the input is string)
+
+        The method is slow since it needs to perform different checks, it shouldn't be used internally
+        """
         if isinstance(item, str):
             return self._check_bound_str(self.convert_str2int, item)
 
@@ -158,6 +288,10 @@ class Ratings:
 
     The *score* column can also be processed: in case you would like to consider as score the sentiment of a textual
     review, or maybe normalizing all scores in $[0, 1]$ range. Check the example below for more
+
+    Note that, during the import phase, the user and item ids will be converted to integers and a mapping between
+    the newly created ids and the original string ids will be created. For replicability purposes, it is possible to
+    pass your custom item and user map instead of leaving this task to the framework. Check the example below to see how
 
     Examples:
 
@@ -213,6 +347,18 @@ class Ratings:
         >>>                      score_column='review',
         >>>                      score_processor=ca.TextBlobSentimentAnalysis())
 
+
+
+        In case you would like to specify the mappings for items or users, simply specify them in the corresponding
+        parameters
+
+        >>> ratings_raw_source = ca.CSVFile('ratings.csv')
+        >>> custom_item_map = {'i1': 0, 'i2': 2, 'i3': 1}
+        >>> custom_user_map = {'u1': 0, 'u2': 2, 'u3': 1}
+        >>> ratings = ca.Ratings(ratings_raw_source,
+        >>>                      item_map=custom_item_map,
+        >>>                      user_map=custom_user_map)
+
     Args:
         source: Source containing the raw interaction frame
         user_id_column: Name or positional index of the field of the raw source representing *users* column
@@ -221,6 +367,10 @@ class Ratings:
         timestamp_column: Name or positional index of the field of the raw source representing *timesamp* column
         score_processor: `ScoreProcessor` object which will process the `score_column` accordingly. Useful if you want
             to perform sentiment analysis on a textual column or you want to normalize all scores in $[0, 1]$ range
+        item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer ids)
+            used to create the item mapping. If not specified, it will be automatically created internally
+        user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer ids)
+            used to create the user mapping. If not specified, it will be automatically created internally
     """
 
     def __init__(self, source: RawInformationSource,
@@ -232,7 +382,11 @@ class Ratings:
                  item_map: Dict[str, int] = None,
                  user_map: Dict[str, int] = None):
 
+        # utility dictionary that will contain each user index as key and a numpy array, containing the indexes of the
+        # rows in the uir matrix which refer to an interaction for that user, as value. This is done to optimize
+        # performance when requesting all interactions of a certain user
         self._user2rows: Dict
+
         self._uir: np.ndarray
         self.item_map: StrIntMap
         self.user_map: StrIntMap
@@ -242,55 +396,110 @@ class Ratings:
 
     @property
     def uir(self):
+        """
+        Getter for the uir matrix created from the interaction frame.
+        The imported ratings are converted in the form of a numpy ndarray where each row will represent an interaction.
+        This uir matrix can be seen in a tabular representation as follows:
+
+        ```title="UIR matrix visualized: tabular format"
+        +----------+----------+--------+-----------+
+        | user_idx | item_idx | score  | timestamp |
+        +----------+----------+--------+-----------+
+        | 0.       | 0.       | 4      | np.nan    |
+        | 0.       | 1.       | 3      | np.nan    |
+        | 1.       | 4.       | 1      | np.nan    |
+        +----------+----------+--------+-----------+
+        ```
+
+        Where the 'user_idx' and 'item_idx' columns contain the integer ids from the mapping of the
+        `Ratings` object itself (these integer ids match the string ids that are in the original interaction frame)
+        """
         return self._uir
 
     @functools.cached_property
     @handler_empty_matrix(dtype=int)
     def user_idx_column(self):
         """
-        Getter for the user id column. This will return the user column "as is", so it will contain duplicate users.
-        Use set(user_id_column) to get all
-        unique users
+        Getter for the 'user_idx' column of the uir matrix. This will return the user column "as is", so it will contain
+        duplicate users. Use the 'unique_user_idx_column' method to get unique users.
 
         Returns:
-            Users column with duplicates
+            Users column with duplicates (integer ids)
         """
         return self._uir[:, 0].astype(int)
 
     @functools.cached_property
     def unique_user_idx_column(self):
+        """
+        Getter for the 'user_idx' column of the uir matrix. This will return the user column without duplicates.
+
+        Returns:
+            Users column without duplicates (integer ids)
+        """
         return pd.unique(self.user_idx_column)
 
     @functools.cached_property
     def user_id_column(self):
+        """
+        Getter for the 'user_id' column of the interaction frame. This will return the user column "as is", so it will
+        contain duplicate users. Use the 'unique_user_id_column' method to get unique users.
+
+        Returns:
+            Users column with duplicates (string ids)
+        """
         return self.user_map.convert_seq_int2str(self.user_idx_column)
 
     @functools.cached_property
     def unique_user_id_column(self):
+        """
+        Getter for the 'user_id' column of the interaction frame. This will return the user column without duplicates.
+
+        Returns:
+            Users column without duplicates (string ids)
+        """
         return self.user_map.convert_seq_int2str(self.unique_user_idx_column)
 
     @functools.cached_property
     @handler_empty_matrix(dtype=int)
     def item_idx_column(self) -> np.ndarray:
         """
-        Getter for the user id column. This will return the item column "as is", so it will contain duplicate items.
-        Use set(item_id_column) to get all unique users
+        Getter for the 'item_idx' column of the uir matrix. This will return the item column "as is", so it will contain
+        duplicate items. Use the 'unique_item_idx_column' method to get unique items.
 
         Returns:
-            Items column with duplicates
+            Items column with duplicates (integer ids)
         """
         return self._uir[:, 1].astype(int)
 
     @functools.cached_property
     def unique_item_idx_column(self):
+        """
+        Getter for the 'item_idx' column of the uir matrix. This will return the item column without duplicates.
+
+        Returns:
+            Items column without duplicates (integer ids)
+        """
         return pd.unique(self.item_idx_column)
 
     @functools.cached_property
     def item_id_column(self):
+        """
+        Getter for the 'item_id' column of the interaction frame. This will return the item column "as is", so it will
+        contain duplicate items. Use the 'unique_item_id_column' method to get unique items.
+
+        Returns:
+            Items column with duplicates (string ids)
+        """
         return self.item_map.convert_seq_int2str(self.item_idx_column)
 
     @functools.cached_property
     def unique_item_id_column(self):
+        """
+        Getter for the 'item_id' column of the interaction frame. This will return the item column without duplicates.
+
+        Returns:
+            Items column without duplicates (string ids)
+        """
         return self.item_map.convert_seq_int2str(self.unique_item_idx_column)
 
     @functools.cached_property
@@ -325,7 +534,13 @@ class Ratings:
                         score_processor: ScoreProcessor,
                         item_map: Dict[str, int],
                         user_map: Dict[str, int]):
+        """
+        This method is used internally to create the uir matrix from the interaction frame
+        """
 
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
         tmp_user_id_column = []
         tmp_item_id_column = []
         tmp_score_column = []
@@ -354,31 +569,36 @@ class Ratings:
                 tmp_score_column.append(score)
                 tmp_timestamp_column.append(timestamp)
 
+        # create the item_map from the item_id column if not specified
         if item_map is None:
             self.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
         else:
             self.item_map = StrIntMap(item_map)
 
+        # create the user_map from the user_id column if not specified
         if user_map is None:
             self.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
         else:
             self.user_map = StrIntMap(user_map)
 
+        # convert user and item ids and create the uir matrix
         self._uir = np.array((
             self.user_map.convert_seq_str2int(np.array(tmp_user_id_column)),
             self.item_map.convert_seq_str2int(np.array(tmp_item_id_column)),
             tmp_score_column, tmp_timestamp_column
         )).T
 
+        # create the utility dictionary user2rows
         self._user2rows = {
             user_idx: np.where(self._uir[:, 0] == user_idx)[0]
             for user_idx in self.unique_user_idx_column
         }
 
-    def get_user_interactions(self, user_idx: int, head: int = None, as_indices: bool = False):
+    def get_user_interactions(self, user_idx: int, head: int = None, as_indices: bool = False) -> np.ndarray:
         """
-        Method which returns a list of `Interaction` objects for a single user, one for each interaction of the user.
-        Then you can easily iterate and extract useful information using list comprehension
+        Method which returns a two-dimensional numpy array containing all the rows from the uir matrix for a single
+        user, one for each interaction of the user.
+        Then you can easily access the columns of the resulting array to obtain useful information
 
         Examples:
 
@@ -394,28 +614,65 @@ class Ratings:
             +---------+---------+-------+
             ```
 
-            >>> rating_frame.get_user_interactions('u1')
-            [Interaction(user_id='u1', item_id='i1', score=4),
-            Interaction(user_id='u1', item_id='i2', score=3)]
+            The corresponding uir matrix will be the following:
 
-            So you could easily extract all the ratings that a user has given for example:
+            ```
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
 
-            >>> [interaction.score for interaction in rating_frame.get_user_interactions('u1')]
-            [4, 3]
+            >>> rating_frame.get_user_interactions(0)
+            np.ndarray([
+                [0. 0. 4 np.nan],
+                [0. 1. 3 np.nan],
+            ])
+
+            So you could easily extract all the ratings that a user has given, for example:
+
+            >>> rating_frame.get_user_interactions(0)[:, 2]
+            np.ndarray([4,
+                        3])
 
             If you only want the first $k$ interactions of the user, set `head=k`. The interactions returned are the
             first $k$ according to their order of appearance in the rating frame:
 
-            >>> rating_frame.get_user_interactions('u1', head=1)
-            [Interaction(user_id='u1', item_id='i1', score=4)]
+            >>> rating_frame.get_user_interactions(0, head=1)
+            np.ndarray([
+                [0. 0. 4 np.nan]
+            ])
+
+            If you want to have the indices of the uir matrix corresponding to the user interactions instead of the
+            actual interactions, set `as_indices=True`. This will return a numpy array containing the indexes of
+            the rows of the uir matrix for the interactions of the specified user
+
+            >>> rating_frame.get_user_interactions(0, as_indices=True)
+            np.ndarray([0, 1])
+
+            If you don't know the `user_idx` for a specific user, you can obtain it using the user map as follows:
+
+            >>> user_idx = rating_frame.user_map['u1']
+            >>> rating_frame.get_user_interactions(user_idx=user_idx)
+            np.ndarray([
+                [0. 0. 4 np.nan],
+                [0. 1. 3 np.nan],
+            ])
 
         Args:
-            user_id: User for which interactions must be extracted
+            user_idx: Integer id of the user for which you want to retrieve the interactions
             head: Integer which will cut the list of interactions of the user returned. The interactions returned are
                 the first $k$ according to their order of appearance
+            as_indices: Instead of returning the user interactions, the indices of the rows in the uir matrix
+                corresponding to interactions for the specified user will be returned
 
         Returns:
-            List of Interaction objects of a single user
+            If `as_indices=False`, numpy ndarray containing the rows from the uir matrix for the specified user,
+            otherwise numpy array containing the indexes of the rows from the uir matrix for the interactions of the
+            specified user
 
         """
         user_rows = self._user2rows.get(user_idx, [])[:head]
@@ -438,7 +695,17 @@ class Ratings:
             +---------+---------+-------+
             ```
 
-            >>> rating_frame.filter_ratings(['u1'])
+            ```title="Starting Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
+            >>> rating_frame.filter_ratings([0])
 
             ```title="Returned Rating object"
             +---------+---------+-------+
@@ -449,8 +716,22 @@ class Ratings:
             +---------+---------+-------+
             ```
 
+            ```title="Returned Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
+            If you don't know the integer ids for the users, you can obtain them using the user map as follows:
+
+            >>> user_idxs = rating_frame.user_map[['u1']]
+            >>> rating_frame.filter_ratings(user_list=user_idxs)
+
         Args:
-            user_list: List of user ids that will be present in the filtered `Ratings` object
+            user_list: List of user integer ids that will be present in the filtered `Ratings` object
 
         Returns
             The filtered Ratings object which contains only interactions of selected users
@@ -463,7 +744,7 @@ class Ratings:
     def take_head_all(self, head: int) -> Ratings:
         """
         Method which will retain only $k$ interactions for each user. The $k$ interactions retained are the first which
-        appears in the rating frame.
+        appear in the rating frame.
 
         This method will return a new `Ratings` object without changing the original
 
@@ -480,6 +761,17 @@ class Ratings:
             +---------+---------+-------+
             ```
 
+            ```title="Starting Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            | 1.       | 5.       | 2      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
             >>> rating_frame.take_head_all(head=1)
 
             ```title="Returned Rating object"
@@ -489,6 +781,15 @@ class Ratings:
             | u1      | i1      |     4 |
             | u2      | i5      |     1 |
             +---------+---------+-------+
+            ```
+
+            ```title="Returned Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
             ```
 
         Args:
@@ -508,6 +809,9 @@ class Ratings:
 
         The returned DataFrame object will contain the 'user_id', 'item_id' and 'score' column and optionally the
         'timestamp' column, if at least one interaction has a timestamp.
+
+        Args:
+            ids_as_str: If True, the original string ids for users and items will be used, otherwise their integer ids
 
         Returns:
             The rating frame converted to a pandas DataFrame with 'user_id', 'item_id', 'score' column and optionally
@@ -538,6 +842,7 @@ class Ratings:
             file_name: Name of the csv_file
             overwrite: If set to True and a csv file exists in the same output directory with the same file name, it
                 will be overwritten
+            ids_as_str: If True the original string ids for users and items will be used, otherwise their integer ids
         """
         Path(output_directory).mkdir(parents=True, exist_ok=True)
 
@@ -585,6 +890,12 @@ class Ratings:
         Check documentation of the `Ratings` class for examples on mapping columns explicitly, the functioning is the
         same
 
+        Furthermore, it is also possible to specify the user and item mapping between original string ids and
+        integer ones. However, differently from the `Ratings` class documentation, it is possible not only to specify
+        them as dictionaries but also as numpy arrays or `StrIntMap` objects directly. The end result will be the same
+        independently of the type, but it is suggested to check the `StrIntMap` class documentation to understand
+        the differences between the three possible types
+
         Examples:
 
             >>> ratings_df = pd.DataFrame({'user_id': ['u1', 'u1', 'u1'],
@@ -592,12 +903,25 @@ class Ratings:
             >>>                            'score': [4, 3, 3])
             >>> Ratings.from_dataframe(ratings_df)
 
+            or
+
+            >>> user_map = {'u1': 0}
+            >>> item_map = {'i1': 0, 'i2': 2, 'i3': 1}
+            >>> ratings_df = pd.DataFrame({'user_id': ['u1', 'u1', 'u1'],
+            >>>                            'item_id': ['i1', 'i2', 'i3'],
+            >>>                            'score': [4, 3, 3])
+            >>> Ratings.from_dataframe(ratings_df, user_map=user_map, item_map=item_map)
+
         Args:
             interaction_frame: pandas DataFrame which represents the original interactions frame
             user_column: Name or positional index of the field of the DataFrame representing *users* column
             item_column: Name or positional index of the field of the DataFrame representing *items* column
             score_column: Name or positional index of the field of the DataFrame representing *score* column
             timestamp_column: Name or positional index of the field of the raw source representing *timesamp* column
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer
+                ids) used to create the item mapping. If not specified, it will be automatically created internally
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping. If not specified, it will be automatically created internally
 
         Returns:
             `Ratings` object instantiated thanks to an existing Pandas DataFrame
@@ -622,6 +946,9 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
         tmp_user_id_column = []
         tmp_item_id_column = []
         tmp_score_column = []
@@ -638,11 +965,13 @@ class Ratings:
             tmp_score_column.append(score)
             tmp_timestamp_column.append(timestamp)
 
+        # create the item_map from the item_id column if not specified
         if item_map is None:
             obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
         else:
             obj.item_map = StrIntMap(item_map)
 
+        # create the user_map from the user_id column if not specified
         if user_map is None:
             obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
         else:
@@ -658,6 +987,7 @@ class Ratings:
         if np.any(tmp_item_id_column == None):
             raise ItemNone('Item column cannot contain None values') from None
 
+        # convert user and item ids and create the uir matrix
         obj._uir = np.array((
             obj.user_map.convert_seq_str2int(tmp_user_id_column),
             obj.item_map.convert_seq_str2int(tmp_item_id_column),
@@ -667,6 +997,7 @@ class Ratings:
         obj._uir[:, 2] = obj._uir[:, 2].astype(float)
         obj._uir[:, 3] = obj._uir[:, 3].astype(float)
 
+        # create the utility dictionary user2rows
         obj._user2rows = {
             user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
             for user_idx in obj.unique_user_idx_column
@@ -680,16 +1011,32 @@ class Ratings:
                   user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
                   item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
         """
-        Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`
-        objects or its generator
+        Class method which allows to instantiate a `Ratings` object by using an existing list of tuples or its generator
+
+        Furthermore, it is also possible to specify the user and item mapping between original string ids and
+        integer ones. However, differently from the `Ratings` class documentation, it is possible not only to specify
+        them as dictionaries but also as numpy arrays or `StrIntMap` objects directly. The end result will be the same
+        independently of the type, but it is suggested to check the `StrIntMap` class documentation to understand
+        the differences between the three possible types
 
         Examples:
 
-            >>> interactions_list = [Interaction('u1', 'i1', 5), Interaction('u2', 'i1', 4)]
+            >>> interactions_list = [('u1', 'i1', 5), ('u2', 'i1', 4)]
             >>> Ratings.from_list(interactions_list)
 
+            or
+
+            >>> user_map = {'u1': 0, 'u2': 1}
+            >>> item_map = {'i1': 0}
+            >>> interactions_list = [('u1', 'i1', 5), ('u2', 'i1', 4)]
+            >>> Ratings.from_list(interactions_list, user_map=user_map, item_map=item_map)
+
         Args:
-            interaction_list: List containing `Interaction` objects or its generator
+            interaction_list: List containing tuples or its generator
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer
+                ids) used to create the item mapping. If not specified, it will be automatically created internally
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping. If not specified, it will be automatically created internally
 
         Returns:
             `Ratings` object instantiated thanks to an existing interaction list
@@ -697,6 +1044,9 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
         tmp_user_id_column = []
         tmp_item_id_column = []
         tmp_score_column = []
@@ -713,11 +1063,13 @@ class Ratings:
             else:
                 tmp_timestamp_column.append(np.nan)
 
+        # create the item_map from the item_id column if not specified
         if item_map is None:
             obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
         else:
             obj.item_map = StrIntMap(item_map)
 
+        # create the user_map from the user_id column if not specified
         if user_map is None:
             obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
         else:
@@ -733,6 +1085,7 @@ class Ratings:
         if np.any(tmp_item_id_column == None):
             raise ItemNone('Item column cannot contain None values')
 
+        # convert user and item ids and create the uir matrix
         obj._uir = np.array((
             obj.user_map.convert_seq_str2int(tmp_user_id_column),
             obj.item_map.convert_seq_str2int(tmp_item_id_column),
@@ -742,6 +1095,7 @@ class Ratings:
         obj._uir[:, 2] = obj._uir[:, 2].astype(float)
         obj._uir[:, 3] = obj._uir[:, 3].astype(float)
 
+        # create the utility dictionary user2rows
         obj._user2rows = {
             user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
             for user_idx in obj.unique_user_idx_column
@@ -752,7 +1106,40 @@ class Ratings:
     @classmethod
     def from_uir(cls, uir: np.ndarray,
                  user_map: Union[Dict[str, int], np.ndarray, StrIntMap],
-                 item_map: Union[Dict[str, int], np.ndarray, StrIntMap]):
+                 item_map: Union[Dict[str, int], np.ndarray, StrIntMap]) -> Ratings:
+        """
+        Class method which allows to instantiate a `Ratings` object by using an existing uir matrix
+
+        The uir matrix should be a two-dimensional numpy ndarray where each row represents a user interaction.
+        Each row should be in the following format:
+
+        ```
+        [0. 0. 4] or [0. 0. 4 np.nan] (without or with the timestamp)
+        ```
+
+        In the case of a different format for the rows, a ValueError exception will be raised.
+        Furthermore, if the uir matrix is not of dtype np.float64, a TypeError exception will be raised.
+
+        In this case the 'user_map' and 'item_map' parameters ***MUST*** be specified, since there is no information
+        regarding the original string ids in the uir matrix
+
+        Examples:
+
+            >>> uir_matrix = np.array([[0, 0, 4], [1, 0, 3]])
+            >>> user_map = {'u1': 0, 'u2': 1}
+            >>> item_map = {'i1': 0}
+            >>> Ratings.from_uir(uir_matrix, user_map=user_map, item_map=item_map)
+
+        Args:
+            uir: uir matrix which will be used to create the new `Ratings` object
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer ids)
+                used to create the item mapping
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping
+
+        Returns:
+            `Ratings` object instantiated thanks to an existing uir matrix
+        """
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
@@ -790,6 +1177,10 @@ class Ratings:
         return repr(self._uir)
 
     def __iter__(self):
+        """
+        Note: iteration is done on integer ids, if you want to iterate over string ids you need to iterate over the
+        'user_id_column' or 'item_id_column'
+        """
         yield from iter(self._uir)
 
     def __eq__(self, other):

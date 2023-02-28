@@ -17,6 +17,15 @@ __all__ = [
 # AUGMENTERS
 
 class TorchAutoAugment(TorchBuiltInTransformer):
+    """
+    Class that implements the AutoAugment Transformer from torchvision.
+    The parameters one could pass are the same ones you would pass instantiating
+    the transformer AutoAugment directly from torchvision.
+
+    TorchVision documentation: [here](https://pytorch.org/vision/main/generated/torchvision.transforms.AutoAugment.html)
+
+    NOTE: the augmented result will SUBSTITUTE the original input
+    """
     def __init__(self, policy: AutoAugmentPolicy = AutoAugmentPolicy.IMAGENET,
                  interpolation: InterpolationMode = InterpolationMode.NEAREST,
                  fill: Optional[List[float]] = None):
@@ -25,6 +34,15 @@ class TorchAutoAugment(TorchBuiltInTransformer):
 
 
 class TorchRandAugment(TorchBuiltInTransformer):
+    """
+    Class that implements the RandAugment Transformer from torchvision.
+    The parameters one could pass are the same ones you would pass instantiating
+    the transformer RandAugment directly from torchvision.
+
+    TorchVision documentation: [here](https://pytorch.org/vision/main/generated/torchvision.transforms.RandAugment.html)
+
+    NOTE: the augmented result will SUBSTITUTE the original input
+    """
     def __init__(
         self,
         num_ops: int = 2,
@@ -37,6 +55,15 @@ class TorchRandAugment(TorchBuiltInTransformer):
 
 
 class TorchTrivialAugmentWide(TorchBuiltInTransformer):
+    """
+    Class that implements the TrivialAugmentWide Transformer from torchvision.
+    The parameters one could pass are the same ones you would pass instantiating
+    the transformer TrivialAugmentWide directly from torchvision.
+
+    TorchVision documentation: [here](https://pytorch.org/vision/main/generated/torchvision.transforms.TrivialAugmentWide.html)
+
+    NOTE: the augmented result will SUBSTITUTE the original input
+    """
     def __init__(
         self,
         num_magnitude_bins: int = 31,

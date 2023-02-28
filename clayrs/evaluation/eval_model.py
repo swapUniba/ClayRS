@@ -129,6 +129,10 @@ class EvalModel:
         The method returns two pandas DataFrame: one containing ***system results*** for every metric in the metric
         list, one containing ***users results*** for every metric eligible
 
+        Args:
+            user_id_list: list of string ids for the users to consider in the evaluation (note that only string ids are
+                accepted and not their mapped integers)
+
         Returns:
             The first DataFrame contains the **system result** for every metric inside the metric_list
 
