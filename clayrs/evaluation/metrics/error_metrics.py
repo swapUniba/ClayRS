@@ -67,19 +67,19 @@ class ErrorMetric(Metric):
     def _calc_metric(self, truth_scores: list, pred_scores: list):
         """
         Private method that must be implemented by every error metric specifying how to calculate the metric
-        for a single user given a Series of ratings taken from the ground truth and a Series of ratings predicted by the
+        for a single user given a list of ratings taken from the ground truth and a list of ratings predicted by the
         recommender system.
 
-        Both Series must be in relation 1 to 1 between each other, meaning that if row 1 of the 'truth_scores' parameter
+        Both lists must be in relation 1 to 1 between each other, meaning that if row 1 of the 'truth_scores' parameter
         contains the rating of the 'iPhone' item, row 1 of the 'pred_scores' parameter must contain the predicted rating
-        of the 'iPhone' item, so both Series must be ordered in the same manner and must be filtered in order to exclude
+        of the 'iPhone' item, so both lists must be ordered in the same manner and must be filtered in order to exclude
         items which are in the ground truth of the user but are not predicted, as well as items which are predicted
         but aren't present in the ground truth. Debug the unittest cases for examples
 
         Args:
-            truth_scores (pd.Series): Pandas Series which contains rating of the user taken from its ground truth. Has a
+            truth_scores: list which contains rating of the user taken from its ground truth. Has a
                 1 to 1 relationship with the 'pred_scores' Series
-            pred_scores (pd.Series): Pandas Series which contains rating predicted by the recommender system. Has a
+            pred_scores: list which contains rating predicted by the recommender system. Has a
                 1 to 1 relationship with the 'truth_scores' Series
         """
         raise NotImplementedError
