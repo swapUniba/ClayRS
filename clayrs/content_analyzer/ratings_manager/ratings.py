@@ -1,100 +1,283 @@
 from __future__ import annotations
 import functools
-import itertools
 import os
-from collections import defaultdict
+import numpy as np
 from pathlib import Path
-from typing import Dict, Union, List, Iterable, Iterator, TYPE_CHECKING
+from typing import Dict, Union, List, Iterator, TYPE_CHECKING, Tuple, Sequence, Callable
 
 import pandas as pd
+import numpy_indexed as npi
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.ratings_manager.score_processor import ScoreProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
-from clayrs.content_analyzer.exceptions import Handler_ScoreNotFloat
+from clayrs.content_analyzer.exceptions import handler_score_not_float, handler_empty_matrix, UserNone, ItemNone
 from clayrs.utils.context_managers import get_progbar
 from clayrs.utils.save_content import get_valid_filename
 
 
-class Interaction:
+class StrIntMap:
     """
-    Class which models an interaction between a user and an item
+    Class responsible to keep track of the mapping between string ids (from the original source) and integer ids
+    (created by the framework and used instead of the string original ones)
+    This conversion is done for performance reasons, because accessing contents based on an integer id is
+    faster when compared to access using a string id, and also algorithms usually reason based on integer
+    representations for users and items (e.g. VBPR)
 
-    Each interaction has a score (a numeric value) and an optional timestamp
+    The mapping is organized using a numpy array containing string elements:
+
+    ```title="Mapping example visualized"
+    ["i1", "i2", "i3", "i4", "i5", ...]
+    ```
+
+    The corresponding mapping is obtained by the index that each string id has inside this array:
+
+    ```title="Mapping example visualized: integer mapping"
+    +---------+---------+
+    | idx     | item_id |
+    +---------+---------+
+    | 0       | i1      |
+    | 1       | i2      |
+    | 2       | i3      |
+    | 3       | i4      |
+    | 4       | i5      |
+    +---------+---------+
+    ```
+
+    The mapping is defined as input, and it can be one of three different types:
+
+        - Dict[str, int]: the dictionary should have string ids as keys and their mapping to integers as values.
+            Mapped integers should start from 0 and end with a number X, where X is the number of elements in the
+            dictionary and should have no missing values in between. Otherwise, a LookupError exception will be
+            raised;
+
+            ex: {"i1": 0, "i2": 1, "i3": 2, ...}
+
+        - np.ndarray: the numpy array should contain the elements to map;
+
+            ex: ["i1", "i2", "i3", ...]
+
+        - StrIntMap: the same mapping will be used.
 
     Args:
-        user_id: ID of the user
-        item_id: ID of the item
-        score: Numeric value of the interaction
-        timestamp: Optional timestamp of the interaction
+        str_int_map: object containing the mapping between string ids and integers, it can be a dictionary, an array or
+            another StrIntMap object.
     """
-    __slots__ = ('_user_id', '_item_id', '_score', '_timestamp')
 
-    def __init__(self, user_id: str, item_id: str, score: float, timestamp: str = None):
-        self._user_id = user_id
-        self._item_id = item_id
-        self._score = score
-        self._timestamp = timestamp
+    def __init__(self, str_int_map: Union[Dict[str, int], np.ndarray, StrIntMap]):
 
-    @property
-    def user_id(self):
-        """
-        Getter for the `user_id` of the interaction
-        """
-        return self._user_id
+        if isinstance(str_int_map, dict):
+            # dictionary should contain all numbers starting from 0 without holes
+            sorted_str = []
+            sorted_int = []
+            try:
+                for str_id, int_idx in sorted(str_int_map.items(), key=lambda item: item[1]):
+                    sorted_str.append(str(str_id))
+                    sorted_int.append(int(int_idx))
+            except ValueError:
+                raise LookupError("Mapping dictionary not in the right format! Strings must be mapped to "
+                                  "integers starting from 0 without holes!") from None
 
-    @property
-    def item_id(self):
-        """
-        Getter for the `item_id` of the interaction
-        """
-        return self._item_id
+            if sorted_int != list(range(len(str_int_map))):
+                raise LookupError("Mapping dictionary not in the right format! Strings must be mapped to "
+                                  "integers starting from 0 without holes!")
 
-    @property
-    def score(self):
-        """
-        Getter for the `score` of the interaction
-        """
-        return self._score
+            self.map = np.array(sorted_str)
+        elif isinstance(str_int_map, np.ndarray):
+            self.map = str_int_map.astype(str)
+        elif isinstance(str_int_map, StrIntMap):
+            self.map = str_int_map.map
 
-    @property
-    def timestamp(self):
+    def convert_seq_int2str(self, idx_list: Sequence[int]) -> np.ndarray:
         """
-        Getter for the `timestamp` of the interaction. Could be `None`
-        """
-        return self._timestamp
+        Method to convert a sequence of integers to the corresponding string ids in the mapping.
+        In case of an empty sequence, an empty array will be returned.
 
-    def __str__(self):
-        if self.timestamp is not None:
-            string = f"(user_id: {self.user_id}, item_id: {self.item_id}, score: {self.score}," \
-                     f" timestamp: {self.timestamp})"
+        If the integer is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            idx_list: sequence object containing integers to convert
+        """
+        return self.map[idx_list] if len(idx_list) else np.array([], dtype=str)
+
+    def convert_seq_str2int(self, id_list: Sequence[str], missing="raise") -> np.ndarray:
+        """
+        Method to convert a sequence of strings to the corresponding integer ids in the mapping.
+        In case of an empty sequence, an empty array will be returned.
+
+        If a string is not present in the mapping, a KeyError exception is raised. This behavior can be changed by
+        modifying the "missing" parameter.
+
+        Args:
+            id_list: sequence object containing strings to convert
+            missing: defines the behavior of the method in case a string is not present in the mapping. The possible
+                values for this parameter can be checked [here](https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP/blob/master/numpy_indexed/arraysetops.py#L115)
+        """
+        return npi.indices(self.map, id_list, missing=missing) if len(id_list) else np.array([], dtype=int)
+
+    def convert_int2str(self, idx: int) -> str:
+        """
+        Method to convert a single integer to the corresponding string id in the mapping.
+
+        If the integer is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            idx: integer to convert
+        """
+        return self.map[idx]
+
+    def convert_str2int(self, id: str) -> int:
+        """
+        Method to convert a single string to the corresponding integer id in the mapping.
+
+        If the string is not present in the mapping, a IndexError exception is raised.
+
+        Args:
+            id: string to convert
+        """
+        # first [0] because np.where returns a tuple, second [0] to access first element
+        return np.where(self.map == id)[0][0]
+
+    def append(self, ids_str_to_append: Union[Sequence[str], str]):
+        """
+        Method to append new string ids to the mapping.
+
+        Note that no control is carried out to check that the new ids do not already exist in the mapping.
+
+        Example:
+
+            >>> mapping = StrIntMap(np.array(["i1", "i2", "i3"]))
+
+            ```
+            +---------+---------+
+            | idx     | item_id |
+            +---------+---------+
+            | 0       | i1      |
+            | 1       | i2      |
+            | 2       | i3      |
+            +---------+---------+
+            ```
+
+            >>> mapping.append(["i4", "i5"])
+
+            ```
+            +---------+---------+
+            | idx     | item_id |
+            +---------+---------+
+            | 0       | i1      |
+            | 1       | i2      |
+            | 2       | i3      |
+            | 3       | i4      |
+            | 4       | i5      |
+            +---------+---------+
+            ```
+
+        Args:
+            ids_str_to_append: sequence object containing strings (or single string) to append to the mapping
+        """
+        self.map = np.hstack((self.map, ids_str_to_append))
+
+    def to_dict(self):
+        """
+        Method to convert the mapping from its numpy representation to a dictionary based one.
+
+        The resulting dictionary will have the following form:
+
+        ```title="Mapping example visualized: array to dictionary"
+        {
+            "i1": 0,
+            "i2": 1,
+            "i3": 2,
+            "i4": 3,
+            "i5": 4,
+            ...
+        }
+        ```
+
+        Note that the dictionary representation might occupy a lot of space in memory depending on the
+        size of the mapping
+        """
+        return {str_idx: int_idx for int_idx, str_idx in enumerate(self.map)}
+
+    @staticmethod
+    def _check_bound_str(f: Callable, item: Union[str, Sequence[str]]):
+        # used to replace an exception raised when the given strings (or string) don't exist in the mapping
+        # this method is used for the __getitem__ magic method
+        try:
+            return f(item)
+        except (KeyError, IndexError):
+            if isinstance(item, str):
+                raise KeyError(f"Item {item} not present in the mapping!") from None
+            else:
+                raise KeyError(f"One or more item used as indices are not present in the mapping!") from None
+
+    def _check_bound_int(self, f: Callable, item: Union[int, Sequence[int]]):
+        # used to replace an exception raised when the given integers (or integer) don't exist in the mapping
+        # this method is used for the __getitem__ magic method
+        try:
+            return f(item)
+        except IndexError:
+            if isinstance(item, int):
+                raise IndexError(f"Index {item} is out of bounds for mapping with len={len(self)}") from None
+            else:
+                raise IndexError(f"One or more indices is out of bounds for mapping with len={len(self)}") from None
+
+    # very ugly but very user-friendly: this is only for the end user!!! Inside the framework you should
+    # never call it, it is slow!!.
+    # Please directly use one of the above (convert_int2str, convert_seq_str2int, etc.)
+    def __getitem__(self, item: Union[Sequence[int], Sequence[str], int, str]) -> Union[np.ndarray[int],
+                                                                                        np.ndarray[str],
+                                                                                        int, str]:
+        """
+        This magic method allows to specify any of the accepted type of inputs (that is, sequences or single elements of
+        type string and integer) and obtain the corresponding matching output (string output if the input is integer,
+        integer output if the input is string)
+
+        The method is slow since it needs to perform different checks, it shouldn't be used internally
+        """
+        if isinstance(item, str):
+            return self._check_bound_str(self.convert_str2int, item)
+
+        elif isinstance(item, int):
+            return self._check_bound_int(self.convert_int2str, item)
+
+        elif isinstance(item, Sequence) or (isinstance(item, np.ndarray) and np.squeeze(item).ndim <= 1):
+            arr_iterable = np.array(item)
+
+            if np.issubdtype(arr_iterable.dtype, str):
+                return self._check_bound_str(self.convert_seq_str2int, arr_iterable)
+            elif np.issubdtype(arr_iterable.dtype, int):
+                return self._check_bound_int(self.convert_seq_int2str, arr_iterable)
+            else:
+                raise TypeError("Iterable to convert should only contains numbers or strings!")
+
         else:
-            string = f"(user_id: {self.user_id}, item_id: {self.item_id}, score: {self.score})"
+            raise TypeError("Item not supported! You should use a sequence of str/int or a scalar str/int! "
+                            "Try using a list or a 1d array")
 
-        return string
+    def __len__(self):
+        return len(self.map)
 
     def __repr__(self):
-        return f"Interaction(user_id={self.user_id}, item_id={self.item_id}, score={self.score}, " \
-               f"timestamp={self.timestamp})"
+        return repr(self.to_dict())
 
-    def __eq__(self, other):
-        if isinstance(other, Interaction):
-            timestamp_equal = (self.timestamp is None and other.timestamp is None) or \
-                              (self.timestamp == other.timestamp)
-
-            return self.user_id == other.user_id and self.item_id == other.item_id and \
-                   self.score == other.score and timestamp_equal
-        else:
-            return False
+    def __iter__(self):
+        yield from self.map
 
     def __hash__(self):
-        return hash(self.user_id + self.item_id + str(self.score) + str(self.timestamp))
+        return hash(self.map.tostring())
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return np.array_equal(self.map, other.map)
+        else:
+            return False
 
 
 class Ratings:
     """
-    Class responsible of importing an interaction frame into the framework
+    Class responsible for importing an interaction frame into the framework
 
     **If** the source file contains users, items and ratings in this order,
     no additional parameters are needed, **otherwise** the mapping must be explicitly specified using:
@@ -105,6 +288,10 @@ class Ratings:
 
     The *score* column can also be processed: in case you would like to consider as score the sentiment of a textual
     review, or maybe normalizing all scores in $[0, 1]$ range. Check the example below for more
+
+    Note that, during the import phase, the user and item ids will be converted to integers and a mapping between
+    the newly created ids and the original string ids will be created. For replicability purposes, it is possible to
+    pass your custom item and user map instead of leaving this task to the framework. Check the example below to see how
 
     Examples:
 
@@ -160,6 +347,18 @@ class Ratings:
         >>>                      score_column='review',
         >>>                      score_processor=ca.TextBlobSentimentAnalysis())
 
+
+
+        In case you would like to specify the mappings for items or users, simply specify them in the corresponding
+        parameters
+
+        >>> ratings_raw_source = ca.CSVFile('ratings.csv')
+        >>> custom_item_map = {'i1': 0, 'i2': 2, 'i3': 1}
+        >>> custom_user_map = {'u1': 0, 'u2': 2, 'u3': 1}
+        >>> ratings = ca.Ratings(ratings_raw_source,
+        >>>                      item_map=custom_item_map,
+        >>>                      user_map=custom_user_map)
+
     Args:
         source: Source containing the raw interaction frame
         user_id_column: Name or positional index of the field of the raw source representing *users* column
@@ -168,6 +367,10 @@ class Ratings:
         timestamp_column: Name or positional index of the field of the raw source representing *timesamp* column
         score_processor: `ScoreProcessor` object which will process the `score_column` accordingly. Useful if you want
             to perform sentiment analysis on a textual column or you want to normalize all scores in $[0, 1]$ range
+        item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer ids)
+            used to create the item mapping. If not specified, it will be automatically created internally
+        user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer ids)
+            used to create the user mapping. If not specified, it will be automatically created internally
     """
 
     def __init__(self, source: RawInformationSource,
@@ -175,50 +378,144 @@ class Ratings:
                  item_id_column: Union[str, int] = 1,
                  score_column: Union[str, int] = 2,
                  timestamp_column: Union[str, int] = None,
-                 score_processor: ScoreProcessor = None):
+                 score_processor: ScoreProcessor = None,
+                 item_map: Dict[str, int] = None,
+                 user_map: Dict[str, int] = None):
 
-        self._ratings_dict = self._import_ratings(source, user_id_column, item_id_column, score_column,
-                                                  timestamp_column, score_processor)
+        # utility dictionary that will contain each user index as key and a numpy array, containing the indexes of the
+        # rows in the uir matrix which refer to an interaction for that user, as value. This is done to optimize
+        # performance when requesting all interactions of a certain user
+        self._user2rows: Dict
+
+        self._uir: np.ndarray
+        self.item_map: StrIntMap
+        self.user_map: StrIntMap
+
+        self._import_ratings(source, user_id_column, item_id_column,
+                             score_column, timestamp_column, score_processor, item_map, user_map)
 
     @property
-    @functools.lru_cache(maxsize=128)
-    def user_id_column(self) -> list:
+    def uir(self) -> np.ndarray:
         """
-        Getter for the user id column. This will return the user column "as is", so it will contain duplicate users.
-        Use set(user_id_column) to get all
-        unique users
+        Getter for the uir matrix created from the interaction frame.
+        The imported ratings are converted in the form of a numpy ndarray where each row will represent an interaction.
+        This uir matrix can be seen in a tabular representation as follows:
+
+        ```title="UIR matrix visualized: tabular format"
+        +----------+----------+--------+-----------+
+        | user_idx | item_idx | score  | timestamp |
+        +----------+----------+--------+-----------+
+        | 0.       | 0.       | 4      | np.nan    |
+        | 0.       | 1.       | 3      | np.nan    |
+        | 1.       | 4.       | 1      | np.nan    |
+        +----------+----------+--------+-----------+
+        ```
+
+        Where the 'user_idx' and 'item_idx' columns contain the integer ids from the mapping of the
+        `Ratings` object itself (these integer ids match the string ids that are in the original interaction frame)
+        """
+        return self._uir
+
+    @functools.cached_property
+    @handler_empty_matrix(dtype=int)
+    def user_idx_column(self) -> np.ndarray:
+        """
+        Getter for the 'user_idx' column of the uir matrix. This will return the user column "as is", so it will contain
+        duplicate users. Use the 'unique_user_idx_column' method to get unique users.
 
         Returns:
-            Users column with duplicates
+            Users column with duplicates (integer ids)
         """
-        return [interaction.user_id for interaction in self]
+        return self._uir[:, 0].astype(int)
 
-    @property
-    @functools.lru_cache(maxsize=128)
-    def item_id_column(self) -> list:
+    @functools.cached_property
+    def unique_user_idx_column(self) -> np.ndarray:
         """
-        Getter for the user id column. This will return the item column "as is", so it will contain duplicate items.
-        Use set(item_id_column) to get all unique users
+        Getter for the 'user_idx' column of the uir matrix. This will return the user column without duplicates.
 
         Returns:
-            Items column with duplicates
+            Users column without duplicates (integer ids)
         """
-        return [interaction.item_id for interaction in self]
+        return pd.unique(self.user_idx_column)
 
-    @property
-    @functools.lru_cache(maxsize=128)
-    def score_column(self) -> list:
+    @functools.cached_property
+    def user_id_column(self) -> np.ndarray:
+        """
+        Getter for the 'user_id' column of the interaction frame. This will return the user column "as is", so it will
+        contain duplicate users. Use the 'unique_user_id_column' method to get unique users.
+
+        Returns:
+            Users column with duplicates (string ids)
+        """
+        return self.user_map.convert_seq_int2str(self.user_idx_column)
+
+    @functools.cached_property
+    def unique_user_id_column(self) -> np.ndarray:
+        """
+        Getter for the 'user_id' column of the interaction frame. This will return the user column without duplicates.
+
+        Returns:
+            Users column without duplicates (string ids)
+        """
+        return self.user_map.convert_seq_int2str(self.unique_user_idx_column)
+
+    @functools.cached_property
+    @handler_empty_matrix(dtype=int)
+    def item_idx_column(self) -> np.ndarray:
+        """
+        Getter for the 'item_idx' column of the uir matrix. This will return the item column "as is", so it will contain
+        duplicate items. Use the 'unique_item_idx_column' method to get unique items.
+
+        Returns:
+            Items column with duplicates (integer ids)
+        """
+        return self._uir[:, 1].astype(int)
+
+    @functools.cached_property
+    def unique_item_idx_column(self) -> np.ndarray:
+        """
+        Getter for the 'item_idx' column of the uir matrix. This will return the item column without duplicates.
+
+        Returns:
+            Items column without duplicates (integer ids)
+        """
+        return pd.unique(self.item_idx_column)
+
+    @functools.cached_property
+    def item_id_column(self) -> np.ndarray:
+        """
+        Getter for the 'item_id' column of the interaction frame. This will return the item column "as is", so it will
+        contain duplicate items. Use the 'unique_item_id_column' method to get unique items.
+
+        Returns:
+            Items column with duplicates (string ids)
+        """
+        return self.item_map.convert_seq_int2str(self.item_idx_column)
+
+    @functools.cached_property
+    def unique_item_id_column(self) -> np.ndarray:
+        """
+        Getter for the 'item_id' column of the interaction frame. This will return the item column without duplicates.
+
+        Returns:
+            Items column without duplicates (string ids)
+        """
+        return self.item_map.convert_seq_int2str(self.unique_item_idx_column)
+
+    @functools.cached_property
+    @handler_empty_matrix(dtype=float)
+    def score_column(self) -> np.ndarray:
         """
         Getter for the score column. This will return the score column "as is".
 
         Returns:
             Score column
         """
-        return [interaction.score for interaction in self]
+        return self._uir[:, 2].astype(float)
 
-    @property
-    @functools.lru_cache(maxsize=128)
-    def timestamp_column(self) -> list:
+    @functools.cached_property
+    @handler_empty_matrix(dtype=int)
+    def timestamp_column(self) -> np.ndarray:
         """
         Getter for the timestamp column. This will return the score column "as is". If no timestamp is present then an
         empty list is returned
@@ -226,26 +523,38 @@ class Ratings:
         Returns:
             Timestamp column or empty list if no timestamp is present
         """
-        return [interaction.timestamp for interaction in self if interaction.timestamp is not None]
+        return self._uir[:, 3][~np.isnan(self._uir[:, 3])].astype(int)
 
-    @Handler_ScoreNotFloat
+    @handler_score_not_float
     def _import_ratings(self, source: RawInformationSource,
                         user_column: Union[str, int],
                         item_column: Union[str, int],
                         score_column: Union[str, int],
                         timestamp_column: Union[str, int],
-                        score_processor: ScoreProcessor):
-        ratings_dict = defaultdict(list)
+                        score_processor: ScoreProcessor,
+                        item_map: Dict[str, int],
+                        user_map: Dict[str, int]):
+        """
+        This method is used internally to create the uir matrix from the interaction frame
+        """
+
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
         with get_progbar(source) as pbar:
 
             pbar.set_description(desc="Importing ratings")
-            for row in pbar:
+            for i, row in enumerate(pbar):
 
                 user_id = self._get_field_data(user_column, row)
                 item_id = self._get_field_data(item_column, row)
                 score = self._get_field_data(score_column, row)
-                timestamp = None
+                timestamp = np.nan
 
                 if score_processor is not None:
                     score = score_processor.fit(score)
@@ -253,17 +562,43 @@ class Ratings:
                     score = float(score)
 
                 if timestamp_column is not None:
-                    timestamp = self._get_field_data(timestamp_column, row)
+                    timestamp = int(self._get_field_data(timestamp_column, row))
 
-                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+                tmp_user_id_column.append(user_id)
+                tmp_item_id_column.append(item_id)
+                tmp_score_column.append(score)
+                tmp_timestamp_column.append(timestamp)
 
-        # re-hashing
-        return dict(ratings_dict)
+        # create the item_map from the item_id column if not specified
+        if item_map is None:
+            self.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            self.item_map = StrIntMap(item_map)
 
-    def get_user_interactions(self, user_id: str, head: int = None) -> List[Interaction]:
+        # create the user_map from the user_id column if not specified
+        if user_map is None:
+            self.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            self.user_map = StrIntMap(user_map)
+
+        # convert user and item ids and create the uir matrix
+        self._uir = np.array((
+            self.user_map.convert_seq_str2int(np.array(tmp_user_id_column)),
+            self.item_map.convert_seq_str2int(np.array(tmp_item_id_column)),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        # create the utility dictionary user2rows
+        self._user2rows = {
+            user_idx: np.where(self._uir[:, 0] == user_idx)[0]
+            for user_idx in self.unique_user_idx_column
+        }
+
+    def get_user_interactions(self, user_idx: int, head: int = None, as_indices: bool = False) -> np.ndarray:
         """
-        Method which returns a list of `Interaction` objects for a single user, one for each interaction of the user.
-        Then you can easily iterate and extract useful information using list comprehension
+        Method which returns a two-dimensional numpy array containing all the rows from the uir matrix for a single
+        user, one for each interaction of the user.
+        Then you can easily access the columns of the resulting array to obtain useful information
 
         Examples:
 
@@ -279,33 +614,71 @@ class Ratings:
             +---------+---------+-------+
             ```
 
-            >>> rating_frame.get_user_interactions('u1')
-            [Interaction(user_id='u1', item_id='i1', score=4),
-            Interaction(user_id='u1', item_id='i2', score=3)]
+            The corresponding uir matrix will be the following:
 
-            So you could easily extract all the ratings that a user has given for example:
+            ```
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
 
-            >>> [interaction.score for interaction in rating_frame.get_user_interactions('u1')]
-            [4, 3]
+            >>> rating_frame.get_user_interactions(0)
+            np.ndarray([
+                [0. 0. 4 np.nan],
+                [0. 1. 3 np.nan],
+            ])
+
+            So you could easily extract all the ratings that a user has given, for example:
+
+            >>> rating_frame.get_user_interactions(0)[:, 2]
+            np.ndarray([4,
+                        3])
 
             If you only want the first $k$ interactions of the user, set `head=k`. The interactions returned are the
             first $k$ according to their order of appearance in the rating frame:
 
-            >>> rating_frame.get_user_interactions('u1', head=1)
-            [Interaction(user_id='u1', item_id='i1', score=4)]
+            >>> rating_frame.get_user_interactions(0, head=1)
+            np.ndarray([
+                [0. 0. 4 np.nan]
+            ])
+
+            If you want to have the indices of the uir matrix corresponding to the user interactions instead of the
+            actual interactions, set `as_indices=True`. This will return a numpy array containing the indexes of
+            the rows of the uir matrix for the interactions of the specified user
+
+            >>> rating_frame.get_user_interactions(0, as_indices=True)
+            np.ndarray([0, 1])
+
+            If you don't know the `user_idx` for a specific user, you can obtain it using the user map as follows:
+
+            >>> user_idx = rating_frame.user_map['u1']
+            >>> rating_frame.get_user_interactions(user_idx=user_idx)
+            np.ndarray([
+                [0. 0. 4 np.nan],
+                [0. 1. 3 np.nan],
+            ])
 
         Args:
-            user_id: User for which interactions must be extracted
+            user_idx: Integer id of the user for which you want to retrieve the interactions
             head: Integer which will cut the list of interactions of the user returned. The interactions returned are
                 the first $k$ according to their order of appearance
+            as_indices: Instead of returning the user interactions, the indices of the rows in the uir matrix
+                corresponding to interactions for the specified user will be returned
 
         Returns:
-            List of Interaction objects of a single user
+            If `as_indices=False`, numpy ndarray containing the rows from the uir matrix for the specified user,
+                otherwise numpy array containing the indexes of the rows from the uir matrix for the interactions of the
+                specified user
 
         """
-        return self._ratings_dict[user_id][:head]
+        user_rows = self._user2rows.get(user_idx, [])[:head]
+        return user_rows if as_indices else self._uir[user_rows]
 
-    def filter_ratings(self, user_list: Iterable[str]) -> Ratings:
+    def filter_ratings(self, user_list: Sequence[int]) -> Ratings:
         """
         Method which will filter the rating frame by keeping only interactions of users appearing in the `user_list`.
         This method will return a new `Ratings` object without changing the original
@@ -322,7 +695,17 @@ class Ratings:
             +---------+---------+-------+
             ```
 
-            >>> rating_frame.filter_ratings(['u1'])
+            ```title="Starting Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
+            >>> rating_frame.filter_ratings([0])
 
             ```title="Returned Rating object"
             +---------+---------+-------+
@@ -333,20 +716,35 @@ class Ratings:
             +---------+---------+-------+
             ```
 
+            ```title="Returned Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
+            If you don't know the integer ids for the users, you can obtain them using the user map as follows:
+
+            >>> user_idxs = rating_frame.user_map[['u1']]
+            >>> rating_frame.filter_ratings(user_list=user_idxs)
+
         Args:
-            user_list: List of user ids that will be present in the filtered `Ratings` object
+            user_list: List of user integer ids that will be present in the filtered `Ratings` object
 
         Returns
             The filtered Ratings object which contains only interactions of selected users
         """
-        filtered_ratings_generator = ((user, self._ratings_dict[user]) for user in user_list)
+        valid_indexes = np.where(np.isin(self.user_idx_column, user_list))
+        new_uir = self._uir[valid_indexes]
 
-        return self.from_dict(filtered_ratings_generator)
+        return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
     def take_head_all(self, head: int) -> Ratings:
         """
         Method which will retain only $k$ interactions for each user. The $k$ interactions retained are the first which
-        appears in the rating frame.
+        appear in the rating frame.
 
         This method will return a new `Ratings` object without changing the original
 
@@ -363,6 +761,17 @@ class Ratings:
             +---------+---------+-------+
             ```
 
+            ```title="Starting Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 0.       | 1.       | 3      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            | 1.       | 5.       | 2      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
             >>> rating_frame.take_head_all(head=1)
 
             ```title="Returned Rating object"
@@ -374,66 +783,57 @@ class Ratings:
             +---------+---------+-------+
             ```
 
+            ```title="Returned Rating object: corresponding uir matrix"
+            +----------+----------+--------+-----------+
+            | user_idx | item_idx | score  | timestamp |
+            +----------+----------+--------+-----------+
+            | 0.       | 0.       | 4      | np.nan    |
+            | 1.       | 4.       | 1      | np.nan    |
+            +----------+----------+--------+-----------+
+            ```
+
         Args:
             head: The number of interactions to retain for each user
 
         Returns:
             The filtered Ratings object which contains only first $k$ interactions for each user
         """
+        cut_rows = np.hstack((rows[:head] for rows in self._user2rows.values()))
+        new_uir = self._uir[cut_rows]
 
-        ratings_cut_generator = ((user_id, user_ratings[:head])
-                                 for user_id, user_ratings in
-                                 zip(self._ratings_dict.keys(), self._ratings_dict.values()))
+        return Ratings.from_uir(new_uir, self.user_map.map, self.item_map.map)
 
-        return self.from_dict(ratings_cut_generator)
-
-    # @Handler_ScoreNotFloat
-    # def add_score_column(self, score_column: Union[str, int], column_name: str,
-    #                      score_processor: ScoreProcessor = None):
-    #
-    #     col_to_add = [self._get_field_data(score_column, row) for row in self._source]
-    #
-    #     if score_processor:
-    #         col_to_add = score_processor.fit(col_to_add)
-    #     else:
-    #         col_to_add = [float(score) for score in col_to_add]
-    #
-    #     self._ratings_frame[column_name] = col_to_add
-    #
-    #     start_ratings_user = 0
-    #     for user_id, user_ratings in zip(self._ratings_dict.keys(), self._ratings_dict.values()):
-    #         first_range_val = start_ratings_user
-    #         second_range_val = start_ratings_user + len(user_ratings)
-    #
-    #         score_to_add = col_to_add[first_range_val:second_range_val]
-    #         new_ratings = [rating_tuple + (added_score,) for rating_tuple, added_score in
-    #                        zip(user_ratings, score_to_add)]
-    #         self._ratings_dict[user_id] = new_ratings
-    #
-    #         start_ratings_user += len(user_ratings)
-
-    def to_dataframe(self) -> pd.DataFrame:
+    def to_dataframe(self, ids_as_str: bool = True) -> pd.DataFrame:
         """
         Method which will convert the `Rating` object to a `pandas DataFrame object`.
 
         The returned DataFrame object will contain the 'user_id', 'item_id' and 'score' column and optionally the
         'timestamp' column, if at least one interaction has a timestamp.
 
+        Args:
+            ids_as_str: If True, the original string ids for users and items will be used, otherwise their integer ids
+
         Returns:
             The rating frame converted to a pandas DataFrame with 'user_id', 'item_id', 'score' column and optionally
-            the 'timestamp' column
+                the 'timestamp' column
 
         """
-        will_be_frame = {'user_id': self.user_id_column,
-                         'item_id': self.item_id_column,
-                         'score': self.score_column}
+        if ids_as_str:
+            will_be_frame = {'user_id': self.user_id_column,
+                             'item_id': self.item_id_column,
+                             'score': self.score_column}
+        else:
+            will_be_frame = {'user_id': self.user_idx_column,
+                             'item_id': self.item_idx_column,
+                             'score': self.score_column}
 
         if len(self.timestamp_column) != 0:
             will_be_frame['timestamp'] = self.timestamp_column
 
         return pd.DataFrame(will_be_frame)
 
-    def to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False):
+    def to_csv(self, output_directory: str = '.', file_name: str = 'ratings_frame', overwrite: bool = False,
+               ids_as_str: bool = True):
         """
         Method which will save the `Ratings` object to a `csv` file
 
@@ -442,12 +842,13 @@ class Ratings:
             file_name: Name of the csv_file
             overwrite: If set to True and a csv file exists in the same output directory with the same file name, it
                 will be overwritten
+            ids_as_str: If True the original string ids for users and items will be used, otherwise their integer ids
         """
         Path(output_directory).mkdir(parents=True, exist_ok=True)
 
         file_name = get_valid_filename(output_directory, file_name, 'csv', overwrite)
 
-        frame = self.to_dataframe()
+        frame = self.to_dataframe(ids_as_str=ids_as_str)
         frame.to_csv(os.path.join(output_directory, file_name), index=False, header=True)
 
     @staticmethod
@@ -468,11 +869,14 @@ class Ratings:
         return str(data)
 
     @classmethod
+    @handler_score_not_float
     def from_dataframe(cls, interaction_frame: pd.DataFrame,
                        user_column: Union[str, int] = 0,
                        item_column: Union[str, int] = 1,
                        score_column: Union[str, int] = 2,
-                       timestamp_column: Union[str, int] = None) -> Ratings:
+                       timestamp_column: Union[str, int] = None,
+                       user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
+                       item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
         """
         Class method which allows to instantiate a `Ratings` object by using an existing pandas DataFrame
 
@@ -486,6 +890,12 @@ class Ratings:
         Check documentation of the `Ratings` class for examples on mapping columns explicitly, the functioning is the
         same
 
+        Furthermore, it is also possible to specify the user and item mapping between original string ids and
+        integer ones. However, differently from the `Ratings` class documentation, it is possible not only to specify
+        them as dictionaries but also as numpy arrays or `StrIntMap` objects directly. The end result will be the same
+        independently of the type, but it is suggested to check the `StrIntMap` class documentation to understand
+        the differences between the three possible types
+
         Examples:
 
             >>> ratings_df = pd.DataFrame({'user_id': ['u1', 'u1', 'u1'],
@@ -493,12 +903,25 @@ class Ratings:
             >>>                            'score': [4, 3, 3])
             >>> Ratings.from_dataframe(ratings_df)
 
+            or
+
+            >>> user_map = {'u1': 0}
+            >>> item_map = {'i1': 0, 'i2': 2, 'i3': 1}
+            >>> ratings_df = pd.DataFrame({'user_id': ['u1', 'u1', 'u1'],
+            >>>                            'item_id': ['i1', 'i2', 'i3'],
+            >>>                            'score': [4, 3, 3])
+            >>> Ratings.from_dataframe(ratings_df, user_map=user_map, item_map=item_map)
+
         Args:
             interaction_frame: pandas DataFrame which represents the original interactions frame
             user_column: Name or positional index of the field of the DataFrame representing *users* column
             item_column: Name or positional index of the field of the DataFrame representing *items* column
             score_column: Name or positional index of the field of the DataFrame representing *score* column
             timestamp_column: Name or positional index of the field of the raw source representing *timesamp* column
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer
+                ids) used to create the item mapping. If not specified, it will be automatically created internally
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping. If not specified, it will be automatically created internally
 
         Returns:
             `Ratings` object instantiated thanks to an existing Pandas DataFrame
@@ -523,33 +946,97 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        ratings_dict = defaultdict(list)
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
-        if not interaction_frame.empty:
-            for row in interaction_frame.to_dict(orient='records'):
-                user_id = get_value_row_df(row, user_column, str)
-                item_id = get_value_row_df(row, item_column, str)
-                score = get_value_row_df(row, score_column, float)
-                timestamp = get_value_row_df(row, timestamp_column, str) if timestamp_column is not None else None
+        for i, row in enumerate(interaction_frame.to_dict(orient='records')):
+            user_id = get_value_row_df(row, user_column, str)
+            item_id = get_value_row_df(row, item_column, str)
+            score = get_value_row_df(row, score_column, float)
+            timestamp = get_value_row_df(row, timestamp_column, int) if timestamp_column is not None else np.nan
 
-                ratings_dict[user_id].append(Interaction(user_id, item_id, score, timestamp))
+            tmp_user_id_column.append(user_id)
+            tmp_item_id_column.append(item_id)
+            tmp_score_column.append(score)
+            tmp_timestamp_column.append(timestamp)
 
-        obj._ratings_dict = dict(ratings_dict)
+        # create the item_map from the item_id column if not specified
+        if item_map is None:
+            obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            obj.item_map = StrIntMap(item_map)
+
+        # create the user_map from the user_id column if not specified
+        if user_map is None:
+            obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            obj.user_map = StrIntMap(user_map)
+
+        tmp_user_id_column = np.array(tmp_user_id_column)
+
+        if np.any(tmp_user_id_column == None):
+            raise UserNone('User column cannot contain None values') from None
+
+        tmp_item_id_column = np.array(tmp_item_id_column)
+
+        if np.any(tmp_item_id_column == None):
+            raise ItemNone('Item column cannot contain None values') from None
+
+        # convert user and item ids and create the uir matrix
+        obj._uir = np.array((
+            obj.user_map.convert_seq_str2int(tmp_user_id_column),
+            obj.item_map.convert_seq_str2int(tmp_item_id_column),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        obj._uir[:, 2] = obj._uir[:, 2].astype(float)
+        obj._uir[:, 3] = obj._uir[:, 3].astype(float)
+
+        # create the utility dictionary user2rows
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     @classmethod
-    def from_list(cls, interaction_list: Union[List[Interaction], Iterator]) -> Ratings:
+    @handler_score_not_float
+    def from_list(cls, interaction_list: Union[List[Tuple], Iterator],
+                  user_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None,
+                  item_map: Union[Dict[str, int], np.ndarray, StrIntMap] = None) -> Ratings:
         """
-        Class method which allows to instantiate a `Ratings` object by using an existing list containing `Interaction`
-        objects or its generator
+        Class method which allows to instantiate a `Ratings` object by using an existing list of tuples or its generator
+
+        Furthermore, it is also possible to specify the user and item mapping between original string ids and
+        integer ones. However, differently from the `Ratings` class documentation, it is possible not only to specify
+        them as dictionaries but also as numpy arrays or `StrIntMap` objects directly. The end result will be the same
+        independently of the type, but it is suggested to check the `StrIntMap` class documentation to understand
+        the differences between the three possible types
 
         Examples:
 
-            >>> interactions_list = [Interaction('u1', 'i1', 5), Interaction('u2', 'i1', 4)]
+            >>> interactions_list = [('u1', 'i1', 5), ('u2', 'i1', 4)]
             >>> Ratings.from_list(interactions_list)
 
+            or
+
+            >>> user_map = {'u1': 0, 'u2': 1}
+            >>> item_map = {'i1': 0}
+            >>> interactions_list = [('u1', 'i1', 5), ('u2', 'i1', 4)]
+            >>> Ratings.from_list(interactions_list, user_map=user_map, item_map=item_map)
+
         Args:
-            interaction_list: List containing `Interaction` objects or its generator
+            interaction_list: List containing tuples or its generator
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer
+                ids) used to create the item mapping. If not specified, it will be automatically created internally
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping. If not specified, it will be automatically created internally
 
         Returns:
             `Ratings` object instantiated thanks to an existing interaction list
@@ -557,225 +1044,153 @@ class Ratings:
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        ratings_dict = defaultdict(list)
-        for interaction in interaction_list:
-            ratings_dict[interaction.user_id].append(interaction)
+        # lists that will contain the original data temporarily
+        # this is so that the conversion from string ids to integers will be called only once
+        # said lists will also be used to create the mappings if not specified in the parameters
+        tmp_user_id_column = []
+        tmp_item_id_column = []
+        tmp_score_column = []
+        tmp_timestamp_column = []
 
-        obj._ratings_dict = dict(ratings_dict)
+        for i, interaction in enumerate(interaction_list):
+
+            tmp_user_id_column.append(interaction[0])
+            tmp_item_id_column.append(interaction[1])
+            tmp_score_column.append(interaction[2])
+
+            if len(interaction) == 4:
+                tmp_timestamp_column.append(interaction[3])
+            else:
+                tmp_timestamp_column.append(np.nan)
+
+        # create the item_map from the item_id column if not specified
+        if item_map is None:
+            obj.item_map = StrIntMap(np.array(list(dict.fromkeys(tmp_item_id_column))))
+        else:
+            obj.item_map = StrIntMap(item_map)
+
+        # create the user_map from the user_id column if not specified
+        if user_map is None:
+            obj.user_map = StrIntMap(np.array(list(dict.fromkeys(tmp_user_id_column))))
+        else:
+            obj.user_map = StrIntMap(user_map)
+
+        tmp_user_id_column = np.array(tmp_user_id_column)
+
+        if np.any(tmp_user_id_column == None):
+            raise UserNone('User column cannot contain None values')
+
+        tmp_item_id_column = np.array(tmp_item_id_column)
+
+        if np.any(tmp_item_id_column == None):
+            raise ItemNone('Item column cannot contain None values')
+
+        # convert user and item ids and create the uir matrix
+        obj._uir = np.array((
+            obj.user_map.convert_seq_str2int(tmp_user_id_column),
+            obj.item_map.convert_seq_str2int(tmp_item_id_column),
+            tmp_score_column, tmp_timestamp_column
+        )).T
+
+        obj._uir[:, 2] = obj._uir[:, 2].astype(float)
+        obj._uir[:, 3] = obj._uir[:, 3].astype(float)
+
+        # create the utility dictionary user2rows
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     @classmethod
-    def from_dict(cls, interaction_dict: Union[Dict[str, List[Interaction]], Iterator]) -> Ratings:
+    def from_uir(cls, uir: np.ndarray,
+                 user_map: Union[Dict[str, int], np.ndarray, StrIntMap],
+                 item_map: Union[Dict[str, int], np.ndarray, StrIntMap]) -> Ratings:
         """
-        Class method which allows to instantiate a `Ratings` object by using an existing dictionary containing
-        user_id as keys and lists of `Interaction` objects as value
+        Class method which allows to instantiate a `Ratings` object by using an existing uir matrix
+
+        The uir matrix should be a two-dimensional numpy ndarray where each row represents a user interaction.
+        Each row should be in the following format:
+
+        ```
+        [0. 0. 4] or [0. 0. 4 np.nan] (without or with the timestamp)
+        ```
+
+        In the case of a different format for the rows, a ValueError exception will be raised.
+        Furthermore, if the uir matrix is not of dtype np.float64, a TypeError exception will be raised.
+
+        In this case the 'user_map' and 'item_map' parameters ***MUST*** be specified, since there is no information
+        regarding the original string ids in the uir matrix
 
         Examples:
 
-            >>> interactions_dict = {'u1': [Interaction('u1', 'i2', 4), Interaction('u1', 'i3', 3)],
-            >>>                      'u2': [Interaction('u2', 'i2', 5)]}
-            >>> Ratings.from_dict(interactions_dict)
+            >>> uir_matrix = np.array([[0, 0, 4], [1, 0, 3]])
+            >>> user_map = {'u1': 0, 'u2': 1}
+            >>> item_map = {'i1': 0}
+            >>> Ratings.from_uir(uir_matrix, user_map=user_map, item_map=item_map)
 
         Args:
-            interaction_dict: Dictionary containing user_id as keys and lists of `Interaction` objets as values
-                or its generator
+            uir: uir matrix which will be used to create the new `Ratings` object
+            item_map: dictionary with string keys (the item ids) and integer values (the corresponding unique integer ids)
+                used to create the item mapping
+            user_map: dictionary with string keys (the user ids) and integer values (the corresponding unique integer
+                ids) used to create the user mapping
 
         Returns:
-            `Ratings` object instantiated thanks to an existing dictionary
+            `Ratings` object instantiated thanks to an existing uir matrix
         """
         obj = cls.__new__(cls)  # Does not call __init__
         super(Ratings, obj).__init__()  # Don't forget to call any polymorphic base class initializers
 
-        obj._ratings_dict = dict(interaction_dict)
+        if uir.shape[0] > 0 and uir.shape[1] > 0:
+            if uir.shape[1] < 3:
+                raise ValueError('User item ratings matrix should have at least 3 rows '
+                                 '(one for users, one for items and one for ratings scores)')
+            elif uir.shape[1] == 3:
+                uir = np.append(uir, np.full((uir.shape[0], 1), fill_value=np.nan), axis=1)
+
+            if uir.dtype != np.float64:
+                raise TypeError('User id columns and item id columns should be mapped to their respective integer')
+        else:
+            uir = np.array([])
+
+        obj._uir = uir
+
+        obj.user_map = StrIntMap(user_map)
+        obj.item_map = StrIntMap(item_map)
+
+        obj._user2rows = {
+            user_idx: np.where(obj._uir[:, 0] == user_idx)[0]
+            for user_idx in obj.unique_user_idx_column
+        }
+
         return obj
 
     def __len__(self):
-        # all columns have same length, so only one is needed in order
-        # to check what is the length
-        return len(self.user_id_column)
+        return self._uir.shape[0]
 
     def __str__(self):
-        return str(self.to_dataframe())
+        return str(self.to_dataframe(ids_as_str=True))
 
     def __repr__(self):
-        return repr(self._ratings_dict)
+        return repr(self._uir)
 
     def __iter__(self):
         """
-        The `Ratings` object can be iterated over and each iteration will return an `Interaction` object
-
-        Examples:
-
-            ```title="Rating object to iterate"
-            +---------+---------+-------+
-            | user_id | item_id | score |
-            +---------+---------+-------+
-            | u1      | i1      |     4 |
-            | u2      | i5      |     1 |
-            +---------+---------+-------+
-            ```
-
-            >>> # for simplicity we stop after the first iteration
-            >>> for interaction in ratings:
-            >>>     first_interaction = interaction
-            >>>     break
-            >>> first_interaction
-            Interaction('u1', 'i1', 4)
+        Note: iteration is done on integer ids, if you want to iterate over string ids you need to iterate over the
+        'user_id_column' or 'item_id_column'
         """
-        yield from itertools.chain.from_iterable(self._ratings_dict.values())
+        yield from iter(self._uir)
 
+    def __eq__(self, other):
 
-class RatingsLowMemory:
-
-    def __init__(self, source: RawInformationSource,
-                 user_id_column: Union[str, int] = 0,
-                 item_id_column: Union[str, int] = 1,
-                 score_column: Union[str, int] = 2,
-                 timestamp_column: Union[str, int] = None,
-                 score_processor: ScoreProcessor = None):
-
-        rat = pd.DataFrame(source, dtype=str)
-        self._ratings_dict = self._import_ratings(rat, user_id_column, item_id_column, score_column,
-                                                  timestamp_column, score_processor)
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def user_id_column(self) -> list:
-        return self._ratings_dict.index.get_level_values('user_id').tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def item_id_column(self) -> list:
-        return self._ratings_dict.index.get_level_values('item_id').tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def score_column(self) -> list:
-        return self._ratings_dict['score'].tolist()
-
-    @property
-    @functools.lru_cache(maxsize=128)
-    def timestamp_column(self) -> list:
-        timestamp_list = self._ratings_dict['timestamp'].tolist()
-        return timestamp_list if all(timestamp is not None for timestamp in timestamp_list) else []
-
-    @Handler_ScoreNotFloat
-    def _import_ratings(self, rat: pd.DataFrame,
-                        user_column: Union[str, int],
-                        item_column: Union[str, int],
-                        score_column: Union[str, int],
-                        timestamp_column: Union[str, int],
-                        score_processor: ScoreProcessor):
-        """
-        Imports the ratings from the source and stores in a dataframe
-
-        Returns:
-            ratings_frame: pd.DataFrame
-        """
-        if isinstance(user_column, int):
-            user_column = rat.columns[user_column]
-        if isinstance(item_column, int):
-            item_column = rat.columns[item_column]
-        if isinstance(score_column, int):
-            score_column = rat.columns[score_column]
-        if isinstance(timestamp_column, int):
-            timestamp_column = rat.columns[timestamp_column]
-        elif timestamp_column is None:
-            rat['timestamp'] = None
-            timestamp_column = 'timestamp'
-
-        index = pd.MultiIndex.from_tuples(zip(rat[user_column].values, rat[item_column].values),
-                                          names=["user_id", "item_id"])
-
-        rat = rat[[score_column, timestamp_column]].set_index(index)
-
-        rat.columns = ['score', 'timestamp']
-
-        rat['score'] = pd.to_numeric(rat['score'])
-
-        return rat
-
-    def get_user_interactions(self, user_id: str, head: int = None):
-        user_rat = self._ratings_dict.loc[user_id][:head]
-
-        user_rat = [Interaction(user_id, index_item, row[0], row[1])
-                    for index_item, row in zip(user_rat.index, user_rat.values)]
-
-        return user_rat
-
-    def filter_ratings(self, user_list: Iterable[str]):
-        filtered_df = self._ratings_dict.loc[
-            (self._ratings_dict.index.get_level_values('user_id').isin(set(user_list)))]
-
-        filtered_df = filtered_df.reset_index(drop=False)
-
-        return self.from_dataframe(filtered_df, user_column='user_id',
-                                   item_column='item_id',
-                                   score_column='score',
-                                   timestamp_column='timestamp')
-
-    def take_head_all(self, head: int):
-
-        filtered_df = self._ratings_dict.groupby(level='user_id').head(head)
-
-        filtered_df = filtered_df.reset_index(drop=False)
-
-        return self.from_dataframe(filtered_df, user_column='user_id',
-                                   item_column='item_id',
-                                   score_column='score',
-                                   timestamp_column='timestamp')
-
-    @classmethod
-    def from_dataframe(cls, interaction_frame: pd.DataFrame,
-                       user_column: Union[str, int] = 0,
-                       item_column: Union[str, int] = 1,
-                       score_column: Union[str, int] = 2,
-                       timestamp_column: Union[str, int] = None):
-
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        ratings_dict = cls._import_ratings(obj, interaction_frame, user_column, item_column, score_column,
-                                           timestamp_column, None)
-
-        obj._ratings_dict = ratings_dict
-        return obj
-
-    @classmethod
-    def from_list(cls, interaction_list: List[Interaction]):
-
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        user_column_iterator = (interaction.user_id for interaction in interaction_list)
-        item_column_iterator = (interaction.item_id for interaction in interaction_list)
-
-        index = pd.MultiIndex.from_tuples(zip(user_column_iterator, item_column_iterator),
-                                          names=["user_id", "item_id"])
-
-        score_timestamp_iterator = ({'score': interaction.score, 'timestamp': interaction.timestamp}
-                                    for interaction in interaction_list)
-
-        rat = pd.DataFrame(score_timestamp_iterator, index=index)
-
-        obj._ratings_dict = rat
-        return obj
-
-    @classmethod
-    def from_dict(cls, interaction_dict: Dict[str, List[Interaction]]):
-        obj = cls.__new__(cls)  # Does not call __init__
-        super(RatingsLowMemory, obj).__init__()  # Don't forget to call any polymorphic base class initializers
-
-        obj._ratings_dict = dict(interaction_dict)
-        return obj
-
-    def __iter__(self):
-        yield from itertools.chain.from_iterable(self.get_user_interactions(user_id)
-                                                 for user_id in
-                                                 self._ratings_dict.index.get_level_values('user_id').unique())
-
-    def __len__(self):
-        return len(self._ratings_dict)
+        if isinstance(other, Ratings):
+            return np.array_equal(self._uir, other._uir, equal_nan=True) and \
+                self.user_map == other.user_map \
+                and self.item_map == other.item_map
+        else:
+            return False
 
 
 # Aliases for the Ratings class

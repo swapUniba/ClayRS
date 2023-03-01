@@ -1,4 +1,4 @@
-# Content Analyzer Config
+# Synset Document Frequency
 
 ::: clayrs.content_analyzer.PyWSDSynsetDocumentFrequency
     handler: python

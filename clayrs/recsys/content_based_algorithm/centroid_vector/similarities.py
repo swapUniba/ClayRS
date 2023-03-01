@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
-from scipy.spatial.distance import cosine as cosine_distance
+from typing import Union
+
 import numpy as np
+from scipy import sparse
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 class Similarity(ABC):
@@ -11,7 +14,7 @@ class Similarity(ABC):
         pass
 
     @abstractmethod
-    def perform(self, v1: np.ndarray, v2: np.ndarray):
+    def perform(self, v1: Union[np.ndarray, sparse.csr_matrix], v2: Union[np.ndarray, sparse.csr_matrix]):
         """
         Calculates the similarity between v1 and v2
         """
@@ -25,7 +28,7 @@ class CosineSimilarity(Similarity):
     def __init__(self):
         super().__init__()
 
-    def perform(self, v1: np.ndarray, v2: np.ndarray):
+    def perform(self, v1: Union[np.ndarray, sparse.csr_matrix], v2: Union[np.ndarray, sparse.csr_matrix]):
         """
         Calculates the cosine similarity between v1 and v2
 
@@ -34,12 +37,7 @@ class CosineSimilarity(Similarity):
             v2: second numpy array
         """
 
-        if not v1.any() or not v2.any():
-            return 0
-        else:
-            # Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:
-            # 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity
-            return 1 - cosine_distance(v1, v2)
+        return cosine_similarity(v1, v2, dense_output=True)
 
     def __str__(self):
         return "CosineSimilarity"

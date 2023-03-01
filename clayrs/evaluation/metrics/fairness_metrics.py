@@ -71,16 +71,20 @@ class GroupFairnessMetric(FairnessMetric):
             Python dictionary containing as keys each user id and as values the average popularity of each user
         """
         if group is None:
-            group = set(data.user_id_column)
+            group = data.unique_user_id_column
+            group_int = data.unique_user_idx_column
+        else:
+            group_int = data.user_map.convert_seq_str2int(list(group))
 
-        list_by_user = {
-            user: [interaction.item_id for interaction in data.get_user_interactions(user)]
-            for user in group
-        }
-        avg_pop_by_users = {
-            user: get_avg_pop(list_by_user[user], pop_by_items)
-            for user in group
-        }
+        avg_pop_by_users = []
+
+        for user_idx in group_int:
+            user_interactions_rows = data.get_user_interactions(user_idx, as_indices=True)
+            user_items = data.item_id_column[user_interactions_rows]
+
+            avg_pop_by_users.append(get_avg_pop(user_items, pop_by_items))
+
+        avg_pop_by_users = dict(zip(group, avg_pop_by_users))
 
         return avg_pop_by_users
 
@@ -123,7 +127,7 @@ class GroupFairnessMetric(FairnessMetric):
             A python dictionary containing as keys each group name and as values the set of *user_id* belonging to
                 the particular group.
         """
-        num_of_users = len(set(score_frame.user_id_column))
+        num_of_users = len(score_frame.unique_user_id_column)
         if num_of_users < len(groups):
             raise NotEnoughUsers("You can't split in {} groups {} users! "
                                  "Try reducing number of groups".format(len(groups), num_of_users))
@@ -214,11 +218,22 @@ class GiniIndex(FairnessMetric):
 
         score_dict = {'user_id': [], str(self): []}
 
+        prediction_items = predictions.item_id_column
         if self.__top_n is not None:
-            predictions = itertools.chain.from_iterable([predictions.get_user_interactions(user_id, self.__top_n)
-                                                         for user_id in set(predictions.user_id_column)])
 
-        coun = Counter([prediction.item_id for prediction in predictions])
+            prediction_items = []
+
+            for user_idx in predictions.unique_user_idx_column:
+                user_interactions_indices = predictions.get_user_interactions(user_idx,
+                                                                              head=self.__top_n,
+                                                                              as_indices=True)
+
+                user_items = predictions.item_id_column[user_interactions_indices]
+                prediction_items.append(user_items)
+
+            prediction_items = itertools.chain.from_iterable(prediction_items)
+
+        coun = Counter(prediction_items)
 
         result = gini(list(coun.values()))
 
@@ -231,7 +246,7 @@ class GiniIndex(FairnessMetric):
 class PredictionCoverage(FairnessMetric):
     r"""
     The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
-    to all available items. It's a system wide metric, so only its result it will be returned and not those of every
+    to all available items. It's a system wise metric, so only its result it will be returned and not those of every
     user.
     The metric is calculated as such:
 
@@ -276,19 +291,17 @@ class PredictionCoverage(FairnessMetric):
         Returns:
             Set of distinct items that have been recommended that also appear in the catalog
         """
-        catalog = self.catalog
-        pred_items = set(pred.item_id_column)
-        return pred_items.intersection(catalog)
+        pred_items = set(pred.unique_item_id_column)
+        return pred_items.intersection(self.catalog)
 
     def perform(self, split: Split) -> pd.DataFrame:
         prediction = {'user_id': [], str(self): []}
-        catalog = {str(item) for item in self.__catalog}  # cast to string in case user is not careful
 
         pred = split.pred
 
         covered_items = self._get_covered(pred)
 
-        percentage = (len(covered_items) / len(catalog)) * 100
+        percentage = (len(covered_items) / len(self.__catalog)) * 100
         coverage_percentage = np.round(percentage, 2)
 
         prediction['user_id'].append('sys')
@@ -366,25 +379,27 @@ class CatalogCoverage(PredictionCoverage):
         return f'CatalogCoverage(catalog={self.catalog}, top_n={self.__top_n}, k={self.__k})'
 
     def _get_covered(self, pred: Ratings):
-        catalog = self.catalog
-
-        if self.__top_n is not None:
-            pred = list(itertools.chain.from_iterable([pred.get_user_interactions(user_id, self.__top_n)
-                                                       for user_id in set(pred.user_id_column)]))
 
         # IF k is passed, then we choose randomly k users and calc catalog coverage
         # based on their predictions. We check that k is < n_user since if it's the equal
         # or it's greater, then all predictions generated for all user must be used
-        if self.__k is not None and self.__k < len(pred):
-            user_list = list(set([interaction_pred.user_id for interaction_pred in pred]))
+        user_list = pred.unique_user_idx_column
+        if self.__k is not None and self.__k < len(pred.unique_user_id_column):
 
-            sampling = random.choices(user_list, k=self.__k)
-            predicted_items = set([interaction_pred.item_id
-                                   for interaction_pred in pred if interaction_pred.user_id in sampling])
-            covered_items = predicted_items.intersection(catalog)
-        else:
-            predicted_items = set([interaction_pred.item_id for interaction_pred in pred])
-            covered_items = predicted_items.intersection(catalog)
+            user_list = random.choices(user_list, k=self.__k)
+
+        prediction_items = []
+
+        for user_idx in user_list:
+            user_interactions_indices = pred.get_user_interactions(user_idx,
+                                                                   head=self.__top_n,
+                                                                   as_indices=True)
+
+            user_items = pred.item_id_column[user_interactions_indices]
+            prediction_items.append(user_items)
+
+        prediction_items = list(itertools.chain.from_iterable(prediction_items))
+        covered_items = set(prediction_items).intersection(self.catalog)
 
         return covered_items
 
@@ -393,7 +408,7 @@ class DeltaGap(GroupFairnessMetric):
     r"""
     The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
     multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
-    It's a system wide metric and results of every group will be returned.
+    It's a system wise metric and results of every group will be returned.
 
     It is calculated as such:
 
@@ -540,7 +555,7 @@ class DeltaGap(GroupFairnessMetric):
         for group_name in splitted_user_groups:
 
             # we don't consider users of the group for which we do not have any recommendation
-            valid_group = splitted_user_groups[group_name].intersection(predictions.user_id_column)
+            valid_group = splitted_user_groups[group_name].intersection(set(predictions.unique_user_id_column))
 
             if len(valid_group) == 0:
                 logger.warning(f"Group {group_name} won't be considered in the DeltaGap since no recs is available "

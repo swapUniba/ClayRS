@@ -1,6 +1,7 @@
 site_name: ClayRS documentation
 repo_url: https://github.com/swapUniba/ClayRS
 repo_name: swapUniba/ClayRS
+edit_uri: docs/mkdocs/docs
 theme:
   name: material
   logo: images/icon_no_borders.svg
@@ -60,20 +61,30 @@ nav:
         - Ratings:
             - 'Ratings class': 'content_analyzer/ratings/ratings.md'
             - 'Score processors': 'content_analyzer/ratings/score_processors.md'
-        - 'Information Preprocessors':
-            - 'NLTK': 'content_analyzer/information_preprocessors/nltk.md'
-            - 'Spacy': 'content_analyzer/information_preprocessors/spacy.md'
-            - 'Ekphrasis': 'content_analyzer/information_preprocessors/ekphrasis.md'
+        - 'Information Processors':
+            - 'Preprocessors':
+                - 'Textual preprocessors':
+                    - 'NLTK': 'content_analyzer/information_preprocessors/textual_preprocessors/nltk.md'
+                    - 'Spacy': 'content_analyzer/information_preprocessors/textual_preprocessors/spacy.md'
+                    - 'Ekphrasis': 'content_analyzer/information_preprocessors/textual_preprocessors/ekphrasis.md'
+                - 'Visual preprocessors':
+                    - 'Torch preprocessors': 'content_analyzer/information_preprocessors/visual_preprocessors/torch_preprocessors.md'
+            - 'Postprocessors': 'content_analyzer/information_preprocessors/postprocessors/postprocessor.md'
         - 'Content Techniques':
-            - 'Embedding techniques':
-                - 'Word Embeddings': 'content_analyzer/content_techniques/embedding_techniques/word_embeddings.md'
-                - 'Sentence Embeddings': 'content_analyzer/content_techniques/embedding_techniques/sentence_embeddings.md'
-                - 'Document Embeddings': 'content_analyzer/content_techniques/embedding_techniques/document_embeddings.md'
-                - 'Combining Embeddings': 'content_analyzer/content_techniques/embedding_techniques/combining_embeddings.md'
-                - 'Contextualized Embeddings': 'content_analyzer/content_techniques/embedding_techniques/contextualized_embeddings.md'
-            - 'TfIdf': 'content_analyzer/content_techniques/tfidf.md'
-            - 'Original Data': 'content_analyzer/content_techniques/original_data.md'
-            - 'Synset Document Frequency': 'content_analyzer/content_techniques/synset_df_frequency.md'
+            - 'Textual techniques':
+                - 'Embedding techniques':
+                    - 'Word Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/word_embeddings.md'
+                    - 'Sentence Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/sentence_embeddings.md'
+                    - 'Document Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/document_embeddings.md'
+                    - 'Combining Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/combining_embeddings.md'
+                    - 'Contextualized Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/contextualized_embeddings.md'
+                - 'TfIdf': 'content_analyzer/content_techniques/textual_techniques/tfidf.md'
+                - 'Original Data': 'content_analyzer/content_techniques/textual_techniques/original_data.md'
+                - 'Synset Document Frequency': 'content_analyzer/content_techniques/textual_techniques/synset_df_frequency.md'
+            - 'Visual techniques':
+                - 'Low level techniques': 'content_analyzer/content_techniques/visual_techniques/low_level_visual.md'
+                - 'High level techniques': 'content_analyzer/content_techniques/visual_techniques/high_level_visual.md'
+            - 'Import from NPY': 'content_analyzer/content_techniques/from_npy.md'
         - 'Exogenous Techniques':
             - 'DBPedia Mapping' : 'content_analyzer/exogenous_techniques/dbpedia.md'
             - 'Properties From Dataset': 'content_analyzer/exogenous_techniques/properties_from_dataset.md'
@@ -86,6 +97,7 @@ nav:
           - 'Abstract Partitioning class': 'recsys/partitioning/abstract_partitioning.md'
           - 'Hold Out': 'recsys/partitioning/hold_out.md'
           - 'KFold': 'recsys/partitioning/kfold.md'
+          - 'Bootstrap': 'recsys/partitioning/bootstrap.md'
         - 'Content Based recommendation': 
             - 'Content Based recsys': 'recsys/content_based/content_based_recsys.md'
             - 'Content Based algorithms':
@@ -93,6 +105,8 @@ nav:
                 - 'Classifier Recommender': 'recsys/content_based/content_based_algorithms/classifier_recommender.md'
                 - 'Linear Predictor': 'recsys/content_based/content_based_algorithms/linear_predictor.md'
                 - 'Index Query': 'recsys/content_based/content_based_algorithms/index_query.md'
+            - 'Visual Based algorithms':
+                - 'VBPR': 'recsys/content_based/visual_based_algorithms/vbpr.md'
         - 'Graph based recommendation':
             - 'Graph Based recsys': 'recsys/graph_based/graph_based_recsys.md'
             - 'Graphs':

@@ -1,6 +1,5 @@
 from __future__ import annotations
-import itertools
-from typing import List, Set, Any, Union, TYPE_CHECKING, Optional
+from typing import Set, Any, TYPE_CHECKING, Optional, List
 
 import networkx as nx
 import numpy as np
@@ -10,10 +9,8 @@ if TYPE_CHECKING:
     from clayrs.recsys.graphs import NXBipartiteGraph
     from clayrs.recsys.methodology import Methodology
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.graph_based_algorithm.page_rank.page_rank import PageRank
 from clayrs.recsys.graphs.graph import UserNode, ItemNode, PropertyNode
-from clayrs.recsys.methodology import TestRatingsMethodology
 from clayrs.utils.context_managers import get_iterator_parallel
 
 
@@ -107,57 +104,58 @@ class NXPageRank(PageRank):
         super().__init__(personalized, relevance_threshold, rel_items_weight, rel_items_prop_weight,
                          default_nodes_weight)
 
-    def rank(self, all_users: Set[str], graph: NXBipartiteGraph, test_set: Ratings,
-             recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 1) -> List[Interaction]:
+    def rank(self, graph: NXBipartiteGraph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
+             recs_number: Optional[int], methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+        Rank the top-n recommended items for the user. If the `recs_number` parameter is set to None,
+        All unrated items for the user will be ranked among all those selected by the `methodology` parameter.
 
-        One can specify which items must be ranked for each user with the `filter_dict` parameter,
-        in this case every user is mapped with a list of items for which a ranking score must be computed.
-        Otherwise, **ALL** unrated items will be ranked for each user.
+        The train set contains basically the interactions modelled in the graph, and it is needed by the methodology
+        object
 
         Args:
-            all_users: Set of user id for which a recommendation list must be generated
-            graph: A NX graph previously instantiated
+            graph: A graph which models interactions of users and items
+            train_set: a Ratings object containing interactions between users and items
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
             test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: List of users for which you want to compute ranking. The list should contain user id as
+                strings and NOT user ids mapped to their integers
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method. If set to `0`, all cpus available will
+                be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            List of uir matrices for each user, where each uir contains predicted interactions between users and unseen
+                items sorted in a descending way w.r.t. the third dimension which is the ranked score
         """
 
-        def compute_single_rank(user_id):
+        def compute_single_rank(user_tuple):
 
             # nonlocal keyword allows to modify the score variable
             nonlocal scores
 
+            user_id, user_idx = user_tuple
             user_node = UserNode(user_id)
 
-            filter_list = None
-            if methodology is not None:
-                filter_list = set(ItemNode(item_to_rank) for item_to_rank in
-                                  methodology.filter_single(user_id, train_set, test_set))
+            filter_list = set(ItemNode(item_to_rank)
+                              for item_to_rank in
+                              train_set.item_map.convert_seq_int2str(methodology.filter_single(user_idx,
+                                                                                               train_set,
+                                                                                               test_set)))
 
             # run the pageRank
             if self._personalized is True:
 
-                user_ratings = train_set.get_user_interactions(user_id)
-                user_relevance_threshold = self._relevance_threshold or np.nanmean([interaction.score
-                                                                                    for interaction in user_ratings])
+                user_ratings = train_set.get_user_interactions(user_idx)
+                user_relevance_threshold = self._relevance_threshold or np.nanmean(user_ratings[:, 2])
 
                 pers_dict = {}
 
-                relevant_items = [ItemNode(interaction.item_id)
-                                  for interaction in user_ratings
-                                  if interaction.score >= user_relevance_threshold]
+                relevant_items = user_ratings[np.where(user_ratings[:, 2] >= user_relevance_threshold)][:, 1]
+                relevant_items = [ItemNode(item_node)
+                                  for item_node in train_set.item_map.convert_seq_int2str(relevant_items.astype(int))]
 
                 # If the prob is > 0 then add relevant nodes to personalization vector. (rel_items_weight True)
                 # But also if the prob is 0 and the user explicitly set this prob to 0, add relevant nodes to
@@ -185,54 +183,52 @@ class NXPageRank(PageRank):
 
                 # all nodes that are not present up until now in the personalization vector, will be added
                 # with probability 'default_nodes_weight'
-                other_nodes = nx_graph.nodes - pers_dict.keys()
+                other_nodes = networkx_graph.nodes - pers_dict.keys()
                 pers_dict.update({node: self._default_nodes_weight / len(other_nodes) for node in other_nodes})
 
-                scores = nx.pagerank(nx_graph, personalization=pers_dict, alpha=self.alpha,
+                scores = nx.pagerank(networkx_graph, personalization=pers_dict, alpha=self.alpha,
                                      max_iter=self.max_iter, tol=self.tol, nstart=self.nstart, weight=weight)
 
             # if scores is None it means this is the first time we are running normal pagerank
             # for all the other users the pagerank won't be computed again
             elif scores is None:
-                scores = nx.pagerank(nx_graph, alpha=self.alpha, max_iter=self.max_iter,
+                scores = nx.pagerank(networkx_graph, alpha=self.alpha, max_iter=self.max_iter,
                                      tol=self.tol, nstart=self.nstart, weight=weight)
 
             # clean the results removing user nodes, selected user profile and eventually properties
             user_scores = self.filter_result(graph, scores, filter_list, user_node)
 
-            # Build the item_score dict (key is item_id, value is rank score predicted)
-            # and order the keys in descending order
-            item_score_dict = dict(zip([node.value for node in user_scores.keys()], user_scores.values()))
-            ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
+            if len(user_scores) == 0:
+                return user_id, np.array([])  # if no item to predict, empty rank is returned
 
-            # we only save the top-n items_ids corresponding to top-n recommendations
-            # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
-            ordered_item_ids = ordered_item_ids[:recs_number]
+            user_scores_arr = np.array(list(user_scores.items()))
 
-            # we construct the output data
-            single_rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
-                                            for item_id in ordered_item_ids]
+            sorted_scores_idxs = np.argsort(user_scores_arr[:, 1])[::-1][:recs_number]
+            user_scores_arr = user_scores_arr[sorted_scores_idxs]
 
-            return user_id, single_rank_interaction_list
+            user_col = np.full((user_scores_arr.shape[0], 1), user_id)
+            uir_rank = np.append(user_col, user_scores_arr, axis=1)
+
+            return user_id, uir_rank
 
         # scores will contain pagerank scores
         scores = None
-        all_rank_interaction_list = []
+        all_rank_uirs_list = []
         weight = 'weight' if self.weight is True else None
-        train_set = graph.to_ratings()
-        nx_graph = graph.to_networkx()
+        networkx_graph = graph.to_networkx()
+        user_idxs_list = train_set.user_map.convert_seq_str2int(list(user_id_list))
 
         with get_iterator_parallel(num_cpus,
-                                   compute_single_rank, all_users,
-                                   progress_bar=True, total=len(all_users)) as pbar:
+                                   compute_single_rank, zip(user_id_list, user_idxs_list),
+                                   progress_bar=True, total=len(user_id_list)) as pbar:
 
             pbar.set_description("Prepping rank...")
 
             for user_id, user_rank in pbar:
-                all_rank_interaction_list.append(user_rank)
+                all_rank_uirs_list.append(user_rank)
                 pbar.set_description(f"Computing rank for user {user_id}")
 
-        return list(itertools.chain.from_iterable(all_rank_interaction_list))
+        return all_rank_uirs_list
 
     def __str__(self):
         return "NXPageRank"

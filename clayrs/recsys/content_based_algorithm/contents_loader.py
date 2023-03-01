@@ -45,18 +45,22 @@ class LoadedContentsDict(LoadedContentsInterface):
     def get_contents_interface(self):
         return self._contents_dict
 
-    def get(self, key: str, only_representations: dict = None):
+    def get(self, key: str, only_representations: dict = None, throw_away: bool = False):
         content = self._contents_dict.get(key)
         if content is None:
             content = load_content_instance(self._contents_path, key, only_representations)
-            self._contents_dict[key] = content
+            if not throw_away:
+                self._contents_dict[key] = content
 
         return content
 
-    def get_list(self, key_list: Iterable[str], only_representations: dict = None):
+    def get_list(self, key_list: Iterable[str], only_representations: dict = None, throw_away: bool = False):
         contents_to_load = set(key_list) - set(self._contents_dict.keys())
-        self._contents_dict.update({content: load_content_instance(self._contents_path, content, only_representations)
-                                    for content in contents_to_load})
+        if not throw_away:
+            self._contents_dict.update({content: load_content_instance(self._contents_path,
+                                                                       content,
+                                                                       only_representations)
+                                        for content in contents_to_load})
 
         return [self._contents_dict[content_id] for content_id in key_list]
 

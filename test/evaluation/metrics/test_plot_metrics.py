@@ -292,12 +292,12 @@ class TestPopRatioProfileVsRecs(TestCase):
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).png')))
         self.assertFalse(os.path.isfile(os.path.join('test_prof_recs/overwrite', 'prof_vs_recs (3).csv')))
 
-    # @classmethod
-    # def tearDownClass(cls) -> None:
-    #     os.remove('pop_ratio_profile_vs_recs.png')
-    #     os.remove('pop_ratio_profile_vs_recs.svg')
-    #     shutil.rmtree('test_prof_recs')
-    #     shutil.rmtree('test_more_splits')
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.remove('pop_ratio_profile_vs_recs.png')
+        os.remove('pop_ratio_profile_vs_recs.svg')
+        shutil.rmtree('test_prof_recs')
+        shutil.rmtree('test_more_splits')
 
 
 class TestPopRecsCorrelation(TestCase):

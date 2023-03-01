@@ -1,4 +1,7 @@
+import concurrent
+import concurrent.futures
 import os
+from concurrent.futures import as_completed
 from typing import Union, Iterator
 
 import distex
@@ -50,3 +53,29 @@ def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f,
     finally:
         if pool is not None:
             pool.shutdown()
+
+
+@contextlib.contextmanager
+def get_iterator_thread(max_workers, f_to_thread, *args_to_f,
+                        progress_bar=False, total=None) -> Union[Iterator, tqdm]:
+
+    # min(32, (os.cpu_count() or 1) + 4) taken from ThreadPoolExecutor
+    max_workers = max_workers or min(32, (os.cpu_count() or 1) + 4) or 1
+
+    if max_workers > 1:
+
+        ex = concurrent.futures.ThreadPoolExecutor(max_workers)
+        iterator_res = as_completed([ex.submit(f_to_thread, *args) for args in zip(*args_to_f)])
+    else:
+        ex = None
+        iterator_res = map(f_to_thread, *args_to_f)
+
+    try:
+        if progress_bar:
+            with get_progbar(iterator_res, total=total) as pbar:
+                yield pbar
+        else:
+            yield iterator_res
+    finally:
+        if ex is not None:
+            ex.shutdown()

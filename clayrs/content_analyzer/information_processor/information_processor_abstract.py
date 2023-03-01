@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any
+
+import torch
 
 
 class InformationProcessor(ABC):
@@ -8,7 +10,7 @@ class InformationProcessor(ABC):
     """
 
     @abstractmethod
-    def process(self, field_data):
+    def process(self, field_data: Any):
         raise NotImplementedError
 
     @abstractmethod
@@ -24,13 +26,19 @@ class InformationProcessor(ABC):
         raise NotImplementedError
 
 
-class ImageProcessor(InformationProcessor):
+class ImageProcessor(InformationProcessor, torch.nn.Module):
     """
     Abstract class for image processing.
     """
     @abstractmethod
-    def process(self, field_data):
+    def forward(self, field_data: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
+
+    def process(self, field_data: torch.Tensor) -> torch.Tensor:
+        return self.forward(field_data)
+
+    def __eq__(self, other):
+        return torch.nn.Module.__eq__(self, other)
 
 
 class AudioProcessor(InformationProcessor):
@@ -58,7 +66,7 @@ class TextProcessor(InformationProcessor):
         return string_text
 
     @staticmethod
-    def string_to_list(text) -> List[str]:
+    def string_to_list(text: str) -> List[str]:
         """
         Covert str in list of str
         Args:
@@ -70,7 +78,7 @@ class TextProcessor(InformationProcessor):
         return list_text
 
     @abstractmethod
-    def process(self, field_data):
+    def process(self, field_data: str):
         raise NotImplementedError
 
 
@@ -81,7 +89,7 @@ class NLP(TextProcessor):
     """
 
     @abstractmethod
-    def process(self, field_data) -> List[str]:
+    def process(self, field_data: str) -> List[str]:
         """
         Apply on the original text the required preprocessing steps
         Args:

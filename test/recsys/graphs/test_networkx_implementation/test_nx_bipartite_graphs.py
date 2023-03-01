@@ -1,3 +1,4 @@
+import shutil
 from unittest import TestCase
 
 import pandas as pd
@@ -21,8 +22,8 @@ rat_timestamp = pd.DataFrame.from_dict({'from_id': ["1", "1", "2", "2", "2", "3"
                                         'to_id': ["tt0112281", "tt0112302", "tt0112281", "tt0112346",
                                                   "tt0112453", "tt0112453", "tt0112346", "tt0112453"],
                                         'score': [0.8, 0.7, -0.4, 1.0, 0.4, 0.1, -0.3, 0.7],
-                                        'timestamp': ['11111', '22222', '33333', '44444',
-                                                      '55555', '66666', '777777', '88888']
+                                        'timestamp': [11111, 22222, 33333, 44444,
+                                                      55555, 66666, 777777, 88888]
                                         })
 rat_timestamp = Ratings.from_dataframe(rat_timestamp, timestamp_column='timestamp')
 
@@ -41,38 +42,60 @@ class TestNXBipartiteGraph(TestCase):
 
     def test_graph_creation(self):
         # test that all nodes are added to the graph
-        for interaction in rat:
-            self.assertTrue(UserNode(interaction.user_id) in self.g.user_nodes)
-            self.assertTrue(ItemNode(interaction.item_id) in self.g.item_nodes)
 
-            link_data = self.g.get_link_data(UserNode(interaction.user_id), ItemNode(interaction.item_id))
+        user_column = rat.user_id_column
+        item_column = rat.item_id_column
+        score_column = rat.score_column
+
+        ratings_iterator = zip(user_column, item_column, score_column)
+
+        for interaction in ratings_iterator:
+            self.assertTrue(UserNode(interaction[0]) in self.g.user_nodes)
+            self.assertTrue(ItemNode(interaction[1]) in self.g.item_nodes)
+
+            link_data = self.g.get_link_data(UserNode(interaction[0]), ItemNode(interaction[1]))
             self.assertIsNotNone(link_data)
 
-            expected_data_link = {'weight': interaction.score}
-            result = self.g.get_link_data(UserNode(interaction.user_id), ItemNode(interaction.item_id))
+            expected_data_link = {'weight': interaction[2]}
+            result = self.g.get_link_data(UserNode(interaction[0]), ItemNode(interaction[1]))
 
             self.assertEqual(expected_data_link, result)
 
     def test_graph_creation_custom_label(self):
         # test that all nodes are added to the graph and the link between them has
         # a changed label
-        for interaction in rat:
-            self.assertTrue(UserNode(interaction.user_id) in self.graph_custom_label.user_nodes)
-            self.assertTrue(ItemNode(interaction.item_id) in self.graph_custom_label.item_nodes)
 
-            link_data = self.graph_custom_label.get_link_data(UserNode(interaction.user_id),
-                                                              ItemNode(interaction.item_id))
+        user_column = rat.user_id_column
+        item_column = rat.item_id_column
+        score_column = rat.score_column
+
+        ratings_iterator = zip(user_column, item_column, score_column)
+
+        for interaction in ratings_iterator:
+            self.assertTrue(UserNode(interaction[0]) in self.graph_custom_label.user_nodes)
+            self.assertTrue(ItemNode(interaction[1]) in self.graph_custom_label.item_nodes)
+
+            link_data = self.graph_custom_label.get_link_data(UserNode(interaction[0]),
+                                                              ItemNode(interaction[1]))
             self.assertIsNotNone(link_data)
 
-            expected_data_link = {'label': 'my_label', 'weight': interaction.score}
-            result = self.graph_custom_label.get_link_data(UserNode(interaction.user_id), ItemNode(interaction.item_id))
+            expected_data_link = {'label': 'my_label', 'weight': interaction[2]}
+            result = self.graph_custom_label.get_link_data(UserNode(interaction[0]), ItemNode(interaction[1]))
 
             self.assertEqual(expected_data_link, result)
 
     def test_graph_creation_w_timestamp(self):
-        for interaction in rat_timestamp:
-            expected_data_link = {'weight': interaction.score, 'timestamp': interaction.timestamp}
-            result = self.graph_timestamp.get_link_data(UserNode(interaction.user_id), ItemNode(interaction.item_id))
+
+        user_column = rat.user_id_column
+        item_column = rat.item_id_column
+        score_column = rat.score_column
+        timestamp_column = rat.timestamp_column
+
+        ratings_iterator = zip(user_column, item_column, score_column, timestamp_column)
+
+        for interaction in ratings_iterator:
+            expected_data_link = {'weight': interaction[2], 'timestamp': interaction[3]}
+            result = self.graph_timestamp.get_link_data(UserNode(interaction[0]), ItemNode(interaction[1]))
 
             self.assertEqual(expected_data_link, result)
 
@@ -328,29 +351,6 @@ class TestNXBipartiteGraph(TestCase):
         user_nodes_after_removal = self.g.user_nodes
         self.assertEqual(user_nodes_before_removal, user_nodes_after_removal)
 
-    #
-    # def test_convert_to_dataframe(self):
-    #     converted_df = self.g.convert_to_dataframe()
-    #     self.assertNotIn('label', converted_df.columns)
-    #     for user, item in zip(converted_df['from_id'], converted_df['to_id']):
-    #         self.assertIsInstance(user, Node)
-    #         self.assertIsInstance(item, Node)
-    #
-    #     result = np.sort(converted_df, axis=0)
-    #     expected = np.sort(self.df, axis=0)
-    #     self.assertTrue(np.array_equal(expected, result))
-    #
-    #     converted_df = self.g.convert_to_dataframe(only_values=True, with_label=True)
-    #     self.assertIn('label', converted_df.columns)
-    #     for user, item in zip(converted_df['from_id'], converted_df['to_id']):
-    #         self.assertNotIsInstance(user, Node)
-    #         self.assertNotIsInstance(item, Node)
-    #
-    #     converted_df = converted_df[['from_id', 'to_id', 'score']]
-    #     result = np.sort(converted_df, axis=0)
-    #     expected = np.sort(self.df, axis=0)
-    #     self.assertTrue(np.array_equal(expected, result))
-    #
     def test_copy(self):
         copy = self.g.copy()
         self.assertTrue(copy == self.g)
@@ -367,3 +367,5 @@ class TestNXBipartiteGraph(TestCase):
             graph = pickle.load(graph_file)
 
         self.assertEqual(self.g, graph)
+
+        shutil.rmtree("test_serialize")
