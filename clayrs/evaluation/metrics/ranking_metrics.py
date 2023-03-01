@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import pandas as pd
 import numpy as np
@@ -25,16 +25,16 @@ class NDCG(RankingMetric):
     the DCG score using the following formula:
 
     $$
-    DCG_{u}(truthScores_{u}) = \sum_{r\in truthScores_{u}}{f(r) / log_x(2 + i)}
+    DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
     $$
 
     Where:
 
-    - $truthScores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said
-        items in the ranking for the user $u$
+    - $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$
     - $f$ is a gain function (linear or exponential, in particular)
     - $x$ is the base of the logarithm
-    - $i$ is the index of the truth score $r$ in the list of scores $truthScores_{u}$
+    - $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$
 
     If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponential" case, the following
     formula is applied to $r$:
@@ -46,7 +46,7 @@ class NDCG(RankingMetric):
     The NDCG for a single user is then calculated using the following formula:
 
     $$
-    NDCG_u(truthScores_{u}) = \frac{DCG_{u}(truthScores_{u})}{IDCG_{u}(truthScores_{u})}
+    NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
     $$
 
     Where:
@@ -69,13 +69,12 @@ class NDCG(RankingMetric):
     The system average excludes NaN values.
 
     Arguments:
-
         gains: type of gain function to use when calculating the DCG score, the possible options are "linear" or
             "exponential"
         discount_log: logarithm function to use when calculating the DCG score, by default numpy logarithm in base 2
             is used
     """
-    def __init__(self, gains="linear", discount_log=np.log2):
+    def __init__(self, gains: str = "linear", discount_log: Callable = np.log2):
         self.gains = gains
         self.discount_log = discount_log
 
@@ -166,28 +165,18 @@ class NDCG(RankingMetric):
 class NDCGAtK(NDCG):
     r"""
     The NDCG@K (Normalized Discounted Cumulative Gain at K) metric is calculated for the **single user** by using the
-    sklearn implementation, so be sure to check its [documentation][sklearn_link].
-
-    [sklearn_link]: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html
-
-    The NDCG@K of the **entire system** is calculated instead as such:
-
-    $$
-    NDCG@K_{sys} = \frac{\sum_{u} NDCG@K_u}{|U|}
-    $$
-
-    Where:
-
-    - $NDCG@K_u$ is the NDCG@K calculated for user $u$
-    - $U$ is the set of all users
-
-    The system average excludes NaN values.
+    [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the first $k$
+    predictions
 
     Args:
         k (int): the cutoff parameter
+        gains: type of gain function to use when calculating the DCG score, the possible options are "linear" or
+            "exponential"
+        discount_log: logarithm function to use when calculating the DCG score, by default numpy logarithm in base 2
+            is used
     """
 
-    def __init__(self, k: int, gains="linear", discount_log=np.log2):
+    def __init__(self, k: int, gains: str = "linear", discount_log: Callable = np.log2):
         super().__init__(gains, discount_log)
 
         self._k = k
@@ -259,8 +248,8 @@ class MRR(RankingMetric):
         Method which calculates the RR (Reciprocal Rank) for a single user
 
         Args:
-            user_predictions: list of Interactions object of the recommendation list for the user
-            user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
+            user_predictions_items: list of ranked item ids for the user computed by the Recommender
+            user_truth_relevant_items: list of relevant item ids for the user in its truth set
         """
 
         common_idxs = npi.indices(user_truth_relevant_items, user_predictions_items, missing=-1)
@@ -364,8 +353,8 @@ class MRRAtK(MRR):
         Method which calculates the RR (Reciprocal Rank) for a single user
 
         Args:
-            user_predictions: list of Interactions object of the recommendation list for the user
-            user_truth_relevant_items: list of relevant Interactions object of the truth set for the user
+            user_predictions_items: list of ranked item ids for the user computed by the Recommender
+            user_truth_relevant_items: list of relevant item ids for the user in its truth set
         """
         user_predictions_cut = user_predictions_items[:self.k]
 
