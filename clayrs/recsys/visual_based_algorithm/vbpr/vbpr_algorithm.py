@@ -29,7 +29,7 @@ __all__ = ["VBPR"]
 
 
 class VBPR(ContentBasedAlgorithm):
-    """
+    r"""
     Class that implements recommendation through the VBPR algorithm.
     It's a ranking algorithm, so it can't do score prediction.
 
@@ -54,10 +54,10 @@ class VBPR(ContentBasedAlgorithm):
         threshold: float value which is used to distinguish positive from negative items. If None, it will vary for each
             user, and it will be set to the average rating given by it
         learning_rate: learning rate for the torch optimizer
-        lambda_w:
-        lambda_b_pos:
-        lambda_b_neg:
-        lambda_e:
+        lambda_w: weight assigned to the regularization of the loss on $\gamma_u$, $\gamma_i$, $\theta_u$
+        lambda_b_pos: weight assigned to the regularization of the loss on $\beta_i$ for the positive items
+        lambda_b_neg: weight assigned to the regularization of the loss on $\beta_i$ for the negative items
+        lambda_e: weight assigned to the regularization of the loss on $\beta'$, $E$
         train_loss: loss function for the training phase. Default is logsigmoid
         optimizer_class: optimizer torch class for the training phase. It will be instantiated using
             `additional_opt_parameters` if specified
