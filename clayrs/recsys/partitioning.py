@@ -37,7 +37,7 @@ class Partitioning(ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def split_single(self, uir_user: np.ndarray):
+    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
         """
         Abstract method in which each partitioning technique must specify how to split data for a single user
 
@@ -285,11 +285,13 @@ class BootstrapPartitioning(Partitioning):
     The bootstrap partitioning consists in executing $n$ extractions with replacement for each user from the original
     interaction frame, where $n$ is the length of the user interactions:
 
-        * The sampled data will be part of the ***train set***
-        * All the data which is part of the original dataset but was not sampled will be part of the ***test set***
+    * The sampled data will be part of the ***train set***
+    * All the data which is part of the original dataset but was not sampled will be part of the ***test set***
 
-    The bootstrap partitioning can **change** the original data distribution, since during the extraction phase you
-    could sample the same data more than once
+    !!! info
+
+        The bootstrap partitioning can **change** the original data distribution, since during the extraction phase you
+        could sample the same data more than once
 
     Args:
         random_state:
