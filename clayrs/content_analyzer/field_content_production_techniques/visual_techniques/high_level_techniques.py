@@ -5,7 +5,7 @@ from typing import Tuple, List, TYPE_CHECKING
 import timm
 import torch
 
-from clayrs.content_analyzer import EmbeddingField
+from clayrs.content_analyzer.content_representation.content import EmbeddingField
 from clayrs.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
     VisualContentTechnique
 from clayrs.utils.context_managers import get_progbar
