@@ -8,8 +8,14 @@
       
       
       
+      
+        <link rel="prev" href="../../content_based_recsys/">
+      
+      
+        <link rel="next" href="../classifier_recommender/">
+      
       <link rel="icon" href="../../../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15">
     
     
       
@@ -17,12 +23,13 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.1c3799f8.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.113286f1.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
-        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.a0c5b2b5.min.css">
       
+      
+
     
     
     
@@ -37,10 +44,11 @@
     
       <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -107,7 +115,6 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
@@ -115,7 +122,6 @@
             </label>
           
         
-          
           
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
@@ -142,7 +148,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -154,7 +160,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -166,7 +172,7 @@
         <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     swapUniba/ClayRS
@@ -185,7 +191,7 @@
           
             
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
+  <div class="md-grid">
     <ul class="md-tabs__list">
       
         
@@ -315,7 +321,7 @@
       <a href="https://github.com/swapUniba/ClayRS" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     swapUniba/ClayRS
@@ -351,17 +357,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_2">
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           First steps
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="First steps" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           First steps
@@ -427,17 +434,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3">
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Content Analyzer
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Content Analyzer" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Content Analyzer
@@ -497,17 +505,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3_4">
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
           Ratings
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Ratings" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_4">
           <span class="md-nav__icon md-icon"></span>
           Ratings
@@ -560,20 +569,75 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3_5">
-          Information Preprocessors
+        <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          Information Processors
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Information Preprocessors" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
           <span class="md-nav__icon md-icon"></span>
-          Information Preprocessors
+          Information Processors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5_1" id="__nav_3_5_1_label" tabindex="0">
+          Preprocessors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          Preprocessors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5_1_1" id="__nav_3_5_1_1_label" tabindex="0">
+          Textual preprocessors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_5_1_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_5_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          Textual preprocessors
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -583,7 +647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/information_preprocessors/nltk/" class="md-nav__link">
+      <a href="../../../../content_analyzer/information_preprocessors/textual_preprocessors/nltk/" class="md-nav__link">
         NLTK
       </a>
     </li>
@@ -597,7 +661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/information_preprocessors/spacy/" class="md-nav__link">
+      <a href="../../../../content_analyzer/information_preprocessors/textual_preprocessors/spacy/" class="md-nav__link">
         Spacy
       </a>
     </li>
@@ -611,7 +675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/information_preprocessors/ekphrasis/" class="md-nav__link">
+      <a href="../../../../content_analyzer/information_preprocessors/textual_preprocessors/ekphrasis/" class="md-nav__link">
         Ekphrasis
       </a>
     </li>
@@ -632,22 +696,99 @@
   
   
     
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5_1_2" id="__nav_3_5_1_2_label" tabindex="0">
+          Visual preprocessors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_5_1_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_5_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          Visual preprocessors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/information_preprocessors/visual_preprocessors/torch_preprocessors/" class="md-nav__link">
+        Torch preprocessors
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/information_preprocessors/postprocessors/postprocessor/" class="md-nav__link">
+        Postprocessors
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
       
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6" type="checkbox" id="__nav_3_6" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3_6">
+        <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
           Content Techniques
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Content Techniques" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_6">
           <span class="md-nav__icon md-icon"></span>
           Content Techniques
@@ -663,18 +804,46 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_6_1" type="checkbox" id="__nav_3_6_1" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_6_1" id="__nav_3_6_1_label" tabindex="0">
+          Textual techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_6_1">
+          <span class="md-nav__icon md-icon"></span>
+          Textual techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-        <label class="md-nav__link" for="__nav_3_6_1">
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_6_1_1" id="__nav_3_6_1_1_label" tabindex="0">
           Embedding techniques
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Embedding techniques" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_6_1">
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_1_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_6_1_1">
           <span class="md-nav__icon md-icon"></span>
           Embedding techniques
         </label>
@@ -686,7 +855,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/embedding_techniques/word_embeddings/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/embedding_techniques/word_embeddings/" class="md-nav__link">
         Word Embeddings
       </a>
     </li>
@@ -700,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/embedding_techniques/sentence_embeddings/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/embedding_techniques/sentence_embeddings/" class="md-nav__link">
         Sentence Embeddings
       </a>
     </li>
@@ -714,7 +883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/embedding_techniques/document_embeddings/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/embedding_techniques/document_embeddings/" class="md-nav__link">
         Document Embeddings
       </a>
     </li>
@@ -728,7 +897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/embedding_techniques/combining_embeddings/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/embedding_techniques/combining_embeddings/" class="md-nav__link">
         Combining Embeddings
       </a>
     </li>
@@ -742,7 +911,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/embedding_techniques/contextualized_embeddings/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/embedding_techniques/contextualized_embeddings/" class="md-nav__link">
         Contextualized Embeddings
       </a>
     </li>
@@ -763,7 +932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/tfidf/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/tfidf/" class="md-nav__link">
         TfIdf
       </a>
     </li>
@@ -777,7 +946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/original_data/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/original_data/" class="md-nav__link">
         Original Data
       </a>
     </li>
@@ -791,8 +960,91 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../content_analyzer/content_techniques/synset_df_frequency/" class="md-nav__link">
+      <a href="../../../../content_analyzer/content_techniques/textual_techniques/synset_df_frequency/" class="md-nav__link">
         Synset Document Frequency
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_6_2" id="__nav_3_6_2_label" tabindex="0">
+          Visual techniques
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          Visual techniques
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/content_techniques/visual_techniques/low_level_visual/" class="md-nav__link">
+        Low level techniques
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/content_techniques/visual_techniques/high_level_visual/" class="md-nav__link">
+        High level techniques
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../content_analyzer/content_techniques/from_npy/" class="md-nav__link">
+        Import from NPY
       </a>
     </li>
   
@@ -817,17 +1069,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_7" type="checkbox" id="__nav_3_7" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3_7">
+        <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
           Exogenous Techniques
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Exogenous Techniques" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_7">
           <span class="md-nav__icon md-icon"></span>
           Exogenous Techniques
@@ -894,17 +1147,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_3_8">
+        <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
           Memory Interfaces
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Memory Interfaces" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_8">
           <span class="md-nav__icon md-icon"></span>
           Memory Interfaces
@@ -951,17 +1205,18 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4">
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
           Recsys
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Recsys" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Recsys
@@ -993,17 +1248,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_2">
+        <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
           Partitioning techniques
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Partitioning techniques" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_2">
           <span class="md-nav__icon md-icon"></span>
           Partitioning techniques
@@ -1052,6 +1308,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../partitioning/bootstrap/" class="md-nav__link">
+        Bootstrap
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1072,17 +1342,18 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_3">
+        <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
           Content Based recommendation
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Content Based recommendation" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
           Content Based recommendation
@@ -1114,17 +1385,18 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3_2" type="checkbox" id="__nav_4_3_2" checked>
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2" checked>
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_3_2">
+        <label class="md-nav__link" for="__nav_4_3_2" id="__nav_4_3_2_label" tabindex="0">
           Content Based algorithms
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Content Based algorithms" data-md-level="3">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_2_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4_3_2">
           <span class="md-nav__icon md-icon"></span>
           Content Based algorithms
@@ -1140,7 +1412,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
@@ -1179,15 +1451,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="md-nav__link">
-    fit()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit_single_user" class="md-nav__link">
+    fit_single_user()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="md-nav__link">
-    predict()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict_single_user" class="md-nav__link">
+    predict_single_user()
   </a>
   
 </li>
@@ -1200,8 +1472,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="md-nav__link">
-    rank()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank_single_user" class="md-nav__link">
+    rank_single_user()
   </a>
   
 </li>
@@ -1302,6 +1574,54 @@
 
             
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3_3" id="__nav_4_3_3_label" tabindex="0">
+          Visual Based algorithms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Visual Based algorithms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../visual_based_algorithms/vbpr/" class="md-nav__link">
+        VBPR
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1320,17 +1640,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_4">
+        <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
           Graph based recommendation
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Graph based recommendation" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_4">
           <span class="md-nav__icon md-icon"></span>
           Graph based recommendation
@@ -1360,17 +1681,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4_2" type="checkbox" id="__nav_4_4_2" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_2" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_4_2">
+        <label class="md-nav__link" for="__nav_4_4_2" id="__nav_4_4_2_label" tabindex="0">
           Graphs
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Graphs" data-md-level="3">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_4_2">
           <span class="md-nav__icon md-icon"></span>
           Graphs
@@ -1449,17 +1771,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4_3" type="checkbox" id="__nav_4_4_3" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_4_3">
+        <label class="md-nav__link" for="__nav_4_4_3" id="__nav_4_4_3_label" tabindex="0">
           Graph Based algorithms
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Graph Based algorithms" data-md-level="3">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_4_3">
           <span class="md-nav__icon md-icon"></span>
           Graph Based algorithms
@@ -1519,17 +1842,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5" type="checkbox" id="__nav_4_5" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_5">
+        <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
           Experiment
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Experiment" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_5">
           <span class="md-nav__icon md-icon"></span>
           Experiment
@@ -1568,17 +1892,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_6" type="checkbox" id="__nav_4_6" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_4_6">
+        <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
           Methodologies
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Methodologies" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4_6">
           <span class="md-nav__icon md-icon"></span>
           Methodologies
@@ -1679,17 +2004,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_5">
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
           Evaluation
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Evaluation" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Evaluation
@@ -1735,17 +2061,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_5_3">
+        <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
           Metrics
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Metrics" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
           Metrics
@@ -1840,17 +2167,18 @@
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_5_4">
+        <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
           Statistical tests
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Statistical tests" data-md-level="2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_4">
           <span class="md-nav__icon md-icon"></span>
           Statistical tests
@@ -1895,17 +2223,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
       
       
       
-      
-        <label class="md-nav__link" for="__nav_6">
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
           Utils
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Utils" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
           Utils
@@ -1967,15 +2296,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="md-nav__link">
-    fit()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit_single_user" class="md-nav__link">
+    fit_single_user()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="md-nav__link">
-    predict()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict_single_user" class="md-nav__link">
+    predict_single_user()
   </a>
   
 </li>
@@ -1988,8 +2317,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="md-nav__link">
-    rank()
+  <a href="#clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank_single_user" class="md-nav__link">
+    rank_single_user()
   </a>
   
 </li>
@@ -2040,14 +2369,14 @@
               </div>
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
-  <a href="https://github.com/swapUniba/ClayRS/edit/master/docs/recsys/content_based/content_based_algorithms/centroid_vector.md" title="Edit this page" class="md-content__button md-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+                  
 
+  
+  
 
 
 <h1 id="centroid-vector">Centroid Vector</h1>
@@ -2065,7 +2394,7 @@
 
   <div class="doc doc-contents first">
       <p class="doc doc-class-bases">
-        Bases: <code><span title="clayrs.recsys.content_based_algorithm.content_based_algorithm.ContentBasedAlgorithm">ContentBasedAlgorithm</span></code></p>
+        Bases: <code><span title="clayrs.recsys.content_based_algorithm.content_based_algorithm.PerUserCBAlgorithm">PerUserCBAlgorithm</span></code></p>
 
   
       <p>Class that implements a centroid-like recommender. It first gets the centroid of the items that the user liked.
@@ -2081,15 +2410,15 @@ If the threshold is not specified, the average score of all items liked by the u
 
 <p><strong>Examples:</strong></p>
     <ul>
-<li>Interested in only a field representation, CosineSimilarity as similarity,
-<span class="arithmatex">\(threshold = 3\)</span> (Every item with rating <span class="arithmatex">\(&gt;= 3\)</span> will be considered as positive)</li>
+<li>Interested in only a field representation, <code>CosineSimilarity</code> as similarity,
+<code>threshold</code> <span class="arithmatex">\(= 3\)</span> (Every item with rating <span class="arithmatex">\(&gt;= 3\)</span> will be considered as positive)</li>
 </ul>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clayrs</span> <span class="kn">import</span> <span class="n">recsys</span> <span class="k">as</span> <span class="n">rs</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">alg</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">CentroidVector</span><span class="p">({</span><span class="s2">&quot;Plot&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">rs</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
     <ul>
-<li>Interested in multiple field representations of the items, CosineSimilarity as similarity,
-<span class="arithmatex">\(threshold = None\)</span> (Every item with rating <span class="arithmatex">\(&gt;=\)</span> mean rating of the user will be considered as positive)</li>
+<li>Interested in multiple field representations of the items, <code>CosineSimilarity</code> as similarity,
+<code>threshold</code> <span class="arithmatex">\(= None\)</span> (Every item with rating <span class="arithmatex">\(&gt;=\)</span> mean rating of the user will be considered as positive)</li>
 </ul>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">alg</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">CentroidVector</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>                     <span class="n">item_field</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Plot&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;tfidf&quot;</span><span class="p">],</span>
@@ -2100,7 +2429,7 @@ If the threshold is not specified, the average score of all items liked by the u
 </code></pre></div>
     <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>After instantiating the CentroidVector algorithm, pass it in the initialization of
+<p>After instantiating the <code>CentroidVector</code> algorithm, pass it in the initialization of
 a CBRS and the use its method to calculate ranking for single user or multiple users:</p>
 <p>Examples:</p>
 <div class="highlight"><pre><span></span><code>&gt;&gt;&gt; cbrs = rs.ContentBasedRS(algorithm=alg, ...)
@@ -2135,7 +2464,8 @@ use a list if you want to use multiple representations for a particular field.</
         <tr>
           <td><code>similarity</code></td>
           <td class="doc-param-details">
-            <p>Kind of similarity to use</p>
+            <p><code>Similarity</code> object which handles how similarities between unseen items and centroid vector of
+positive items of the active user is computed</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2148,7 +2478,7 @@ use a list if you want to use multiple representations for a particular field.</
           <td><code>threshold</code></td>
           <td class="doc-param-details">
             <p>Threshold for the ratings. If the rating is greater than the threshold, it will be considered
-as positive. If the threshold is not specified, the average score of all items liked by the user is used.</p>
+as positive. If the threshold is not specified, the average score of all items rated by the user is used.</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
@@ -2164,8 +2494,8 @@ as positive. If the threshold is not specified, the average score of all items l
         <tr>
           <td><code>embedding_combiner</code></td>
           <td class="doc-param-details">
-            <p><code>CombiningTechnique</code> used when embeddings representation must be used but they are in a
-matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
+            <p><code>CombiningTechnique</code> used when embeddings representation must be used, but they are in a
+matrix form instead of a single vector (e.g. WordEmbedding representations have one
 vector for each word). By default, the <code>Centroid</code> of the rows of the matrix is computed</p>
             <p>
                 <span class="doc-param-annotation">
@@ -2185,14 +2515,14 @@ vector for each word). By default, the <code>Centroid</code> of the rows of the 
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
-<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">similarity</span><span class="p">:</span> <span class="n">Similarity</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">similarity</span><span class="p">:</span> <span class="n">Similarity</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">embedding_combiner</span><span class="p">:</span> <span class="n">CombiningTechnique</span> <span class="o">=</span> <span class="n">Centroid</span><span class="p">()):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">item_field</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
 
@@ -2219,50 +2549,60 @@ vector for each word). By default, the <code>Centroid</code> of the rows of the 
 
 
 
-<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit</span><span class="p">()</span></code>
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.fit_single_user" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">fit_single_user</span><span class="p">()</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
   
-      <p>The fit process for the CentroidVector consists in calculating the centroid of the features
-of the positive items ONLY.</p>
+      <p>The fit process for the CentroidVector consists in computing the centroid for the active user of the features
+of its positive items ONLY.</p>
 <p>This method uses extracted features of the positive items stored in a private attribute, so
 <code>process_rated()</code> must be called before this method.</p>
 <p>The built centroid will also be stored in a private attribute.</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The fit process for the CentroidVector consists in calculating the centroid of the features</span>
-<span class="sd">    of the positive items ONLY.</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit_single_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The fit process for the CentroidVector consists in computing the centroid for the active user of the features</span>
+<span class="sd">    of its positive items ONLY.</span>
 
 <span class="sd">    This method uses extracted features of the positive items stored in a private attribute, so</span>
 <span class="sd">    `process_rated()` must be called before this method.</span>
 
 <span class="sd">    The built centroid will also be stored in a private attribute.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">positive_rated_features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">,</span>
-                                                              <span class="n">as_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span> <span class="o">=</span> <span class="n">positive_rated_features_fused</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">positive_rated_features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">)</span>
+    <span class="c1"># reshape make the centroid bidimensional of shape (1, h) needed to compute faster similarities</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span> <span class="o">=</span> <span class="n">positive_rated_features_fused</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># we maintain original representation</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">positive_rated_features_fused</span><span class="p">,</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span><span class="p">)</span>
 
     <span class="c1"># we delete variable used to fit since will no longer be used</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_positive_rated_list</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2276,8 +2616,8 @@ of the positive items ONLY.</p>
 
 
 
-<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">filter_list</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.predict_single_user" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">predict_single_user</span><span class="p">(</span><span class="n">user_idx</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2310,18 +2650,18 @@ the <code>NotPredictionAlg</code> exception!</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
-            <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict_single_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+                        <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CentroidVector is not a score prediction algorithm, calling this method will raise</span>
 <span class="sd">    the `NotPredictionAlg` exception!</span>
 
@@ -2340,16 +2680,18 @@ the <code>NotPredictionAlg</code> exception!</p>
 
 
 <h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.process_rated" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process_rated</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">process_rated</span><span class="p">(</span><span class="n">user_idx</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">)</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
   
-      <p>Function that extracts features from positive rated items ONLY!
+      <p>Function that extracts features from positive rated items ONLY of a user
 The extracted features will be used to fit the algorithm (build the centroid).</p>
-<p>Features extracted will be stored in a private attributes of the class.</p>
+<p>Features extracted will be stored in a private attribute of the class.</p>
+<p>IF there are no rated items available locally or if there are only negative
+items, an exception is thrown.</p>
 
   <table>
     <thead>
@@ -2360,13 +2702,25 @@ The extracted features will be used to fit the algorithm (build the centroid).</
     </thead>
     <tbody>
         <tr>
-          <td><code>user_ratings</code></td>
+          <td><code>user_idx</code></td>
           <td class="doc-param-details">
-            <p>List of Interaction objects for a single user</p>
+            <p>Mapped integer of the active user (the user for which we must fit the algorithm)</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>train_ratings</code></td>
+          <td class="doc-param-details">
+            <p><code>Ratings</code> object which contains the train set of each user</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
                 </span>
             </p>
           </td>
@@ -2386,11 +2740,52 @@ The extracted features will be used to fit the algorithm (build the centroid).</
     </tbody>
   </table>
 
+  <table>
+    <thead>
+      <tr>
+        <th><b>RAISES</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <span class="doc-raises-annotation">
+                <code><span title="clayrs.recsys.content_based_algorithm.exceptions.EmptyUserRatings">EmptyUserRatings</span></code>
+            </span>
+          </td>
+          <td class="doc-raises-details">
+            <p>Exception raised when the user does not appear in the train set</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="doc-raises-annotation">
+                <code><span title="clayrs.recsys.content_based_algorithm.exceptions.NoRatedItems">NoRatedItems</span></code>
+            </span>
+          </td>
+          <td class="doc-raises-details">
+            <p>Exception raised when there isn't any item available locally
+rated by the user</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="doc-raises-annotation">
+                <code>OnlyNegativeitems</code>
+            </span>
+          </td>
+          <td class="doc-raises-details">
+            <p>Exception raised when there are only negative items available locally
+for the user (Items that the user disliked)</p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
 <span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
@@ -2438,34 +2833,67 @@ The extracted features will be used to fit the algorithm (build the centroid).</
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function that extracts features from positive rated items ONLY!</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_rated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that extracts features from positive rated items ONLY of a user</span>
 <span class="sd">    The extracted features will be used to fit the algorithm (build the centroid).</span>
 
-<span class="sd">    Features extracted will be stored in a private attributes of the class.</span>
+<span class="sd">    Features extracted will be stored in a private attribute of the class.</span>
+
+<span class="sd">    IF there are no rated items available locally or if there are only negative</span>
+<span class="sd">    items, an exception is thrown.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        user_ratings: List of Interaction objects for a single user</span>
+<span class="sd">        user_idx: Mapped integer of the active user (the user for which we must fit the algorithm)</span>
+<span class="sd">        train_ratings: `Ratings` object which contains the train set of each user</span>
 <span class="sd">        available_loaded_items: The LoadedContents interface which contains loaded contents</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        EmptyUserRatings: Exception raised when the user does not appear in the train set</span>
+<span class="sd">        NoRatedItems: Exception raised when there isn&#39;t any item available locally</span>
+<span class="sd">            rated by the user</span>
+<span class="sd">        OnlyNegativeitems: Exception raised when there are only negative items available locally</span>
+<span class="sd">            for the user (Items that the user disliked)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># a list since there could be duplicate interaction (eg bootstrap partitioning)</span>
+    <span class="n">uir_user</span> <span class="o">=</span> <span class="n">train_ratings</span><span class="o">.</span><span class="n">get_user_interactions</span><span class="p">(</span><span class="n">user_idx</span><span class="p">)</span>
+    <span class="n">rated_items_id</span> <span class="o">=</span> <span class="n">train_ratings</span><span class="o">.</span><span class="n">item_map</span><span class="o">.</span><span class="n">convert_seq_int2str</span><span class="p">(</span><span class="n">uir_user</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+
+    <span class="c1"># a list since there could be duplicate interaction (eg bootstrap partitioning)</span>
     <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">:</span>
-        <span class="n">items_scores_dict</span><span class="p">[</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rated_items_id</span><span class="p">,</span> <span class="n">uir_user</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]):</span>
+        <span class="n">items_scores_dict</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 
     <span class="n">items_scores_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">items_scores_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>  <span class="c1"># sort dictionary based on key for reproducibility</span>
 
-    <span class="c1"># Load rated items from the path</span>
+    <span class="c1"># Create list of all the available items that are useful for the user</span>
     <span class="n">loaded_rated_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Content</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">([</span><span class="n">item_id</span>
-                                                                                      <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span>
-                                                                                      <span class="n">items_scores_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+                                                                                      <span class="k">for</span> <span class="n">item_id</span>
+                                                                                      <span class="ow">in</span> <span class="n">rated_items_id</span><span class="p">])</span>
 
     <span class="c1"># If threshold wasn&#39;t passed in the constructor, then we take the mean rating</span>
     <span class="c1"># given by the user as its threshold</span>
     <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_mean_user_threshold</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">uir_user</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
 
     <span class="c1"># we extract feature of each POSITIVE item sorted based on its key: IMPORTANT for reproducibility!!</span>
     <span class="c1"># otherwise the matrix we feed to sklearn will have input item in different rows each run!</span>
@@ -2473,18 +2901,17 @@ The extracted features will be used to fit the algorithm (build the centroid).</
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">loaded_rated_items</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-            <span class="n">score_assigned</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">items_scores_dict</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">])</span>
+            <span class="n">score_assigned</span> <span class="o">=</span> <span class="n">items_scores_dict</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">score_assigned</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
                     <span class="n">positive_rated_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_features_item</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uir_user</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">EmptyUserRatings</span><span class="p">(</span><span class="s2">&quot;The user selected doesn&#39;t have any ratings!&quot;</span><span class="p">)</span>
 
-    <span class="n">user_id</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaded_rated_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="n">loaded_rated_items</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaded_rated_items</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="n">NoRatedItems</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> - No rated items available locally!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="n">NoRatedItems</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> - No rated items available locally!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user_idx</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positive_rated_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">OnlyNegativeItems</span><span class="p">(</span><span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> - There are only negative items available locally!&quot;</span><span class="p">)</span>
 
@@ -2499,20 +2926,23 @@ The extracted features will be used to fit the algorithm (build the centroid).</
 
 
 
-<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rank</span><span class="p">(</span><span class="n">user_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">recs_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="clayrs.recsys.content_based_algorithm.centroid_vector.centroid_vector.CentroidVector.rank_single_user" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rank_single_user</span><span class="p">(</span><span class="n">user_idx</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">,</span> <span class="n">recs_number</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">)</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
   
-      <p>Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-All unrated items for the user will be ranked (or only items in the filter list, if specified).</p>
-<p>One can specify which items must be ranked with the <code>filter_list</code> parameter,
-in this case ONLY items in the <code>filter_list</code> parameter will be ranked.
-One can also pass items already seen by the user with the filter_list parameter.
-Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
+      <p>Rank the top-n recommended items for the active user, where the top-n items to rank are controlled by the
+<code>recs_number</code> and <code>filter_list</code> parameter:</p>
+<ul>
+<li>the former one is self-explanatory, the second is a list of items
+represented with their string ids. Must be necessarily strings and not their mapped integer since items are
+serialized following their string representation!</li>
+</ul>
+<p>If <code>recs_number</code> is <code>None</code>, all ranked items will be returned</p>
+<p>The filter list parameter is usually the result of the <code>filter_single()</code> method of a <code>Methodology</code> object</p>
 
   <table>
     <thead>
@@ -2523,13 +2953,25 @@ Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
     </thead>
     <tbody>
         <tr>
-          <td><code>user_ratings</code></td>
+          <td><code>user_idx</code></td>
           <td class="doc-param-details">
-            <p>List of Interaction objects for a single user</p>
+            <p>Mapped integer of the active user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>train_ratings</code></td>
+          <td class="doc-param-details">
+            <p><code>Ratings</code> object which contains the train set of each user</p>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><a class="autorefs autorefs-internal" title="clayrs.content_analyzer.Ratings" href="../../../../content_analyzer/ratings/ratings/#clayrs.content_analyzer.ratings_manager.Ratings">Ratings</a></code>
                 </span>
             </p>
           </td>
@@ -2553,11 +2995,7 @@ Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
+                    <code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
                 </span>
             </p>
           </td>
@@ -2565,15 +3003,11 @@ Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
         <tr>
           <td><code>filter_list</code></td>
           <td class="doc-param-details">
-            <p>list of the items to rank, if None all unrated items for the user will be ranked</p>
+            <p>list of the items to rank. Should contain string item ids</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
+                    <code><a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
                 </span>
             </p>
           </td>
@@ -2592,12 +3026,12 @@ Otherwise, <strong>ALL</strong> unrated items will be ranked.</p>
         <tr>
           <td>
               <span class="doc-returns-annotation">
-                  <code><a class="autorefs autorefs-external" title="typing.List" href="https://docs.python.org/3/library/typing.html#typing.List">List</a>[<span title="clayrs.content_analyzer.ratings_manager.ratings.Interaction">Interaction</span>]</code>
+                  <code><a class="autorefs autorefs-external" title="numpy" href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code>
               </span>
           </td>
           <td class="doc-returns-details">
-            <p>List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-a single user</p>
+            <p>uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
+as third dimension sorted in a decreasing order</p>
           </td>
         </tr>
     </tbody>
@@ -2605,29 +3039,7 @@ a single user</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/centroid_vector.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
@@ -2668,70 +3080,80 @@ a single user</p>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
-<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ratings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">],</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
-         <span class="n">recs_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Interaction</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Rank the top-n recommended items for the user. If the recs_number parameter isn&#39;t specified,</span>
-<span class="sd">    All unrated items for the user will be ranked (or only items in the filter list, if specified).</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rank_single_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">train_ratings</span><span class="p">:</span> <span class="n">Ratings</span><span class="p">,</span> <span class="n">available_loaded_items</span><span class="p">:</span> <span class="n">LoadedContentsDict</span><span class="p">,</span>
+                     <span class="n">recs_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">filter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rank the top-n recommended items for the active user, where the top-n items to rank are controlled by the</span>
+<span class="sd">    `recs_number` and `filter_list` parameter:</span>
 
-<span class="sd">    One can specify which items must be ranked with the `filter_list` parameter,</span>
-<span class="sd">    in this case ONLY items in the `filter_list` parameter will be ranked.</span>
-<span class="sd">    One can also pass items already seen by the user with the filter_list parameter.</span>
-<span class="sd">    Otherwise, **ALL** unrated items will be ranked.</span>
+<span class="sd">    * the former one is self-explanatory, the second is a list of items</span>
+<span class="sd">    represented with their string ids. Must be necessarily strings and not their mapped integer since items are</span>
+<span class="sd">    serialized following their string representation!</span>
+
+<span class="sd">    If `recs_number` is `None`, all ranked items will be returned</span>
+
+<span class="sd">    The filter list parameter is usually the result of the `filter_single()` method of a `Methodology` object</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        user_ratings: List of Interaction objects for a single user</span>
+<span class="sd">        user_idx: Mapped integer of the active user</span>
+<span class="sd">        train_ratings: `Ratings` object which contains the train set of each user</span>
 <span class="sd">        available_loaded_items: The LoadedContents interface which contains loaded contents</span>
 <span class="sd">        recs_number: number of the top ranked items to return, if None all ranked items will be returned</span>
-<span class="sd">        filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked</span>
+<span class="sd">        filter_list: list of the items to rank. Should contain string item ids</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List of Interactions object in a descending order w.r.t the &#39;score&#39; attribute, representing the ranking for</span>
-<span class="sd">            a single user</span>
+<span class="sd">        uir matrix for a single user containing user and item idxs (integer representation) with the ranked score</span>
+<span class="sd">            as third dimension sorted in a decreasing order</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">user_ratings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span>
-    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+    <span class="n">uir_user</span> <span class="o">=</span> <span class="n">train_ratings</span><span class="o">.</span><span class="n">get_user_interactions</span><span class="p">(</span><span class="n">user_idx</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uir_user</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">EmptyUserRatings</span><span class="p">(</span><span class="s2">&quot;The user selected doesn&#39;t have any ratings!&quot;</span><span class="p">)</span>
 
-    <span class="n">user_seen_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">interaction</span><span class="o">.</span><span class="n">item_id</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">user_ratings</span><span class="p">])</span>
-
     <span class="c1"># Load items to predict</span>
-    <span class="k">if</span> <span class="n">filter_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">items_to_predict</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">([</span><span class="n">item_id</span> <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">available_loaded_items</span>
-                                                            <span class="k">if</span> <span class="n">item_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">user_seen_items</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">items_to_predict</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">filter_list</span><span class="p">)</span>
+    <span class="n">items_to_predict</span> <span class="o">=</span> <span class="n">available_loaded_items</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">filter_list</span><span class="p">)</span>
 
     <span class="c1"># Extract features of the items to predict</span>
-    <span class="n">id_items_to_predict</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">idx_items_to_predict</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">features_items_to_predict</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items_to_predict</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">id_items_to_predict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">)</span>
+            <span class="n">idx_items_to_predict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">content_id</span><span class="p">)</span>
             <span class="n">features_items_to_predict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_features_item</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_items_to_predict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># Calculate predictions, they are the similarity of the new items with the centroid vector</span>
-        <span class="n">features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="n">features_items_to_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">,</span> <span class="n">as_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_similarity</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">features_fused</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_items_to_predict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>  <span class="c1"># if no item to predict, empty rank is returned</span>
 
-    <span class="c1"># Build the item_score dict (key is item_id, value is rank score predicted)</span>
-    <span class="c1"># and order the keys in descending order</span>
-    <span class="n">item_score_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">id_items_to_predict</span><span class="p">,</span> <span class="n">similarities</span><span class="p">))</span>
-    <span class="n">ordered_item_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item_score_dict</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">item_score_dict</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">idx_items_to_predict</span> <span class="o">=</span> <span class="n">train_ratings</span><span class="o">.</span><span class="n">item_map</span><span class="o">.</span><span class="n">convert_seq_str2int</span><span class="p">(</span><span class="n">idx_items_to_predict</span><span class="p">)</span>
 
-    <span class="c1"># we only save the top-n items_ids corresponding to top-n recommendations</span>
-    <span class="c1"># (if recs_number is None ordered_item_ids will contain all item_ids as the original list)</span>
-    <span class="n">ordered_item_ids</span> <span class="o">=</span> <span class="n">ordered_item_ids</span><span class="p">[:</span><span class="n">recs_number</span><span class="p">]</span>
+    <span class="c1"># Calculate predictions, they are the similarity of the new items with the centroid vector</span>
+    <span class="n">features_fused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuse_representations</span><span class="p">(</span><span class="n">features_items_to_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emb_combiner</span><span class="p">)</span>
+    <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_similarity</span><span class="o">.</span><span class="n">perform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centroid</span><span class="p">,</span> <span class="n">features_fused</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 2d to 1d</span>
+
+    <span class="n">sorted_scores_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">similarities</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">recs_number</span><span class="p">]</span>
+    <span class="n">sorted_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx_items_to_predict</span><span class="p">)[</span><span class="n">sorted_scores_idxs</span><span class="p">]</span>
+    <span class="n">sorted_scores</span> <span class="o">=</span> <span class="n">similarities</span><span class="p">[</span><span class="n">sorted_scores_idxs</span><span class="p">]</span>
 
     <span class="c1"># we construct the output data</span>
-    <span class="n">rank_interaction_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Interaction</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_score_dict</span><span class="p">[</span><span class="n">item_id</span><span class="p">])</span>
-                             <span class="k">for</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">ordered_item_ids</span><span class="p">]</span>
+    <span class="n">uir_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">user_idx</span><span class="p">,</span> <span class="n">item_idx</span><span class="p">,</span> <span class="n">score</span><span class="p">]</span>
+                         <span class="k">for</span> <span class="n">item_idx</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sorted_items</span><span class="p">,</span> <span class="n">sorted_scores</span><span class="p">)])</span>
 
-    <span class="k">return</span> <span class="n">rank_interaction_list</span>
+    <span class="k">return</span> <span class="n">uir_rank</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2769,8 +3191,8 @@ a single user</p>
 
           <details class="quote">
             <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/similarities.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -2816,7 +3238,7 @@ a single user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="numpy" href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="numpy" href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a>, <span title="scipy.sparse">sparse</span>.<span title="scipy.sparse.csr_matrix">csr_matrix</span>]</code>
                 </span>
             </p>
           </td>
@@ -2828,7 +3250,7 @@ a single user</p>
             <p>
                 <span class="doc-param-annotation">
                   <b>TYPE:</b>
-                    <code><a class="autorefs autorefs-external" title="numpy" href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code>
+                    <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="numpy" href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a>, <span title="scipy.sparse">sparse</span>.<span title="scipy.sparse.csr_matrix">csr_matrix</span>]</code>
                 </span>
             </p>
           </td>
@@ -2838,10 +3260,7 @@ a single user</p>
 
       <details class="quote">
         <summary>Source code in <code>clayrs/recsys/content_based_algorithm/centroid_vector/similarities.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -2850,10 +3269,8 @@ a single user</p>
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">v2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">],</span> <span class="n">v2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the cosine similarity between v1 and v2</span>
 
 <span class="sd">    Args:</span>
@@ -2861,12 +3278,7 @@ a single user</p>
 <span class="sd">        v2: second numpy array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">v1</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">v2</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">return</span> <span class="mi">0</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Cosine_distance is defined in the scipy library as 1 - cosine_similarity, so:</span>
-        <span class="c1"># 1 - cosine_distance = 1 - (1 - cosine_similarity) = cosine_similarity</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cosine_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2881,12 +3293,18 @@ a single user</p>
 
 </div>
 
-              
-            </article>
-          </div>
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
         </div>
         
-          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
             Back to top
           </a>
@@ -2894,41 +3312,6 @@ a single user</p>
       </main>
       
         <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        
-        <a href="../../content_based_recsys/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Content Based recsys" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Content Based recsys
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../classifier_recommender/" class="md-footer__link md-footer__link--next" aria-label="Next: Classifier Recommender" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Classifier Recommender
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -2950,8 +3333,10 @@ a single user</p>
   
     
     
+    
+    
     <a href="https://github.com/swapUniba" target="_blank" rel="noopener" title="Swap Uniba on GitHub" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
 </div>
@@ -2964,10 +3349,11 @@ a single user</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.tooltips", "navigation.tabs", "navigation.top", "navigation.sections", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.tooltips", "navigation.tabs", "navigation.top", "navigation.sections", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.3a4b43e5.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.2a6f1dda.min.js"></script>
       
         <script src="../../../../javascripts/mathjax.js"></script>
       
