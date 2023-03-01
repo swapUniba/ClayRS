@@ -10,9 +10,11 @@ from skimage.feature import canny, hog, SIFT, local_binary_pattern
 from sklearn.cluster import KMeans
 
 from clayrs.content_analyzer import JSONFile, EmbeddingField, TorchGrayscale
-from clayrs.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
-    ClasslessImageFolder, PytorchImageModels, SkImageHogDescriptor, SkImageCannyEdgeDetector, ColorsHist, \
+from clayrs.content_analyzer.field_content_production_techniques.visual_techniques import \
+    PytorchImageModels, SkImageHogDescriptor, SkImageCannyEdgeDetector, ColorsHist, \
     ColorQuantization, SkImageSIFT, SkImageLBP, CustomFilterConvolution
+from clayrs.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
+    ClasslessImageFolder
 
 import torch
 import PIL.Image
