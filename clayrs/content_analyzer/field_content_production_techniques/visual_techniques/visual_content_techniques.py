@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
     from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
         ImageProcessor
-    from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import \
+    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import \
         EmbeddingInputPostProcessor
 
 from clayrs.content_analyzer.content_representation.content import EmbeddingField

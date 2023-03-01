@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from clayrs.content_analyzer.information_processor.visual_postprocessors import CountVisualBagOfWords, \
+from clayrs.content_analyzer.information_processor.postprocessors import CountVisualBagOfWords, \
     TfIdfVisualBagOfWords, ScipyVQ, SkLearnPCA, SkLearnGaussianRandomProjections, SkLearnFeatureAgglomeration
 from clayrs.content_analyzer.content_representation.content import EmbeddingField, FeaturesBagField
 

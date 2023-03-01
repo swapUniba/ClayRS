@@ -4,4 +4,4 @@ from .ekphrasis_processor import Ekphrasis
 
 
 from .visual_preprocessors import *
-from .visual_postprocessors import *
+from .postprocessors import *

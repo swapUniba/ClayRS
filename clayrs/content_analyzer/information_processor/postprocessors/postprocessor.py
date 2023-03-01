@@ -79,6 +79,7 @@ class VisualBagOfWords(EmbeddingInputPostProcessor):
     https://customers.pyimagesearch.com/the-bag-of-visual-words-model/
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -176,13 +177,16 @@ class CountVisualBagOfWords(VisualBagOfWords):
     NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
     visual techniques and setting this as postprocessor for the output of that technique as follows:
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.CountVisualBagOfWords()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.CountVisualBagOfWords()])
+    ```
 
     ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
     Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -233,14 +237,18 @@ class TfIdfVisualBagOfWords(VisualBagOfWords):
     NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
     visual techniques and setting this as postprocessor for the output of that technique as follows:
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.TfIdfVisualBagOfWords()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.TfIdfVisualBagOfWords()])
+    ```
 
     ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
     Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+
     Arguments for [SkLearn TfIdf Transformer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfTransformer.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -287,10 +295,13 @@ class ScipyVQ(EmbeddingInputPostProcessor):
     representation, the closest one from the codebook is found using the Vector Quantization implementation from
     scipy and the retrieved vector is replaced to the original one in the final representation.
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.ScipyVQ()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.ScipyVQ()])
+    ```
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -423,8 +434,10 @@ class SkLearnPCA(DimensionalityReduction):
 
     Usage example:
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnPCA()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnPCA()])
+    ```
 
     Arguments for [SkLearn PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html)
     """
@@ -452,8 +465,10 @@ class SkLearnGaussianRandomProjections(DimensionalityReduction):
 
     Usage example:
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnGaussianRandomProjections()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnGaussianRandomProjections()])
+    ```
 
     Arguments for [SkLearn Gaussian Random Projection](https://scikit-learn.org/stable/modules/generated/sklearn.random_projection.GaussianRandomProjection.html)
     """
@@ -479,8 +494,10 @@ class SkLearnFeatureAgglomeration(DimensionalityReduction):
 
     Usage example:
 
-    >>> import clayrs.content_analyzer as ca
-    >>> ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnFeatureAgglomeration()])
+    ```python
+    import clayrs.content_analyzer as ca
+    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnFeatureAgglomeration()])
+    ```
 
     Arguments for [SkLearn Feature Agglomeration](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.FeatureAgglomeration.html)
     """

@@ -11,7 +11,7 @@ from clayrs.utils.context_managers import get_progbar
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs.content_analyzer.information_processor.visual_postprocessors.visualpostprocessor import PostProcessor
+    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import PostProcessor
 
 from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
 from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
