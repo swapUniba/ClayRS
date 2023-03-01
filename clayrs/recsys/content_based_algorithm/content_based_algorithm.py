@@ -309,8 +309,10 @@ class ContentBasedAlgorithm(Algorithm):
                 value will be None. The second value is always the list of predicted uir matrices
 
         Returns:
-            A tuple where the first value is the fit VBPR algorithm (could be None if `save_fit == False`), the second
-            one is a list of predicted uir matrices all sorted in a decreasing order w.r.t. the ranking scores
+            The first value is the fit VBPR algorithm (could be None if `save_fit == False`)
+
+            The second value is a list of predicted uir matrices all sorted in a decreasing order w.r.t.
+                the ranking scores
         """
         raise NotImplementedError
 
@@ -353,8 +355,9 @@ class ContentBasedAlgorithm(Algorithm):
                 value will be None. The second value is always the list of predicted uir matrices
 
         Returns:
-            A tuple where the first value is the fit algorithm (could be None if `save_fit == False`), the second
-            one is a list of predicted uir matrices
+            The first value is the fit algorithm (could be None if `save_fit == False`)
+
+            The second value is a list of predicted uir matrices
         """
         raise NotImplementedError
 
@@ -444,7 +447,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         Returns:
             uir matrix for a single user containing user and item idxs (integer representation) with the predicted score
-            as third dimension
+                as third dimension
         """
         raise NotImplementedError
 
@@ -472,7 +475,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         Returns:
             uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
-            as third dimension sorted in a decreasing order
+                as third dimension sorted in a decreasing order
         """
         raise NotImplementedError
 
@@ -491,8 +494,8 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         Returns:
             A dictionary with users idxs (int representation) are keys and tuples containing (`rank_fn`,
-            `predict_fn`) are values. In this dictionary only users for which the *fit* process could be performed
-            appear!
+                `predict_fn`) are values. In this dictionary only users for which the *fit* process could be performed
+                appear!
         """
         def compute_single_fit(user_idx):
 

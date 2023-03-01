@@ -1,7 +1,6 @@
-from __future__ import annotations
 from collections import defaultdict
 
-from typing import Set, List, Tuple, TYPE_CHECKING, Union
+from typing import Set, List, Tuple, Union
 
 import abc
 from abc import ABC
@@ -38,7 +37,7 @@ class Partitioning(ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def split_single(self, uir_user: np.ndarray) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    def split_single(self, uir_user: np.ndarray):
         """
         Abstract method in which each partitioning technique must specify how to split data for a single user
 
@@ -46,9 +45,9 @@ class Partitioning(ABC):
             uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains a uir matrix for each split constituting the
-            *train set* of the user, the second contains a uir matrix for each split constituting
-            the *test set* of the user
+            The first list contains a uir matrix for each split constituting the *train set* of the user
+
+            The second list contains a uir matrix for each split constituting the *test set* of the user
         """
         raise NotImplementedError
 
@@ -79,7 +78,7 @@ class Partitioning(ABC):
 
         Raises:
             ValueError: if `skip_user_error=True` in the constructor and for at least one user splitting
-            can't be performed
+                can't be performed
         """
 
         # convert user list to list of int if necessary (strings are passed)
@@ -169,9 +168,9 @@ class KFoldPartitioning(Partitioning):
             uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains a uir matrix for each split constituting the
-            *train set* of the user, the second contains a uir matrix for each split constituting
-            the *test set* of the user
+            The first list contains a uir matrix for each split constituting the *train set* of the user
+
+            The second list contains a uir matrix for each split constituting the *test set* of the user
         """
         split_result = self.__kf.split(uir_user)
 
@@ -256,9 +255,9 @@ class HoldOutPartitioning(Partitioning):
             uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains a uir matrix for each split constituting the
-            *train set* of the user, the second contains a uir matrix for each split constituting
-            the *test set* of the user
+            The first list contains a uir matrix for each split constituting the *train set* of the user
+
+            The second list contains a uir matrix for each split constituting the *test set* of the user
         """
         uir_train, uir_test = train_test_split(uir_user,
                                                train_size=self.__train_set_size,
@@ -316,9 +315,9 @@ class BootstrapPartitioning(Partitioning):
             uir_user: uir matrix containing interactions of a single user
 
         Returns:
-            Two lists, where the first contains a uir matrix for each split constituting the
-            *train set* of the user, the second contains a uir matrix for each split constituting
-            the *test set* of the user
+            The first list contains a uir matrix for each split constituting the *train set* of the user
+
+            The second list contains a uir matrix for each split constituting the *test set* of the user
         """
 
         interactions_train = resample(uir_user,

@@ -467,8 +467,10 @@ class VBPR(ContentBasedAlgorithm):
                 be used. Be careful though: multiprocessing in python has a substantial memory overhead!
 
         Returns:
-            A tuple where the first value is the fit VBPR algorithm (could be None if `save_fit == False`), the second
-            one is a list of predicted uir matrices all sorted in a decreasing order w.r.t. the ranking scores
+            The first value is the fit VBPR algorithm (could be None if `save_fit == False`)
+
+            The second value is a list of predicted uir matrices all sorted in a decreasing order w.r.t.
+                the ranking scores
         """
         vbpr_fit = self.fit(train_set, items_directory, num_cpus)
         rank = self.rank(vbpr_fit, train_set, test_set, items_directory, user_idx_list, n_recs, methodology, num_cpus)

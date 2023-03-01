@@ -211,7 +211,7 @@ class ClassifierRecommender(PerUserCBAlgorithm):
 
         Returns:
             uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
-            as third dimension sorted in a decreasing order
+                as third dimension sorted in a decreasing order
         """
 
         uir_user = train_ratings.get_user_interactions(user_idx)

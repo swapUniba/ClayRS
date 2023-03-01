@@ -60,8 +60,9 @@ class MetricEvaluator:
             metric_list (List[Metric]): List of metric on which recommendations need to be evaluated
 
         Returns:
-            Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
-            list, the second one will contain every user results for every metric eligible
+            The first DataFrame will contain the system result for every metric specified inside the metric list,
+
+            The second DataFrame will contain every user results for every metric eligible
         """
 
         frames_to_concat_users = []

@@ -77,7 +77,6 @@ class PairedTest(StatisticalTest):
         Returns:
             A Pandas DataFrame where each combination of learning schemas are compared in pair. The first value of each
                 cell is the ***statistic***, the second is the ***p-value***
-
         """
 
         user_id_column = self.user_id_column

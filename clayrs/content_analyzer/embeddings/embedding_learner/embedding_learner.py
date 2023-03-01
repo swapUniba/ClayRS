@@ -155,7 +155,7 @@ class EmbeddingLearner(EmbeddingSource):
 
         Returns:
             doc_data modified to fit the granularity. For example, if the technique had word granularity and doc_data
-            was "this is an example", the output would be ["this", "is", "an", "example"]
+                was "this is an example", the output would be ["this", "is", "an", "example"]
         """
         raise NotImplementedError
 

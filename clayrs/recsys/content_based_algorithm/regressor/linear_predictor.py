@@ -207,7 +207,7 @@ class LinearPredictor(PerUserCBAlgorithm):
 
         Returns:
             uir matrix for a single user containing user and item idxs (integer representation) with the predicted score
-            as third dimension
+                as third dimension
         """
 
         idx_items_to_predict, score_labels = self._common_prediction_process(user_idx, train_ratings,
@@ -245,7 +245,7 @@ class LinearPredictor(PerUserCBAlgorithm):
 
         Returns:
             uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
-            as third dimension sorted in a decreasing order
+                as third dimension sorted in a decreasing order
         """
 
         # Predict the rating for the items and sort them in descending order

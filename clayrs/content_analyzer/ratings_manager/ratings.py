@@ -671,8 +671,8 @@ class Ratings:
 
         Returns:
             If `as_indices=False`, numpy ndarray containing the rows from the uir matrix for the specified user,
-            otherwise numpy array containing the indexes of the rows from the uir matrix for the interactions of the
-            specified user
+                otherwise numpy array containing the indexes of the rows from the uir matrix for the interactions of the
+                specified user
 
         """
         user_rows = self._user2rows.get(user_idx, [])[:head]
@@ -815,7 +815,7 @@ class Ratings:
 
         Returns:
             The rating frame converted to a pandas DataFrame with 'user_id', 'item_id', 'score' column and optionally
-            the 'timestamp' column
+                the 'timestamp' column
 
         """
         if ids_as_str:

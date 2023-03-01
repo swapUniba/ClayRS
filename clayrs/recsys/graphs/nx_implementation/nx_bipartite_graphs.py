@@ -270,7 +270,6 @@ class NXBipartiteGraph(BipartiteDiGraph):
 
         Raises:
             TypeError: Exception raised when the node it's not in the graph
-
         """
         try:
             return list(self._graph.successors(node))

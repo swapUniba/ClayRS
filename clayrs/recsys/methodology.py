@@ -80,7 +80,7 @@ class Methodology(ABC):
 
         Returns:
             A DataFrame or a python dictionary which contains all items which must be recommended to
-            every user based on the methodology chosen.
+                every user based on the methodology chosen.
         """
         user_list = test_set.unique_user_idx_column
         user_int2str = train_set.user_map.convert_int2str

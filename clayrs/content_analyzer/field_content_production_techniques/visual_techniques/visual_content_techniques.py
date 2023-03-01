@@ -134,7 +134,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 
         Returns:
             processed_data (Union[List[str], str): it could be a list of tokens created from the original data
-            or the data in string form
+                or the data in string form
         """
         transformers_seq = torch.nn.Sequential(*preprocessor_list)
         processed_data = transformers_seq(data)
