@@ -89,7 +89,7 @@ class StrIntMap:
         elif isinstance(str_int_map, StrIntMap):
             self.map = str_int_map.map
 
-    def convert_seq_int2str(self, idx_list: Sequence[int]):
+    def convert_seq_int2str(self, idx_list: Sequence[int]) -> np.ndarray:
         """
         Method to convert a sequence of integers to the corresponding string ids in the mapping.
         In case of an empty sequence, an empty array will be returned.
@@ -101,7 +101,7 @@ class StrIntMap:
         """
         return self.map[idx_list] if len(idx_list) else np.array([], dtype=str)
 
-    def convert_seq_str2int(self, id_list: Sequence[str], missing="raise"):
+    def convert_seq_str2int(self, id_list: Sequence[str], missing="raise") -> np.ndarray:
         """
         Method to convert a sequence of strings to the corresponding integer ids in the mapping.
         In case of an empty sequence, an empty array will be returned.
@@ -116,7 +116,7 @@ class StrIntMap:
         """
         return npi.indices(self.map, id_list, missing=missing) if len(id_list) else np.array([], dtype=int)
 
-    def convert_int2str(self, idx: int):
+    def convert_int2str(self, idx: int) -> str:
         """
         Method to convert a single integer to the corresponding string id in the mapping.
 
@@ -127,7 +127,7 @@ class StrIntMap:
         """
         return self.map[idx]
 
-    def convert_str2int(self, id: str):
+    def convert_str2int(self, id: str) -> int:
         """
         Method to convert a single string to the corresponding integer id in the mapping.
 
@@ -395,7 +395,7 @@ class Ratings:
                              score_column, timestamp_column, score_processor, item_map, user_map)
 
     @property
-    def uir(self):
+    def uir(self) -> np.ndarray:
         """
         Getter for the uir matrix created from the interaction frame.
         The imported ratings are converted in the form of a numpy ndarray where each row will represent an interaction.
@@ -418,7 +418,7 @@ class Ratings:
 
     @functools.cached_property
     @handler_empty_matrix(dtype=int)
-    def user_idx_column(self):
+    def user_idx_column(self) -> np.ndarray:
         """
         Getter for the 'user_idx' column of the uir matrix. This will return the user column "as is", so it will contain
         duplicate users. Use the 'unique_user_idx_column' method to get unique users.
@@ -429,7 +429,7 @@ class Ratings:
         return self._uir[:, 0].astype(int)
 
     @functools.cached_property
-    def unique_user_idx_column(self):
+    def unique_user_idx_column(self) -> np.ndarray:
         """
         Getter for the 'user_idx' column of the uir matrix. This will return the user column without duplicates.
 
@@ -439,7 +439,7 @@ class Ratings:
         return pd.unique(self.user_idx_column)
 
     @functools.cached_property
-    def user_id_column(self):
+    def user_id_column(self) -> np.ndarray:
         """
         Getter for the 'user_id' column of the interaction frame. This will return the user column "as is", so it will
         contain duplicate users. Use the 'unique_user_id_column' method to get unique users.
@@ -450,7 +450,7 @@ class Ratings:
         return self.user_map.convert_seq_int2str(self.user_idx_column)
 
     @functools.cached_property
-    def unique_user_id_column(self):
+    def unique_user_id_column(self) -> np.ndarray:
         """
         Getter for the 'user_id' column of the interaction frame. This will return the user column without duplicates.
 
@@ -472,7 +472,7 @@ class Ratings:
         return self._uir[:, 1].astype(int)
 
     @functools.cached_property
-    def unique_item_idx_column(self):
+    def unique_item_idx_column(self) -> np.ndarray:
         """
         Getter for the 'item_idx' column of the uir matrix. This will return the item column without duplicates.
 
@@ -482,7 +482,7 @@ class Ratings:
         return pd.unique(self.item_idx_column)
 
     @functools.cached_property
-    def item_id_column(self):
+    def item_id_column(self) -> np.ndarray:
         """
         Getter for the 'item_id' column of the interaction frame. This will return the item column "as is", so it will
         contain duplicate items. Use the 'unique_item_id_column' method to get unique items.
@@ -493,7 +493,7 @@ class Ratings:
         return self.item_map.convert_seq_int2str(self.item_idx_column)
 
     @functools.cached_property
-    def unique_item_id_column(self):
+    def unique_item_id_column(self) -> np.ndarray:
         """
         Getter for the 'item_id' column of the interaction frame. This will return the item column without duplicates.
 
@@ -504,7 +504,7 @@ class Ratings:
 
     @functools.cached_property
     @handler_empty_matrix(dtype=float)
-    def score_column(self):
+    def score_column(self) -> np.ndarray:
         """
         Getter for the score column. This will return the score column "as is".
 
@@ -515,7 +515,7 @@ class Ratings:
 
     @functools.cached_property
     @handler_empty_matrix(dtype=int)
-    def timestamp_column(self):
+    def timestamp_column(self) -> np.ndarray:
         """
         Getter for the timestamp column. This will return the score column "as is". If no timestamp is present then an
         empty list is returned

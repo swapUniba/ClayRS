@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Set, Any, TYPE_CHECKING, Optional
+from typing import Set, Any, TYPE_CHECKING, Optional, List
 
 import networkx as nx
 import numpy as np
@@ -105,7 +105,7 @@ class NXPageRank(PageRank):
                          default_nodes_weight)
 
     def rank(self, graph: NXBipartiteGraph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
-             recs_number: Optional[int], methodology: Methodology, num_cpus: int):
+             recs_number: Optional[int], methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
         Rank the top-n recommended items for the user. If the `recs_number` parameter is set to None,
         All unrated items for the user will be ranked among all those selected by the `methodology` parameter.
