@@ -246,7 +246,7 @@ class GiniIndex(FairnessMetric):
 class PredictionCoverage(FairnessMetric):
     r"""
     The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
-    to all available items. It's a system wide metric, so only its result it will be returned and not those of every
+    to all available items. It's a system wise metric, so only its result it will be returned and not those of every
     user.
     The metric is calculated as such:
 
@@ -408,7 +408,7 @@ class DeltaGap(GroupFairnessMetric):
     r"""
     The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
     multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
-    It's a system wide metric and results of every group will be returned.
+    It's a system wise metric and results of every group will be returned.
 
     It is calculated as such:
 
