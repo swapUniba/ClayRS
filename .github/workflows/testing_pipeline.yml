@@ -11,16 +11,19 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10']
 
     steps:
       -
         name: Checkout Repository
         uses: actions/checkout@v3
       -
-        name: Setup python
+        name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
       -
         name: Setup installation requirements
         run: |
@@ -28,11 +31,18 @@ jobs:
           pip install pytest-cov==3.00
           pip install -e .
       -
-        name: Test
+        name: Test without coverage
+        if: ${{ matrix.python-version != '3.10' }}
+        run: |
+          pytest --color=yes test/
+      -
+        name: Test with coverage
+        if: ${{ matrix.python-version == '3.10' }}
         run: |
           pytest --color=yes --cov-report xml:codecoverage.xml --cov=clayrs test/
       -
         name: Upload coverage to Codecov
+        if: ${{ matrix.python-version == '3.10' }}
         uses: codecov/codecov-action@v3
         with: # no token required for public repos
           fail_ci_if_error: true
