@@ -31,19 +31,13 @@ jobs:
           pip install pytest-cov==3.00
           pip install -e .
       -
-        name: Test without coverage
-        if: ${{ matrix.python-version != '3.10' }}
+        name: Testing Python ${{ matrix.python-version }} with coverage
         run: |
-          pytest --color=yes test/
-      -
-        name: Test with coverage
-        if: ${{ matrix.python-version == '3.10' }}
-        run: |
-          pytest --color=yes --cov-report xml:codecoverage.xml --cov=clayrs test/
+          pytest --color=yes --cov-report xml:codecoverage_${{ matrix.python-version }}.xml --cov=clayrs test/
       -
         name: Upload coverage to Codecov
-        if: ${{ matrix.python-version == '3.10' }}
         uses: codecov/codecov-action@v3
         with: # no token required for public repos
           fail_ci_if_error: true
-          files: ./codecoverage.xml
+          files: ./codecoverage_${{ matrix.python-version }}.xml
+          flags: python_${{ matrix.python-version }}
