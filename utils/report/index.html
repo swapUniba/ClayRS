@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-8.2.16">
     
     
       
@@ -2120,7 +2120,7 @@ experiment is conducted in the current run, then a <code>ValueError</code> excep
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clayrs</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clayrs</span> <span class="kn">import</span> <span class="n">recsys</span> <span class="k">as</span> <span class="n">rs</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">clayrs</span> <span class="kn">import</span> <span class="n">evaluation</span> <span class="k">as</span> <span class="n">eva</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Generate recommendations</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">Ratings</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="n">ratings_path</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pt</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">HoldOutPartitioning</span><span class="p">()</span>
@@ -2128,7 +2128,7 @@ experiment is conducted in the current run, then a <code>ValueError</code> excep
 <span class="gp">&gt;&gt;&gt; </span><span class="n">alg</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">CentroidVector</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cbrs</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">ContentBasedRS</span><span class="p">(</span><span class="n">alg</span><span class="p">,</span> <span class="n">train_set</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">items_directory</span><span class="o">=</span><span class="n">items_path</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rank</span> <span class="o">=</span> <span class="n">cbrs</span><span class="o">.</span><span class="n">fit_rank</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">n_recs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Evaluate recommendations and generate report</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">em</span> <span class="o">=</span> <span class="n">eva</span><span class="o">.</span><span class="n">EvalModel</span><span class="p">([</span><span class="n">rank</span><span class="p">],</span> <span class="p">[</span><span class="n">test</span><span class="p">],</span> <span class="n">metric_list</span><span class="o">=</span><span class="p">[</span><span class="n">eva</span><span class="o">.</span><span class="n">Precision</span><span class="p">(),</span> <span class="n">eva</span><span class="o">.</span><span class="n">Recall</span><span class="p">()])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ut</span><span class="o">.</span><span class="n">Report</span><span class="p">()</span><span class="o">.</span><span class="n">yaml</span><span class="p">(</span><span class="n">original_ratings</span><span class="o">=</span><span class="n">ratings</span><span class="p">,</span>

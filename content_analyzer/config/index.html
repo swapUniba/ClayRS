@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../images/icon_no_borders.svg">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-8.2.16">
     
     
       
@@ -2530,7 +2530,7 @@ embedding technique using Word2Vec. For the latter, no preprocessing operation w
 <span class="gp">&gt;&gt;&gt; </span><span class="n">movies_ca_config</span><span class="o">.</span><span class="n">add_multiple_config</span><span class="p">(</span><span class="s2">&quot;Plot&quot;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                                      <span class="p">[</span><span class="n">FieldConfig</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">SkLearnTfIdf</span><span class="p">(),</span>
 <span class="gp">&gt;&gt;&gt; </span>                                                   <span class="n">preprocessing</span><span class="o">=</span><span class="n">ca</span><span class="o">.</span><span class="n">NLTK</span><span class="p">(</span><span class="n">stopwords_removal</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span>                                       <span class="n">FieldConfig</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">WordEmbeddingTechnique</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">GensimWord2Vec</span><span class="p">()))]</span>
 </code></pre></div>
 
@@ -2652,7 +2652,7 @@ embedding technique using Word2Vec. For the latter, no preprocessing operation w
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">ca</span><span class="o">.</span><span class="n">ExogenousConfig</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>            <span class="n">ca</span><span class="o">.</span><span class="n">DBPediaMappingTechnique</span><span class="p">(</span><span class="s1">&#39;dbo:Film&#39;</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;EN&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="p">),</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">ca</span><span class="o">.</span><span class="n">ExogenousConfig</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>            <span class="n">ca</span><span class="o">.</span><span class="n">PropertiesFromDataset</span><span class="p">(</span><span class="n">field_name_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;director&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="p">),</span>
