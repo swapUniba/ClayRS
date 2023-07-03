@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 from clayrs_can_see.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from clayrs_can_see.utils.const import logger
-from clayrs_can_see.utils.context_managers import get_progbar, get_iterator_thread
+from clayrs_can_see.utils.context_managers import get_iterator_thread
 from clayrs_can_see.content_analyzer.utils.id_merger import id_merger
 
 
@@ -73,8 +73,8 @@ class ContentAnalyzer:
                                  keep_order=False, progress_bar=True, total=len(created_contents)) as pbar:
             pbar.set_description("Serializing contents")
 
-            for content in pbar:
-                self._serialize_content(content)
+            for _ in pbar:
+                pass
 
     def _serialize_content(self, content: Content):
         """
