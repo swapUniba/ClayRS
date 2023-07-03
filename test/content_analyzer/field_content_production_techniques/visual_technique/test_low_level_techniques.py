@@ -1,3 +1,4 @@
+import os
 import shutil
 import unittest
 
@@ -39,7 +40,7 @@ class TestLowLevelTechnique(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         shutil.rmtree(ds_path_without_field_name)
-        shutil.rmtree(cls.full_path_source)
+        os.remove(cls.full_path_source)
 
 
 class TestHogDescriptor(TestLowLevelTechnique):
