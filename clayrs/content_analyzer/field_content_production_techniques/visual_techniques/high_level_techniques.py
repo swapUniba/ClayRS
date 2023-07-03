@@ -126,8 +126,8 @@ class CaffeImageModels(HighLevelVisual):
         self.model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
 
         if use_gpu:
-            self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_GPU)
-            self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_GPU)
+            self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+            self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
         self.feature_layer = feature_layer
         self.mean_file_path = mean_file_path
