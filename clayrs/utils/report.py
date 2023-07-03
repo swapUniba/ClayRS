@@ -12,11 +12,11 @@ from typing import TYPE_CHECKING
 # to avoid circular import. Maybe a little 'hacky', better organization for the future?
 # This is almost inevitable though, since Report MUST refer to other modules for type hints
 if TYPE_CHECKING:
-    from clayrs_can_see.content_analyzer.content_analyzer_main import ContentAnalyzer
-    from clayrs_can_see.content_analyzer import Ratings
-    from clayrs_can_see.evaluation import EvalModel
-    from clayrs_can_see.recsys.partitioning import Partitioning
-    from clayrs_can_see.recsys.recsys import RecSys
+    from clayrs.content_analyzer.content_analyzer_main import ContentAnalyzer
+    from clayrs.content_analyzer import Ratings
+    from clayrs.evaluation import EvalModel
+    from clayrs.recsys.partitioning import Partitioning
+    from clayrs.recsys.recsys import RecSys
 
 
 class Report:
@@ -285,25 +285,25 @@ class Report:
         Examples:
 
             * Generate a report for the Content Analyzer module
-            >>> from clayrs_can_see import content_analyzer as ca
-            >>> from clayrs_can_see import utils as ut
+            >>> from clayrs import content_analyzer as ca
+            >>> from clayrs import utils as ut
             >>> # movies_ca_config = ...  # user defined configuration
             >>> content_a = ca.ContentAnalyzer(movies_config)
             >>> content_a.fit()  # generate and serialize contents
             >>> ut.Report().yaml(content_analyzer=content_a)  # generate yaml
 
             * Generate a partial report for the RecSys module
-            >>> from clayrs_can_see import utils as ut
-            >>> from clayrs_can_see import recsys as rs
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
             >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))
             >>> pt = rs.HoldOutPartitioning()
             >>> [train], [test] = pt.split_all(ratings)
             >>> ut.Report().yaml(original_ratings=ratings, partitioning_technique=pt)
 
             * Generate a full report for the RecSys module and evaluation module
-            >>> from clayrs_can_see import utils as ut
-            >>> from clayrs_can_see import recsys as rs
-            >>> from clayrs_can_see import evaluation as eva
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
+            >>> from clayrs import evaluation as eva
             >>>
             >>> # Generate recommendations
             >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))

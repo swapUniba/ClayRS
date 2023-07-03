@@ -14,17 +14,17 @@ import torch
 import torchvision.transforms.functional as TF
 
 if TYPE_CHECKING:
-    from clayrs_can_see.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs_can_see.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs_can_see.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
+    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
         ImageProcessor
-    from clayrs_can_see.content_analyzer.information_processor.postprocessors.postprocessor import \
+    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import \
         EmbeddingInputPostProcessor
 
-from clayrs_can_see.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     FieldContentProductionTechnique
-from clayrs_can_see.utils.const import logger
-from clayrs_can_see.utils.context_managers import get_iterator_thread
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_iterator_thread
 
 
 class ClasslessImageFolder(Dataset):

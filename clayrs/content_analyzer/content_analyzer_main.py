@@ -10,13 +10,13 @@ import shutil
 from typing import List, Dict, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from clayrs_can_see.content_analyzer.config import ContentAnalyzerConfig
-    from clayrs_can_see.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
+    from clayrs.content_analyzer.config import ContentAnalyzerConfig
+    from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 
-from clayrs_can_see.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
-from clayrs_can_see.utils.const import logger
-from clayrs_can_see.utils.context_managers import get_iterator_thread
-from clayrs_can_see.content_analyzer.utils.id_merger import id_merger
+from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_iterator_thread
+from clayrs.content_analyzer.utils.id_merger import id_merger
 
 
 class ContentAnalyzer:

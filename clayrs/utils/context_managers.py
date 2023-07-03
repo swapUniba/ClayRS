@@ -10,7 +10,7 @@ import contextlib
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-from clayrs_can_see.utils.const import logger
+from clayrs.utils.const import logger
 
 
 @contextlib.contextmanager
