@@ -157,7 +157,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                     try:
                         byte_img = requests.get(url_or_path, timeout=self.max_timeout).content
                         img = PIL.Image.open(io.BytesIO(byte_img))
-                        img_path = os.path.join(self.imgs_dirs, Path(field_name).name)
+                        img_path = os.path.join(self.imgs_dirs, field_name, Path(url_or_path).name)
 
                         img.save(img_path)
 
