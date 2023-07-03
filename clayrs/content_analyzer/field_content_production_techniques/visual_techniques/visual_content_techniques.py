@@ -136,6 +136,18 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         paths but links
         """
         def dl_and_save_images(url_or_path):
+
+            filename = Path(url_or_path).name
+            filename_no_extension = Path(url_or_path).stem
+
+            image_path = os.path.join(field_imgs_dir, filename)
+            image_path_lnk = os.path.join(field_imgs_dir, filename_no_extension + ".lnk")
+
+            if os.path.isfile(image_path):
+                return image_path
+            elif os.path.isfile(image_path_lnk):
+                return image_path_lnk
+
             if validators.url(url_or_path):
 
                 n_retry = 0
@@ -145,7 +157,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                     try:
                         byte_img = requests.get(url_or_path, timeout=self.max_timeout).content
                         img = PIL.Image.open(io.BytesIO(byte_img))
-                        img_path = os.path.join(self.imgs_dirs, field_name + ".jpg")
+                        img_path = os.path.join(self.imgs_dirs, Path(field_name).name)
 
                         img.save(img_path)
 
@@ -173,31 +185,34 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                     if not os.path.isfile(url_or_path):
                         return None
 
-                file_link = Path(url_or_path).stem + ".jpg"
+                file_link = Path(url_or_path).stem + ".lnk"
                 os.link(url_or_path, os.path.join(self.imgs_dirs, field_name, file_link))
 
                 return os.path.join(self.imgs_dirs, field_name, file_link)
 
         field_imgs_dir = os.path.join(self.imgs_dirs, field_name)
-        try:
-            os.makedirs(field_imgs_dir)
-        except OSError:
-            raise FileExistsError(f'{field_imgs_dir} already exists') from None
+
+        os.makedirs(field_imgs_dir, exist_ok=True)
 
         url_images = (content[field_name] for content in raw_source)
 
+        img_paths = []
         error_count = 0
         with get_iterator_thread(self.max_workers, dl_and_save_images, url_images,
-                                 progress_bar=True, total=len(raw_source)) as pbar:
+                                 keep_order=True, progress_bar=True, total=len(raw_source)) as pbar:
 
             pbar.set_description("Downloading/Locating images")
 
             for future in pbar:
                 if not future:
                     error_count += 1
+                else:
+                    img_paths.append(future)
 
         if error_count != 0:
             logger.warning(f"Number of images that couldn't be retrieved: {error_count}")
+
+        return img_paths
 
     def get_data_loader(self, field_name: str, raw_source: RawInformationSource):
         """
@@ -205,17 +220,11 @@ class VisualContentTechnique(FieldContentProductionTechnique):
 
         If the images are organized as paths, the
         """
-        field_images_dir = os.path.join(self.imgs_dirs, field_name)
-
-        if not os.path.isdir(field_images_dir):
-            self._retrieve_images(field_name, raw_source)
-
         # IMPORTANT: we must give to the data loader the same ordering of contents
         # in the raw source, otherwise the content analyzer assigns to an item
         # a representation of another!
-        # TO DO: save images with the id of the content rather than the filename of the image
-        image_filenames = (Path(content[field_name]).stem + ".jpg" for content in raw_source)
-        image_paths = [os.path.join(field_images_dir, filename) for filename in image_filenames]
+        # TO DO: maybe save images with the id of the content rather than the filename of the image?
+        image_paths = self._retrieve_images(field_name, raw_source)
 
         ds = ClasslessImageFolder(image_paths=image_paths,
                                   resize_size=self.resize_size)
