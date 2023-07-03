@@ -70,7 +70,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(field_dict)
 
         # Representations for plot field
-        plot_dict = field_dict.get('plot_0')
+        plot_dict = field_dict.get('plot/0')
         self.assertIsNotNone(plot_dict)
 
         self.assertIsNotNone(plot_dict.get('SkLearnTfIdf'))
@@ -81,7 +81,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(plot_preprocessing_dict.get('Ekphrasis'))
 
         # Representation 0 for genres field
-        genres_0_dict = field_dict.get('genres_0')
+        genres_0_dict = field_dict.get('genres/0')
         self.assertIsNotNone(genres_0_dict)
 
         self.assertIsNotNone(genres_0_dict.get('WordEmbeddingTechnique'))
@@ -91,7 +91,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(genres_0_preprocessing_dict.get('Spacy'))
 
         # Representation 1 for genres field
-        genres_1_dict = field_dict.get('genres_1')
+        genres_1_dict = field_dict.get('genres/1')
         self.assertIsNotNone(genres_1_dict)
 
         self.assertIsNotNone(genres_1_dict.get('SentenceEmbeddingTechnique'))
