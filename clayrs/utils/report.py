@@ -152,7 +152,7 @@ class Report:
 
             for i, field_config in enumerate(field_config_list):
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = dict()
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = dict()
 
                 single_representation_dict = dict()
 
@@ -170,7 +170,7 @@ class Report:
 
                     single_representation_dict['preprocessing'][name_preprocessing] = parameter_dict_preprocessing
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = single_representation_dict
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = single_representation_dict
 
         return ca_dict
 
