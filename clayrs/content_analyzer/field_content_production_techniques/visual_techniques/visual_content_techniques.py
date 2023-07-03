@@ -9,21 +9,22 @@ import PIL.Image
 import requests
 import validators
 from torch.utils.data import DataLoader, Dataset
+from pathlib import Path
 import torch
 import torchvision.transforms.functional as TF
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
+    from clayrs_can_see.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs_can_see.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs_can_see.content_analyzer.information_processor.information_processor_abstract import InformationProcessor, \
         ImageProcessor
-    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import \
+    from clayrs_can_see.content_analyzer.information_processor.postprocessors.postprocessor import \
         EmbeddingInputPostProcessor
 
-from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+from clayrs_can_see.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     FieldContentProductionTechnique
-from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_iterator_thread
+from clayrs_can_see.utils.const import logger
+from clayrs_can_see.utils.context_managers import get_iterator_thread
 
 
 class ClasslessImageFolder(Dataset):
@@ -31,12 +32,9 @@ class ClasslessImageFolder(Dataset):
     Dataset which is used by torch dataloaders to efficiently handle images.
     In this case, since labels are not of interest, only the image in the form of a Torch tensor will be returned.
     """
-    def __init__(self, root, resize_size: Tuple[int, int], all_images_list: list = None):
+    def __init__(self, root, resize_size: Tuple[int, int]):
 
-        if all_images_list is None:
-            self.image_paths = [os.path.join(root, file_name) for file_name in os.listdir(root)]
-        else:
-            self.image_paths = [os.path.join(root, file_name) for file_name in all_images_list]
+        self.image_paths = [os.path.join(root, file_name) for file_name in os.listdir(root)]
 
         self.resize_size = list(resize_size)
         self.count = 0
@@ -67,6 +65,7 @@ class ClasslessImageFolder(Dataset):
 
     def __len__(self):
         return len(self.image_paths)
+
 
 class VisualContentTechnique(FieldContentProductionTechnique):
     """
@@ -164,7 +163,18 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                                            f"{url_or_path}\nThe image will be skipped")
                             return None
             else:
-                return None
+
+                # if the path is not absolute, we go in this if
+                if not os.path.isfile(url_or_path):
+                    # we build the absolute path and check again if the image exist
+                    path_dir_imgs = str(Path(raw_source.file_path).parent.absolute())
+                    url_or_path = str(os.path.join(path_dir_imgs, url_or_path))
+
+                    if not os.path.isfile(url_or_path):
+                        return None
+
+                file_link = Path(url_or_path).stem + ".lnk"
+                os.link(url_or_path, os.path.join(self.imgs_dirs, field_name, file_link))
 
         field_imgs_dir = os.path.join(self.imgs_dirs, field_name)
         try:
@@ -178,14 +188,14 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         with get_iterator_thread(self.max_workers, dl_and_save_images, url_images,
                                  progress_bar=True, total=len(raw_source)) as pbar:
 
-            pbar.set_description("Downloading images")
+            pbar.set_description("Downloading/Locating images")
 
             for future in pbar:
                 if not future:
                     error_count += 1
 
         if error_count != 0:
-            logger.warning(f"Failed requests: {error_count}")
+            logger.warning(f"Number of images that couldn't be retrieved: {error_count}")
 
     def get_data_loader(self, field_name: str, raw_source: RawInformationSource):
         """
@@ -199,7 +209,6 @@ class VisualContentTechnique(FieldContentProductionTechnique):
             self._retrieve_images(field_name, raw_source)
 
         ds = ClasslessImageFolder(root=field_images_dir,
-                                  all_images_list=[content[field_name].split('/')[-1] for content in raw_source],
                                   resize_size=self.resize_size)
         dl = DataLoader(ds, batch_size=self.batch_size, shuffle=False)
 
@@ -214,8 +223,3 @@ class VisualContentTechnique(FieldContentProductionTechnique):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
-
-
-
-
-
