@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import abstractmethod
 from collections import OrderedDict
-from typing import Tuple, List, TYPE_CHECKING
+from typing import Tuple, List, TYPE_CHECKING, Callable
 
 import timm
 import torch
@@ -79,6 +79,7 @@ class PytorchImageModels(HighLevelVisual):
     """
 
     def __init__(self, model_name: str, feature_layer: int = -1, flatten: bool = True, device: str = 'cpu',
+                 apply_on_output: Callable[[torch.Tensor], torch.Tensor] = None,
                  imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
                  max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
 
@@ -95,6 +96,11 @@ class PytorchImageModels(HighLevelVisual):
 
         self.model = torch.nn.Sequential(OrderedDict(layers))
 
+        def return_self(x: torch.Tensor) -> torch.Tensor:
+            return x
+
+        self.apply_on_output = return_self if apply_on_output is None else apply_on_output
+
         self.model.to(device)
         self.device = device
         self.flatten = flatten
@@ -103,10 +109,10 @@ class PytorchImageModels(HighLevelVisual):
 
         if self.flatten:
             return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy().flatten()),
-                            self.model(field_data.to(self.device))))
+                            self.apply_on_output(self.model(field_data.to(self.device)))))
         else:
             return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy()),
-                            self.model(field_data.to(self.device))))
+                            self.apply_on_output(self.model(field_data.to(self.device)))))
 
     def __str__(self):
         return "Pytorch Image Models"
