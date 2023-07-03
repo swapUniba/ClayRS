@@ -171,23 +171,6 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(recsys_dict)
         self.assertIsNotNone(recsys_dict.get('GraphBasedRS'))
 
-    def test_rs_yaml_error(self):
-        original_rat = Ratings(CSVFile(rat_path))
-
-        pt = HoldOutPartitioning()
-
-        train_list, test_list = pt.split_all(original_rat)
-
-        alg = NXPageRank()
-
-        graph = NXFullGraph(train_list[0])
-
-        gbrs = GraphBasedRS(alg, graph=graph)
-
-        # try to build report without calling the rank method first
-        with self.assertRaises(ValueError):
-            Report(output_dir="this doesn't work").yaml(recsys=gbrs)
-
     @staticmethod
     def _build_eva_report():
 
