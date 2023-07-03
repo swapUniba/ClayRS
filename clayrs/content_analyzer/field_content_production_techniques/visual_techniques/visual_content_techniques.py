@@ -37,7 +37,7 @@ class ClasslessImageFolder(Dataset):
         self.image_paths = image_paths
 
         self.resize_size = list(resize_size)
-        self.count = 0
+        self.error_count = 0
 
     def __getitem__(self, index):
         """
@@ -58,7 +58,7 @@ class ClasslessImageFolder(Dataset):
             x = TF.to_tensor(x)
             x = TF.resize(x, self.resize_size)
         except FileNotFoundError:
-            self.count += 1
+            self.error_count += 1
             x = torch.zeros((3, self.resize_size[0], self.resize_size[1]))
 
         return x
