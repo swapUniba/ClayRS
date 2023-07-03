@@ -96,7 +96,7 @@ class PytorchImageModels(HighLevelVisual):
             if layer_name == feature_layer:
                 break
 
-        self.model = torch.nn.Sequential(OrderedDict(layers))
+        self.model = torch.nn.Sequential(OrderedDict(layers)).eval()
 
         def return_self(x: torch.Tensor) -> torch.Tensor:
             return x
@@ -112,11 +112,13 @@ class PytorchImageModels(HighLevelVisual):
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
 
         if self.flatten:
-            return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy().flatten()),
-                            self.apply_on_output(self.model(field_data.to(self.device)))))
+            with torch.no_grad():
+                return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy().flatten()),
+                                self.apply_on_output(self.model(field_data.to(self.device)))))
         else:
-            return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy()),
-                            self.apply_on_output(self.model(field_data.to(self.device)))))
+            with torch.no_grad():
+                return list(map(lambda x: EmbeddingField(x.cpu().detach().numpy()),
+                                self.apply_on_output(self.model(field_data.to(self.device)))))
 
     def __str__(self):
         return f"Pytorch Image Models ({self.model.pretrained_cfg['architecture']})"
