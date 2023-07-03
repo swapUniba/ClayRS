@@ -10,13 +10,13 @@ import shutil
 from typing import List, Dict, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.config import ContentAnalyzerConfig
-    from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
+    from clayrs_can_see.content_analyzer.config import ContentAnalyzerConfig
+    from clayrs_can_see.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
 
-from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
-from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_progbar
-from clayrs.content_analyzer.utils.id_merger import id_merger
+from clayrs_can_see.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
+from clayrs_can_see.utils.const import logger
+from clayrs_can_see.utils.context_managers import get_progbar, get_iterator_thread
+from clayrs_can_see.content_analyzer.utils.id_merger import id_merger
 
 
 class ContentAnalyzer:
@@ -30,8 +30,9 @@ class ContentAnalyzer:
             the possibility of customizing the way in which the input data is processed.
     """
 
-    def __init__(self, config: ContentAnalyzerConfig):
+    def __init__(self, config: ContentAnalyzerConfig, n_thread: int = 1):
         self._config: ContentAnalyzerConfig = config
+        self._n_thread = n_thread
 
     def set_config(self, config: ContentAnalyzerConfig):
         self._config = config
@@ -67,13 +68,15 @@ class ContentAnalyzer:
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
-        with get_progbar(created_contents) as pbar:
+        # with get_progbar(created_contents) as pbar:
+        with get_iterator_thread(self._n_thread, self._serialize_content, created_contents,
+                                 keep_order=False, progress_bar=True, total=len(created_contents)) as pbar:
             pbar.set_description("Serializing contents")
 
             for content in pbar:
-                self.__serialize_content(content)
+                self._serialize_content(content)
 
-    def __serialize_content(self, content: Content):
+    def _serialize_content(self, content: Content):
         """
         This method serializes a specific content in the output directory defined by the content analyzer config
         Args:
@@ -83,7 +86,7 @@ class ContentAnalyzer:
         file_name = re.sub(r'[^\w\s]', '', content.content_id)
         path = os.path.join(self._config.output_directory, file_name + '.xz')
         with lzma.open(path, 'wb') as f:
-            pickle.dump(content, f, protocol=4)
+            pickle.dump(content, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def __check_field_dict(self):
         """
