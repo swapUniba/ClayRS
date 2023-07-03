@@ -1,4 +1,5 @@
 from __future__ import annotations
+import inspect
 from abc import abstractmethod
 from collections import OrderedDict
 from typing import Tuple, List, TYPE_CHECKING, Callable
@@ -12,6 +13,7 @@ from clayrs_can_see.content_analyzer.content_representation.content import Embed
 from clayrs_can_see.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
     VisualContentTechnique
 from clayrs_can_see.utils.context_managers import get_progbar
+from clayrs_can_see.utils.automatic_methods import autorepr
 
 if TYPE_CHECKING:
     from clayrs_can_see.content_analyzer.content_representation.content import FieldRepresentation
@@ -105,6 +107,8 @@ class PytorchImageModels(HighLevelVisual):
         self.device = device
         self.flatten = flatten
 
+        self._repr_string = autorepr(self, inspect.currentframe())
+
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
 
         if self.flatten:
@@ -115,10 +119,10 @@ class PytorchImageModels(HighLevelVisual):
                             self.apply_on_output(self.model(field_data.to(self.device)))))
 
     def __str__(self):
-        return "Pytorch Image Models"
+        return f"Pytorch Image Models ({self.model.pretrained_cfg['architecture']})"
 
     def __repr__(self):
-        return "Pytorch Image Models"
+        return self._repr_string
 
 
 class CaffeImageModels(HighLevelVisual):
@@ -139,6 +143,8 @@ class CaffeImageModels(HighLevelVisual):
         self.mean_file_path = mean_file_path
         self.swapRB = swap_rb
         self.flatten = flatten
+
+        self._repr_string = autorepr(self, inspect.currentframe())
 
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
 
@@ -168,4 +174,4 @@ class CaffeImageModels(HighLevelVisual):
         return "Caffe Image Models"
 
     def __repr__(self):
-        return "Caffe Image Models"
+        return self._repr_string
