@@ -57,7 +57,7 @@ class ClasslessImageFolder(Dataset):
             x = PIL.Image.open(image_path).convert("RGB")
             x = TF.to_tensor(x)
             x = TF.resize(x, self.resize_size)
-        except FileNotFoundError:
+        except (FileNotFoundError, AttributeError):
             self.error_count += 1
             x = torch.zeros((3, self.resize_size[0], self.resize_size[1]))
 
@@ -206,6 +206,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
             for future in pbar:
                 if not future:
                     error_count += 1
+                    img_paths.append(None)
                 else:
                     img_paths.append(future)
 
