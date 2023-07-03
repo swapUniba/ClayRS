@@ -32,9 +32,9 @@ class ClasslessImageFolder(Dataset):
     Dataset which is used by torch dataloaders to efficiently handle images.
     In this case, since labels are not of interest, only the image in the form of a Torch tensor will be returned.
     """
-    def __init__(self, root, resize_size: Tuple[int, int]):
+    def __init__(self, image_paths: List[str], resize_size: Tuple[int, int]):
 
-        self.image_paths = [os.path.join(root, file_name) for file_name in os.listdir(root)]
+        self.image_paths = image_paths
 
         self.resize_size = list(resize_size)
         self.count = 0
@@ -145,7 +145,7 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                     try:
                         byte_img = requests.get(url_or_path, timeout=self.max_timeout).content
                         img = PIL.Image.open(io.BytesIO(byte_img))
-                        img_path = os.path.join(self.imgs_dirs, field_name, url_or_path.split("/")[-1])
+                        img_path = os.path.join(self.imgs_dirs, field_name + ".jpg")
 
                         img.save(img_path)
 
@@ -173,8 +173,10 @@ class VisualContentTechnique(FieldContentProductionTechnique):
                     if not os.path.isfile(url_or_path):
                         return None
 
-                file_link = Path(url_or_path).stem + ".lnk"
+                file_link = Path(url_or_path).stem + ".jpg"
                 os.link(url_or_path, os.path.join(self.imgs_dirs, field_name, file_link))
+
+                return os.path.join(self.imgs_dirs, field_name, file_link)
 
         field_imgs_dir = os.path.join(self.imgs_dirs, field_name)
         try:
@@ -208,7 +210,14 @@ class VisualContentTechnique(FieldContentProductionTechnique):
         if not os.path.isdir(field_images_dir):
             self._retrieve_images(field_name, raw_source)
 
-        ds = ClasslessImageFolder(root=field_images_dir,
+        # IMPORTANT: we must give to the data loader the same ordering of contents
+        # in the raw source, otherwise the content analyzer assigns to an item
+        # a representation of another!
+        # TO DO: save images with the id of the content rather than the filename of the image
+        image_filenames = (Path(content[field_name]).stem + ".jpg" for content in raw_source)
+        image_paths = [os.path.join(field_images_dir, filename) for filename in image_filenames]
+
+        ds = ClasslessImageFolder(image_paths=image_paths,
                                   resize_size=self.resize_size)
         dl = DataLoader(ds, batch_size=self.batch_size, shuffle=False)
 
