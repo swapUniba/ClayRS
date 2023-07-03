@@ -4,17 +4,19 @@ from typing import Tuple, List, TYPE_CHECKING
 
 import timm
 import torch
+import cv2
+import numpy as np
 
-from clayrs.content_analyzer.content_representation.content import EmbeddingField
-from clayrs.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
+from clayrs_can_see.content_analyzer.content_representation.content import EmbeddingField
+from clayrs_can_see.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
     VisualContentTechnique
-from clayrs.utils.context_managers import get_progbar
+from clayrs_can_see.utils.context_managers import get_progbar
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
-    from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import ImageProcessor
-    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import \
+    from clayrs_can_see.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs_can_see.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs_can_see.content_analyzer.information_processor.information_processor_abstract import ImageProcessor
+    from clayrs_can_see.content_analyzer.information_processor.postprocessors.postprocessor import \
         EmbeddingInputPostProcessor
 
 
@@ -98,3 +100,49 @@ class PytorchImageModels(HighLevelVisual):
 
     def __repr__(self):
         return "Pytorch Image Models"
+
+
+class CaffeImageModels(HighLevelVisual):
+
+    def __init__(self, prototxt_path: str, model_path: str, feature_layer: str = None, mean_file_path: str = None,
+                 swapRB: bool = False, flatten: bool = True, imgs_dirs: str = "imgs_dirs",
+                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0, batch_size: int = 64,
+                 resize_size: Tuple[int, int] = (227, 227)):
+
+        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        self.model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
+
+        self.feature_layer = feature_layer
+        self.mean_file_path = mean_file_path
+        self.swapRB = swapRB
+        self.flatten = flatten
+
+    def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
+
+        if self.mean_file_path is not None:
+            mean = np.load(self.mean_file_path).mean(1).mean(1)
+        else:
+            mean = None
+
+        if mean is not None:
+            imgs_blob = cv2.dnn.blobFromImages(np.moveaxis(field_data.numpy(), 1, -1), mean=mean, swapRB=self.swapRB)
+        else:
+            imgs_blob = cv2.dnn.blobFromImages(np.moveaxis(field_data.numpy(), 1, -1), swapRB=self.swapRB)
+
+        self.model.setInput(imgs_blob)
+
+        if self.feature_layer is None:
+            features_output = self.model.forward()
+        else:
+            features_output = self.model.forward(self.feature_layer)
+
+        if self.flatten:
+            return [EmbeddingField(x.flatten()) for x in features_output]
+        else:
+            return [EmbeddingField(x) for x in features_output]
+
+    def __str__(self):
+        return "Caffe Image Models"
+
+    def __repr__(self):
+        return "Caffe Image Models"
