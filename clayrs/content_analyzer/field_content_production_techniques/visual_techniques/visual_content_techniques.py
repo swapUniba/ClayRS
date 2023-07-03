@@ -55,7 +55,7 @@ class ClasslessImageFolder(Dataset):
 
         try:
             x = PIL.Image.open(image_path).convert("RGB")
-            x = TF.to_tensor(x)
+            x = TF.pil_to_tensor(x)
             x = TF.resize(x, self.resize_size)
         except FileNotFoundError:
             self.count += 1
