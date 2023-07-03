@@ -7,16 +7,16 @@ from abc import ABC
 import numpy as np
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer import Ratings
-    from clayrs.recsys.graphs.graph import FullDiGraph, UserNode
-    from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
-    from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
-    from clayrs.recsys.methodology import Methodology
+    from clayrs_can_see.content_analyzer import Ratings
+    from clayrs_can_see.recsys.graphs.graph import FullDiGraph, UserNode
+    from clayrs_can_see.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+    from clayrs_can_see.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
+    from clayrs_can_see.recsys.methodology import Methodology
 
-from clayrs.content_analyzer.ratings_manager.ratings import Rank, Prediction
-from clayrs.recsys.methodology import TestRatingsMethodology, AllItemsMethodology
-from clayrs.recsys.content_based_algorithm.exceptions import NotFittedAlg
-from clayrs.utils.const import logger
+from clayrs_can_see.content_analyzer.ratings_manager.ratings import Rank, Prediction
+from clayrs_can_see.recsys.methodology import TestRatingsMethodology, AllItemsMethodology
+from clayrs_can_see.recsys.content_based_algorithm.exceptions import NotFittedAlg
+from clayrs_can_see.utils.const import logger
 
 
 class RecSys(ABC):
@@ -35,7 +35,7 @@ class RecSys(ABC):
     def __init__(self, algorithm: Union[ContentBasedAlgorithm, GraphBasedAlgorithm]):
         self.__alg = algorithm
 
-        self._yaml_report: Optional[Dict] = None
+        self._yaml_report: Dict = {}
 
     @property
     def algorithm(self):
@@ -63,8 +63,8 @@ class ContentBasedRS(RecSys):
         technique):
 
         ```python title="Single split train"
-        from clayrs import recsys as rs
-        from clayrs import content_analyzer as ca
+        from clayrs_can_see import recsys as rs
+        from clayrs_can_see import content_analyzer as ca
 
         original_rat = ca.Ratings(ca.CSVFile(ratings_path))
 
@@ -80,8 +80,8 @@ class ContentBasedRS(RecSys):
         In case you perform a splitting of the dataset which returns a multiple train and test sets (KFold technique):
 
         ```python title="Multiple split train"
-        from clayrs import recsys as rs
-        from clayrs import content_analyzer as ca
+        from clayrs_can_see import recsys as rs
+        from clayrs_can_see import content_analyzer as ca
 
         original_rat = ca.Ratings(ca.CSVFile(ratings_path))
 
@@ -493,8 +493,8 @@ class GraphBasedRS(RecSys):
         technique):
 
         ```python title="Single split train"
-        from clayrs import recsys as rs
-        from clayrs import content_analyzer as ca
+        from clayrs_can_see import recsys as rs
+        from clayrs_can_see import content_analyzer as ca
 
         original_rat = ca.Ratings(ca.CSVFile(ratings_path))
 
@@ -519,8 +519,8 @@ class GraphBasedRS(RecSys):
         In case you perform a splitting of the dataset which returns a multiple train and test sets (KFold technique):
 
         ```python title="Multiple split train"
-        from clayrs import recsys as rs
-        from clayrs import content_analyzer as ca
+        from clayrs_can_see import recsys as rs
+        from clayrs_can_see import content_analyzer as ca
 
         original_rat = ca.Ratings(ca.CSVFile(ratings_path))
 
@@ -620,7 +620,7 @@ class GraphBasedRS(RecSys):
 
         logger.info("Don't worry if it looks stuck at first")
         logger.info("First iterations will stabilize the estimated remaining time")
-        
+
         # in the graph recsys, each graph algorithm works with strings,
         # so in case we should convert int to strings
         all_users = test_set.unique_user_id_column

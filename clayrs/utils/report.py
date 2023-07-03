@@ -176,10 +176,10 @@ class Report:
 
     def _report_rs_module(self, original_ratings: Ratings, partitioning_technique: Partitioning, recsys: RecSys):
 
-        # To provide a yaml report for recsys object, a rank or predict method must be called first
-        if recsys is not None and recsys._yaml_report is None:
-            raise ValueError("You must first call with the rank() or predict() method of the recsys object "
-                             "before computing the report!")
+        # # To provide a yaml report for recsys object, a rank or predict method must be called first
+        # if recsys is not None and recsys._yaml_report is None:
+        #     raise ValueError("You must first call with the rank() or predict() method of the recsys object "
+        #                      "before computing the report!")
 
         rs_dict = dict()
 
@@ -220,6 +220,7 @@ class Report:
 
             parameters_recsys_dict['algorithm'] = {name_alg: parameters_alg}
 
+            # _yaml_report is empty if no rank or pred method is called first
             for key, val in recsys._yaml_report.items():
 
                 val = val if isinstance(val, str) else repr(val)
