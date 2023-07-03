@@ -10,7 +10,7 @@ import contextlib
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
-from clayrs.utils.const import logger
+from clayrs_can_see.utils.const import logger
 
 
 @contextlib.contextmanager
@@ -57,7 +57,7 @@ def get_iterator_parallel(num_cpus, f_to_parallelize, *args_to_f,
 
 @contextlib.contextmanager
 def get_iterator_thread(max_workers, f_to_thread, *args_to_f,
-                        progress_bar=False, total=None) -> Union[Iterator, tqdm]:
+                        keep_order=False, progress_bar=False, total=None) -> Union[Iterator, tqdm]:
 
     # min(32, (os.cpu_count() or 1) + 4) taken from ThreadPoolExecutor
     max_workers = max_workers or min(32, (os.cpu_count() or 1) + 4) or 1
@@ -65,7 +65,10 @@ def get_iterator_thread(max_workers, f_to_thread, *args_to_f,
     if max_workers > 1:
 
         ex = concurrent.futures.ThreadPoolExecutor(max_workers)
-        iterator_res = as_completed([ex.submit(f_to_thread, *args) for args in zip(*args_to_f)])
+        if keep_order:
+            iterator_res = ex.map(f_to_thread, *args_to_f)
+        else:
+            iterator_res = as_completed([ex.submit(f_to_thread, *args) for args in zip(*args_to_f)])
     else:
         ex = None
         iterator_res = map(f_to_thread, *args_to_f)
