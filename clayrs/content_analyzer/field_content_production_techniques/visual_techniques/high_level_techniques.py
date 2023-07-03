@@ -118,16 +118,20 @@ class PytorchImageModels(HighLevelVisual):
 class CaffeImageModels(HighLevelVisual):
 
     def __init__(self, prototxt_path: str, model_path: str, feature_layer: str = None, mean_file_path: str = None,
-                 swapRB: bool = False, flatten: bool = True, imgs_dirs: str = "imgs_dirs",
+                 swap_rb: bool = False, flatten: bool = True, imgs_dirs: str = "imgs_dirs", use_gpu: bool = False,
                  max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0, batch_size: int = 64,
                  resize_size: Tuple[int, int] = (227, 227)):
 
         super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
         self.model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
 
+        if use_gpu:
+            self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_GPU)
+            self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_GPU)
+
         self.feature_layer = feature_layer
         self.mean_file_path = mean_file_path
-        self.swapRB = swapRB
+        self.swapRB = swap_rb
         self.flatten = flatten
 
     def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
