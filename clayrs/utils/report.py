@@ -102,7 +102,7 @@ class Report:
             # which has as follow-up character the '=' and a nested object after that or anything else.
             # The last part is the bounding, the match ends when ', \w+=' is found (another parameter= or the ')' (the
             # end)
-            tuples_list_args = re.findall(r"(?<=\(|\s)(\w+)=(\w+"+balanced_parenthesis_pattern+r"|.*?)(?=,\s\w+=|\))",
+            tuples_list_args = re.findall(r"(?<=\(|\s)(\w+)=(\w+"+balanced_parenthesis_pattern+r"|.*?)(?=,\s\w+=|\)$)",
                                           repr_string)
 
             dict_args_string = dict(tuples_list_args)
@@ -152,7 +152,7 @@ class Report:
 
             for i, field_config in enumerate(field_config_list):
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = dict()
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = dict()
 
                 single_representation_dict = dict()
 
@@ -170,16 +170,16 @@ class Report:
 
                     single_representation_dict['preprocessing'][name_preprocessing] = parameter_dict_preprocessing
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = single_representation_dict
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = single_representation_dict
 
         return ca_dict
 
     def _report_rs_module(self, original_ratings: Ratings, partitioning_technique: Partitioning, recsys: RecSys):
 
-        # To provide a yaml report for recsys object, a rank or predict method must be called first
-        if recsys is not None and recsys._yaml_report is None:
-            raise ValueError("You must first call with the rank() or predict() method of the recsys object "
-                             "before computing the report!")
+        # # To provide a yaml report for recsys object, a rank or predict method must be called first
+        # if recsys is not None and recsys._yaml_report is None:
+        #     raise ValueError("You must first call with the rank() or predict() method of the recsys object "
+        #                      "before computing the report!")
 
         rs_dict = dict()
 
@@ -220,6 +220,7 @@ class Report:
 
             parameters_recsys_dict['algorithm'] = {name_alg: parameters_alg}
 
+            # _yaml_report is empty if no rank or pred method is called first
             for key, val in recsys._yaml_report.items():
 
                 val = val if isinstance(val, str) else repr(val)
@@ -334,7 +335,7 @@ class Report:
 
         def dump_yaml(output_dir, data):
             with open(output_dir, 'w') as yaml_file:
-                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True)
+                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True,)
 
         # None values will be represented as 'null' in yaml file.
         # without this, they will simply be represented as an empty string

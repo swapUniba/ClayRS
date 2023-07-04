@@ -1,15 +1,14 @@
 from __future__ import annotations
 from abc import abstractmethod
-from typing import List, Set, Callable, TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction
-    from clayrs.recsys.partitioning import Split
+    from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import Split
 
-from clayrs.evaluation.metrics.metrics import Metric
+from clayrs.evaluation.metrics.metrics import Metric, handler_different_users
 
 
 class ClassificationMetric(Metric):
@@ -48,6 +47,7 @@ class ClassificationMetric(Metric):
     def precision(self):
         return self.__precision
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         # This method will calculate for every split true positive, false positive, true negative, false negative items
         # so that every metric must simply implement the method _calc_metric(...).
@@ -60,30 +60,39 @@ class ClassificationMetric(Metric):
         sys_confusion_matrix = np.array([[0, 0],
                                          [0, 0]], dtype=np.int32)
 
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
+
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_predictions_indices = pred.get_user_interactions(uidx_pred, as_indices=True)
+            user_truth_indices = truth.get_user_interactions(uidx_truth, as_indices=True)
+
+            user_truth_scores = truth.score_column[user_truth_indices]
+            user_truth_items = truth.item_id_column[user_truth_indices]
 
             relevant_threshold = self.relevant_threshold
             if relevant_threshold is None:
-                relevant_threshold = np.nanmean([truth_interaction.score
-                                                 for truth_interaction in user_truth])
+                relevant_threshold = np.nanmean(user_truth_scores)
 
-            user_truth_relevant_items = set([truth_interaction.item_id for truth_interaction in user_truth
-                                             if truth_interaction.score >= relevant_threshold])
+            user_predictions_items = pred.item_id_column[user_predictions_indices]
+            user_truth_relevant_items = user_truth_items[np.where(user_truth_scores >= relevant_threshold)]
 
             # If basically the user has not provided a rating to any items greater than the threshold,
             # then we don't consider it since it's not fault of the system
             if len(user_truth_relevant_items) != 0:
-                metric_user, user_confusion_matrix = self._perform_single_user(user_predictions,
+                metric_user, user_confusion_matrix = self._perform_single_user(user_predictions_items,
                                                                                user_truth_relevant_items)
 
                 sys_confusion_matrix += user_confusion_matrix
             else:
                 metric_user = np.nan
 
-            split_result['user_id'].append(user)
+            # temporarily append user_idx, later convert to user id
+            split_result['user_id'].append(uidx_truth)
             split_result[str(self)].append(metric_user)
+
+        split_result['user_id'] = list(truth.user_map.convert_seq_int2str(split_result['user_id']))
 
         # trick to check for nan values, if all values are nan then an exception is thrown
         if all(user_result != user_result for user_result in split_result[str(self)]):
@@ -109,7 +118,7 @@ class ClassificationMetric(Metric):
         raise NotImplementedError
 
     @abstractmethod
-    def _perform_single_user(self, user_prediction_items: List[Interaction], user_truth_items: Set[str]):
+    def _perform_single_user(self, user_prediction_items: np.ndarray, user_truth_items: np.ndarray):
         raise NotImplementedError
 
 
@@ -160,10 +169,9 @@ class Precision(ClassificationMetric):
         fp = confusion_matrix[0, 1]
         return self.precision((tp + fp) and tp / (tp + fp) or 0)  # safediv between tp and (tp + fp)
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        tp = len([prediction_interaction for prediction_interaction in user_prediction
-                  if prediction_interaction.item_id in user_truth_relevant_items])
-        fp = len(user_prediction) - tp
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        tp = len(np.intersect1d(user_predictions_items, user_truth_relevant_items))
+        fp = len(user_predictions_items) - tp
 
         # we do not compute the full confusion matrix for the user
         useful_confusion_matrix_user = np.array([[tp, fp],
@@ -223,11 +231,10 @@ class PrecisionAtK(Precision):
         return f"PrecisionAtK(k={self.k}, relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
                f"precision={self.precision})"
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        user_prediction_cut = user_prediction[:self.k]
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        user_prediction_cut = user_predictions_items[:self.k]
 
-        tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
-                  if prediction_interaction.item_id in user_truth_relevant_items])
+        tp = len(np.intersect1d(user_prediction_cut, user_truth_relevant_items))
         fp = len(user_prediction_cut) - tp
 
         useful_confusion_matrix_user = np.array([[tp, fp],
@@ -279,12 +286,11 @@ class RPrecision(Precision):
         return f"RPrecision(relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
                f"precision={self.precision})"
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
         r = len(user_truth_relevant_items)
-        user_prediction_cut = user_prediction[:r]
+        user_prediction_cut = user_predictions_items[:r]
 
-        tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
-                  if prediction_interaction.item_id in user_truth_relevant_items])
+        tp = len(np.intersect1d(user_prediction_cut, user_truth_relevant_items))
         fp = len(user_prediction_cut) - tp
 
         useful_confusion_matrix_user = np.array([[tp, fp],
@@ -341,9 +347,8 @@ class Recall(ClassificationMetric):
         fn = confusion_matrix[1, 0]
         return self.precision((tp + fn) and tp / (tp + fn) or 0)  # safediv between tp and (tp + fn)
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        tp = len([prediction_interaction for prediction_interaction in user_prediction
-                  if prediction_interaction.item_id in user_truth_relevant_items])
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        tp = len(np.intersect1d(user_predictions_items, user_truth_relevant_items))
         fn = len(user_truth_relevant_items) - tp
 
         useful_confusion_matrix_user = np.array([[tp, 0],
@@ -403,11 +408,10 @@ class RecallAtK(Recall):
         return f"RecallAtK(k={self.k}, relevant_threshold={self.relevant_threshold}, sys_average={self.sys_avg}, " \
                f"precision={self.precision})"
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        user_prediction_cut = user_prediction[:self.k]
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        user_prediction_cut = user_predictions_items[:self.k]
 
-        tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
-                  if prediction_interaction.item_id in user_truth_relevant_items])
+        tp = len(np.intersect1d(user_prediction_cut, user_truth_relevant_items))
         fn = len(user_truth_relevant_items) - tp
 
         useful_confusion_matrix_user = np.array([[tp, 0],
@@ -489,10 +493,9 @@ class FMeasure(ClassificationMetric):
 
         return fbeta
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        tp = len([prediction_interaction for prediction_interaction in user_prediction
-                  if prediction_interaction.item_id in user_truth_relevant_items])
-        fp = len(user_prediction) - tp
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        tp = len(np.intersect1d(user_predictions_items, user_truth_relevant_items))
+        fp = len(user_predictions_items) - tp
         fn = len(user_truth_relevant_items) - tp
 
         useful_confusion_matrix_user = np.array([[tp, fp],
@@ -563,11 +566,10 @@ class FMeasureAtK(FMeasure):
         return f"FMeasureAtK(k={self.k}, beta={self.beta}, relevant_threshold={self.relevant_threshold}, " \
                f"sys_average={self.sys_avg}, precision={self.precision})"
 
-    def _perform_single_user(self, user_prediction: List[Interaction], user_truth_relevant_items: Set[str]):
-        user_prediction_cut = user_prediction[:self.k]
+    def _perform_single_user(self, user_predictions_items: np.ndarray, user_truth_relevant_items: np.ndarray):
+        user_prediction_cut = user_predictions_items[:self.k]
 
-        tp = len([prediction_interaction for prediction_interaction in user_prediction_cut
-                  if prediction_interaction.item_id in user_truth_relevant_items])
+        tp = len(np.intersect1d(user_prediction_cut, user_truth_relevant_items))
         fp = len(user_prediction_cut) - tp
         fn = len(user_truth_relevant_items) - tp
 

@@ -17,12 +17,17 @@ class RawInformationSource(ABC):
         encoding: define the type of encoding of data stored in the source (example: "utf-8")
     """
 
-    def __init__(self, encoding: str):
+    def __init__(self, file_path: str, encoding: str):
+        self.__file_path = file_path
         self.__encoding = encoding
 
     @property
     def encoding(self):
         return self.__encoding
+
+    @property
+    def file_path(self):
+        return self.__file_path
 
     @property
     @abstractmethod
@@ -76,8 +81,7 @@ class DATFile(RawInformationSource):
     """
 
     def __init__(self, file_path: str, encoding: str = "utf-8"):
-        super().__init__(encoding)
-        self.__file_path = file_path
+        super().__init__(file_path, encoding)
 
     @property
     def representative_name(self) -> str:
@@ -90,12 +94,12 @@ class DATFile(RawInformationSource):
             The representative name for the raw source
         """
         # file name with extension
-        file_name = os.path.basename(self.__file_path)
+        file_name = os.path.basename(self.file_path)
 
         return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path, encoding=self.encoding) as f:
+        with open(self.file_path, encoding=self.encoding) as f:
             for line in f:
                 line_dict = {}
                 fields = line.split('::')
@@ -106,7 +110,7 @@ class DATFile(RawInformationSource):
                 yield line_dict
 
     def __len__(self):
-        with open(self.__file_path, newline='', encoding=self.encoding) as dat_file:
+        with open(self.file_path, newline='', encoding=self.encoding) as dat_file:
             total_length = sum(1 for _ in dat_file)
 
             return total_length
@@ -115,7 +119,7 @@ class DATFile(RawInformationSource):
         return "DATFile"
 
     def __repr__(self):
-        return f'DATFile(encoding={self.__encoding}, file_path={self.__file_path})'
+        return f'DATFile(encoding={self.__encoding}, file_path={self.file_path})'
 
 
 class JSONFile(RawInformationSource):
@@ -144,8 +148,7 @@ class JSONFile(RawInformationSource):
     """
 
     def __init__(self, file_path: str, encoding: str = "utf-8"):
-        super().__init__(encoding)
-        self.__file_path = file_path
+        super().__init__(file_path, encoding)
 
     @property
     def representative_name(self) -> str:
@@ -158,25 +161,25 @@ class JSONFile(RawInformationSource):
             The representative name for the raw source
         """
         # file name with extension
-        file_name = os.path.basename(self.__file_path)
+        file_name = os.path.basename(self.file_path)
 
         return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path, encoding=self.encoding) as j:
+        with open(self.file_path, encoding=self.encoding) as j:
             all_lines = json.load(j, parse_int=str, parse_float=str)
             for line in all_lines:
                 yield line
 
     def __len__(self):
-        with open(self.__file_path, encoding=self.encoding) as j:
+        with open(self.file_path, encoding=self.encoding) as j:
             return len(json.load(j))
 
     def __str__(self):
         return "JSONFile"
 
     def __repr__(self):
-        return f'JSONFile(encoding={self.__encoding}, file_path={self.__file_path})'
+        return f'JSONFile(encoding={self.__encoding}, file_path={self.file_path})'
 
 
 class CSVFile(RawInformationSource):
@@ -227,8 +230,7 @@ class CSVFile(RawInformationSource):
     """
 
     def __init__(self, file_path: str, separator: str = ',', has_header: bool = True, encoding: str = "utf-8-sig"):
-        super().__init__(encoding)
-        self.__file_path = file_path
+        super().__init__(file_path, encoding)
         self.__has_header = has_header
         self.__separator = separator
 
@@ -243,12 +245,12 @@ class CSVFile(RawInformationSource):
             The representative name for the raw source
         """
         # file name with extension
-        file_name = os.path.basename(self.__file_path)
+        file_name = os.path.basename(self.file_path)
 
         return file_name
 
     def __iter__(self) -> Iterator[Dict[str, str]]:
-        with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
+        with open(self.file_path, newline='', encoding=self.encoding) as csv_file:
             if self.__has_header:
                 reader = csv.DictReader(csv_file, quoting=csv.QUOTE_MINIMAL, delimiter=self.__separator)
             else:
@@ -259,7 +261,7 @@ class CSVFile(RawInformationSource):
             yield from reader
 
     def __len__(self):
-        with open(self.__file_path, newline='', encoding=self.encoding) as csv_file:
+        with open(self.file_path, newline='', encoding=self.encoding) as csv_file:
             total_length = sum(1 for _ in csv_file)
             if self.__has_header:
                 total_length -= 1
@@ -270,7 +272,7 @@ class CSVFile(RawInformationSource):
         return "CSVFile"
 
     def __repr__(self):
-        return f'CSVFile(file_path={self.__file_path}, separator={self.__separator}, has_header={self.__has_header}, ' \
+        return f'CSVFile(file_path={self.file_path}, separator={self.__separator}, has_header={self.__has_header}, ' \
                f'encoding={self.encoding})'
 
 
@@ -314,7 +316,7 @@ class SQLDatabase(RawInformationSource):
                  database_name: str,
                  table_name: str,
                  encoding: str = "utf-8"):
-        super().__init__(encoding)
+        super().__init__('', encoding)
         self.__host: str = host
         self.__username: str = username
         self.__password: str = password

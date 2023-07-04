@@ -1,8 +1,14 @@
 from typing import List
-import spacy
-from spacy.tokens import Token
+import warnings
 
-from clayrs.content_analyzer.information_processor.information_processor import NLP
+# spacy has a bug which prints a useless warning if pytorch cuda is installed but no gpu is detected
+with warnings.catch_warnings():
+
+    warnings.filterwarnings("ignore", message="Can't initialize NVML")
+    import spacy
+    from spacy.tokens import Token
+
+from clayrs.content_analyzer.information_processor.information_processor_abstract import NLP
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 

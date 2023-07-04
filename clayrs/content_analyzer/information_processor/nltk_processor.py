@@ -12,7 +12,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk.stem.snowball import SnowballStemmer
 
-from clayrs.content_analyzer.information_processor.information_processor import NLP
+from clayrs.content_analyzer.information_processor.information_processor_abstract import NLP
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 

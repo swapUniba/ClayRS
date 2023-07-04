@@ -2,7 +2,6 @@ from unittest import TestCase
 import pandas as pd
 
 from clayrs.content_analyzer import Ratings
-from clayrs.recsys.graph_based_algorithm.graph_based_algorithm import GraphBasedAlgorithm
 from clayrs.recsys.graphs.graph import ItemNode, UserNode, PropertyNode
 from clayrs.recsys.graphs.nx_implementation.nx_full_graphs import NXFullGraph
 

@@ -30,6 +30,7 @@ truth = pd.DataFrame({'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u2', 'u2', 'u2'
                       'score': [3, 2, 3, 1, 2, 4, 3, 3]})
 truth = Ratings.from_dataframe(truth)
 
+
 split_only_new = Split(pred_only_new_items, truth)
 split_w_new_items = Split(pred_w_new_items, truth)
 split_only_one = Split(pred_only_one_item, truth)
@@ -55,25 +56,25 @@ class TestNDCG(unittest.TestCase):
 
         result_only_new = metric.perform(split_only_new)
 
-        ndcgs_predicted = set(result_only_new[str(metric)])
-        ndcgs_expected = {0}
-        self.assertEqual(ndcgs_expected, ndcgs_predicted)
+        # no items predicted is in truth, so ndcg can't be computed
+        for result in result_only_new[str(metric)]:
+            self.assertTrue(np.isnan(result))
 
     def test_perform_w_new_items(self):
         metric = self.metric
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = [[2, 3, 1, 0, 2, 3, 0, 0]]
-        u1_ideal = [[3, 3, 2, 2, 1, 0, 0, 0]]
+        u1_actual = [[600, 650, 220, 500, 300]]
+        u1_truth = [[3, 2, 3, 1, 2]]
 
-        u1_expected_ndcg = ndcg_score(u1_ideal, u1_actual)
+        u1_expected_ndcg = ndcg_score(u1_truth, u1_actual)
         u1_result_ndcg = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_ndcg, u1_result_ndcg)
 
-        u2_actual = [[3, 0, 4, 3]]
-        u2_ideal = [[4, 3, 3, 0]]
+        u2_actual = [[100, 50, 350]]
+        u2_ideal = [[4, 3, 3]]
 
         u2_expected_ndcg = ndcg_score(u2_ideal, u2_actual)
         u2_result_ndcg = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
@@ -104,18 +105,18 @@ class TestNDCGAtK(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = [[2, 3, 1, 0, 2, 3, 0, 0]]
-        u1_ideal = [[3, 3, 2, 2, 1, 0, 0, 0]]
+        u1_actual_all = [[600, 650, 220, 500, 300]]
+        u1_truth_all = [[3, 2, 3, 1, 2]]
 
-        u1_expected_ndcg = ndcg_score(u1_ideal, u1_actual, k=k)
+        u1_expected_ndcg = ndcg_score(u1_truth_all, u1_actual_all, k=k)
         u1_result_ndcg = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
         self.assertAlmostEqual(u1_expected_ndcg, u1_result_ndcg)
 
-        u2_actual = [[3, 0, 4, 3]]
-        u2_ideal = [[4, 3, 3, 0]]
+        u2_actual_all = [[100, 50, 350]]
+        u2_truth_all = [[4, 3, 3]]
 
-        u2_expected_ndcg = ndcg_score(u2_ideal, u2_actual, k=k)
+        u2_expected_ndcg = ndcg_score(u2_truth_all, u2_actual_all, k=k)
         u2_result_ndcg = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
         self.assertAlmostEqual(u2_expected_ndcg, u2_result_ndcg)
@@ -415,14 +416,18 @@ class TestMAPAtK(unittest.TestCase):
     def test__compute_ap(self):
         relevant_threshold = 3
 
-        user_predictions = pred_w_new_items.get_user_interactions('u1')
-        user_truth = truth.get_user_interactions('u1')
-        user_truth_relevant_items = set(interaction.item_id for interaction in user_truth
-                                        if interaction.score >= relevant_threshold)
+        u1_uidx_pred = pred_w_new_items.user_map["u1"]
+        user_predictions_items_uidx = pred_w_new_items.get_user_interactions(u1_uidx_pred)[:, 1].astype(int)
+        user_predictions_items_str = pred_w_new_items.item_map[user_predictions_items_uidx]
+
+        u1_uidx_truth = truth.user_map["u1"]
+        user_truth = truth.get_user_interactions(u1_uidx_truth)
+        user_truth_relevant_items_uidx = user_truth[np.where(user_truth[:, 2] >= relevant_threshold)][:, 1].astype(int)
+        user_truth_relevant_items_str = truth.item_map[user_truth_relevant_items_uidx]
 
         metric = MAPAtK(k=2)
 
-        result_u1_ap = metric._compute_ap(user_predictions, user_truth_relevant_items)
+        result_u1_ap = metric._compute_ap(user_predictions_items_str, user_truth_relevant_items_str)
         expected_u1_ap = 1/2 * 1/2
         self.assertAlmostEqual(expected_u1_ap, result_u1_ap)
 
@@ -459,23 +464,23 @@ class TestCorrelation(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = pd.Series([1, 5, 0, 4, 2])
-        u1_ideal = pd.Series([0, 1, 2, 3, 4])
+        u1_truth = pd.Series([3, 2, 3, 1, 2])
+        u1_pred = pd.Series([600, 650, 220, 500, 300])
 
-        u1_expected_pearson = u1_actual.corr(u1_ideal, method)
-        u1_result_pearson = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
+        u1_expected_corr = u1_truth.corr(u1_pred, method)
+        u1_result_corr = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
-        self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
+        self.assertAlmostEqual(u1_expected_corr, u1_result_corr)
 
-        u2_actual = pd.Series([2, 3, 0])
-        u2_ideal = pd.Series([0, 1, 2])
+        u2_truth = pd.Series([4, 3, 3])
+        u2_pred = pd.Series([100, 50, 350])
 
-        u2_expected_pearson = u2_actual.corr(u2_ideal, method)
-        u2_result_pearson = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
+        u2_expected_corr = u2_truth.corr(u2_pred, method)
+        u2_result_corr = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
-        self.assertAlmostEqual(u2_expected_pearson, u2_result_pearson)
+        self.assertAlmostEqual(u2_expected_corr, u2_result_corr)
 
-        sys_expected_pearson = (u1_expected_pearson + u2_expected_pearson) / 2
+        sys_expected_pearson = (u1_expected_corr + u2_expected_corr) / 2
         sys_result_pearson = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
         self.assertAlmostEqual(sys_expected_pearson, sys_result_pearson)
@@ -486,27 +491,29 @@ class TestCorrelation(unittest.TestCase):
 
         result_w_new_items = metric.perform(split_w_new_items)
 
-        u1_actual = pd.Series([1, 0])
-        u1_ideal = pd.Series([0, 1, 2, 3, 4])
+        # top_2 items i2==650, i1==600
+        u1_truth = pd.Series([3, 2])
+        u1_pred = pd.Series([600, 650])
 
-        u1_expected_pearson = u1_actual.corr(u1_ideal, method)
-        u1_result_pearson = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
+        u1_expected_corr = u1_truth.corr(u1_pred, method)
+        u1_result_corr = float(result_w_new_items.query('user_id == "u1"')[str(metric)])
 
-        self.assertAlmostEqual(u1_expected_pearson, u1_result_pearson)
+        self.assertAlmostEqual(u1_expected_corr, u1_result_corr)
 
-        u2_actual = pd.Series([0])
-        u2_ideal = pd.Series([0, 1, 2])
+        # top_2 items i4=350, i6==200 which does not appear in truth
+        u2_truth = pd.Series([3])
+        u2_pred = pd.Series([350])
 
-        u2_expected_pearson = u2_actual.corr(u2_ideal, method)
-        u2_result_pearson = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
+        u2_expected_corr = u2_truth.corr(u2_pred, method)
+        u2_result_corr = float(result_w_new_items.query('user_id == "u2"')[str(metric)])
 
-        self.assertTrue(np.isnan(u2_expected_pearson))
-        self.assertTrue(np.isnan(u2_result_pearson))
+        self.assertTrue(np.isnan(u2_expected_corr))
+        self.assertTrue(np.isnan(u2_result_corr))
 
-        sys_expected_pearson = u1_expected_pearson  # the mean doesn't consider nan values
-        sys_result_pearson = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
+        sys_expected_corr = u1_expected_corr  # the mean doesn't consider nan values
+        sys_result_corr = float(result_w_new_items.query('user_id == "sys"')[str(metric)])
 
-        self.assertAlmostEqual(sys_expected_pearson, sys_result_pearson)
+        self.assertAlmostEqual(sys_expected_corr, sys_result_corr)
 
     @for_each_method
     def test_perform_only_one(self, method: str):

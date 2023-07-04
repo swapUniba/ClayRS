@@ -239,7 +239,7 @@ You can customize the ranking process by changing the parameters of the `rank(..
 * You can choice for which users to produce recommendations:
 
 ```python
-rank = cbrs.rank(test_set, user_id_list=['u1', 'u23', 'u56'])
+rank = cbrs.rank(test_set, user_list=['u1', 'u23', 'u56'])
 ```
 
 * If a cut rank list for each user must be produced:
@@ -265,7 +265,7 @@ rank = cbrs.rank(test_set, n_recs=10)
 By default the methodology used is the **TestRatings** methodology
 
 ```python
-rank = cbrs.rank(test_set, methodology=rs.TrainingItems())
+rank = cbrs.rank(test_set, methodology=rs.TrainingItemsMethodology())
 ```
 
 ## Generating score predictions

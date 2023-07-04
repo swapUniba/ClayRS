@@ -20,7 +20,7 @@ def get_item_popularity(original_ratings: Ratings) -> Dict:
     Returns:
         Python dictionary containing popularity computed for each item in the `original_ratings` parameter
     """
-    n_users = len(set(original_ratings.user_id_column))
+    n_users = len(original_ratings.unique_user_id_column)
 
     pop_by_item = {item_id: count / n_users for item_id, count in Counter(original_ratings.item_id_column).items()}
 
@@ -67,19 +67,21 @@ def pop_ratio_by_user(score_frame: Ratings, most_pop_items: Set[str]) -> Dict:
         Python dictionary containing as keys each user id and as value the popularity ratio of each user
     """
     # Splitting users by popularity
-    users = set(score_frame.user_id_column)
+    users_idxs = score_frame.unique_user_idx_column
 
-    popularity_ratio_by_user = {}
+    popularity_ratios = []
 
-    for user in users:
+    for user_idx in users_idxs:
         # filters by the current user and returns all the items he has rated
-        user_ratings = score_frame.get_user_interactions(user)
-        rated_items = set([user_interaction.item_id for user_interaction in user_ratings])
+        user_ratings_idxs = score_frame.get_user_interactions(user_idx, as_indices=True)
+        rated_items = set(score_frame.item_id_column[user_ratings_idxs])
         # intersects rated_items with popular_items
         popular_rated_items = rated_items.intersection(most_pop_items)
         popularity_ratio = len(popular_rated_items) / len(rated_items)
 
-        popularity_ratio_by_user[user] = popularity_ratio
+        popularity_ratios.append(popularity_ratio)
+
+    popularity_ratio_by_user = dict(zip(score_frame.unique_user_id_column, popularity_ratios))
 
     return popularity_ratio_by_user
 

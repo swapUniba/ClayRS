@@ -63,7 +63,7 @@ def feature_selector(graph: FullDiGraph,
 
     Returns:
         Copy of the original graph from which the less important Property nodes (the ones having edges with less
-        important property labels) will be removed
+            important property labels) will be removed
     """
     if fs_algorithm_user is not None and user_target_nodes is None:
         user_target_nodes = graph.user_nodes

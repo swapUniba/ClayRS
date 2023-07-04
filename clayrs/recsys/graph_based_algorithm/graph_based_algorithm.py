@@ -1,14 +1,15 @@
 from __future__ import annotations
 import abc
-from typing import Dict, List, Set, Union, TYPE_CHECKING
+from typing import Dict, List, Set, Union, TYPE_CHECKING, Optional, Iterable
+
+import numpy as np
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
     from clayrs.recsys.graphs.graph import UserNode, Node, Graph, BipartiteDiGraph
     from clayrs.recsys.methodology import Methodology
 
 from clayrs.recsys.graphs.graph import ItemNode
-from clayrs.recsys.methodology import TestRatingsMethodology
 from clayrs.recsys.algorithm import Algorithm
 
 
@@ -21,15 +22,15 @@ class GraphBasedAlgorithm(Algorithm):
         # FUTURE WORK: this can be expanded in making the page rank keeping also PropertyNodes, etc.
         self._nodes_to_keep = {ItemNode}
 
-    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[List[Node], None],
+    def filter_result(self, graph: BipartiteDiGraph, result: Dict, filter_list: Union[Iterable[Node], None],
                       user_node: UserNode) -> Dict:
         """
         Method which filters and cleans the result dict based on the parameters passed
 
-        If `filter_list` parameter is not None, then the final dict will contains items and score only for items
+        If `filter_list` parameter is not None, then the final dict will contain items and score only for items
         in said `filter_list`
 
-        Otherwise if no filter list is specified, then all unrated items by the user will be returned in the final
+        Otherwise, if no filter list is specified, then all unrated items by the user will be returned in the final
         dict
 
         Args:
@@ -57,9 +58,8 @@ class GraphBasedAlgorithm(Algorithm):
         return filtered_result
 
     @abc.abstractmethod
-    def predict(self, all_users: Set[str], graph: Graph, test_set: Ratings,
-                methodology: Union[Methodology, None] = TestRatingsMethodology(),
-                num_cpus: int = 1) -> List[Interaction]:
+    def predict(self, graph: Graph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
+                methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
         Abstract method that predicts how much a user will like unrated items.
         If the algorithm is not a PredictionScore Algorithm, implement this method like this:
@@ -69,28 +69,25 @@ class GraphBasedAlgorithm(Algorithm):
             raise NotPredictionAlg
         ```
 
-        One can specify on which items score prediction must be performed for each user with the `filter_dict`
-        parameter, in this case every user is mapped with a list of items for which a prediction score must be computed.
-        Otherwise, for **ALL** unrated items a prediction score will be computed for each user.
-
         Args:
-            all_users: Set of user id for which a recommendation list must be generated
-            graph: A graph previously instantiated
+            graph: A graph which models interactions of users and items
+            train_set: a Ratings object containing interactions between users and items
             test_set: Ratings object which represents the ground truth of the split considered
+            user_id_list: Set of user id for which a recommendation list must be generated. Users should be represented
+                as strings rather than with their mapped integer
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method
 
         Returns:
-            List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
+            List of uir matrices for each user, where each uir contains predicted interactions between users and unseen
+                items
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rank(self, all_users: Set[str], graph: Graph, test_set: Ratings,
-             recs_number: int = None, methodology: Union[Methodology, None] = TestRatingsMethodology(),
-             num_cpus: int = 1) -> List[Interaction]:
+    def rank(self, graph: Graph, train_set: Ratings, test_set: Ratings, user_id_list: Set[str],
+             recs_number: Optional[int], methodology: Methodology, num_cpus: int) -> List[np.ndarray]:
         """
         Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
         All unrated items for the user will be ranked (or only items in the filter list, if specified).
@@ -100,22 +97,17 @@ class GraphBasedAlgorithm(Algorithm):
             raise NotRankingAlg
         ```
 
-        One can specify which items must be ranked for each user with the `filter_dict` parameter,
-        in this case every user is mapped with a list of items for which a ranking score must be computed.
-        Otherwise, **ALL** unrated items will be ranked for each user.
-
         Args:
-            all_users: Set of user id for which a recommendation list must be generated
-            graph: A graph previously instantiated
+            graph: A graph which models interactions of users and items
+            train_set: a Ratings object containing interactions between users and items
             test_set: Ratings object which represents the ground truth of the split considered
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
             methodology: `Methodology` object which governs the candidate item selection. Default is
                 `TestRatingsMethodology`
-            num_cpus: number of processors that must be reserved for the method. Default is 0, meaning that
-                the number of cpus will be automatically detected.
+            num_cpus: number of processors that must be reserved for the method
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            List of uir matrices for each user, where each uir contains predicted interactions between users and unseen
+                items sorted in a descending way w.r.t. the third dimension which is the ranked score
         """
         raise NotImplementedError

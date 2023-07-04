@@ -13,8 +13,6 @@ from clayrs.evaluation.eval_model import EvalModel
 
 import pandas as pd
 
-from test import dir_test_files
-
 original_ratings = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1', 'u1',
                  'u2', 'u2', 'u2', 'u2',
@@ -230,10 +228,16 @@ class TestEvalModel(TestCase):
 
         # we must also cut user profiles of DeltaGAP by only considering u1, u2, u3
         self.metric_list.pop(4)
+
+        filter_list = ['u1', 'u2', 'u3']
+        filter_1 = train_1.user_map.convert_seq_str2int(filter_list)
+        filter_2 = train_2.user_map.convert_seq_str2int(filter_list)
+        original_filter = original_ratings.user_map.convert_seq_str2int(filter_list)
+
         self.metric_list.append(DeltaGap({'a': 0.2, 'b': 0.5, 'c': 0.3},
-                                         user_profiles=[train_1.filter_ratings(['u1', 'u2', 'u3']),
-                                                        train_2.filter_ratings(['u1', 'u2', 'u3'])],
-                                         original_ratings=original_ratings.filter_ratings(['u1', 'u2', 'u3']))
+                                         user_profiles=[train_1.filter_ratings(filter_1),
+                                                        train_2.filter_ratings(filter_2)],
+                                         original_ratings=original_ratings.filter_ratings(original_filter))
                                 )
 
         em = EvalModel(pred_list, truth_list, self.metric_list)

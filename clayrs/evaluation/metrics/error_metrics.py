@@ -4,12 +4,13 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 import numpy as np
+import numpy_indexed as npi
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 if TYPE_CHECKING:
     from clayrs.recsys.partitioning import Split
 
-from clayrs.evaluation.metrics.metrics import Metric
+from clayrs.evaluation.metrics.metrics import Metric, handler_different_users
 
 
 class ErrorMetric(Metric):
@@ -18,33 +19,44 @@ class ErrorMetric(Metric):
     An Error Metric evaluates 'how wrong' the recommender system was in predicting a rating
     """
 
+    @handler_different_users
     def perform(self, split: Split) -> pd.DataFrame:
         pred = split.pred
         truth = split.truth
 
         split_result = {'user_id': [], str(self): []}
 
-        for user in set(truth.user_id_column):
-            user_predictions = pred.get_user_interactions(user)
-            user_truth = truth.get_user_interactions(user)
+        # users in truth and pred of the split to evaluate must be the same!
+        user_idx_truth = truth.unique_user_idx_column
+        user_idx_pred = pred.user_map.convert_seq_str2int(truth.unique_user_id_column)
 
-            # this will contain as key item id and as value the score in the truth of the user
-            items_scores_truth = {truth_interaction.item_id: truth_interaction.score for truth_interaction in user_truth}
+        for uidx_pred, uidx_truth in zip(user_idx_pred, user_idx_truth):
+            user_predictions_idxs = pred.get_user_interactions(uidx_pred, as_indices=True)
+            user_truth_idxs = truth.get_user_interactions(uidx_truth, as_indices=True)
 
-            # [(pred_score, truth_score), (pred_score, truth_score), ...]
-            zipped_score_list = [(pred_interaction.score, items_scores_truth.get(pred_interaction.item_id))
-                                 for pred_interaction in user_predictions
-                                 if items_scores_truth.get(pred_interaction.item_id) is not None]
+            user_truth_items = truth.item_id_column[user_truth_idxs]
 
-            if len(zipped_score_list) != 0:
-                pred_score_list = [zipped_tuple[0] for zipped_tuple in zipped_score_list]
-                truth_score_list = [zipped_tuple[1] for zipped_tuple in zipped_score_list]
-                result = self._calc_metric(pred_score_list, truth_score_list)
+            user_prediction_items = pred.item_id_column[user_predictions_idxs]
+            user_prediction_scores = pred.score_column[user_predictions_idxs]
+
+            idx_truth_in_pred = npi.indices(user_prediction_items, user_truth_items, missing=-1)
+            idx_truth_not_in_pred = np.where(idx_truth_in_pred == -1)
+
+            user_pred_common_idxs = np.delete(idx_truth_in_pred, idx_truth_not_in_pred)
+            user_truth_common_idxs = np.delete(user_truth_idxs, idx_truth_not_in_pred)
+
+            common_truth_scores = truth.score_column[user_truth_common_idxs]
+            common_prediction_scores = user_prediction_scores[user_pred_common_idxs]
+
+            if len(common_prediction_scores) != 0:
+                result = self._calc_metric(common_truth_scores, common_prediction_scores)
             else:
                 result = np.nan
 
-            split_result['user_id'].append(user)
+            split_result['user_id'].append(uidx_truth)
             split_result[str(self)].append(result)
+
+        split_result['user_id'] = list(truth.user_map.convert_seq_int2str(split_result['user_id']))
 
         split_result['user_id'].append('sys')
         split_result[str(self)].append(np.nanmean(split_result[str(self)]))
@@ -55,19 +67,19 @@ class ErrorMetric(Metric):
     def _calc_metric(self, truth_scores: list, pred_scores: list):
         """
         Private method that must be implemented by every error metric specifying how to calculate the metric
-        for a single user given a Series of ratings taken from the ground truth and a Series of ratings predicted by the
+        for a single user given a list of ratings taken from the ground truth and a list of ratings predicted by the
         recommender system.
 
-        Both Series must be in relation 1 to 1 between each other, meaning that if row 1 of the 'truth_scores' parameter
+        Both lists must be in relation 1 to 1 between each other, meaning that if row 1 of the 'truth_scores' parameter
         contains the rating of the 'iPhone' item, row 1 of the 'pred_scores' parameter must contain the predicted rating
-        of the 'iPhone' item, so both Series must be ordered in the same manner and must be filtered in order to exclude
+        of the 'iPhone' item, so both lists must be ordered in the same manner and must be filtered in order to exclude
         items which are in the ground truth of the user but are not predicted, as well as items which are predicted
         but aren't present in the ground truth. Debug the unittest cases for examples
 
         Args:
-            truth_scores (pd.Series): Pandas Series which contains rating of the user taken from its ground truth. Has a
+            truth_scores: list which contains rating of the user taken from its ground truth. Has a
                 1 to 1 relationship with the 'pred_scores' Series
-            pred_scores (pd.Series): Pandas Series which contains rating predicted by the recommender system. Has a
+            pred_scores: list which contains rating predicted by the recommender system. Has a
                 1 to 1 relationship with the 'truth_scores' Series
         """
         raise NotImplementedError

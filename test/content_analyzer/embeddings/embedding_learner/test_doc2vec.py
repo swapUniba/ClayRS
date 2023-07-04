@@ -3,7 +3,7 @@ import os
 import pathlib as pl
 
 from clayrs.content_analyzer.embeddings.embedding_learner.doc2vec import GensimDoc2Vec
-from clayrs.content_analyzer.information_processor.nltk import NLTK
+from clayrs.content_analyzer.information_processor.nltk_processor import NLTK
 from clayrs.content_analyzer.raw_information_source import JSONFile
 from test import dir_test_files
 

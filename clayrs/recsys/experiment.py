@@ -6,6 +6,9 @@ import sys
 from abc import ABC
 from typing import List, Union, Dict, Callable, TYPE_CHECKING, Optional
 
+import pyaml
+
+# fix circular import, for the future: move Ratings class to the RecSys module
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Ratings
     from clayrs.evaluation.metrics.metrics import Metric
@@ -127,11 +130,19 @@ class Experiment(ABC):
                                       "Delete it and run the experiment again or set `overwrite_if_exists` parameter "
                                       "to True!") from None
 
+        # save user_map
+        with open(os.path.join(self.output_folder, "user_map.yml"), 'w') as yaml_file:
+            pyaml.dump(self.original_ratings.user_map.to_dict(), yaml_file, sort_dicts=False, safe=True)
+
+        # save item_map
+        with open(os.path.join(self.output_folder, "item_map.yml"), 'w') as yaml_file:
+            pyaml.dump(self.original_ratings.user_map.to_dict(), yaml_file, sort_dicts=False, safe=True)
+
         train_set_list, test_set_list = self.pt.split_all(self.original_ratings)
 
         for i, (train_set, test_set) in enumerate(zip(train_set_list, test_set_list)):
-            train_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_train_split{i}")
-            test_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_test_split{i}")
+            train_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_train_split{i}", ids_as_str=True)
+            test_set.to_csv(self.output_folder, file_name=f"{str(self.pt)}_test_split{i}", ids_as_str=True)
 
         for alg in self.algorithm_list:
 
@@ -312,7 +323,7 @@ class ContentBasedExperiment(Experiment):
                          metric_list, report, output_folder, overwrite_if_exists)
 
     def predict(self,
-                user_id_list: Optional[List[str]] = None,
+                user_id_list: Optional[Union[List[str], List[int]]] = None,
                 methodology: Optional[Methodology] = TestRatingsMethodology(),
                 num_cpus: int = 1,
                 skip_alg_error: bool = True) -> None:
@@ -354,9 +365,10 @@ class ContentBasedExperiment(Experiment):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
             predict_alg = cbrs.fit_predict(test_set, methodology=methodology, num_cpus=num_cpus,
-                                           user_id_list=user_id_list)
+                                           user_list=user_id_list)
 
-            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}")
+            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}",
+                               ids_as_str=True)
 
             if self.report:
                 Report(output_dir=f"{self.output_folder}/{dirname}").yaml(original_ratings=self.original_ratings,
@@ -369,7 +381,7 @@ class ContentBasedExperiment(Experiment):
 
     def rank(self,
              n_recs: Optional[int] = 10,
-             user_id_list: Optional[List[str]] = None,
+             user_id_list: Optional[Union[List[str], List[int]]] = None,
              methodology: Optional[Methodology] = TestRatingsMethodology(),
              num_cpus: int = 1):
         """
@@ -399,9 +411,10 @@ class ContentBasedExperiment(Experiment):
             cbrs = ContentBasedRS(alg, train_set, self.items_directory)
 
             predict_alg = cbrs.fit_rank(test_set, n_recs=n_recs, methodology=methodology,
-                                        user_id_list=user_id_list, num_cpus=num_cpus)
+                                        user_list=user_id_list, num_cpus=num_cpus)
 
-            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}")
+            predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}",
+                               ids_as_str=True)
 
             if self.report:
                 Report(output_dir=f"{self.output_folder}/{dirname}").yaml(original_ratings=self.original_ratings,
@@ -542,7 +555,7 @@ class GraphBasedExperiment(Experiment):
         self.link_label = link_label
 
     def predict(self,
-                user_id_list: Optional[List[str]] = None,
+                user_id_list: Optional[Union[List[str], List[int]]] = None,
                 methodology: Optional[Methodology] = TestRatingsMethodology(),
                 num_cpus: int = 1,
                 skip_alg_error: bool = True):
@@ -595,7 +608,7 @@ class GraphBasedExperiment(Experiment):
             gbrs = GraphBasedRS(alg, graph)
 
             predict_alg = gbrs.predict(test_set, methodology=methodology,
-                                       num_cpus=num_cpus, user_id_list=user_id_list)
+                                       num_cpus=num_cpus, user_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_predict_split{split_num}")
 
@@ -610,7 +623,7 @@ class GraphBasedExperiment(Experiment):
 
     def rank(self,
              n_recs: Optional[int] = 10,
-             user_id_list: Optional[List[str]] = None,
+             user_id_list: Optional[Union[List[str], List[int]]] = None,
              methodology: Optional[Methodology] = TestRatingsMethodology(),
              num_cpus: int = 1):
         """
@@ -651,7 +664,7 @@ class GraphBasedExperiment(Experiment):
             gbrs = GraphBasedRS(alg, graph)
 
             predict_alg = gbrs.rank(test_set, n_recs=n_recs, methodology=methodology,
-                                    num_cpus=num_cpus, user_id_list=user_id_list)
+                                    num_cpus=num_cpus, user_list=user_id_list)
 
             predict_alg.to_csv(f"{self.output_folder}/{dirname}", file_name=f"rs_rank_split{split_num}")
 

@@ -1,4 +1,4 @@
-# Content Analyzer Config
+# TfIdf
 
 ::: clayrs.content_analyzer.SkLearnTfIdf
     handler: python

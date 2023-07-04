@@ -7,7 +7,7 @@ import lzma
 import os
 import shutil
 
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.config import ContentAnalyzerConfig
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_progbar
+from clayrs.utils.context_managers import get_iterator_thread
 from clayrs.content_analyzer.utils.id_merger import id_merger
 
 
@@ -30,8 +30,9 @@ class ContentAnalyzer:
             the possibility of customizing the way in which the input data is processed.
     """
 
-    def __init__(self, config: ContentAnalyzerConfig):
+    def __init__(self, config: ContentAnalyzerConfig, n_thread: int = 1):
         self._config: ContentAnalyzerConfig = config
+        self._n_thread = n_thread
 
     def set_config(self, config: ContentAnalyzerConfig):
         self._config = config
@@ -67,13 +68,15 @@ class ContentAnalyzer:
             with open(json_path, "w") as data:
                 json.dump(created_contents, data, cls=ContentEncoder, indent=4)
 
-        with get_progbar(created_contents) as pbar:
+        # with get_progbar(created_contents) as pbar:
+        with get_iterator_thread(self._n_thread, self._serialize_content, created_contents,
+                                 keep_order=False, progress_bar=True, total=len(created_contents)) as pbar:
             pbar.set_description("Serializing contents")
 
-            for content in pbar:
-                self.__serialize_content(content)
+            for _ in pbar:
+                pass
 
-    def __serialize_content(self, content: Content):
+    def _serialize_content(self, content: Content):
         """
         This method serializes a specific content in the output directory defined by the content analyzer config
         Args:
@@ -83,7 +86,7 @@ class ContentAnalyzer:
         file_name = re.sub(r'[^\w\s]', '', content.content_id)
         path = os.path.join(self._config.output_directory, file_name + '.xz')
         with lzma.open(path, 'wb') as f:
-            pickle.dump(content, f, protocol=4)
+            pickle.dump(content, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def __check_field_dict(self):
         """
@@ -138,7 +141,7 @@ class ContentsProducer:
         return ContentsProducer.__instance
 
     def __init__(self):
-        self.__config: ContentAnalyzerConfig = None
+        self.__config: Optional[ContentAnalyzerConfig] = None
         # dictionary of memory interfaces defined in the FieldConfigs. The key is the directory of the memory interface
         # and the value is the memory interface itself (only one memory interface can be defined for each directory)
         # if a memory interface has an already defined directory, the memory interface associated to said directory
@@ -195,7 +198,7 @@ class ContentsProducer:
                 # each field repr in the list will refer to a content
                 # technique_result[0] -> contents_list[0]
                 technique_result = field_config.content_technique.produce_content(
-                    field_name, field_config.preprocessing, self.__config.source)
+                    field_name, field_config.preprocessing, field_config.postprocessing, self.__config.source)
 
                 if field_config.memory_interface is not None:
                     memory_interface = field_config.memory_interface

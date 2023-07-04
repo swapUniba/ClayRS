@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-VERSION = "0.4.1"
+VERSION = "0.5.0"
 
 setup(name='clayrs',
       version=VERSION,
@@ -21,7 +21,7 @@ setup(name='clayrs',
       url='https://github.com/swapUniba/ClayRS',
       include_package_data=True,
       packages=setuptools.find_packages(),
-      python_requires='>=3.7',
+      python_requires='>=3.8',
 
       classifiers=[
             'Development Status :: 3 - Alpha',
@@ -31,7 +31,6 @@ setup(name='clayrs',
             'Programming Language :: Python',
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3 :: Only',
-            'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
             'Programming Language :: Python :: 3.10',

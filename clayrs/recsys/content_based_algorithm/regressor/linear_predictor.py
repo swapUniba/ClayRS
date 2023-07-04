@@ -2,21 +2,23 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import List, Union, Optional, TYPE_CHECKING
 
+import numpy as np
+
 if TYPE_CHECKING:
     from clayrs.content_analyzer import Content
     from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
         CombiningTechnique
     from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
     from clayrs.recsys.content_based_algorithm.regressor.regressors import Regressor
+    from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 
 from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
     Centroid
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction
 from clayrs.recsys.content_based_algorithm.exceptions import NoRatedItems, EmptyUserRatings
-from clayrs.recsys.content_based_algorithm.content_based_algorithm import ContentBasedAlgorithm
+from clayrs.recsys.content_based_algorithm.content_based_algorithm import PerUserCBAlgorithm
 
 
-class LinearPredictor(ContentBasedAlgorithm):
+class LinearPredictor(PerUserCBAlgorithm):
     """
     Class that implements recommendation through a specified linear predictor.
     It's a score prediction algorithm, so it can predict what rating a user would give to an unseen item.
@@ -24,17 +26,17 @@ class LinearPredictor(ContentBasedAlgorithm):
 
     Examples:
 
-        * Interested in only a field representation, LinearRegression regressor from sklearn
+        * Interested in only a field representation, `LinearRegression` regressor from sklearn
 
         >>> from clayrs import recsys as rs
         >>> alg = rs.LinearPredictor({"Plot": 0}, rs.SkLinearRegression())
 
-        * Interested in only a field representation, Ridge regressor from sklearn with custom parameters
+        * Interested in only a field representation, `Ridge` regressor from sklearn with custom parameters
 
         >>> alg = rs.LinearPredictor({"Plot": 0}, rs.SkRidge(alpha=0.8))
 
         * Interested in multiple field representations of the items, Ridge regressor from sklearn with custom
-        parameters, $only_greater_eq = 2$ (Every item with rating $>= 2$ will be discarded and not considered in the
+        parameters, `only_greater_eq` $= 2$ (Every item with rating $>= 2$ will be discarded and not considered in the
         ranking/score prediction task)
 
         >>> alg = rs.LinearPredictor(
@@ -46,7 +48,7 @@ class LinearPredictor(ContentBasedAlgorithm):
 
         !!! info
 
-            After instantiating the LinearPredictor algorithm, pass it in the initialization of
+            After instantiating the `LinearPredictor` algorithm, pass it in the initialization of
             a CBRS and the use its method to predict ratings or calculate ranking for a single user or multiple users:
 
             Examples:
@@ -64,9 +66,9 @@ class LinearPredictor(ContentBasedAlgorithm):
         regressor: regressor that will be used. Can be one object of the `Regressor` class.
         only_greater_eq: Threshold for the ratings. Only items with rating greater or equal than the
             threshold will be considered, items with lower rating will be discarded. If None, no item will be filter out
-        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used but they are in a
-            matrix form instead of a single vector (e.g. when WordEmbedding representations must be used you have one
-            vector for each word). By default the `Centroid` of the rows of the matrix is computed
+        embedding_combiner: `CombiningTechnique` used when embeddings representation must be used, but they are in a
+            matrix form instead of a single vector (e.g. WordEmbedding representations have one
+            vector for each word). By default, the `Centroid` of the rows of the matrix is computed
     """
     __slots__ = ('_regressor', '_labels', '_items_features', '_embedding_combiner')
 
@@ -78,34 +80,40 @@ class LinearPredictor(ContentBasedAlgorithm):
         self._items_features: Optional[list] = None
         self._embedding_combiner = embedding_combiner
 
-    def process_rated(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict):
+    def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict):
         """
         Function that extracts features from rated item and labels them.
-        The extracted features will be later used to fit the classifier.
+        The extracted features will be later used to fit the regressor.
 
         Features and labels (in this case the rating score) will be stored in private attributes of the class.
 
         IF there are no rated items available locally, an exception is thrown.
 
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user (the user for which we must fit the algorithm)
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
 
         Raises:
+            EmptyUserRatings: Exception raised when the user does not appear in the train set
             NoRatedItems: Exception raised when there isn't any item available locally
                 rated by the user
         """
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        rated_items_id = train_ratings.item_map.convert_seq_int2str(uir_user[:, 1].astype(int))
+
         # a list since there could be duplicate interaction (eg bootstrap partitioning)
         items_scores_dict = defaultdict(list)
-        for interaction in user_ratings:
-            items_scores_dict[interaction.item_id].append(interaction.score)
+
+        for item_id, score in zip(rated_items_id, uir_user[:, 2]):
+            items_scores_dict[item_id].append(score)
 
         items_scores_dict = dict(sorted(items_scores_dict.items()))  # sort dictionary based on key for reproducibility
 
         # Create list of all the available items that are useful for the user
         loaded_rated_items: List[Union[Content, None]] = available_loaded_items.get_list([item_id
                                                                                           for item_id
-                                                                                          in items_scores_dict.keys()])
+                                                                                          in rated_items_id])
 
         # Assign label and extract features from the rated items
         labels = []
@@ -121,22 +129,21 @@ class LinearPredictor(ContentBasedAlgorithm):
                         items_features.append(self.extract_features_item(item))
                         labels.append(score)
 
-        if len(user_ratings) == 0:
+        if len(uir_user[:, 1]) == 0:
             raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        user_id = user_ratings[0].user_id
         if len(items_features) == 0:
-            raise NoRatedItems("User {} - No rated item available locally!".format(user_id))
+            raise NoRatedItems("User {} - No rated item available locally!".format(user_idx))
 
         self._labels = labels
         self._items_features = items_features
 
-    def fit(self):
+    def fit_single_user(self):
         """
         Fit the regressor specified in the constructor with the features and labels (rating scores)
-        extracted with the process_rated() method.
+        extracted with the `process_rated()` method.
 
-        It uses private attributes to fit the classifier, so process_rated() must be called
+        It uses private attributes to fit the regressor, so `process_rated()` must be called
         before this method.
         """
         # Fuse the input if there are dicts, multiple representation, etc.
@@ -148,29 +155,31 @@ class LinearPredictor(ContentBasedAlgorithm):
         self._labels = None
         self._items_features = None
 
-    def _common_prediction_process(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                                   filter_list: List[str] = None):
-
-        user_seen_items = set([interaction.item_id for interaction in user_ratings])
+    def _common_prediction_process(self, user_idx: int, train_ratings: Ratings,
+                                   available_loaded_items: LoadedContentsDict, filter_list: List[str] = None):
+        """
+        Simple private method which encapsulate common prediction process for both the `predict()` and `rank()`
+        method, to avoid duplicate code
+        """
+        uir_user = train_ratings.get_user_interactions(user_idx)
+        if len(uir_user) == 0:
+            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         # Load items to predict
-        if filter_list is None:
-            items_to_predict = available_loaded_items.get_list([item_id
-                                                                for item_id in available_loaded_items
-                                                                if item_id not in user_seen_items])
-        else:
-            items_to_predict = available_loaded_items.get_list(filter_list)
+        items_to_predict = available_loaded_items.get_list(filter_list)
 
         # Extract features of the items to predict
-        id_items_to_predict = []
+        idx_items_to_predict = []
         features_items_to_predict = []
         for item in items_to_predict:
             if item is not None:
                 # raises AttributeError if items are not present locally
-                id_items_to_predict.append(item.content_id)
+                idx_items_to_predict.append(item.content_id)
                 features_items_to_predict.append(self.extract_features_item(item))
 
-        if len(id_items_to_predict) > 0:
+        idx_items_to_predict = train_ratings.item_map.convert_seq_str2int(idx_items_to_predict)
+
+        if len(idx_items_to_predict) > 0:
             # Fuse the input if there are dicts, multiple representation, etc.
             fused_features_items_to_pred = self.fuse_representations(features_items_to_predict,
                                                                      self._embedding_combiner)
@@ -179,84 +188,82 @@ class LinearPredictor(ContentBasedAlgorithm):
         else:
             score_labels = []
 
-        return id_items_to_predict, score_labels
+        return idx_items_to_predict, score_labels
 
-    def predict(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-                filter_list: List[str] = None) -> List[Interaction]:
+    def predict_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                            filter_list: List[str]) -> np.ndarray:
         """
         Predicts how much a user will like unrated items.
 
-        One can specify which items must be predicted with the filter_list parameter,
-        in this case ONLY items in the filter_list will be predicted.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, ALL unrated items will be predicted.
+        The filter list parameter is usually the result of the `filter_single()` method of a `Methodology` object, and
+        is a list of items represented with their string ids. Must be necessarily strings and not their mapped integer
+        since items are serialized following their string representation!
 
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
-            filter_list: List of the items to predict, if None all unrated items for the user will be predicted
+            filter_list: list of the items to rank. Should contain string item ids
 
         Returns:
-            List of Interactions object where the 'score' attribute is the rating predicted by the algorithm
+            uir matrix for a single user containing user and item idxs (integer representation) with the predicted score
+                as third dimension
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
-            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
-        id_items_to_predict, score_labels = self._common_prediction_process(user_ratings, available_loaded_items,
-                                                                            filter_list)
+        idx_items_to_predict, score_labels = self._common_prediction_process(user_idx, train_ratings,
+                                                                             available_loaded_items,
+                                                                             filter_list)
+        if len(score_labels) != 0:
+            # Build the output data
+            uir_pred = np.array(
+                [[user_idx, item_idx, score] for item_idx, score in zip(idx_items_to_predict, score_labels)])
+        else:
+            uir_pred = np.array([])
 
-        # Build the output data
-        pred_interaction_list = [Interaction(user_id, item_id, score)
-                                 for item_id, score in zip(id_items_to_predict, score_labels)]
+        return uir_pred
 
-        return pred_interaction_list
-
-    def rank(self, user_ratings: List[Interaction], available_loaded_items: LoadedContentsDict,
-             recs_number: int = None, filter_list: List[str] = None) -> List[Interaction]:
+    def rank_single_user(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsDict,
+                         recs_number: Optional[int], filter_list: List[str]) -> np.ndarray:
         """
-        Rank the top-n recommended items for the user. If the recs_number parameter isn't specified,
-        All unrated items for the user will be ranked (or only items in the filter list, if specified).
+        Rank the top-n recommended items for the active user, where the top-n items to rank are controlled by the
+        `recs_number` and `filter_list` parameter:
 
-        One can specify which items must be ranked with the `filter_list` parameter,
-        in this case ONLY items in the `filter_list` parameter will be ranked.
-        One can also pass items already seen by the user with the filter_list parameter.
-        Otherwise, **ALL** unrated items will be ranked.
+        * the former one is self-explanatory, the second is a list of items
+        represented with their string ids. Must be necessarily strings and not their mapped integer since items are
+        serialized following their string representation!
+
+        If `recs_number` is `None`, all ranked items will be returned
+
+        The filter list parameter is usually the result of the `filter_single()` method of a `Methodology` object
 
         Args:
-            user_ratings: List of Interaction objects for a single user
+            user_idx: Mapped integer of the active user
+            train_ratings: `Ratings` object which contains the train set of each user
             available_loaded_items: The LoadedContents interface which contains loaded contents
             recs_number: number of the top ranked items to return, if None all ranked items will be returned
-            filter_list (list): list of the items to rank, if None all unrated items for the user will be ranked
+            filter_list: list of the items to rank. Should contain string item ids
 
         Returns:
-            List of Interactions object in a descending order w.r.t the 'score' attribute, representing the ranking for
-                a single user
+            uir matrix for a single user containing user and item idxs (integer representation) with the ranked score
+                as third dimension sorted in a decreasing order
         """
-        try:
-            user_id = user_ratings[0].user_id
-        except IndexError:
-            raise EmptyUserRatings("The user selected doesn't have any ratings!")
 
         # Predict the rating for the items and sort them in descending order
-        id_items_to_predict, score_labels = self._common_prediction_process(user_ratings, available_loaded_items,
-                                                                            filter_list)
+        idx_items_to_predict, score_labels = self._common_prediction_process(user_idx, train_ratings,
+                                                                             available_loaded_items,
+                                                                             filter_list)
 
-        # Build the item_score dict (key is item_id, value is rank score predicted)
-        # and order the keys in descending order
-        item_score_dict = dict(zip(id_items_to_predict, score_labels))
-        ordered_item_ids = sorted(item_score_dict, key=item_score_dict.get, reverse=True)
+        if len(score_labels) != 0:
+            sorted_scores_idxs = np.argsort(score_labels)[::-1][:recs_number]
+            sorted_items = np.array(idx_items_to_predict)[sorted_scores_idxs]
+            sorted_scores = score_labels[sorted_scores_idxs]
 
-        # we only save the top-n items_ids corresponding to top-n recommendations
-        # (if recs_number is None ordered_item_ids will contain all item_ids as the original list)
-        ordered_item_ids = ordered_item_ids[:recs_number]
+            # we construct the output data
+            uir_rank = np.array([[user_idx, item_idx, score] for item_idx, score in zip(sorted_items, sorted_scores)])
+        else:
+            uir_rank = np.array([])
 
-        # we construct the output data
-        rank_interaction_list = [Interaction(user_id, item_id, item_score_dict[item_id])
-                                 for item_id in ordered_item_ids]
-
-        return rank_interaction_list
+        return uir_rank
 
     def __str__(self):
         return "LinearPredictor"

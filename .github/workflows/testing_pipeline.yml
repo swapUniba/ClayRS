@@ -27,7 +27,7 @@ jobs:
       -
         name: Setup installation requirements
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip wheel
           pip install pytest-cov==3.00
           pip install -e .
       -

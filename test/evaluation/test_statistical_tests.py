@@ -17,7 +17,8 @@ class TestStatisticalTest(unittest.TestCase):
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
-        result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=['NDCG'])
+        result = StatisticalTest._common_users(equal_users_sys1, "user_id", equal_users_sys2, "user_id",
+                                               column_list=['NDCG'])
 
         expected_dict = {'NDCG_x': [0.5, 0.7, 0.8, 0.2],
                          'user_id': ['u1', 'u2', 'u3', 'u4'],
@@ -35,7 +36,8 @@ class TestStatisticalTest(unittest.TestCase):
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
-        result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=['NDCG'])
+        result = StatisticalTest._common_users(equal_users_sys1, "user_id", equal_users_sys2,
+                                               "user_id", column_list=['NDCG'])
 
         expected_dict = {'NDCG_x': [0.8, 0.2],
                          'user_id': ['u3', 'u4'],
@@ -53,7 +55,8 @@ class TestStatisticalTest(unittest.TestCase):
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
-        result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=[])
+        result = StatisticalTest._common_users(equal_users_sys1, "user_id", equal_users_sys2, "user_id",
+                                               column_list=[])
 
         expected_dict = {'user_id': ['u1', 'u2', 'u3', 'u4']}
         result_dict = result.to_dict(orient='list')
@@ -69,7 +72,8 @@ class TestStatisticalTest(unittest.TestCase):
                                          'NDCG': [0.8, 0.2, 0.2, 0.4],
                                          'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
 
-        result = StatisticalTest._common_users(equal_users_sys1, equal_users_sys2, column_list=[])
+        result = StatisticalTest._common_users(equal_users_sys1, "user_id", equal_users_sys2, "user_id",
+                                               column_list=[])
 
         expected_dict = {'user_id': []}
         result_dict = result.to_dict(orient='list')
@@ -101,10 +105,14 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
 
-        result_ndcg = result_df['NDCG'].values[0]
-        result_precision = result_df['Precision - micro'].values[0]
+                         list(result_df.columns))
+
+        result_ndcg = tuple(result_df['NDCG'].values[0])
+
+        result_precision = tuple(result_df['Precision - micro'].values[0])
 
         expected_ndcg = external_function([0.5, 0.7, 0.8, 0.2], [0.8, 0.2, 0.2, 0.4])
         expected_precision = external_function([0.998, 0.123, 0.556, 0.887], [0.45, 0.23, 0.112, 0.776])
@@ -128,17 +136,21 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2, users_metrics_result3])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
+
+                              list(result_df.columns))
 
         # we expect sys1/sys2, sys1/sys3, sys2/sys3
         self.assertTrue(len(result_df) == 3)
 
-        result_ndcg_12 = result_df['NDCG'].values[0]
-        result_ndcg_13 = result_df['NDCG'].values[1]
-        result_ndcg_23 = result_df['NDCG'].values[2]
-        result_precision_12 = result_df['Precision - micro'].values[0]
-        result_precision_13 = result_df['Precision - micro'].values[1]
-        result_precision_23 = result_df['Precision - micro'].values[2]
+        result_ndcg_12 = tuple(result_df['NDCG'].values[0])
+        result_ndcg_13 = tuple(result_df['NDCG'].values[1])
+        result_ndcg_23 = tuple(result_df['NDCG'].values[2])
+
+        result_precision_12 = tuple(result_df['Precision - micro'].values[0])
+        result_precision_13 = tuple(result_df['Precision - micro'].values[1])
+        result_precision_23 = tuple(result_df['Precision - micro'].values[2])
 
         expected_ndcg_12 = external_function([0.5, 0.7, 0.8, 0.2], [0.8, 0.2, 0.2, 0.4])
         expected_ndcg_13 = external_function([0.5, 0.7, 0.8, 0.2], [0.9, 0.3, 0.2, 0.5])
@@ -154,6 +166,37 @@ class TestPairedTest(unittest.TestCase):
         self.assertEqual(expected_precision_13, result_precision_13)
         self.assertEqual(expected_precision_23, result_precision_23)
 
+        # perform all users in common but not all metrics
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
+                                              'NDCG': [0.5, 0.7, 0.8, 0.2],
+                                              'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
+
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
+                                              'NDCG': [0.8, 0.2, 0.2, 0.4],
+                                              'Recall - micro': [0.45, 0.23, 0.112, 0.776]})
+
+        users_metrics_result3 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
+                                              'MRR': [0.9, 0.3, 0.2, 0.5],
+                                              'Recall - micro': [0.44, 0.88, 0.21, 0.56]})
+
+        result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2, users_metrics_result3])
+
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Recall - micro', 'statistic'), ('Recall - micro', 'pvalue')],
+
+                              list(result_df.columns))
+
+        # we expect sys1/sys2, sys2/sys3 (sys1/sys3 missing since no metric is in common)
+        self.assertTrue(len(result_df) == 2)
+
+        # sys1/sys2 do not have in common recall (so nan value is expected)
+        self.assertTrue(np.isnan(result_df['Recall - micro']["statistic"].values[0]))
+        self.assertTrue(np.isnan(result_df['Recall - micro']["pvalue"].values[0]))
+
+        # sys2/sys3 do not have in common ndcg (so nan value is expected)
+        self.assertTrue(np.isnan(result_df["NDCG"]["statistic"].values[1]))
+        self.assertTrue(np.isnan(result_df["NDCG"]["pvalue"].values[1]))
+
     def perform_only_some_in_common(self, class_to_test, external_function):
         # perform only some users in common
         users_metrics_result1 = pd.DataFrame({'user_id': ['u5', 'u6', 'u3', 'u4'],
@@ -166,11 +209,15 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
 
-        result_ndcg = result_df['NDCG'].values[0]
-        result_precision = result_df['Precision - micro'].values[0]
+                         list(result_df.columns))
 
+        result_ndcg = tuple(result_df['NDCG'].values[0])
+        result_precision = tuple(result_df['Precision - micro'].values[0])
+
+        # we consider values only from user in common
         expected_ndcg = external_function([0.8, 0.2], [0.2, 0.4])
         expected_precision = external_function([0.556, 0.887], [0.23, 0.776])
 
@@ -188,9 +235,11 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue')],
 
-        result_ndcg = result_df['NDCG'].values[0]
+                         list(result_df.columns))
+
+        result_ndcg = tuple(result_df['NDCG'].values[0])
 
         expected_ndcg = external_function([0.8, 0.2], [0.23, 0.776])
 
@@ -209,15 +258,18 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
 
-        result_ndcg = result_df['NDCG'].values[0]
-        result_precision = result_df['Precision - micro'].values[0]
+                         list(result_df.columns))
 
-        self.assertTrue(np.isnan(result_ndcg.statistic))
-        self.assertTrue(np.isnan(result_ndcg.pvalue))
-        self.assertTrue(np.isnan(result_precision.statistic))
-        self.assertTrue(np.isnan(result_precision.pvalue))
+        result_ndcg = tuple(result_df['NDCG'].values[0])
+        result_precision = tuple(result_df['Precision - micro'].values[0])
+
+        self.assertTrue(np.isnan(result_ndcg[0]))
+        self.assertTrue(np.isnan(result_ndcg[1]))
+        self.assertTrue(np.isnan(result_precision[0]))
+        self.assertTrue(np.isnan(result_precision[1]))
 
         # perform users in common but not columns in common
         users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
@@ -244,15 +296,18 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
+
+                         list(result_df.columns))
 
         # ndcg column has one nan values, we don't use it
         expected_ndcg = external_function([0.7, 0.8, 0.2], [0.2, 0.2, 0.4])
         # other metric columns are unaffected
         expected_precision = external_function([0.998, 0.123, 0.556, 0.887], [0.45, 0.23, 0.112, 0.776])
 
-        result_ndcg = result_df['NDCG'].values[0]
-        result_precision = result_df['Precision - micro'].values[0]
+        result_ndcg = tuple(result_df['NDCG'].values[0])
+        result_precision = tuple(result_df['Precision - micro'].values[0])
 
         self.assertEqual(expected_ndcg, result_ndcg)
         self.assertEqual(expected_precision, result_precision)
@@ -268,19 +323,66 @@ class TestPairedTest(unittest.TestCase):
 
         result_df = class_to_test.perform([users_metrics_result1, users_metrics_result2])
 
-        self.assertTrue(['NDCG', 'Precision - micro'] == list(result_df.columns))
+        self.assertCountEqual([('NDCG', 'statistic'), ('NDCG', 'pvalue'),
+                               ('Precision - micro', 'statistic'), ('Precision - micro', 'pvalue')],
+
+                         list(result_df.columns))
 
         # NDCG columns has all nan values, so we can't compute the statistic
-        result_ndcg = result_df['NDCG'].values[0]
+        result_ndcg = tuple(result_df['NDCG'].values[0])
 
-        self.assertTrue(np.isnan(result_ndcg.statistic))
-        self.assertTrue(np.isnan(result_ndcg.pvalue))
+        self.assertTrue(np.isnan(result_ndcg[0]))
+        self.assertTrue(np.isnan(result_ndcg[1]))
 
         # other metric columns are unaffected
         expected_precision = external_function([0.998, 0.123, 0.556, 0.887], [0.45, 0.23, 0.112, 0.776])
-        result_precision = result_df['Precision - micro'].values[0]
+        result_precision = tuple(result_df['Precision - micro'].values[0])
 
         self.assertEqual(expected_precision, result_precision)
+
+    def test_check_col_specified(self):
+
+        # perform by default column name is "user_id", so no necessary to specify it
+        stat_test = Ttest()
+        stat_test_col_specified = Ttest("user_id")
+
+        users_metrics_result1 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
+                                              'NDCG': [0.5, 0.7, 0.8, 0.2],
+                                              'Precision - micro': [0.998, 0.123, 0.556, 0.887]})
+
+        users_metrics_result2 = pd.DataFrame({'user_id': ['u1', 'u2', 'u3', 'u4'],
+                                              'NDCG': [0.8, 0.2, 0.2, 0.4],
+                                              'Precision - micro': [0.45, 0.23, 0.112, 0.776]})
+
+        expected = stat_test.perform([users_metrics_result1, users_metrics_result2])
+        result = stat_test_col_specified.perform([users_metrics_result1, users_metrics_result2])
+
+        self.assertEqual(tuple(expected["NDCG"].values[0]), tuple(result["NDCG"].values[0]))
+        self.assertEqual(tuple(expected["Precision - micro"].values[0]),
+                         tuple(result["Precision - micro"].values[0]))
+
+        # the two dataframes have different column name for "user_id"
+
+        users_metrics_result2.columns = ["user_idx", "NDCG", "Precision - micro"]
+
+        with self.assertRaises(KeyError):
+            stat_test.perform([users_metrics_result1, users_metrics_result2])
+
+        # but if we specify it we are safe
+        stat_test_col_specified = Ttest("user_id", "user_idx")
+
+        result = stat_test_col_specified.perform([users_metrics_result1, users_metrics_result2])
+
+        self.assertEqual(tuple(expected["NDCG"].values[0]), tuple(result["NDCG"].values[0]))
+        self.assertEqual(tuple(expected["Precision - micro"].values[0]),
+                         tuple(result["Precision - micro"].values[0]))
+
+        # case in which the user columns specified do not match len of df_list
+        stat_test_col_specified = Ttest("user_id", "user_idx", "user_idxx")
+
+        with self.assertRaises(ValueError):
+            stat_test_col_specified.perform([users_metrics_result1, users_metrics_result2])
+
 
 
 class TestTtest(TestPairedTest):

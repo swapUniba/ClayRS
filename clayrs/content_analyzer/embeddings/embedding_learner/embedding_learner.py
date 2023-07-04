@@ -6,7 +6,7 @@ import numpy as np
 from gensim.models import KeyedVectors
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
 from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource
@@ -155,7 +155,7 @@ class EmbeddingLearner(EmbeddingSource):
 
         Returns:
             doc_data modified to fit the granularity. For example, if the technique had word granularity and doc_data
-            was "this is an example", the output would be ["this", "is", "an", "example"]
+                was "this is an example", the output would be ["this", "is", "an", "example"]
         """
         raise NotImplementedError
 

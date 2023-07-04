@@ -11,7 +11,7 @@ def id_values_merger(id_values: List[str]):
 
     Returns:
         id_merged (str): String in which the values contained in the list given in input are
-        merged
+            merged
     """
     if type(id_values) == str or type(id_values) == int:
         return str(id_values)
