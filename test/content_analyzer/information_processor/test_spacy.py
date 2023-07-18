@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from clayrs.content_analyzer.information_processor.spacy import Spacy
+from clayrs.content_analyzer.information_processor.spacy_processor import Spacy
 
 
 class TestSpacy(TestCase):
@@ -51,7 +51,9 @@ class TestSpacy(TestCase):
 
     def test_entity_recognition(self):
         spa = Spacy(named_entity_recognition=True)
-        expected = {'Hewlett Packard': 'ORG', '100 €': 'MONEY', 'Cristiano Ronaldo': 'PERSON', 'Juventus': 'ORG'}
+        expected = ["Facebook", "was", "fined", "by", "<Hewlett_ORG_B>", "<Packard_ORG_I>", "for", "spending",
+                    "<100_MONEY_B>", "<€_MONEY_I>", "to", "buy", "<Cristiano_PERSON_B>", "<Ronaldo_PERSON_I>",
+                    "from", "<Juventus_ORG_B>"]
         result = spa.process(
             "Facebook was fined by Hewlett Packard for spending 100€ to buy Cristiano Ronaldo from "
             "Juventus")

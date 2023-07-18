@@ -1,0 +1,169 @@
+site_name: ClayRS documentation
+repo_url: https://github.com/swapUniba/ClayRS
+repo_name: swapUniba/ClayRS
+edit_uri: docs/mkdocs/docs
+theme:
+  name: material
+  logo: images/icon_no_borders.svg
+  favicon: images/icon_no_borders.svg
+  icon:
+    repo: fontawesome/brands/github
+  palette: 
+      - media: "(prefers-color-scheme: light)"
+        scheme: default
+        primary: blue
+        accent: deep orange
+        toggle:
+          icon: material/weather-sunny
+          name: Switch to dark mode
+      - media: "(prefers-color-scheme: dark)"
+        scheme: slate
+        primary: indigo
+        accent: amber
+        toggle:
+          icon: material/weather-night
+          name: Switch to light mode
+  features:
+    - content.tooltips
+    - navigation.tabs
+    - navigation.top
+    - navigation.sections
+    - content.code.annotate
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - abbr
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+nav:
+    - Home: 'index.md'
+    - 'First steps':
+        - Installation: 'first_steps/installation.md'
+        - Quickstart: 'first_steps/quickstart.md'
+        - 'Colab examples': 'first_steps/colab_examples.md'
+    - 'Content Analyzer':
+        - Introduction: 'content_analyzer/introduction.md'
+        - 'Content Analyzer config and class': 'content_analyzer/config.md'
+        - 'Raw source wrappers': 'content_analyzer/raw_sources.md'
+        - Ratings:
+            - 'Ratings class': 'content_analyzer/ratings/ratings.md'
+            - 'Score processors': 'content_analyzer/ratings/score_processors.md'
+        - 'Information Processors':
+            - 'Preprocessors':
+                - 'Textual preprocessors':
+                    - 'NLTK': 'content_analyzer/information_preprocessors/textual_preprocessors/nltk.md'
+                    - 'Spacy': 'content_analyzer/information_preprocessors/textual_preprocessors/spacy.md'
+                    - 'Ekphrasis': 'content_analyzer/information_preprocessors/textual_preprocessors/ekphrasis.md'
+                - 'Visual preprocessors':
+                    - 'Torch preprocessors': 'content_analyzer/information_preprocessors/visual_preprocessors/torch_preprocessors.md'
+            - 'Postprocessors': 'content_analyzer/information_preprocessors/postprocessors/postprocessor.md'
+        - 'Content Techniques':
+            - 'Textual techniques':
+                - 'Embedding techniques':
+                    - 'Word Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/word_embeddings.md'
+                    - 'Sentence Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/sentence_embeddings.md'
+                    - 'Document Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/document_embeddings.md'
+                    - 'Combining Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/combining_embeddings.md'
+                    - 'Contextualized Embeddings': 'content_analyzer/content_techniques/textual_techniques/embedding_techniques/contextualized_embeddings.md'
+                - 'TfIdf': 'content_analyzer/content_techniques/textual_techniques/tfidf.md'
+                - 'Original Data': 'content_analyzer/content_techniques/textual_techniques/original_data.md'
+                - 'Synset Document Frequency': 'content_analyzer/content_techniques/textual_techniques/synset_df_frequency.md'
+            - 'Visual techniques':
+                - 'Low level techniques': 'content_analyzer/content_techniques/visual_techniques/low_level_visual.md'
+                - 'High level techniques': 'content_analyzer/content_techniques/visual_techniques/high_level_visual.md'
+            - 'Import from NPY': 'content_analyzer/content_techniques/from_npy.md'
+        - 'Exogenous Techniques':
+            - 'DBPedia Mapping' : 'content_analyzer/exogenous_techniques/dbpedia.md'
+            - 'Properties From Dataset': 'content_analyzer/exogenous_techniques/properties_from_dataset.md'
+            - 'BabelFy Entity Linking': 'content_analyzer/exogenous_techniques/babelfy.md'
+        - 'Memory Interfaces':
+            - 'Index Interface': 'content_analyzer/index_interface.md'
+    - Recsys:
+        - Introduction: 'recsys/introduction.md'
+        - 'Partitioning techniques':
+          - 'Abstract Partitioning class': 'recsys/partitioning/abstract_partitioning.md'
+          - 'Hold Out': 'recsys/partitioning/hold_out.md'
+          - 'KFold': 'recsys/partitioning/kfold.md'
+          - 'Bootstrap': 'recsys/partitioning/bootstrap.md'
+        - 'Content Based recommendation': 
+            - 'Content Based recsys': 'recsys/content_based/content_based_recsys.md'
+            - 'Content Based algorithms':
+                - 'Centroid Vector': 'recsys/content_based/content_based_algorithms/centroid_vector.md'
+                - 'Classifier Recommender': 'recsys/content_based/content_based_algorithms/classifier_recommender.md'
+                - 'Linear Predictor': 'recsys/content_based/content_based_algorithms/linear_predictor.md'
+                - 'Index Query': 'recsys/content_based/content_based_algorithms/index_query.md'
+            - 'Visual Based algorithms':
+                - 'VBPR': 'recsys/content_based/visual_based_algorithms/vbpr.md'
+        - 'Graph based recommendation':
+            - 'Graph Based recsys': 'recsys/graph_based/graph_based_recsys.md'
+            - 'Graphs':
+                - 'Nodes categories': 'recsys/graph_based/graphs/nodes.md'
+                - 'Bipartite Graph': 'recsys/graph_based/graphs/nx_bipartite.md'
+                - 'Tripartite Graph': 'recsys/graph_based/graphs/nx_tripartite.md'
+                - 'Full Graph': 'recsys/graph_based/graphs/nx_full.md'
+            - 'Graph Based algorithms':
+                - 'Page Rank': 'recsys/graph_based/graph_based_algorithms/nx_pagerank.md'
+            - 'Feature Selection': 'recsys/graph_based/feature_selection.md'
+        - Experiment:
+            - 'Experiment class': 'recsys/experiment.md'
+        - Methodologies:
+            - 'Abstract Methodology class': 'recsys/methodology/abstract_methodology.md'
+            - TestRatings: 'recsys/methodology/test_ratings.md'
+            - TestItems: 'recsys/methodology/test_items.md'
+            - TrainingItems: 'recsys/methodology/training_items.md'
+            - AllItems: 'recsys/methodology/all_items.md'
+    - Evaluation:
+        - Introduction: 'evaluation/introduction.md'
+        - 'EvalModel class': 'evaluation/eval_model.md'
+        - Metrics:
+            - 'Classification metrics': 'evaluation/metrics/classification_metrics.md'
+            - 'Ranking metrics': 'evaluation/metrics/ranking_metrics.md'
+            - 'Error metrics': 'evaluation/metrics/error_metrics.md'
+            - 'Fairness metrics': 'evaluation/metrics/fairness_metrics.md'
+            - 'Plot metrics': 'evaluation/metrics/plot_metrics.md'
+        - 'Statistical tests':
+            - Paired: 'evaluation/statistical_tests/paired.md'
+    - Utils:
+        - Report: 'utils/report.md'
+copyright: Documentation made by Antonio Silletti
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/swapUniba
+      name: Swap Uniba on GitHub
+plugins:
+    - search
+    - autorefs
+    - mkdocstrings:
+        handlers:
+            python:
+                import:
+                - https://docs.python.org/3/objects.inv
+                - https://pandas.pydata.org/docs/objects.inv
+                - https://numpy.org/doc/stable/objects.inv
+                - https://scikit-learn.org/stable/objects.inv
+                paths: [../../]
+                options:
+                  show_root_toc_entry: false
+                  show_root_heading: false
+                  show_root_full_path: false
+                  merge_init_into_class: true
+                  docstring_section_style: 'spacy'
+                  filters:
+                    - '!^_+'  # hide private functions
+                    - '^__\w+__'  # show built-in function
+watch:
+    - ../../clayrs

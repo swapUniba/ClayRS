@@ -1,17 +1,23 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from collections import defaultdict
 
 import pandas as pd
 import numpy as np
-from typing import List
-from SPARQLWrapper import SPARQLWrapper, JSON, POST, POSTDIRECTLY
-
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-
-from clayrs.content_analyzer.content_representation.content import PropertiesDict, \
-    ExogenousPropertiesRepresentation, EntitiesProp
-from clayrs.utils.const import logger, get_progbar
+from typing import List, TYPE_CHECKING
+from SPARQLWrapper import SPARQLWrapper, JSON, POST, GET
+from SPARQLWrapper.SPARQLExceptions import URITooLong
 from babelpy.babelfy import BabelfyClient
-from clayrs.utils.check_tokenization import check_not_tokenized
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.content_representation.content import ExogenousPropertiesRepresentation
+
+from clayrs.content_analyzer.content_representation.content import PropertiesDict, EntitiesProp
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
+from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
 
 class ExogenousPropertiesRetrieval(ABC):
@@ -25,20 +31,19 @@ class ExogenousPropertiesRetrieval(ABC):
         Args:
             mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
         """
-        self.__mode = self.__check_mode(mode)
+        self._check_mode(mode)
+        self.__mode = mode
 
     @staticmethod
-    def __check_mode(mode):
-        modalities = [
+    def _check_mode(mode):
+        modalities = {
             'all',
             'all_retrieved',
             'only_retrieved_evaluated',
             'original_retrieved',
-        ]
-        if mode in modalities:
-            return mode
-        else:
-            return 'all'
+        }
+        if mode not in modalities:
+            raise ValueError(f"mode={mode} not supported! Valid modalities are {modalities}")
 
     @property
     def mode(self):
@@ -46,7 +51,8 @@ class ExogenousPropertiesRetrieval(ABC):
 
     @mode.setter
     def mode(self, mode):
-        self.__mode = self.__check_mode(mode)
+        self._check_mode(mode)
+        self.__mode = mode
 
     @abstractmethod
     def get_properties(self, raw_source: RawInformationSource) -> List[ExogenousPropertiesRepresentation]:
@@ -62,9 +68,85 @@ class ExogenousPropertiesRetrieval(ABC):
 
 
 class PropertiesFromDataset(ExogenousPropertiesRetrieval):
+    """
+    Exogenous technique which expands each content by using as external source the raw source itself
+
+    Different modalities are available:
+
+    * If `mode='only_retrieved_evaluated'` all fields for the content will be retrieved from raw source but discarding
+    the ones with a blank value (i.e. '')
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated').get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji', 'Year': 1995},
+    #  {'Title': 'Toy Story'}]
+    ```
+
+    * If `mode='all'` all fields for the content will be retrieved from raw source including the ones with a blank value
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated').get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji', 'Year': 1995},
+    #  {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    You could also choose exactly **which** fields to use to expand each content with the `field_name_list` parameter
+
+    ```title='JSON raw source'
+    [{'Title': 'Jumanji', 'Year': 1995},
+    {'Title': 'Toy Story', 'Year': ''}]
+    ```
+
+    ```python
+    json_file = JSONFile(json_path)
+    PropertiesFromDataset(mode='only_retrieved_evaluated',
+                          field_name_list=['Title']).get_properties(json_file)
+    # output is a list of PropertiesDict object with the following values:
+    # [{'Title': 'Jumanji'},
+    #  {'Title': 'Toy Story'}]
+    ```
+
+    Args:
+
+        mode: Parameter which specifies which properties should be retrieved.
+
+            Possible values are ['only_retrieved_evaluated', 'all']:
+
+                1. 'only retrieved evaluated' will retrieve properties which have a
+                value, discarding ones with a blank value (i.e. '')
+                2. 'all' will retrieve all properties, regardless if they have a value
+                or not
+
+        field_name_list: List of fields from the raw source that will be retrieved. Useful if you want to expand each
+            content with only a subset of available properties from the local dataset
+
+    """
+
     def __init__(self, mode: str = 'only_retrieved_evaluated', field_name_list: List[str] = None):
         super().__init__(mode)
         self.__field_name_list: List[str] = field_name_list
+
+    def _check_mode(self, mode):
+        modalities = {
+            'all',
+            'only_retrieved_evaluated',
+        }
+        if mode not in modalities:
+            raise ValueError(f"mode={mode} not supported! Valid modalities are {modalities}")
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
 
@@ -94,195 +176,159 @@ class PropertiesFromDataset(ExogenousPropertiesRetrieval):
 
 class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
     """
-    Class that creates a list of couples like this:
-        <property: property value URI>
-    In this implementation the properties are retrieved from DBPedia
+    Exogenous technique which expands each content by using as external source the DBPedia ontology
+
+    It needs the entity of the contents for which a mapping is required (e.g. entity_type=`dbo:Film`) and the field
+    of the raw source that will be used for the actual mapping:
+
+
+    Different modalities are available:
+
+    * If `mode='only_retrieved_evaluated'`, all properties from DBPedia will be retrieved but discarding
+    the ones with a blank value (i.e. '')
+
+    * If `mode='all'`, all properties in DBPedia + all properties in local raw source will be retrieved.
+    Local properties will be overwritten by dbpedia values if there's a conflict (same property in dbpedia and in local
+    dataset)
+
+    * If `mode='all_retrieved'`, all properties in DBPedia *only* will be retrieved
+
+    * If `mode='original_retrieved'`, all local properties with their DBPedia value will be retrieved
 
     Args:
-        entity_type (str): domain of the items that you want to process
-        lang (str): lang of the descriptions
-        label_field: field to be used as a filter,
-            DBPedia node that has the property rdfs:label equal to specified field value
-            will be retrieved
-        mode: one in: 'all', 'all_retrieved', 'only_retrieved_evaluated', 'original_retrieved',
+        entity_type: Domain of the contents you want to process (e.g. 'dbo:Film')
+        label_field: Field of the raw source that will be used to map each content, DBPedia node with
+            property **rdfs:label equal** to specified field value will be retrieved
+        lang: Language of the `rdfs:label` that should match with `label_field` in the raw source
+        mode: Parameter which specifies which properties should be retrieved.
+
+            Possible values are ['only_retrieved_evaluated', 'all', 'all_retrieved', 'original_retrieved']:
+
+                1. 'only retrieved evaluated' will retrieve properties which have a
+                value, discarding ones with a blank value (i.e. '')
+                2. 'all' will retrieve all properties from DBPedia + local source,
+                regardless if they have a value or not
+                3. 'all_retrieved' will retrieve all properties from DBPedia only
+                4. 'original_retrieved' will retrieve all local properties with
+                their DBPedia value
+        return_prop_as_uri: If set to True, properties will be returned in their full uri form rather than in their
+            rdfs:label form (e.g. "http://dbpedia.org/ontology/director" rather than "film director")
+        max_timeout: Sometimes when mapping content to dbpedia, a batch of query may take longer than the max time
+            allowed by the server due to internet issues: the framework will re-try the exact query `max_timeout` times
+            before raising a `TimeoutError`
     """
 
-    def __init__(self, entity_type: str, label_field: str,
-                 mode: str = 'only_retrieved_evaluated', prop_as_uri: bool = False):
+    def __init__(self, entity_type: str, label_field: str, lang: str = 'EN',
+                 mode: str = 'only_retrieved_evaluated', return_prop_as_uri: bool = False,
+                 max_timeout: int = 5):
         super().__init__(mode)
 
-        self.__entity_type = entity_type
-        self.__label_field = label_field
-        self.__prop_as_uri = prop_as_uri
+        self._entity_type = entity_type
+        self._label_field = label_field
+        self._prop_as_uri = return_prop_as_uri
+        self._lang = lang
+        self._max_timeout = max_timeout
 
-        self.__sparql = SPARQLWrapper("http://factforge.net/repositories/ff-news")
-        self.__sparql.setMethod(POST)
-        self.__sparql.setRequestMethod(POSTDIRECTLY)
-        self.__sparql.setReturnFormat(JSON)
+        self._sparql = SPARQLWrapper("https://dbpedia.org/sparql")
+        self._sparql.setReturnFormat(JSON)
 
-        self.__class_properties = self.__get_properties_class()
+        self._class_properties = self._get_properties_class()
 
-    @property
-    def label_field(self):
-        return self.__label_field
+    def _query_dbpedia(self, query: str):
 
-    @label_field.setter
-    def label_field(self, label_field: str):
-        self.__label_field = label_field
+        timeout_counter = 0
+        self._sparql.setQuery(query)
+        self._sparql.setMethod(GET)
 
-    @property
-    def prop_as_uri(self):
-        return self.__prop_as_uri
+        while True:
+            try:
+                result = self._sparql.query()
+                if result.response.status == 200:
+                    timeout_counter = 0
+                    break
+                elif result.response.status == 206:
+                    if timeout_counter >= self._max_timeout:
+                        raise TimeoutError("Maximum number of trials reached!")
 
-    # INITIAL IDEA ON HOW TO USE ADDITIONAL FILTERS TO RETIREVE CONTENTS
-    # def __get_uris_all_contents_with_additional(self, raw_source: RawInformationSource):
-    # prefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-    # prefixes += "PREFIX dbo: <http://dbpedia.org/ontology/> "
-    # prefixes += "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-    # prefixes += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
-    #
-    # all_contents_labels_original_order = [str(raw_content[self.__label_field]) for raw_content in raw_source]
-    # all_contents_labels = sorted(all_contents_labels_original_order)
-    #
-    # values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels) + "} "
-    #
-    # additional_fields_select = [
-    #     f"(str(?{self.__additional_filters[prop]}) as ?str_{self.__additional_filters[prop]})"
-    #     for prop in self.__additional_filters.keys()]
-    #
-    # select_clause = f"SELECT ?contents ?uri {' '.join(additional_fields_select)} "
-    # where_clause = "WHERE { "
-    # optional_clause = "OPTIONAL {"
-    # optional_clause += f"?uri rdf:type {self.__entity_type} . " \
-    #                    "?uri rdfs:label ?label . " \
-    #                    "BIND(str(?label) as ?str_label) " \
-    #                    "FILTER(?contents=?str_label) "
-    #
-    # if self.__additional_filters is not None:
-    #     optional_clause += "OPTIONAL { "
-    #     additional_fields = ' '.join([f"?uri {prop} ?{self.__additional_filters[prop]} ."
-    #                                   for prop in self.__additional_filters.keys()])
-    #     optional_clause += additional_fields + "} "
-    #
-    # optional_clause += "} }"
-    #
-    # query = prefixes + select_clause + where_clause + values + optional_clause
-    #
-    # self.__sparql.setQuery(query)
-    # results = self.__sparql.query().convert()["results"]["bindings"]
-    #
-    # contents_taken = sorted([row['contents']['value'] for row in results])
-    # while len(contents_taken) < len(all_contents_labels):
-    #     contents_missing = all_contents_labels[len(contents_taken):]
-    #     values_incomplete = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in contents_missing) + "} "
-    #     query_incomplete = prefixes + select_clause + where_clause + values_incomplete + optional_clause
-    #
-    #     self.__sparql.setQuery(query_incomplete)
-    #     result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
-    #
-    #     results.extend(result_incomplete)
-    #     contents_taken.extend([row['contents']['value'] for row in result_incomplete])
-    #
-    # if len(results) == 0:
-    #     raise ValueError("No mapping found")
-    #
-    # # Reset the order of contents
-    # results = sorted(results, key=lambda k: all_contents_labels_original_order.index(k['contents']['value']))
-    #
-    # uri_lables_dict = {'uri': [], 'label': []}
-    # uri_lables_dict.update({additional_field: [] for additional_field in self.__additional_filters.values()})
-    # for row in results:
-    #     # We are sure there is always the label, it's how the query is built
-    #     uri_lables_dict['label'].append(row["contents"]["value"])
-    #
-    #     if row.get('uri') is not None:
-    #         uri_lables_dict['uri'].append(row['uri']['value'])
-    #         for additional_field in self.__additional_filters.values():
-    #             if row.get('str_' + additional_field) is not None:
-    #                 uri_lables_dict[additional_field].append(row['str_' + additional_field]['value'])
-    #             else:
-    #                 uri_lables_dict[additional_field].append(np.nan)
-    #     else:
-    #         uri_lables_dict['uri'].append(np.nan)
-    #         for additional_field in self.__additional_filters.values():
-    #             uri_lables_dict[additional_field].append(np.nan)
-    #
-    # results_df = pd.DataFrame.from_dict(uri_lables_dict)
-    #
-    # return results_df
+                    logger.warning(f"Timeout occurred! - {timeout_counter + 1} out of {self._max_timeout} possible \n"
+                                   f"The timeout counter will be reset as soon as the request goes through")
+                    timeout_counter += 1
+                    query += '\n'  # add space to avoid query plan cache so that we perform a new request
+                    self._sparql.setQuery(query)
+            except URITooLong:
+                self._sparql.setMethod(POST)
 
-    def __get_uris_all_contents(self, raw_source: RawInformationSource):
+        return result.convert()["results"]["bindings"]
+
+    def _get_uris_all_contents(self, raw_source: RawInformationSource):
         prefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
         prefixes += "PREFIX dbo: <http://dbpedia.org/ontology/> "
         prefixes += "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
         prefixes += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
 
-        all_contents_labels_original = [str(raw_content[self.__label_field]) for raw_content in raw_source]
-        all_contents_labels_set = sorted(set(all_contents_labels_original))
+        all_contents_labels_original = [str(raw_content[self._label_field]) for raw_content in raw_source]
 
-        values = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in all_contents_labels_set) + "} "
+        select_clause = 'SELECT DISTINCT ?uri ?title '
+        where_clause = 'WHERE { ' \
+                       '?uri rdf:type dbo:Film . ' \
+                       '?uri rdfs:label ?title . ' \
+                       'BIND(str(?title) as ?str_label) . ' \
+                       f'filter langMatches(lang(?title), "{self._lang}") '
 
-        select_clause = f"SELECT ?contents ?uri "
-        where_clause = "WHERE { "
-        optional_clause = "OPTIONAL {"
-        optional_clause += f"?uri rdf:type {self.__entity_type} . " \
-                           "?uri rdfs:label ?label . " \
-                           "BIND(str(?label) as ?str_label) " \
-                           "FILTER(?contents=?str_label) "
+        contents_taken = []
+        results = []
+        while True:
+            contents_missing = set(all_contents_labels_original).difference(set(contents_taken))
+            values_incomplete = ', '.join(f'"{wrapped}"' for wrapped in contents_missing)
+            filter_query = f'filter(?str_label in ({values_incomplete}))'
+            query_incomplete = prefixes + select_clause + where_clause + filter_query + "}"
 
-        optional_clause += "} }"
+            result_incomplete = self._query_dbpedia(query_incomplete)
 
-        query = prefixes + select_clause + where_clause + values + optional_clause
-
-        self.__sparql.setQuery(query)
-        results = self.__sparql.query().convert()["results"]["bindings"]
-
-        contents_taken = sorted(set([row['contents']['value'] for row in results]))
-        while len(contents_taken) < len(all_contents_labels_set):
-            contents_missing = all_contents_labels_set[len(contents_taken):]
-            values_incomplete = "VALUES ?contents {" + ' '.join(f'"{wrapped}"' for wrapped in contents_missing) + "} "
-            query_incomplete = prefixes + select_clause + where_clause + values_incomplete + optional_clause
-
-            self.__sparql.setQuery(query_incomplete)
-            result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
+            # if result_incomplete is empty, then there's no other item to map and we exit the loop
+            if not result_incomplete:
+                break
 
             results.extend(result_incomplete)
-            contents_taken.extend(set([row['contents']['value'] for row in result_incomplete]))
+            contents_taken.extend([row["title"]["value"] for row in result_incomplete])
+
+            logger.info(f"Contents mapped so far: {len(results)} of {len(all_contents_labels_original)} "
+                        f"(ideal, tipically less are mapped)")
+
+        logger.info(f"Contents mapped in total: {len(results)}")
 
         if len(results) == 0:
             raise ValueError("No mapping found")
 
         # Reset the order of contents
-        # results = sorted(results, key=lambda k: all_contents_labels_original.index(k['contents']['value']))
-        res = {row["contents"]["value"]: row["uri"]["value"] if row.get("uri") is not None else np.nan
-               for row in results}
-        uri_lables_dict = {'uri': [res[content] for content in all_contents_labels_original],
+        res = {row["title"]["value"]: row["uri"]["value"] for row in results}
+        uri_lables_dict = {'uri': [res[content] if res.get(content) else np.nan
+                                   for content in all_contents_labels_original],
                            'label': all_contents_labels_original}
 
         results_df = pd.DataFrame.from_dict(uri_lables_dict)
 
         return results_df
 
-    def __get_properties_class(self):
+    def _get_properties_class(self):
         query = "PREFIX dbo: <http://dbpedia.org/ontology/> "
         query += "SELECT DISTINCT ?property ?property_label WHERE { "
         query += "{ "
         query += "?property rdfs:domain ?class. "
-        query += "%s rdfs:subClassOf+ ?class. " % self.__entity_type
+        query += "%s rdfs:subClassOf+ ?class. " % self._entity_type
         query += "} UNION {"
-        query += "?property rdfs:domain %s " % self.__entity_type
+        query += "?property rdfs:domain %s " % self._entity_type
         query += "} "
         query += "?property rdfs:label ?property_label. "
-        query += f"FILTER (langMatches(lang(?property_label), \"EN\"))." + "} "
+        query += f"FILTER (langMatches(lang(?property_label), \"{self._lang}\"))." + "} "
 
-        self.__sparql.setQuery(query)
-        results = self.__sparql.query().convert()
+        results = self._query_dbpedia(query)
 
-        if len(results["results"]["bindings"]) == 0:
+        if len(results) == 0:
             raise ValueError("The Entity type doesn't exists in DBPedia!")
 
         uri_labels_tuples = [(row["property"]["value"], row["property_label"]["value"])
-                             for row in results["results"]["bindings"]]
+                             for row in results]
 
         properties_df = pd.DataFrame.from_records(
             uri_labels_tuples,
@@ -291,12 +337,15 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return properties_df
 
-    def __retrieve_properties_contents(self, uris: pd.DataFrame):
+    def _retrieve_properties_contents(self, uris: pd.DataFrame):
+
+        logger.info("Extracting properties for mapped contents...")
+
         query = "PREFIX dbo: <http://dbpedia.org/ontology/> "
-        query += "SELECT ?uri ?property ?o WHERE { "
+        query += "SELECT ?uri ?property ?o WHERE {{ SELECT DISTINCT ?uri ?property ?o WHERE {"
 
         query += "VALUES ?property { "
-        query += " ".join([f"<{uri_property}>" for uri_property in self.__class_properties['uri']])
+        query += " ".join([f"<{uri_property}>" for uri_property in self._class_properties['uri']])
         query += "} "
 
         query += "VALUES ?uri { "
@@ -304,54 +353,45 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         query += "} "
 
         query += "OPTIONAL {?uri ?property ?o . } "
-        query += "} ORDER BY ?uri ?property ?o"
+        query += "} ORDER BY ?uri ?property ?o }} "
 
-        self.__sparql.setQuery(query)
-        results = self.__sparql.query().convert()["results"]["bindings"]
+        results = []
 
-        offset = 0
-        while len(results) < (len(self.__class_properties) * len(uris)):
-            offset += len(results)
-            query_incomplete = query + f"OFFSET {str(offset)} "
+        while True:
+            # limit set at maximum allowed by dbpedia which is 10.000 may seem redundant
+            # but the sparql endpoint won't work without it for this particular query
+            query_incomplete = query + f" OFFSET {len(results)} LIMIT 10000"
 
-            self.__sparql.setQuery(query_incomplete)
-            result_incomplete = self.__sparql.query().convert()["results"]["bindings"]
+            result_incomplete = self._query_dbpedia(query_incomplete)
+
+            if not result_incomplete:
+                break
 
             results.extend(result_incomplete)
 
-        result_dict = {}
+        result_dict = defaultdict(lambda: defaultdict(list))
         for row in results:
 
             uri_item = row["uri"]["value"]
             property = row["property"]["value"]
-
-            try:
-                value = row["o"]["value"]
-            except KeyError:
-                value = None
+            value = row.get("o", {}).get("value")  # safe way of accessing nested value in a dict
 
             # wrap every property value in a list, in case a property have more than one value
             # eg. starring: [DiCaprio, Tom Hardy]
-            if result_dict.get(uri_item) is not None:
-                if result_dict[uri_item].get(property) is not None:
-                    result_dict[uri_item][property].append(value)
-                else:
-                    result_dict[uri_item][property] = [value]
-            else:
-                result_dict[uri_item] = {property: [value]}
+            result_dict[uri_item][property].append(value)
 
-        index_map = {v: i for i, v in enumerate(list(uris['uri']))}
-        result_dict = dict(sorted(result_dict.items(), key=lambda pair: index_map[pair[0]]))
+        # index_map = {v: i for i, v in enumerate(list(uris['uri']))}
+        # result_dict = dict(sorted(result_dict.items(), key=lambda pair: index_map[pair[0]]))
 
         # if some properties have only one value, then remove the list that wraps them
-        # eg. director: [Inarritu] -> director: Inarritu
+        # e.g. director: [Inarritu] -> director: Inarritu
         for uri in result_dict:
             result_dict[uri].update({prop: result_dict[uri][prop][0] for prop in result_dict[uri]
                                      if isinstance(result_dict[uri][prop], list) and len(result_dict[uri][prop]) == 1})
 
         return result_dict
 
-    def __get_only_retrieved_evaluated(self, uris: pd.DataFrame, all_properties_dbpedia: dict) -> List[PropertiesDict]:
+    def _get_only_retrieved_evaluated(self, uris: pd.DataFrame, all_properties_dbpedia: dict) -> List[PropertiesDict]:
 
         prop_dict_list = []
 
@@ -362,13 +402,13 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                 content_properties_dbpedia = all_properties_dbpedia[uri]
 
                 # Get only retrieved properties that have a value
-                if self.prop_as_uri:
+                if self._prop_as_uri:
                     content_properties_final = {k: content_properties_dbpedia[k] for k in content_properties_dbpedia
                                                 if content_properties_dbpedia[k] is not None}
                 else:
                     # This goes into the class properties table and gets the labels to the corresponding uri
                     content_properties_final = {
-                        self.__class_properties.query('uri == @k')['label'].values[0]: content_properties_dbpedia[k]
+                        self._class_properties.query('uri == @k')['label'].values[0]: content_properties_dbpedia[k]
                         for k in content_properties_dbpedia
                         if content_properties_dbpedia[k] is not None}
 
@@ -380,7 +420,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return prop_dict_list
 
-    def __get_all_properties_retrieved(self, uris, all_properties_dbpedia) -> List[PropertiesDict]:
+    def _get_all_properties_retrieved(self, uris, all_properties_dbpedia) -> List[PropertiesDict]:
         prop_dict_list = []
 
         for uri in uris['uri']:
@@ -393,19 +433,15 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                 content_properties_final = {}
                 for prop_uri in content_properties_dbpedia:
 
-                    if self.prop_as_uri:
-                        value = ''
-                        if content_properties_dbpedia.get(prop_uri) is not None:
-                            value = content_properties_dbpedia[prop_uri]
+                    value = ''
+                    if content_properties_dbpedia.get(prop_uri) is not None:
+                        value = content_properties_dbpedia[prop_uri]
 
+                    if self._prop_as_uri:
                         key = prop_uri
                     else:
-                        value = ''
-                        if content_properties_dbpedia.get(prop_uri) is not None:
-                            value = content_properties_dbpedia[prop_uri]
-
                         # This goes into the class properties table and gets the labels to the corresponding uri
-                        key = self.__class_properties.query('uri == @prop_uri')['label'].values[0]
+                        key = self._class_properties.query('uri == @prop_uri')['label'].values[0]
 
                     content_properties_final[key] = value
 
@@ -433,28 +469,25 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                 # those that don't have value in dbpedia will be ''
                 content_properties_final = {}
                 for k in content_properties_source:
-                    if k in self.__class_properties['uri'].tolist():
-                        value = content_properties_dbpedia[k]
+                    if k in self._class_properties['uri'].tolist():
+                        value = content_properties_dbpedia[k] or ''
 
-                        if self.prop_as_uri:
+                        if self._prop_as_uri:
                             key = k
                         else:
-                            key = self.__class_properties.query('uri == @k')['label'].values[0]
-                    elif k in self.__class_properties['label'].tolist():
-                        uri = self.__class_properties.query('label == @k')['uri'].values[0]
+                            key = self._class_properties.query('uri == @k')['label'].values[0]
+                    elif k in self._class_properties['label'].tolist():
+                        uri = self._class_properties.query('label == @k')['uri'].values[0]
 
-                        value = content_properties_dbpedia[uri]
+                        value = content_properties_dbpedia[uri] or ''
 
-                        if self.prop_as_uri:
+                        if self._prop_as_uri:
                             key = uri
                         else:
                             key = k
                     else:
-                        value = None
-                        key = k
-
-                    if value is None:
                         value = ''
+                        key = k
 
                     content_properties_final[key] = value
 
@@ -466,7 +499,7 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
 
         return prop_dict_list
 
-    def __get_all_properties(self, uris, all_properties_dbpedia,
+    def _get_all_properties(self, uris, all_properties_dbpedia,
                              raw_source: RawInformationSource) -> List[PropertiesDict]:
         prop_dict_list = []
 
@@ -482,20 +515,20 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                 # the dbpedia value will overwrite the local source value
                 content_properties_final = {}
                 for k in content_properties_source:
-                    if k in self.__class_properties['uri'].tolist():
+                    if k in self._class_properties['uri'].tolist():
                         value = content_properties_dbpedia.pop(k)
 
-                        if self.prop_as_uri:
+                        if self._prop_as_uri:
                             key = k
                         else:
-                            key = self.__class_properties.query('uri == @k')['label'].values[0]
+                            key = self._class_properties.query('uri == @k')['label'].values[0]
 
-                    elif k in self.__class_properties['label'].tolist():
-                        uri = self.__class_properties.query('label == @k')['uri'].values[0]
+                    elif k in self._class_properties['label'].tolist():
+                        uri = self._class_properties.query('label == @k')['uri'].values[0]
 
                         value = content_properties_dbpedia.pop(uri)
 
-                        if self.prop_as_uri:
+                        if self._prop_as_uri:
                             key = uri
                         else:
                             key = k
@@ -514,10 +547,10 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
                     if value is None:
                         value = ''
 
-                    if self.prop_as_uri:
+                    if self._prop_as_uri:
                         key = k
                     else:
-                        key = self.__class_properties.query('uri == @k')['label'].values[0]
+                        key = self._class_properties.query('uri == @k')['label'].values[0]
 
                     content_properties_final[key] = value
 
@@ -530,35 +563,24 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         return prop_dict_list
 
     def get_properties(self, raw_source: RawInformationSource) -> List[PropertiesDict]:
-        """
-        Execute the properties couple retrieval
-
-        Args:
-            name (str): string identifier of the returned properties object
-            raw_content: represent a row in the dataset that
-                is being processed
-
-        Returns:
-            PropertiesDict
-        """
         logger.info("Extracting exogenous properties from DBPedia")
-        uris = self.__get_uris_all_contents(raw_source)
+        uris = self._get_uris_all_contents(raw_source)
 
         uris_wo_none = uris.dropna()
-        all_properties = self.__retrieve_properties_contents(uris_wo_none)
+        all_properties = self._retrieve_properties_contents(uris_wo_none)
 
         prop_dict_list = []
         if self.mode == 'only_retrieved_evaluated':
-            prop_dict_list = self.__get_only_retrieved_evaluated(uris, all_properties)
+            prop_dict_list = self._get_only_retrieved_evaluated(uris, all_properties)
 
         elif self.mode == 'all_retrieved':
-            prop_dict_list = self.__get_all_properties_retrieved(uris, all_properties)
+            prop_dict_list = self._get_all_properties_retrieved(uris, all_properties)
 
         elif self.mode == 'original_retrieved':
             prop_dict_list = self.__get_original_retrieved(uris, all_properties, raw_source)
 
         elif self.mode == 'all':
-            prop_dict_list = self.__get_all_properties(uris, all_properties, raw_source)
+            prop_dict_list = self._get_all_properties(uris, all_properties, raw_source)
 
         return prop_dict_list
 
@@ -566,8 +588,8 @@ class DBPediaMappingTechnique(ExogenousPropertiesRetrieval):
         return "DBPediaMappingTechnique"
 
     def __repr__(self):
-        return f'DBPediaMappingTechnique(mode={self.__mode}, entity type={self.__entity_type}, ' \
-               f'label_field={self.__label_field}, prop_as_uri={self.__prop_as_uri})'
+        return f'DBPediaMappingTechnique(mode={self.mode}, entity type={self._entity_type}, ' \
+               f'label_field={self._label_field}, prop_as_uri={self._prop_as_uri}, max_timeout={self._max_timeout})'
 
 
 class EntityLinking(ExogenousPropertiesRetrieval):
@@ -582,32 +604,32 @@ class EntityLinking(ExogenousPropertiesRetrieval):
 
 class BabelPyEntityLinking(EntityLinking):
     """
-    Interface for the Babelpy library that wraps some feature of Babelfy entity Linking.
+    Exogenous technique which expands each content by using as external source the the BabelFy library.
+
+    Each content will be expanded with the following babelfy properties (if available):
+
+    * 'babelSynsetID',
+    * 'DBPediaURL',
+    * 'BabelNetURL',
+    * 'score',
+    * 'coherenceScore',
+    * 'globalScore',
+    * 'source'
 
     Args:
-        api_key: string obtained by registering to babelfy website, with None babelpy key only few
-            queries can be executed
+        field_to_link: Field of the raw source which will be used to search for the content properties in BabelFy
+        api_key: String obtained by registering to babelfy website. If None only few queries can be executed
+        lang: Language of the properties to retrieve
     """
 
     def __init__(self, field_to_link: str, api_key: str = None, lang: str = "EN"):
-        super().__init__("all_retrieved")
+        super().__init__("all_retrieved")  # fixed mode since it doesn't make sense for babelfy
         self.__field_to_link = field_to_link
         self.__api_key = api_key
         self.__lang = lang
         self.__babel_client = BabelfyClient(self.__api_key, {"lang": lang})
 
     def get_properties(self, raw_source: RawInformationSource) -> List[EntitiesProp]:
-        """
-        Produces a list of EntitiesProp objects for every raw content in the raw source where .
-
-        An Entity Prop object is basically a dict where the keys are the entity linked (since there can be multiple
-        entities in a field) and values are properties retrieved from BabelPy for that entity.
-        EXAMPLE:
-            properties_list = [EntityProp(), EntityProp(), ...]
-
-            EntityProp.value -> {'DiCaprio': {'babelSynsetID': ..., ...},'Nolan': {'babelSynsetID: ..., ...}, ...}
-
-        """
         properties_list = []
         logger.info("Performing Entity Linking with BabelFy")
         with get_progbar(list(raw_source)) as pbar:

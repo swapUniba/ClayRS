@@ -1,0 +1,32 @@
+name: Build documentation
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+            fetch-depth: 0        
+      -
+        name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8 #install the python needed
+      -
+        name: Setup documentation requirements
+        run: |
+          pip install --upgrade pip
+          pip install -r docs/mkdocs/requirements-doc.txt
+      -
+        name: Deploy documentation
+        run: |
+          cd docs/mkdocs
+          mkdocs gh-deploy --clean

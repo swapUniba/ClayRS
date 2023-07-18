@@ -1,16 +1,18 @@
-from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
-
 from sentence_transformers import SentenceTransformer
-
 import numpy as np
+
+from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import SentenceEmbeddingLoader
+from clayrs.utils.const import logger
 
 
 class Sbert(SentenceEmbeddingLoader):
     """
-    This class loads the embeddings using the SentenceTransformer (from sbert).
+    Class that produces sentences embeddings using sbert.
+
+    The model will be automatically downloaded if not present locally.
 
     Args:
-        model_name_or_file_path (str): name of the embeddings model to download or path where the model is stored
+        model_name_or_file_path: name of the model to download or path where the model is stored
             locally
     """
 
@@ -19,9 +21,11 @@ class Sbert(SentenceEmbeddingLoader):
 
     def load_model(self):
         try:
+            logger.info(f"Downloading/Loading {str(self)}")
+
             return SentenceTransformer(self.reference)
         except (OSError, AttributeError):
-            raise FileNotFoundError
+            raise FileNotFoundError("Model not found!")
 
     def get_vector_size(self) -> int:
         return self.model.get_sentence_embedding_dimension()
@@ -33,7 +37,7 @@ class Sbert(SentenceEmbeddingLoader):
         raise NotImplementedError("The model chosen can't return token embeddings")
 
     def __str__(self):
-        return "Sbert"
+        return f"Sbert {self.reference}"
 
     def __repr__(self):
         return f"Sbert(model_name_or_file_path={self.reference})"

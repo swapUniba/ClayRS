@@ -7,11 +7,11 @@ from whoosh.formats import Frequency
 from whoosh.qparser import QueryParser, OrGroup, FieldsPlugin
 from whoosh.query import Term, Or
 from whoosh.scoring import TF_IDF, BM25F
-from typing import Union
-
-from clayrs.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
+from typing import Union, Dict
 import math
 import abc
+
+from clayrs.content_analyzer.memory_interfaces.memory_interfaces import TextInterface
 
 
 class IndexInterface(TextInterface):
@@ -71,14 +71,14 @@ class IndexInterface(TextInterface):
         """
         self.__doc = {}
 
-    def new_field(self, field_name: str, field_data):
+    def new_field(self, field_name: str, field_data: object):
         """
         Adds a new field to the document that is being created. Since the index Schema is generated dynamically, if
         the field name is not in the Schema already it is added to it
 
         Args:
             field_name (str): Name of the new field
-            field_data: Data to put into the field
+            field_data (object): Data to put into the field
         """
         if field_name not in open_dir(self.directory).schema.names():
             self.__writer.add_field(field_name, self.schema_type)
@@ -117,7 +117,7 @@ class IndexInterface(TextInterface):
             content_id (Union[str, int]): either the position or Id of the content that contains the specified field
 
         Returns:
-            result: data contained in the field of the content
+            Data contained in the field of the content
         """
         ix = open_dir(self.directory)
         with ix.searcher() as searcher:
@@ -136,22 +136,25 @@ class IndexInterface(TextInterface):
         form
 
         Args:
-            string_query (str): query expressed as a string
-            results_number (int): number of results the searcher will return for the query
-            mask_list (list): list of content_ids of items to ignore in the search process
-            candidate_list (list): list of content_ids of items to consider in the search process,
+            string_query: query expressed as a string
+            results_number: number of results the searcher will return for the query
+            mask_list: list of content_ids of items to ignore in the search process
+            candidate_list: list of content_ids of items to consider in the search process,
                 if it is not None only items in the list will be considered
-            classic_similarity (bool): if True, classic tf idf is used for scoring, otherwise BM25F is used
+            classic_similarity: if True, classic tf idf is used for scoring, otherwise BM25F is used
 
         Returns:
-            results (dict): the final results dictionary containing the results found from the search index for the
+            results: the final results dictionary containing the results found from the search index for the
                 query. The dictionary will be in the following form:
 
                     {content_id: {"item": item_dictionary, "score": item_score}, ...}
 
                 content_id is the content_id for the corresponding item
                 item_dictionary is the dictionary of the item containing the fields as keys and the contents as values.
-                So it will be in the following form: {"Plot": "this is the plot", "Genre": "this is the Genre"}
+                So it will be in the following form:
+
+                    {"Plot": "this is the plot", "Genre": "this is the Genre"}
+
                 The item_dictionary will not contain the content_id since it is already defined and used as key of the
                 external dictionary
                 items_score is the score given to the item for the query by the index searcher
@@ -199,19 +202,24 @@ class IndexInterface(TextInterface):
                 results[content_id]["score"] = hit.score
             return results
 
-    def get_tf_idf(self, field_name: str, content_id: Union[str, int]):
-        """
+    def get_tf_idf(self, field_name: str, content_id: Union[str, int]) -> Dict[str, float]:
+        r"""
         Calculates the tf-idf for the words contained in the field of the content whose id
         is content_id (if it is a string) or in the given position (if it is an integer).
-        The tf-idf computation formula is: tf-idf = (1 + log10(tf)) * log10(idf)
+
+        The tf-idf computation formula is:
+
+        $$
+        tf \mbox{-} idf = (1 + log10(tf)) * log10(idf)
+        $$
 
         Args:
-            field_name (str): Name of the field containing the words for which calculate the tf-idf
-            content_id (Union[str, int]): either the position or Id of the content that contains the specified field
+            field_name: Name of the field containing the words for which calculate the tf-idf
+            content_id: either the position or Id of the content that contains the specified field
 
         Returns:
-             words_bag (Dict <str, float>): Dictionary whose keys are the words contained in the field,
-                and the corresponding values are the tf-idf values
+            words_bag: Dictionary whose keys are the words contained in the field, and the
+                corresponding values are the tf-idf values
         """
         ix = open_dir(self.directory)
         words_bag = {}

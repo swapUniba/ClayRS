@@ -1,9 +1,14 @@
+from __future__ import annotations
 import networkx as nx
 from abc import ABC, abstractmethod
-from typing import List, Union, Any
+from typing import List, Union, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.recsys.graphs.graph import FullDiGraph
+    from clayrs.recsys.graphs.graph import UserNode, ItemNode
 
 from clayrs.recsys.graphs.feature_selection.exceptions import FeatureSelectionException
-from clayrs.recsys.graphs.graph import FullDiGraph, PropertyNode, Node, UserNode, ItemNode
+from clayrs.recsys.graphs.graph import PropertyNode
 
 
 class FeatureSelectionAlgorithm(ABC):
@@ -16,40 +21,42 @@ class FeatureSelectionAlgorithm(ABC):
     Instead of having the property instance (for example: http://dbpedia.org/resource/Phil_Collins) the Property nodes
     in the new graph will have the property names associated to the property instance (for example: 'starring').
     This is retrieved because the label of the edge connecting a User or Item node to a Property node will be the
+
     Property name. So, for example:
 
-        Item Node someitem -- (label: starring) --> Property Node http://dbpedia.org/resource/Phil_Collins
+    ```
+    Item Node someitem -- (label: starring) --> Property Node http://dbpedia.org/resource/Phil_Collins
+    ```
 
-        will be transformed to
-
-        Item Node someitem ----> Property Node starring
+    will be transformed to:
+    ```
+    Item Node someitem ----> Property Node starring
+    ```
 
     This is done so that only the instances related to the most important properties will be kept in the original graph
 
     After creating the new graph, an algorithm which can compute the 'importance' scores for each node in the new graph
     is used (for example, PageRank) and the Property nodes (in this case being the property labels of the original
     graph) with the best scores will be returned
-
-    Args:
-        additional_arguments (dict): it's possible to pass the parameters one would normally pass to the scores
-            computation algorithms (for example, if the PageRank from networkx is used to compute the scores for
-            each node, this parameter can contain the additional parameters for said method)
     """
 
     def perform(self, graph: FullDiGraph, target_nodes: Union[List[UserNode], List[ItemNode]],
                 mode: str = 'to_keep') -> list:
         """
         Main method that handles the entire Feature Selection process. After every step of the process is completed, it
-        will return a list containing the most important property labels of the original graph.
+        will return a list containing the most important property labels of the original graph if `mode='to_keep'` or
+        it will return a list containing the least important property labels of the original graph if `mode='to_remove'`
 
         Args:
-            graph (FullGraph): the original graph to apply Feature Selection on
-            target_nodes (list[Node]): list of nodes from the original graph to consider for the creation
-                of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
-                be considered)
+            graph: The original graph to apply Feature Selection on
+            target_nodes: list of nodes from the original graph to consider for the creation
+                of the new graph
+            mode: String which governs what the method will return. With `mode='to_keep'` the method will return the
+                the most important property labels, with `mode='to_remove'` the method will return the
+                the least important property labels
 
         Returns:
-            list of properties to keep of the original graph
+            List of properties to keep or to remove of the original graph
         """
         raise NotImplementedError
 
@@ -58,15 +65,25 @@ class FeatureSelectionAlgorithm(ABC):
         """
         Creates a NetworkX directed graph from the original graph and the target nodes list passed as argument
 
+        Given links of this kind in the original graph:
+
+        ```
+        Item Node someitem -- (label: starring) --> Property Node http://dbpedia.org/resource/Phil_Collins
+        ```
+
+        This method will create a new graph where links will be transformed to:
+
+        ```
+        Item Node someitem ----> Property Node starring
+        ```
+
         Args:
             graph (FullGraph): the original graph to apply Feature Selection on
             target_nodes (list[object]): list of user or item nodes from the original graph to consider for the creation
-                of the new graph (for example, only items recommendable to the active user in a ranking algorithm should
-                be considered)
+                of the new graph
 
         Returns:
-            mew_graph (DiGraph): new graph that will be created from the original graph and the list of its nodes to
-                consider
+            A new graph that will be created from the original graph and the list of its nodes to consider
         """
         new_graph = nx.DiGraph()
 
@@ -97,7 +114,7 @@ class TopKFeatureSelection(FeatureSelectionAlgorithm):
     ranking will be considered as the most important properties)
 
     Args:
-        k (int): number of properties to keep
+        k: Number of properties to keep
     """
 
     def __init__(self, k: int):
@@ -116,9 +133,7 @@ class TopKFeatureSelection(FeatureSelectionAlgorithm):
             graph (DiGraph): graph from which the rank for the nodes will be calculated
 
         Returns:
-            rank (dict): rank in the following form:
-
-                {Node: rank_score, Node: rank_score, ...}
+            Dictionary containing the 'importance' score for each node in the graph
         """
         raise NotImplementedError
 
@@ -156,8 +171,34 @@ class TopKFeatureSelection(FeatureSelectionAlgorithm):
 
 class TopKPageRank(TopKFeatureSelection):
     """
-    Computes the PageRank for the new graph used by Feature Selection passed as argument. It's also possible to pass
-    the parameters that one could normally pass to the NetworkX pagerank method
+    Computes the PageRank as FeatureSelection algorithm. Property labels of the original graph will be scored with their
+    page rank score and only the top-k labels will be kept in the *feature selected graph*,
+    while discarding the others
+
+    Args:
+        k: Top-k property labels to keep in the *feature selected graph*
+
+        alpha: Damping parameter for PageRank, default=0.85.
+
+        personalization: The "personalization vector" consisting of a dictionary with a key some subset of graph nodes
+            and personalization value each of those. At least one personalization value must be non-zero.
+            If not specfiied, a nodes personalization value will be zero.
+            By default, a uniform distribution is used.
+
+        max_iter: Maximum number of iterations in power method eigenvalue solver.
+
+        tol: Error tolerance used to check convergence in power method solver.
+
+        nstart: Starting value of PageRank iteration for each node.
+
+        weight: Edge data key to use as weight.  If None weights are set to 1.
+
+        dangling: The outedges to be assigned to any "dangling" nodes, i.e., nodes without any outedges.
+            The dict key is the node the outedge points to and the dict value is the weight of that outedge.
+            By default, dangling nodes are given outedges according to the personalization vector (uniform if not
+            specified). This must be selected to result in an irreducible transition matrix
+            (see notes under google_matrix). It may be common to have the dangling dict to be the same as the
+            personalization dict.
     """
 
     def __init__(self, k: int = 10, alpha: Any = 0.85, personalization: Any = None, max_iter: Any = 100,
@@ -180,8 +221,17 @@ class TopKPageRank(TopKFeatureSelection):
 
 class TopKEigenVectorCentrality(TopKFeatureSelection):
     """
-    Computes the EigenVector Centrality for the new graph used by Feature Selection passed as argument. It's also
-    possible to pass the parameters that one could normally pass to the NetworkX eigenvector_centrality method
+    Computes the Eigen Vector Centrality as FeatureSelection algorithm. Property labels of the original graph will be
+    scored with their eigen vector centrality score and only the top-k labels will be kept in the
+    *feature selected graph*, while discarding the others
+
+    Args:
+        k: Top-k property labels to keep in the *feature selected graph*
+        max_iter: Maximum number of iterations in power method.
+        tol: Error tolerance used to check convergence in power method iteration.
+        nstart: Starting value of eigenvector iteration for each node.
+        weight: Boolean value which tells the algorithm if weight of the edges must be considered or not.
+            Default is True
     """
 
     def __init__(self, k: int = 10, max_iter: Any = 100, tol: Any = 1.0e-6, nstart: Any = None, weight: bool = False):
@@ -199,7 +249,9 @@ class TopKEigenVectorCentrality(TopKFeatureSelection):
 
 class TopKDegreeCentrality(TopKFeatureSelection):
     """
-    Computes the Degree Centrality for the new graph used by Feature Selection passed as argument.
+    Computes the Degree Centrality as FeatureSelection algorithm. Property labels of the original graph will be
+    scored with their degree centrality score and only the top-k labels will be kept in the *feature selected graph*,
+    while discarding the others
     """
 
     def __init__(self, k: int = 10):

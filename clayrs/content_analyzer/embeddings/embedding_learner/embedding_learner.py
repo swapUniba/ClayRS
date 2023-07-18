@@ -1,15 +1,18 @@
+from __future__ import annotations
 from abc import abstractmethod
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
 
 import numpy as np
 from gensim.models import KeyedVectors
 
-from clayrs.content_analyzer.embeddings.embedding_source import \
-    EmbeddingSource
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
-from clayrs.utils.const import get_progbar, logger
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
+from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 
 class EmbeddingLearner(EmbeddingSource):
@@ -63,12 +66,12 @@ class EmbeddingLearner(EmbeddingSource):
 
         super().__init__(file_path)
 
-        self.__auto_save = auto_save
-        self.__additional_parameters = kwargs
+        self._auto_save = auto_save
+        self._additional_parameters = kwargs
 
     @property
     def additional_parameters(self):
-        return self.__additional_parameters
+        return self._additional_parameters
 
     @abstractmethod
     def load_model(self):
@@ -98,7 +101,7 @@ class EmbeddingLearner(EmbeddingSource):
         logger.info("Fitting model with extracted corpus...")
         self.fit_model(corpus)
 
-        if self.__auto_save and self.reference is not None:
+        if self._auto_save and self.reference is not None:
             self.save()
 
     @abstractmethod
@@ -152,7 +155,7 @@ class EmbeddingLearner(EmbeddingSource):
 
         Returns:
             doc_data modified to fit the granularity. For example, if the technique had word granularity and doc_data
-            was "this is an example", the output would be ["this", "is", "an", "example"]
+                was "this is an example", the output would be ["this", "is", "an", "example"]
         """
         raise NotImplementedError
 

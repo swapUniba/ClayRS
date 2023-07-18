@@ -1,19 +1,18 @@
-from gensim.models import KeyedVectors
-
-from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import WordEmbeddingLoader
-
-import gensim.downloader as downloader
+from gensim import downloader
 import numpy as np
 
 from clayrs.utils.const import logger
+from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import WordEmbeddingLoader
 
 
 class Gensim(WordEmbeddingLoader):
     """
-    This class loads the embeddings using the gensim downloader API.
+    Class that produces word embeddings using gensim pre-trained models.
+
+    The model will be automatically downloaded using the gensim downloader api if not present locally.
 
     Args:
-        model_name (str): name of the embeddings model to load
+        model_name: Name of the model to load/download
     """
 
     def __init__(self, model_name: str = 'glove-twitter-25'):

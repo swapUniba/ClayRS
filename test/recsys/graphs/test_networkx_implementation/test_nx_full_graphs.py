@@ -53,6 +53,19 @@ class TestNXFullGraph(TestNXTripartiteGraph):
                                                     user_exo_properties={'local': '1'},
                                                     user_contents_dir=users_dir)
 
+        # item_exo_properties set but no item_contents_dir specified
+        self.graph_missing_item_dir_parameter = NXFullGraph(rat, item_exo_properties={'dbpedia': ['film director',
+                                                                                                  'runtime (m)']})
+
+        # item_contents_dir set but no item_exo_properties_specified specified
+        self.graph_missing_item_prop_parameter = NXFullGraph(rat, item_contents_dir=movies_dir)
+
+        # user_exo_properties set but no user_contents_dir specified
+        self.graph_missing_user_dir_parameter = NXFullGraph(rat, user_exo_properties={'local'})
+
+        # user_contents_dir set but no user_exo_properties_specified specified
+        self.graph_missing_user_prop_parameter = NXFullGraph(rat, user_contents_dir=users_dir)
+
     def test_graph_creation(self):
         # the super class test will check if every user and item have a link
         # as they are present in the ratings frame and that each item is linked to its property
@@ -73,6 +86,21 @@ class TestNXFullGraph(TestNXTripartiteGraph):
                 expected_link_data = {'label': '1'}
 
                 self.assertEqual(expected_link_data, result_link_data)
+
+    def test_graph_creation_missing_parameter(self):
+
+        # super class method will test missing parameters related to items
+        super().test_graph_creation_missing_parameter()
+
+        self.assertTrue(len(self.graph_missing_user_dir_parameter.user_nodes) != 0)
+        self.assertTrue(len(self.graph_missing_user_dir_parameter.item_nodes) != 0)
+        # warning is printed and no prop will be loaded
+        self.assertTrue(len(self.graph_missing_user_dir_parameter.property_nodes) == 0)
+
+        self.assertTrue(len(self.graph_missing_user_prop_parameter.user_nodes) != 0)
+        self.assertTrue(len(self.graph_missing_user_prop_parameter.item_nodes) != 0)
+        # warning is printed and no prop will be loaded
+        self.assertTrue(len(self.graph_missing_user_prop_parameter.property_nodes) == 0)
 
     def test_add_link_user_prop_existent(self):
         # Link existent 'user' node to an existent 'prop' node

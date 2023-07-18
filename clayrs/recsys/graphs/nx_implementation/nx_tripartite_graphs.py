@@ -1,15 +1,18 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import List, Set, Union, Dict
+from typing import List, Set, Union, Dict, TYPE_CHECKING
 
-from clayrs.content_analyzer import Ratings, Content
+from clayrs.utils.const import logger
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer import Ratings, Content
+    from clayrs.recsys.graphs.graph import Node
+
 from clayrs.recsys.content_based_algorithm.contents_loader import LoadedContentsDict
 from clayrs.recsys.graphs.nx_implementation.nx_bipartite_graphs import NXBipartiteGraph
-
-from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, Node
-import pandas as pd
-
+from clayrs.recsys.graphs.graph import TripartiteDiGraph, ItemNode, UserNode
 from clayrs.recsys.graphs.graph import PropertyNode
-from clayrs.utils.const import logger, get_progbar
+from clayrs.utils.context_managers import get_progbar
 
 
 # Multiple Inheritance so that we will use NXBipartite as its proper father class (we'll its __init__ method)
@@ -17,32 +20,77 @@ from clayrs.utils.const import logger, get_progbar
 class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
     """
     Class that implements a Tripartite graph through networkx library.
-    It supports 'user' node, 'item' and 'property' node, but the latter ones are available only for
-    are only allowed to be linked to 'item' nodes.
 
-    It creates a graph from an initial rating frame and if the 'item_contents_dir' is specified,
-    tries to add properties for every 'item' node.
-    EXAMPLE::
-            _| from_id | to_id | score|
-            _|   u1    | Tenet | 0.6  |
+    !!! info
 
-        Becomes:
-                u1 -----> Tenet
-        with the edge weighted and labelled based on the score column and on the
-        'default_score_label' parameter.
-        Then tries to load 'Tenet' from the 'item_contents_dir' if it is specified and if succeeds,
-        adds in the graph its loaded properties as specified with 'item_exo_representation' and
-        'item_exo_properties'.
+        A *Tripartite Graph* is a graph which supports *User* nodes, *Item* nodes and *Property* nodes, but the latter
+        can only be linked to *Item* nodes.
+        If you need maximum flexibility, consider using a Full Graph
+
+    It creates a graph from an initial Rating object.
+
+    Consider the following matrix representation of the Rating object
+    ```
+        +------+-----------+-------+
+        | User |   Item    | Score |
+        +------+-----------+-------+
+        | u1   | Tenet     |     4 |
+        | u2   | Inception |     5 |
+        | ...  | ...       |   ... |
+        +------+-----------+-------+
+    ```
+
+    The graph will be created with the following interactions:
+
+    ```
+                 4
+            u1 -----> Tenet
+                 5
+            u2 -----> Inception
+    ```
+
+    where `u1` and `u2` become *User nodes* and `Tenet` and `Inception` become *Item nodes*,
+    with the edge weighted depending on the score given
+
+    If the `link_label` parameter is specified, then each link between users and items will be labeled with the label
+    specified (e.g. `link_label='score'`):
+
+    ```
+            (4, 'score')
+        u1 -------------> Tenet
+            (5, 'score')
+        u2 -------------> Inception
+    ```
+
+    Then the framework tries to load 'Tenet' and 'Inception' from the `item_contents_dir` if it is specified and if
+    succeeds, adds in the graph their loaded properties as specified in the `item_exo_properties` parameter.
+
+    !!! info "Load exogenous properties"
+
+        In order to load properties in the graph, we must specify where items are serialized and ***which
+        properties to add***:
+
+        *   If *item_exo_properties* is specified as a **set**, then the graph will try to load **all properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id'}
+        ```
+
+        *   If *item_exo_properties* is specified as a **dict**, then the graph will try to load **said properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id': ['my_prop1', 'my_prop2']]}
+        ```
 
     Args:
-        source_frame (pd.DataFrame): the initial rating frame needed to create the graph
-        item_contents_dir (str): the path containing items serialized
-        item_exo_representation (str): the exogenous representation we want to extract properties from
-        item_exo_properties (list): the properties we want to extract from the exogenous representation
-        default_score_label (str): the label of the link between 'from' and 'to' nodes.
-            Default is 'score'
-        default_not_rated_value (float): the default value with which the link will be weighted
-            Default is 0.5
+        source_frame: The initial Ratings object needed to create the graph
+        item_exo_properties: Set or Dict which contains representations to load from items. Use a `Set` if you want
+            to load all properties from specific representations, or use a `Dict` if you want to choose which properties
+            to load from specific representations
+        item_contents_dir: The path containing items serialized with the Content Analyzer
+        link_label: If specified, each link will be labeled with the given label. Default is None
 
     """
 
@@ -53,45 +101,110 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
 
         NXBipartiteGraph.__init__(self, source_frame, link_label)
 
-        if source_frame is not None and item_contents_dir is not None:
-            self.add_node_with_prop([ItemNode(item_id) for item_id in set(source_frame.item_id_column)],
+        if item_exo_properties and not item_contents_dir:
+            logger.warning("`item_exo_properties` parameter set but `item_contents_dir` is None! "
+                           "No property will be loaded")
+        elif not item_exo_properties and item_contents_dir:
+            logger.warning("`item_contents_dir` parameter set but `item_exo_properties` is None! "
+                           "No property will be loaded")
+
+        if source_frame is not None and item_contents_dir is not None and item_exo_properties is not None:
+            self.add_node_with_prop([ItemNode(item_id) for item_id in source_frame.unique_item_id_column],
                                     item_exo_properties,
                                     item_contents_dir)
 
     @property
     def property_nodes(self) -> Set[PropertyNode]:
         """
-        Returns a set of all 'property' nodes in the graph
+        Returns a set of all *Property nodes* in the graph
         """
         return set(node for node in self._graph.nodes if isinstance(node, PropertyNode))
 
     def add_node(self, node: Union[Node, List[Node]]):
         """
-        Adds a 'user' node to the graph.
-        If a list is passed, then every element of the list will be added as a 'user' node
+        Adds one or multiple Node objects to the graph.
+        Since this is a Tripartite Graph, only `User Node`, `Item Node` and `Property Node` can be added!
+
+        No duplicates are allowed, but different category nodes with same id are (e.g. `ItemNode('1')` and
+        `UserNode('1')`)
 
         Args:
-            node: node(s) that needs to be added to the graph as 'user' node(s)
+            node: Node(s) object(s) that needs to be added to the graph
+
+        Raises:
+            ValueError: Exception raised when one of the node to add to the graph is not a User, Item or Property node
         """
         if not isinstance(node, list):
             node = [node]
+
+        if any(not isinstance(n, (UserNode, ItemNode, PropertyNode)) for n in node):
+            raise ValueError("You can only add UserNodes or ItemNodes to a bipartite graph!")
 
         self._graph.add_nodes_from(node)
 
     def add_node_with_prop(self, node: Union[ItemNode, List[ItemNode]], item_exo_properties: Union[Dict, set],
                            item_contents_dir: str,
                            item_filename: Union[str, List[str]] = None):
+        """
+        Adds one or multiple Node objects and its/their properties to the graph.
+        Since this is a Tripartite Graph, only `Item Node` are allowed to have properties!
 
+        In order to load properties in the graph, we must specify where items are serialized and ***which
+        properties to add***:
+
+        *   If *item_exo_properties* is specified as a **set**, then the graph will try to load **all properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id'}
+        ```
+
+        *   If *item_exo_properties* is specified as a **dict**, then the graph will try to load **said properties**
+        from **said exogenous representation**
+
+        ```python
+        {'my_exo_id': ['my_prop1', 'my_prop2']]}
+        ```
+
+        In case you want your node to have a different id from serialized contents, via the `item_filename` parameter
+        you can specify what is the filename of the node that you are adding, e.g.
+
+        ```
+        item_to_add = ItemNode('different_id')
+
+        # item_filename is 'item_serialized_1.xz'
+
+        graph.add_node_with_prop(item_to_add, ..., item_filename='item_serialized_1')
+        ```
+
+        In case you are adding a list of nodes, you can specify the filename for each node in the list.
+
+        Args:
+            node: Node(s) object(s) that needs to be added to the graph along with their properties
+            item_exo_properties: Set or Dict which contains representations to load from items. Use a `Set` if you want
+                to load all properties from specific representations, or use a `Dict` if you want to choose which
+                properties to load from specific representations
+            item_contents_dir: The path containing items serialized with the Content Analyzer
+            item_filename: Filename(s) of the node(s) to add
+
+        Raises:
+            ValueError: Exception raised when one of the node to add to the graph with their properties is not
+                an ItemNode
+        """
         def node_prop_link_generator():
             for n, id in zip(progbar, item_filename):
                 item: Content = loaded_items.get(id)
 
-                exo_props = self._get_exo_props(item_exo_properties, item)
+                if item is not None:
+                    exo_props = self._get_exo_props(item_exo_properties, item)
 
-                single_item_prop_edges = [(n,
-                                           PropertyNode(prop_dict[prop]),
-                                           {'label': prop})
-                                          for prop_dict in exo_props for prop in prop_dict]
+                    single_item_prop_edges = [(n,
+                                               PropertyNode(prop_dict[prop]),
+                                               {'label': prop})
+                                              for prop_dict in exo_props for prop in prop_dict]
+
+                else:
+                    single_item_prop_edges = []
 
                 yield from single_item_prop_edges
 
@@ -149,17 +262,28 @@ class NXTripartiteGraph(NXBipartiteGraph, TripartiteDiGraph):
     def add_link(self, start_node: Union[Node, List[Node]], final_node: Union[Node, List[Node]],
                  weight: float = None, label: str = None, timestamp: str = None):
         """
-        Creates a weighted link connecting the 'start_node' to the 'final_node'
-        Both nodes must be present in the graph before calling this method
+        Creates a link connecting the `start_node` to the `final_node`. If two lists are passed, then the node in
+        position $i$ in the `start_node` list will be linked to the node in position $i$ in the `final_node` list.
 
-        'weight' and 'label' are optional parameters, if not specified default values
-        will be used.
+        If nodes to link do not exist, they will be added automatically to the graph. Please remember that since this is
+        a Tripartite Graph, only *User nodes*, *Item nodes* and *Property nodes* can be added! And *Property nodes* can
+        only be linked to *Item nodes*!
+
+        A link can be weighted with the `weight` parameter and labeled with the `label` parameter.
+        A timestamp can also be specified via `timestamp` parameter.
+        All three are optional parameters, so they are not required
 
         Args:
-            start_node (object): starting node of the link
-            final_node (object): ending node of the link
-            weight (float): weight of the link, default is 0.5
-            label (str): label of the link, default is 'score_label'
+            start_node: Single Node object or a list of Node objects. They will be the 'head' of the link, since it's a
+                directed graph
+            final_node (object): Single Node object or a list Node objects. They will be the 'tail' of the link,
+                since it's a directed graph
+            weight: weight of the link, default is None (no weight)
+            label: label of the link, default is None (no label)
+            timestamp: timestamp of the link, default is None (no timestamp)
+
+        Raises:
+            ValueError: Exception raised when Property nodes are tried to be linked with non-Item nodes
         """
 
         def is_not_valid_link(start_n: Node, final_n: Node):

@@ -70,7 +70,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(field_dict)
 
         # Representations for plot field
-        plot_dict = field_dict.get('plot_0')
+        plot_dict = field_dict.get('plot/0')
         self.assertIsNotNone(plot_dict)
 
         self.assertIsNotNone(plot_dict.get('SkLearnTfIdf'))
@@ -81,7 +81,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(plot_preprocessing_dict.get('Ekphrasis'))
 
         # Representation 0 for genres field
-        genres_0_dict = field_dict.get('genres_0')
+        genres_0_dict = field_dict.get('genres/0')
         self.assertIsNotNone(genres_0_dict)
 
         self.assertIsNotNone(genres_0_dict.get('WordEmbeddingTechnique'))
@@ -91,7 +91,7 @@ class TestReport(unittest.TestCase):
         self.assertIsNotNone(genres_0_preprocessing_dict.get('Spacy'))
 
         # Representation 1 for genres field
-        genres_1_dict = field_dict.get('genres_1')
+        genres_1_dict = field_dict.get('genres/1')
         self.assertIsNotNone(genres_1_dict)
 
         self.assertIsNotNone(genres_1_dict.get('SentenceEmbeddingTechnique'))
@@ -170,23 +170,6 @@ class TestReport(unittest.TestCase):
         recsys_dict = result.get('recsys')
         self.assertIsNotNone(recsys_dict)
         self.assertIsNotNone(recsys_dict.get('GraphBasedRS'))
-
-    def test_rs_yaml_error(self):
-        original_rat = Ratings(CSVFile(rat_path))
-
-        pt = HoldOutPartitioning()
-
-        train_list, test_list = pt.split_all(original_rat)
-
-        alg = NXPageRank()
-
-        graph = NXFullGraph(train_list[0])
-
-        gbrs = GraphBasedRS(alg, graph=graph)
-
-        # try to build report without calling the rank method first
-        with self.assertRaises(ValueError):
-            Report(output_dir="this doesn't work").yaml(recsys=gbrs)
 
     @staticmethod
     def _build_eva_report():

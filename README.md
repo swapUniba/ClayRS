@@ -1,6 +1,14 @@
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/26851363/172485577-be6993ef-47c3-4b3c-9187-4988f6c44d94.svg" alt="ClayRS logo" style="width:75%;"/>
+</p>
+
+
 # ClayRS
 
-![Build Status](https://github.com/swapUniba/ClayRS/workflows/Testing%20pipeline/badge.svg)&nbsp;&nbsp;[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-382/)
+[![Build Status](https://github.com/swapUniba/ClayRS/actions/workflows/testing_pipeline.yml/badge.svg)](https://github.com/swapUniba/ClayRS/actions/workflows/testing_pipeline.yml)&nbsp;&nbsp;
+[![Docs](https://github.com/swapUniba/ClayRS/actions/workflows/docs_building.yml/badge.svg)](https://swapuniba.github.io/ClayRS/)&nbsp;&nbsp;
+[![codecov](https://codecov.io/gh/swapUniba/ClayRS/branch/master/graph/badge.svg?token=dftmT3QD8D)](https://codecov.io/gh/swapUniba/ClayRS)&nbsp;&nbsp;
+[![Python versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue)](https://www.python.org/downloads/)
 
 
 ***ClayRS*** is a python framework for (mainly) content-based recommender systems which allows you to perform several operations, starting from a raw representation of users and items to building and evaluating a recommender system. It also supports graph-based recommendation with feature selection algorithms and graph manipulation methods.
@@ -24,18 +32,17 @@ The ***EvalModel*** has the task of evaluating a recommender system, using sever
 
 Code examples for all three modules will follow in the *Usage* section
 
-Installation
-=============
-*ClayRS* requires Python **3.8** or later, while package dependencies are in `requirements.txt` and are all installable via `pip`, as *ClayRS* itself.
+## Installation
+*ClayRS* requires Python **3.7** or later, while package dependencies are in `requirements.txt` and are all installable
+via `pip`, as *ClayRS* itself.
 
 To install it execute the following command:
 
 ``
-pip install git+https://github.com/SwapUniba/clayrs.git
+pip install clayrs
 ``
 
-Usage
-=====
+## Usage
 
 ### Content Analyzer
 The first thing to do is to import the Content Analyzer module
@@ -44,14 +51,16 @@ The first thing to do is to import the Content Analyzer module
 import clayrs.content_analyzer as ca
 ```
 
-First let's point to the source containing raw information to process
+Then, let's point to the source containing raw information to process
 ```python
 raw_source = ca.JSONFile('items_info.json')
 ```
 
-Then let's start building the configuration for the items
+We can now start building the configuration for the items
+
 * Note that same operations that can be specified for *items*, could be also specified for *users*, via the
 `ca.UserAnalyzerConfig` class
+
 ```python
 # Configuration of item representation
 movies_ca_config = ca.ItemAnalyzerConfig(
@@ -61,38 +70,23 @@ movies_ca_config = ca.ItemAnalyzerConfig(
 )
 ```
 
-
 Let's represent the *plot* field of each content with a TfIdf representation
+
 * Since the `preprocessing` parameter has been specified, then each field is first preprocessed with the specified
 operations
 ```python
 movies_ca_config.add_single_config(
     'plot',
     ca.FieldConfig(ca.SkLearnTfIdf(),
-                   preprocessing=ca.NLTK(stopwords_removal=True, lemmatization=True),
+                   preprocessing=ca.NLTK(stopwords_removal=True,
+                                         lemmatization=True),
                    id='tfidf')  # Custom id
-)
-```
-
-Let's also represent the *description* field of each content with the embedding representation of each word by using the
-*glove-twitter-50* model of the Gensim library
-* *ClayRS* will download the model for you if it is not already present locally
-
-In this case we are performing a pipeline of *NLP* operations
-```python
-movies_ca_config.add_single_config(
-    'description',
-    ca.FieldConfig(ca.WordEmbeddingTechnique(ca.Gensim('glove-twitter-50')),
-                   preprocessing=[
-                       ca.Spacy(url_tagging=True, remove_punctuation=True),
-                       ca.Ekphrasis(corrector='english', spell_correction=True)
-                   ],
-                   id='gensim')  # Custom id
 )
 ```
 
 To finalize the Content Analyzer part, let's instantiate the `ContentAnalyzer` class by passing the built configuration
 and by calling its `fit()` method
+
 * The items will be created with the specified representations and serialized
 ```python
 ca.ContentAnalyzer(movies_ca_config).fit()
@@ -105,6 +99,7 @@ import clayrs.recsys as rs
 ```
 
 Then we load the rating frame from a TSV file
+
 * In this case in our file the first three columns are user_id, item_id, score in this order
   * If your file has a different structure you must specify how to map the column via parameters, check documentation
   for more
@@ -114,20 +109,22 @@ ratings = ca.Ratings(ca.CSVFile('ratings.tsv', separator='\t'))
 ```
 
 Let's split with the KFold technique the loaded rating frame into train set and test set
+
 * since `n_splits=2`, train_list will contain two *train_sets* and test_list will contain two *test_sets*
 ```python
 train_list, test_list = rs.KFoldPartitioning(n_splits=2).split_all(ratings)
 ```
 
 In order to recommend items to users, we must choose an algorithm to use
+
 * In this case we are using the `CentroidVector` algorithm which will work by using the first representation
-specified for the *plot* field and the representation with *glove* id specified for the *description* field
+specified for the *plot* field
 * You can freely choose which representation to use among all representation codified for the fields in the Content
 Analyzer phase
+* 
 ```python
 centroid_vec = rs.CentroidVector(
-    {'plot': 0,  # the first representation codified for 'plot' field, we didn't specified a custom id
-     'description': 'glove'},
+    {'plot': 'tfidf'},
   
     similarity=rs.CosineSimilarity()
 )
@@ -162,7 +159,8 @@ The Evaluation module needs the following parameters:
 *   List of metrics to compute
 
 Obviously the list of computed rank/predictions and list of truths must have the same length,
-and the rank/prediction in position $i$ will be compared with the truth at position $i$
+and the rank/prediction in position <img src="https://render.githubusercontent.com/render/math?math=i"> will be compared
+with the truth at position <img src="https://render.githubusercontent.com/render/math?math=i">
 
 ```python
 em = eva.EvalModel(

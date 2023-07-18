@@ -1,6 +1,7 @@
-from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource
 from abc import abstractmethod
 import numpy as np
+
+from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource
 
 
 class EmbeddingLoader(EmbeddingSource):

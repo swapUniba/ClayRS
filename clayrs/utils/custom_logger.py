@@ -24,7 +24,7 @@ class ColoredFormatter(logging.Formatter):
 
 
 formatter = ColoredFormatter(
-    "\r{color}{levelname}{reset} - {message} ({filename}:{lineno})",
+    "\r{color}{levelname}{reset} - {message}",
     style='{',
     colors={
         'DEBUG': Fore.CYAN,
@@ -36,11 +36,15 @@ formatter = ColoredFormatter(
 )
 
 
-def getCustomLogger(name: str):
+def get_custom_logger(name: str):
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
+    if len(logger.handlers) != 0:
+        logger.handlers.clear()
+
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
+    logger.propagate = False
     return logger

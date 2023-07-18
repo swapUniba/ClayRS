@@ -7,7 +7,6 @@ from clayrs.recsys import NXFullGraph
 from test import dir_test_files
 from unittest import TestCase
 
-ratings_filename = os.path.join(dir_test_files, 'new_ratings_small.csv')
 movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 users_dir = os.path.join(dir_test_files, 'complex_contents', 'users_codified/')
 
@@ -34,14 +33,27 @@ class TestGraph(TestCase):
         converted_rat = self.g.to_ratings()
 
         # check that original ratings and converted ratings are equal
-
-        self.assertEqual(set(rat.user_id_column), set(converted_rat.user_id_column))
-        self.assertEqual(set(rat.item_id_column), set(converted_rat.item_id_column))
+        self.assertEqual(set(rat.unique_user_id_column), set(converted_rat.unique_user_id_column))
+        self.assertEqual(set(rat.unique_item_id_column), set(converted_rat.unique_item_id_column))
         self.assertEqual(set(rat.score_column), set(converted_rat.score_column))
         self.assertEqual(set(rat.timestamp_column), set(converted_rat.timestamp_column))
 
+        # compare that for each user, we have same user interactions
         for user in rat.user_id_column:
             user_rat = rat.get_user_interactions(user)
             user_converted_rat = converted_rat.get_user_interactions(user)
 
             self.assertCountEqual(user_rat, user_converted_rat)
+
+        # user map set, so we expected same user map between expected and result
+        converted_rat_with_user_map = self.g.to_ratings(user_map=rat.user_map)
+        self.assertEqual(list(rat.user_map), list(converted_rat_with_user_map.user_map))
+
+        # item map set, so we expected same item map between expected and result
+        converted_rat_with_item_map = self.g.to_ratings(item_map=rat.item_map)
+        self.assertEqual(list(rat.item_map), list(converted_rat_with_item_map.item_map))
+
+        # user map and item_map set, so we expected them to be equal between expected and result
+        converted_rat_with_user_item_map = self.g.to_ratings(user_map=rat.user_map, item_map=rat.item_map)
+        self.assertEqual(list(rat.user_map), list(converted_rat_with_user_item_map.user_map))
+        self.assertEqual(list(rat.item_map), list(converted_rat_with_user_item_map.item_map))

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from nltk import Tree
 
-from clayrs.content_analyzer.information_processor.nltk import NLTK
+from clayrs.content_analyzer.information_processor.nltk_processor import NLTK
 
 
 class TestNLTK(TestCase):
@@ -16,9 +16,8 @@ class TestNLTK(TestCase):
     def test_process_stemming(self):
         # Test for only stemming
         nltka = NLTK(stemming=True)
-        expected = ["my", "name", "is", "francesco", "and", "i", "am", "a", "student", "at", "the",
-                    "univers", "of", "the", "citi", "of", "bari"]
-        result = nltka.process("My name is Francesco and I am a student at the University of the city of Bari")
+        expected = ['these', 'unbeliev', 'abnorm', 'object']
+        result = nltka.process("These unbelievable abnormous objects")
 
         self.assertEqual(expected, result)
 
@@ -42,14 +41,10 @@ class TestNLTK(TestCase):
                                "http://facebook.com hanging on their feet for best http://twitter.it")
         self.assertEqual(expected, result)
 
-    def test_entity_recognition(self):
-        nltka = NLTK(named_entity_recognition=True)
-        expected = Tree('S',
-                        [Tree('PERSON', [('Facebook', 'NNP')]), ('was', 'VBD'), ('fined', 'VBN'), ('by', 'IN'),
-                         Tree('PERSON', [('Hewlett', 'NNP'), ('Packard', 'NNP')]), ('for', 'IN'),
-                         ('spending', 'VBG'), ('100€', 'CD'), ('to', 'TO'), ('buy', 'VB'),
-                         Tree('PERSON', [('Cristiano', 'NNP'), ('Ronaldo', 'NNP')]), ('from', 'IN'),
-                         Tree('GPE', [('Juventus', 'NNP')])])
+    def test_pos_tags(self):
+        nltka = NLTK(pos_tag=True)
+        expected = ['Facebook_NNP', 'was_VBD', 'fined_VBN', 'by_IN', 'Hewlett_NNP', 'Packard_NNP', 'for_IN', 'spending_VBG',
+                    '100€_CD', 'to_TO', 'buy_VB', 'Cristiano_NNP', 'Ronaldo_NNP', 'from_IN', 'Juventus_NNP']
         result = nltka.process("Facebook was fined by Hewlett Packard for spending 100€ to buy Cristiano Ronaldo from "
                                "Juventus")
 

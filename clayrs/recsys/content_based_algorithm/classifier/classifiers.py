@@ -31,11 +31,11 @@ class Classifier(ABC):
     def fit(self, X: Union[np.ndarray, sparse.csr_matrix], Y: list = None):
         """
         Fit the classifier.
-        First the classifier is instantiated, then we transform the Training Data,
-        then the actual fitting is done.
 
         Training data (X) is in the form:
-            X = [ (merged) representation for item 1, (merged) representation for item 2, ...]
+
+            `X = [ (merged) representation for item 1, (merged) representation for item 2, ...]`
+
         where every item is a representation for an item (can be a merged one in case multiple representations
         are chosen)
 
@@ -44,8 +44,8 @@ class Classifier(ABC):
         where 0 represent a negative item, 1 represent a positive item
 
         Args:
-            X (list): list containing Training data.
-            Y (list): list containing Training targets.
+            X: list containing Training data.
+            Y: list containing Training targets.
         """
         self.classifier.fit(X, Y)
 
@@ -60,7 +60,7 @@ class Classifier(ABC):
         are chosen)
 
         Args:
-            X_pred (list): list containing data to predict.
+            X_pred: list containing data to predict.
         """
         return self.classifier.predict_proba(X_pred)
 
@@ -77,6 +77,9 @@ class SkSVC(Classifier):
     Class that implements the SVC Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the classifier SVC directly from sklearn.
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)
+
     The only parameter from sklearn that cannot be passed is the 'probability' parameter:
     it is set to True and cannot be changed
     """
@@ -116,12 +119,11 @@ class SkKNN(Classifier):
     The parameters one could pass are the same ones you would pass instantiating
     the classifier KNN directly from sklearn.
 
-    Since KNN implementation of sklearn has n_neighbors = 5 as default, it can throw an exception if less sample in
-    the training data are provided, so we change dynamically the n_neighbors parameter
-    according to the number of samples
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
 
-    Args:
-        X (list): Training data
+    Since KNN implementation of sklearn has `n_neighbors = 5` as default, it can throw an exception if less sample in
+    the training data are provided, so we change dynamically the n_neighbors parameter
+    according to the number of samples if the dataset is too small and if no manual `n_neighbors` is set
     """
 
     def __init__(self, n_neighbors: Any = 5,
@@ -155,6 +157,9 @@ class SkRandomForest(Classifier):
     Class that implements the Random Forest Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the classifier directly from sklearn
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+
     """
 
     def __init__(self, n_estimators: Any = 100,
@@ -195,6 +200,8 @@ class SkLogisticRegression(Classifier):
     Class that implements the Logistic Regression Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the classifier directly from sklearn
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
     """
 
     def __init__(self, penalty: Any = "l2",
@@ -230,6 +237,8 @@ class SkDecisionTree(Classifier):
     Class that implements the Decision Tree Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the classifier directly from sklearn
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html)
     """
 
     def __init__(self, *,
@@ -263,6 +272,8 @@ class SkGaussianProcess(Classifier):
     Class that implements the Gaussian Process Classifier from sklearn.
     The parameters one could pass are the same ones you would pass instantiating
     the classifier directly from sklearn
+
+    Sklearn documentation: [here](https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessClassifier.html)
     """
 
     def __init__(self, kernel: Any = None,

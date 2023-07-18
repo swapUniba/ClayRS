@@ -20,6 +20,19 @@ if TYPE_CHECKING:
 
 
 class Report:
+    """
+    Class which will generate a YAML report for the whole experiment (or a part of it) depending on the objects
+    passed to the `yaml()` function.
+
+    A report will be generated for each module used (`Content Analyzer`, `RecSys`, `Evaluation`).
+
+    Args:
+        output_dir: Path of the folder where reports generated will be saved
+        ca_report_filename: Filename of the Content Analyzer report
+        rs_report_filename: Filename of the Recsys report
+        eva_report_filename: Filename of the evaluation report
+
+    """
 
     def __init__(self, output_dir: str = '.',
                  ca_report_filename: str = 'ca_report',
@@ -86,10 +99,10 @@ class Report:
             # we are also matching whole nested objects as attributes, with the max recursion discussed above
             # NameObject(a1=1.0, a2=2.0, a3=NestedObject()) -> [(a1, 1.0), (a2, 2.0), (a3, NestedObject())]
             # we are matching any \w preceded by '(' (the beginning) or by a space (it's a follow up parameter)
-            # which has has follow up character the '=' and a nested object after that or anything else.
+            # which has as follow-up character the '=' and a nested object after that or anything else.
             # The last part is the bounding, the match ends when ', \w+=' is found (another parameter= or the ')' (the
             # end)
-            tuples_list_args = re.findall(r"(?<=\(|\s)(\w+)=(\w+"+balanced_parenthesis_pattern+r"|.*?)(?=,\s\w+=|\))",
+            tuples_list_args = re.findall(r"(?<=\(|\s)(\w+)=(\w+"+balanced_parenthesis_pattern+r"|.*?)(?=,\s\w+=|\)$)",
                                           repr_string)
 
             dict_args_string = dict(tuples_list_args)
@@ -139,7 +152,7 @@ class Report:
 
             for i, field_config in enumerate(field_config_list):
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = dict()
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = dict()
 
                 single_representation_dict = dict()
 
@@ -157,16 +170,16 @@ class Report:
 
                     single_representation_dict['preprocessing'][name_preprocessing] = parameter_dict_preprocessing
 
-                ca_dict['field_representations']['{}_{}'.format(field_name, str(i))] = single_representation_dict
+                ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = single_representation_dict
 
         return ca_dict
 
     def _report_rs_module(self, original_ratings: Ratings, partitioning_technique: Partitioning, recsys: RecSys):
 
-        # To provide a yaml report for recsys object, a rank or predict method must be called first
-        if recsys is not None and recsys._yaml_report is None:
-            raise ValueError("You must first call with the rank() or predict() method of the recsys object "
-                             "before computing the report!")
+        # # To provide a yaml report for recsys object, a rank or predict method must be called first
+        # if recsys is not None and recsys._yaml_report is None:
+        #     raise ValueError("You must first call with the rank() or predict() method of the recsys object "
+        #                      "before computing the report!")
 
         rs_dict = dict()
 
@@ -207,6 +220,7 @@ class Report:
 
             parameters_recsys_dict['algorithm'] = {name_alg: parameters_alg}
 
+            # _yaml_report is empty if no rank or pred method is called first
             for key, val in recsys._yaml_report.items():
 
                 val = val if isinstance(val, str) else repr(val)
@@ -255,13 +269,73 @@ class Report:
              partitioning_technique: Partitioning = None,
              recsys: RecSys = None,
              eval_model: EvalModel = None):
+        """
+        Main module responsible of generating the `YAML` reports based on the objects passed to this function:
+
+        * If `content_analyzer` is set, then the report for the Content Analyzer will be produced
+        * If one between `original_ratings`, `partitioning_technique`, `recsys` is set, then the report for the recsys
+        module will be produced.
+        * If `eval_model` is set, then the report for the evaluation module will be produced
+
+        **PLEASE NOTE**: by setting the `recsys` parameter, the last experiment conducted will be documented! If no
+        experiment is conducted in the current run, then a `ValueError` exception is raised!
+
+        * Same goes for the `eval_model`
+
+        Examples:
+
+            * Generate a report for the Content Analyzer module
+            >>> from clayrs import content_analyzer as ca
+            >>> from clayrs import utils as ut
+            >>> # movies_ca_config = ...  # user defined configuration
+            >>> content_a = ca.ContentAnalyzer(movies_config)
+            >>> content_a.fit()  # generate and serialize contents
+            >>> ut.Report().yaml(content_analyzer=content_a)  # generate yaml
+
+            * Generate a partial report for the RecSys module
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
+            >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))
+            >>> pt = rs.HoldOutPartitioning()
+            >>> [train], [test] = pt.split_all(ratings)
+            >>> ut.Report().yaml(original_ratings=ratings, partitioning_technique=pt)
+
+            * Generate a full report for the RecSys module and evaluation module
+            >>> from clayrs import utils as ut
+            >>> from clayrs import recsys as rs
+            >>> from clayrs import evaluation as eva
+            >>>
+            >>> # Generate recommendations
+            >>> ratings = ca.Ratings(ca.CSVFile(ratings_path))
+            >>> pt = rs.HoldOutPartitioning()
+            >>> [train], [test] = pt.split_all(ratings)
+            >>> alg = rs.CentroidVector()
+            >>> cbrs = rs.ContentBasedRS(alg, train_set=train, items_directory=items_path)
+            >>> rank = cbrs.fit_rank(test, n_recs=10)
+            >>>
+            >>> # Evaluate recommendations and generate report
+            >>> em = eva.EvalModel([rank], [test], metric_list=[eva.Precision(), eva.Recall()])
+            >>> ut.Report().yaml(original_ratings=ratings,
+            >>>                  partitioning_technique=pt,
+            >>>                  recsys=cbrs,
+            >>>                  eval_model=em)
+
+        Args:
+            content_analyzer: `ContentAnalyzer` object used to generate complex representation in the experiment
+            original_ratings: `Ratings` object representing the original dataset
+            partitioning_technique: `Partitioning` object used to split the original dataset
+            recsys: `RecSys` object used to produce recommendations/score predictions. Please note that the latest
+                experiment run will be documented. If no experiment is run, then an exception is thrown
+            eval_model: `EvalModel` object used to evaluate predictions generated. Please note that the latest
+                evaluation run will be documented. If no evaluation is run, then an exception is thrown
+        """
 
         def represent_none(self, _):
             return self.represent_scalar('tag:yaml.org,2002:null', 'null')
 
         def dump_yaml(output_dir, data):
             with open(output_dir, 'w') as yaml_file:
-                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True)
+                pyaml.dump(data, yaml_file, sort_dicts=False, safe=True,)
 
         # None values will be represented as 'null' in yaml file.
         # without this, they will simply be represented as an empty string

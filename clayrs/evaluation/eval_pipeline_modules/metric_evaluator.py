@@ -1,11 +1,13 @@
-from typing import List, Tuple, Union
-
-from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
-from clayrs.recsys.partitioning import Split
-from clayrs.evaluation.metrics.metrics import Metric
-from clayrs.utils.const import get_progbar
+from __future__ import annotations
+from typing import List, Tuple, Union, TYPE_CHECKING
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.ratings_manager.ratings import Prediction, Rank, Ratings
+    from clayrs.evaluation.metrics.metrics import Metric
+
+from clayrs.utils.context_managers import get_progbar
 
 
 class MetricEvaluator:
@@ -58,8 +60,9 @@ class MetricEvaluator:
             metric_list (List[Metric]): List of metric on which recommendations need to be evaluated
 
         Returns:
-            Two pandas DataFrame, the first will contain the system result for every metric specified inside the metric
-            list, the second one will contain every user results for every metric eligible
+            The first DataFrame will contain the system result for every metric specified inside the metric list,
+
+            The second DataFrame will contain every user results for every metric eligible
         """
 
         frames_to_concat_users = []
@@ -74,9 +77,18 @@ class MetricEvaluator:
 
                 for pred, truth in zip(self._pred_list, self._truth_list):
                     if len(pred) != 0 and len(truth) != 0:
-                        user_id_valid = set(pred.user_id_column)
-                        # Remove from truth users of which we do not have predictions
-                        truth = truth.filter_ratings(user_id_valid)
+
+                        # users can be different between predictions and truth, we only consider those
+                        # who are in both
+                        common_user_ids = list(
+                            set(pred.unique_user_id_column).intersection(set(truth.unique_user_id_column))
+                        )
+
+                        prediction_user_idxs = pred.user_map.convert_seq_str2int(common_user_ids)
+                        truth_user_idxs = truth.user_map.convert_seq_str2int(common_user_ids)
+
+                        pred = pred.filter_ratings(prediction_user_idxs)
+                        truth = truth.filter_ratings(truth_user_idxs)
 
                         metric_result = metric.perform(Split(pred, truth))
 
@@ -89,6 +101,13 @@ class MetricEvaluator:
                 if not total_results_metric.empty:
                     total_results_metric = total_results_metric.set_index('user_id')
                     system_results = total_results_metric.loc[['sys']]
+
+                    # this means that if a system result is nan, it won't be present in the final df.
+                    # Maybe there's a better solution?
+                    # (This removal is done in case metric for users and system have different name eg. AP for users and
+                    # MAP for sys)
+                    system_results = system_results.dropna(axis='columns', how='all')
+
                     each_user_result = total_results_metric.drop(['sys'])
                     each_user_result = each_user_result.dropna(axis=1, how='all')
 
@@ -120,3 +139,53 @@ class MetricEvaluator:
             final_result_system.loc['sys - mean'] = system_means
 
         return final_result_system, final_result_users
+
+
+class Split:
+    """
+    Class container for two pandas DataFrame
+
+    It may represent a split containing 'train set' and 'test set', or a split containing a ground truth and predictions
+    for it, etc.
+
+    Once instantiated, one can access the two dataframes in different ways:
+
+    | > sp = Split()
+    | > # Various ways of accessing the FIRST DataFrame
+    | > sp.train
+    | > sp.pred
+    | > sp.first
+    | >
+    | > # Various ways of accessing the SECOND DataFrame
+    | > sp.test
+    | > sp.truth
+    | > sp.second
+
+    Args:
+        first_set (pd.DatFrame): the first DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id', and 'score' column will be instantiated
+        second_set (pd.DataFrame): the second DataFrame to contain. If not specified, an empty DataFrame with 'from_id',
+            'to_id' and 'score' column will be instantiated
+    """
+
+    def __init__(self,
+                 first_set: Ratings,
+                 second_set: Ratings):
+
+        self.__dict__['first'] = first_set
+        self.__dict__['second'] = second_set
+
+        self.__dict__['_valid_first_name'] = ['train', 'pred', 'first']
+        self.__dict__['_valid_second_name'] = ['test', 'truth', 'second']
+
+    def __getattr__(self, name):
+        if name in self._valid_first_name:
+            return self.first
+        elif name in self._valid_second_name:
+            return self.second
+
+    def __setattr__(self, name, value):
+        if name in self._valid_first_name:
+            super().__setattr__('first', value)
+        elif name in self._valid_second_name:
+            super().__setattr__('second', value)

@@ -1,23 +1,29 @@
+from __future__ import annotations
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from typing import List, Union, Mapping, Iterable, Callable
+from typing import List, Union, Mapping, Iterable, Callable, TYPE_CHECKING
 
-from clayrs.content_analyzer.field_content_production_techniques.\
-    field_content_production_technique import TfIdfTechnique
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+
+from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique \
+    import TfIdfTechnique
 from clayrs.content_analyzer.memory_interfaces.text_interface import KeywordIndex
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, check_not_tokenized
 from clayrs.utils.const import logger
 
 
 class SkLearnTfIdf(TfIdfTechnique):
     """
-    Class that computes tf-idf using SkLearn
+    Class that produces a sparse vector for each content representing the tf-idf scores of its terms using SkLearn.
+
+    Please refer to [its documentation](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
+    for more information about how it's computed
 
     Args:
-        max_df : float or int, default=1.0
+        max_df:
             When building the vocabulary ignore terms that have a document
             frequency strictly higher than the given threshold (corpus-specific
             stop words).
@@ -25,7 +31,7 @@ class SkLearnTfIdf(TfIdfTechnique):
             documents, integer absolute counts.
             This parameter is ignored if vocabulary is not None.
 
-        min_df : float or int, default=1
+        min_df:
             When building the vocabulary ignore terms that have a document
             frequency strictly lower than the given threshold. This value is also
             called cut-off in the literature.
@@ -33,26 +39,26 @@ class SkLearnTfIdf(TfIdfTechnique):
             of documents, integer absolute counts.
             This parameter is ignored if vocabulary is not None.
 
-        max_features : int, default=None
+        max_features:
             If not None, build a vocabulary that only consider the top
             max_features ordered by term frequency across the corpus.
 
             This parameter is ignored if vocabulary is not None.
 
-        vocabulary : Mapping or iterable, default=None
+        vocabulary:
             Either a Mapping (e.g., a dict) where keys are terms and values are
             indices in the feature matrix, or an iterable over terms. If not
             given, a vocabulary is determined from the input documents.
 
-        binary : bool, default=False
+        binary:
             If True, all non-zero term counts are set to 1. This does not mean
             outputs will have only 0/1 values, only that the tf term in tf-idf
             is binary. (Set idf and normalization to False to get 0/1 outputs).
 
-        dtype : Callable, default=float64
+        dtype:
             Precision of the tf-idf scores
 
-        norm : {'l1', 'l2'}, default='l2'
+        norm:
             Each output row will have unit norm, either:
 
             - 'l2': Sum of squares of vector elements is 1. The cosine
@@ -61,15 +67,15 @@ class SkLearnTfIdf(TfIdfTechnique):
             - 'l1': Sum of absolute values of vector elements is 1.
               See :func:`preprocessing.normalize`.
 
-        use_idf : bool, default=True
+        use_idf:
             Enable inverse-document-frequency reweighting. If False, idf(t) = 1.
 
-        smooth_idf : bool, default=True
+        smooth_idf:
             Smooth idf weights by adding one to document frequencies, as if an
             extra document was seen containing every term in the collection
             exactly once. Prevents zero divisions.
 
-        sublinear_tf : bool, default=False
+        sublinear_tf:
             Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
     """
     def __init__(self, max_df: Union[float, int] = 1.0, min_df: Union[float, int] = 1, max_features: int = None,
@@ -84,10 +90,10 @@ class SkLearnTfIdf(TfIdfTechnique):
 
     def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
                          preprocessor_list: List[InformationProcessor]) -> int:
-        """
-        Creates a corpus structure, a list of string where each string is a document.
-        Then calls TfIdfVectorizer on this collection, obtaining term-document tf-idf matrix, the corpus is then deleted
-        """
+        # Creates a corpus structure, a list of string where each string is a document.
+        # Then calls TfIdfVectorizer on this collection, obtaining term-document tf-idf matrix,
+        # the corpus is then deleted
+
         corpus = []
         logger.info(f"Computing tf-idf with {str(self)}")
         for raw_content in information_source:
@@ -113,8 +119,15 @@ class SkLearnTfIdf(TfIdfTechnique):
 
 
 class WhooshTfIdf(TfIdfTechnique):
-    """
-    Class that produces a Bag of words with tf-idf metric using Whoosh
+    r"""
+    Class that produces a sparse vector for each content representing the tf-idf scores of its terms using Whoosh
+
+    The tf-idf computation formula is:
+
+    $$
+    tf \mbox{-} idf = (1 + log10(tf)) * log10(idf)
+    $$
+
     """
 
     def __init__(self):
@@ -122,9 +135,8 @@ class WhooshTfIdf(TfIdfTechnique):
 
     def dataset_refactor(self, information_source: RawInformationSource, field_name: str,
                          preprocessor_list: List[InformationProcessor]):
-        """
-        Saves the processed data in a index that will be used for frequency calculation
-        """
+        # Saves the processed data in a index that will be used for frequency calculation
+
         logger.info(f"Computing tf-idf with {str(self)}")
         index = KeywordIndex(f'./tf_idf_{field_name}')
         index.init_writing(True)

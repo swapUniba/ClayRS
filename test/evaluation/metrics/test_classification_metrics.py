@@ -6,7 +6,7 @@ import numpy as np
 from clayrs.content_analyzer import Ratings
 from clayrs.evaluation.metrics.classification_metrics import Precision, Recall, FMeasure, PrecisionAtK, \
     RPrecision, RecallAtK, FMeasureAtK
-from clayrs.recsys.partitioning import Split
+from clayrs.evaluation.eval_pipeline_modules.metric_evaluator import Split
 
 pred_only_new_items = pd.DataFrame(
     {'user_id': ['u1', 'u1', 'u2', 'u2'],
@@ -78,6 +78,31 @@ class TestClassificationMetric(TestCase):
         with self.assertRaises(ValueError):
             metric.perform(split_no_rel)
 
+    def test_exception_different_users(self):
+
+        # test case in which user appears in prediction set but not in truth
+        pred_all_users = pred_w_new_items
+
+        truth_missing_u2 = pd.DataFrame(
+            {'user_id': ['u1', 'u1', 'u1', 'u1', 'u1'],
+             'item_id': ['i1', 'i2', 'i3', 'i4', 'i6'],
+             'score': [3, 2, 3, 1, 2]})
+        truth_missing_u2 = Ratings.from_dataframe(truth_missing_u2)
+
+        with self.assertRaises(ValueError):
+            Precision(relevant_threshold=2).perform(Split(pred_all_users, truth_missing_u2))
+
+        # test case in which user appears in truth but not in prediction set
+        pred_missing_u1 = pd.DataFrame(
+            {'user_id': ['u2', 'u2', 'u2', 'u2'],
+             'item_id': ['i4', 'i6', 'i1', 'i8'],
+             'score': [350, 200, 100, 50]})
+        pred_missing_u1 = Ratings.from_dataframe(pred_missing_u1)
+
+        truth_all_users = truth
+
+        with self.assertRaises(ValueError):
+            Precision(relevant_threshold=2).perform(Split(pred_missing_u1, truth_all_users))
 
 class TestPrecision(TestCase):
 

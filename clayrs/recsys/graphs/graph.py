@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import List, Set, Union, Iterable, Dict
 
-from clayrs.content_analyzer.ratings_manager.ratings import Interaction, Ratings
 from clayrs.recsys.graphs.graph_metrics import GraphMetrics
+from clayrs.content_analyzer.ratings_manager.ratings import Ratings
 
 
 class Node(ABC):
@@ -241,17 +241,16 @@ class BipartiteDiGraph(Graph, GraphMetrics):
         raise NotImplementedError
 
     # will only contain users and items
-    def to_ratings(self):
+    def to_ratings(self, user_map=None, item_map=None):
 
         node_list = list(self.user_nodes)
 
-        interaction_list = [Interaction(node.value, succ.value,
-                                        float(self.get_link_data(node, succ).get('weight')))
+        interaction_list = [(node.value, succ.value, float(self.get_link_data(node, succ).get('weight')))
                             for node in node_list
                             for succ in self.get_successors(node)
                             if isinstance(succ, ItemNode) and self.get_link_data(node, succ).get('weight')]
 
-        return Ratings.from_list(interaction_list)
+        return Ratings.from_list(interaction_list, user_map=user_map, item_map=item_map)
 
 
 class TripartiteDiGraph(BipartiteDiGraph):

@@ -1,89 +1,110 @@
+from __future__ import annotations
 import abc
 import re
 from abc import ABC
-from typing import List, Dict, Union, Iterator
+from typing import List, Dict, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
+        FieldContentProductionTechnique
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
+    from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
 
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
-    FieldContentProductionTechnique, OriginalData
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
-from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    OriginalData
 
 
 class FieldConfig:
     """
     Class that represents the configuration for a single representation of a field. The configuration of a single
-    representation is defined by a FieldContentProductionTechnique that will be applied to the pre-processed data
-    of said field (EmbeddingTechnique, for example), a list of InformationProcessor that will pre-process the data
-    in the field (NLTK, for example), an id which can be used by the user to refer to a particular representation
-    (by doing so the user can freely refer to a representation for a field of a content by using the id).
-    There is also a memory_interface attribute which allows to define a data structure where the contents can be
-    serialized. If None, the output of the field content production technique in the config will be serialized in the
-    content itself, otherwise it will be serialized in a InformationInterface.
+    representation is defined by a `FieldContentProductionTechnique` (e.g. an `EmbeddingTechnique`) that will be applied
+    to the pre-processed data of said field.
+
+    To specify how to preprocess data, simply specify an `InformationProcessor` in the `preprocessing` parameter.
+    Multiple `InformationProcessor` can be wrapped in a list: in this case, the field will be preprocessed by performing
+    operations all objects inside the list.
     If preprocessing is not defined, no preprocessing operations will be done on the field data.
-    If id is not defined, a default id will be assigned to the field representation related to this config once it is
-    being processed by the ContentAnalyzer.
-    Various configurations are possible depending on the type of field the user wants to create.
 
-    EXAMPLE:
-        FieldConfig(SkLearnTfIdf(), NLTK(), id='field_example')
+    You can use the `id` parameter to assign a custom id for the representation: by doing so the user can freely refer
+    to it by using the custom id given, rather than positional integers (which are given automatically by the
+    framework).
 
-        this will produce a field representation using the SkLearnTfIdf technique on the field data,
-        preprocessed by NLTK, and the name of the produced representation will be 'field_example'
+    There is also a memory_interface attribute which allows to define a data structure where the representation will
+    be serialized (e.g. an Index).
 
-        FieldConfig(SkLearnTfIdf(), NLTK())
+    Various configurations are possible depending on how the user wants to represent a particular field:
 
-        this will produce the same result as above but the id for the field representation defined by this config will
-        be set by the ContentAnalyzer once it is being processed
+    * This will produce a field representation using the SkLearnTfIdf technique on the field data
+      preprocessed by NLTK by performing stopwords removal, and the name of the produced representation will be
+      'field_example'
 
-        FieldConfig(SkLearnTfIdf(), memory_interface=SearchIndex(/somedir))
+    ```python
+    FieldConfig(SkLearnTfIdf(), NLTK(stopwords_removal=True), id='field_example')
+    ```
 
-        this will produce a field representation using the SkLearnTfIdf technique on the field data, but it will not be
-        directly stored in the content, instead it will be stored in a index
+    * This will produce the same result as above but the id for the field representation defined by this config will
+      be set by the ContentAnalyzer once it is being processed (0 integer if it's the first representation specified
+      for the field, 1 if it's the second, etc.)
 
-        FieldConfig(SkLearnTfIdf())
+    ```python
+    FieldConfig(SkLearnTfIdf(), NLTK())
+    ```
 
-        this time no preprocessing operations will be applied to the field data, only the complex representation will
-        be applied
+    * This will produce a field representation using the SkLearnTfIdf technique on the field data without applying
+      any preprocessing operation, but it will not be directly stored in the content, instead it will be
+      stored in a index
 
-        FieldConfig()
+    ```python
+    FieldConfig(SkLearnTfIdf(), memory_interface=SearchIndex(/somedir))
+    ```
 
-        nothing will be done on the field. The ContentAnalyzer will just decode the data without applying anything else
+    * In the following nothing will be done on the field data, it will be represented as is
+
+    ```python
+    FieldConfig()
+    ```
 
     Args:
-        content_technique (FieldContentProductionTechnique): technique that will be applied to the field in order to
-            produce a complex representation of said field
-        preprocessing (Union[InformationProcessor, List[InformationProcessor]): list (or single value) of
-            InformationProcessor that will be used to modify the data in the field that will be used
-            by the content_technique
-        memory_interface (InformationInterface): complex structure where the contents can be serialized (an Index for
+        content_technique: Technique that will be applied to the field in order to produce a complex representation
+            of said field
+        preprocessing: Single `InformationProcessor` object or a list of `InformationProcessor` objects that will be
+            used preprocess field data before applying the `content_technique`
+        memory_interface: complex structure where the content representation can be serialized (an Index for
             example)
-        id (str): id to store for the config, this can be used later by the user to refer to the representation
-            generated by this config. (the content analyzer main will handle cases where a list of FieldConfigs for a
-            field has non unique ids)
-        lang (str): string code that represents the language the preprocessors will be set to
+        id: Custom id that can be used later by the user to easily refer to the representation generated by this config.
+            IDs for a single field should be unique! And should only contain '_', '-' and alphanumeric characters
     """
 
     def __init__(self,
                  content_technique: FieldContentProductionTechnique = OriginalData(),
                  preprocessing: Union[InformationProcessor, List[InformationProcessor]] = None,
+                 postprocessing: Union[VisualPostProcessor, List[VisualPostProcessor]] = None,
                  memory_interface: InformationInterface = None,
                  id: str = None):
 
         if preprocessing is None:
             preprocessing = []
 
+        if postprocessing is None:
+            postprocessing = []
+
         if id is not None:
             self._check_custom_id(id)
 
         self.__content_technique = content_technique
         self.__preprocessing = preprocessing
+        self.__postprocessing = postprocessing
         self.__memory_interface = memory_interface
         self.__id = id
 
         if not isinstance(self.__preprocessing, list):
             self.__preprocessing = [self.__preprocessing]
+
+        if not isinstance(self.__postprocessing, list):
+            self.__postprocessing = [self.__postprocessing]
 
     @property
     def memory_interface(self):
@@ -107,6 +128,13 @@ class FieldConfig:
         return self.__preprocessing
 
     @property
+    def postprocessing(self):
+        """
+        Getter for the list of postprocessor of the field config
+        """
+        return self.__postprocessing
+
+    @property
     def id(self):
         """
         Getter for the id of the field config
@@ -128,32 +156,35 @@ class FieldConfig:
 
 class ExogenousConfig:
     """
-    Class that represents the configuration for a single exogenous representation. The config allows the user to
-    specify an exogenous properties retrieval technique to use (that will be used to retrieve the data that will
-    be stored in the content exogenous dictionary) and an id for the configuration (that can be used by the user
-    to refer to the representation that the config will generate).
-    It's possible to avoid assigning an id to the Config, in that case the content_analyzer_main will just
-    automatically assign a default id to the exogenous representation the config will generate (default ids are
-    '0', '1', and so on).
+    Class that represents the configuration for a single exogenous representation.
 
-    EXAMPLE:
-        ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'), 'test')
+    The config allows the user to specify an `ExogenousPropertiesRetrieval` technique to use to expand each content.
+    W.r.t `FieldConfig` objects, an `ExogenousConfig` does not refer to a particular field but to the whole content
+    itself.
 
-        will create an exogenous_representation for the content bu retrieving the data regarding it from DBPedia,
-        said representation will be named 'test' in the content's exogenous dictionary
+    You can use the `id` parameter to assign a custom id for the representation: by doing so the user can freely refer
+    to it by using the custom id given, rather than positional integers (which are given automatically by the
+    framework).
 
-        ExogenousConfig(DBPediaMappingTechnique('Film', 'EN', 'Title'))
+    * This will create an exogenous representation for the content by expanding it using DBPedia,
+    said representation will be named 'test'
+    ```python
+    ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title', 'EN'), id='test')
+    ```
 
-        same as the example above, but, once in the content analyzer main, the representation generated by the
-        exogenous technique will be assigned a default name
+    * Same as the example above, but since no custom id was assigned, the exogenous representation can be referred to
+    only with an integer (0 if it's the first exogenous representation specified for the contents, 1 if it's the second,
+    etc.)
+
+    ```python
+    ExogenousConfig(DBPediaMappingTechnique('dbo:Film', 'Title', 'EN'))
+    ```
 
     Args:
-        exogenous_technique (ExogenousPropertiesRetrieval): technique to use in order to retrieve exogenous data
-            regarding the content to store inside of it. An example would be the DBPediaMappingTechnique which allows
-            to retrieve properties from DBPedia regarding the item.
-        id (str): id to store for the config, this can be used later by the user to refer to the representation
-            generated by this config. (the content_analyzer_main will handle cases where a list of ExogenousConfigs
-            has non unique ids)
+        exogenous_technique: Technique which will be used to expand each content with data from external sources.
+            An example would be the DBPediaMappingTechnique which allows to retrieve properties from DBPedia.
+        id: Custom id that can be used later by the user to easily refer to the representation generated by this config.
+            IDs for a single field should be unique! And should only contain '_', '-' and alphanumeric characters
     """
 
     def __init__(self, exogenous_technique: ExogenousPropertiesRetrieval, id: str = None):
@@ -192,26 +223,26 @@ class ExogenousConfig:
 
 class ContentAnalyzerConfig(ABC):
     """
-    Class that represents the configuration for the content analyzer. The configuration stores the data that
-    will be used by the content analyzer main to create contents and process their fields with complex techniques
+    Abstract class that represents the configuration for the content analyzer. The configuration specifies how the
+    `Content Analyzer` needs to complexly represent contents, i.e. how to preprocess them and how to represent them
 
     Args:
-        source (RawInformationSource): raw data source to iterate over for extracting the original contents
-        id (Union[str, List[str]]): list of the fields names containing the content's id,
-            it's a list instead of single value for handling complex ids composed of multiple fields
-        output_directory (str): path of the results serialized content instance
-        field_dict (Dict<str, FieldConfig>): stores the config for each field_name the user wants to apply said
-            configurations on
-        exogenous_representation_list: list of techniques that are used to retrieve exogenous properties that represent
-            the contents
+        source: Raw data source wrapper which contains original information about contents to process
+        id: Field of the raw source which represents each content uniquely.
+        output_directory: Where contents complexly represented will be serialized
+        field_dict: Dictionary object which contains, for each field of the raw source to process, a FieldConfig object
+            (e.g. `{'plot': FieldConfig(SkLearnTfIdf(), 'genres': FieldConfig(WhooshTfIdf()))}`)
+        exogenous_representation_list: List of `ExogenousTechnique` objects that will be used to expand each contents
+            with data from external sources
+        export_json: If set to True, contents complexly represented will be serialized in a human readable JSON, other
+            than in a proprietary format of the framework
     """
 
     def __init__(self, source: RawInformationSource,
                  id: Union[str, List[str]],
                  output_directory: str,
                  field_dict: Dict[str, List[FieldConfig]] = None,
-                 exogenous_representation_list:
-                 Union[ExogenousConfig, List[ExogenousConfig]] = None,
+                 exogenous_representation_list: Union[ExogenousConfig, List[ExogenousConfig]] = None,
                  export_json: bool = False):
         if field_dict is None:
             field_dict = {}
@@ -261,36 +292,46 @@ class ContentAnalyzerConfig(ABC):
 
     @property
     def export_json(self) -> bool:
+        """
+        Getter for the export_json parameter
+        """
         return self.__export_json
 
     def get_configs_list(self, field_name: str) -> List[FieldConfig]:
         """
-        Getter the list of the field configs specified for the input field
+        Method which returns the list of all `FieldConfig` objects specified for the input `field_name` parameter
 
         Args:
-            field_name (str): name of the field for which the list of field configs will be retrieved
+            field_name: Name of the field for which the list of field configs will be retrieved
 
         Returns:
-            List[FieldConfig]: list containing the field configs specified for the input field
+            List containing all `FieldConfig` objects specified for the input `field_name`
         """
         return [config for config in self.__field_dict[field_name]]
 
     def get_field_name_list(self) -> List[str]:
         """
-        Get the list of the field names
+        Method which returns a list containing all the fields of the raw source for which at least one `FieldConfig`
+        object has been assigned (i.e. at least one complex representations is specified)
 
         Returns:
-            List<str>: list of the field names in the field_dict
+            List of all the fields of the raw source that must be complexly represented
         """
         return list(self.__field_dict.keys())
 
     def add_single_config(self, field_name: str, field_config: FieldConfig):
         """
-        Adds a single FieldConfig passed as argument to the FieldConfigs list of the defined field_name.
+        Method which adds a single complex representation for the `field_name` of the raw source
+
+        Examples:
+
+            * Represent field "Plot" of the raw source with a tf-idf technique using sklearn
+            >>> import clayrs.content_analyzer as ca
+            >>> movies_ca_config.add_single_config("Plot", FieldConfig(ca.SkLearnTfIdf()))
 
         Args:
-            field_name (str): field name for which the FieldConfig will be added to its config list in the field_dict
-            field_config (FieldConfig): FieldConfig instance to append to the config list of the defined field
+            field_name: field name of the raw source which must be complexly represented
+            field_config: `FieldConfig` specifying how to represent the field of the raw source
         """
         # If the field_name is not in the field_dict keys it means there is no list to append the FieldConfig to,
         # so a new list is instantiated
@@ -302,13 +343,22 @@ class ContentAnalyzerConfig(ABC):
 
     def add_multiple_config(self, field_name: str, config_list: List[FieldConfig]):
         """
-        Adds multiple FieldConfig for a specific field
+        Method which adds multiple complex representations for the `field_name` of the raw source
 
-        Useful when multiple representations must be specified at once for a field
+        Examples:
+
+            * Represent preprocessed field "Plot" of the raw source with a tf-idf technique using sklearn and a word
+            embedding technique using Word2Vec. For the latter, no preprocessing operation will be applied
+            >>> import clayrs.content_analyzer as ca
+            >>> movies_ca_config.add_multiple_config("Plot",
+            >>>                                       [FieldConfig(ca.SkLearnTfIdf(),
+            >>>                                                    preprocessing=ca.NLTK(stopwords_removal=True)),
+            >>>
+            >>>                                        FieldConfig(ca.WordEmbeddingTechnique(ca.GensimWord2Vec()))]
 
         Args:
-            field_name (str): field_name for which the configuration list will be set in the field_dict
-            config_list (List[FieldConfig]): list of FieldConfigs that will be added for a specific field_name
+            field_name: field name of the raw source which must be complexly represented
+            config_list: List of `FieldConfig` objects specifying how to represent the field of the raw source
         """
         # If the field_name is not in the field_dict keys it means there is no list to append the FieldConfig to,
         # so a new list is instantiated
@@ -320,21 +370,45 @@ class ContentAnalyzerConfig(ABC):
 
     def add_single_exogenous(self, exogenous_config: ExogenousConfig):
         """
-        Add the Exogenous Config passed as argument to the exogenous representation list.
+        Method which adds a single exogenous representation which will be used to expand each content
+
+        Examples:
+
+            * Expand each content by using DBPedia as external source
+            >>> import clayrs.content_analyzer as ca
+            >>> movies_ca_config.add_single_exogenous(
+            >>>     ca.ExogenousConfig(
+            >>>         ca.DBPediaMappingTechnique('dbo:Film', 'Title', 'EN')
+            >>>     )
+            >>> )
 
         Args:
-            exogenous_config (ExogenousConfig): exogenous config instance to append to the exogenous_representation_list
+            exogenous_config: `ExogenousConfig` object specifying how to expand each content
         """
         self.__exogenous_representation_list.append(exogenous_config)
 
     def add_multiple_exogenous(self, config_list: List[ExogenousConfig]):
         """
-        Adds multiple Exogenous Config passed as argument to the exogenous representation list.
+        Method which adds multiple exogenous representations which will be used to expand each content
 
-        Useful when multiple exogenous techniques must be specified at once
+        Examples:
+
+            * Expand each content by using DBPedia as external source and local dataset as external source
+            >>> import clayrs.content_analyzer as ca
+            >>> movies_ca_config.add_single_exogenous(
+            >>>     [
+            >>>         ca.ExogenousConfig(
+            >>>             ca.DBPediaMappingTechnique('dbo:Film', 'Title', 'EN')
+            >>>         ),
+            >>>
+            >>>         ca.ExogenousConfig(
+            >>>             ca.PropertiesFromDataset(field_name_list=['director'])
+            >>>         ),
+            >>>     ]
+            >>> )
 
         Args:
-            config_list (List[ExogenousConfig]): List of ExogenousConfig that will used to expand the Content
+            config_list: List containing `ExogenousConfig` objects specifying how to expand each content
         """
         self.__exogenous_representation_list.extend(config_list)
 
@@ -349,9 +423,20 @@ class ContentAnalyzerConfig(ABC):
 
 class UserAnalyzerConfig(ContentAnalyzerConfig):
     """
-        Class that represents the configuration for the content analyzer. The configuration stores the data that
-        will be used by the content analyzer main to create contents and process their fields with complex techniques.
-        In particular this class refers to users as the content.
+    Class that represents the configuration for the content analyzer. The configuration specifies how the
+    `Content Analyzer` needs to complexly represent contents, i.e. how to preprocess them and how to represent them
+    In particular this class refers to *users*.
+
+    Examples:
+
+        >>> import clayrs.content_analyzer as ca
+        >>> raw_source = ca.JSONFile(json_path)
+        >>> users_config = ca.UserAnalyzerConfig(raw_source, id='user_id', output_directory='users_codified/')
+        >>> # add single field config
+        >>> users_config.add_single_config('occupation', FieldConfig(content_technique=ca.OriginalData()))
+        >>> # add single exogenous technique
+        >>> users_config.add_single_exogenous(ca.ExogenousConfig(ca.PropertiesFromDataset(field_name_list=['gender']))
+
     """
     def __str__(self):
         return str(self.__id)
@@ -365,10 +450,21 @@ class UserAnalyzerConfig(ContentAnalyzerConfig):
 
 class ItemAnalyzerConfig(ContentAnalyzerConfig):
     """
-        Class that represents the configuration for the content analyzer. The configuration stores the data that
-        will be used by the content analyzer main to create contents and process their fields with complex techniques.
-        In particular this class refers to items as the content.
+    Class that represents the configuration for the content analyzer. The configuration specifies how the
+    `Content Analyzer` needs to complexly represent contents, i.e. how to preprocess them and how to represent them
+    In particular this class refers to *items*.
+
+    Examples:
+
+        >>> import clayrs.content_analyzer as ca
+        >>> raw_source = ca.JSONFile(json_path)
+        >>> movies_config = ca.ItemAnalyzerConfig(raw_source, id='movie_id', output_directory='movies_codified/')
+        >>> # add single field config
+        >>> movies_config.add_single_config('occupation', FieldConfig(content_technique=ca.OriginalData()))
+        >>> # add single exogenous technique
+        >>> movies_config.add_single_exogenous(ca.ExogenousConfig(ca.PropertiesFromDataset(field_name_list=['gender']))
     """
+
     def __str__(self):
         return str(self.__id)
 

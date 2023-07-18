@@ -1,23 +1,31 @@
+from __future__ import annotations
 from abc import abstractmethod
 
 import numpy as np
+from typing import Union, List, Type, TYPE_CHECKING
 
-from clayrs.content_analyzer.content_representation.content import EmbeddingField, FieldRepresentation
-from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner, \
-    WordEmbeddingLearner, SentenceEmbeddingLearner, DocumentEmbeddingLearner
-from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
-    CombiningTechnique
-from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
-    WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader, EmbeddingLoader, EmbeddingSource
+if TYPE_CHECKING:
+    from clayrs.content_analyzer.content_representation.content import FieldRepresentation
+    from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import WordEmbeddingLearner, \
+        SentenceEmbeddingLearner, DocumentEmbeddingLearner
+    from clayrs.content_analyzer.field_content_production_techniques.embedding_technique.combining_technique import \
+        CombiningTechnique
+    from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
+        WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader
+    from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingSource
+    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.raw_information_source import RawInformationSource
+    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
+
+from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
+from clayrs.content_analyzer.content_representation.content import EmbeddingField
+from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingLoader, EmbeddingSource
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     SingleContentTechnique
-from clayrs.content_analyzer.information_processor.information_processor import InformationProcessor
-from clayrs.content_analyzer.raw_information_source import RawInformationSource
-from clayrs.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
+from clayrs.content_analyzer.utils.check_tokenization import check_tokenized, tokenize_in_sentences, check_not_tokenized
 from clayrs.utils.class_utils import get_all_implemented_subclasses
-from clayrs.utils.const import logger, get_progbar
-
-from typing import Union, List, Type
+from clayrs.utils.const import logger
+from clayrs.utils.context_managers import get_progbar
 
 
 class EmbeddingTechnique(SingleContentTechnique):
@@ -38,8 +46,7 @@ class EmbeddingTechnique(SingleContentTechnique):
         self.__embedding_source = embedding_source
 
     @staticmethod
-    def from_str_to_embedding_source(embedding_source_str: str, loader_class: Type[EmbeddingLoader]) \
-            -> EmbeddingSource:
+    def from_str_to_embedding_source(embedding_source_str: str, loader_class: Type[EmbeddingLoader]) -> EmbeddingSource:
         """
         Method used to convert a string (which represents a model name) to a corresponding Embedding Source that can
         use the defined model
@@ -78,6 +85,7 @@ class EmbeddingTechnique(SingleContentTechnique):
         return self.__embedding_source
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         representation_list: List[FieldRepresentation] = []
 
@@ -105,6 +113,8 @@ class EmbeddingTechnique(SingleContentTechnique):
 
                 processed_data = self.process_data(content_data[field_name], preprocessor_list)
                 representation_list.append(self.produce_single_repr(processed_data))
+
+            representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         self.embedding_source.unload_model()
         return representation_list
@@ -162,7 +172,10 @@ class StandardEmbeddingTechnique(EmbeddingTechnique):
 
 class WordEmbeddingTechnique(StandardEmbeddingTechnique):
     """
-    Class that creates the embedding field with word granularity. The embedding source must have word granularity
+    Class that makes use of a *word* granularity embedding source to produce *word* embeddings
+
+    Args:
+        embedding_source: Any `WordEmbedding` model
     """
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str]):
@@ -182,8 +195,10 @@ class WordEmbeddingTechnique(StandardEmbeddingTechnique):
 
 class SentenceEmbeddingTechnique(StandardEmbeddingTechnique):
     """
-    Class that creates the embedding field with sentence granularity.
-    The embedding source must have sentence granularity
+    Class that makes use of a *sentence* granularity embedding source to produce *sentence* embeddings
+
+    Args:
+        embedding_source: Any `SentenceEmbedding` model
     """
 
     def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str]):
@@ -203,8 +218,10 @@ class SentenceEmbeddingTechnique(StandardEmbeddingTechnique):
 
 class DocumentEmbeddingTechnique(StandardEmbeddingTechnique):
     """
-    Class that creates the embedding field with document granularity.
-    The embedding source must have document granularity
+    Class that makes use of a *document* granularity embedding source to produce *document* embeddings
+
+    Args:
+        embedding_source: Any `DocumentEmbedding` model
     """
 
     def __init__(self, embedding_source: Union[DocumentEmbeddingLoader, DocumentEmbeddingLearner, str]):
@@ -296,7 +313,12 @@ class CombiningSentenceEmbeddingTechnique(CombiningEmbeddingTechnique):
 
 class Word2SentenceEmbedding(CombiningSentenceEmbeddingTechnique):
     """
-    Class that makes use of a word granularity embedding source to produce an embedding matrix with sentence granularity
+    Class that makes use of a word granularity embedding source to produce sentence embeddings
+
+    Args:
+        embedding_source: Any `WordEmbedding` model
+        combining_technique: Technique used to combine embeddings of finer granularity (word-level) to obtain embeddings
+            of coarser granularity (sentence-level)
     """
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str],
@@ -343,7 +365,12 @@ class CombiningDocumentEmbeddingTechnique(CombiningEmbeddingTechnique):
 
 class Word2DocEmbedding(CombiningDocumentEmbeddingTechnique):
     """
-    Class that makes use of a word granularity embedding source to produce an embedding matrix with document granularity
+    Class that makes use of a *word* granularity embedding source to produce embeddings of *document* granularity
+
+    Args:
+        embedding_source: Any `WordEmbedding` model
+        combining_technique: Technique used to combine embeddings of finer granularity (word-level) to obtain embeddings
+            of coarser granularity (doc-level)
     """
 
     def __init__(self, embedding_source: Union[WordEmbeddingLoader, WordEmbeddingLearner, str],
@@ -365,8 +392,13 @@ class Word2DocEmbedding(CombiningDocumentEmbeddingTechnique):
 
 class Sentence2DocEmbedding(CombiningDocumentEmbeddingTechnique):
     """
-    Class that makes use of a sentence granularity embedding source to produce an embedding matrix with
-    document granularity
+    Class that makes use of a *sentence* granularity embedding source to produce embeddings of *document* granularity
+
+
+    Args:
+        embedding_source: Any `SentenceEmbedding` model
+        combining_technique: Technique used to combine embeddings of finer granularity (sentence-level) to obtain
+            embeddings of coarser granularity (doc-level)
     """
 
     def __init__(self, embedding_source: Union[SentenceEmbeddingLoader, SentenceEmbeddingLearner, str],
@@ -442,10 +474,14 @@ class Sentence2WordEmbedding(DecombiningInWordsEmbeddingTechnique):
 
     def produce_single_repr(self, field_data: Union[List[str], str]) -> EmbeddingField:
         """
-        Produces a single representation with Token granularity returning the embedding matrix that
-        represents the tokens
+        Produces a single matrix where each row is the embedding representation of each token of the sentence,
+        while the columns are the hidden dimension of the chosen model
 
-        Returns: matrix embedding for token
+        Args:
+            field_data: textual data to complexly represent
+
+        Returns:
+            Embedding for each token of the sentence
 
         """
         field_data = check_not_tokenized(field_data)
