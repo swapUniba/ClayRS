@@ -431,3 +431,84 @@ class TorchVisionVideoModels(HighLevelVisualClip):
 
     def __repr__(self):
         return self._repr_string
+
+
+class PytorchVideoModels(HighLevelVisualClip):
+    """
+    High level technique which uses the torch hub for feature extraction from video frames
+    using pre-trained models
+
+    Args:
+        model_name: a model name supported by the timm library
+        feature_layer: the layer index from which the features will be retrieved (or its name in string format)
+        repo: name of the repository related to the pre-trained model
+        flatten: whether the features obtained from the model should be flattened or not
+        device: device where the model will be stored ('cpu', 'cuda:0', ...). If not specified, 'cpu' will be set
+            by default
+        apply_on_output: custom lambda function to be applied to the features output
+        additional_parameters: additional parameters to pass to the torch.hub.load function (e.g. num_classes)
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the dataloader
+        mini_batch_size: batch size for each batch
+    """
+
+    def __init__(self, model_name: str, feature_layer: int = -1, repo: str = 'facebookresearch/pytorchvideo:main',
+                 flatten: bool = False, device: str = 'cpu',
+                 apply_on_output: Callable[[torch.Tensor], torch.Tensor] = None,
+                 additional_parameters: dict = None,
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, mini_batch_size: int = 64):
+
+        available_models = torch.hub.list(repo)
+
+        if model_name not in available_models:
+            available_models_str = '\n'.join(available_models)
+
+            raise ValueError(f"{model_name} is not available in {repo}!\n"
+                             f"Please select one of the following models: \n"
+                             f"{available_models_str}")
+
+        if additional_parameters is None:
+            additional_parameters = {}
+
+        original_model = torch.hub.load(repo, model_name, pretrained=True, **additional_parameters)
+
+        if isinstance(feature_layer, int):
+            feature_layer = list(dict(original_model.named_modules()).keys())[feature_layer]
+
+        model = create_feature_extractor(original_model, {feature_layer: "feature_layer"}).to(device).eval()
+
+        super().__init__(model, feature_layer, flatten, device, apply_on_output, contents_dirs, time_tuple,
+                         max_timeout, max_retries, max_workers, batch_size, mini_batch_size)
+
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    @torch.no_grad()
+    def produce_batch_repr(self, field_data: torch.Tensor) -> torch.Tensor:
+
+        split_field_data = torch.split(field_data, self.mini_batch_size)
+        all_outs = []
+
+        for split_field in split_field_data:
+
+            if len(split_field.shape) == 4:
+                split_field = split_field.moveaxis(0, 1)
+                split_field = split_field.unsqueeze(0)
+            else:
+                # expected dim = 5 (video clips)
+                split_field = split_field.moveaxis(1, 2)
+
+            out = self.model(split_field.to(self.device))['feature_layer']
+            all_outs.append(out.cpu())
+
+        return torch.vstack(all_outs)
+
+    def __str__(self):
+        return f"PytorchVideo"
+
+    def __repr__(self):
+        return self._repr_string
