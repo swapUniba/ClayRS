@@ -13,7 +13,7 @@ class TestSynsetDocumentFrequency(TestCase):
     def test_produce_content(self):
         technique = PyWSDSynsetDocumentFrequency()
 
-        features_bag_list = technique.produce_content("Plot", [], [], JSONFile(file_path))
+        features_bag_list = technique.produce_content("Plot", [], JSONFile(file_path))
 
         self.assertEqual(len(features_bag_list), 20)
         self.assertIsInstance(features_bag_list[0], FeaturesBagField)

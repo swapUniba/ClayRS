@@ -21,7 +21,7 @@ class TestOriginalData(TestCase):
     def test_produce_content(self):
         technique = OriginalData()
 
-        data_list = technique.produce_content("Title", [], [], JSONFile(file_path))
+        data_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(data_list), 20)
         self.assertIsInstance(data_list[0], SimpleField)
@@ -33,7 +33,7 @@ class TestOriginalData(TestCase):
         with open(self.file_name, 'w') as f:
             f.write(source)
 
-        result = technique.produce_content("0", [], [], DATFile(self.file_name))
+        result = technique.produce_content("0", [], DATFile(self.file_name))
 
         self.assertIsInstance(result[0], SimpleField)
         self.assertIsInstance(result[0].value, int)
@@ -46,7 +46,7 @@ class TestOriginalData(TestCase):
             f.write(source)
 
         with self.assertRaises(ValueError):
-            technique.produce_content("0", [], [], DATFile(self.file_name))
+            technique.produce_content("0", [], DATFile(self.file_name))
 
     def doCleanups(self) -> None:
         if os.path.isfile(self.file_name):
@@ -109,7 +109,7 @@ class TestFromNPY(TestCase):
 
         # since the array is 1 dimensional, outputs should be single values
         technique = FromNPY(self.path_array_1_dim)
-        output_1_dim = technique.produce_content('idx', [], [], idxs_source)
+        output_1_dim = technique.produce_content('idx', [], idxs_source)
 
         self.assertEqual(3, len(output_1_dim))
         self.assertEqual(0, technique._missing)
@@ -119,7 +119,7 @@ class TestFromNPY(TestCase):
 
         # since the array is 2 dimensional, outputs should be arrays
         technique = FromNPY(self.path_array_2_dim)
-        output_2_dim = technique.produce_content('idx', [], [], idxs_source)
+        output_2_dim = technique.produce_content('idx', [], idxs_source)
 
         self.assertEqual(3, len(output_2_dim))
         self.assertEqual(0, technique._missing)
@@ -145,7 +145,7 @@ class TestFromNPY(TestCase):
         source_out_of_bounds = JSONFile(idxs_out_of_bounds_source_path)
         technique = FromNPY(self.path_array_2_dim)
         with self.assertRaises(IndexError):
-            technique.produce_content('idx', [], [], source_out_of_bounds)
+            technique.produce_content('idx', [], source_out_of_bounds)
 
         os.remove(idxs_out_of_bounds_source_path)
 
@@ -168,7 +168,7 @@ class TestFromNPY(TestCase):
         technique = FromNPY(self.path_array_2_dim)
 
         with self.assertRaises(ValueError):
-            technique.produce_content('idx', [], [], source_out_of_bounds)
+            technique.produce_content('idx', [], source_out_of_bounds)
 
         os.remove(idxs_not_int_path)
 

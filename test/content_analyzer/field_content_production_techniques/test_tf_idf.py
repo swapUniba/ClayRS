@@ -14,7 +14,7 @@ class TestWhooshTfIdf(TestCase):
     def test_produce_content(self):
         technique = WhooshTfIdf()
 
-        features_bag_list = technique.produce_content("Plot", [], [], JSONFile(file_path))
+        features_bag_list = technique.produce_content("Plot", [], JSONFile(file_path))
 
         self.assertEqual(len(features_bag_list), 20)
         self.assertIsInstance(features_bag_list[0], FeaturesBagField)
@@ -25,7 +25,7 @@ class TestSkLearnTfIdf(TestCase):
     def test_produce_content(self):
         technique = SkLearnTfIdf()
 
-        features_bag_list = technique.produce_content("Title", [], [], JSONFile(file_path))
+        features_bag_list = technique.produce_content("Title", [], JSONFile(file_path))
 
         self.assertEqual(len(features_bag_list), 20)
         self.assertIsInstance(features_bag_list[0], FeaturesBagField)
