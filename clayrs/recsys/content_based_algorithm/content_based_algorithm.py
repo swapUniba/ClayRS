@@ -75,7 +75,7 @@ class ContentBasedAlgorithm(Algorithm):
 
         return item_field
 
-    def extract_features_item(self, item: Content):
+    def extract_features_item(self, item: Content, item_field: dict = None):
         """
         Function that extracts the feature of a loaded item using the item_field parameter passed in the
         constructor.
@@ -92,10 +92,13 @@ class ContentBasedAlgorithm(Algorithm):
         Returns:
             A list containing all representations extracted for the item
         """
+        if item_field is None:
+            item_field = self.item_field
+
         item_bag_list = []
         if item is not None:
-            for field in self.item_field:
-                field_representations = self.item_field[field]
+            for field in item_field:
+                field_representations = item_field[field]
 
                 for representation in field_representations:
                     item_bag_list.append(
@@ -193,7 +196,7 @@ class ContentBasedAlgorithm(Algorithm):
         return X_vectorized
 
     @abc.abstractmethod
-    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 0) -> Any:
+    def fit(self, train_set: Ratings, items_directory: str, users_directory: str = None, num_cpus: int = 0) -> Any:
         """
         Abstract method that fits the content-based algorithm.
 
@@ -277,8 +280,8 @@ class ContentBasedAlgorithm(Algorithm):
 
     @abc.abstractmethod
     def fit_rank(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
-                 n_recs: Optional[int], methodology: Methodology, num_cpus: int,
-                 save_fit: bool) -> Tuple[Optional[Any], List[np.ndarray]]:
+                 n_recs: Optional[int], methodology: Methodology, num_cpus: int, save_fit: bool,
+                 users_directory: str = None) -> Tuple[Optional[Any], List[np.ndarray]]:
         """
         Method used to both fit and calculate ranking for all users in `user_idx_list` parameter.
         The algorithm will first be fit for each user in the `user_idx_list` which should contain user id
@@ -318,8 +321,8 @@ class ContentBasedAlgorithm(Algorithm):
 
     @abc.abstractmethod
     def fit_predict(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
-                    methodology: Methodology, num_cpus: int,
-                    save_fit: bool) -> Tuple[Optional[Any], List[np.ndarray]]:
+                    methodology: Methodology, num_cpus: int, save_fit: bool,
+                    users_directory: str = None) -> Tuple[Optional[Any], List[np.ndarray]]:
         """
         Method used to both fit and calculate score prediction for all users in `user_idx_list` parameter.
         The algorithm will first be fit for each user in the `user_idx_list` which should contain user id
@@ -361,8 +364,8 @@ class ContentBasedAlgorithm(Algorithm):
         """
         raise NotImplementedError
 
-    def _load_available_contents(self, contents_path: str, items_to_load: set = None):
-        return LoadedContentsDict(contents_path, items_to_load, only_representations=self.item_field)
+    def _load_available_contents(self, contents_path: str, contents_to_load: set = None, only_representations: Optional[dict] = None):
+        return LoadedContentsDict(contents_path, contents_to_load, only_representations)
 
     def __deepcopy__(self, memo):
         # Create a new instance
@@ -479,7 +482,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         """
         raise NotImplementedError
 
-    def fit(self, train_set: Ratings, items_directory: str, num_cpus: int = 1) -> Dict[int, Tuple[Callable, Callable]]:
+    def fit(self, train_set: Ratings, items_directory: str, users_directory: str = None, num_cpus: int = 0) -> Dict[int, Tuple[Callable, Callable]]:
         """
         Method which will fit the algorithm chosen for each user in the `train_set` parameter
 
@@ -516,7 +519,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         count_skipped_user = 0
         items_to_load = train_set.unique_item_id_column
         all_users = train_set.unique_user_idx_column
-        loaded_items_interface = self._load_available_contents(items_directory, items_to_load)
+        loaded_items_interface = self._load_available_contents(items_directory, items_to_load, self.item_field)
 
         users_fit_dict = {}
         with get_iterator_parallel(num_cpus,
@@ -604,7 +607,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         count_skipped_user = 0
 
-        loaded_items_interface = self._load_available_contents(items_directory, set())
+        loaded_items_interface = self._load_available_contents(items_directory, set(), self.item_field)
 
         uir_rank_list = []
 
@@ -684,7 +687,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
         count_skipped_user = 0
 
-        loaded_items_interface = self._load_available_contents(items_directory, set())
+        loaded_items_interface = self._load_available_contents(items_directory, set(), self.item_field)
 
         uir_pred_list = []
 
@@ -708,8 +711,8 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         return uir_pred_list
 
     def fit_rank(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
-                 n_recs: Optional[int], methodology: Methodology, num_cpus: int,
-                 save_fit: bool) -> Tuple[Optional[dict], List[np.ndarray]]:
+                 n_recs: Optional[int], methodology: Methodology, num_cpus: int, save_fit: bool,
+                 users_directory: str = None) -> Tuple[Optional[dict], List[np.ndarray]]:
         """
         Method used to both fit and calculate ranking for all users in `user_idx_list` parameter.
         The algorithm will first be fit for each user in the `user_idx_list` which should contain user id
@@ -775,7 +778,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         count_skipped_user = 0
         users_fit_dict = {} if save_fit else None
 
-        loaded_items_interface = self._load_available_contents(items_directory, set())
+        loaded_items_interface = self._load_available_contents(items_directory, set(), self.item_field)
 
         uir_rank_list = []
 
@@ -799,8 +802,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
         return users_fit_dict, uir_rank_list
 
     def fit_predict(self, train_set: Ratings, test_set: Ratings, items_directory: str, user_idx_list: Set[int],
-                    methodology: Methodology, num_cpus: int,
-                    save_fit: bool) -> Tuple[Optional[dict], List[np.ndarray]]:
+                    methodology: Methodology, num_cpus: int, save_fit: bool, users_directory: str = None) -> Tuple[Optional[dict], List[np.ndarray]]:
         """
         Method used to both fit and calculate score prediction for all users in `user_idx_list` parameter.
         The algorithm will first be fit for each user in the `user_idx_list` which should contain user id
@@ -869,7 +871,7 @@ class PerUserCBAlgorithm(ContentBasedAlgorithm):
 
             return user_idx, user_pred
 
-        loaded_items_interface = self._load_available_contents(items_directory, set())
+        loaded_items_interface = self._load_available_contents(items_directory, set(), self.item_field)
 
         uir_pred_list = []
 
