@@ -133,6 +133,75 @@ class HighLevelVisualFrame(HighLevelVisual):
         raise NotImplementedError
 
 
+class HighLevelVisualClip(HighLevelVisual):
+    """
+    High level visual techniques are categorized into three subclasses:
+
+        - Frame level techniques
+        - Clip level techniques
+        - Flow level techniques
+
+    Clip level techniques return an output for each clip extracted from the video.
+    These techniques should be used only after pre-processing carried out by a clip sampler (that
+    extracts a collection of consecutive video frames).
+
+    NOTE: the technique will not raise an error when processing single images or entire videos, but
+    the inputs should be properly processed beforehand (using the ClipSampler preprocessor for instance)
+    """
+
+    def __init__(self, model, feature_layer: int = -1, flatten: bool = False, device: str = 'cpu',
+                 apply_on_output: Callable[[torch.Tensor], torch.Tensor] = None,
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0, batch_size: int = 64, mini_batch_size: int = 64):
+
+        super().__init__(model, feature_layer, flatten, device, apply_on_output,
+                         contents_dirs, time_tuple, max_timeout, max_retries, max_workers, batch_size)
+
+        self.mini_batch_size = mini_batch_size
+
+    def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor], source: RawInformationSource) -> List[FieldRepresentation]:
+
+        dl, video_mode = self.get_data_loader(field_name, source, preprocessor_list)
+
+        representation_list: [FieldRepresentation] = []
+
+        with get_progbar(dl) as pbar:
+            for processed_data_batch in pbar:
+                pbar.set_description(f"Processing and producing contents with {self}")
+
+                if not video_mode:
+                    # preprocessing is done by the dataset directly in the dataloader
+                    reprs = self.produce_batch_repr(processed_data_batch.unsqueeze(1)).unsqueeze(1)
+                else:
+
+                    processed_data_batch, idxs = processed_data_batch
+
+                    # clips generated from video
+                    if len(processed_data_batch.shape) == 5:
+                        reprs = self.produce_batch_repr(processed_data_batch)
+                        reprs = torch.split(reprs, idxs)
+                    # entire video
+                    else:
+                        processed_data_batch = torch.split(processed_data_batch, idxs)
+                        reprs = []
+                        for video in processed_data_batch:
+                            reprs.append(self.produce_batch_repr(video.unsqueeze(0)))
+
+                for single_repr in reprs:
+                    out_f_applied_single_repr = self.apply_and_flatten(single_repr)
+                    representation_list.append(EmbeddingField(out_f_applied_single_repr))
+
+        return representation_list
+
+    @abstractmethod
+    def produce_batch_repr(self, field_data: torch.Tensor) -> torch.Tensor:
+        """
+        Method that will produce the corresponding complex representations from all field data for the batch
+        """
+        raise NotImplementedError
+
+
 class PytorchImageModels(HighLevelVisualFrame):
     """
     High level technique which uses the [timm library] (https://timm.fast.ai/) for feature extraction from images or
