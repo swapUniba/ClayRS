@@ -213,29 +213,55 @@ class PytorchImageModels(HighLevelVisualFrame):
         return self._repr_string
 
 
-class CaffeImageModels(HighLevelVisual):
+class CaffeImageModels(HighLevelVisualFrame):
+    """
+    High level technique which use pre-trained Caffe models for feature extraction from images or video frames using
+    pre-trained models
+
+    Args:
+        prototxt_path: path to the prototxt of the model
+        model_path: path to the Caffe model
+        feature_layer: the layer index from which the features will be retrieved
+            NOTE: the model is loaded from the timm library with the parameter "features_only" set at True, meaning
+            that only feature layers of the model will be available and accessible through the index
+        mean_file_path: path where the mean pixel file related to the dataset on which the model has been trained on
+        flatten: whether the features obtained from the model should be flattened or not
+        apply_on_output: custom lambda function to be applied to the features output
+        swap_rb: instead of RGB use GBR
+        use_gpu: use GPU as device instead of CPU
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the dataloader
+    """
 
     def __init__(self, prototxt_path: str, model_path: str, feature_layer: str = None, mean_file_path: str = None,
-                 swap_rb: bool = False, flatten: bool = True, imgs_dirs: str = "imgs_dirs", use_gpu: bool = False,
-                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0, batch_size: int = 64,
-                 resize_size: Tuple[int, int] = (227, 227)):
+                 apply_on_output: Callable[[torch.Tensor], torch.Tensor] = None,
+                 swap_rb: bool = False, flatten: bool = True,
+                 time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 use_gpu: bool = False,
+                 contents_dirs: str = "contents_dirs",
+                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0,
+                 batch_size: int = 64):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
-        self.model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
+        model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
         self.model_name = Path(model_path).name
 
         if use_gpu:
             self.model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
             self.model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
-        self.feature_layer = feature_layer
+        super().__init__(model, feature_layer, flatten, None, apply_on_output,
+                         contents_dirs, time_tuple, max_timeout, max_retries, max_workers, batch_size)
+
         self.mean_file_path = mean_file_path
         self.swapRB = swap_rb
         self.flatten = flatten
 
         self._repr_string = autorepr(self, inspect.currentframe())
 
-    def produce_batch_repr(self, field_data: torch.Tensor) -> List[EmbeddingField]:
+    def produce_batch_repr(self, field_data: torch.Tensor) -> torch.Tensor:
 
         if self.mean_file_path is not None:
             mean = np.load(self.mean_file_path).mean(1).mean(1)
@@ -255,9 +281,9 @@ class CaffeImageModels(HighLevelVisual):
             features_output = self.model.forward(self.feature_layer)
 
         if self.flatten:
-            return [EmbeddingField(x.flatten()) for x in features_output]
+            return torch.from_numpy(features_output).flatten(1, -1)
         else:
-            return [EmbeddingField(x) for x in features_output]
+            return torch.from_numpy(features_output)
 
     def __str__(self):
         return f"Caffe Image Models ({self.model_name})"
