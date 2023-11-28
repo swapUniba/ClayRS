@@ -13,9 +13,8 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
         WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader
     from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import InformationProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
 
 from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
 from clayrs.content_analyzer.content_representation.content import EmbeddingField

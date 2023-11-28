@@ -9,7 +9,7 @@ from ekphrasis.classes.segmenter import Segmenter
 from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.spellcorrect import SpellCorrector
 
-from clayrs.content_analyzer.information_processor.information_processor_abstract import NLP
+from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import NLP
 from clayrs.utils.automatic_methods import autorepr
 
 with warnings.catch_warnings():

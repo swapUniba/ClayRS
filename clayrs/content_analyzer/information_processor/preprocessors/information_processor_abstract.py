@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any
+from typing import List, Any, Tuple, Union
 
 import torch
 
@@ -26,7 +26,67 @@ class InformationProcessor(ABC):
         raise NotImplementedError
 
 
-class ImageProcessor(InformationProcessor, torch.nn.Module):
+class FileProcessor(InformationProcessor, torch.nn.Module):
+    """
+    Abstract class that generalizes data processing for data extracted from files.
+    """
+
+    @abstractmethod
+    def process(self, field_data: Any) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def forward(self, field_data: Any) -> Any:
+        raise NotImplementedError
+
+    def __eq__(self, other):
+        return torch.nn.Module.__eq__(self, other)
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class VisualProcessor(FileProcessor):
+    """
+    Abstract class that generalizes data processing.
+    """
+
+    @abstractmethod
+    def process(self, field_data: Any) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def forward(self, field_data: Any) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class ImageProcessor(VisualProcessor):
+    """
+    Abstract class for image processing.
+    """
+
+    @abstractmethod
+    def forward(self, field_data: Union[torch.Tensor, Tuple[torch.Tensor, int]]) -> Union[torch.Tensor, Tuple[torch.Tensor, int]]:
+        raise NotImplementedError
+
+    def process(self, field_data: torch.Tensor) -> torch.Tensor:
+        return self.forward(field_data)
+
+
+class VideoProcessor(VisualProcessor):
     """
     Abstract class for image processing.
     """
@@ -37,17 +97,17 @@ class ImageProcessor(InformationProcessor, torch.nn.Module):
     def process(self, field_data: torch.Tensor) -> torch.Tensor:
         return self.forward(field_data)
 
-    def __eq__(self, other):
-        return torch.nn.Module.__eq__(self, other)
 
-
-class AudioProcessor(InformationProcessor):
+class AudioProcessor(FileProcessor):
     """
-    Abstract class for audio processing.
+    Abstract class for image processing.
     """
     @abstractmethod
-    def process(self, field_data):
+    def forward(self, field_data: Tuple[torch.Tensor, int]) -> Tuple[torch.Tensor, int]:
         raise NotImplementedError
+
+    def process(self, field_data: Tuple[torch.Tensor, int]) -> torch.Tensor:
+        return self.forward(field_data)[0]
 
 
 class TextProcessor(InformationProcessor):

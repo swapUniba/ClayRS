@@ -4,7 +4,7 @@ import torch
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
 
-from clayrs.content_analyzer.information_processor.information_processor_abstract import ImageProcessor
+from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import ImageProcessor
 
 __all__ = [
     "TorchCompose",
@@ -287,7 +287,7 @@ class TorchResize(TorchBuiltInTransformer):
 
     TorchVision documentation: [here](https://pytorch.org/vision/main/generated/torchvision.transforms.Resize.html)
     """
-    def __init__(self, size: int, interpolation=InterpolationMode.BILINEAR, max_size: Any = None,
+    def __init__(self, size: Tuple[int, int], interpolation=InterpolationMode.BILINEAR, max_size: Any = None,
                  antialias: Any = None):
         super().__init__(transforms.Resize(size, interpolation, max_size, antialias))
 
