@@ -84,7 +84,6 @@ class EmbeddingTechnique(SingleContentTechnique):
         return self.__embedding_source
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         representation_list: List[FieldRepresentation] = []
 
@@ -112,8 +111,6 @@ class EmbeddingTechnique(SingleContentTechnique):
 
                 processed_data = self.process_data(content_data[field_name], preprocessor_list)
                 representation_list.append(self.produce_single_repr(processed_data))
-
-            representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         self.embedding_source.unload_model()
         return representation_list
