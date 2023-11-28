@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 from clayrs.content_analyzer.content_representation.content import Content, IndexField, ContentEncoder
 from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_iterator_thread
+from clayrs.utils.context_managers import get_iterator_thread, get_progbar_without_time_estim
 from clayrs.content_analyzer.utils.id_merger import id_merger
 
 
@@ -93,13 +93,28 @@ class ContentAnalyzer:
         This function checks that there are no duplicate ids in the field_dict for a specific field_name.
         If this is not the case and a duplicate is found, a ValueError exception is thrown to warn the user.
         If the config id is None, the representation name will be kept as None even if it is not unique.
+        PostProcessor config ids are checked for each field config so that no combination of field id + post id is repeated.
         So any case where the id is None is not considered.
         """
         for field_name in self._config.get_field_name_list():
-            custom_id_list = [config.id for config in self._config.get_configs_list(field_name)
-                              if config.id is not None]
+            custom_field_id_list = []
 
-            if len(custom_id_list) != len(set(custom_id_list)):
+            for i, config in enumerate(self._config.get_configs_list(field_name)):
+
+                custom_postprocessor_id_list = []
+
+                if config.id is not None:
+                    custom_field_id_list.append(config.id)
+
+                    for postprocessor in config.postprocessing:
+                        if postprocessor.id is not None:
+                            custom_postprocessor_id_list.append(postprocessor.id)
+
+                    if len(custom_postprocessor_id_list) != len(set(custom_postprocessor_id_list)):
+                        raise ValueError(f"Each id for each postprocessor of the field config with internal id {i} for "
+                                         f"field name {field_name} has to be unique")
+
+            if len(custom_field_id_list) != len(set(custom_field_id_list)):
                 raise ValueError("Each id for each field config of the field %s has to be unique" % field_name)
 
     def __check_exogenous_representation_list(self):
@@ -188,46 +203,84 @@ class ContentsProducer:
         # the 0 after the Plot field name is used to define the representation number associated with the Plot field
         # since it's possible to store multiple Plot fields in the index
         index_representations_dict = {}
+        global_repr_number = 0
 
         for field_name in self.__config.get_field_name_list():
             logger.info(f"   Processing field: {field_name}   ".center(50, '*'))
 
-            for repr_number, field_config in enumerate(self.__config.get_configs_list(field_name)):
-
+            for field_config in self.__config.get_configs_list(field_name):
                 # technique_result is a list of field representation produced by the content technique
                 # each field repr in the list will refer to a content
                 # technique_result[0] -> contents_list[0]
-                technique_result = field_config.content_technique.produce_content(
-                    field_name, field_config.preprocessing, field_config.postprocessing, self.__config.source)
+                technique_result = field_config.content_technique.produce_content(field_name, field_config.preprocessing, self.__config.source)
 
-                if field_config.memory_interface is not None:
-                    memory_interface = field_config.memory_interface
-                    # if the index for the directory in the config hasn't been defined yet in the contents producer,
-                    # the index associated to the field config that is being processed is added to the
-                    # contents producer's memory interfaces list, and will be used for the future field configs with
-                    # an assigned memory interface that has the same directory.
-                    # This means that only the index defined in the first FieldConfig that has one will actually be used
-                    if memory_interface not in self.__memory_interfaces.values():
-                        self.__memory_interfaces[memory_interface.directory] = memory_interface
-                        index_representations_dict[memory_interface] = {}
-                    else:
-                        memory_interface = self.__memory_interfaces[memory_interface.directory]
+                # if no postprocessor configs are specified for a field config, the technique output is used directly
+                if len(field_config.postprocessing) == 0:
+                    final_result = [(field_config.id, technique_result)]
+                else:
+                    final_result = []
 
-                    if field_config.id is not None:
-                        index_field_name = "{}#{}#{}".format(field_name, str(repr_number), field_config.id)
-                    else:
-                        index_field_name = "{}#{}".format(field_name, str(repr_number))
+                    # iterate over all postprocessor configs, apply the postprocessor to the representation
+                    # generated by the field content production technique
+                    for i, postprocessor_config in enumerate(field_config.postprocessing):
 
-                    index_representations_dict[memory_interface][index_field_name] = technique_result
+                        post_id = postprocessor_config.id
+                        post_results = technique_result
 
-                    # in order to refer to the representation that will be stored in the index, an IndexField repr will
-                    # be added to each content (and it will contain all the necessary information to retrieve the data
-                    # from the index)
-                    technique_result = [IndexField(index_field_name, i, memory_interface)
-                                        for i in range(len(self.__config.source))]
+                        with get_progbar_without_time_estim(postprocessor_config.postprocessor_technique) as pbar:
 
-                for i in range(len(contents_list)):
-                    contents_list[i].append_field_representation(field_name, technique_result[i], field_config.id)
+                            pbar.set_description(f"PostProcessor Config number {i + 1}")
+
+                            for postprocessor in pbar:
+
+                                pbar.set_description(f"PostProcessor Config number {i+1}: processing contents with {postprocessor}")
+                                post_results = postprocessor.process(post_results)
+
+                            # if field config id was None then keep None as final external id
+                            # otherwise append "_" plus the postprocessor id
+                            if field_config.id is None:
+                                final_result.append((None, post_results))
+                            else:
+
+                                if postprocessor_config.id is None:
+                                    final_result.append((None, post_results))
+                                else:
+                                    final_result.append((field_config.id + "_" + post_id, post_results))
+
+                for (field_id, field_result) in final_result:
+
+                    result_to_save = field_result
+
+                    if field_config.memory_interface is not None:
+                        memory_interface = field_config.memory_interface
+                        # if the index for the directory in the config hasn't been defined yet in the contents producer,
+                        # the index associated to the field config that is being processed is added to the
+                        # contents producer's memory interfaces list, and will be used for the future field configs with
+                        # an assigned memory interface that has the same directory.
+                        # This means that only the index defined in the first FieldConfig that has one will actually be used
+                        if memory_interface not in self.__memory_interfaces.values():
+                            self.__memory_interfaces[memory_interface.directory] = memory_interface
+                            index_representations_dict[memory_interface] = {}
+                        else:
+                            memory_interface = self.__memory_interfaces[memory_interface.directory]
+
+                        if field_config.id is not None:
+                            index_field_name = "{}#{}#{}".format(field_name, str(global_repr_number), field_id)
+                        else:
+                            index_field_name = "{}#{}".format(field_name, str(global_repr_number))
+
+                        index_representations_dict[memory_interface][index_field_name] = field_result
+
+                        # in order to refer to the representation that will be stored in the index, an IndexField repr will
+                        # be added to each content (and it will contain all the necessary information to retrieve the data
+                        # from the index)
+                        result_to_save = [IndexField(index_field_name, i, memory_interface)
+                                          for i in range(len(self.__config.source))]
+
+                        global_repr_number += 1
+
+                    for i in range(len(contents_list)):
+                        contents_list[i].append_field_representation(field_name, result_to_save[i], field_id)
 
                 del technique_result
                 gc.collect()
