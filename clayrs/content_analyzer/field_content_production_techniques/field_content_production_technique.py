@@ -1,19 +1,26 @@
 from __future__ import annotations
 
+import os
 from abc import ABC, abstractmethod
-from typing import List, Union, Callable, Optional, TYPE_CHECKING
+from pathlib import Path
+from urllib.parse import urlparse
+from typing import List, Union, Callable, Optional, TYPE_CHECKING, Tuple
 
 import numpy as np
+import requests
+import validators
 from scipy.sparse import csr_matrix
+from torch.utils.data import DataLoader
 
 from clayrs.utils.const import logger
-from clayrs.utils.context_managers import get_progbar
+from clayrs.utils.context_managers import get_progbar, get_iterator_thread
 
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
 
 from clayrs.content_analyzer.content_representation.content import FeaturesBagField, SimpleField, EmbeddingField
-from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import InformationProcessor, \
+    FileProcessor
 from clayrs.content_analyzer.raw_information_source import RawInformationSource
 from clayrs.content_analyzer.utils.check_tokenization import check_not_tokenized
 
@@ -101,6 +108,149 @@ class FieldContentProductionTechnique(ABC):
 
 
 class TextualContentTechnique(FieldContentProductionTechnique):
+    """
+    Class which encapsulates the logic of techniques which use text data as input
+    The textual data is directly extracted from the raw source for the specified field_name
+    """
+
+    @abstractmethod
+    def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
+                        source: RawInformationSource) -> List[FieldRepresentation]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+
+
+class FileContentTechnique(FieldContentProductionTechnique):
+    """
+    Class which encapsulates the logic for techniques which use data extracted from files as input
+
+    In order for the framework to process files the input source (a CSV file, for example) should contain
+    a field with all values of a certain type, that are either:
+
+        - paths to files stored locally (either relative or absolute paths)
+        - links to files
+
+    In the case of file paths, the contents will simply be loaded. In the case of links, the files will first be
+    downloaded locally and then loaded
+
+    Args:
+
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        time_tuple: start and end second from which the data will be extracted
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
+        max_workers: maximum number of workers for parallelism
+        batch_size: batch size for the dataloader
+    """
+
+    def __init__(self, contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (1, None), max_timeout: int = 2,
+                 max_retries: int = 5, max_workers: int = 0, batch_size: int = 64, flatten: bool = False):
+
+        self.contents_dirs = contents_dirs
+        self.max_timeout = max_timeout
+        self.max_retries = max_retries
+        self.max_workers = max_workers
+        self.batch_size = batch_size
+        self.flatten = flatten
+        self.time_tuple = time_tuple
+
+    def _retrieve_contents(self, field_name: str, raw_source: RawInformationSource):
+        """
+        Method which retrieves all the files for the specified field name in the raw source
+
+        It checks all possible options, which are:
+
+            - Local relative path to a file
+            - Local absolute path to a file
+            - Web link to a file
+        """
+
+        def dl_and_save_contents(url_or_path):
+
+            filename = Path(url_or_path).name
+            filename_no_extension = Path(url_or_path).stem
+
+            content_path = os.path.join(field_contents_dir, filename)
+            content_path_lnk = os.path.join(field_contents_dir, filename_no_extension + ".lnk")
+
+            # if content_path or content_path_lnk already exist return them
+            if os.path.isfile(content_path):
+                return content_path
+            elif os.path.isfile(content_path_lnk):
+                return content_path_lnk
+
+            if validators.url(url_or_path):
+
+                n_retry = 0
+
+                # keep trying to download a file until the max_retries number is reached
+                while True:
+                    try:
+                        byte_content = requests.get(url_or_path, timeout=self.max_timeout).content
+                        filename = Path(urlparse(url_or_path).path).name
+                        content_path = os.path.join(self.contents_dirs, field_name, filename)
+                        with open(content_path, 'wb') as f:
+                            f.write(byte_content)
+
+                        return content_path
+
+                    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+                        if n_retry < self.max_retries:
+                            n_retry += 1
+                        else:
+                            logger.warning(f"Max number of retries reached ({n_retry + 1}/{self.max_retries}) for URL: "
+                                           f"{url_or_path}\nThe content will be skipped")
+                            return None
+            else:
+
+                # if the path is not absolute, we go in this if
+                if not os.path.isfile(url_or_path):
+                    # we build the absolute path and check again if the file exists
+                    path_dir_contents = str(Path(raw_source.file_path).parent.absolute())
+                    url_or_path = str(os.path.join(path_dir_contents, url_or_path))
+
+                    if not os.path.isfile(url_or_path):
+                        return None
+
+                file_link = Path(url_or_path).stem + ".lnk"
+                os.link(url_or_path, os.path.join(self.contents_dirs, field_name, file_link))
+
+                return os.path.join(self.contents_dirs, field_name, file_link)
+
+        field_contents_dir = os.path.join(self.contents_dirs, field_name)
+
+        os.makedirs(field_contents_dir, exist_ok=True)
+
+        url_contents = (content[field_name] for content in raw_source)
+
+        content_paths = []
+        error_count = 0
+        with get_iterator_thread(self.max_workers, dl_and_save_contents, url_contents,
+                                 keep_order=True, progress_bar=True, total=len(raw_source)) as pbar:
+
+            pbar.set_description("Downloading/Locating contents")
+
+            for future in pbar:
+                if not future:
+                    error_count += 1
+                    content_paths.append(None)
+                else:
+                    content_paths.append(future)
+
+        # when some files are not correctly loaded, the system loads a default value
+        # depending on the file type (empty image, empty waveform, ...)
+        # this warning message is sent to warn the user that this has happened
+        if error_count != 0:
+            logger.warning(f"Number of contents that couldn't be retrieved: {error_count}")
+
+        return content_paths
+
+    @abstractmethod
+    def get_data_loader(self, field_name: str, raw_source: RawInformationSource, preprocessor_list: List[FileProcessor]) -> Tuple[DataLoader, bool]:
+        raise NotImplementedError
 
     @abstractmethod
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
