@@ -1,7 +1,9 @@
 from unittest import TestCase
 
+from clayrs.content_analyzer import ScalerPostProcessor
 from clayrs.content_analyzer.information_processor.postprocessors import CountVisualBagOfWords, \
-    TfIdfVisualBagOfWords, ScipyVQ, SkLearnPCA, SkLearnGaussianRandomProjections, SkLearnFeatureAgglomeration
+    TfIdfVisualBagOfWords, ScipyVQ, SkLearnPCA, SkLearnGaussianRandomProjections, SkLearnFeatureAgglomeration, \
+    FVGMM, VLADGMM
 from clayrs.content_analyzer.content_representation.content import EmbeddingField, FeaturesBagField
 
 import numpy as np
@@ -28,6 +30,12 @@ class TestVisualPostProcessing(TestCase):
 
         with self.assertRaises(ValueError):
             SkLearnPCA(n_components=2, random_state=42).process(input)
+
+        with self.assertRaises(ValueError):
+            FVGMM(n_components=2, random_state=42).process(input)
+
+        with self.assertRaises(ValueError):
+            VLADGMM(n_components=2, random_state=42).process(input)
 
     def test_1dim_errors(self):
         input = [
@@ -213,4 +221,106 @@ class TestVisualPostProcessing(TestCase):
         self.assertEqual(len(output[1].value), 2)
         self.assertEqual(len(output[2].value), 2)
 
+    def test_fisher_vectors(self):
 
+        # 2 dimensional case
+        input = [
+            EmbeddingField(np.array([[10, 10, 10], [10, 10, 10]])),
+            EmbeddingField(np.array([[9.8, 9.8, 9.8], [9.8, 9.8, 9.8]])),
+            EmbeddingField(np.array([[1, 1, 1], [10, 10, 10]])),
+            EmbeddingField(np.array([[0.8, 0.8, 0.8], [9.8, 9.8, 9.8]]))
+        ]
+
+        output = FVGMM(n_components=2, random_state=42).process(input)
+
+        self.assertIsInstance(output[0], EmbeddingField)
+        self.assertTrue(np.allclose(np.abs(output[0].value), np.abs(output[1].value)))
+        self.assertTrue(np.allclose(np.abs(output[2].value), np.abs(output[3].value)))
+        self.assertFalse(np.array_equal(output[0].value, output[2].value))
+        self.assertFalse(np.array_equal(output[1].value, output[2].value))
+
+    def test_vector_of_locally_aggregated_descriptors(self):
+
+        # 2 dimensional case
+        input = [
+            EmbeddingField(np.array([[10, 10, 10], [10, 10, 10]])),
+            EmbeddingField(np.array([[9.8, 9.8, 9.8], [9.8, 9.8, 9.8]])),
+            EmbeddingField(np.array([[1, 1, 1], [10, 10, 10]])),
+            EmbeddingField(np.array([[0.8, 0.8, 0.8], [9.8, 9.8, 9.8]]))
+        ]
+
+        output = VLADGMM(n_components=2, random_state=42).process(input)
+
+        self.assertIsInstance(output[0], EmbeddingField)
+        self.assertTrue(np.allclose(np.abs(output[0].value), np.abs(output[1].value)))
+        self.assertTrue(np.allclose(np.abs(output[2].value), np.abs(output[3].value)))
+        self.assertFalse(np.array_equal(output[0].value, output[2].value))
+        self.assertFalse(np.array_equal(output[1].value, output[2].value))
+
+    def test_with_std_and_with_mean(self):
+
+        # check that ScalerPostProcessor obtains zero mean and unit variance
+
+        # 1 dimensional case
+
+        input = [
+            EmbeddingField(np.array([10, 10, 9, 9, 10])),
+            EmbeddingField(np.array([10, 9, 10, 6, 8])),
+            EmbeddingField(np.array([12, 7, 10, 5, 2]))
+        ]
+
+        output = ScalerPostProcessor(with_mean=True, with_std=True).process(input)
+        output = np.vstack(output)
+
+        self.assertTrue(np.all(np.isclose(output.std(0), 1.)))
+        self.assertTrue(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=False, with_std=True).process(input)
+        output = np.vstack(output)
+
+        self.assertTrue(np.all(np.isclose(output.std(0), 1.)))
+        self.assertFalse(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=True, with_std=False).process(input)
+        output = np.vstack(output)
+
+        self.assertFalse(np.all(np.isclose(output.std(0), 1.)))
+        self.assertTrue(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=False, with_std=False).process(input)
+        output = np.vstack(output)
+
+        self.assertFalse(np.all(np.isclose(output.std(0), 1.)))
+        self.assertFalse(np.all(np.isclose(output.mean(0), 0.)))
+
+        # 2 dimensional case
+
+        input = [
+            EmbeddingField(np.array([[10, 10, 9, 9, 10], [12, 7, 10, 5, 2]])),
+            EmbeddingField(np.array([[10, 9, 10, 6, 8], [10, 10, 9, 9, 10]])),
+            EmbeddingField(np.array([[12, 7, 10, 5, 2], [10, 9, 10, 6, 8]]))
+        ]
+
+        output = ScalerPostProcessor(with_mean=True, with_std=True).process(input)
+        output = np.vstack(output)
+
+        self.assertTrue(np.all(np.isclose(output.std(0), 1.)))
+        self.assertTrue(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=False, with_std=True).process(input)
+        output = np.vstack(output)
+
+        self.assertTrue(np.all(np.isclose(output.std(0), 1.)))
+        self.assertFalse(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=True, with_std=False).process(input)
+        output = np.vstack(output)
+
+        self.assertFalse(np.all(np.isclose(output.std(0), 1.)))
+        self.assertTrue(np.all(np.isclose(output.mean(0), 0.)))
+
+        output = ScalerPostProcessor(with_mean=False, with_std=False).process(input)
+        output = np.vstack(output)
+
+        self.assertFalse(np.all(np.isclose(output.std(0), 1.)))
+        self.assertFalse(np.all(np.isclose(output.mean(0), 0.)))
