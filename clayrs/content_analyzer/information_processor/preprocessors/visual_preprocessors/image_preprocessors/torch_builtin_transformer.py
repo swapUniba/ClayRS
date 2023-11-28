@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Tuple
 
 import torch
+from pytorchvideo import transforms as video_transforms
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
 
@@ -37,6 +38,7 @@ __all__ = [
     "TorchRandomAdjustSharpness",
     "TorchRandomAutocontrast",
     "TorchRandomEqualize",
+    "TorchShortSideScale"
 ]
 
 
@@ -452,3 +454,21 @@ class TorchRandomEqualize(TorchBuiltInTransformer):
     """
     def __init__(self, p: float = 0.5):
         super().__init__(transforms.RandomEqualize(p))
+
+
+class TorchShortSideScale(TorchBuiltInTransformer):
+    """
+    Class that implements the ShortSideScale Transformer from PyTorchVideo.
+    The parameters one could pass are the same ones you would pass instantiating
+    the transformer ShortSideScale directly from PyTorchVideo.
+
+    PyTorchVideo documentation: [here](https://pytorchvideo.readthedocs.io/en/latest/api/transforms/transforms.html#pytorchvideo.transforms.ShortSideScale)
+    """
+
+    def __init__(self, size: int, interpolation: str = "bilinear"):
+        super().__init__(lambda x: self.short_side_scale(x, size, interpolation))
+
+    def short_side_scale(self, x, size, interpolation):
+        x = torch.moveaxis(x, 0, 1)
+        out = video_transforms.functional.short_side_scale(x, size, interpolation)
+        return torch.moveaxis(out, 0, 1)
