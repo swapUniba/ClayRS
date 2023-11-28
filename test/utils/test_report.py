@@ -5,7 +5,7 @@ import yaml
 
 from clayrs.content_analyzer import ItemAnalyzerConfig, JSONFile, ExogenousConfig, PropertiesFromDataset, \
     SkLearnTfIdf, NLTK, SentenceEmbeddingTechnique, Spacy, Sbert, WordEmbeddingTechnique, Gensim, FieldConfig, \
-    ContentAnalyzer, Ekphrasis, Ratings, CSVFile, Rank
+    ContentAnalyzer, Ekphrasis, Ratings, CSVFile, Rank, PostProcessorConfig, SkLearnPCA
 from clayrs.evaluation import EvalModel, Precision, PrecisionAtK, NDCG, MRR, FMeasureAtK
 from clayrs.recsys import HoldOutPartitioning, NXPageRank, NXFullGraph, GraphBasedRS
 from clayrs.utils.const import datasets_path
@@ -44,6 +44,10 @@ class TestReport(unittest.TestCase):
 
                 FieldConfig(content_technique=SentenceEmbeddingTechnique(Sbert()),
                             preprocessing=Spacy(stopwords_removal=True, remove_punctuation=True)),
+
+                FieldConfig(content_technique=SentenceEmbeddingTechnique(Sbert()),
+                            preprocessing=Spacy(stopwords_removal=True),
+                            postprocessing=PostProcessorConfig(SkLearnPCA(1), id="pca")),
             ]
         )
 
@@ -99,6 +103,14 @@ class TestReport(unittest.TestCase):
         genres_1_preprocessing_dict = genres_1_dict.get('preprocessing')
         self.assertIsNotNone(genres_1_preprocessing_dict)
         self.assertIsNotNone(genres_1_preprocessing_dict.get('Spacy'))
+
+        # Representation 2 for genres field
+        genres_2_dict = field_dict.get('genres/2')
+        self.assertIsNotNone(genres_2_dict)
+
+        genres_2_postprocessing_dict = genres_2_dict.get('postprocessing')
+        self.assertIsNotNone(genres_2_postprocessing_dict)
+        self.assertIsNotNone(genres_2_postprocessing_dict.get(0))
 
     @staticmethod
     def _build_rs_report():
