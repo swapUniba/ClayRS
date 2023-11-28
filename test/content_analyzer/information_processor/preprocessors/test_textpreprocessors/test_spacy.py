@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from clayrs.content_analyzer.information_processor.spacy_processor import Spacy
+from clayrs.content_analyzer.information_processor.preprocessors.text_preprocessors.spacy_processor import Spacy
 
 
 class TestSpacy(TestCase):

@@ -5,7 +5,7 @@ from typing import Optional
 import torch
 from torchvision import transforms
 
-import clayrs.content_analyzer.information_processor.visual_preprocessors.torch_builtin_transformer as clayrs_transforms
+import clayrs.content_analyzer.information_processor.preprocessors.visual_preprocessors.image_preprocessors.torch_builtin_transformer as clayrs_transforms
 
 
 class TestTorchBuiltInTransformer(unittest.TestCase):

@@ -2,9 +2,9 @@ import unittest
 
 from torchvision import transforms
 
-import clayrs.content_analyzer.information_processor.visual_preprocessors.torch_builtin_augmenter as clayrs_augments
+import clayrs.content_analyzer.information_processor.preprocessors.visual_preprocessors.image_preprocessors.torch_builtin_augmenter as clayrs_augments
 
-from test.content_analyzer.information_processor.test_visualpreprocessors.test_torch_builtin_transformer import \
+from test.content_analyzer.information_processor.preprocessors.test_visualpreprocessors.test_torch_builtin_transformer import \
     TestTorchBuiltInTransformer
 
 
