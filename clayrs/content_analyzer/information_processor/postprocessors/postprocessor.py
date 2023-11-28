@@ -563,30 +563,29 @@ class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
     """
 
     @staticmethod
-    def vstack(field_values_repr_list: Union[List[csc_matrix], List[np.ndarray]]) -> np.ndarray:
+    def vstack(field_values_repr_list) -> np.ndarray:
         """method for vertically stacking"""
-        if isinstance(field_values_repr_list[0], csc_matrix):
-            return vstack(field_values_repr_list).A
+        if isinstance(field_values_repr_list[0].value, csc_matrix):
+            return vstack([x.value for x in field_values_repr_list]).A
         else:
             return np.vstack(field_values_repr_list)
 
     def process(self, field_repr_list: Union[List[EmbeddingField], List[FeaturesBagField]]) -> List[EmbeddingField]:
-        first_inst = field_repr_list[0].value
+        first_inst = field_repr_list[0]
 
         # single array containing the whole embedding (document embedding, for example)
         # or 1 dimensional sparse array
-        if len(first_inst.shape) == 1 or (len(first_inst.shape) == 2 and first_inst.shape[0] == 1):
-            processed_arrays = self.apply_processing(self.vstack([field.value for field in field_repr_list]))
+        if isinstance(first_inst, FeaturesBagField) or len(first_inst.value.shape) == 1:
+            processed_arrays = self.apply_processing(self.vstack(field_repr_list))
             return [EmbeddingField(array) for array in processed_arrays]
 
         # array of word embeddings (330 word embeddings with 100 as dimensionality, for example)
         # this code applies the post-processing to each single word embedding
-        elif len(first_inst.shape) == 2:
-            values = [field.value for field in field_repr_list]
-            processed_arrays = self.apply_processing(self.vstack(values))
+        elif len(first_inst.value.shape) == 2:
+            processed_arrays = self.apply_processing(self.vstack(field_repr_list))
             next_instance_index = 0
             new_field_repr_list = []
-            for embedding in values:
+            for embedding in processed_arrays:
                 num_of_elements = len(embedding)
                 new_embedding_repr = processed_arrays[next_instance_index:num_of_elements+next_instance_index]
                 next_instance_index = num_of_elements+next_instance_index
