@@ -434,6 +434,75 @@ class FVGMM(EncodingPostProcessor):
         return self._repr_string
 
 
+class VLADGMM(EncodingPostProcessor):
+    """
+    VLAD (Vector of Locally Aggregated Descriptors) encoding technique.
+    You can read a detailed explanation of the technique [here](https://www.ics.uci.edu/~majumder/VC/211HW3/vlfeat/doc/api/vlad-fundamentals.html)
+    Parameters that can be specified are the ones from SkLearn GMM.
+    It is also possible to scale the inputs before post-processing, this is done with the parameters of the
+    StandardScaler
+
+    Arguments for [SkLearn GMM](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html#sklearn.mixture.GaussianMixture)
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, n_components=1, covariance_type='diag', tol=0.001, reg_covar=1e-06, max_iter=100, n_init=1,
+                 init_params='kmeans', weights_init=None, means_init=None, precisions_init=None, random_state=None,
+                 warm_start=False, verbose=0, verbose_interval=10, improved: bool = False, alpha: float = 0.5,
+                 with_mean: bool = False, with_std: bool = False):
+
+        super().__init__(with_mean=with_mean,
+                         with_std=with_std)
+
+        self.gmm = GaussianMixture(n_components=n_components, covariance_type=covariance_type,
+                                   tol=tol, reg_covar=reg_covar, max_iter=max_iter, n_init=n_init,
+                                   init_params=init_params, weights_init=weights_init, means_init=means_init,
+                                   precisions_init=precisions_init, random_state=random_state,
+                                   warm_start=warm_start, verbose=verbose, verbose_interval=verbose_interval)
+
+        self.improved = improved
+        self.alpha = alpha
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+
+        results = []
+
+        self.gmm.fit(descriptors)
+        means = self.gmm.means_
+
+        for repr in repr_list:
+
+            repr = repr.value
+
+            if scaler is not None:
+                repr = scaler.transform(repr)
+
+            q = self.gmm.predict_proba(repr)
+
+            # alternative fully vectorized, opted out because it easily leads to out of memory error
+            # vlad = ((repr[..., np.newaxis, :] - means) * q[..., np.newaxis]).sum(axis=0).flatten()
+
+            # other possible loop
+            # [a * c for a, c in zip((repr[..., np.newaxis, :] - means), q[0])]
+
+            vlad = np.array([(a - means) * c[..., np.newaxis] for a, c in zip(repr, q)]).sum(axis=0).flatten()
+
+            if self.improved:
+                vlad = np.sign(vlad) * np.power(np.abs(vlad), self.alpha)
+                vlad /= np.linalg.norm(vlad)
+
+            results.append(EmbeddingField(vlad))
+
+        return results
+
+    def __str__(self):
+        return "VladGMM"
+
+    def __repr__(self):
+        return self._repr_string
+
+
 class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
     """
     Abstract class that encapsulates the logic for dimensionality reduction techniques.
