@@ -1,17 +1,18 @@
 from __future__ import annotations
 from abc import abstractmethod
-import inspect
-from typing import List, TYPE_CHECKING, Tuple, Any
+from typing import List, TYPE_CHECKING, Any, Tuple, Optional
 
-import numpy as np
 import torch
+import inspect
+import numpy as np
 import torchvision.transforms.functional as TF
+
 from scipy.ndimage import convolve
 from skimage.feature import hog, canny, SIFT, local_binary_pattern
 from sklearn.cluster import KMeans
 
 from clayrs.content_analyzer.content_representation.content import EmbeddingField
-from clayrs.content_analyzer.field_content_production_techniques.visual_techniques.visual_content_techniques import \
+from clayrs.content_analyzer.field_content_production_techniques.file_techniques.visual_techniques.visual_content_techniques import \
     VisualContentTechnique
 from clayrs.utils.automatic_methods import autorepr
 from clayrs.utils.const import logger
@@ -20,9 +21,8 @@ from clayrs.utils.context_managers import get_progbar
 if TYPE_CHECKING:
     from clayrs.content_analyzer.content_representation.content import FieldRepresentation
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import ImageProcessor
-    from clayrs.content_analyzer.information_processor.postprocessors.postprocessor import \
-        EmbeddingInputPostProcessor
+    from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import \
+        ImageProcessor
 
 
 class LowLevelVisual(VisualContentTechnique):
@@ -32,15 +32,15 @@ class LowLevelVisual(VisualContentTechnique):
     (because, for example, they need to analyze the single pixels of the images).
     """
 
-    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+    def __init__(self, contents_dirs: str = "contents_dirs",
+                 time_tuple: Tuple[Optional[int], Optional[int]] = (0, None), max_timeout: int = 2,
+                 max_retries: int = 5, max_workers: int = 0):
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers, 1)
 
-    def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor],
-                        postprocessor_list: List[EmbeddingInputPostProcessor],
-                        source: RawInformationSource) -> List[FieldRepresentation]:
+    def produce_content(self, field_name: str, preprocessor_list: List[ImageProcessor], source: RawInformationSource) -> \
+    List[FieldRepresentation]:
 
-        dl = self.get_data_loader(field_name, source)
+        dl, video_mode = self.get_data_loader(field_name, source, preprocessor_list)
 
         representation_list: [FieldRepresentation] = []
 
@@ -49,11 +49,16 @@ class LowLevelVisual(VisualContentTechnique):
             for data_batch in pbar:
                 pbar.set_description(f"Processing and producing contents with {self}")
 
-                for content_data in data_batch:
-                    processed_data = self.process_data(content_data, preprocessor_list)
-                    representation_list.append(self.produce_single_repr(processed_data))
+                # preprocessing is done by the dataset directly in the dataloader
+                processed_data = data_batch[0]
 
-        representation_list = self.postprocess_representations(representation_list, postprocessor_list)
+                if not video_mode:
+                    representation_list.append(self.produce_single_repr(processed_data))
+                else:
+                    representation_list.append(
+                        EmbeddingField(np.vstack(
+                            [self.produce_single_repr(x) for x in processed_data]
+                        )))
 
         return representation_list
 
@@ -73,22 +78,18 @@ class SkImageHogDescriptor(LowLevelVisual):
 
     Args:
         flatten: whether the output of the technique should be flattened or not
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3),
                  block_norm='L2-Hys', transform_sqrt=False, flatten: bool = False,
-                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.hog = lambda x, channel_axis: hog(x, orientations=orientations, pixels_per_cell=pixels_per_cell,
                                                cells_per_block=cells_per_block, block_norm=block_norm,
                                                transform_sqrt=transform_sqrt, feature_vector=flatten,
@@ -129,22 +130,19 @@ class SkImageCannyEdgeDetector(LowLevelVisual):
 
     Args:
         flatten: whether the output of the technique should be flattened or not
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, sigma=1.0, low_threshold=None, high_threshold=None, mask=None, use_quantiles=False,
                  mode='constant', cval=0.0, flatten: bool = False,
-                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2,
+                 max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.canny = lambda x: canny(image=x, sigma=sigma, low_threshold=low_threshold,
                                      high_threshold=high_threshold, mask=mask,
                                      use_quantiles=use_quantiles, mode=mode, cval=cval)
@@ -185,21 +183,18 @@ class CustomFilterConvolution(LowLevelVisual):
 
     Args:
         flatten: whether the output of the technique should be flattened or not
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, weights, mode='reflect', cval=0.0, origin=0, flatten: bool = False,
-                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2,
+                 max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.convolve = lambda x: convolve(x, weights=weights, mode=mode, cval=cval, origin=origin)
         self.flatten = flatten
         self._repr_string = autorepr(self, inspect.currentframe())
@@ -235,20 +230,17 @@ class ColorsHist(LowLevelVisual):
     channel)
 
     Args:
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
-    def __init__(self, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+    def __init__(self, contents_dirs: str = "contents_dirs",
+                 time_tuple: Tuple[Optional[int], Optional[int]] = (0, None), max_timeout: int = 2,
+                 max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self._repr_string = autorepr(self, inspect.currentframe())
 
     def produce_single_repr(self, field_data: torch.Tensor) -> EmbeddingField:
@@ -265,14 +257,14 @@ class ColorsHist(LowLevelVisual):
             logger.warning(f'Grayscale images were detected, {self} only accepts RGB images! '
                            'The images will be converted to RGB')
 
-        numpy_field_data = field_data.numpy() * 255
-        colors = np.array([numpy_field_data[0, :, :].flatten(),
+        numpy_field_data = field_data.numpy()
+        colors = np.stack([numpy_field_data[0, :, :].flatten(),
                            numpy_field_data[1, :, :].flatten(),
                            numpy_field_data[2, :, :].flatten()])
         return EmbeddingField(colors.astype(int))
 
     def __str__(self):
-        return "ColorHist"
+        return "ColorsHist"
 
     def __repr__(self):
         return self._repr_string
@@ -285,22 +277,19 @@ class ColorQuantization(LowLevelVisual):
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
 
     Args:
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, n_colors: Any = 3, init: Any = "k-means++", n_init: Any = 10, max_iter: Any = 300,
                  tol: Any = 1e-4, random_state: Any = None, copy_x: Any = True, algorithm: Any = "auto",
-                 flatten: bool = False, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 flatten: bool = False, contents_dirs: str = "contents_dirs",
+                 time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.k_means = KMeans(n_clusters=n_colors, init=init, n_init=n_init, max_iter=max_iter, tol=tol,
                               random_state=random_state, copy_x=copy_x, algorithm=algorithm)
         self.flatten = flatten
@@ -320,7 +309,7 @@ class ColorQuantization(LowLevelVisual):
             logger.warning(f'Grayscale images were detected, {self} only accepts RGB images! '
                            'The images will be converted to RGB')
 
-        numpy_field_data = field_data.numpy() * 255
+        numpy_field_data = field_data.numpy()
         numpy_field_data = numpy_field_data.reshape((numpy_field_data.shape[1] * numpy_field_data.shape[2], 3))
         self.k_means.fit(numpy_field_data)
         dominant_colors = self.k_means.cluster_centers_
@@ -344,22 +333,19 @@ class SkImageSIFT(LowLevelVisual):
     Arguments for [SkImage SIFT](https://scikit-image.org/docs/stable/api/skimage.feature.html?highlight=hog#skimage.feature.SIFT)
 
     Args:
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, upsampling=2, n_octaves=8, n_scales=3, sigma_min=1.6, sigma_in=0.5, c_dog=0.013333333333333334,
                  c_edge=10, n_bins=36, lambda_ori=1.5, c_max=0.8, lambda_descr=6, n_hist=4, n_ori=8,
-                 flatten: bool = False, imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 flatten: bool = False, contents_dirs: str = "contents_dirs",
+                 time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5, max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.sift = SIFT(upsampling=upsampling, n_octaves=n_octaves, n_scales=n_scales, sigma_min=sigma_min,
                          sigma_in=sigma_in, c_dog=c_dog, c_edge=c_edge, n_bins=n_bins, lambda_ori=lambda_ori,
                          c_max=c_max, lambda_descr=lambda_descr, n_hist=n_hist, n_ori=n_ori)
@@ -403,21 +389,18 @@ class SkImageLBP(LowLevelVisual):
     Args:
         as_image: if True, the lbp image obtained from SkImage will be returned, otherwise the number of occurences
             of each binary pattern will be returned (as if it was a feature vector)
-        imgs_dirs: directory where the images are stored (or will be stored in the case of fields containing links)
-        max_timeout: maximum time to wait before considering a request failed (image from link)
-        max_retries: maximum number of retries to retrieve an image from a link
+        contents_dirs: directory where the files are stored (or will be stored in the case of fields containing links)
+        max_timeout: maximum time to wait before considering a request failed (file from link)
+        max_retries: maximum number of retries to retrieve a file from a link
         max_workers: maximum number of workers for parallelism
-        batch_size: batch size for the images dataloader
-        resize_size: since the Tensorflow dataset requires all images to be of the same size, they will all be resized
-            to the specified size. Note that if you were to specify a resize transformer in the preprocessing pipeline,
-            the size specified in the latter will be the final resize size
     """
 
     def __init__(self, p: int, r: float, method='default', flatten: bool = False, as_image: bool = False,
-                 imgs_dirs: str = "imgs_dirs", max_timeout: int = 2, max_retries: int = 5,
-                 max_workers: int = 0, batch_size: int = 64, resize_size: Tuple[int, int] = (227, 227)):
+                 contents_dirs: str = "contents_dirs", time_tuple: Tuple[Optional[int], Optional[int]] = (0, None),
+                 max_timeout: int = 2, max_retries: int = 5,
+                 max_workers: int = 0):
 
-        super().__init__(imgs_dirs, max_timeout, max_retries, max_workers, batch_size, resize_size)
+        super().__init__(contents_dirs, time_tuple, max_timeout, max_retries, max_workers)
         self.lbp = lambda x: local_binary_pattern(x, P=p, R=r, method=method)
         self.flatten = flatten
         self.as_image = as_image
