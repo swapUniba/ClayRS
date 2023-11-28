@@ -4,8 +4,10 @@ from abc import ABC, abstractmethod
 import scipy.sparse
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, FeatureAgglomeration
+from sklearn.mixture import GaussianMixture
 from sklearn.random_projection import GaussianRandomProjection
 from sklearn.feature_extraction.text import TfidfTransformer
+from skimage.feature import fisher_vector
 from sklearn.preprocessing import StandardScaler
 from scipy.cluster.vq import vq
 from scipy.sparse import csc_matrix, vstack
@@ -338,6 +340,95 @@ class ScipyVQ(EmbeddingInputPostProcessor):
 
     def __str__(self):
         return "Scipy Vector Quantization"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class EncodingPostProcessor(EmbeddingInputPostProcessor):
+    """
+    PostProcessor that is used to encode the inputs, generalizes the behavior of techniques that process multiple
+    embeddings to produce a single one
+    """
+
+    def __init__(self, with_mean: bool = False, with_std: bool = False):
+
+        super().__init__()
+
+        self.with_mean = with_mean
+        self.with_std = with_std
+
+    @abstractmethod
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+        raise NotImplementedError
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+
+        if len(field_repr_list[0].value.shape) != 2:
+            raise ValueError(f'Unsupported dimensionality for technique {self}, only two dimensional arrays are supported')
+
+        # stack the representations from all fields
+        descriptors = np.vstack(field_repr_list)
+
+        scaler = None
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        new_field_repr_list = self.get_new_field_repr_list(descriptors, field_repr_list, scaler)
+
+        return new_field_repr_list
+
+
+class FVGMM(EncodingPostProcessor):
+    """
+    FV (Fisher Vector) encoding technique done by wrapping the SkImage Fisher Vector method.
+    Parameters that can be specified are the ones from SkLearn GMM and SkImage fisher_vector.
+    It is also possible to scale the inputs before post-processing, this is done with the parameters of the
+    StandardScaler
+
+    Arguments for [SkLearn GMM](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html#sklearn.mixture.GaussianMixture)
+    Arguments for [SkImage FV](https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.fisher_vector)
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, n_components=1, covariance_type='diag', tol=0.001, reg_covar=1e-06, max_iter=100, n_init=1,
+                 init_params='kmeans', weights_init=None, means_init=None, precisions_init=None, random_state=None,
+                 warm_start=False, verbose=0, verbose_interval=10, improved: bool = False, alpha: float = 0.5,
+                 with_mean: bool = False, with_std: bool = False):
+
+        super().__init__(with_mean=with_mean, with_std=with_std)
+
+        self.gmm = GaussianMixture(n_components=n_components, covariance_type=covariance_type,
+                                   tol=tol, reg_covar=reg_covar, max_iter=max_iter, n_init=n_init,
+                                   init_params=init_params, weights_init=weights_init, means_init=means_init,
+                                   precisions_init=precisions_init, random_state=random_state,
+                                   warm_start=warm_start, verbose=verbose, verbose_interval=verbose_interval)
+
+        self.improved_fisher = improved
+        self.alpha = alpha
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+
+        results = []
+
+        self.gmm.fit(descriptors, )
+
+        for repr in repr_list:
+
+            repr = repr.value
+
+            if scaler is not None:
+                repr = scaler.transform(repr)
+
+            results.append(EmbeddingField(fisher_vector(repr, self.gmm, improved=self.improved_fisher, alpha=self.alpha)))
+
+        return results
+
+    def __str__(self):
+        return "FVGMM"
 
     def __repr__(self):
         return self._repr_string
