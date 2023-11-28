@@ -345,6 +345,47 @@ class ScipyVQ(EmbeddingInputPostProcessor):
         return self._repr_string
 
 
+class ScalerPostProcessor(EmbeddingInputPostProcessor):
+    """
+    PostProcessor that is used to scale the inputs using mean and standard deviation
+    This technique uses the same logic applied by other PostProcessors with the
+    'with_mean' and 'with_std' parameters, but if one only wants to apply scaling
+    this technique allows it. The class wraps the StandardScaler SkLearn class, so the arguments are the same.
+
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, with_mean: bool = True, with_std: bool = True):
+        super().__init__()
+
+        self.with_mean = with_mean
+        self.with_std = with_std
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+
+        new_field_repr_list = []
+
+        # stack the representations from all fields
+        descriptors = np.vstack(field_repr_list)
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        for i, field_repr in enumerate(field_repr_list):
+            new_repr = descriptors[i*len(field_repr.value):(i+1)*len(field_repr.value)]
+            new_field_repr_list.append(EmbeddingField(new_repr))
+
+        return new_field_repr_list
+
+    def __str__(self):
+        return "ScalerPostProcessor"
+
+    def __repr__(self):
+        return self._repr_string
+
+
 class EncodingPostProcessor(EmbeddingInputPostProcessor):
     """
     PostProcessor that is used to encode the inputs, generalizes the behavior of techniques that process multiple
