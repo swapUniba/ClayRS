@@ -318,8 +318,8 @@ class Amar(ContentBasedAlgorithm):
                 for i, batch in enumerate(pbar):
                     optimizer.zero_grad()
 
-                    user_idx = batch[0].long()
-                    item_idx = batch[1].long()
+                    user_idx = batch[0].int()
+                    item_idx = batch[1].int()
 
                     model_input = (
                         user_idx,

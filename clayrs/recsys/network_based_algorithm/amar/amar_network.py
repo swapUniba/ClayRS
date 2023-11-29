@@ -56,8 +56,8 @@ class AmarNetwork(torch.nn.Module):
 
     def return_scores(self, user_idx, item_idx):
         with torch.no_grad():
-            scores = self((torch.from_numpy(user_idx).to(self.device).long(),
-                           torch.from_numpy(item_idx).to(self.device).long())).cpu()
+            scores = self((torch.from_numpy(user_idx).to(self.device).int(),
+                           torch.from_numpy(item_idx).to(self.device).int())).cpu()
 
             if len(item_idx) != 1:
                 return scores.squeeze()
