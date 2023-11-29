@@ -229,14 +229,14 @@ class PostProcessorConfig:
     @property
     def postprocessor_technique(self):
         """
-        Getter for the exogenous properties retrieval technique
+        Getter for the postprocessing techniques
         """
         return self.__postprocessor_technique
 
     @property
     def id(self):
         """
-        Getter for the ExogenousConfig id
+        Getter for the PostProcessorConfig id
         """
         return self.__id
 
