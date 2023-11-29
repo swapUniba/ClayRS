@@ -1,7 +1,6 @@
--f https://download.pytorch.org/whl/torch_stable.html
-torch==2.0.1+cu117
-torchaudio==2.0.2+cu117
-torchvision==0.15.2+cu117
+torch==2.0.1
+torchaudio==2.0.2
+torchvision==0.15.2
 pytorchvideo~=0.1.5
 pandas~=1.5.3
 numpy~=1.24.1
