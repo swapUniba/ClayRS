@@ -59,6 +59,15 @@ class TorchBuiltInTransformer(ImageProcessor):
         NOTE: the data is expected to be an image converted to a torch tensor, this technique will not work on
         textual data
         """
+
+        # this means that the input is a split video
+        if len(field_data.shape) == 5:
+            split_dim = field_data.shape[1]
+            tmp_flat_field_data = field_data.flatten(0, 1)
+            transform_output = self.transformer(tmp_flat_field_data)
+            # re-build the processed tensor to have same shapes as the original split video
+            return torch.stack(transform_output.split(split_dim))
+
         return self.transformer(field_data)
 
     def __str__(self):
