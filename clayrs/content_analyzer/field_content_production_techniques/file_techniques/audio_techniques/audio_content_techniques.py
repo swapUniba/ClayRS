@@ -143,7 +143,7 @@ class ClasslessAudioFromVideoFolder(Dataset):
                 if self.end_pts is None:
                     waveform = [frame['data'] for frame in reader if frame['pts'] >= self.start_pts]
                 else:
-                    waveform = [frame['data'] for frame in itertools.takewhile(lambda x: x['pts'] >= self.start_pts, reader.seek(self.end_pts))]
+                    waveform = [frame['data'] for frame in itertools.takewhile(lambda x: x['pts'] <= self.end_pts, reader.seek(self.start_pts))]
 
                 waveform = torch.vstack(waveform).moveaxis(0, 1)
 

@@ -114,7 +114,7 @@ class ClasslessImageFromVideoFolder(Dataset):
                 if self.end_pts is None:
                     all_frames = [frame['data'] for frame in reader if frame['pts'] >= self.start_pts]
                 else:
-                    all_frames = [frame['data'] for frame in itertools.takewhile(lambda x: x['pts'] <= self.start_pts, reader.seek(self.end_pts))]
+                    all_frames = [frame['data'] for frame in itertools.takewhile(lambda x: x['pts'] <= self.end_pts, reader.seek(self.start_pts))]
 
                 all_frames = torch.stack(all_frames)
                 all_frames = VisualContentTechnique.process_data(all_frames, self.preprocessor_list)
