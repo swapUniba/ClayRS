@@ -151,7 +151,7 @@ class ClasslessAudioFromVideoFolder(Dataset):
                 if not waveform.numel():
                     raise AttributeError
 
-                original_sample_rate = reader.get_metadata()['audio']['framerate']
+                original_sample_rate = reader.get_metadata()['audio']['framerate'][0]
 
         except (FileNotFoundError, AttributeError, Exception) as e:
             self.count += 1
