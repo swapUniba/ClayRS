@@ -12,18 +12,17 @@ import pandas as pd
 from jinja2 import Undefined
 
 TEMPLATE_FILE = "report_template.tex"
-#todo UNIFIEDI DATA_FILE = "data/unified_report.yml"
+# todo UNIFIEDI DATA_FILE = "data/unified_report.yml"
 DATA_FILE = "data/ca_report.yml"
 DATA_FILES_LIST = ["data/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
-#DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml",
-                #   "/home/vincenzo/PycharmProjects/ClayRS/eva_report.yml",
-                #   "/home/vincenzo/PycharmProjects/ClayRS/rs_report.yml"]
-#DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
+# DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml",
+#   "/home/vincenzo/PycharmProjects/ClayRS/eva_report.yml",
+#   "/home/vincenzo/PycharmProjects/ClayRS/rs_report.yml"]
+# DATA_FILES_LIST = ["/home/vincenzo/PycharmProjects/ClayRS/ca_report.yml", "data/eva_report.yml", "data/rs_report.yml"]
 
 
 OUTPUT_TEX = "output/report.tex"
 OUTPUT_PATH = "output/report.pdf"
-
 
 LATEX_JINJA_ENV = jinja2.Environment(
     block_start_string="\BLOCK{",
@@ -37,12 +36,14 @@ LATEX_JINJA_ENV = jinja2.Environment(
     loader=jinja2.FileSystemLoader(searchpath="templates"),
 )
 
+
 def safe_text(text: str) -> str:
     special_chars = ['&', '%', '$', '_', '{', '}', '#']
     for char in special_chars:
         text = str(text)
         text = text.replace(char, "\\" + char)
     return text
+
 
 def truncate(text: str) -> str:
     number = float(text)
@@ -51,10 +52,9 @@ def truncate(text: str) -> str:
     print(text)
     return text
 
+
 LATEX_JINJA_ENV.filters["safe_text"] = safe_text
 LATEX_JINJA_ENV.filters["truncate"] = truncate
-
-
 
 
 def unify_yaml_files():
@@ -66,13 +66,13 @@ def unify_yaml_files():
     data_ev = get_data(file_ev_path)
     data_rs = get_data(file_rs_path)
 
-    if(data_ev is not None):
+    if (data_ev is not None):
         data_ca.update(data_ev)
-    if(data_rs is not None):
+    if (data_rs is not None):
         data_ca.update(data_rs)
 
     return data_ca
-    #TODO  to write the unified YAML file
+    # TODO  to write the unified YAML file
     # with open(DATA_FILE, 'w') as file:
     #    yaml.dump(data_ca, file)
 
@@ -86,7 +86,6 @@ def get_data(DATA_FILE):
             print(exc)
 
 
-
 def recursive_print_dict(d, indent=0):
     for k, v in d.items():
         if isinstance(v, dict):
@@ -96,6 +95,8 @@ def recursive_print_dict(d, indent=0):
             print("\t" * indent, f"{k}:{v}")
 
 
+# sembra che questa funzione sia abbastanza inutile essendo che abbiamo già un ambiente jinja
+# definito ad inizio di questo file di script @ Diego
 def get_template():
     '''template_loader = jinja2.FileSystemLoader(searchpath="templates")
     template_env = jinja2.Environment(loader=template_loader)
@@ -114,24 +115,25 @@ def get_template():
     return LATEX_JINJA_ENV.get_template(TEMPLATE_FILE)
 
 
-
 def generate_tex_output():
-    #TODO SINGLE FILE
+    # TODO SINGLE FILE
     # data = get_data(DATA_FILE) #dict
 
-    #TODO MULTIPLE FILE TO REVIEW
+    # TODO MULTIPLE FILE TO REVIEW
     data = unify_yaml_files()
     template = get_template()
 
-    output_text = template.render(dict = data)
+    output_text = template.render(dict=data)
 
-    #print(output_text)
+    # print(output_text)
     with open(OUTPUT_TEX, 'w') as ofile:
         ofile.write(output_text)
+
 
 def load_file(*args: str):
     with open(Path(*args)) as f:
         return f.read()
+
 
 def generate_pdf_output():
     generate_tex_output()
@@ -147,11 +149,11 @@ def generate_pdf_output():
     # TeX source filename
     # TODO ORIGINAL
     tex_filename = OUTPUT_TEX
-    #tex_filename = "report.pdf"
-    #TODO ORIGINAL
+    # tex_filename = "report.pdf"
+    # TODO ORIGINAL
     filename, ext = os.path.splitext(tex_filename)
     # the corresponding PDF filename
-    #TODO ORIGINAL
+    # TODO ORIGINAL
     pdf_filename = filename + '.pdf'
     # TODO ORIGINAL print(pdf_filename)
     # compile TeX file
@@ -161,7 +163,7 @@ def generate_pdf_output():
 def main():
     generate_pdf_output()
     print("Generating Report PDF File...")
-    #unify_yaml_files()
+    # unify_yaml_files()
 
 
 if __name__ == "__main__":
