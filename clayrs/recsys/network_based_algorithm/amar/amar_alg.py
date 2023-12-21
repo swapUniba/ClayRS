@@ -149,13 +149,13 @@ class Amar(ContentBasedAlgorithm):
             torch.manual_seed(self.seed)
             torch.cuda.manual_seed(self.seed)
             torch.cuda.manual_seed_all(self.seed)
-            torch.backends.cudnn.benchmark = False
-            torch.backends.cudnn.deterministic = True
 
             cublas_config = os.environ.get("CUBLAS_WORKSPACE_CONFIG", "")
 
             if cublas_config == ":16:8" or cublas_config == ":4096:8":
                 torch.use_deterministic_algorithms(True)
+                torch.backends.cudnn.benchmark = False
+                torch.backends.cudnn.deterministic = True
 
     def _make_ratings_implicit(self, train_set: Ratings) -> Ratings:
         """
