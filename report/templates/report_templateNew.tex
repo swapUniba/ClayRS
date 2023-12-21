@@ -1,0 +1,502 @@
+%! Author = DIEGO MICCOLI
+%! Date = 16/12/2023
+
+% Preamble
+\documentclass[12pt, a4paper]{article}
+\title{Report ClayRS}
+\author{Semantic Web Access and Personalization Research Group}
+
+
+% Packages
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+
+% Document
+
+\begin{document}
+\maketitle
+This \LaTeX{} document was generated from yaml files for the purpose of replicability of experiments done with
+\href{https://github.com/swapUniba/ClayRS}{ClayRS},
+it contains information about the dataset, preprocessing methods, analysis algorithms and
+the results of the experimental evaluation.
+
+% apertura CONTENT ANALYZER REPORT STYLE
+\BLOCK{ if my_dict['source_file'] is defined and my_dict['source_file'] }
+\section{ClayRS configurations of the experiment}\label{sec:clayrs-configurations-of-the-experiment}
+
+% Dataset sotto sezione
+\subsection{Dataset}\label{subsec:dataset}
+In this experiment, the \BLOCK{ if my_dict['id_each_content'] == ['movielens_id'] } \textbf{Movielens}\BLOCK{endif}
+\textbf{Dataset} was used.
+
+
+\hfill\break
+% Questo blocco if controlla la tabella sulle statiche del dataset
+\BLOCK{if 'interactions' in my_dict}
+The statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
+
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & \VAR{my_dict['interactions']['n_users']|safe_text}\\ \hline
+    n\_items  & \VAR{my_dict['interactions']['n_items']|safe_text}\\ \hline
+    total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['interactions']['min_score']|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|safe_text}\\ \hline
+    sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+% chiusura blocco controllo tabella dataset
+\BLOCK{endif}
+
+\hfill\break
+\hfill\break
+
+% blocco della condizione in OR
+\BLOCK{ if 'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0'] or
+        'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1'] }
+ The embendding techniques used during the processing of the document are the following:
+\begin{itemize}
+   \BLOCK{ if 'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0'] }
+   \item
+        \begin{minipage}[t]{\linewidth}
+        \VAR{my_dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text}
+         has been used as word embedding.
+        \end{minipage}  \BLOCK{endif}
+   \BLOCK{ if 'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1'] }
+   \item
+        \begin{minipage}[t]{\linewidth}
+            \VAR{ my_dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text  }
+            has been used as sentence embedding.
+         \end{minipage}  \BLOCK{endif}
+\end{itemize}
+% chiusura del blocco in OR
+\BLOCK{endif}
+
+\hfill\break
+
+% Preprocessing
+\subsection{Preprocessing}\label{subsec:preprocessing}
+\BLOCK{if 'plot_0' in my_dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{if 'NLTK' in my_dict['field_representations']['plot_0']['preprocessing']}
+The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+and semantic reasoning.
+
+\hfill\break
+In this experiment, those operations of NLTK were used:
+
+\begin{itemize}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('strip_multiple_whitespace') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+        \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('remove_punctuation') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stopwords_removal') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('url_tagging') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('lemmatization') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stemming') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stemming}, an operation that reduces a word to its root, for example "Flying" becomes "Fly" after the stemming operations is applied.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('named_entity_recognition') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Named entity recognition}, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+         \end{minipage}  \BLOCK{endif}
+\end{itemize}
+
+\hfill\break
+
+% chisura dei 2 blocchi aperti all'inizion della sezione preprocessing
+\BLOCK{ endif }
+\BLOCK{ endif }
+
+
+% NLTK REPORTING STYLE
+\BLOCK{if 'genres_0' in my_dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{if 'NLTK' in my_dict['field_representations']['genres_0']['preprocessing']}
+The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+and semantic reasoning.
+
+\hfill\break
+
+In this experiment, those operations of NLTK were used:
+
+\begin{itemize}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('strip_multiple_whitespace') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+        \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('remove_punctuation') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stopwords_removal') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('url_tagging') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('lemmatization') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stemming') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stemming}, an operation that reduces a word to its root, for example "Flying" becomes "Fly" after the stemming operations is applied.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('named_entity_recognition') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Named entity recognition}, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+         \end{minipage}  \BLOCK{endif}
+\end{itemize}
+
+\hfill\break
+
+% closing NLTK REPORTING STYLE
+\BLOCK{ endif }
+\BLOCK{ endif }
+
+
+% EKPHRASYS REPORTING STYLE
+\BLOCK{if 'plot_0' in my_dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{if 'Ekphrasis' in my_dict['field_representations']['plot_0']['preprocessing'] }
+The preprocessing used is Ekphrasis, ........................
+
+\hfill\break
+The Ekphrasis configuration for this experiment is :
+
+% closing EKPHRASYS REPORTING STYLE
+\BLOCK{ endif }
+\BLOCK{ endif }
+
+
+% SPACY reporting style
+\BLOCK{if 'genres_0' in my_dict['field_representations']} %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+\BLOCK{if 'Spacy' in my_dict['field_representations']['genres_0']['preprocessing'] }
+
+spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
+spaCy is designed specifically for production use and helps you build applications that process and “understand”
+large volumes of text.
+It can be used to build information extraction or natural language understanding systems,
+or to pre-process text for deep learning.
+In this experiment, those spaCy operations have been used:
+
+\hfill\break
+In this experiment, those spaCy operations were used:
+
+\begin{itemize}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('strip_multiple_whitespace') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+        \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('remove_punctuation') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Remove punctuation}, an operation that removes the punctuation characters occuring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('stopwords_removal') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('url_tagging') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Url tagging}, tags the urls occuring in the text, replacing them with "<URL>".
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{ if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('lemmatization') == True }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Lemmatization}, an operation that determines the lemma of a word based on its intended meaning, for example "troubled" becomes "trouble" after lemmatization.
+         \end{minipage}  \BLOCK{endif}
+    \BLOCK{if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('named_entity_recognition') == True  }
+    \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Named entity recognition}, an operation that detects the named entities such as person names, location names, company names, etc., from the text.
+         \end{minipage}  \BLOCK{endif}
+\end{itemize}
+
+% closing SPACY reporting style
+\BLOCK{ endif }
+\BLOCK{ endif }
+
+% content analyzer END
+% \BLOCK{ endif } %end of the content analyzer section
+
+
+% opening RECSYS REPORT STYLE
+\BLOCK{ if my_dict['interactions'] is defined } %beginning of the recommender system section recsys
+%\subsection{Interactions}
+%\newpage
+\subsection{Partitioning}\label{subsec:partitioning}
+
+%  HOUD-OUT PARTIONING TECNIQUE
+\BLOCK{ if my_dict['partitioning']['HoldOutPartitioning'] is defined}
+%\subsection{Partitioning}
+
+The partitioning used is the Hold-Out Partitioning.
+This approach splits the dataset in use into a ‘train’ set and a ‘test’ set.
+The training set is what the model is trained on, and the test set is used to see how
+well the model will perform on new, unseen data.
+\hfill\break
+\hfill\break
+The train set size of this experiment is the \VAR{my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100}\%
+of the original dataset, while the test set is the remaining \VAR{(100 - (my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100))}\%.
+\hfill\break
+\hfill\break
+\BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
+The data has been shuffled before being splitted into batches.
+\BLOCK{endif}
+
+% closing HoldOutPartitioning tecnique
+\BLOCK{endif}
+
+% KFOLD PARTITIONING TECNIQUE
+\BLOCK{ if my_dict['partitioning']['KFoldPartitioning'] is defined}
+%\subsection{Partitioning}
+K-fold cross-validation is a technique used in machine learning to assess
+the performance of a predictive model. The basic idea is to divide the dataset
+into K subsets, or folds. The model is then trained K times, each time using K-1
+folds for training and the remaining fold for validation. This process is
+repeated K times, with a different fold used as the validation set in each iteration.
+
+The key benefits of K-fold cross-validation include a more robust estimation
+of the model's performance and a better utilization of the available data for
+both training and validation. It helps to reduce the variability that may arise
+from a single train-test split and provides a more accurate evaluation of how
+well the model generalizes to new, unseen data.
+
+The final performance metric is often the average of the performance measures
+obtained in each iteration. Common choices for K include 5 or 10, but the value
+can be adjusted based on the size and characteristics of the dataset. K-fold
+cross-validation is widely used for model evaluation, hyperparameter tuning,
+and assessing the generalization performance of machine learning models.
+
+The KFoldPartitioning has been used with the following setting:
+\hfill\break
+\hfill\break
+The train set size of this experiment is the \VAR{my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100}\%
+of the original dataset, while the test set is the remaining \VAR{(100 - (my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100))}\%.
+\hfill\break
+\hfill\break
+\BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
+The data has been shuffled before being splitted into batches.
+\BLOCK{endif}
+
+% closing KFoldPartitioning tecnique
+\BLOCK{endif}
+
+
+% start algorithm section
+\BLOCK{if my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined} %beginning recsys graph based area
+\subsection{Algorithm Used}
+In this experiment a Graph Based Recommender Algorithm has been used.
+Specifically the NXPageRank algorithm, a Page Rank algorithm based on the networkx implementation
+The PageRank can be 'personalized', in this case the PageRank will be calculated with Priors.
+The alpha value used was: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|safe_text}
+
+% End algorithm section
+\BLOCK{endif}
+
+% closing block RECSYS REPORT STYLE
+\BLOCK{endif}
+%\newpage
+
+
+% openeing EVAL REPORT STYLE
+\BLOCK{ if my_dict['metrics'] is defined } %beginning of the eval model section
+\subsection{Metrics}
+
+% Precision report
+\BLOCK{if my_dict['metrics']['Precision'] is defined} %beginning of the precision section
+%\subsection{Precision}
+
+\hfill\break
+In ClayRS the Precision metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+
+    Where:
+
+    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      ratingasdjiasd $\geq$ \BLOCK{ if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']}}
+        \BLOCK{endif}
+
+
+    - $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$ \BLOCK{if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{dict['interactions']['mean_score']}}
+        \BLOCK{endif}
+
+\hfill\break
+
+
+
+In ClayRS, Precision needs those parameters:
+\hfill\break
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
+\hfill\break\hfill\break
+\textbf{sys\_average}, a parameter that specifies how the system average must be computed the default value is 'macro',
+in this experiment the value of the sys\_average is \textbf{\VAR{my_dict['metrics']['Precision']['sys_average']|safe_text}}.
+
+% closing precision report
+\BLOCK{endif}
+
+
+% Precision@K report
+\BLOCK{if my_dict['metrics']['PrecisionAtK'] is defined} %beginning of the precision at k section
+%\subsection{Metrics: Precision at K}
+\hfill\break
+\textbf{Precision at k} is the proportion of recommended items in the top-k set that are relevant.
+ The Precision@K metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+
+    Where:
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $\geq$
+        \BLOCK{if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']}}
+        \BLOCK{endif}
+
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $<$
+        \BLOCK{if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']}}
+        \BLOCK{endif}
+
+
+
+In this experiment the value \textbf{k is \VAR{my_dict['metrics']['PrecisionAtK']['k']|safe_text}},
+the sys\_average is \textbf{\VAR{my_dict['metrics']['PrecisionAtK']['sys_average']|safe_text}}
+
+% end precision@K repoort
+\BLOCK{endif}
+
+
+% FMeasure@K report
+\BLOCK{if my_dict['metrics']['FMeasureAtK'] is defined} %beginning of the fmeasure at k section
+%\subsection{Metrics: F - measure at K}
+\hfill\break\hfill\break
+ The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+ It is calculated as such for the
+    \textbf{single user}:
+
+    \[
+    FMeasure_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+
+    Where:
+
+    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}
+    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}
+    - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+
+        - $\beta = 1$: Equally weight Precision and Recall
+        - $\beta > 1$: Weight Recall more
+        - $\beta < 1$: Weight Precision more
+
+    A famous FMeasure@K is the F1@K Metric, where $\beta$ = 1, which basically is the harmonic mean of recall and
+    precision:
+    \hfill\break\hfill\break
+
+
+    \[
+    F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    \]
+
+
+\hfill\break
+\hfill\break
+In this experiment \textbf{k = \VAR{my_dict['metrics']['FMeasureAtK']['k']|safe_text}},
+\text{\boldmath$\beta$} = \textbf{\VAR{my_dict['metrics']['FMeasureAtK']['beta']|safe_text}} and
+\textbf{sys\_average} is \textbf{\VAR{my_dict['metrics']['FMeasureAtK']['sys_average']|safe_text}}.
+
+
+% end FMeasure@K report
+\BLOCK{endif}
+
+
+% System results on the splits obtained from the partition
+\BLOCK{if my_dict['sys_results']['sys - fold1'] is defined} %beginning of sysfold 1 results
+%\subsection{Sys Results fold1 :}
+%\newpage
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+    Precision - macro & \VAR{my_dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text}\\ \hline
+    Precision@2 - macro  & \VAR{my_dict['sys_results']['sys - fold1']['Precision@2 - macro']|truncate|safe_text}\\ \hline
+    NDCG  & \VAR{my_dict['sys_results']['sys - fold1']['NDCG']|truncate|safe_text}\\ \hline
+    MRR  & \VAR{my_dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text}\\ \hline
+    F1@1 - macro  & \VAR{my_dict['sys_results']['sys - fold1']['F1@1 - macro']|truncate|safe_text}\\ \hline
+  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+
+% End report on slit fold1
+\BLOCK{endif}
+
+% closing eval report style
+\BLOCK{endif}
+
+
+\end{document}

@@ -1,0 +1,310 @@
+%! Author = DIEGO MICCOLI
+%! Date = 16/12/2023
+
+% Preamble
+\documentclass[12pt, a4paper]{article}
+\title{Report ClayRS}
+\author{Semantic Web Access and Personalization Research Group}
+
+
+% Packages
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+
+% Document
+
+\begin{document}
+\maketitle
+This \LaTeX{} document was generated from yaml files for the purpose of replicability of experiments done with
+\href{https://github.com/swapUniba/ClayRS}{ClayRS},
+it contains information about the dataset, preprocessing methods, analysis algorithms and
+the results of the experimental evaluation.
+
+% apertura CONTENT ANALYZER REPORT STYLE
+\section{ClayRS configurations of the experiment}\label{sec:clayrs-configurations-of-the-experiment}
+
+% Dataset sotto sezione
+\subsection{Dataset}\label{subsec:dataset}
+In this experiment, the  \textbf{Movielens}\textbf{Dataset} was used.
+
+
+\hfill\break
+% Questo blocco if controlla la tabella sulle statiche del dataset
+The statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
+
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & 943\\ \hline
+    n\_items  & 1682\\ \hline
+    total\_interactions  & 100000\\ \hline
+    min\_score  & 1.0\\ \hline
+    max\_score  & 5.0\\ \hline
+    mean\_score  & 3.52986\\ \hline
+    sparsity  & 0.93695\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+% chiusura blocco controllo tabella dataset
+
+\hfill\break
+\hfill\break
+
+% blocco della condizione in OR
+ The embendding techniques used during the processing of the document are the following:
+\begin{itemize}
+      \item
+        \begin{minipage}[t]{\linewidth}
+        Gensim glove-twitter-25
+         has been used as word embedding.
+        \end{minipage}        \item
+        \begin{minipage}[t]{\linewidth}
+            Sbert
+            has been used as sentence embedding.
+         \end{minipage}  \end{itemize}
+% chiusura del blocco in OR
+
+\hfill\break
+
+% Preprocessing
+\subsection{Preprocessing}\label{subsec:preprocessing}
+ %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+and semantic reasoning.
+
+\hfill\break
+In this experiment, those operations of NLTK were used:
+
+\begin{itemize}
+        \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+        \end{minipage}              \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+         \end{minipage}                  \end{itemize}
+
+\hfill\break
+
+% chisura dei 2 blocchi aperti all'inizion della sezione preprocessing
+
+
+% NLTK REPORTING STYLE
+ %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+
+
+% EKPHRASYS REPORTING STYLE
+ %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+
+
+% SPACY reporting style
+ %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
+
+spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
+spaCy is designed specifically for production use and helps you build applications that process and “understand”
+large volumes of text.
+It can be used to build information extraction or natural language understanding systems,
+or to pre-process text for deep learning.
+In this experiment, those spaCy operations have been used:
+
+\hfill\break
+In this experiment, those spaCy operations were used:
+
+\begin{itemize}
+        \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
+        \end{minipage}              \item
+        \begin{minipage}[t]{\linewidth}
+        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
+         \end{minipage}              \end{itemize}
+
+% closing SPACY reporting style
+
+% content analyzer END
+%  %end of the content analyzer section
+
+
+% opening RECSYS REPORT STYLE
+ %beginning of the recommender system section recsys
+%\subsection{Interactions}
+%\newpage
+\subsection{Partitioning}\label{subsec:partitioning}
+
+%  HOUD-OUT PARTIONING TECNIQUE
+%\subsection{Partitioning}
+
+The partitioning used is the Hold-Out Partitioning.
+This approach splits the dataset in use into a ‘train’ set and a ‘test’ set.
+The training set is what the model is trained on, and the test set is used to see how
+well the model will perform on new, unseen data.
+\hfill\break
+\hfill\break
+The train set size of this experiment is the 80.0\%
+of the original dataset, while the test set is the remaining 20.0\%.
+\hfill\break
+\hfill\break
+The data has been shuffled before being splitted into batches.
+
+% closing HoldOutPartitioning tecnique
+
+% KFOLD PARTITIONING TECNIQUE
+
+
+% start algorithm section
+ %beginning recsys graph based area
+\subsection{Algorithm Used}
+In this experiment a Graph Based Recommender Algorithm has been used.
+Specifically the NXPageRank algorithm, a Page Rank algorithm based on the networkx implementation
+The PageRank can be 'personalized', in this case the PageRank will be calculated with Priors.
+The alpha value used was: 0.85
+
+% End algorithm section
+
+% closing block RECSYS REPORT STYLE
+%\newpage
+
+
+% openeing EVAL REPORT STYLE
+ %beginning of the eval model section
+\subsection{Metrics}
+
+% Precision report
+ %beginning of the precision section
+%\subsection{Precision}
+
+\hfill\break
+In ClayRS the Precision metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+
+    Where:
+
+    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      ratingasdjiasd $\geq$         \textbf{3.52986}
+        
+
+    - $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$         \textbf{}
+        
+\hfill\break
+
+
+
+In ClayRS, Precision needs those parameters:
+\hfill\break
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{None}.
+\hfill\break\hfill\break
+\textbf{sys\_average}, a parameter that specifies how the system average must be computed the default value is 'macro',
+in this experiment the value of the sys\_average is \textbf{macro}.
+
+% closing precision report
+
+
+% Precision@K report
+ %beginning of the precision at k section
+%\subsection{Metrics: Precision at K}
+\hfill\break
+\textbf{Precision at k} is the proportion of recommended items in the top-k set that are relevant.
+ The Precision@K metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+
+    Where:
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $\geq$
+                \textbf{3.52986}
+        
+
+    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
+      \textbf{cutoff to the first K items} and have a rating $<$
+                \textbf{3.52986}
+        
+
+
+In this experiment the value \textbf{k is 2},
+the sys\_average is \textbf{macro}
+
+% end precision@K repoort
+
+
+% FMeasure@K report
+ %beginning of the fmeasure at k section
+%\subsection{Metrics: F - measure at K}
+\hfill\break\hfill\break
+ The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+ It is calculated as such for the
+    \textbf{single user}:
+
+    \[
+    FMeasure_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+
+    Where:
+
+    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}
+    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}
+    - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+
+        - $\beta = 1$: Equally weight Precision and Recall
+        - $\beta > 1$: Weight Recall more
+        - $\beta < 1$: Weight Precision more
+
+    A famous FMeasure@K is the F1@K Metric, where $\beta$ = 1, which basically is the harmonic mean of recall and
+    precision:
+    \hfill\break\hfill\break
+
+
+    \[
+    F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    \]
+
+
+\hfill\break
+\hfill\break
+In this experiment \textbf{k = 1},
+\text{\boldmath$\beta$} = \textbf{1} and
+\textbf{sys\_average} is \textbf{macro}.
+
+
+% end FMeasure@K report
+
+
+% System results on the splits obtained from the partition
+ %beginning of sysfold 1 results
+%\subsection{Sys Results fold1 :}
+%\newpage
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+    Precision - macro & 0.55697\\ \hline
+    Precision@2 - macro  & 0.6527\\ \hline
+    NDCG  & 0.93529\\ \hline
+    MRR  & 0.79602\\ \hline
+    F1@1 - macro  & 0.04221\\ \hline
+  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+
+% End report on slit fold1
+
+% closing eval report style
+
+
+\end{document}
