@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <!-- opening RECSYS REPORT STYLE -->
+    {% if dict['interactions'] is defined %}
+
+        <!-- Partitioning -->
+        <h3 id="subsec-partitioning">Partitioning</h3>
+
+        <!-- HOUD-OUT PARTIONING TECNIQUE -->
+        {% if dict['partitioning']['HoldOutPartitioning'] is defined %}
+         <!-- HouldOutPartition explanation !IMPROVE -->
+        <p>
+            The partitioning used is the Hold-Out Partitioning. This approach splits
+            the dataset in use into a ‘train’ set and a ‘test’ set. The training set
+            is what the model is trained on, and the test set is used to see how well
+            the model will perform on new, unseen data.
+        </p>
+        <p>
+            The train set size of this experiment is the
+            {{ dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100 }}\%
+            of the original dataset, while the test set is the remaining
+            {{(100 - (dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100)) }}\%.
+        </p>
+        <!-- in case of shuffe of the partion created -->
+        {% if dict['partitioning']['HoldOutPartitioning']['shuffle'] == True %}
+        <p>
+            The data has been shuffled before being splitted into batches.
+        </p>
+        <!-- end block shuffle -->
+        {% endif %}
+
+        <!-- closing HoldOutPartition tecnique -->
+        {% endif %}
+
+        <!-- KFOLD PARTITIONING TECNIQUE -->
+        {% if dict['partitioning']['KFoldPartitioning'] is defined %}
+
+        <!-- KFold Partitioning explanation TO BE REVIEWED -->
+        <p>
+            K-fold cross-validation is a technique used in machine learning to assess
+            the performance of a predictive model. The basic idea is to divide the dataset
+            into K subsets, or folds. The model is then trained K times, each time using K-1
+            folds for training and the remaining fold for validation. This process is
+            repeated K times, with a different fold used as the validation set in each iteration.
+
+            The key benefits of K-fold cross-validation include a more robust estimation
+            of the model's performance and a better utilization of the available data for
+            both training and validation. It helps to reduce the variability that may arise
+            from a single train-test split and provides a more accurate evaluation of how
+            well the model generalizes to new, unseen data.
+
+            The final performance metric is often the average of the performance measures
+            obtained in each iteration. Common choices for K include 5 or 10, but the value
+            can be adjusted based on the size and characteristics of the dataset. K-fold
+            cross-validation is widely used for model evaluation, hyperparameter tuning,
+            and assessing the generalization performance of machine learning models.
+        </p>
+        <p>
+            The train set size of this experiment is the
+            {{dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100 }}\%
+            of the original dataset, while the test set is the remaining
+            {{(100 - (dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100)) }}\%.
+        </p>
+        <!-- in case of shuffe of the partion created -->
+        {% if dict['partitioning']['KFoldPartitioning']['shuffle'] == True %}
+        <p>
+            The data has been shuffled before being splitted into batches.
+        </p>
+        <!-- end block shuffle -->
+        {% endif %}
+        <!-- closing KFoldPartitioning tecnique -->
+        {% endif %}
+
+        <!-- Dopo aver trattatto la tecnica adottata dal recsys module per l'addestramento
+            sul dataset, si definisce la parte di report per l'algoritmo usato
+            da ricordare di effettuare la suddivisione tra algoritmi che lavorano
+            sul contenuto e quelli che lavorano con la rappresentazione a grafo-->
+        {% if 'NXPageRank' in my_dict and my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank] is not None %}
+            <h3 id="subsec-algo">Algorithm Used</h3>
+            <p>
+                In this experiment a Graph Based Recommender Algorithm has been used.
+                Specifically the NXPageRank algorithm, a Page Rank algorithm based on
+                the networkx implementation The PageRank can be personalized, in this
+                case the PageRank will be calculated with Priors. The alpha value used
+                was:
+                {% if 'NXPageRank' in my_dict and my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank] is not None %}
+                {{ my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|safe_text }}
+                {% endif %}
+            </p>
+            <!--  closing algorithm used subsection -->
+        {% endif %}
+
+    <!-- closing block RECSYS REPORT STYLE -->
+    {% endif %}
+
+
+    <!-- opening EVAL REPORT STYLE -->
+    {%  if dict['metrics'] is defined %}
+        <!-- Metrics -->
+        <h3 id="subsec-metrix">Metrics</h3>
+        <!-- open Precision report style -->
+        {% if dict['metrics']['Precision'] is defined %}
+        <p>
+            In ClayRS the Precision metric is calculated as such for the <strong>single user</strong>:
+        </p>
+        <!-- code for showing precision_u formula -->
+        <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+         Precision<sub>u</sub> =
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              <span style="display: inline-block; margin-left: -3px;">tp<sub>u</sub></span>
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              <span style="display: inline-block; margin-left: -3px;">(tp<sub>u</sub> + fp<sub>u</sub>)</span>
+             <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+        </p>
+        <p>Where:</p>
+        <ul>
+            <li>
+                <strong>tp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                ratingasdjiasd &ge {% if dict['metrics']['Precision']['relevant_threshold'] != None %}
+                <strong>{{ dict['metrics']['Precision']['relevant_threshold'] }}</strong>
+                {% endif %}
+                {% if dict['metrics']['Precision']['relevant_threshold'] == None %}
+                <strong>{{ dict['interactions']['mean_score'] }}</strong>
+                {% endif %}
+            </li>
+            <li>
+                <strong>fp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                rating &lt {% if dict['metrics']['Precision']['relevant_threshold'] != None %}
+                <strong>{{ dict['metrics']['Precision']['relevant_threshold'] }}</strong>
+                {% endif %}
+                {% if dict['metrics']['Precision']['relevant_threshold'] == None %}
+                 <strong>{{ dict['interactions']['mean_score'] }}</strong>
+                {% endif %}
+            </li>
+        </ul>
+        <p>
+            In ClayRS, Precision metric needs the following parameters:
+            the <strong>relevant\_threshold</strong>, is a parameter needed to discern
+            relevant items and non-relevant items for every user. If not specified,
+            the mean rating score of every user will be used, in this experiment it
+            has been set to
+            <strong>{{ dict['metrics']['Precision']['relevant_threshold']|safe_text }}</strong>.
+
+            <strong>sys\_average</strong>, a parameter that specifies how
+            the system average must be computed the default value is 'macro',
+            in this experiment the value of the sys\_average is
+            <strong>{{ dict['metrics']['Precision']['sys_average']|safe_text }}</strong>.
+        </p>
+        <!-- closing Precision report style -->
+        {% endif %}
+
+        <!-- open Precision@K report style -->
+        {% if dict['metrics']['PrecisionAtK'] is defined %}
+        <p>
+            <strong>Precision at k</strong> is the proportion of recommended
+            items in the top-k set that are relevant. The Precision@K metric is
+            calculated as such for the <strong>single user</strong>:
+        </p>
+        <!-- code for showing precision@K_u formula -->
+        <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+         Precision@K<sub>u</sub> =
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              <span style="display: inline-block; margin-left: -3px;">tp@K<sub>u</sub></span>
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+              <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              <span style="display: inline-block; margin-left: -3px;">(tp@K<sub>u</sub> + fp@K<sub>u</sub>)</span>
+             <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+        </p>
+        <p>Where:</p>
+        <ul>
+            <li>
+                <strong>tp@K<sub>u</sub>:</strong> is the number of items which are in the
+                recommendation list of the user and have a ratingasdjiasd &ge
+                {% if dict['metrics']['PrecisionAtK']['relevant_threshold'] != None %}
+                <strong>{{ dict['metrics']['PrecisionAtK']['relevant_threshold'] }}</strong>
+                {% endif %}
+                {% if dict['metrics']['PrecisionAtK']['relevant_threshold'] == None %}
+                <strong>{{ dict['interactions']['mean_score'] }}</strong>
+                {% endif %}
+            </li>
+            <li>
+                <strong>fp@K<sub>u</sub>:</strong> is the number of items which are in the
+                recommendation list of the user and have a rating &lt
+                {% if dict['metrics']['PrecisionAtK']['relevant_threshold'] != None %}
+                <strong>{{ dict['metrics']['PrecisionAtK']['relevant_threshold'] }}</strong>
+                {% endif %}
+                {% if dict['metrics']['PrecisionAtK']['relevant_threshold'] == None %}
+                 <strong>{{ dict['interactions']['mean_score'] }}</strong>
+                {% endif %}
+            </li>
+        </ul>
+        <p>
+            In this experiment the value
+            <strong>k is {{ dict['metrics']['PrecisionAtK']['k']|safe_text }}</strong>,
+            the sys\_average is
+            <strong>{{ dict['metrics']['PrecisionAtK']['sys_average']|safe_text }}</strong>
+        </p>
+        <!-- closing block Precision@K report style -->
+        {% endif %}
+
+        <!-- open FMeasure@K report style -->
+        {% if dict['metrics']['FMeasureAtK'] is defined %}
+        <p>
+            The FMeasure@K metric combines Precision@K and Recall@K into a single
+            metric. It is calculated as such for the <strong>single user</strong>:
+        </p>
+        <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+          FMeasure@K<sub>u</sub> =
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+            <span style="display: inline-block; margin-left: -3px;">(1 + β<sup>2</sup>)</span>
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">·</span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+            <span style="display: inline-block; margin-left: -3px;">P@K<sub>u</sub> · R@K<sub>u</sub></span>
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+            <span style="display: inline-block; margin-left: -3px;">(β<sup>2</sup> · P@K<sub>u</sub>) + R@K<sub>u</sub></span>
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+        </p>
+        <p>Where:</p>
+        <ul>
+            <li>
+                <strong>P@K<sub>u</sub>:</strong> iis the Precision at K calculated for the user
+                <strong>u</strong>
+            </li>
+            <li>
+                <strong>R@K<sub>u</sub>:</strong> is the Recall at K calculated for the user
+                <strong>u</strong>
+            </li>
+            <li>
+                <strong>β</strong> is a real factor which could weight differently Recall
+                or Precision based on its value:
+                <ul>
+                  <li> <strong>β = 1</strong>: Equally weight Precision and Recall</li>
+                  <li><strong>β > 1</strong>: Weight Recall more</li>
+                  <li><strong>β < 1</strong>: Weight Precision more</li>
+                </ul>
+            </li>
+        </ul>
+        <p>
+            A famous FMeasure@K is the F1@K Metric, where β = 1,
+            which basically is the harmonic mean of recall and precision:
+        </p>
+        <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+          F1@K<sub>u</sub> =
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+            <span style="display: inline-block; margin-left: -3px;">2 · P@K<sub>u</sub> · R@K<sub>u</sub></span>
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+          <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+            <span style="display: inline-block; margin-left: -3px;">(P@K<sub>u</sub> + R@K<sub>u</sub>)</span>
+            <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+          </span>
+        </p>
+        <p>
+            In this experiment <strong>k = {{ dict['metrics']['FMeasureAtK']['k']|safe_text }}</strong>,
+            <strong>β</strong> = <strong>{{ dict['metrics']['FMeasureAtK']['beta']|safe_text }}</strong>
+            and
+            <strong>sys\_average</strong> is  <strong>{{ dict['metrics']['FMeasureAtK']['sys_average']|safe_text }}</strong>.
+        </p>
+        <!-- close block FMeasure@K report style -->
+        {% endif %}
+
+        <!-- open System Results -->
+        {% if dict['sys_results']['sys - fold1'] is defined %}
+        <h3 id="subsec-res">Results</h3>
+        <p>
+            In the following table, we present the results of the
+            evaluation <a href="#results_table">Table of the results</a>:
+        </p>
+       <div style="text-align: center;">
+          <table id="results_table" style="margin: auto;">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Precision - macro</td>
+                <td>{{ dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text }}</td>
+              </tr>
+              <tr>
+                <td>Precision@2 - macro</td>
+                <td>{{ dict['sys_results']['sys - fold1']['Precision@2 - macro']|truncate|safe_text }}</td>
+              </tr>
+              <tr>
+                <td>NDCG</td>
+                <td>{{ dict['sys_results']['sys - fold1']['NDCG']|truncate|safe_text }}</td>
+              </tr>
+              <tr>
+                <td>MRR</td>
+                <td>{{ dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text }}</td>
+              </tr>
+              <tr>
+                <td>F1@1 - macro</td>
+                <td>{{ dict['sys_results']['sys - fold1']['F1@1 - macro']|truncate|safe_text }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="caption-side: bottom; text-align: center;">Table of the results</p>
+        </div>
+        <!-- close System Results -->
+        {% endif %}
+    <!-- close blockEVAL REPORT STYLE -->
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Report ClayRS</title>
+</head>
+<body>
+    <h1>Report ClayRS</h1>
+    <p>This HTML document was generated from YAML files for the purpose
+      of replicability of experiments done with <a href="https://github.com/swapUniba/ClayRS" target="_blank">ClayRS</a>.
+      It contains information about the dataset, preprocessing methods, analysis algorithms,
+      and the results of the experimental evaluation.</p>
+
+    <!-- apertura CONTENT ANALYZER REPORT STYLE -->
+    {% if my_dict['source_file'] is defined and my_dict['source_file'] %}
+         <!-- ClayRS configurations of the experiment -->
+         <h2 id="sec-clayrs-configurations-of-the-experiment">ClayRS configurations of the experiment</h2>
+
+        <!-- Dataset sotto sezione di h2 -->
+        <h3 id="subsec-dataset">Dataset</h3>
+        <p>In this experiment, the {% if my_dict['id_each_content'] == ['movielens_id'] %} <strong>Movielens</strong> {% endif %}
+            <strong>Dataset</strong> was used.</p>
+
+        {% if 'interactions' in my_dict %}
+            <!-- Questo blocco if controlla la tabella sulle statiche del dataset -->
+            <!-- Statistics of the dataset -->
+            <p>
+                The statistics of the dataset used are reported in the following
+                <a href="#stat-table">Table of iteractions</a>:
+            </p>
+            <div style="text-align: center;">
+                <table id="stat-table" style="margin: auto;">
+                    <tr>
+                         <th>Parameter</th>
+                         <th>Value</th>
+                    </tr>
+                     <tr>
+                         <td>n_users</td>
+                         <td>{{ my_dict['interactions']['n_users']|safe_text }}</td>
+                     </tr>
+                     <tr>
+                        <td>n_items</td>
+                        <td>{{ my_dict['interactions']['n_items']|safe_text }}</td>
+                    </tr>
+                     <tr>
+                        <td>total_interactions</td>
+                        <td>{{ my_dict['interactions']['total_interactions']|safe_text }}</td>
+                     </tr>
+                    <tr>
+                        <td>min_score</td>
+                        <td>{{ my_dict['interactions']['min_score']|safe_text }}</td>
+                     </tr>
+                    <tr>
+                        <td>max_score</td>
+                        <td>{{ my_dict['interactions']['max_score']|safe_text }}</td>
+                    </tr>
+                    <tr>
+                        <td>mean_score</td>
+                        <td>{{ my_dict['interactions']['mean_score']|safe_text }}</td>
+                    </tr>
+                    <tr>
+                        <td>sparsity</td>
+                        <td>{{ my_dict['interactions']['sparsity']|truncate|safe_text }}</td>
+                    </tr>
+                     <caption>Table of the Interactions</caption>
+                 </table>
+            </div>
+            <!-- chiusura blocco controllo tabella dataset -->
+        {% endif %}
+
+        {% if 'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0'] or
+            'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1'] %}
+            <!-- Field representations -->
+            <p>
+                The embendding techniques used during the processing of the document are the following:
+                {% if 'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0'] %}
+                {{ my_dict['field_representations']['genres_0']['WordEmbeddingTechnique']['embedding_source']|safe_text }}
+                {% endif %}
+                {% if 'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1'] %}
+                {{ my_dict['field_representations']['genres_1']['SentenceEmbeddingTechnique']['embedding_source']|safe_text }}
+                {% endif %}
+            </p>
+        <!-- closing the OR condition -->
+        {% endif %}
+
+        <!-- Preprocessing -->
+        <h3 id="subsec-preprocessing">Preprocessing</h3>
+        <!--  Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf'] -->
+        {% if 'plot_0' in my_dict['field_representations'] %}
+            {% if 'NLTK' in my_dict['field_representations']['plot_0']['preprocessing'] %}
+            <p>
+                The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+                It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+                along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+                and semantic reasoning.
+            </p>
+            <!-- potremmo gestire questi paragrafi come lista numerata  -->
+            <p>
+                In this experiment, those operations of NLTK were used:
+            </p>
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('strip_multiple_whitespace') == True %}
+            <p>
+                <strong> Strip multiple whitespace </strong>,
+                an operation that removes multiple whitspaces between words.
+            </p>
+            {% endif %}
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('remove_punctuation') == True %}
+            <p>
+                <strong> Remove punctuation </strong>,
+                used to remove the punctuation occurring in the text.
+            </p>
+            {% endif %}
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stopwords_removal') == True %}
+            <p>
+                <strong> Stopwords removal </strong>,
+                used to remove the stopwords occurring in the text.
+            </p>
+            {% endif %}
+            {%  if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('url_tagging') == True %}
+            <p>
+                <strong> Url tagging </strong>, tags the urls occuring in the text,
+                replacing them with "&lt URL &gt".
+            </p>
+            {% endif %}
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('lemmatization') == True %}
+            <p>
+                <strong> Lemmatization </strong>, an operation that determines the lemma of a word based on its intended meaning,
+                for example "troubled" becomes "trouble" after lemmatization.
+            </p>
+            {% endif %}
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stemming') == True %}
+            <p>
+                <strong> Stemming </strong>, an operation that reduces a word to its root,
+                for example "Flying" becomes "Fly" after the stemming operations is applied.
+            </p>
+            {% endif %}
+            {% if my_dict.get('field_representations', {}).get('plot_0', {}).get('preprocessing', {}).get('NLTK', {}).get('named_entity_recognition') == True %}
+            <p>
+                <strong>Named entity recognition</strong>, an operation that detects the named entities such as person names,
+                location names, company names, etc., from the text.
+            </p>
+            {% endif %}
+             <!-- chiusura dei primi due blocchi di flusso aperti
+                 sotto il tag header h3 id="subsec-preprocessing" -->
+            {% endif %}
+        {% endif %}
+
+
+        <!-- NLTK REPORTING STYLE -->
+        {% if 'genres_0' in my_dict['field_representations'] %}
+            {% if 'NLTK' in my_dict['field_representations']['genres_0']['preprocessing'] %}
+                <p>
+                   The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
+                   It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
+                   along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
+                   and semantic reasoning.
+                </p>
+                <p>
+                    In this experiment, those operations of NLTK were used:
+                </p>
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('strip_multiple_whitespace') == True %}
+                <p>
+                    <strong>Strip multiple whitespace</strong>,an operation that removes multiple whitspaces between words.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('remove_punctuation') == True %}
+                <p>
+                    <strong>Remove punctuation</strong>, an operation that removes the punctuation characters occuring in the text.
+                </p>
+                 {% endif %}
+                 {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stopwords_removal') == True %}
+                 <p>
+                     <strong>Stopwords removal</strong>, used to remove the stopwords occurring in the text.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('url_tagging') == True %}
+                 <p>
+                    <strong>Url tagging</strong>, tags the urls occuring in the text, replacing them with "&lt URL &gt"
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('lemmatization') == True %}
+                <p>
+                    <strong>Lemmatization</strong>, an operation that determines the lemma of a word based on its intended meaning,
+                    for example "troubled" becomes "trouble" after lemmatization.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('stemming') == True %}
+                <p>
+                    <strong>Stemming</strong>, an operation that reduces a word to its root,
+                    for example "Flying" becomes "Fly" after the stemming operations is applied.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('NLTK', {}).get('named_entity_recognition') == True %}
+                <p>
+                    <strong>Named entity recognition</strong>, an operation that detects the named entities such as person names,
+                    location names, company names, etc., from the text.
+                </p>
+                {% endif %}
+            <!-- chiusura dei blocchi di controllo aperti all'inizio di
+                 NLTK REPORTING STYLE -->
+            {% endif %}
+        {% endif %}
+
+        <!-- EKPHRASYS REPORTING STYLE -->
+        {% if 'genres_0' in my_dict['field_representations'] %}
+            {% if 'Ekphrasis' in my_dict['field_representations']['genres_0']['preprocessing'] %}
+                <p>
+                    The preprocessing used is Ekphrasis, ........................
+                </p>
+                <p>
+                    The Ekphrasis configuration for this experiment is:
+                </p>
+                <!-- NEED TO BE CONTINUED -->
+            <!-- chiusura dei blocchi di controllo aperti all'inizio di
+                 EKPHRASYS REPORTING STYLE -->
+            {% endif %}
+        {% endif %}
+
+        <!-- SPACY reporting style -->
+        {% if 'genres_0' in my_dict['field_representations']  %}
+            {% if 'Spacy' in my_dict['field_representations']['genres_0']['preprocessing'] %}
+                <p>
+                    spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
+                    spaCy is designed specifically for production use and helps you build applications that process
+                    and "understand" large volumes of text. It can be used to build information extraction or natural
+                    language understanding systems, or to pre-process text for deep learning.
+                </p>
+                <p>
+                    In this experiment, those spaCy operations have been used:
+                </p>
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('strip_multiple_whitespace') == True %}
+                <p>
+                    <strong>Strip multiple whitespace</strong>, an operation that removes multiple whitspaces between words.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('remove_punctuation') == True %}
+                <p>
+                    <strong>Remove punctuation</strong>, an operation that removes the punctuation characters occuring in the text.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('stopwords_removal') == True %}
+                <p>
+                    <strong>Stopwords removal</strong>, used to remove the stopwords occurring in the text.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('url_tagging') == True %}
+                <p>
+                    <strong>Url tagging</strong>, tags the urls occuring in the text, replacing them with "&lt URL &gt".
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('lemmatization') == True %}
+                <p>
+                    <strong>Lemmatization</strong>, an operation that determines the lemma of a word based on its intended
+                    meaning, for example "troubled" becomes "trouble" after lemmatization.
+                </p>
+                {% endif %}
+                {% if my_dict.get('field_representations', {}).get('genres_0', {}).get('preprocessing', {}).get('Spacy', {}).get('named_entity_recognition') == True %}
+                <p>
+                    <strong>Named entity recognition</strong>, an operation that detects the named entities such as person names,
+                    location names, company names, etc., from the text.
+                </p>
+                {% endif %}
+            <!-- chiusura dei blocchi di controllo aperti all'inizio di
+                 SPACY reporting style -->
+            {% endif %}
+        {% endif %}
+    <!-- chiusura della sezione del content analyzer -->
+    {% endif %}
+
+    <!-- opening RECSYS REPORT STYLE -->
+    {% if my_dict['interactions'] is defined %}
+
+        <!-- Partitioning -->
+        <h3 id="subsec-partitioning">Partitioning</h3>
+
+        <!-- HOUD-OUT PARTIONING TECNIQUE -->
+        {% if my_dict['partitioning']['HoldOutPartitioning'] is defined %}
+            <!-- HouldOutPartition explanation !IMPROVE -->
+            <p>
+                The partitioning used is the Hold-Out Partitioning. This approach splits
+                the dataset in use into a "train" set and a "test" set. The training set
+                is what the model is trained on, and the test set is used to see how well
+                the model will perform on new, unseen data.
+            </p>
+            <p>
+                The train set size of this experiment is the
+                {{ my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100 }}%
+                of the original dataset, while the test set is the remaining
+                {{(100 - (my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100)) }}%.
+            </p>
+            <!-- in case of shuffe of the partion created -->
+            {% if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True %}
+            <p>
+                The data has been shuffled before being splitted into batches.
+            </p>
+            <!-- end block shuffle -->
+            {% endif %}
+        <!-- closing HoldOutPartition tecnique -->
+        {% endif %}
+
+        <!-- KFOLD PARTITIONING TECNIQUE -->
+        {% if my_dict['partitioning']['KFoldPartitioning'] is defined %}
+            <!-- KFold Partitioning explanation TO BE REVIEWED -->
+            <p>
+                K-fold cross-validation is a technique used in machine learning to assess
+                the performance of a predictive model. The basic idea is to divide the dataset
+                into K subsets, or folds. The model is then trained K times, each time using K-1
+                folds for training and the remaining fold for validation. This process is
+                repeated K times, with a different fold used as the validation set in each iteration.
+
+                The key benefits of K-fold cross-validation include a more robust estimation
+                of the model's performance and a better utilization of the available data for
+                both training and validation. It helps to reduce the variability that may arise
+                from a single train-test split and provides a more accurate evaluation of how
+                well the model generalizes to new, unseen data.
+
+                The final performance metric is often the average of the performance measures
+                obtained in each iteration. Common choices for K include 5 or 10, but the value
+                can be adjusted based on the size and characteristics of the dataset. K-fold
+                cross-validation is widely used for model evaluation, hyperparameter tuning,
+                and assessing the generalization performance of machine learning models.
+            </p>
+            <p>
+                The train set size of this experiment is the
+                {{ my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100 }}%
+                of the original dataset, while the test set is the remaining
+                {{(100 - (my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100)) }}%.
+            </p>
+            <!-- in case of shuffe of the partion created -->
+            {% if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True %}
+            <p>
+                The data has been shuffled before being splitted into batches.
+            </p>
+            <!-- end block shuffle -->
+            {% endif %}
+        <!-- closing KFoldPartitioning tecnique -->
+        {% endif %}
+
+        <!-- Dopo aver trattatto la tecnica adottata dal recsys module per l'addestramento
+            sul dataset, si definisce la parte di report per l'algoritmo usato
+            da ricordare di effettuare la suddivisione tra algoritmi che lavorano
+            sul contenuto e quelli che lavorano con la rappresentazione a grafo-->
+        {% if 'NXPageRank' in my_dict and my_dict.get('recsys', {}).get('GraphBasedRS', {}).get('algorithm', {}).get('NXPageRank') is not none %}
+            <h3 id="subsec-algo">Algorithm Used</h3>
+            <p>
+                In this experiment a Graph Based Recommender Algorithm has been used.
+                Specifically the NXPageRank algorithm, a Page Rank algorithm based on
+                the networkx implementation The PageRank can be personalized, in this
+                case the PageRank will be calculated with Priors. The alpha value used
+                was:
+                {{ my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|safe_text }}
+            </p>
+            <!--  closing algorithm used subsection -->
+        {% endif %}
+
+    <!-- closing block RECSYS REPORT STYLE -->
+    {% endif %}
+
+    <!-- opening EVAL REPORT STYLE -->
+    {%  if my_dict['metrics'] is defined %}
+        <!-- Metrics -->
+        <h3 id="subsec-metrix">Metrics</h3>
+        <!-- open Precision report style -->
+        {% if my_dict['metrics']['Precision'] is defined %}
+            <p>
+                In ClayRS the Precision metric is calculated as such for the <strong>single user</strong>:
+            </p>
+            <!-- code for showing precision_u formula -->
+            <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+             Precision<sub>u</sub> =
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                  <span style="display: inline-block; margin-left: -3px;">tp<sub>u</sub></span>
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                  <span style="display: inline-block; margin-left: -3px;">(tp<sub>u</sub> + fp<sub>u</sub>)</span>
+                 <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+            </p>
+            <p>Where:</p>
+            <ul>
+                {% if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none %}
+                <li>
+                    <strong>tp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                    rating >  <strong>{{ my_dict['metrics']['Precision']['relevant_threshold'] }}</strong>
+
+                    <!-- if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is none -->
+                </li>
+                {% else %}
+                <li>
+                    <strong>tp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                    rating &ge <strong> <!--  my_dict['interactions']['mean_score']  --> </strong>
+                </li>
+                {% endif %}
+                {% if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none %}
+                <li>
+                    <strong>fp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                    rating &lt <strong>{{ my_dict['metrics']['Precision']['relevant_threshold'] }}</strong>
+
+                    <!-- if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is none -->
+                </li>
+                {% else %}
+                <li>
+                    <strong>fp<sub>u</sub>:</strong> is the number of items which are in the recommendation list of the user and have a
+                    rating &lt  <strong> <!--  my_dict['interactions']['mean_score']  --></strong>
+                </li>
+                {% endif %}
+            </ul>
+            <p>
+                In ClayRS, Precision metric needs the following parameters:
+                the <strong>relevant\_threshold</strong>, is a parameter needed to discern
+                relevant items and non-relevant items for every user. If not specified,
+                the mean rating score of every user will be used, in this experiment it
+                has been set to
+                <strong>{{ my_dict['metrics']['Precision']['relevant_threshold']|safe_text }}</strong>.
+
+                <strong>sys\_average</strong>, a parameter that specifies how
+                the system average must be computed the default value is 'macro',
+                in this experiment the value of the sys\_average is
+                <strong>{{ my_dict['metrics']['Precision']['sys_average']|safe_text }}</strong>.
+            </p>
+        <!-- closing Precision report style -->
+        {% endif %}
+
+        <!-- open Precision@K report style -->
+        {% if my_dict['metrics']['PrecisionAtK'] is defined %}
+            <p>
+                <strong>Precision at k</strong> is the proportion of recommended
+                items in the top-k set that are relevant. The Precision@K metric is
+                calculated as such for the <strong>single user</strong>:
+            </p>
+            <!-- code for showing precision@K_u formula -->
+            <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+             Precision@K<sub>u</sub> =
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                  <span style="display: inline-block; margin-left: -3px;">tp@K<sub>u</sub></span>
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                  <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                  <span style="display: inline-block; margin-left: -3px;">(tp@K<sub>u</sub> + fp@K<sub>u</sub>)</span>
+                 <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+            </p>
+            <p>Where:</p>
+            <ul>
+               {% if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is not none %}
+                <li>
+                    <strong>tp@K<sub>u</sub>:</strong> is the number of items which are in the
+                    recommendation list of the user and have a rating > <strong>{{ my_dict['metrics']['PrecisionAtK']['relevant_threshold'] }}</strong>
+
+                    <!-- if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is none -->
+                </li>
+                {% else %}
+                <li>
+                     <strong>tp@K<sub>u</sub>:</strong> is the number of items which are in the
+                    recommendation list of the user and have a rating > <strong> <!--  my_dict['interactions']['mean_score']  --></strong>
+                </li>
+                {% endif %}
+                {% if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is not none %}
+                <li>
+                    <strong>fp@K<sub>u</sub>:</strong> is the number of items which are in the
+                    recommendation list of the user and have a rating &lt <strong>{{ my_dict['metrics']['PrecisionAtK']['relevant_threshold'] }}</strong>
+
+                    <!-- if my_dict.get('metrics', {}).get('PrecisionAtK', {}).get('relevant_threshold') is none -->
+                </li>
+                {% else %}
+                <li>
+                    <strong>fp@K<sub>u</sub>:</strong> is the number of items which are in the
+                    recommendation list of the user and have a rating &lt  <strong> <!-- my_dict['interactions']['mean_score'] --></strong>
+                </li>
+                {% endif %}
+            </ul>
+            <p>
+                In this experiment the value
+                <strong>k is {{ my_dict['metrics']['PrecisionAtK']['k']|safe_text }}</strong>,
+                the sys\_average is
+                <strong>{{ my_dict['metrics']['PrecisionAtK']['sys_average']|safe_text }}</strong>
+            </p>
+        <!-- closing block Precision@K report style -->
+        {% endif %}
+
+        <!-- open FMeasure@K report style -->
+        {% if dict['metrics']['FMeasureAtK'] is defined %}
+            <p>
+                The FMeasure@K metric combines Precision@K and Recall@K into a single
+                metric. It is calculated as such for the <strong>single user</strong>:
+            </p>
+            <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+              FMeasure@K<sub>u</sub> =
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                <span style="display: inline-block; margin-left: -3px;">(1 + β<sup>2</sup>)</span>
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">·</span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                <span style="display: inline-block; margin-left: -3px;">P@K<sub>u</sub> · R@K<sub>u</sub></span>
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                <span style="display: inline-block; margin-left: -3px;">(β<sup>2</sup> · P@K<sub>u</sub>) + R@K<sub>u</sub></span>
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+            </p>
+            <p>Where:</p>
+            <ul>
+                <li>
+                    <strong>P@K<sub>u</sub>:</strong> iis the Precision at K calculated for the user
+                    <strong>u</strong>
+                </li>
+                <li>
+                    <strong>R@K<sub>u</sub>:</strong> is the Recall at K calculated for the user
+                    <strong>u</strong>
+                </li>
+                <li>
+                    <strong>β</strong> is a real factor which could weight differently Recall
+                    or Precision based on its value:
+                    <ul>
+                      <li> <strong>β = 1</strong>: Equally weight Precision and Recall</li>
+                      <li><strong>β > 1</strong>: Weight Recall more</li>
+                      <li><strong>β < 1</strong>: Weight Precision more</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+                A famous FMeasure@K is the F1@K Metric, where β = 1,
+                which basically is the harmonic mean of recall and precision:
+            </p>
+            <p style="font-family: 'Cambria Math', 'Times New Roman', Times, serif; font-size: 28px;">
+              F1@K<sub>u</sub> =
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                <span style="display: inline-block; margin-left: -3px;">2 · P@K<sub>u</sub> · R@K<sub>u</sub></span>
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">/</span>
+              <span style="display: inline-block; vertical-align: middle; margin-left: -1px;">
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+                <span style="display: inline-block; margin-left: -3px;">(P@K<sub>u</sub> + R@K<sub>u</sub>)</span>
+                <span style="border-bottom: 1px solid; padding-bottom: 3px; display: inline-block;"></span>
+              </span>
+            </p>
+            <p>
+                In this experiment <strong>k = {{ my_dict['metrics']['FMeasureAtK']['k']|safe_text }}</strong>,
+                <strong>β</strong> = <strong>{{ my_dict['metrics']['FMeasureAtK']['beta']|safe_text }}</strong>
+                and
+                <strong>sys\_average</strong> is  <strong>{{ my_dict['metrics']['FMeasureAtK']['sys_average']|safe_text }}</strong>.
+            </p>
+        <!-- close block FMeasure@K report style -->
+        {% endif %}
+
+        <!-- open System Results -->
+        {% if my_dict['sys_results']['sys - fold1'] is defined %}
+            <h3 id="subsec-res">Results</h3>
+            <p>
+                In the following table, we present the results of the
+                evaluation <a href="#results_table">Table of the results</a>:
+            </p>
+           <div style="text-align: center;">
+              <table id="results_table" style="margin: auto;">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Precision - macro</td>
+                    <td>{{ my_dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text }}</td>
+                  </tr>
+                  <tr>
+                    <td>Precision@2 - macro</td>
+                    <td>{{ my_dict['sys_results']['sys - fold1']['Precision@2 - macro']|truncate|safe_text }}</td>
+                  </tr>
+                  <tr>
+                    <td>NDCG</td>
+                    <td>{{ my_dict['sys_results']['sys - fold1']['NDCG']|truncate|safe_text }}</td>
+                  </tr>
+                  <tr>
+                    <td>MRR</td>
+                    <td>{{ my_dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text }}</td>
+                  </tr>
+                  <tr>
+                    <td>F1@1 - macro</td>
+                    <td>{{ my_dict['sys_results']['sys - fold1']['F1@1 - macro']|truncate|safe_text }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="caption-side: bottom; text-align: center;">Table of the results</p>
+            </div>
+        <!-- close System Results -->
+        {% endif %}
+    <!-- close blockEVAL REPORT STYLE -->
+    {% endif %}
+</body>
+</html>
+
