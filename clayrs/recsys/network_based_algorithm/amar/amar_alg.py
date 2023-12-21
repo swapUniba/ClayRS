@@ -474,6 +474,16 @@ class Amar(ContentBasedAlgorithm):
 
         raise NotPredictionAlg("Amar is not a Score Prediction Algorithm!")
 
+    def __repr__(self):
+        return f"{self}(network={self.network}, item_fields={self.item_field_list}, user_fields={self.user_field_list}, " \
+               f"batch_size={self.dl_parameters['batch_size']}, epochs={self.epochs}, threshold={self.threshold}, " \
+               f"additional_opt_parameters={self.train_optimizer_parameters['lr']}, " \
+               f"train_loss={repr(self.train_loss)}, optimizer_class={repr(self.train_optimizer)}, " \
+               f"device={self.device}, embedding_combiner={repr(self._embedding_combiner)}, " \
+               f"seed={self.seed}, " \
+               f"additional_opt_parameters={ {key: val for key, val in self.dl_parameters.items() if key != 'lr'} }, " \
+               f"additional_dl_parameters={ {key: val for key, val in self.dl_parameters.items() if key != 'batch_size'} })"
+
 
 class AmarSingleSource(Amar):
     r"""
@@ -533,6 +543,9 @@ class AmarSingleSource(Amar):
                          train_loss, optimizer_class, device, embedding_combiner, seed,
                          additional_network_parameters, additional_opt_parameters, additional_dl_parameters,
                          custom_network_weights)
+
+    def __str__(self):
+        return "AmarSingleSource"
 
 
 class AmarDoubleSource(Amar):
@@ -606,4 +619,7 @@ class AmarDoubleSource(Amar):
                          train_loss, optimizer_class, device, embedding_combiner, seed,
                          additional_network_parameters, additional_opt_parameters, additional_dl_parameters,
                          custom_network_weights)
+
+    def __str__(self):
+        return "AmarDoubleSource"
 
