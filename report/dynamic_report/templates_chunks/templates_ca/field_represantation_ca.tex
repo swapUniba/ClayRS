@@ -1,0 +1,74 @@
+
+###
+
+% field: X reppresentation subsection
+
+% check if non particular technique of data reppresentation has been used
+\BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
+
+
+% check WhooshTfIdf used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
+
+
+% check SkLearnTfIdf used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
+
+
+% check WordEmbeddingTechnique used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
+
+
+% check SentenceEmbeddingTechnique used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
+
+
+% check DocumentEmbeddingTechnique used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
+
+
+% check Word2SentenceEmbeddingused as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
+
+
+% check Word2DocEmbedding used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
+
+
+% check Sentence2DocEmbedding used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
+
+
+% check PyWSDSynsetDocumentFrequency used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
+
+
+% check FromNPY used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
+
+
+% check SkImageHogDescriptorused as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
+
+
+% check MFCC used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
+
+
+% check PytorchImageModels used as representation
+\BLOCK{elif 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
+
+
+% check TorchVisionVideoModels used as representation
+\BLOCK{elif  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
+
+
+\BLOCK{else}
+The reppresentation techinque used has not been recognised from the framework check statement flow controll
+for chunks template used for rendering by jinja.
+
+\BLOCK{endif}
+
+
+
+###

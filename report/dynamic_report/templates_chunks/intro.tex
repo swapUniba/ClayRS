@@ -1,0 +1,57 @@
+###
+%! Author = DIEGO
+%! Date = 21/12/2023
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+
+% Document
+\begin{document}
+
+\maketitle
+This \LaTeX{} document was generated from yaml files for the purpose of replicability of experiments done with
+\href{https://github.com/swapUniba/ClayRS}{ClayRS},
+it contains information about the dataset, preprocessing methods, analysis algorithms and
+the results of the experimental evaluation.
+
+% apertura CONTENT ANALYZER REPORT STYLE
+\BLOCK{ if my_dict['source_file'] is defined and my_dict['source_file'] }
+\section{ClayRS configurations of the experiment}\label{sec:clayrs-configurations-of-the-experiment}
+
+% Dataset sotto sezione
+\subsection{Dataset}\label{subsec:dataset}
+In this experiment, the \BLOCK{ if my_dict['id_each_content'] == ['movielens_id'] } \textbf{Movielens}\BLOCK{endif}
+\textbf{Dataset} was used.
+
+
+\hfill\break
+% Questo blocco if controlla la tabella sulle statiche del dataset
+\BLOCK{if 'interactions' in my_dict}
+The statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
+
+XXX
+
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & \VAR{my_dict['interactions']['XXX']|safe_text}\\ \hline
+    n\_items  & \VAR{my_dict['interactions']['n_items']|safe_text}\\ \hline
+    total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['XXX']['min_score']|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|safe_text}\\ \hline
+    sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+% chiusura blocco controllo tabella dataset
+\BLOCK{endif}
+
+###
+
+\end{document}

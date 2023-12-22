@@ -1,0 +1,49 @@
+%! Author = DIEGO
+%! Date = 21/12/2023
+
+% Document
+%\begin{document}
+
+ ###
+
+ This exogenous technique expands each content by using as external source the DBPedia ontology.
+ It needs the entity of the contents for which a mapping is required (e.g. entity_type=`dbo:Film`)
+ and the field of the raw source that will be used for the actual mapping. This technique can be performend
+ with four different modalities as follows:
+
+\begin{itemize}
+ \item \begin{minipage}
+           \textbf{mode='only_retrieved_evaluated'}, all properties from DBPedia will be retrieved but discarding the
+            ones with a blank value.
+        \end{minipage}
+ \item \begin{minipage}
+           \textbf{mode='all'}, all properties in DBPedia più all properties in local raw source will be retrieved.
+            Local properties will be overwritten by dbpedia values if there's a conflict
+        \end{minipage}
+ \item \begin{minipage}
+           \textbf{mode='all_retrieved'}, all properties in DBPedia *only* will be retrieved
+       \end{minipage}
+ \item \begin{minipage}
+           \textbf{mode='original_retrieved'}, all local properties with their DBPedia value will be retrieved
+       \end{minipage}
+\end{itemize}
+
+\hfill\break
+
+In this experiment the DBpedia Mapping Technique has been used with the mode:
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['mode']|safe_text}, the label_field_used is
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['label_field']|safe_text} and the timeout used
+to expand the content with dbpedia is set to
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['max_timeout']|safe_text}.
+\BLOCK{if my_dict['exogenous_representations']['DBPediaMappingTechnique']['prop_as_uri'] is defined and
+my_dict['exogenous_representations']['DBPediaMappingTechnique']['prop_as_uri'] == true}
+The properties have been returned in their full uri form.
+\BLOCK{else}
+The properties have been returned in their rdfs:label form.
+\BLOCK{endif}
+
+\hfill\break
+
+###
+
+%\end{document}
