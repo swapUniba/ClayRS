@@ -241,28 +241,127 @@ for chunks template used for rendering by jinja.
 % ------ PREPROCESSING OF DATA FIELD ------------
 
 \BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
+Spacy has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item model: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation:\VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['stopwords_removal']|default('no setting used')|safe_text}
+    \item new stopwords: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['new_stopwords']|default('no setting used')|safe_text}
+    \item not stopwords: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['not_stopwords']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['lemmatization']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['url_tagging']|default('no setting used')|safe_text}
+    \item named entity recognition: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['named_entity_recognition']|default('no setting used')|safe_text}
+\end{itemize}
 
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
+Ekphrasis has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item omit: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['omit']|default('no setting used')|safe_text}
+    \item normalize: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['normalize']|default('no setting used')|safe_text}
+    \item unpack contractions: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['unpack_contractions']|default('no setting used')|safe_text}
+    \item unpack hashtags: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['unpack_hashtags']|default('no setting used')|safe_text}
+    \item annotate: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['annotate']|default('no setting used')|safe_text}
+    \item corrector: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['corrector']|default('no setting used')|safe_text}
+    \item tokenizer:
+    \item segmenter: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['segmenter']|default('no setting used')|safe_text}
+    \item all caps tag: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['all_caps_tag']|default('no setting used')|safe_text}
+    \item spell correction: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['spell_correction']|default('no setting used')|safe_text}
+    \item segmentation: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['segmentation']|default('no setting used')|safe_text}
+    \item dicts: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['dicts']|default('no setting used')|safe_text}
+    \item spell correct elong: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['spell_correct_elong']|default('no setting used')|safe_text}
+\end{itemize}
 
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+NLTK has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation:\VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['stopwords_removal']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['url_tagging']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['lemmatization']|default('no setting used')|safe_text}
+    \item stemming: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['stemming']|default('no setting used')|safe_text}
+    \item pos tag: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['pos_tag']|default('no setting used')|safe_text}
+    \item lang: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['lang']|default('no setting used')|safe_text}
+\end{itemize}
+
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
+TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number samples: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
+\end{itemize}
+
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
+TorchResample has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item new freq: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
+    \item resampling method: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['resampling_method']|default('no setting used')|safe_text}
+    \item lowpass filter width: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['lowpass_filter_width']|default('no setting used')|safe_text}
+    \item roll off: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['rolloff']|default('no setting used')|safe_text}
+    \item beta: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['beta']|default('no setting used')|safe_text}
+\end{itemize}
+
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
+ConvertToMono has been used to preprocess data with the following settings:
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
+Resize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+    \item interpolation: \VAR{my_dict['field_representations']['X']['preprocessing']['Resize']['interpolation']|default('no setting used')|safe_text}
+    \item max size: \VAR{my_dict['field_representations']['X']['preprocessing']['Resize']['max_size']|default('no setting used')|safe_text}
+    \item antialias: \VAR{my_dict['field_representations']['X']['preprocessing']['Resize']['antialias']|default('no setting used')|safe_text}
+\end{itemize}
+
+
+\BLOCK{ elif 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
+CenterCrop has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+\end{itemize}
+
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
+Lambda has been used to preprocess data with the following settings:
+
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
+Normalize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
+    \item std:
+\end{itemize}
+
+
+\BLOCK{ elif 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
+ClipSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of frames for clip: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_frames_for_clip']|default('no setting used')|safe_text}
+    \item number of clips: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_clips']|default('no setting used')|safe_text}
+    \item selection strategy: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['selection_strategy']|default('no setting used')|safe_text}
+\end{itemize}
+
+
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data X during the experiment.
+
+\BLOCK{endif}
+
 
 
 % ------ POSTPROCESSING OF DATA FIELD ------------
 
+\BLOCK{ if }
+
+\BLOCK{elif}
+
+\BLOCK{else}
+
+\BLOCK{endif}
 ###
