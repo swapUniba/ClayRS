@@ -357,11 +357,69 @@ No preprocessing techniques have been used to preprocess data X during the exper
 
 % ------ POSTPROCESSING OF DATA FIELD ------------
 
-\BLOCK{ if }
+\BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
 
-\BLOCK{elif}
+
+\BLOCK{elif in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
+VLADGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+
+\BLOCK{elif in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
+SkLearnPCA has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
+    \item copy: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['copy']|default('no setting used')|safe_text}
+    \item whiten: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['whiten']|default('no setting used')|safe_text}
+    \item svd solver: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['svd_solver']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['tol']|default('no setting used')|safe_text}
+    \item iterated power: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
+\end{itemize}
+
 
 \BLOCK{else}
+No postprocessing techniques have been used on the data X in this experiment.
+
 
 \BLOCK{endif}
 ###
