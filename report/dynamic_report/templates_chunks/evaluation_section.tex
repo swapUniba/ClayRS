@@ -1,0 +1,37 @@
+%! Author = DIEGO
+%! Date = 21/12/2023
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+
+% Document
+\begin{document}
+
+###
+
+XXX
+
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+    Precision - macro & \VAR{dict['sys_results']['XXX']['Precision - macro']|truncate|safe_text}\\ \hline
+    Precision@2 - macro  & \VAR{dict['sys_results']['XXX']['Precision@2 - macro']|truncate|safe_text}\\ \hline
+    NDCG  & \VAR{dict['sys_results']['XXX']['NDCG']|truncate|safe_text}\\ \hline
+    MRR  & \VAR{dict['sys_results']['XXX']['MRR']|truncate|safe_text}\\ \hline
+    F1@1 - macro  & \VAR{dict['sys_results']['XXX']['F1@1 - macro']|truncate|safe_text}\\ \hline
+  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+
+XXX
+
+###
+
+\end{document}
