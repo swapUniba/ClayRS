@@ -1,0 +1,43 @@
+
+###
+
+% THIS LATEC TEMPLATE REPORT THE RISULTS OF THE SYSTEMS ON THE FOLD USED
+
+
+\BLOCK{if my_dict['sys_results'] is defined}
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+    Precision - macro & \VAR{my_dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text}\\ \hline
+    Precision - micro & \VAR{my_dict['sys_results']['sys - fold1']['Precision - micro']|truncate|safe_text}\\ \hline
+    Recall - macro & \VAR{my_dict['sys_results']['sys - fold1']['Recall - macro']|truncate|safe_text}\\ \hline
+    Recall - micro & \VAR{my_dict['sys_results']['sys - fold1']['Recall - micro']|truncate|safe_text}\\ \hline
+    R-Precision - macro & \VAR{my_dict['sys_results']['sys - fold1']['R-Precision - macro']|truncate|safe_text}\\ \hline
+    R-Precision - micro & \VAR{my_dict['sys_results']['sys - fold1']['R-Precision - micro']|truncate|safe_text}\\ \hline
+    F1 - macro &  \VAR{my_dict['sys_results']['sys - fold1']['F1 - macro']|truncate|safe_text}\\ \hline
+    F1 - micro & \VAR{my_dict['sys_results']['sys - fold1']['F1 - micro']|truncate|safe_text}\\ \hline
+    NDCG  & \VAR{my_dict['sys_results']['sys - fold1']['NDCG']|truncate|safe_text}\\ \hline
+    MRR  & \VAR{my_dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text}\\ \hline
+    RMSE & \VAR{my_dict['sys_results']['sys - fold1']['RMSE']|truncate|safe_text}\\ \hline
+    MSE & \VAR{my_dict['sys_results']['sys - fold1']['MSE']|truncate|safe_text}\\ \hline
+    MAE & \VAR{my_dict['sys_results']['sys - fold1']['MAE']|truncate|safe_text}\\ \hline
+    MRR & \VAR{my_dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text}\\ \hline
+    MAP  & \VAR{my_dict['sys_results']['sys - fold1']['MAP']|truncate|safe_text}\\ \hline
+    Gini & \VAR{my_dict['sys_results']['sys - fold1']['Gini']|truncate|safe_text}\\ \hline
+    PredictionCoverage & \VAR{my_dict['sys_results']['sys - fold1']['PredictionCoverage']|truncate|safe_text}\\ \hline
+  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+
+\BLOCK{elif}
+
+\BLOCK{else}
+
+\BLOCK{endif}
+
+
+###
