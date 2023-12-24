@@ -641,6 +641,8 @@ The correlation metric is calculated as such for the \textbf{single user}:
     - $ranking_u$ is ranking of the user
     - $ideal\_ranking_u$ is the ideal ranking for the user
 
+\hfill\break
+
 The ideal ranking is calculated based on the rating inside the *ground truth* of the user.
 The Correlation metric calculated for the **entire system** is simply the average of every $Corr$:
 
@@ -652,6 +654,8 @@ The Correlation metric calculated for the **entire system** is simply the averag
 
     - $Corr_u$ is the correlation of the user $u$
     - $U$ is the set of all users
+
+\hfill\break
 
 The system average excludes NaN values.
 It's also possible to specify a cutoff parameter thanks to the 'top_n' parameter: if specified, only the first
@@ -681,6 +685,8 @@ result it will be returned and not those of every user. The metric is calculated
     - $n$ is the total number of distinct items that are being recommended
     - $x_i$ is the number of times that the item $i$ has been recommended
 
+\hfill\break
+
 A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
 index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1. If the 'top_n'
 parameter is specified, then the Gini index will measure inequality considering only the first n items of every
@@ -688,7 +694,7 @@ recommendation list of all users. For this experiment the top_n:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
 
 
-
+% PREDICTION COVERAGE REPORT
 \BLOCK{elif my_dict['metrics']['PredictionCoverage'] is defined}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wise metric, so only its result it will be returned and not those of every
@@ -703,11 +709,13 @@ user. The metric is calculated as such:
     - $I$ is the set of all available items
     - $I_p$ is the set of recommended items
 
+\hfill\break
+
 The $I$ must be specified through the 'catalog' parameter.
 
 
 
-
+% CATALOG COVERAGE REPORT
 \BLOCK{elif my_dict['metrics']['CatalogCoverage'] is defined}
 The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wide metric, so only its result it will be returned and not those of every
@@ -725,8 +733,10 @@ The metric is calculated as such:
     - $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$
     - $I$ is the set of all available items
 
+\hfill\break
+
 The $I$ must be specified through the 'catalog' parameter. The recommendation list of every user ($reclist(u_j)$)
-can be reduced to the first *n* parameter with the top-n parameter, so that catalog coverage is measured considering
+can be reduced to the first n parameter with the top-n parameter, so that catalog coverage is measured considering
 only the most highest ranked items. With the 'k' parameter one could specify the number of users that will be used to
 calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
 The formula above becomes:
@@ -739,9 +749,61 @@ The formula above becomes:
 
     - $k$ is the parameter specified
 
+\hfill\break
+
 Obviously 'k' < N, else simply recommendation lists of all users will be used
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+% DELTA GAP REPORT
+\BLOCK{elif my_dict['metrics']['DeltaGap'] is defined}
+The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
+multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
+It's a system wise metric and results of every group will be returned. It is calculated as such:
+
+    \[
+    \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+    \]
+
+Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:
+
+\hfill\break
+
+\begin{itemize}
+        \item user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+\end{itemize}
+
+\hfill\break
+
+Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):
+
+\begin{itemize}
+    \item users with many popular items will be inserted into the first group
+    \item users with niche items rated will be inserted into one of the last groups.
+\end{itemize}
+
+In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
+is defined as:
+
+    \[
+    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+    \]
+
+The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
+popularity. The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
+divided by the total number of users in the 'original_ratings'.
+
+\hfill\break
+
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+and it won't be considered in the $\Delta GAP$ computation of its group. In case no user of a group has recs
+available, a warning will be printed and the whole group won't be considered.
+
+If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
+n items of every recommendation list of all users
+
+
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
