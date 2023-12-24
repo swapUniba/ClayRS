@@ -1,0 +1,297 @@
+\usepackage{amsmath}
+###
+
+
+% Precision report
+\BLOCK{if my_dict['metrics']['Precision'] is defined }
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+
+    Where:
+
+    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
+       $\geq$ \BLOCK{ if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \BLOCK{endif}
+
+
+    - $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$ \BLOCK{if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \BLOCK{endif}
+
+\hfill\break
+
+In ClayRS, Precision needs those parameters:
+\hfill\break
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
+\hfill\break
+
+
+
+% Recall report
+\BLOCK{elif my_dict['metrics']['Recall'] is defined}
+The Recall metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Recall_u = \frac{tp_u}{tp_u + fn_u}
+    \]
+
+    Where:
+
+    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $>=$ \BLOCK{ if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \BLOCK{endif}
+
+    - $fn_u$ is the number of items which are not in the recommendation list of the user and have a
+      rating $>=$ \BLOCK{if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}
+        \BLOCK{else}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \BLOCK{endif}
+
+\hfill\break
+
+In ClayRS, Recall needs those parameters:
+\hfill\break
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
+\hfill\break
+
+
+
+%FMeasure report
+\BLOCK{elif my_dict['metrics']['FMeasure'] is defined}
+The FMeasure metric combines Precision and Recall into a single metric.
+It is calculated as such for the \textbf{single user}.
+
+    \[
+    FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+
+    Where:
+
+    - $P_u$ is the Precision calculated for the user \textbf{u}
+    - $R_u$ is the Recall calculated for the user \textbf{u}
+    - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+
+        - $\beta = 1$: Equally weight Precision and Recall
+        - $\beta > 1$: Weight Recall more
+        - $\beta < 1$: Weight Precision more
+
+\hfill\break
+
+A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+
+    \[
+    F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+    \]
+
+\hfill\break
+
+The FMeasure metric is calculated as such for the **entire system**, depending on if 'macro' average or 'micro'
+average has been chosen:
+
+    \begin{gather*}
+        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}\\
+        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}\\
+    \end{gather*}
+
+\hfill\break
+During the experiment the FMeasure has been calculated with $\beta = $
+\VAR{my_dict['metrics']['FMeasure']['beta']|safe_text} and the relevant threshold is
+\textbf{\VAR{my_dict['metrics']['FMeasure']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
+
+
+% PRECISION @K REPORT
+\BLOCK{elif my_dict['metrics']['PrecisionAtK'] is defined}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+
+    Where:
+
+    - $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items and have a rating >= relevant threshold in its 'ground truth'
+
+    - $tp@K_u$ is the number of items which are in the recommendation list of the user
+      **cutoff to the first K items** and have a rating < relevant threshold in its 'ground truth'
+
+\hfill\break
+
+And it is calculated as such for the **entire system**, depending on if 'macro' average or 'micro' average has been
+chosen:
+
+   \begin{gather*}
+       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}\\
+       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}\\
+   \end{gather*}
+
+\hfill\break
+
+During the experiment Precision@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['PrecisionAtK']['k']|safe_text} }
+    \item \textbf{relevant threshold:\VAR{my_dict['metrics']['PrecisionAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['PrecisionAtK']['sys_average']|safe_text} }
+\end{itemize}
+
+
+% RECALL @K REPORT
+\BLOCK{elif my_dict['metrics']['RecallAtK'] is defined}
+The Recall@K metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+    \]
+
+    Where:
+
+    - $tp@K_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating >= relevant threshold in its 'ground truth'
+
+    - $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating >= relevant threshold in its 'ground truth'
+
+\hfill\break
+
+And it is calculated as such for the **entire system**, depending on if 'macro' average or 'micro' average has been
+chosen:
+
+    \begin{gather*}
+        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}\\
+        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}\\
+    \end{gather*}
+
+\hfill\break
+
+During the experiment Recall@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['RecallAtK']['k']|safe_text} }
+    \item \textbf{relevant threshold: \VAR{my_dict['metrics']['RecallAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['RecallAtK']['sys_average']|safe_text} }
+\end{itemize}
+
+
+% FMEASURE @K REPORT
+\BLOCK{elif my_dict['metrics']['FMeasureAtK'] is defined}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+
+    \[
+    FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+
+    Where:
+
+    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}
+    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}
+    - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+
+        - $\beta = 1$: Equally weight Precision and Recall
+        - $\beta > 1$: Weight Recall more
+        - $\beta < 1$: Weight Precision more
+
+\hfill\break
+
+A famous FMeasure@K is the F1@K Metric, where :math:`\beta = 1`, which basically is the harmonic mean of recall and
+precision:
+
+    \[
+    F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    \]
+
+\hfill\break
+
+The FMeasure@K metric is calculated as such for the entire system, depending on if 'macro' average or 'micro'
+average has been chosen:
+
+    \begin{gather*}
+        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}\\
+        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}\\
+    \end{gather*}
+
+\hfill\break
+
+During the experiment FMeasure@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['FMeasureAtK']['k']|safe_text}}
+    \item  \textbf{$\beta$: \VAR{my_dict['metrics']['FMeasureAtK']['beta']|safe_text}}
+    \item \textbf{relevant threshold: \VAR{my_dict['metrics']['FMeasureAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['FMeasureAtK']['sys_average']|safe_text} }
+\end{itemize}
+
+
+% R-PRECISION REPORT
+\BLOCK{elif my_dict['metrics']['RPrecision'] is defined}
+The R-Precision metric is calculated as such for the \textbf{single user}:
+
+    \[
+    R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+    \]
+
+    Where:
+
+    - $R$ it's the number of relevant items for the user \textbf{u}.
+
+    - $tp@R_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first R items} and have a rating >= relevant_threshold in its 'ground truth'
+
+    - $tp@R_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first R items} and have a rating < relevant_threshold in its 'ground truth'
+
+\hfill\break
+
+And it is calculated as such for the entire system, depending on if 'macro' average or 'micro' average has been
+chosen:
+
+    \begin{gather*}
+        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}\\
+        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}\\
+    \end{gather*}
+
+\hfill\break
+
+During the experiment R-Precision has been used with the following settings:
+\begin{itemize}
+    \item \textbf{relevant threshold:\VAR{my_dict['metrics']['RPrecision']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['RPrecision']['sys_average']|safe_text} }
+\end{itemize}
+
+
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined }
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{else}
+
+\BLOCK{endif}
+
+###
