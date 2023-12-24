@@ -803,11 +803,146 @@ available, a warning will be printed and the whole group won't be considered.
 If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
 n items of every recommendation list of all users
 
+% ---------------------------------- FAIRNESS METRICS ENDED --------------------------------------------
+
+
+% --------------------------------- PLOT METRICS STARTED ----------------------------------------------
+
+
+% LONG TAIL DISTIBUTION REPORT
+\BLOCK{elif my_dict['metrics']['LongTailDistr'] is defined}
+This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified. The plot can be generated both for the truth set or the predictions set based on
+the on parameter:
+
+    - \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
+      the most rated ones
+
+    - \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended items
+
+\hfill\break
+
+The plot file will be saved as `out_dir/file_name.format`
+
+Since multiple split could be evaluated at once, the overwrite parameter comes into play:
+if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
+so that for every split a plot is generated without overwriting any file previously generated.
+
+\hfill\break
+
+For this experiments the Long Tail Distribution has been used with the following settings:
+\begin{itemize}
+    \item on: \VAR{my_dict['metrics']['LongTailDistr'][''on'']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['LongTailDistr']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['LongTailDistr']['overwrite']|safe_text}.
+\end{itemize}
+
+
+% PopRatioProfileVsRecs REPORT
+\BLOCK{elif my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
+profile popularity ratio and recommendations popularity ratio is drawn.
+
+Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:
+\begin{itemize}
+       \item user_groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+\end{itemize}
+
+\hfill\break
+
+Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
+percentage of users we specified as value in the dictionary):
+\begin{itemize}
+    \item users with many popular items will be inserted into the first group
+    \item users with niche items rated will be inserted into one of the last groups.
+\end{itemize}
+
+\hfill\break
+
+In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
+is defined as:
+
+    \[
+    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+    \]
+
+The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
+popularity.
+
+The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
+divided by the total number of users in the 'original_ratings'.
+
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+and it won't be considered in the $Popularity\_ratio$ computation of its group. In case no user of a group has recs
+available, a warning will be printed and the whole group won't be considered.
+\begin{itemize}
+    \item The plot file will be saved as `out_dir/file_name.format`
+\end{itemize}
+
+Since multiple split could be evaluated at once, the `overwrite` parameter comes into play:
+if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
+so that for every split a plot is generated without overwriting any file previously generated
+
+Thanks to the 'store_frame' parameter it's also possible to store a csv containing the calculations done in order
+to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
+with the .csv format):
+\begin{itemize}
+    \item The csv will be saved as `out_dir/file_name.csv`
+\end{itemize}
+
+
+% PopRecsCorrelation REPORT
+\BLOCK{elif my_dict['metrics']['PopRecsCorrelation'] is defined}
+This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
+recommended
+
+The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
+divided by the total number of users in the 'original_ratings'.
+\begin{itemize}
+    \item The plot file will be saved as out_dir/file_name.format'
+\end{itemize}
+
+\hfill\break
+
+Since multiple split could be evaluated at once, the overwrite parameter comes into play:
+if is set to False, file with the same name will be saved as 'file_name (1).format, 'file_name (2).format', etc.
+so that for every split a plot is generated without overwriting any file previously generated
+\hfill\break
+There exists cases in which some items are not recommended even once, so in the graph could appear
+zero recommendations. One could change this behaviour thanks to the 'mode' parameter:
+
+    - \textbf{mode='both'}: two graphs will be created, the first one containing eventual zero recommendations, the
+      second one where *zero recommendations* are excluded. This additional graph will be stored as
+      out_dir/file_name_no_zeros.format (the string '_no_zeros' will be added to the file_name chosen automatically)
+
+    - \textbf{mode='w_zeros'}: only a graph containing eventual zero recommendations will be created
+
+    - \text{mode='no_zeros'}: only a graph excluding eventual zero recommendations will be created. The graph will be
+      saved as out_dir/file_name_no_zeros.format (the string '_no_zeros' will be added to the file_name chosen
+      automatically)
+
+\hfill\break
+
+For this experiments the PopRecsCorrelation has been used with the following settings:
+\begin{itemize}
+    \item mode: \VAR{my_dict['metrics']['PopRecsCorrelation']['mode']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['PopRecsCorrelation']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['PopRecsCorrelation']['overwrite']|safe_text}.
+\end{itemize}
+
 
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+
 \BLOCK{else}
 
 \BLOCK{endif}
