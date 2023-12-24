@@ -528,7 +528,7 @@ custom 'relevant_threshold' parameter that will be applied to every user, so tha
 is >= relevant_threshold, then it's relevant, otherwise it's not.
 If no 'relevant_threshold' parameter is passed then, for every user, its mean rating score will be used
 
-In this experiment the relevant threshod used is
+In this experiment, the relevant threshod used is
 \VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 
 
@@ -552,17 +552,194 @@ In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+% MAP REPORT
+\BLOCK{elif my_dict['metrics']['MAP'] is defined}
+The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
+abbreviation of Average Precision for each user and then taking its mean.
+The AP is calculated as such for the \textbf{single user}:
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+    \[
+    AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    \]
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+    Where:
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+    - $m_u$ is the number of relevant items for the user $u$
+    - $N_u$ is the number of recommended items for the user $u$
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+\hfill\break
+
+After computing the AP for each user, we can compute the MAP for the whole system:
+
+    \[
+    MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+    \]
+
+\hfill\break
+
+This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
+computed for the whole system in the dataframe containing system results. In this experiment the MAP has been calculeted
+using a relevant threshold:
+\VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+
+
+% MAP@K REPORT
+\BLOCK{elif my_dict['metrics']['MAPAtK'] is defined}
+The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
+AP@K abbreviation of Average Precision At K for each user and then taking its mean.
+The AP@K is calculated as such for the \text\[{single user}:
+
+    \[
+        AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+    \]
+
+    Where:
+
+    - $m_u$ is the number of relevant items for the user $u$
+    - $K$ is the cutoff value
+    - $P(i)$ is the precision computed at cutoff $i$
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
+
+\hfill\break
+
+After computing the AP@K for each user, we can compute the MAP@K for the whole system:
+
+    \[
+        MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+    \]
+
+\hfill\break
+
+This metric will return the AP@K computed for each user in the dataframe containing users results, and the MAP@K
+computed for the whole system in the dataframe containing system results.
+
+
+% CORRELATION REPORT
+\BLOCK{elif my_dict['metrics']['Correlation'] is defined}
+The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The currently correlation methods implemented are:
+
+    - `pearson`
+    - `kendall`
+    - `spearman`
+
+Every correlation method is implemented by the pandas library, so read its [documentation][pd_link] for more
+
+[pd_link]: https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html
+
+The correlation metric is calculated as such for the \textbf{single user}:
+
+    \[
+    Corr_u = Corr(ranking_u, ideal\_ranking_u)
+    \]
+
+    Where:
+
+    - $ranking_u$ is ranking of the user
+    - $ideal\_ranking_u$ is the ideal ranking for the user
+
+The ideal ranking is calculated based on the rating inside the *ground truth* of the user.
+The Correlation metric calculated for the **entire system** is simply the average of every $Corr$:
+
+    \[
+    Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+    \]
+
+    Where:
+
+    - $Corr_u$ is the correlation of the user $u$
+    - $U$ is the set of all users
+
+The system average excludes NaN values.
+It's also possible to specify a cutoff parameter thanks to the 'top_n' parameter: if specified, only the first
+$n$ results of the recommendation list will be used in order to calculate the correlation.
+For this experiment the setting of the correlation metrics are :
+\begin{itemize}
+    \item method: \VAR{my_dict['metrics']['Correlation']['method']|default('no method for correlation specified')|safe_text}.
+    \item top_n: \VAR{my_dict['metrics']['Correlation']['top_n']|default('no cutoff setted')|safe_text}.
+\end{itemize}
+
+% ------------------------- ranking metrics ended ---------------------------
+
+
+% ------------------------- FAIRNESS METRICS ------------------------------
+
+% Gini Index REPORT
+\BLOCK{elif my_dict['metrics']['GiniIndex'] is defined}
+The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
+result it will be returned and not those of every user. The metric is calculated as such:
+
+    \[
+    Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    \]
+
+    Where:
+
+    - $n$ is the total number of distinct items that are being recommended
+    - $x_i$ is the number of times that the item $i$ has been recommended
+
+A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1. If the 'top_n'
+parameter is specified, then the Gini index will measure inequality considering only the first n items of every
+recommendation list of all users. For this experiment the top_n:
+\VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
+
+
+
+\BLOCK{elif my_dict['metrics']['PredictionCoverage'] is defined}
+The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items. It's a system wise metric, so only its result it will be returned and not those of every
+user. The metric is calculated as such:
+
+    \[
+    Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+    \]
+
+    Where:
+
+    - $I$ is the set of all available items
+    - $I_p$ is the set of recommended items
+
+The $I$ must be specified through the 'catalog' parameter.
+
+
+
+
+\BLOCK{elif my_dict['metrics']['CatalogCoverage'] is defined}
+The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items. It's a system wide metric, so only its result it will be returned and not those of every
+user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
+parameter is passed then it's a simple Prediction Coverage.
+The metric is calculated as such:
+
+    \[
+    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    \]
+
+    Where:
+
+    - $N$ is the total number of users
+    - $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$
+    - $I$ is the set of all available items
+
+The $I$ must be specified through the 'catalog' parameter. The recommendation list of every user ($reclist(u_j)$)
+can be reduced to the first *n* parameter with the top-n parameter, so that catalog coverage is measured considering
+only the most highest ranked items. With the 'k' parameter one could specify the number of users that will be used to
+calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
+The formula above becomes:
+
+    \[
+    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1\dotsk}reclist(u_j)|}{|I|})\cdot100
+    \]
+
+    Where:
+
+    - $k$ is the parameter specified
+
+Obviously 'k' < N, else simply recommendation lists of all users will be used
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
