@@ -1,0 +1,38 @@
+
+###
+
+% --------------- START RECSYS MODULE ----------------------------------
+
+\BLOCK{if 'interactions' in my_dict}
+\section{Recommender System module: RecSys}\label{sec:recsys}
+The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
+by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
+give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
+In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
+and train the recommender system and the settings beloning to the algorithm chosen.
+
+\hfill\break
+
+\subsection{Statistics on data used}\label{subsec:stats}
+In this experiment the statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
+
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & \VAR{my_dict['interactions']['n_users']|default('no users')|safe_text}\\ \hline
+    n\_items  & \VAR{my_dict['interactions']['n_items']|default('no items')|safe_text}\\ \hline
+    total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['interactions']['min_score']|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|safe_text}\\ \hline
+    sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+
+\hfill\break
+
+
+###
