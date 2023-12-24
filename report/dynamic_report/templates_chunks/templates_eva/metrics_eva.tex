@@ -1,6 +1,7 @@
 \usepackage{amsmath}
 ###
 
+% ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
 
 % Precision report
 \BLOCK{if my_dict['metrics']['Precision'] is defined }
@@ -275,8 +276,281 @@ During the experiment R-Precision has been used with the following settings:
 \end{itemize}
 
 
+% ------------------ CLASSIFICATION METRICS ENDED ------------------------------------
 
-\BLOCK{elif my_dict['metrics']['Precision'] is defined }
+% ------------------ ERROR METRICS STARTED -------------------------------------------
+
+
+% MSE REPORT
+\BLOCK{elif my_dict['metrics']['MSE'] is defined }
+The MSE (Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+
+    \[
+    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    \]
+
+    Where:
+
+    - $T_u$ is the *test set* of the user \textbf{u}
+    - $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}
+    - $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}
+
+\hfill\break
+
+And it is calculated as such for the entire system:
+
+    \[
+    MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+    \]
+
+    Where:
+
+    - $T$ is the \textbf{test set}
+    - $MSE_u$ is the MSE calculated for user \textbf{u}
+
+\hfill\break
+
+There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally)
+
+    In those cases, the $MSE_u$ formula becomes
+
+    \[
+    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    \]
+
+    Where:
+
+    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
+
+\hfill\break
+
+If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
+
+    \[
+    MSE_u = NaN
+    \]
+
+\hfill\break
+
+
+% RMSE REPORT
+\BLOCK{elif my_dict['metrics']['RMSE'] is defined}
+The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+
+    \[
+    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    \]
+
+    Where:
+
+    - $T_u$ is the *test set* of the user $u$
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
+
+\hfill\break
+
+And it is calculated as such for the entire system:
+
+    \[
+    RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+    \]
+
+    Where:
+
+    - $T$ is the test set
+    - $RMSE_u$ is the RMSE calculated for user $u$
+
+\hfill\break
+
+There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally, a methodology different from TestRatings was chosen).
+
+In those cases, the $RMSE_u$ formula becomes
+
+    \[
+    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    \]
+
+    Where:
+
+    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
+
+    If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
+
+    \[
+    RMSE_u = NaN
+    \]
+
+\hfill\break
+
+
+
+% MAE REPORT
+\BLOCK{elif my_dict['metrics']['MAE'] is defined}
+The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
+
+    \[
+    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    \]
+
+    Where:
+
+    - $T_u$ is the test set of the user $u$
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
+
+\hfill\break
+
+And it is calculated as such for the entire system:
+
+    \[
+    MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+    \]
+
+    Where:
+
+    - $T$ is the test set
+    - $MAE_u$ is the MAE calculated for user $u$
+
+\hfill\break
+
+There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
+and items were not present locally, a methodology different from *TestRatings* was chosen).
+In those cases, the $MAE_u$ formula becomes
+
+    \[
+    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    \]
+
+    Where:
+
+    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
+
+    If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
+
+    \[
+    MAE_u = NaN
+    \]
+
+\hfill\break
+
+% ------------------------- error metrics ended -------------------------------------------
+
+
+% ------------------------ RANKING METRICS STARTED ----------------------------------------
+
+% Normalized Discounted Cumulative Gain REPORT
+\BLOCK{elif my_dict['metrics']['NDCG'] is defined}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+
+    \[
+    DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+    \]
+
+    Where:
+
+    - $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$
+    - $f$ is a gain function (linear or exponential, in particular)
+    - $x$ is the base of the logarithm
+    - $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$
+
+\hfill\break
+
+If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponential" case, the following
+formula is applied to $r$:
+
+    \[
+    f(r) = 2^{r} - 1
+    \]
+
+\hfill\break
+
+The NDCG for a single user is then calculated using the following formula:
+
+    \[
+    NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+    \]
+
+    Where:
+
+    - $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores
+
+\hfill\break
+
+So the basic idea is to compare the actual ranking with the ideal one.
+Finally, the NDCG of the entire system is calculated instead as such:
+
+    \[
+    NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+    \]
+
+    Where:
+
+    - $NDCG_u$ is the NDCG calculated for user :math:`u`
+    - $U$ is the set of all users
+
+\hfill\break
+
+The system average excludes NaN values.
+
+
+
+% NDCG@K REPORT
+\BLOCK{elif my_dict['metrics']['NDCGAtK'] is defined}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
+by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
+first $k$ predictions.
+
+The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
+
+
+% MRR REPORT
+\BLOCK{elif my_dict['metrics']['MRR'] is defined}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned and not those
+of every user. MRR is calculated as such:
+
+    \[
+    MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+    \]
+
+    Where:
+
+    - $Q$ is the set of recommendation lists
+    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list
+
+\hfill\break
+
+The MRR metric needs to discern relevant items from the not relevant ones: in order to do that, one could pass a
+custom 'relevant_threshold' parameter that will be applied to every user, so that if a rating of an item
+is >= relevant_threshold, then it's relevant, otherwise it's not.
+If no 'relevant_threshold' parameter is passed then, for every user, its mean rating score will be used
+
+In this experiment the relevant threshod used is
+\VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+
+
+
+\BLOCK{elif my_dict['metrics']['MRRAtK'] is defined}
+The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
+not those of every user. MRR@K is calculated as such
+
+    \[
+    MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+    \]
+
+    Where:
+
+    - $K$ is the cutoff parameter
+    - $Q$ is the set of recommendation lists
+    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list
+
+\hfill\break
+In this experiment, the relevant threshold used is
+\VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
@@ -290,6 +564,11 @@ During the experiment R-Precision has been used with the following settings:
 
 \BLOCK{elif my_dict['metrics']['Precision'] is defined}
 
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
+
+\BLOCK{elif my_dict['metrics']['Precision'] is defined}
 \BLOCK{else}
 
 \BLOCK{endif}
