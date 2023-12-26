@@ -7,8 +7,13 @@
 % Packages
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{graphicx}
 
-% Document
+\title{REPORT EXPERIMENT CLAYRS FRAMEWORK}
+\author{SWAP UniBa}
+%\date{27 December 2023}
+
+% ------------ DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------
 \begin{document}
 
 \maketitle
@@ -17,9 +22,8 @@ This \LaTeX{} document was generated automatically from yaml files for the purpo
 it contains information about the experiment that has been conducted and the results obtained.
 The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
 and a conclusion section to highlights what have been achieved from the experiment.
-
 \hfill\break
-
+\hfill\break
 % opening content analyzer section
 \BLOCK{if my_dict['source_file'] is defined}
 \section{CONTENT ANALYZER MODULE}\label{sec:ca}
@@ -29,7 +33,7 @@ The text data source could be rappresented with exogenous technique or with a sp
 and each field given could be treated with preprocessing techiniques and postprocessing technique. In
 this experiment the following techinques have been used on specific field in order to achieve the
 rappresentation wanted:
-
+\hfill\break
 \hfill\break
 % ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
 
@@ -38,16 +42,19 @@ rappresentation wanted:
 % check if non particular technique of data reppresentation has been used
 \BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
 No techniques have been used to represent the data.
+\hfill\break
+\hfill\break
 
 % check WhooshTfIdf used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
 The WhooshTfIdf technique has been used.
+\hfill\break
+\hfill\break
 
 % check SkLearnTfIdf used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
-
 \begin{itemize}
     \item max df: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['max_df']|safe_text}
     \item min df: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['min_df']|safe_text}
@@ -59,7 +66,8 @@ The technique has been settled with the following parameter:
     \item smooth idf: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['smooth_idf']|safe_text}
     \item sublinear tf: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['sublinear_tf']|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % check WordEmbeddingTechnique used as representation
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
@@ -71,7 +79,8 @@ the embedding source used is
 \BLOCK{else}
 no embedding source has been specified.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check SentenceEmbeddingTechnique used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
@@ -83,7 +92,8 @@ the embedding source used is
 \BLOCK{else}
 no embedding source has been specified.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check DocumentEmbeddingTechnique used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
@@ -95,7 +105,8 @@ the embedding source used is
 \BLOCK{else}
 no embedding source has been specified.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check Word2SentenceEmbeddingused as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
@@ -114,7 +125,8 @@ Combining technique used is
 \BLOCK{else}
 No combining technique has been used.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check Word2DocEmbedding used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
@@ -133,7 +145,8 @@ Combining technique used is
 \BLOCK{else}
 No combining technique has been used.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check Sentence2DocEmbedding used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
@@ -152,17 +165,20 @@ Combining technique used is
 \BLOCK{else}
 No combining technique has been used.
 \BLOCK{endif}
-
+\hfill\break
+\hfill\break
 
 % check PyWSDSynsetDocumentFrequency used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
 The PyWSD Synset Document Frequency Technique has been used.
-
+\hfill\break
+\hfill\break
 
 % check FromNPY used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
 The FromNPY Technique has been used.
-
+\hfill\break
+\hfill\break
 
 % check SkImageHogDescriptorused as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
@@ -180,7 +196,8 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
     \item max retries: \VAR{my_dict['field_representations']['X']['SkImageHogDescriptor']['max_retries']|default('no setting used')|safe_text}
     \item max workers: \VAR{my_dict['field_representations']['X']['SkImageHogDescriptor']['max_workers']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % check MFCC used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
@@ -199,7 +216,8 @@ MFCC technique has been applied to process data with the following settings:
     \item log mels: \VAR{my_dict['field_representations']['X']['MFCC']['log_mels']|default('no setting used')|safe_text}
     \item melkwargs: \VAR{my_dict['field_representations']['X']['MFCC']['melkwargs']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % check VGGISH used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
@@ -216,7 +234,8 @@ VGGISH technique has been applied to process data with the following settings:
     \item max workers: \VAR{my_dict['field_representations']['X']['VGGISH']['max_workers']|default('no setting used')|safe_text}
     \item batch size:  \VAR{my_dict['field_representations']['X']['VGGISH']['batch_size']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % check PytorchImageModels used as representation
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
@@ -237,7 +256,8 @@ Pytorch Image Models technique has been applied to process data with the followi
     \item max workers: \VAR{my_dict['field_representations']['X']['PytorchImageModels']['max_workers']|default('no setting used')|safe_text}
     \item batch size:  \VAR{my_dict['field_representations']['X']['PytorchImageModels']['batch_size']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % check TorchVisionVideoModels used as representation
 \BLOCK{elif  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
@@ -257,12 +277,14 @@ Torch Vision Video Models technique has been applied to process data with the fo
     \item batch size:  \VAR{my_dict['field_representations']['X']['TorchVisionVideoModels']['batch_size']|default('no setting used')|safe_text}
     \item mini batch size: \VAR{my_dict['field_representations']['X']['TorchVisionVideoModels']['mini_batch_size']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 \BLOCK{else}
 The representation technique used has not been recognised from the framework check statement flow control
 for chunks template used for rendering by jinja.
-
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 
 
@@ -282,7 +304,8 @@ Spacy has been used to preprocess data with the following settings:
     \item url tagging: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['url_tagging']|default('no setting used')|safe_text}
     \item named entity recognition: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['named_entity_recognition']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
 Ekphrasis has been used to preprocess data with the following settings:
@@ -301,8 +324,10 @@ Ekphrasis has been used to preprocess data with the following settings:
     \item dicts: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['dicts']|default('no setting used')|safe_text}
     \item spell correct elong: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['spell_correct_elong']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% NLTK preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -315,15 +340,18 @@ NLTK has been used to preprocess data with the following settings:
     \item pos tag: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['pos_tag']|default('no setting used')|safe_text}
     \item lang: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['lang']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
 TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number samples: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% TorchResample preproceessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
 TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -333,12 +361,16 @@ TorchResample has been used to preprocess data with the following settings:
     \item roll off: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['rolloff']|default('no setting used')|safe_text}
     \item beta: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['beta']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% ConvertToMono preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
 ConvertToMono has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
 
-
+/ Resize preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
 Resize has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -347,27 +379,35 @@ Resize has been used to preprocess data with the following settings:
     \item max size: \VAR{my_dict['field_representations']['X']['preprocessing']['Resize']['max_size']|default('no setting used')|safe_text}
     \item antialias: \VAR{my_dict['field_representations']['X']['preprocessing']['Resize']['antialias']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% CenterCrop preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
 CenterCrop has been used to preprocess data with the following settings:
 \begin{itemize}
     \item size:
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% Lambda preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
 Lambda has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
 
-
+% Normalize preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
 Normalize has been used to preprocess data with the following settings:
 \begin{itemize}
     \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
     \item std:
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% ClipSampler preprocessing
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
 ClipSampler has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -375,16 +415,19 @@ ClipSampler has been used to preprocess data with the following settings:
     \item number of clips: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_clips']|default('no setting used')|safe_text}
     \item selection strategy: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['selection_strategy']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 \BLOCK{else}
 No preprocessing techniques have been used to preprocess data X during the experiment.
-
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 
 
-% ------ POSTPROCESSING OF DATA FIELD ------------
+% ------------------- POSTPROCESSING OF DATA FIELD ------------
 
+% FVGMM posttprocessing
 \BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
 FVGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -407,8 +450,10 @@ FVGMM has been used to preprocess data with the following settings:
     \item with mean: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
     \item with std: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
-
+% VLADGMM postprocessing
 \BLOCK{elif in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
 VLADGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -431,7 +476,10 @@ VLADGMM has been used to preprocess data with the following settings:
     \item with mean: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
     \item with std: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 
+% SkLearnPCA postprocessing
 \BLOCK{elif in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
 SkLearnPCA has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -443,38 +491,36 @@ SkLearnPCA has been used to preprocess data with the following settings:
     \item iterated power: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
     \item random state: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 \BLOCK{else}
 No postprocessing techniques have been used on the data X in this experiment.
+\hfill\break
+\hfill\break
 
-
+% -------------- ends post processing techniques ---------------------------------
 \BLOCK{endif}
 
-% EXOGENOUS TECHNIQUE REPRESENTATION OF DATA.
+% EXOGENOUS TECHNIQUE REPRESENTATION OF DATA
 
 This exogenous technique expands each content by using as external source the DBPedia ontology.
 It needs the entity of the contents for which a mapping is required (e.g. entity\_type=`dbo:Film`)
 and the field of the raw source that will be used for the actual mapping.
 This technique can be performed with four different modalities as follows:
-
 \begin{itemize}
- \item \begin{minipage}
-           \textbf{mode='only\_retrieved\_evaluated'}, all properties from DBPedia will be retrieved but discarding the
-            ones with a blank value.
-        \end{minipage}
- \item \begin{minipage}
-           \textbf{mode='all'}, all properties in DBPedia più all properties in local raw source will be retrieved.
-            Local properties will be overwritten by dbpedia values if there's a conflict
-        \end{minipage}
- \item \begin{minipage}
-           \textbf{mode='all\_retrieved'}, all properties in DBPedia *only* will be retrieved
-       \end{minipage}
- \item \begin{minipage}
-           \textbf{mode='original\_retrieved'}, all local properties with their DBPedia value will be retrieved
-       \end{minipage}
+ \item
+       \textbf{mode='only\_retrieved\_evaluated'}, all properties from DBPedia will be retrieved but discarding the
+        ones with a blank value.
+ \item
+       \textbf{mode='all'}, all properties in DBPedia più all properties in local raw source will be retrieved.
+        Local properties will be overwritten by dbpedia values if there's a conflict.
+ \item
+       \textbf{mode='all\_retrieved'}, all properties in DBPedia *only* will be retrieved.
+ \item
+       \textbf{mode='original\_retrieved'}, all local properties with their DBPedia value will be retrieved.
 \end{itemize}
-
+\hfill\break
 \hfill\break
 
 In this experiment the DBpedia Mapping Technique has been used with the mode:
@@ -488,18 +534,19 @@ The properties have been returned in their full uri form.
 \BLOCK{else}
 The properties have been returned in their rdfs:label form.
 \BLOCK{endif}
-
+\hfill\break
 \hfill\break
 
 % In case of the content analyzer is not used
 \BLOCK{else}
 For this experiment the module of the content analyzer has not been used.
-
+\hfill\break
+\hfill\break
 % closing the controll block for the content analyzer section
 \BLOCK{endif}
 
 
-% --------------- START RECSYS MODULE ----------------------------------
+% ------------------------------- START RECSYS MODULE ----------------------------------
 
 \BLOCK{if 'interactions' in my_dict}
 \section{Recommender System module: RecSys}\label{sec:recsys}
@@ -508,12 +555,11 @@ by the Content Analyzer module, despite this is also possible using other serial
 give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
 In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
 and train the recommender system and the settings beloning to the algorithm chosen.
-
+\hfill\break
 \hfill\break
 
 \subsection{Statistics on data used}\label{subsec:stats}
 In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
-
 \begin{table}[ht]
     \centering
   \begin{tabular}{|c|c|}
@@ -529,7 +575,7 @@ In this experiment the statistics of the dataset used are reported in the follow
   \end{tabular}
    \caption{Table of the Interactions}\label{tab:dataset_table}
 \end{table}
-
+\hfill\break
 \hfill\break
 
 
@@ -561,6 +607,8 @@ The partitioning technique has been executed with the following settings:
     \item random state: \VAR{my_dict['partitioning']['KFoldPartitioning']['random_state']|default('no random state applied')}
     \item skip user error: \VAR{my_dict['partitioning']['KFoldPartitioning']['skip_user_error']|default('no setted')}
 \end{itemize}
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 % KFOLD PARTITIONING TECNIQUE ended
 
@@ -578,6 +626,8 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
 The data has been shuffled before being split into batches.
+\hfill\break
+\hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
 
 \BLOCK{endif}
@@ -585,7 +635,7 @@ The data has been shuffled before being split into batches.
 \hfill\break
 \hfill\break
 
-% --------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
+% ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
 The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
@@ -593,12 +643,16 @@ this target the system need to be based on a chosen algorithm that will work wit
 we have.
 In this section we will analyse which algorithm has been used for the experiment and what are the settings
 given.
-
+\hfill\break
+\hfill\break
 \BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
 The recommender system is based on content.
-
+\hfill\break
+\hfill\break
 \BLOCK{elif my_dict['recsys']['GraphBasedRS'] id defined}
 The recommender system is based on a graph representation.
+\hfill\break
+\hfill\break
 
 % -------------------------------- CONTENT BASE ALGO ----------------------------------------
 
@@ -615,10 +669,12 @@ The algorithm used is AmarDoubleSource
     \item seed: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['seed']|default('no batch size')}
     \item additional dl parameters: TO ADJUST
 \end{itemize}
-
+\hfill\break
+\hfill\break
 The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
-
+\hfill\break
+\hfill\break
 
 \BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
@@ -630,12 +686,14 @@ The algorithm used is the centroid vector
     \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector']['threshold']|default('no threshold')}
     \item embedding combiner: TO ADJUST
 \end{itemize}
-
+\hfill\break
+\hfill\break
 The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+\hfill\break
+\hfill\break
 
-
-\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
 The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
 \begin{itemize}
@@ -644,12 +702,14 @@ The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['alg
     \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['threshold']|default('no threshold')}
     \item embedding combiner: TO ADJUST
 \end{itemize}
-
+\hfill\break
+\hfill\break
 The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+\hfill\break
+\hfill\break
 
-
-\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
 The algorithm used is the Index Query.
 \begin{itemize}
@@ -659,12 +719,14 @@ The algorithm used is the Index Query.
     \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery']['threshold']|default('no threshold')}
     \item embedding combiner: TO ADJUST
 \end{itemize}
-
+\hfill\break
+\hfill\break
 The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+\hfill\break
+\hfill\break
 
-
-\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
 The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
 \begin{itemize}
@@ -673,13 +735,15 @@ The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algo
     \item only greater eq: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['only_greater_eq']|default('no used')}
     \item embedding combiner: TO ADJUST
 \end{itemize}
-
+\hfill\break
+\hfill\break
 The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
-
+\hfill\break
+\hfill\break
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
-\BLOC{elif my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+\BLOCK{elif my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
 % NX PAGE RANK ALGO
 The algorithm used is NX Page Rank.
 \begin{itemize}
@@ -690,21 +754,25 @@ The algorithm used is NX Page Rank.
     \item nstart: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['nstart']|default('no used')}
     \item weight: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['weight']|default('no used')|safe_text}
 \end{itemize}
+\hfill\break
+\hfill\break
 The type of graph used in the algorithm is a \VAR{ my_dict['recsys']['GraphBasedRS']['mode']},
 the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
-
+\hfill\break
+\hfill\break
 \BLOC{else}
-
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 
 % In case of the RecSys in not been used
 \BLOCK{else}
 The RecSys module has noit been used during this experiment.
-
+\hfill\break
+\hfill\break
 % ------------------ RECSYS SECTION ENDED-------------------
 \BLOCK{endif}
-
 
 
 % --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
@@ -716,12 +784,11 @@ using several state-of-the-art metrics, this allows to compare different recomme
 recommendation and find out which are the strength points and which the weak ones.
 
 \subsection{Metrics}\label{subsec:metrics}
-During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete the performace
-of the system.
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete
+the performace of the system.
 The metrics used are the followings:
-
 \hfill\break
-
+\hfill\break
 
 
 % ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
@@ -729,144 +796,144 @@ The metrics used are the followings:
 % Precision report
 \BLOCK{if my_dict['metrics']['Precision'] is defined }
 In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
-
     \[
-    Precision_u = \frac{tp_u}{tp_u + fp_u}
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
     \]
 
     Where:
 
     - $tp_u$ is the number of items which are in the recommendation list of the user and have a
        $\geq$ \BLOCK{ if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
         \BLOCK{else}
-        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
         \BLOCK{endif}
 
 
     - $fp_u$ is the number of items which are in the recommendation list of the user and have a
       rating $<$ \BLOCK{if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
         \BLOCK{else}
-        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
         \BLOCK{endif}
-
+\hfill\break
 \hfill\break
 
 In ClayRS, Precision needs those parameters:
-\hfill\break
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
 If not specified, the mean rating score of every user will be used, in this experiment it has been set to
 \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
 \hfill\break
-
+\hfill\break
 
 
 % Recall report
 \BLOCK{elif my_dict['metrics']['Recall'] is defined}
 The Recall metric is calculated as such for the \textbf{single user}:
-
     \[
-    Recall_u = \frac{tp_u}{tp_u + fn_u}
+        Recall_u = \frac{tp_u}{tp_u + fn_u}
     \]
 
     Where:
 
     - $tp_u$ is the number of items which are in the recommendation list of the user and have a
       rating $>=$ \BLOCK{ if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
         \BLOCK{else}
-        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
         \BLOCK{endif}
 
     - $fn_u$ is the number of items which are not in the recommendation list of the user and have a
       rating $>=$ \BLOCK{if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
         \BLOCK{else}
-        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
         \BLOCK{endif}
-
+\hfill\break
 \hfill\break
 
 In ClayRS, Recall needs those parameters:
-\hfill\break
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
 If not specified, the mean rating score of every user will be used, in this experiment it has been set to
 \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
 \hfill\break
-
+\hfill\break
 
 
 %FMeasure report
 \BLOCK{elif my_dict['metrics']['FMeasure'] is defined}
 The FMeasure metric combines Precision and Recall into a single metric.
 It is calculated as such for the \textbf{single user}.
-
     \[
-    FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
     \]
 
     Where:
 
-    - $P_u$ is the Precision calculated for the user \textbf{u}
-    - $R_u$ is the Recall calculated for the user \textbf{u}
+    - $P_u$ is the Precision calculated for the user \textbf{u}.
+    - $R_u$ is the Recall calculated for the user \textbf{u}.
     - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
-
-        - $\beta = 1$: Equally weight Precision and Recall
-        - $\beta > 1$: Weight Recall more
-        - $\beta < 1$: Weight Precision more
-
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
 \hfill\break
-
+\hfill\break
 A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
 precision:
-
     \[
-    F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+         F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
     \]
 
 \hfill\break
-
-The FMeasure metric is calculated as such for the **entire system**, depending on if 'macro' average or 'micro'
-average has been chosen:
-
-    \begin{gather*}
-        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}\\
-        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}\\
-    \end{gather*}
-
+\hfill\break
+The FMeasure metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+    \[
+        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+    \]
+\hfill\break
 \hfill\break
 During the experiment the FMeasure has been calculated with $\beta = $
 \VAR{my_dict['metrics']['FMeasure']['beta']|safe_text} and the relevant threshold is
 \textbf{\VAR{my_dict['metrics']['FMeasure']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
-
+\hfill\break
+\hfill\break
 
 % PRECISION @K REPORT
 \BLOCK{elif my_dict['metrics']['PrecisionAtK'] is defined}
 The Precision@K metric is calculated as such for the \textbf{single user}:
 
     \[
-    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
     \]
 
     Where:
 
     - $tp@K_u$ is the number of items which are in the recommendation list of the user
-      cutoff to the first K items and have a rating >= relevant threshold in its 'ground truth'
+      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
 
     - $tp@K_u$ is the number of items which are in the recommendation list of the user
-      **cutoff to the first K items** and have a rating < relevant threshold in its 'ground truth'
-
+      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
 \hfill\break
-
+\hfill\break
 And it is calculated as such for the **entire system**, depending on if 'macro' average or 'micro' average has been
 chosen:
-
-   \begin{gather*}
-       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}\\
-       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}\\
-   \end{gather*}
-
+   \[
+       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+   \]
+\hfill\break
+\hfill\break
+    \[
+       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+   \]
+\hfill\break
 \hfill\break
 
 During the experiment Precision@K has been used with the following settings:
@@ -875,35 +942,38 @@ During the experiment Precision@K has been used with the following settings:
     \item \textbf{relevant threshold:\VAR{my_dict['metrics']['PrecisionAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
     \item \textbf{sys average: \VAR{my_dict['metrics']['PrecisionAtK']['sys_average']|safe_text} }
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % RECALL @K REPORT
 \BLOCK{elif my_dict['metrics']['RecallAtK'] is defined}
 The Recall@K metric is calculated as such for the \textbf{single user}:
-
     \[
-    Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
     \]
 
     Where:
 
     - $tp@K_u$ is the number of items which are in the recommendation list of the user
-      \textbf{cutoff to the first K items} and have a rating >= relevant threshold in its 'ground truth'
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
 
     - $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
-      \textbf{cutoff to the first K items} and have a rating >= relevant threshold in its 'ground truth'
-
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+\hfill\break
 \hfill\break
 
-And it is calculated as such for the **entire system**, depending on if 'macro' average or 'micro' average has been
-chosen:
-
-    \begin{gather*}
-        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}\\
-        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}\\
-    \end{gather*}
-
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+    \[
+        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+    \]
 \hfill\break
+\hfill\break
+    \[
+        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\breakeak
 
 During the experiment Recall@K has been used with the following settings:
 \begin{itemize}
@@ -911,46 +981,49 @@ During the experiment Recall@K has been used with the following settings:
     \item \textbf{relevant threshold: \VAR{my_dict['metrics']['RecallAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
     \item \textbf{sys average: \VAR{my_dict['metrics']['RecallAtK']['sys_average']|safe_text} }
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % FMEASURE @K REPORT
 \BLOCK{elif my_dict['metrics']['FMeasureAtK'] is defined}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
 It is calculated as such for the \textbf{single user}:
-
     \[
-    FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
     \]
 
     Where:
 
-    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}
-    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}
+    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
+    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
     - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
-
-        - $\beta = 1$: Equally weight Precision and Recall
-        - $\beta > 1$: Weight Recall more
-        - $\beta < 1$: Weight Precision more
-
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\hfill\break
 \hfill\break
 
-A famous FMeasure@K is the F1@K Metric, where :math:`\beta = 1`, which basically is the harmonic mean of recall and
+A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
 precision:
-
     \[
-    F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+        F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
     \]
-
+\hfill\break
 \hfill\break
 
-The FMeasure@K metric is calculated as such for the entire system, depending on if 'macro' average or 'micro'
-average has been chosen:
-
-    \begin{gather*}
-        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}\\
-        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}\\
-    \end{gather*}
-
+The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+    \[
+        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+    \]
+\hfill\break
 \hfill\break
 
 During the experiment FMeasure@K has been used with the following settings:
@@ -960,36 +1033,39 @@ During the experiment FMeasure@K has been used with the following settings:
     \item \textbf{relevant threshold: \VAR{my_dict['metrics']['FMeasureAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
     \item \textbf{sys average: \VAR{my_dict['metrics']['FMeasureAtK']['sys_average']|safe_text} }
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % R-PRECISION REPORT
 \BLOCK{elif my_dict['metrics']['RPrecision'] is defined}
 The R-Precision metric is calculated as such for the \textbf{single user}:
-
     \[
-    R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
     \]
-
+\hfill\break
+\hfill\break
     Where:
 
     - $R$ it's the number of relevant items for the user \textbf{u}.
 
     - $tp@R_u$ is the number of items which are in the recommendation list of the user
-      \textbf{cutoff to the first R items} and have a rating >= relevant_threshold in its 'ground truth'
+      \textbf{cutoff to the first R items} and have a rating $>=$ relevant_threshold in its ground truth
 
     - $tp@R_u$ is the number of items which are in the recommendation list of the user
-      \textbf{cutoff to the first R items} and have a rating < relevant_threshold in its 'ground truth'
-
+      \textbf{cutoff to the first R items} and have a rating $<$ relevant_threshold in its ground truth
 \hfill\break
-
-And it is calculated as such for the entire system, depending on if 'macro' average or 'micro' average has been
-chosen:
-
-    \begin{gather*}
-        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}\\
-        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}\\
-    \end{gather*}
-
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+    \[
+        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+    \]
+\hfill\break
 \hfill\break
 
 During the experiment R-Precision has been used with the following settings:
@@ -997,165 +1073,144 @@ During the experiment R-Precision has been used with the following settings:
     \item \textbf{relevant threshold:\VAR{my_dict['metrics']['RPrecision']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
     \item \textbf{sys average: \VAR{my_dict['metrics']['RPrecision']['sys_average']|safe_text} }
 \end{itemize}
-
+\hfill\break
+\hfill\break
 
 % ------------------ CLASSIFICATION METRICS ENDED ------------------------------------
 
 % ------------------ ERROR METRICS STARTED -------------------------------------------
 
-
 % MSE REPORT
 \BLOCK{elif my_dict['metrics']['MSE'] is defined }
-The MSE (Mean Squared Error) metric is calculated as such for the \textbf{single user}:
-
+The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
     \[
-    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
     \]
 
     Where:
 
-    - $T_u$ is the *test set* of the user \textbf{u}
-    - $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}
-    - $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}
-
+    - $T_u$ is the test set of the user \textbf{u}.
+    - $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}.
+    - $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}.
+\hfill\break
 \hfill\break
 
-And it is calculated as such for the entire system:
-
+It is calculated as such for the entire system:
     \[
-    MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
     \]
 
     Where:
 
-    - $T$ is the \textbf{test set}
-    - $MSE_u$ is the MSE calculated for user \textbf{u}
-
+    - $T$ is the \textbf{test set}.
+    - $MSE_u$ is the MSE calculated for user \textbf{u}.
+\hfill\break
 \hfill\break
 
-There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
-and items were not present locally)
-
-    In those cases, the $MSE_u$ formula becomes
-
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{eg. a CBRS was chosen and items were not present locally}. In those cases, the $MSE_u$ formula becomes:
     \[
-    MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
     \]
 
     Where:
 
-    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
-
+    - $unk$ stay for unknown is the number of items of the user test set that could not be predicted.
+\hfill\break
 \hfill\break
 
 If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
-
     \[
-    MSE_u = NaN
+        MSE_u = NaN
     \]
-
+\hfill\break
 \hfill\break
 
 
 % RMSE REPORT
 \BLOCK{elif my_dict['metrics']['RMSE'] is defined}
 The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
-
     \[
-    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
     \]
 
     Where:
 
-    - $T_u$ is the *test set* of the user $u$
-    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
-    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
-
+    - $T_u$ is the *test set* of the user $u$.
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
 \hfill\break
-
-And it is calculated as such for the entire system:
-
+\hfill\break
+It is calculated as such for the entire system:
     \[
-    RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
     \]
 
     Where:
-
-    - $T$ is the test set
-    - $RMSE_u$ is the RMSE calculated for user $u$
-
+    - $T$ is the test set.
+    - $RMSE_u$ is the RMSE calculated for user $u$.
+\hfill\break
 \hfill\break
 
-There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
-and items were not present locally, a methodology different from TestRatings was chosen).
-
-In those cases, the $RMSE_u$ formula becomes
-
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{eg. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $RMSE_u$ formula becomes:
     \[
-    RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
     \]
 
     Where:
-
-    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
-
-    If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
-
-    \[
-    RMSE_u = NaN
-    \]
-
+    - $unk$ (unknown) is the number of items of the user test set that could not be predicted.
 \hfill\break
-
+\hfill\break
+If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
+    \[
+        RMSE_u = NaN
+    \]
+\hfill\break
+\hfill\break
 
 
 % MAE REPORT
 \BLOCK{elif my_dict['metrics']['MAE'] is defined}
 The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
-
     \[
-    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
     \]
 
     Where:
-
-    - $T_u$ is the test set of the user $u$
-    - $r_{u, i}$ is the actual score give by user $u$ to item $i$
-    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$
-
+    - $T_u$ is the test set of the user $u$.
+    - $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    - $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\hfill\break
 \hfill\break
 
-And it is calculated as such for the entire system:
-
+It is calculated as such for the entire system:
     \[
-    MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+        MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
     \]
 
     Where:
-
-    - $T$ is the test set
-    - $MAE_u$ is the MAE calculated for user $u$
-
+    - $T$ is the test set.
+    - $MAE_u$ is the MAE calculated for user $u$.
 \hfill\break
-
-There may be cases in which some items of the *test set* of the user could not be predicted (eg. A CBRS was chosen
-and items were not present locally, a methodology different from *TestRatings* was chosen).
-In those cases, the $MAE_u$ formula becomes
-
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{eg. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $MAE_u$ formula becomes:
     \[
-    MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
     \]
 
     Where:
-
-    - $unk$ (unknown) is the number of items of the user test set that could not be predicted
-
-    If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
-
+    - $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted ($|T_u| - unk = 0$), then:
     \[
-    MAE_u = NaN
+        MAE_u = NaN
     \]
-
+\hfill\break
 \hfill\break
 
 % ------------------------- error metrics ended -------------------------------------------
@@ -1167,58 +1222,48 @@ In those cases, the $MAE_u$ formula becomes
 \BLOCK{elif my_dict['metrics']['NDCG'] is defined}
 The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
 by first computing the DCG score using the following formula:
-
     \[
-    DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
     \]
 
     Where:
-
     - $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
-        ranking for the user $u$
-    - $f$ is a gain function (linear or exponential, in particular)
-    - $x$ is the base of the logarithm
-    - $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$
-
+        ranking for the user $u$.
+    - $f$ is a gain function \textit{linear or exponential, in particular}.
+    - $x$ is the base of the logarithm.
+    - $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
 \hfill\break
-
-If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponential" case, the following
+\hfill\break
+If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponentia" case, the following
 formula is applied to $r$:
-
     \[
-    f(r) = 2^{r} - 1
+        f(r) = 2^{r} - 1
     \]
-
 \hfill\break
-
+\hfill\break
 The NDCG for a single user is then calculated using the following formula:
-
     \[
-    NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+        NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
     \]
 
     Where:
-
-    - $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores
-
+    - $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
 \hfill\break
-
+\hfill\break
 So the basic idea is to compare the actual ranking with the ideal one.
 Finally, the NDCG of the entire system is calculated instead as such:
-
     \[
-    NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+        NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
     \]
 
     Where:
-
-    - $NDCG_u$ is the NDCG calculated for user :math:`u`
-    - $U$ is the set of all users
-
+    - $NDCG_u$ is the NDCG calculated for user $u$.
+    - $U$ is the set of all users.
 \hfill\break
-
+\hfill\break
 The system average excludes NaN values.
-
+\hfill\break
+\hfill\break
 
 
 % NDCG@K REPORT
@@ -1226,54 +1271,52 @@ The system average excludes NaN values.
 The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
 by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
 first $k$ predictions.
-
 The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
-
+\hfill\break
+\hfill\break
 
 % MRR REPORT
 \BLOCK{elif my_dict['metrics']['MRR'] is defined}
-The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned and not those
-of every user. MRR is calculated as such:
-
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
     \[
-    MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
     \]
 
     Where:
-
-    - $Q$ is the set of recommendation lists
-    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list
-
+    - $Q$ is the set of recommendation lists.
+    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
 \hfill\break
-
+\hfill\break
 The MRR metric needs to discern relevant items from the not relevant ones: in order to do that, one could pass a
-custom 'relevant\_threshold' parameter that will be applied to every user, so that if a rating of an item
-is >= relevant\_threshold, then it's relevant, otherwise it's not.
-If no 'relevant\_threshold' parameter is passed then, for every user, its mean rating score will be used
+custom 'relevant_threshold' parameter that will be applied to every user, so that if a rating of an item
+is $>=$ relevant_threshold, then it's relevant, otherwise it's not.
+If no 'relevant_threshold' parameter is passed then, for every user, its mean rating score will be used.
 
-In this experiment, the relevant threshod used is
+In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
-
+\hfill\break
+\hfill\break
 
 
 \BLOCK{elif my_dict['metrics']['MRRAtK'] is defined}
 The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
-not those of every user. MRR@K is calculated as such
-
+not those of every user. MRR@K is calculated as such:
     \[
-    MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
     \]
 
     Where:
-
-    - $K$ is the cutoff parameter
-    - $Q$ is the set of recommendation lists
-    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list
-
+    - $K$ is the cutoff parameter.
+    - $Q$ is the set of recommendation lists.
+    - $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\hfill\break
 \hfill\break
 In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
-
+\hfill\break
+\hfill\break
 
 
 % MAP REPORT
@@ -1281,105 +1324,94 @@ In this experiment, the relevant threshold used is
 The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
 abbreviation of Average Precision for each user and then taking its mean.
 The AP is calculated as such for the \textbf{single user}:
-
     \[
-    AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
     \]
 
     Where:
-
-    - $m_u$ is the number of relevant items for the user $u$
-    - $N_u$ is the number of recommended items for the user $u$
-    - $P(i)$ is the precision computed at cutoff $i$
-    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
-
+    - $m_u$ is the number of relevant items for the user $u$.
+    - $N_u$ is the number of recommended items for the user $u$.
+    - $P(i)$ is the precision computed at cutoff $i$.
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
 \hfill\break
-
+\hfill\break
 After computing the AP for each user, we can compute the MAP for the whole system:
-
     \[
-    MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+        MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
     \]
-
 \hfill\break
-
+\hfill\break
 This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
 computed for the whole system in the dataframe containing system results. In this experiment the MAP has been calculeted
 using a relevant threshold:
 \VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
-
+\hfill\break
+\hfill\break
 
 % MAP@K REPORT
 \BLOCK{elif my_dict['metrics']['MAPAtK'] is defined}
 The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
 AP@K abbreviation of Average Precision At K for each user and then taking its mean.
-The AP@K is calculated as such for the \text\[{single user}:
-
+The AP@K is calculated as such for the \textbf{single user}:
     \[
         AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
     \]
 
     Where:
-
-    - $m_u$ is the number of relevant items for the user $u$
-    - $K$ is the cutoff value
-    - $P(i)$ is the precision computed at cutoff $i$
-    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$)
-
+    - $m_u$ is the number of relevant items for the user $u$.
+    - $K$ is the cutoff value.
+    - $P(i)$ is the precision computed at cutoff $i$.
+    - $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
 \hfill\break
-
+\hfill\break
 After computing the AP@K for each user, we can compute the MAP@K for the whole system:
-
     \[
         MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
     \]
-
 \hfill\break
-
+\hfill\break
 This metric will return the AP@K computed for each user in the dataframe containing users results, and the MAP@K
 computed for the whole system in the dataframe containing system results.
+\hfill\break
+\hfill\break
 
 
 % CORRELATION REPORT
 \BLOCK{elif my_dict['metrics']['Correlation'] is defined}
 The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
 The currently correlation methods implemented are:
-
-    - `pearson`
-    - `kendall`
-    - `spearman`
-
-Every correlation method is implemented by the pandas library, so read its [documentation][pd_link] for more
-
-[pd_link]: https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html
-
+\begin{itemize}
+    \item `pearson`
+    \item `kendall`
+    \item `spearman`
+\end{itemize}
+\hfill\break
+\hfill\break
+Every correlation method is implemented by the pandas library, so refer to its
+\href{https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html}{documentation} for more information.
+\hfill\break
+\hfill\break
 The correlation metric is calculated as such for the \textbf{single user}:
-
     \[
-    Corr_u = Corr(ranking_u, ideal\_ranking_u)
+        Corr_u = Corr(ranking_u, ideal_ranking_u)
     \]
 
     Where:
-
-    - $ranking_u$ is ranking of the user
-    - $ideal\_ranking_u$ is the ideal ranking for the user
-
+    - $ranking_u$ is ranking of the user.
+    - $ideal_ranking_u$ is the ideal ranking for the user.
 \hfill\break
-
+\hfill\break
 The ideal ranking is calculated based on the rating inside the *ground truth* of the user.
-The Correlation metric calculated for the **entire system** is simply the average of every $Corr$:
-
+The Correlation metric calculated for the entire system is simply the average of every $Corr$:
     \[
-    Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+        Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
     \]
 
     Where:
-
-    - $Corr_u$ is the correlation of the user $u$
-    - $U$ is the set of all users
-
+    - $Corr_u$ is the correlation of the user $u$.
+    - $U$ is the set of all users.
 \hfill\break
-
+\hfill\break
 The system average excludes NaN values.
 It's also possible to specify a cutoff parameter thanks to the 'top_n' parameter: if specified, only the first
 $n$ results of the recommendation list will be used in order to calculate the correlation.
@@ -1388,7 +1420,8 @@ For this experiment the setting of the correlation metrics are :
     \item method: \VAR{my_dict['metrics']['Correlation']['method']|default('no method for correlation specified')|safe_text}.
     \item top_n: \VAR{my_dict['metrics']['Correlation']['top_n']|default('no cutoff setted')|safe_text}.
 \end{itemize}
-
+\hfill\break
+\hfill\break
 % ------------------------- ranking metrics ended ---------------------------
 
 
@@ -1398,44 +1431,40 @@ For this experiment the setting of the correlation metrics are :
 \BLOCK{elif my_dict['metrics']['GiniIndex'] is defined}
 The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
 result it will be returned and not those of every user. The metric is calculated as such:
-
     \[
-    Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
     \]
 
     Where:
-
-    - $n$ is the total number of distinct items that are being recommended
-    - $x_i$ is the number of times that the item $i$ has been recommended
-
+    - $n$ is the total number of distinct items that are being recommended.
+    - $x_i$ is the number of times that the item $i$ has been recommended.
 \hfill\break
-
+\hfill\break
 A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
 index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1. If the 'top_n'
 parameter is specified, then the Gini index will measure inequality considering only the first n items of every
 recommendation list of all users. For this experiment the top_n:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
-
+\hfill\break
+\hfill\break
 
 % PREDICTION COVERAGE REPORT
 \BLOCK{elif my_dict['metrics']['PredictionCoverage'] is defined}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wise metric, so only its result it will be returned and not those of every
 user. The metric is calculated as such:
-
     \[
-    Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
     \]
 
     Where:
-
-    - $I$ is the set of all available items
-    - $I_p$ is the set of recommended items
-
+    - $I$ is the set of all available items.
+    - $I_p$ is the set of recommended items.
 \hfill\break
-
+\hfill\break
 The $I$ must be specified through the 'catalog' parameter.
-
+\hfill\break
+\hfill\break
 
 
 % CATALOG COVERAGE REPORT
@@ -1445,36 +1474,30 @@ to all available items. It's a system wide metric, so only its result it will be
 user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
 parameter is passed then it's a simple Prediction Coverage.
 The metric is calculated as such:
-
     \[
-    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
     \]
 
     Where:
-
-    - $N$ is the total number of users
-    - $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$
-    - $I$ is the set of all available items
-
+    - $N$ is the total number of users.
+    - $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$.
+    - $I$ is the set of all available items.
 \hfill\break
-
+\hfill\break
 The $I$ must be specified through the 'catalog' parameter. The recommendation list of every user ($reclist(u_j)$)
 can be reduced to the first n parameter with the top-n parameter, so that catalog coverage is measured considering
 only the most highest ranked items. With the 'k' parameter one could specify the number of users that will be used to
 calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
 The formula above becomes:
-
     \[
-    Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1\dotsk}reclist(u_j)|}{|I|})\cdot100
+        Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
     \]
 
     Where:
-
-    - $k$ is the parameter specified
-
+    - $k$ is the parameter specified.
 \hfill\break
-
-Obviously 'k' < N, else simply recommendation lists of all users will be used
+\hfill\break
+Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 
 
 % DELTA GAP REPORT
@@ -1482,50 +1505,45 @@ Obviously 'k' < N, else simply recommendation lists of all users will be used
 The Delta GAP (Group Average popularity) metric lets you compare the average popularity "requested" by one or
 multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
 It's a system wise metric and results of every group will be returned. It is calculated as such:
-
     \[
-    \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+        \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
     \]
-
-Users are split into groups based on the user\_groups parameter, which contains names of the groups as keys,
-and percentage of how many user must contain a group as values. For example:
-
 \hfill\break
-
+\hfill\break
+Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values. For example:
 \begin{itemize}
         \item user groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 \end{itemize}
-
 \hfill\break
-
-Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
-percentage of users we specified as value in the dictionary):
-
+\hfill\break
+Every user will be inserted in a group based on how many popular items the user has rated
+\textit{in relation to the percentage of users we specified as value in the dictionary}:
 \begin{itemize}
-    \item users with many popular items will be inserted into the first group
+    \item users with many popular items will be inserted into the first group.
     \item users with niche items rated will be inserted into one of the last groups.
 \end{itemize}
-
-In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
-is defined as:
-
-    \[
-    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
-    \]
-
-The most popular items are the first 'pop\_percentage', items of all items ordered in a descending order by
-popularity. The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
-divided by the total number of users in the 'original\_ratings'.
-
 \hfill\break
-
+\hfill\break
+In general users are grouped by $Popularity_ratio$ in a descending order. $Popularity_ratio$ for a single user $u$
+is defined as:
+    \[
+        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+    \]
+\hfill\break
+\hfill\break
+The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
+popularity. The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
+divided by the total number of users in the 'original_ratings'.
+\hfill\break
+\hfill\break
 It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
 and it won't be considered in the $\Delta GAP$ computation of its group. In case no user of a group has recs
 available, a warning will be printed and the whole group won't be considered.
-
 If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
 n items of every recommendation list of all users
-
+\hfill\break
+\hfill\break
 % ---------------------------------- FAIRNESS METRICS ENDED --------------------------------------------
 
 
@@ -1535,62 +1553,59 @@ n items of every recommendation list of all users
 % LONG TAIL DISTIBUTION REPORT
 \BLOCK{elif my_dict['metrics']['LongTailDistr'] is defined}
 This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
-specified. The plot can be generated both for the truth set or the predictions set based on
-the on parameter:
-
+specified. The plot can be generated both for the truth set or the predictions set based on the on parameter:
+\hfill\break
+\hfill\break
     - \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
-      the most rated ones
+       the most rated ones.
 
-    - \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended items
-
+    - \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
+        items.
 \hfill\break
-
-The plot file will be saved as `out_dir/file_name.format`
-
+\hfill\break
+The plot file will be saved as `out_dir/file_name.format`.
 Since multiple split could be evaluated at once, the overwrite parameter comes into play:
-if is set to False, file with the same name will be saved as `file\_name (1).format`, `file\_name (2).format`, etc.
+if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
 so that for every split a plot is generated without overwriting any file previously generated.
-
 \hfill\break
-
+\hfill\break
 For this experiments the Long Tail Distribution has been used with the following settings:
 \begin{itemize}
     \item on: \VAR{my_dict['metrics']['LongTailDistr'][''on'']|safe_text}.
     \item format: \VAR{my_dict['metrics']['LongTailDistr']['format']|safe_text}.
     \item overwrite: \VAR{my_dict['metrics']['LongTailDistr']['overwrite']|safe_text}.
 \end{itemize}
+\hfill\break
+\hfill\break
 
 
 % PopRatioProfileVsRecs REPORT
 \BLOCK{elif my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
 This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
 profile popularity ratio and recommendations popularity ratio is drawn.
-
-Users are split into groups based on the user\_groups parameter, which contains names of the groups as keys,
+Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
 and percentage of how many user must contain a group as values. For example:
 \begin{itemize}
        \item user groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
 \end{itemize}
-
 \hfill\break
-
-Every user will be inserted in a group based on how many popular items the user has rated (in relation to the
-percentage of users we specified as value in the dictionary):
+\hfill\break
+Every user will be inserted in a group based on how many popular items the user has rated
+\textit{in relation to the percentage of users we specified as value in the dictionary}:
 \begin{itemize}
     \item users with many popular items will be inserted into the first group
     \item users with niche items rated will be inserted into one of the last groups.
 \end{itemize}
-
 \hfill\break
-
-In general users are grouped by $Popularity\_ratio$ in a descending order. $Popularity\_ratio$ for a single user $u$
+\hfill\break
+In general users are grouped by $Popularity_ratio$ in a descending order. $Popularity_ratio$ for a single user $u$
 is defined as:
-
     \[
-    Popularity\_ratio_u = n\_most\_popular\_items\_rated_u / n\_items\_rated_u
+        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
     \]
-
-The most popular items are the first 'pop\_percentage', items of all items ordered in a descending order by
+\hfill\break
+\hfill\break
+The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
 popularity.
 
 The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
@@ -1602,40 +1617,43 @@ available, a warning will be printed and the whole group won't be considered.
 \begin{itemize}
     \item The plot file will be saved as `out\_dir/file\_name.format`
 \end{itemize}
-
+\hfill\break
+\hfill\break
 Since multiple split could be evaluated at once, the `overwrite` parameter comes into play:
-if is set to False, file with the same name will be saved as `file\_name (1).format`, `file\_name (2).format`, etc.
+if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
 so that for every split a plot is generated without overwriting any file previously generated
 
-Thanks to the 'store\_frame' parameter it's also possible to store a csv containing the calculations done in order
+Thanks to the 'store_frame' parameter it's also possible to store a csv containing the calculations done in order
 to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
 with the .csv format):
 \begin{itemize}
-    \item The csv will be saved as `out\_dir/file\_name.csv`
+    \item The csv will be saved as `out_dir/file_name.csv`
 \end{itemize}
+\hfill\break
+\hfill\break
 
 
 % PopRecsCorrelation REPORT
 \BLOCK{elif my_dict['metrics']['PopRecsCorrelation'] is defined}
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
 frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
-recommended
-
-The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
-divided by the total number of users in the 'original\_ratings'.
+recommended.
+The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
+divided by the total number of users in the 'original_ratings'.
 \begin{itemize}
-    \item The plot file will be saved as out\_dir/file\_name.format'
+    \item The plot file will be saved as out_dir/file_name.format'
 \end{itemize}
-
 \hfill\break
-
+\hfill\break
 Since multiple split could be evaluated at once, the overwrite parameter comes into play:
 if is set to False, file with the same name will be saved as 'file_name (1).format, 'file_name (2).format', etc.
 so that for every split a plot is generated without overwriting any file previously generated
 \hfill\break
+\hfill\break
 There exists cases in which some items are not recommended even once, so in the graph could appear
 zero recommendations. One could change this behaviour thanks to the 'mode' parameter:
-
+\hfill\break
+\hfill\break
     - \textbf{mode='both'}: two graphs will be created, the first one containing eventual zero recommendations, the
       second one where *zero recommendations* are excluded. This additional graph will be stored as
       out_dir/file_name_no_zeros.format (the string '_no_zeros' will be added to the file_name chosen automatically)
@@ -1645,27 +1663,29 @@ zero recommendations. One could change this behaviour thanks to the 'mode' param
     - \text{mode='no_zeros'}: only a graph excluding eventual zero recommendations will be created. The graph will be
       saved as out_dir/file_name_no_zeros.format (the string '_no_zeros' will be added to the file_name chosen
       automatically)
-
 \hfill\break
-
+\hfill\break
 For this experiments the PopRecsCorrelation has been used with the following settings:
 \begin{itemize}
     \item mode: \VAR{my_dict['metrics']['PopRecsCorrelation']['mode']|safe_text}.
     \item format: \VAR{my_dict['metrics']['PopRecsCorrelation']['format']|safe_text}.
     \item overwrite: \VAR{my_dict['metrics']['PopRecsCorrelation']['overwrite']|safe_text}.
 \end{itemize}
+\hfill\break
+\hfill\break
+
 
 % ----------------------------- PLOT METRICS ENDED --------------------------------------
 
 \BLOCK{else}
 No metrics have been used during this experiment.
-
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 
 
 
 % THIS LATEC TEMPLATE REPORT THE RISULTS OF THE SYSTEMS ON THE FOLD USED
-
 
 \BLOCK{if my_dict['sys_results'] is defined}
 \subsection{Results}\label{sec:results}
@@ -1695,19 +1715,24 @@ In the following table, we present the results of the evaluation \ref{tab:result
   \end{tabular}
   \caption{Table of the results}
 \end{table}
+\hfill\break
+\hfill\break
 \BLOCK{endif}
 
 % In case of eval modulke is not used
 \BLOCK{else}
 The evaluation module has not been used during the experiment conducted.
-
+\hfill\break
+\hfill\break
 \BLOCK{endif}
+
 % ------------ END OF EVAL MODULE RREPORT -------------------------------
 
 
 \section{Conclusion on the experiments}\label{sec:conclution}
 This part is for conclution to be sum up as needed.
-
+\hfill\break
+\hfill\break
 % ------------------- END OF THE REPORT COMPLETED ---------------
 % closing the document
 \end{document}
