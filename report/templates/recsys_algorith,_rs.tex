@@ -1,6 +1,120 @@
 
 ###
 
+% ALGORITHM FOR RECOMMENDER SYSTEM
+
+\subsection{Algorithm used for the recommender system}\label{subsec:algo}
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
+this target the system need to be based on a chosen algorithm that will work with the representation of data that
+we have.
+In this section we will analyse which algorithm has been used for the experiment and what are the settings
+given.
+
+\BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
+The recommender system is based on content.
+
+\BLOCK{elif my_dict['recsys']['GraphBasedRS'] id defined}
+The recommender system is based on a graph representation.
+
+% -------------------------------- CONTENT BASE ALGO ----------------------------------------
+
+\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+% AMAR DOUBLE SOURCE ALGO
+The algorithm used is AmarDoubleSource
+\begin{itemize}
+    \item item fields: 'list of field used' TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item batch size: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['batch_size']|default('no batch size') }
+    \item epochs: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['epochs']|default('no batch size')}
+    \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['threshold']|default('no batch size')}
+    \item embedding combiner: TO ADJUST
+    \item seed: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['seed']|default('no batch size')}
+    \item additional dl parameters: TO ADJUST
+\end{itemize}
+
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+% CENTROID VECTOR ALGO
+The algorithm used is the centroid vector
+\begin{itemize}
+    \item item fields: TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item similarity:  \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector']['similarity']|default('no similarity')|safe_text}
+    \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector']['threshold']|default('no threshold')}
+    \item embedding combiner: TO ADJUST
+\end{itemize}
+
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+% CLASSIFIER ALGO
+The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
+\begin{itemize}
+    \item item fields: TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['threshold']|default('no threshold')}
+    \item embedding combiner: TO ADJUST
+\end{itemize}
+
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+% INDEX QUERY ALGO
+The algorithm used is the Index Query.
+\begin{itemize}
+    \item item fields: TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item classic similarity: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery']['classic_similarity']|default('no used')}
+    \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery']['threshold']|default('no threshold')}
+    \item embedding combiner: TO ADJUST
+\end{itemize}
+
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+\BLOC{elif my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+% LINEAR PREDICTOR ALGO
+The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
+\begin{itemize}
+    \item item fields: TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item only greater eq: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['only_greater_eq']|default('no used')}
+    \item embedding combiner: TO ADJUST
+\end{itemize}
+
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+
+% ------------------------ GRAPH BASED ALGO ------------------------------------------
+\BLOC{elif my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+% NX PAGE RANK ALGO
+The algorithm used is NX Page Rank.
+\begin{itemize}
+    \item alpha: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|default('no alpha used')}
+    \item personalized: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['personalized']|default('no used')}
+    \item max iter: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['max_iter']|default('no max iter')}
+    \item tol: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['tol']|default('no used')}
+    \item nstart: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['nstart']|default('no used')}
+    \item weight: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['weight']|default('no used')|safe_text}
+\end{itemize}
+The type of graph used in the algorithm is a \VAR{ my_dict['recsys']['GraphBasedRS']['mode']},
+the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
+
+
+\BLOC{else}
+
+\BLOCK{endif}
 
 
 ###
