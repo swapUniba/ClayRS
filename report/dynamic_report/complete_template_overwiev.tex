@@ -41,29 +41,31 @@ rappresentation wanted:
 
 
 
-% ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
 
 % field: X reppresentation subsection
 X has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
+% --------------------------- TECNIQUE USED TO REPPRESENT DATA FIELD ----------------------
 
 \BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
 % check if non particular technique of data reppresentation has been used
 The data has been represented as the original.
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
+\BLOCK{if 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
 % check WhooshTfIdf used as representation
 The WhooshTfIdf technique has been used.
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
 % check SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
@@ -80,9 +82,10 @@ The technique has been settled with the following parameter:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
 % check WordEmbeddingTechnique used as representation
 The Word Embedding Technique has been used and
 \BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('X', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -94,9 +97,10 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
 % check SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('X', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -108,9 +112,10 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
 % check DocumentEmbeddingTechnique used as representation
 The Document Embedding Technique has been used and
 \BLOCK{ set emb_src1 = my_dict.get('field_representations', {}).get('X', {}).get('DocumentEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -122,9 +127,10 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
 % check Word2SentenceEmbeddingused as representation
 The Word2Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src2 = my_dict.get('field_representations', {}).get('X', {}).get('Word2SentenceEmbedding', {}).get('embedding_source', None) }
@@ -143,9 +149,10 @@ No combining technique has been used.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
 % check Word2DocEmbedding used as representation
 The Word2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src3 = my_dict.get('field_representations', {}).get('X', {}).get('Word2DocEmbedding', {}).get('embedding_source', None) }
@@ -164,9 +171,10 @@ No combining technique has been used.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
 % check Sentence2DocEmbedding used as representation
 The Sentence2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src4 = my_dict.get('field_representations', {}).get('X', {}).get('Sentence2DocEmbedding', {}).get('embedding_source', None) }
@@ -185,23 +193,26 @@ No combining technique has been used.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
 % check PyWSDSynsetDocumentFrequency used as representation
 The PyWSD Synset Document Frequency Technique has been used.
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
 % check FromNPY used as representation
 The FromNPY Technique has been used.
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
 % check SkImageHogDescriptorused as representation
 SKImage Hog Descriptor technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -219,9 +230,10 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
 % check MFCC used as representation
 MFCC technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -240,9 +252,10 @@ MFCC technique has been applied to process data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
 % check VGGISH used as representation
 VGGISH technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -259,9 +272,10 @@ VGGISH technique has been applied to process data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
 % check PytorchImageModels used as representation
 Pytorch Image Models technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -282,9 +296,10 @@ Pytorch Image Models technique has been applied to process data with the followi
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
+\BLOCK{if  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
 % check TorchVisionVideoModels used as representation
 Torch Vision Video Models technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -304,6 +319,8 @@ Torch Vision Video Models technique has been applied to process data with the fo
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
+
 
 \BLOCK{else}
 The representation technique used has not been recognised from the framework check statement flow control
@@ -311,10 +328,10 @@ for chunks template used for rendering by jinja.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
+% --- ends fields representation techniques -----
 
 
-
-% ------ PREPROCESSING OF DATA FIELD ------------
+% ------------------------- PREPROCESSING OF DATA FIELD -----------------------------------
 
 \BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
 % Spacy
@@ -332,9 +349,10 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
 % Ekphrasis
 Ekphrasis has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -354,9 +372,10 @@ Ekphrasis has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
 % NLTK preprocessing
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -371,9 +390,10 @@ NLTK has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
 % TorchUniformTemporalSubSampler
 TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -381,9 +401,10 @@ TorchUniformTemporalSubSampler has been used to preprocess data with the followi
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
 % TorchResample preproceessing
 TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -395,16 +416,18 @@ TorchResample has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
 % ConvertToMono preprocessing
 ConvertToMono has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
 % Resize preprocessing
 Resize has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -415,9 +438,10 @@ Resize has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
 % CenterCrop preprocessing
 CenterCrop has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -425,16 +449,18 @@ CenterCrop has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
 % Lambda preprocessing
 Lambda has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
 % Normalize preprocessing
 Normalize has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -443,9 +469,10 @@ Normalize has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{ elif 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
 % ClipSampler preprocessing
 ClipSampler has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -455,18 +482,20 @@ ClipSampler has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
-\BLOCK{else}
+
+\BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X']['preprocessing'] is none}
 No preprocessing techniques have been used to preprocess data X during the experiment.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
+% ----------- ends pre processing techniques --------------
 
 
-% ------------------- POSTPROCESSING OF DATA FIELD ------------
+% ----------------------- POSTPROCESSING OF DATA FIELD ------------------------------------
 
-
-\BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
+\BLOCK{if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
 % FVGMM posttprocessing
 FVGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -491,9 +520,10 @@ FVGMM has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
+\BLOCK{if in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
 % VLADGMM postprocessing
 VLADGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -518,9 +548,10 @@ VLADGMM has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{elif in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
+\BLOCK{if in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
 % SkLearnPCA postprocessing
 SkLearnPCA has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -534,18 +565,21 @@ SkLearnPCA has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
-\BLOCK{else}
+\BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X']['postprocessing'] is none}
 No postprocessing techniques have been used on the data X in this experiment.
 \hfill\break
 \hfill\break
-
-% -------------- ends post processing techniques ---------------------------------
 \BLOCK{endif}
+% ----------- ends post processing techniques --------------
 
-% EXOGENOUS TECHNIQUE REPRESENTATION OF DATA
 
+% ------------------- EXOGENOUS TECHNIQUE REPRESENTATION OF DATA -------------------------
+
+\BLOCK{if 'exogenous_representations' in my_dict and
+'DBPediaMappingTechnique' in my_dict['exogenous_representations']}
 This exogenous technique expands each content by using as external source the DBPedia ontology.
 It needs the entity of the contents for which a mapping is required (e.g. entity\_type=`dbo:Film`)
 and the field of the raw source that will be used for the actual mapping.
@@ -577,6 +611,7 @@ The properties have been returned in their rdfs:label form.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+\BLOCK{endif}
 
 
 % In case of the content analyzer is not used

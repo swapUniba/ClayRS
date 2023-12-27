@@ -1,0 +1,37 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
+% TorchResample preproceessing
+TorchResample has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item new freq: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
+    \item resampling method: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['resampling_method']|default('no setting used')|safe_text}
+    \item lowpass filter width: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['lowpass_filter_width']|default('no setting used')|safe_text}
+    \item roll off: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['rolloff']|default('no setting used')|safe_text}
+    \item beta: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['beta']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

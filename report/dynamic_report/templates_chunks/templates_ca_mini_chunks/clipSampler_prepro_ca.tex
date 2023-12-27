@@ -1,0 +1,35 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
+% ClipSampler preprocessing
+ClipSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of frames for clip: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_frames_for_clip']|default('no setting used')|safe_text}
+    \item number of clips: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_clips']|default('no setting used')|safe_text}
+    \item selection strategy: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['selection_strategy']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

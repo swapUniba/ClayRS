@@ -1,0 +1,41 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
+% Spacy
+Spacy has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item model: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation:\VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['stopwords_removal']|default('no setting used')|safe_text}
+    \item new stopwords: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['new_stopwords']|default('no setting used')|safe_text}
+    \item not stopwords: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['not_stopwords']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['lemmatization']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['url_tagging']|default('no setting used')|safe_text}
+    \item named entity recognition: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['named_entity_recognition']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

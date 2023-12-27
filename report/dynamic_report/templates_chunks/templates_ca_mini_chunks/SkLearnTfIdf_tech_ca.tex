@@ -1,0 +1,36 @@
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
+% check SkLearnTfIdf used as representation
+The SkLearnTfIdf technique has been used.
+The technique has been settled with the following parameter:
+\begin{itemize}
+    \item max df: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['max_df']|safe_text}
+    \item min df: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['min_df']|safe_text}
+    \item max features: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['max_features']|safe_text}
+    \item vocabulary: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['vocabulary']|safe_text}
+    \item binary: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['binary']|safe_text}
+    \item norm: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['norm']|safe_text}
+    \item use idf: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['use_idf']|safe_text}
+    \item smooth idf: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['smooth_idf']|safe_text}
+    \item sublinear tf: \VAR{my_dict['field_representations']['X']['SkLearnTfIdf']['sublinear_tf']|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

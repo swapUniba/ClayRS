@@ -1,0 +1,18 @@
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
+% check WordEmbeddingTechnique used as representation
+The Word Embedding Technique has been used and
+\BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('X', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
+\BLOCK{ if emb_source is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['X']['WordEmbeddingTechnique']['embedding_source']|safe_text}
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###

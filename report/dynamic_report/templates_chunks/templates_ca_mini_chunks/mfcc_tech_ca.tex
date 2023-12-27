@@ -1,0 +1,44 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
+% check MFCC used as representation
+MFCC technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item contents dirs: \VAR{my_dict['field_representations']['X']['MFCC']['contents_dirs']|safe_text}
+    \item time tuple:
+    \item flatten: \VAR{my_dict['field_representations']['X']['MFCC']['flatten']|default('no setting used')|safe_text}
+    \item mean: \VAR{my_dict['field_representations']['X']['MFCC']['mean']|default('no setting used')|safe_text}
+    \item max timeout: \VAR{my_dict['field_representations']['X']['MFCC']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['X']['MFCC']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['X']['MFCC']['max_workers']|default('no setting used')|safe_text}
+    \item n mfcc: \VAR{my_dict['field_representations']['X']['MFCC']['n_mfcc']|default('no setting used')|safe_text}
+    \item dct type: \VAR{my_dict['field_representations']['X']['MFCC']['dct_type']|default('no setting used')|safe_text}
+    \item norm: \VAR{my_dict['field_representations']['X']['MFCC']['norm']|default('no setting used')|safe_text}
+    \item log mels: \VAR{my_dict['field_representations']['X']['MFCC']['log_mels']|default('no setting used')|safe_text}
+    \item melkwargs: \VAR{my_dict['field_representations']['X']['MFCC']['melkwargs']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

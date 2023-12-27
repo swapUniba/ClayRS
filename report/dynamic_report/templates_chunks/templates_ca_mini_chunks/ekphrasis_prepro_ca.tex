@@ -1,0 +1,45 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
+% Ekphrasis
+Ekphrasis has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item omit: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['omit']|default('no setting used')|safe_text}
+    \item normalize: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['normalize']|default('no setting used')|safe_text}
+    \item unpack contractions: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['unpack_contractions']|default('no setting used')|safe_text}
+    \item unpack hashtags: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['unpack_hashtags']|default('no setting used')|safe_text}
+    \item annotate: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['annotate']|default('no setting used')|safe_text}
+    \item corrector: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['corrector']|default('no setting used')|safe_text}
+    \item tokenizer:
+    \item segmenter: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['segmenter']|default('no setting used')|safe_text}
+    \item all caps tag: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['all_caps_tag']|default('no setting used')|safe_text}
+    \item spell correction: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['spell_correction']|default('no setting used')|safe_text}
+    \item segmentation: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['segmentation']|default('no setting used')|safe_text}
+    \item dicts: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['dicts']|default('no setting used')|safe_text}
+    \item spell correct elong: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['spell_correct_elong']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

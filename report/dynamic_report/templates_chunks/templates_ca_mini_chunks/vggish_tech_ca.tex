@@ -1,0 +1,42 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
+% check VGGISH used as representation
+VGGISH technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item feature layer: \VAR{my_dict['field_representations']['X']['VGGISH']['feature_layer']|default('no setting used')|safe_text}
+    \item flatten: \VAR{my_dict['field_representations']['X']['VGGISH']['flatten']|default('no setting used')|safe_text}
+    \item device:  \VAR{my_dict['field_representations']['X']['VGGISH']['device']|default('no setting used')|safe_text}
+    \item apply on output: \VAR{my_dict['field_representations']['X']['VGGISH']['apply_on_output']|default('no setting used')|safe_text}
+    \item contents dirs: \VAR{my_dict['field_representations']['X']['VGGISH']['contents_dirs']|default('no setting used')|safe_text}
+    \item time tuple:
+    \item max timeout: \VAR{my_dict['field_representations']['X']['VGGISH']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['X']['VGGISH']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['X']['VGGISH']['max_workers']|default('no setting used')|safe_text}
+    \item batch size:  \VAR{my_dict['field_representations']['X']['VGGISH']['batch_size']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

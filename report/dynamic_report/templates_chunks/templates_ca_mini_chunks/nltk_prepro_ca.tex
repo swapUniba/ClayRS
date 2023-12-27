@@ -1,0 +1,40 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+% NLTK preprocessing
+NLTK has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['stopwords_removal']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['url_tagging']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['lemmatization']|default('no setting used')|safe_text}
+    \item stemming: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['stemming']|default('no setting used')|safe_text}
+    \item pos tag: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['pos_tag']|default('no setting used')|safe_text}
+    \item lang: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['lang']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

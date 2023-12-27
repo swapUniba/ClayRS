@@ -1,0 +1,50 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
+% FVGMM posttprocessing
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

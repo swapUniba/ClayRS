@@ -1,0 +1,59 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'exogenous_representations' in my_dict and
+'DBPediaMappingTechnique' in my_dict['exogenous_representations']}
+This exogenous technique expands each content by using as external source the DBPedia ontology.
+It needs the entity of the contents for which a mapping is required (e.g. entity\_type=`dbo:Film`)
+and the field of the raw source that will be used for the actual mapping.
+This technique can be performed with four different modalities as follows:
+\begin{itemize}
+ \item
+       \textbf{mode='only\_retrieved\_evaluated'}, all properties from DBPedia will be retrieved but discarding the
+        ones with a blank value.
+ \item
+       \textbf{mode='all'}, all properties in DBPedia più all properties in local raw source will be retrieved.
+        Local properties will be overwritten by dbpedia values if there's a conflict.
+ \item
+       \textbf{mode='all\_retrieved'}, all properties in DBPedia *only* will be retrieved.
+ \item
+       \textbf{mode='original\_retrieved'}, all local properties with their DBPedia value will be retrieved.
+\end{itemize}
+\hfill\break
+\hfill\break
+In this experiment the DBpedia Mapping Technique has been used with the mode:
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['mode']|safe_text}, the label_field_used is
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['label_field']|safe_text} and the timeout used
+to expand the content with dbpedia is set to
+\VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['max_timeout']|safe_text}.
+\BLOCK{if my_dict['exogenous_representations']['DBPediaMappingTechnique']['prop_as_uri'] is defined and
+my_dict['exogenous_representations']['DBPediaMappingTechnique']['prop_as_uri'] == true}
+The properties have been returned in their full uri form.
+\BLOCK{else}
+The properties have been returned in their rdfs:label form.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+###
+
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}
