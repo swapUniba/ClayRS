@@ -1,0 +1,90 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if my_dict['sys_results'] is defined}
+% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+    \BLOCK{if my_dict['sys_results']['X']['Precision - macro'] is defined}
+    Precision - macro & \VAR{my_dict['sys_results']['X']['Precision - macro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['Precision - micro'] is defined}
+    Precision - micro & \VAR{my_dict['sys_results']['X']['Precision - micro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['Recall - macro'] is defined}
+    Recall - macro & \VAR{my_dict['sys_results']['X']['Recall - macro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['Recall - micro'] is defined}
+    Recall - micro & \VAR{my_dict['sys_results']['X']['Recall - micro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['R-Precision - macro'] is defined}
+    R-Precision - macro & \VAR{my_dict['sys_results']['X']['R-Precision - macro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['R-Precision - micro'] is defined}
+    R-Precision - micro & \VAR{my_dict['sys_results']['X']['R-Precision - micro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['F1 - macro'] is defined}
+    F1 - macro &  \VAR{my_dict['sys_results']['X']['F1 - macro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['F1 - micro'] is defined}
+    F1 - micro & \VAR{my_dict['sys_results']['X']['F1 - micro']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['NDCG'] is defined}
+    NDCG  & \VAR{my_dict['sys_results']['X']['NDCG']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['MRR'] is defined}
+    MRR  & \VAR{my_dict['sys_results']['X']['MRR']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['RMSE'] is defined}
+    RMSE & \VAR{my_dict['sys_results']['X']['RMSE']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['MSE'] is defined}
+    MSE & \VAR{my_dict['sys_results']['X']['MSE']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['MAE'] is defined}
+    MAE & \VAR{my_dict['sys_results']['X']['MAE']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['MRR'] is defined}
+    MRR & \VAR{my_dict['sys_results']['X']['MRR']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['MAP'] is defined}
+    MAP  & \VAR{my_dict['sys_results']['X']['MAP']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['Gini'] is defined}
+    Gini & \VAR{my_dict['sys_results']['X']['Gini']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+    \BLOCK{if my_dict['sys_results']['X']['PredictionCoverage'] is defined}
+    PredictionCoverage & \VAR{my_dict['sys_results']['X']['PredictionCoverage']|truncate|safe_text}\\ \hline
+    \BLOCK{endif}
+  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+\hfill\break
+\hfill\break
+% end table of performance on the fold_________
+\BLOCK{endif}
+
+###
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}
