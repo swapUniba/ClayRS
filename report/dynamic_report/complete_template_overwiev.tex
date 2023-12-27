@@ -24,8 +24,11 @@ The report is divided in 3 principal section dedicated each one for the 3 princi
 and a conclusion section to highlights what have been achieved from the experiment.
 \hfill\break
 \hfill\break
-% opening content analyzer section
+
+
+
 \BLOCK{if my_dict['source_file'] is defined}
+% ---------OPENING CONTENT ANALYZER SECTION ----------------
 \section{CONTENT ANALYZER MODULE}\label{sec:ca}
 The content analyzer module will deal with raw source document or more in general data which could be
 video or audio data and give a rappresentation of these data which will be used by the other two module.
@@ -35,24 +38,33 @@ this experiment the following techinques have been used on specific field in ord
 rappresentation wanted:
 \hfill\break
 \hfill\break
+
+
+
 % ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
 
 % field: X reppresentation subsection
+X has been represented with the following techniques:
+\hfill\break
+\hfill\break
 
-% check if non particular technique of data reppresentation has been used
+
 \BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
-No techniques have been used to represent the data.
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
 \hfill\break
 \hfill\break
 
-% check WhooshTfIdf used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
+% check WhooshTfIdf used as representation
 The WhooshTfIdf technique has been used.
 \hfill\break
 \hfill\break
 
-% check SkLearnTfIdf used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
+% check SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
 \begin{itemize}
@@ -69,8 +81,9 @@ The technique has been settled with the following parameter:
 \hfill\break
 \hfill\break
 
-% check WordEmbeddingTechnique used as representation
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
+% check WordEmbeddingTechnique used as representation
 The Word Embedding Technique has been used and
 \BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('X', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_source is not none }
@@ -82,8 +95,9 @@ no embedding source has been specified.
 \hfill\break
 \hfill\break
 
-% check SentenceEmbeddingTechnique used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
+% check SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('X', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src is not none }
@@ -95,8 +109,9 @@ no embedding source has been specified.
 \hfill\break
 \hfill\break
 
-% check DocumentEmbeddingTechnique used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
+% check DocumentEmbeddingTechnique used as representation
 The Document Embedding Technique has been used and
 \BLOCK{ set emb_src1 = my_dict.get('field_representations', {}).get('X', {}).get('DocumentEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src1 is not none }
@@ -108,8 +123,9 @@ no embedding source has been specified.
 \hfill\break
 \hfill\break
 
-% check Word2SentenceEmbeddingused as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
+% check Word2SentenceEmbeddingused as representation
 The Word2Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src2 = my_dict.get('field_representations', {}).get('X', {}).get('Word2SentenceEmbedding', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src2 is not none }
@@ -128,8 +144,9 @@ No combining technique has been used.
 \hfill\break
 \hfill\break
 
-% check Word2DocEmbedding used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
+% check Word2DocEmbedding used as representation
 The Word2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src3 = my_dict.get('field_representations', {}).get('X', {}).get('Word2DocEmbedding', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src3 is not none }
@@ -148,8 +165,9 @@ No combining technique has been used.
 \hfill\break
 \hfill\break
 
-% check Sentence2DocEmbedding used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
+% check Sentence2DocEmbedding used as representation
 The Sentence2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src4 = my_dict.get('field_representations', {}).get('X', {}).get('Sentence2DocEmbedding', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src4 is not none }
@@ -168,20 +186,23 @@ No combining technique has been used.
 \hfill\break
 \hfill\break
 
-% check PyWSDSynsetDocumentFrequency used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
+% check PyWSDSynsetDocumentFrequency used as representation
 The PyWSD Synset Document Frequency Technique has been used.
 \hfill\break
 \hfill\break
 
-% check FromNPY used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
+% check FromNPY used as representation
 The FromNPY Technique has been used.
 \hfill\break
 \hfill\break
 
-% check SkImageHogDescriptorused as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
+% check SkImageHogDescriptorused as representation
 SKImage Hog Descriptor technique has been applied to process data with the following settings:
 \begin{itemize}
     \item orientations: \VAR{my_dict['field_representations']['X']['SkImageHogDescriptor']['orientations']|default('no setting used')|safe_text}
@@ -199,8 +220,9 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
 \hfill\break
 \hfill\break
 
-% check MFCC used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
+% check MFCC used as representation
 MFCC technique has been applied to process data with the following settings:
 \begin{itemize}
     \item contents dirs: \VAR{my_dict['field_representations']['X']['MFCC']['contents_dirs']|safe_text}
@@ -219,8 +241,9 @@ MFCC technique has been applied to process data with the following settings:
 \hfill\break
 \hfill\break
 
-% check VGGISH used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
+% check VGGISH used as representation
 VGGISH technique has been applied to process data with the following settings:
 \begin{itemize}
     \item feature layer: \VAR{my_dict['field_representations']['X']['VGGISH']['feature_layer']|default('no setting used')|safe_text}
@@ -237,8 +260,9 @@ VGGISH technique has been applied to process data with the following settings:
 \hfill\break
 \hfill\break
 
-% check PytorchImageModels used as representation
+
 \BLOCK{elif 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
+% check PytorchImageModels used as representation
 Pytorch Image Models technique has been applied to process data with the following settings:
 \begin{itemize}
     \item model name: \VAR{my_dict['field_representations']['X']['PytorchImageModels']['model_name']|default('no setting used')|safe_text}
@@ -259,8 +283,9 @@ Pytorch Image Models technique has been applied to process data with the followi
 \hfill\break
 \hfill\break
 
-% check TorchVisionVideoModels used as representation
+
 \BLOCK{elif  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
+% check TorchVisionVideoModels used as representation
 Torch Vision Video Models technique has been applied to process data with the following settings:
 \begin{itemize}
     \item model name: \VAR{my_dict['field_representations']['X']['TorchVisionVideoModels']['model_name']|default('no setting used')|safe_text}
@@ -292,6 +317,7 @@ for chunks template used for rendering by jinja.
 % ------ PREPROCESSING OF DATA FIELD ------------
 
 \BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
+% Spacy
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
@@ -307,7 +333,9 @@ Spacy has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
+% Ekphrasis
 Ekphrasis has been used to preprocess data with the following settings:
 \begin{itemize}
     \item omit: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['omit']|default('no setting used')|safe_text}
@@ -327,8 +355,9 @@ Ekphrasis has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% NLTK preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+% NLTK preprocessing
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
     \item strip multiple whitespace: \VAR{my_dict['field_representations']['X']['preprocessing']['NLTK']['strip_multiple_whitespace']|default('no setting used')|safe_text}
@@ -343,7 +372,9 @@ NLTK has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
+% TorchUniformTemporalSubSampler
 TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number samples: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
@@ -351,8 +382,9 @@ TorchUniformTemporalSubSampler has been used to preprocess data with the followi
 \hfill\break
 \hfill\break
 
-% TorchResample preproceessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
+% TorchResample preproceessing
 TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
     \item new freq: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
@@ -364,14 +396,16 @@ TorchResample has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% ConvertToMono preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
+% ConvertToMono preprocessing
 ConvertToMono has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-/ Resize preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
+% Resize preprocessing
 Resize has been used to preprocess data with the following settings:
 \begin{itemize}
     \item size:
@@ -382,8 +416,9 @@ Resize has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% CenterCrop preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
+% CenterCrop preprocessing
 CenterCrop has been used to preprocess data with the following settings:
 \begin{itemize}
     \item size:
@@ -391,14 +426,16 @@ CenterCrop has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% Lambda preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
+% Lambda preprocessing
 Lambda has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% Normalize preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
+% Normalize preprocessing
 Normalize has been used to preprocess data with the following settings:
 \begin{itemize}
     \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
@@ -407,8 +444,9 @@ Normalize has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% ClipSampler preprocessing
+
 \BLOCK{ elif 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
+% ClipSampler preprocessing
 ClipSampler has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number of frames for clip: \VAR{my_dict['field_representations']['X']['preprocessing']['ClipSampler']['num_frames_for_clip']|default('no setting used')|safe_text}
@@ -427,8 +465,9 @@ No preprocessing techniques have been used to preprocess data X during the exper
 
 % ------------------- POSTPROCESSING OF DATA FIELD ------------
 
-% FVGMM posttprocessing
+
 \BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
+% FVGMM posttprocessing
 FVGMM has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
@@ -453,8 +492,9 @@ FVGMM has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% VLADGMM postprocessing
+
 \BLOCK{elif in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
+% VLADGMM postprocessing
 VLADGMM has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
@@ -479,8 +519,9 @@ VLADGMM has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 
-% SkLearnPCA postprocessing
+
 \BLOCK{elif in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
+% SkLearnPCA postprocessing
 SkLearnPCA has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
@@ -493,6 +534,7 @@ SkLearnPCA has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+
 
 \BLOCK{else}
 No postprocessing techniques have been used on the data X in this experiment.
@@ -522,7 +564,6 @@ This technique can be performed with four different modalities as follows:
 \end{itemize}
 \hfill\break
 \hfill\break
-
 In this experiment the DBpedia Mapping Technique has been used with the mode:
 \VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['mode']|safe_text}, the label_field_used is
 \VAR{my_dict['exogenous_representations']['DBPediaMappingTechnique']['label_field']|safe_text} and the timeout used
@@ -536,6 +577,7 @@ The properties have been returned in their rdfs:label form.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+
 
 % In case of the content analyzer is not used
 \BLOCK{else}
@@ -559,6 +601,7 @@ and train the recommender system and the settings beloning to the algorithm chos
 \hfill\break
 
 \subsection{Statistics on data used}\label{subsec:stats}
+% --- DATA STATS ---
 In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
 \begin{table}[ht]
     \centering
@@ -612,6 +655,7 @@ The partitioning technique has been executed with the following settings:
 \BLOCK{endif}
 % KFOLD PARTITIONING TECNIQUE ended
 
+
 \BLOCK{elif  my_dict['partitioning']['HoldOutPartitioning'] is defined}
 %  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
@@ -631,13 +675,13 @@ The data has been shuffled before being split into batches.
 %  HOLD-OUT PARTIONING TECNIQUE ended
 
 \BLOCK{endif}
-
 \hfill\break
 \hfill\break
 
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
+% ---RECSYS ALGORITHM ---
 The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
 this target the system need to be based on a chosen algorithm that will work with the representation of data that
 we have.
@@ -676,6 +720,7 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \hfill\break
 \hfill\break
 
+
 \BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
 The algorithm used is the centroid vector
@@ -693,6 +738,7 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \hfill\break
 \hfill\break
 
+
 \BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
 The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
@@ -708,6 +754,7 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+
 
 \BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
@@ -726,6 +773,7 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \hfill\break
 \hfill\break
 
+
 \BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
 The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
@@ -741,6 +789,7 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
 \BLOCK{elif my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
@@ -761,10 +810,7 @@ the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-\BLOCK{else}
-\hfill\break
-\hfill\break
-\BLOCK{endif}
+
 
 % In case of the RecSys in not been used
 \BLOCK{else}
@@ -778,12 +824,14 @@ The RecSys module has noit been used during this experiment.
 % --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
 
 \BLOCK{if my_dict['metrics'] is defined}
+% --- EVA MODULE start ---
 \section{EVALUATION MODULE}\label{sec:eva-module}
 The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
 using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
 recommendation and find out which are the strength points and which the weak ones.
 
 \subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
 During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete
 the performace of the system.
 The metrics used are the followings:
