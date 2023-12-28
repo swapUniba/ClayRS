@@ -657,8 +657,7 @@ In this experiment the statistics of the dataset used are reported in the follow
 \hfill\break
 
 
-% --------------- START SUBSECTION OF PARTITIONING OF RECSYS ------------------------------------
-
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
 \subsection{Partitioning techinque used}\label{subsec:partitioning}
 \BLOCK{if  my_dict['partitioning']['KFoldPartitioning'] is defined}
 % KFOLD PARTITIONING TECNIQUE
@@ -691,10 +690,10 @@ The partitioning technique has been executed with the following settings:
 % KFOLD PARTITIONING TECNIQUE ended
 
 
-\BLOCK{elif  my_dict['partitioning']['HoldOutPartitioning'] is defined}
+\BLOCK{if  my_dict['partitioning']['HoldOutPartitioning'] is defined}
 %  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
-This approach splits the dataset in use into a ‘train’ set and a ‘test’ set.
+This approach splits the dataset in use into a train set and a test set.
 The training set is what the model is trained on, and the test set is used to see how
 well the model will perform on new, unseen data.
 \hfill\break
@@ -708,13 +707,11 @@ The data has been shuffled before being split into batches.
 \hfill\break
 \hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
-
 \BLOCK{endif}
-\hfill\break
-\hfill\break
+% end partitioning section___________
+
 
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
-
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
 % ---RECSYS ALGORITHM ---
 The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
@@ -724,6 +721,7 @@ In this section we will analyse which algorithm has been used for the experiment
 given.
 \hfill\break
 \hfill\break
+% Dealing with the principal class where the algorithm used belong to.
 \BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
 The recommender system is based on content.
 \hfill\break
@@ -732,10 +730,14 @@ The recommender system is based on content.
 The recommender system is based on a graph representation.
 \hfill\break
 \hfill\break
+\BLOCK{else}
+Algorithm used is unknown.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
 
-% -------------------------------- CONTENT BASE ALGO ----------------------------------------
-
-\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+% ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
+\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
 % AMAR DOUBLE SOURCE ALGO
 The algorithm used is AmarDoubleSource
 \begin{itemize}
@@ -754,9 +756,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% AmarDoubleSource end_____
+\BLOCK{endif}
 
 
-\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
 The algorithm used is the centroid vector
 \begin{itemize}
@@ -772,9 +776,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% centroid vector end____
+\BLOCK{endif}
 
 
-\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
 The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
 \begin{itemize}
@@ -789,9 +795,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% classifier end___
+\BLOCK{endif}
 
 
-\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
 The algorithm used is the Index Query.
 \begin{itemize}
@@ -807,9 +815,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% index query end____
+\BLOCK{endif}
 
 
-\BLOCK{elif my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
 The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
 \begin{itemize}
@@ -824,10 +834,12 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% linear predictor end____
+\BLOCK{endif}
 
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
-\BLOCK{elif my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+\BLOCK{if my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
 % NX PAGE RANK ALGO
 The algorithm used is NX Page Rank.
 \begin{itemize}
@@ -845,14 +857,16 @@ the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
+% NX page rank end____
+\BLOCK{endif}
 
 
 % In case of the RecSys in not been used
 \BLOCK{else}
-The RecSys module has noit been used during this experiment.
+The RecSys module has not been used during this experiment.
 \hfill\break
 \hfill\break
-% ------------------ RECSYS SECTION ENDED-------------------
+% <------------------ RECSYS SECTION ENDED------------------->
 \BLOCK{endif}
 
 
