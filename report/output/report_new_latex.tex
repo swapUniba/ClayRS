@@ -1,38 +1,174 @@
-%! Author = DIEGO MICCOLI
-%! Date = 16/12/2023
+
+
+%! Author = DIEGO
+%! Date = 21/12/2023
 
 % Preamble
-\documentclass[12pt, a4paper]{article}
-\title{Report ClayRS}
-\author{Semantic Web Access and Personalization Research Group}
-
+\documentclass[11pt]{article}
 
 % Packages
-\usepackage{hyperref}
 \usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{graphicx}
 
+\title{REPORT EXPERIMENT CLAYRS FRAMEWORK}
+\author{SWAP research group UniBa}
+%\date{27 December 2023}
 
-% Document
-
+% -------------------- DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
 \begin{document}
+
 \maketitle
-This \LaTeX{} document was generated from yaml files for the purpose of replicability of experiments done with
+This \LaTeX{} document was generated automatically from yaml files for the purpose of replicability of experiments done with
 \href{https://github.com/swapUniba/ClayRS}{ClayRS},
-it contains information about the dataset, preprocessing methods, analysis algorithms and
-the results of the experimental evaluation.
-
-% apertura CONTENT ANALYZER REPORT STYLE
-\section{ClayRS configurations of the experiment}\label{sec:clayrs-configurations-of-the-experiment}
-
-% Dataset sotto sezione
-\subsection{Dataset}\label{subsec:dataset}
-In this experiment, the  \textbf{Movielens}\textbf{Dataset} was used.
-
-
+it contains information about the experiment that has been conducted and the results obtained.
+The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
+and a conclusion section to highlights what have been achieved from the experiment.
 \hfill\break
-% Questo blocco if controlla la tabella sulle statiche del dataset
-The statistics of the dataset used are reported in the following table \ref{tab:dataset_table}:
+\hfill\break
 
+
+
+% ---------OPENING CONTENT ANALYZER SECTION ----------------
+\section{CONTENT ANALYZER MODULE}\label{sec:ca}
+The content analyzer module will deal with raw source document or more in general data which could be
+video or audio data and give a rappresentation of these data which will be used by the other two module.
+The text data source could be rappresented with exogenous technique or with a specified rappresentation
+and each field given could be treated with preprocessing techiniques and postprocessing technique. In
+this experiment the following techinques have been used on specific field in order to achieve the
+rappresentation wanted:
+\hfill\break
+\hfill\break
+% ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
+
+
+
+% field: plot_0 reppresentation subsection
+\textbf{plot_0} has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check SkLearnTfIdf used as representation
+The SkLearnTfIdf technique has been used.
+The technique has been settled with the following parameter:
+\begin{itemize}
+    \item max df: 1.0
+    \item min df: 1
+    \item max features: None
+    \item vocabulary: None
+    \item binary: False
+    \item norm: l2
+    \item use idf: True
+    \item smooth idf: True
+    \item sublinear tf: False
+\end{itemize}
+\hfill\break
+\hfill\break
+
+
+
+% NLTK preprocessing
+NLTK has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item strip multiple whitespace: True
+    \item remove punctuation: False
+    \item stopwords removal: True
+    \item url tagging: False
+    \item lemmatization: False
+    \item stemming: False
+    \item pos tag: no setting used
+    \item lang: english
+\end{itemize}
+\hfill\break
+\hfill\break
+
+
+
+% field: genres_0 reppresentation subsection
+\textbf{genres_0} has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check WordEmbeddingTechnique used as representation
+The Word Embedding Technique has been used and
+the embedding source used is
+Gensim glove-twitter-25
+\hfill\break
+\hfill\break
+
+
+
+% Spacy
+Spacy has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item model: en\_core\_web\_sm
+    \item strip multiple whitespace: True
+    \item remove punctuation:False
+    \item stopwords removal: True
+    \item new stopwords: None
+    \item not stopwords: None
+    \item lemmatization: False
+    \item url tagging: False
+    \item named entity recognition: False
+\end{itemize}
+\hfill\break
+\hfill\break
+
+
+
+% field: genres_1 reppresentation subsection
+\textbf{genres_1} has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check SentenceEmbeddingTechnique used as representation
+The Sentence Embedding Technique has been used and
+the embedding source used is
+Sbert
+\hfill\break
+\hfill\break
+
+
+
+% Spacy
+Spacy has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item model: en\_core\_web\_sm
+    \item strip multiple whitespace: True
+    \item remove punctuation:False
+    \item stopwords removal: True
+    \item new stopwords: None
+    \item not stopwords: None
+    \item lemmatization: False
+    \item url tagging: False
+    \item named entity recognition: False
+\end{itemize}
+\hfill\break
+\hfill\break
+
+
+
+
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System module: RecSys}\label{sec:recsys}
+The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
+by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
+give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
+In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
+and train the recommender system and the settings beloning to the algorithm chosen.
+\hfill\break
+\hfill\break
+
+\subsection{Statistics on data used}\label{subsec:stats}
+% --- DATA STATS ---
+In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
 \begin{table}[ht]
     \centering
   \begin{tabular}{|c|c|}
@@ -48,99 +184,17 @@ The statistics of the dataset used are reported in the following table \ref{tab:
   \end{tabular}
    \caption{Table of the Interactions}\label{tab:dataset_table}
 \end{table}
-% chiusura blocco controllo tabella dataset
-
 \hfill\break
 \hfill\break
 
-% blocco della condizione in OR
- The embendding techniques used during the processing of the document are the following:
-\begin{itemize}
-      \item
-        \begin{minipage}[t]{\linewidth}
-        Gensim glove-twitter-25
-         has been used as word embedding.
-        \end{minipage}        \item
-        \begin{minipage}[t]{\linewidth}
-            Sbert
-            has been used as sentence embedding.
-         \end{minipage}  \end{itemize}
-% chiusura del blocco in OR
 
-\hfill\break
-
-% Preprocessing
-\subsection{Preprocessing}\label{subsec:preprocessing}
- %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-The preprocessing used is NLTK, a leading platform for building Python programs to work with human language data.
-It provides easy-to-use interfaces to over 50 corpora and lexical resources such as WordNet,
-along with a suite of text processing libraries for classification, tokenization, stemming, tagging, parsing,
-and semantic reasoning.
-
-\hfill\break
-In this experiment, those operations of NLTK were used:
-
-\begin{itemize}
-        \item
-        \begin{minipage}[t]{\linewidth}
-        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
-        \end{minipage}              \item
-        \begin{minipage}[t]{\linewidth}
-        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
-         \end{minipage}                  \end{itemize}
-
-\hfill\break
-
-% chisura dei 2 blocchi aperti all'inizion della sezione preprocessing
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+\subsection{Partitioning techinque used}\label{subsec:partitioning}
 
 
-% NLTK REPORTING STYLE
- %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-
-
-% EKPHRASYS REPORTING STYLE
- %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-
-
-% SPACY reporting style
- %# Beginning OF THE dict['field_representations']['plot_0']['SkLearnTfIdf']
-
-spaCy is a free, open-source library for advanced Natural Language Processing (NLP) in Python.
-spaCy is designed specifically for production use and helps you build applications that process and “understand”
-large volumes of text.
-It can be used to build information extraction or natural language understanding systems,
-or to pre-process text for deep learning.
-In this experiment, those spaCy operations have been used:
-
-\hfill\break
-In this experiment, those spaCy operations were used:
-
-\begin{itemize}
-        \item
-        \begin{minipage}[t]{\linewidth}
-        \textbf{Strip multiple whitespace}, an operation that removes multiple whitspaces between words.
-        \end{minipage}              \item
-        \begin{minipage}[t]{\linewidth}
-        \textbf{Stopwords removal}, used to remove the stopwords occurring in the text.
-         \end{minipage}              \end{itemize}
-
-% closing SPACY reporting style
-
-% content analyzer END
-%  %end of the content analyzer section
-
-
-% opening RECSYS REPORT STYLE
- %beginning of the recommender system section recsys
-%\subsection{Interactions}
-%\newpage
-\subsection{Partitioning}\label{subsec:partitioning}
-
-%  HOUD-OUT PARTIONING TECNIQUE
-%\subsection{Partitioning}
-
+%  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
-This approach splits the dataset in use into a ‘train’ set and a ‘test’ set.
+This approach splits the dataset in use into a train set and a test set.
 The training set is what the model is trained on, and the test set is used to see how
 well the model will perform on new, unseen data.
 \hfill\break
@@ -149,143 +203,362 @@ The train set size of this experiment is the 80.0\%
 of the original dataset, while the test set is the remaining 20.0\%.
 \hfill\break
 \hfill\break
-The data has been shuffled before being splitted into batches.
-
-% closing HoldOutPartitioning tecnique
-
-% KFOLD PARTITIONING TECNIQUE
-
-
-% start algorithm section
- %beginning recsys graph based area
-\subsection{Algorithm Used}
-In this experiment a Graph Based Recommender Algorithm has been used.
-Specifically the NXPageRank algorithm, a Page Rank algorithm based on the networkx implementation
-The PageRank can be 'personalized', in this case the PageRank will be calculated with Priors.
-The alpha value used was: 0.85
-
-% End algorithm section
-
-% closing block RECSYS REPORT STYLE
-%\newpage
-
-
-% openeing EVAL REPORT STYLE
- %beginning of the eval model section
-\subsection{Metrics}
-
-% Precision report
- %beginning of the precision section
-%\subsection{Precision}
-
+    The data has been shuffled before being split into batches.
 \hfill\break
-In ClayRS the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+%  HOLD-OUT PARTIONING TECNIQUE ended
+% end partitioning section___________
 
+
+% ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm used for the recommender system}\label{subsec:algo}
+% ---RECSYS ALGORITHM ---
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
+this target the system need to be based on a chosen algorithm that will work with the representation of data that
+we have.
+In this section we will analyse which algorithm has been used for the experiment and what are the settings
+given.
+\hfill\break
+\hfill\break
+
+% Dealing with the principal class where the algorithm used belong to.
+The recommender system is based on a graph representation.
+\hfill\break
+\hfill\break
+
+% ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+% ------------------------ GRAPH BASED ALGO ------------------------------------------
+% NX PAGE RANK ALGO
+The algorithm used is NX Page Rank.
+\begin{itemize}
+    \item alpha: 0.85
+    \item personalized: False
+    \item max iter: 100
+    \item tol: 1e-06
+    \item nstart: None
+    \item weight: weight
+\end{itemize}
+\hfill\break
+\hfill\break
+The type of graph used in the algorithm is a rank,
+the mode used is rank and the number of recommendation given is
+None.
+\hfill\break
+\hfill\break
+% NX page rank end____
+
+
+% In case of the RecSys in not been used
+
+
+
+% --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
+\section{EVALUATION MODULE}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete
+the performace of the system.
+The metrics used are the followings:
+\hfill\break
+\hfill\break
+
+
+% ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
+
+% Precision report start
+\subsubsection{Precision}\label{sec:precision}
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
     \[
-    Precision_u = \frac{tp_u}{tp_u + fp_u}
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
     \]
-
+\hfill\break
+\hfill\break
     Where:
-
-    - $tp_u$ is the number of items which are in the recommendation list of the user and have a
-      ratingasdjiasd $\geq$         \textbf{3.52986}
-        
-
-    - $fp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $<$         \textbf{}
-        
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+       $\geq$         \textbf{3.52986}.
+            \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$         \textbf{no relevant threshold used}.
+        \end{itemize}
 \hfill\break
-
-
-
+\hfill\break
 In ClayRS, Precision needs those parameters:
-\hfill\break
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
 If not specified, the mean rating score of every user will be used, in this experiment it has been set to
 \textbf{None}.
-\hfill\break\hfill\break
-\textbf{sys\_average}, a parameter that specifies how the system average must be computed the default value is 'macro',
-in this experiment the value of the sys\_average is \textbf{macro}.
-
-% closing precision report
-
-
-% Precision@K report
- %beginning of the precision at k section
-%\subsection{Metrics: Precision at K}
 \hfill\break
-\textbf{Precision at k} is the proportion of recommended items in the top-k set that are relevant.
- The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+% precision report ended______
 
+
+
+
+
+
+% PRECISION @K REPORT start
+\subsubsection{Precision@K}\label{sec:prec-k}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
     \[
-    Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
     \]
-
+\hfill\break
+\hfill\break
     Where:
-
-    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
-      \textbf{cutoff to the first K items} and have a rating $\geq$
-                \textbf{3.52986}
-        
-
-    - $tp@K_u$ is the number of items which are in the recommendation list  of the user
-      \textbf{cutoff to the first K items} and have a rating $<$
-                \textbf{3.52986}
-        
-
-
-In this experiment the value \textbf{k is 2},
-the sys\_average is \textbf{macro}
-
-% end precision@K repoort
-
-
-% FMeasure@K report
- %beginning of the fmeasure at k section
-%\subsection{Metrics: F - measure at K}
-\hfill\break\hfill\break
- The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
- It is calculated as such for the
-    \textbf{single user}:
-
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+   \[
+       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+   \]
+\hfill\break
+\hfill\break
     \[
-    FMeasure_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
-    \]
+       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+   \]
+\hfill\break
+\hfill\break
+During the experiment Precision@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 2 }
+    \item \textbf{relevant threshold:None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% precision@k report end______
 
+
+
+
+% FMEASURE @K REPORT start
+\subsubsection{FMeasure@K }\label{sec:f-meas-k}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
     Where:
-
-    - $P@K_u$ is the Precision at K calculated for the user \textbf{u}
-    - $R@K_u$ is the Recall at K calculated for the user \textbf{u}
-    - $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
-
-        - $\beta = 1$: Equally weight Precision and Recall
-        - $\beta > 1$: Weight Recall more
-        - $\beta < 1$: Weight Precision more
-
-    A famous FMeasure@K is the F1@K Metric, where $\beta$ = 1, which basically is the harmonic mean of recall and
-    precision:
-    \hfill\break\hfill\break
-
-
+\begin{itemize}
+    \item $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
+    \item $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
     \[
-    F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+        F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
     \]
-
-
 \hfill\break
 \hfill\break
-In this experiment \textbf{k = 1},
-\text{\boldmath$\beta$} = \textbf{1} and
-\textbf{sys\_average} is \textbf{macro}.
+The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment FMeasure@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 1}
+    \item  \textbf{$\beta$: 1}
+    \item \textbf{relevant threshold: None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% fmeasure@k report end_______
 
 
-% end FMeasure@K report
+% <----- classification metrics end ------->
+
+% ------------------ ERROR METRICS STARTED -------------------------------------------
 
 
-% System results on the splits obtained from the partition
- %beginning of sysfold 1 results
-%\subsection{Sys Results fold1 :}
-%\newpage
+
+
+
+% <------ error metrics ended -------->
+
+
+% ------------------------ RANKING METRICS STARTED ----------------------------------------
+
+% Normalized Discounted Cumulative Gain REPORT start
+\subsubsection{NDCG}\label{sec:ndcg}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$.
+    \item $f$ is a gain function \textit{linear or exponential, in particular}.
+    \item $x$ is the base of the logarithm.
+    \item $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
+\end{itemize}
+\hfill\break
+\hfill\break
+If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponentia" case, the following
+formula is applied to $r$:
+\hfill\break
+\hfill\break
+    \[
+        f(r) = 2^{r} - 1
+    \]
+\hfill\break
+\hfill\break
+The NDCG for a single user is then calculated using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
+\end{itemize}
+\hfill\break
+\hfill\break
+So the basic idea is to compare the actual ranking with the ideal one.
+Finally, the NDCG of the entire system is calculated instead as such:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $NDCG_u$ is the NDCG calculated for user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+The system average excludes NaN values.
+\hfill\break
+\hfill\break
+% ndcg report end______
+
+
+
+
+% MRR REPORT start
+\subsubsection{MRR}\label{sec:mrr}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTENTION here we modified with \_ in case change
+The MRR metric needs to discern relevant items from the not relevant ones. To achieve this, one could pass a
+custom \texttt{relevant\_threshold} parameter that will be applied to every user. If the rating of an item
+is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
+If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
+In this experiment, the relevant threshold used is
+None.
+\hfill\break
+\hfill\break
+% mrr report end_______
+
+
+
+
+
+
+
+
+% <------- ranking metrics ended ------->
+
+
+% ------------------------- FAIRNESS METRICS ------------------------------------
+
+
+
+
+
+
+% <----- fairness metrics end ------>
+
+
+% --------------------------------- PLOT METRICS STARTED ----------------------------------------------
+
+
+
+
+% <------- plot metric end ----------->
+
+% ---------------------- closing the only metric section -------------------------
+
+
+
+% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
 \subsection{Results}\label{sec:results}
 In the following table, we present the results of the evaluation \ref{tab:results_table}
 \begin{table}[!hbp]\label{tab:results_table}
@@ -293,18 +566,50 @@ In the following table, we present the results of the evaluation \ref{tab:result
   \begin{tabular}{|c|c|}
     \hline
     \textbf{Metric}& \textbf{Value} \\ \hline
-    Precision - macro & 0.55697\\ \hline
-    Precision@2 - macro  & 0.6527\\ \hline
-    NDCG  & 0.93529\\ \hline
-    MRR  & 0.79602\\ \hline
-    F1@1 - macro  & 0.04221\\ \hline
-  \end{tabular}
+        Precision - macro & 0.55697\\ \hline
+                                        NDCG  & 0.93529\\ \hline
+            MRR  & 0.79602\\ \hline
+                        MRR & 0.79602\\ \hline
+                  \end{tabular}
   \caption{Table of the results}
 \end{table}
+\hfill\break
+\hfill\break
+% end table of performance on the fold_________
 
-% End report on slit fold1
-
-% closing eval report style
 
 
+% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
+\subsection{Results}\label{sec:results}
+In the following table, we present the results of the evaluation \ref{tab:results_table}
+\begin{table}[!hbp]\label{tab:results_table}
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric}& \textbf{Value} \\ \hline
+        Precision - macro & 0.55697\\ \hline
+                                        NDCG  & 0.93529\\ \hline
+            MRR  & 0.79602\\ \hline
+                        MRR & 0.79602\\ \hline
+                  \end{tabular}
+  \caption{Table of the results}
+\end{table}
+\hfill\break
+\hfill\break
+% end table of performance on the fold_________
+
+
+
+
+% In case of eval module is not used
+
+
+
+\section{CONCLUSION ON THE EXPERIMENT}\label{sec:conclution}
+This part is for conclution to be sum up as needed.
+\hfill\break
+\hfill\break
+
+% ------------------- END OF THE REPORT COMPLETED ---------------
+% closing the document
 \end{document}

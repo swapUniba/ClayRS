@@ -11,7 +11,6 @@ from pathlib import Path
 import pandas as pd
 from jinja2 import Undefined
 
-
 # VARIABILI GLOBALI NELLO SCRIPT
 
 # template non indentato
@@ -29,8 +28,9 @@ from jinja2 import Undefined
 # DATA_FILE = "data/ca_report.yml"
 OUTPUT_TEX = "output/report.TEX"
 OUTPUT_PATH = "output/report.pdf"
-LIST_YAML_FILES = [ "data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml" ]
-TEMPLATE_FILE = "report_templateNew.tex"
+LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
+# TEMPLATE_FILE = "report_templateNew.tex"
+TEMPLATE_FILE = "dynamic_fin_rep.tex"
 
 # setting enviroment based on latex needs
 LATEX_JINJA_ENV = jinja2.Environment(
@@ -105,6 +105,7 @@ def merge_yaml_files(input_paths_list, output_folder, output_filename):
         yaml.dump(merged_data, output_file, default_flow_style=False)
 
     return output_path
+
 
 """
 def unify_yaml_files():
@@ -218,7 +219,6 @@ def generate_tex_output(path_data_in, output_tex_path):
         return None
 
 
-
 """
 def generate_tex_output():
     # TODO SINGLE FILE
@@ -247,7 +247,8 @@ def generate_pdf_output(latex_file_path, output_folder=None):
         latex_file_name, _ = os.path.splitext(os.path.basename(latex_file_path))
 
         # Costruisci il percorso del file PDF nella cartella di output o nella stessa cartella del file LaTeX
-        pdf_file_path = os.path.join(output_folder, f"tex_to_pdf_report.pdf") if output_folder else f"{latex_file_name}_to_pdf_report.pdf"
+        pdf_file_path = os.path.join(output_folder,
+                                     f"tex_to_pdf_report.pdf") if output_folder else f"{latex_file_name}_to_pdf_report.pdf"
 
         # Copia il file LaTeX nella cartella di output se è specificata
         if output_folder:
@@ -300,9 +301,9 @@ def generate_pdf_output(output_path):
 def main():
     input_yaml = merge_yaml_files(LIST_YAML_FILES, "data", "finale_unify_report.yml")
     latex_file_to_compile = generate_tex_output(input_yaml, "output/report_new_latex.tex")
-    generate_pdf_output(latex_file_to_compile, output_folder=None)
+    # generate_pdf_output(latex_file_to_compile, output_folder=None)
     print("Generating Report PDF File...")
-
+    print(latex_file_to_compile)
 
 
 if __name__ == "__main__":

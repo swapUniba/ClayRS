@@ -41,7 +41,8 @@ In this experiment the statistics of the dataset used are reported in the follow
 
 % ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
 \subsection{Partitioning techinque used}\label{subsec:partitioning}
-\BLOCK{if  my_dict['partitioning']['KFoldPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['KFoldPartitioning'] is defined}
 % KFOLD PARTITIONING TECNIQUE
 K-fold cross-validation is a technique used in machine learning to assess
 the performance of a predictive model. The basic idea is to divide the dataset
@@ -59,6 +60,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 The partitioning technique has been executed with the following settings:
 \begin{itemize}
     \item number of splits: \VAR{my_dict['partitioning']['KFoldPartitioning']['n_splits']}
@@ -72,7 +74,8 @@ The partitioning technique has been executed with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if  my_dict['partitioning']['HoldOutPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['HoldOutPartitioning'] is defined}
 %  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
 This approach splits the dataset in use into a train set and a test set.
@@ -86,6 +89,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 \hfill\break
 \hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
@@ -96,19 +100,22 @@ The data has been shuffled before being split into batches.
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
 % ---RECSYS ALGORITHM ---
-The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achieve
 this target the system need to be based on a chosen algorithm that will work with the representation of data that
 we have.
 In this section we will analyse which algorithm has been used for the experiment and what are the settings
 given.
 \hfill\break
 \hfill\break
+
 % Dealing with the principal class where the algorithm used belong to.
-\BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
+\BLOCK{if my_dict['recsys'] is defined and
+        my_dict['recsys']['ContentBasedRS'] is defined}
 The recommender system is based on content.
 \hfill\break
 \hfill\break
-\BLOCK{elif my_dict['recsys']['GraphBasedRS'] id defined}
+\BLOCK{elif my_dict['recsys'] is defined and
+        my_dict['recsys']['GraphBasedRS'] is defined}
 The recommender system is based on a graph representation.
 \hfill\break
 \hfill\break
@@ -119,7 +126,9 @@ Algorithm used is unknown.
 \BLOCK{endif}
 
 % ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
 % AMAR DOUBLE SOURCE ALGO
 The algorithm used is AmarDoubleSource
 \begin{itemize}
@@ -142,7 +151,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
 The algorithm used is the centroid vector
 \begin{itemize}
@@ -162,7 +173,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
 The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
 \begin{itemize}
@@ -181,7 +194,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
 The algorithm used is the Index Query.
 \begin{itemize}
@@ -201,7 +216,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
 The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
 \begin{itemize}
@@ -221,7 +238,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
-\BLOCK{if my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['GraphBasedRS'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
 % NX PAGE RANK ALGO
 The algorithm used is NX Page Rank.
 \begin{itemize}
@@ -234,7 +253,7 @@ The algorithm used is NX Page Rank.
 \end{itemize}
 \hfill\break
 \hfill\break
-The type of graph used in the algorithm is a \VAR{ my_dict['recsys']['GraphBasedRS']['mode']},
+The type of graph used in the algorithm is a: \VAR{ my_dict['recsys']['GraphBasedRS']['graph']},
 the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
