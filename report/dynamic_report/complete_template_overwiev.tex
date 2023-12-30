@@ -26,7 +26,6 @@ and a conclusion section to highlights what have been achieved from the experime
 \hfill\break
 
 
-
 \BLOCK{if my_dict['source_file'] is defined}
 % ---------OPENING CONTENT ANALYZER SECTION ----------------
 \section{CONTENT ANALYZER MODULE}\label{sec:ca}
@@ -39,17 +38,17 @@ rappresentation wanted:
 \hfill\break
 \hfill\break
 
-
-
-
 % field: X reppresentation subsection
 X has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 % --------------------------- TECNIQUE USED TO REPPRESENT DATA FIELD ----------------------
-
-\BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'OriginalData' in my_dict['field_representations']['X']}
 % check if non particular technique of data reppresentation has been used
 The data has been represented as the original.
 \hfill\break
@@ -57,7 +56,11 @@ The data has been represented as the original.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'WhooshTfIdf' in my_dict['field_representations']['X']}
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'WhooshTfIdf' in my_dict['field_representations']['X']}
 % check WhooshTfIdf used as representation
 The WhooshTfIdf technique has been used.
 \hfill\break
@@ -65,7 +68,11 @@ The WhooshTfIdf technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SkLearnTfIdf' in my_dict['field_representations']['X']}
 % check SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
@@ -85,7 +92,11 @@ The technique has been settled with the following parameter:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'WordEmbeddingTechnique' in my_dict['field_representations']['X']}
 % check WordEmbeddingTechnique used as representation
 The Word Embedding Technique has been used and
 \BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('X', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -100,7 +111,11 @@ no embedding source has been specified.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SentenceEmbeddingTechnique' in my_dict['field_representations']['X']}
 % check SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('X', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -115,7 +130,11 @@ no embedding source has been specified.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'DocumentEmbeddingTechnique' in my_dict['field_representations']['X']}
 % check DocumentEmbeddingTechnique used as representation
 The Document Embedding Technique has been used and
 \BLOCK{ set emb_src1 = my_dict.get('field_representations', {}).get('X', {}).get('DocumentEmbeddingTechnique', {}).get('embedding_source', None) }
@@ -130,7 +149,11 @@ no embedding source has been specified.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Word2SentenceEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'Word2SentenceEmbedding' in my_dict['field_representations']['X']}
 % check Word2SentenceEmbeddingused as representation
 The Word2Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src2 = my_dict.get('field_representations', {}).get('X', {}).get('Word2SentenceEmbedding', {}).get('embedding_source', None) }
@@ -152,7 +175,11 @@ No combining technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'Word2DocEmbedding' in my_dict['field_representations']['X']}
 % check Word2DocEmbedding used as representation
 The Word2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src3 = my_dict.get('field_representations', {}).get('X', {}).get('Word2DocEmbedding', {}).get('embedding_source', None) }
@@ -174,7 +201,11 @@ No combining technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Sentence2DocEmbedding' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'Sentence2DocEmbedding' in my_dict['field_representations']['X']}
 % check Sentence2DocEmbedding used as representation
 The Sentence2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src4 = my_dict.get('field_representations', {}).get('X', {}).get('Sentence2DocEmbedding', {}).get('embedding_source', None) }
@@ -196,7 +227,11 @@ No combining technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X']}
 % check PyWSDSynsetDocumentFrequency used as representation
 The PyWSD Synset Document Frequency Technique has been used.
 \hfill\break
@@ -204,7 +239,11 @@ The PyWSD Synset Document Frequency Technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'FromNPY' in my_dict['field_representations']['X']}
 % check FromNPY used as representation
 The FromNPY Technique has been used.
 \hfill\break
@@ -212,7 +251,11 @@ The FromNPY Technique has been used.
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SkImageHogDescriptor' in my_dict['field_representations']['X']}
 % check SkImageHogDescriptorused as representation
 SKImage Hog Descriptor technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -233,7 +276,11 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'MFCC' in my_dict['field_representations']['X']}
 % check MFCC used as representation
 MFCC technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -255,7 +302,11 @@ MFCC technique has been applied to process data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'VGGISH' in my_dict['field_representations']['X']}
 % check VGGISH used as representation
 VGGISH technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -275,7 +326,11 @@ VGGISH technique has been applied to process data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'PytorchImageModels' in my_dict['field_representations']['X']}
 % check PytorchImageModels used as representation
 Pytorch Image Models technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -299,7 +354,11 @@ Pytorch Image Models technique has been applied to process data with the followi
 \BLOCK{endif}
 
 
-\BLOCK{if  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'TorchVisionVideoModels' in my_dict['field_representations']['X']}
 % check TorchVisionVideoModels used as representation
 Torch Vision Video Models technique has been applied to process data with the following settings:
 \begin{itemize}
@@ -332,8 +391,13 @@ for chunks template used for rendering by jinja.
 
 
 % ------------------------- PREPROCESSING OF DATA FIELD -----------------------------------
-
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'Spacy' in my_dict['field_representations']['X']['preprocessing']}
 % Spacy
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -352,7 +416,13 @@ Spacy has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'Ekphrasis' in my_dict['field_representations']['X']['preprocessing']}
 % Ekphrasis
 Ekphrasis has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -375,7 +445,13 @@ Ekphrasis has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'NLTK' in my_dict['field_representations']['X']['preprocessing']}
 % NLTK preprocessing
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -393,7 +469,13 @@ NLTK has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing']}
 % TorchUniformTemporalSubSampler
 TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -404,7 +486,12 @@ TorchUniformTemporalSubSampler has been used to preprocess data with the followi
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'TorchResample' in my_dict['field_representations']['X']['preprocessing']}
 % TorchResample preproceessing
 TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -419,7 +506,12 @@ TorchResample has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'ConvertToMono' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'ConvertToMono' in my_dict['field_representations']['X']['preprocessing']}
 % ConvertToMono preprocessing
 ConvertToMono has been used to preprocess data with the following settings:
 \hfill\break
@@ -427,7 +519,12 @@ ConvertToMono has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Resize' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'Resize' in my_dict['field_representations']['X']['preprocessing']}
 % Resize preprocessing
 Resize has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -441,7 +538,12 @@ Resize has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'CenterCrop' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'CenterCrop' in my_dict['field_representations']['X']['preprocessing']}
 % CenterCrop preprocessing
 CenterCrop has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -452,7 +554,12 @@ CenterCrop has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'Lambda' in my_dict['field_representations']['X']['preprocessing']}
 % Lambda preprocessing
 Lambda has been used to preprocess data with the following settings:
 \hfill\break
@@ -460,7 +567,12 @@ Lambda has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Normalize' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'Normalize' in my_dict['field_representations']['X']['preprocessing']}
 % Normalize preprocessing
 Normalize has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -472,7 +584,12 @@ Normalize has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'ClipSampler' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'ClipSampler' in my_dict['field_representations']['X']['preprocessing']}
 % ClipSampler preprocessing
 ClipSampler has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -485,7 +602,12 @@ ClipSampler has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X']['preprocessing'] is none}
+\BLOCK{ if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is none}
 No preprocessing techniques have been used to preprocess data X during the experiment.
 \hfill\break
 \hfill\break
@@ -494,8 +616,12 @@ No preprocessing techniques have been used to preprocess data X during the exper
 
 
 % ----------------------- POSTPROCESSING OF DATA FIELD ------------------------------------
-
-\BLOCK{if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '1' in my_dict['field_representations']['X']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1']}
 % FVGMM posttprocessing
 FVGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -523,7 +649,12 @@ FVGMM has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '2' in my_dict['field_representations']['X']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
 % VLADGMM postprocessing
 VLADGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -551,7 +682,12 @@ VLADGMM has been used to preprocess data with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '3' in my_dict['field_representations']['X']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
 % SkLearnPCA postprocessing
 SkLearnPCA has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -577,9 +713,8 @@ No postprocessing techniques have been used on the data X in this experiment.
 
 
 % ------------------- EXOGENOUS TECHNIQUE REPRESENTATION OF DATA -------------------------
-
 \BLOCK{if 'exogenous_representations' in my_dict and
-'DBPediaMappingTechnique' in my_dict['exogenous_representations']}
+          'DBPediaMappingTechnique' in my_dict['exogenous_representations']}
 This exogenous technique expands each content by using as external source the DBPedia ontology.
 It needs the entity of the contents for which a mapping is required (e.g. entity\_type=`dbo:Film`)
 and the field of the raw source that will be used for the actual mapping.
@@ -623,8 +758,7 @@ For this experiment the module of the content analyzer has not been used.
 \BLOCK{endif}
 
 
-% ------------------------------- START RECSYS MODULE ----------------------------------
-
+% -------------------------------------- START RECSYS MODULE --------------------------------------------------------
 \BLOCK{if 'interactions' in my_dict}
 \section{Recommender System module: RecSys}\label{sec:recsys}
 The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
@@ -657,9 +791,10 @@ In this experiment the statistics of the dataset used are reported in the follow
 \hfill\break
 
 
-% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS -------------------------------------------
 \subsection{Partitioning techinque used}\label{subsec:partitioning}
-\BLOCK{if  my_dict['partitioning']['KFoldPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+          my_dict['partitioning']['KFoldPartitioning'] is defined}
 % KFOLD PARTITIONING TECNIQUE
 K-fold cross-validation is a technique used in machine learning to assess
 the performance of a predictive model. The basic idea is to divide the dataset
@@ -677,6 +812,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 The partitioning technique has been executed with the following settings:
 \begin{itemize}
     \item number of splits: \VAR{my_dict['partitioning']['KFoldPartitioning']['n_splits']}
@@ -690,7 +826,8 @@ The partitioning technique has been executed with the following settings:
 % KFOLD PARTITIONING TECNIQUE ended
 
 
-\BLOCK{if  my_dict['partitioning']['HoldOutPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+          my_dict['partitioning']['HoldOutPartitioning'] is defined}
 %  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
 This approach splits the dataset in use into a train set and a test set.
@@ -704,6 +841,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 \hfill\break
 \hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
@@ -721,12 +859,15 @@ In this section we will analyse which algorithm has been used for the experiment
 given.
 \hfill\break
 \hfill\break
+
 % Dealing with the principal class where the algorithm used belong to.
-\BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
+\BLOCK{if my_dict['recsys'] is defined and
+          my_dict['recsys']['ContentBasedRS'] is defined}
 The recommender system is based on content.
 \hfill\break
 \hfill\break
-\BLOCK{elif my_dict['recsys']['GraphBasedRS'] id defined}
+\BLOCK{elif my_dict['recsys'] is defined and
+            my_dict['recsys']['GraphBasedRS'] is defined}
 The recommender system is based on a graph representation.
 \hfill\break
 \hfill\break
@@ -734,10 +875,14 @@ The recommender system is based on a graph representation.
 Algorithm used is unknown.
 \hfill\break
 \hfill\break
+% principal class algorithm end_____
 \BLOCK{endif}
 
 % ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
 % AMAR DOUBLE SOURCE ALGO
 The algorithm used is AmarDoubleSource
 \begin{itemize}
@@ -760,7 +905,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
 The algorithm used is the centroid vector
 \begin{itemize}
@@ -780,7 +928,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
 The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
 \begin{itemize}
@@ -799,7 +950,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
 The algorithm used is the Index Query.
 \begin{itemize}
@@ -819,7 +973,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
 The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
 \begin{itemize}
@@ -839,7 +996,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
-\BLOCK{if my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['GraphBasedRS'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
 % NX PAGE RANK ALGO
 The algorithm used is NX Page Rank.
 \begin{itemize}
@@ -871,7 +1031,6 @@ The RecSys module has not been used during this experiment.
 
 
 % --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
-
 \BLOCK{if my_dict['metrics'] is defined}
 % --- EVA MODULE start ---
 \section{EVALUATION MODULE}\label{sec:eva-module}
@@ -889,8 +1048,8 @@ The metrics used are the followings:
 
 
 % ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
-
-\BLOCK{if my_dict['metrics']['Precision'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Precision'] is defined}
 % Precision report start
 \subsubsection{Precision}\label{sec:precision}
 In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
@@ -928,7 +1087,8 @@ If not specified, the mean rating score of every user will be used, in this expe
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['Recall'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Recall'] is defined}
 % Recall report start
 \subsubsection{Recall}\label{sec:recall}
 The Recall metric is calculated as such for the \textbf{single user}:
@@ -966,7 +1126,8 @@ If not specified, the mean rating score of every user will be used, in this expe
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['FMeasure'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasure'] is defined}
 %FMeasure report start
 \subsubsection{FMeasure}\label{sec:f-meas}
 The FMeasure metric combines Precision and Recall into a single metric.
@@ -1023,7 +1184,8 @@ During the experiment the FMeasure has been calculated with $\beta = $
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['PrecisionAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PrecisionAtK'] is defined}
 % PRECISION @K REPORT start
 \subsubsection{Precision@K}\label{sec:prec-k}
 The Precision@K metric is calculated as such for the \textbf{single user}:
@@ -1069,7 +1231,8 @@ During the experiment Precision@K has been used with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['RecallAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RecallAtK'] is defined}
 % RECALL @K REPORT start
 \subsubsection{Recall@K}\label{sec:rec-k}
 The Recall@K metric is calculated as such for the \textbf{single user}:
@@ -1115,7 +1278,8 @@ During the experiment Recall@K has been used with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['FMeasureAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasureAtK'] is defined}
 % FMEASURE @K REPORT start
 \subsubsection{FMeasure@K }\label{sec:f-meas-k}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
@@ -1176,7 +1340,8 @@ During the experiment FMeasure@K has been used with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['RPrecision'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RPrecision'] is defined}
 % R-PRECISION REPORT start
 \subsubsection{R-Precision }\label{sec:r-prec}
 The R-Precision metric is calculated as such for the \textbf{single user}:
@@ -1223,8 +1388,8 @@ During the experiment R-Precision has been used with the following settings:
 % <----- classification metrics end ------->
 
 % ------------------ ERROR METRICS STARTED -------------------------------------------
-
-\BLOCK{if my_dict['metrics']['MSE'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MSE'] is defined}
 % MSE REPORT start
 \subsubsection{MSE }\label{sec:mse}
 The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
@@ -1285,7 +1450,8 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['RMSE'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RMSE'] is defined}
 % RMSE REPORT start
 \subsubsection{RMSE}\label{sec:rmse}
 The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
@@ -1347,7 +1513,8 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['MAE'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAE'] is defined}
 % MAE REPORT start
 \subsubsection{MAE}\label{sec:mae}
 The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
@@ -1411,8 +1578,8 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 
 
 % ------------------------ RANKING METRICS STARTED ----------------------------------------
-
-\BLOCK{if my_dict['metrics']['NDCG'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCG'] is defined}
 % Normalized Discounted Cumulative Gain REPORT start
 \subsubsection{NDCG}\label{sec:ndcg}
 The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
@@ -1480,7 +1647,8 @@ The system average excludes NaN values.
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['NDCGAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCGAtK'] is defined}
 % NDCG@K REPORT start
 \subsubsection{NDCG@k}\label{sec:ndcg-k}
 The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
@@ -1493,7 +1661,8 @@ The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_tex
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['MRR'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRR'] is defined}
 % MRR REPORT start
 \subsubsection{MRR}\label{sec:mrr}
 The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
@@ -1526,7 +1695,8 @@ In this experiment, the relevant threshold used is
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['MRRAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRRAtK'] is defined}
 % MRR@K REPORT start
 \subsubsection{MRR@K}\label{sec:mrr-k}
 The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
@@ -1554,7 +1724,8 @@ In this experiment, the relevant threshold used is
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['MAP'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAP'] is defined}
 % MAP REPORT start
 \subsubsection{MAP}\label{sec:map}
 The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
@@ -1594,7 +1765,8 @@ using a relevant threshold:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['MAPAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAPAtK'] is defined}
 % MAP@K REPORT start
 \subsubsection{MAP@K}\label{sec:map-k}
 The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
@@ -1632,7 +1804,8 @@ computed for the whole system in the dataframe containing system results.
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['Correlation'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Correlation'] is defined}
 % CORRELATION REPORT start
 \subsubsection{Correlation}\label{sec:corr}
 The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
@@ -1696,7 +1869,8 @@ For this experiment, the settings for the correlation metrics are:
 
 
 % ------------------------- FAIRNESS METRICS ------------------------------------
-\BLOCK{if my_dict['metrics']['GiniIndex'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['GiniIndex'] is defined}
 % Gini Index REPORT start
 \subsubsection{Gini Index}\label{sec:gini}
 The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
@@ -1726,7 +1900,8 @@ recommendation list of all users. For this experiment the top_n:
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['PredictionCoverage'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PredictionCoverage'] is defined}
 % PREDICTION COVERAGE REPORT start
 \subsubsection{Prediction Coverage}\label{sec:pred_cov}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
@@ -1753,7 +1928,8 @@ The $I$ must be specified through the 'catalog' parameter.
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['CatalogCoverage'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['CatalogCoverage'] is defined}
 % CATALOG COVERAGE REPORT start
 \subsubsection{Catalog Coverage}\label{sec:cat_cov}
 The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
@@ -1801,7 +1977,8 @@ Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['DeltaGap'] is defined}
+\BLOCK{ if my_dict['metrics'] is defined and
+           my_dict['metrics']['DeltaGap'] is defined}
 % DELTA GAP REPORT start
 \subsubsection{Delta GAP}\label{sec:DG}
 The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
@@ -1856,7 +2033,8 @@ n items of every recommendation list of all users
 
 
 % --------------------------------- PLOT METRICS STARTED ----------------------------------------------
-\BLOCK{if my_dict['metrics']['LongTailDistr'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['LongTailDistr'] is defined}
 % LONG TAIL DISTIBUTION REPORT start
 \subsubsection{Long Tail Distribution}\label{sec:LTD}
 This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
@@ -1887,7 +2065,8 @@ For this experiments the Long Tail Distribution has been used with the following
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
 % PopRatioProfileVsRecs REPORT start
 \subsubsection{Pop Ratio Profile Vs Recs}\label{sec:popRatio}
 This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
@@ -1943,7 +2122,8 @@ with the .csv format):
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['metrics']['PopRecsCorrelation'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+        my_dict['metrics']['PopRecsCorrelation'] is defined}
 % PopRecsCorrelation REPORT start
 \subsubsection{Pop Recs Correlation}\label{sec:popRC}
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
