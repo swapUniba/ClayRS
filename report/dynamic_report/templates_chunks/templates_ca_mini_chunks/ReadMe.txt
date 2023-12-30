@@ -1,3 +1,5 @@
+WARNINGS AND INFORMATION:
+
 The chuncks of the final report template are in this directory
 and the idea when we use them will be to loop and use them as
 many times as needed, but the key point it's how we are going to
@@ -27,3 +29,12 @@ techniques used on the data:
 ...
 ...
 ...
+
+
+Project: ClayRS branch report
+==============================================================================
+
+Author: Diego Miccoli
+GitHub nickname: Kozen88
+Email: <d.miccoli13@studenti.uniba>
+Date: 30/12/2023
