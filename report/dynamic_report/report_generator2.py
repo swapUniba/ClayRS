@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import yaml
+from datetime import datetime
 
 # PATH USED TO TEXT THE SCRIPT
 CA_YML = "../data/ca_report.yml"
@@ -73,6 +74,18 @@ list_of_fields = []
 # the list will contain teh keys of the eva yaml that represent
 # the fold n-th of the evaluation performed.
 list_fold_eva = []
+
+
+def get_current_date_string():
+    """
+       The function will take the current day, formatting as DD-MM-YYYY and returning as a string.
+
+       Author:
+       - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+       """
+    today_date = datetime.now()
+    today_date_string = today_date.strftime('%d-%m-%Y')
+    return today_date_string
 
 
 def get_keys_at_level(dictionary, parent_key):
@@ -177,7 +190,6 @@ def read_yaml_file(file_path):
     return yaml_content
 
 
-# -------------- to test this code -----------
 def read_file_latex(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         contenuto = file.read()
@@ -321,66 +333,6 @@ def build_final_latex_file(file_destination):
     add_single_mini_template(REPORT_DICT, 'end', file_destination, content_of_field, text_extract)
 
 
-"""
-    if 'id_each_content' in ca_dict:
-      
-    else:
-
-
-    for file_path in file_list:
-        contenuto_file = read_file_latex(file_path)
-
-        if file_path in customizations:
-            personalizzazione = customizations[file_path]
-            contenuto_file = contenuto_file.replace('XXX', personalizzazione)
-
-        testo_estratto = get_text_from_latex(contenuto_file)
-
-        if testo_estratto:
-            write_on_file_latex(testo_estratto, file_destinazione)
-            print(f"Contenuto di {file_path} aggiunto con successo a {file_destinazione}")
-        else:
-            print(f"Impossibile estrarre il testo dal documento LaTeX: {file_path}")
-
-    # Condizione 1: Aggiungi un numero predefinito di file LaTeX
-    numero_file_predefiniti = 3
-    file_list_predefiniti = file_list[:numero_file_predefiniti]
-
-    for file_path in file_list_predefiniti:
-        contenuto_file = read_file_latex(file_path)
-
-        if file_path in customizations:
-            personalizzazione = customizations[file_path]
-            contenuto_file = contenuto_file.replace('XXX', personalizzazione)
-
-        testo_estratto = get_text_from_latex(contenuto_file)
-
-        if testo_estratto:
-            write_on_file_latex(testo_estratto, file_destinazione)
-            print(f"Contenuto di {file_path} aggiunto con successo a {file_destinazione}")
-        else:
-            print(f"Impossibile estrarre il testo dal documento LaTeX: {file_path}")
-
-    # Condizione 2: Aggiungi un numero variabile di file LaTeX
-    file_list_variabili = get_variable_files()
-    for file_path in file_list_variabili:
-        contenuto_file = read_file_latex(file_path)
-
-        if file_path in customizations:
-            personalizzazione = customizations[file_path]
-            contenuto_file = contenuto_file.replace('XXX', personalizzazione)
-
-        testo_estratto = get_text_from_latex(contenuto_file)
-
-        if testo_estratto:
-            write_on_file_latex(testo_estratto, file_destinazione)
-            print(f"Contenuto di {file_path} aggiunto con successo a {file_destinazione}")
-        else:
-            print(f"Impossibile estrarre il testo dal documento LaTeX: {file_path}")
-"""
-
-
-
 
 # Funzione di esempio per ottenere una lista di file LaTeX variabili
 def get_variable_files():
@@ -389,13 +341,14 @@ def get_variable_files():
     return []
 
 
-# ------ up to this part we have to test ------------
-
-
 # Chiamata principale
 if __name__ == "__main__":
-    build_final_latex_file("./dynamic_fin_rep.tex")
-    print()
+    today_date_result = get_current_date_string()
+
+    # Stampa la data come stringa
+    print("Data corrente come stringa:", today_date_result)
+    # build_final_latex_file("./dynamic_fin_rep.tex")
+    # print()
 
 """
     # Esempio di utilizzo
