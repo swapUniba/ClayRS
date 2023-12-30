@@ -13,7 +13,7 @@
 \author{SWAP research group UniBa}
 %\date{27 December 2023}
 
-% ------------ DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------
+% ------------------------- DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------
 \begin{document}
 
 \maketitle
@@ -24,7 +24,6 @@ The report is divided in 3 principal section dedicated each one for the 3 princi
 and a conclusion section to highlights what have been achieved from the experiment.
 \hfill\break
 \hfill\break
-
 
 \BLOCK{if my_dict['source_file'] is defined}
 % ---------OPENING CONTENT ANALYZER SECTION ----------------
@@ -43,7 +42,7 @@ X has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
-% --------------------------- TECNIQUE USED TO REPPRESENT DATA FIELD ----------------------
+% --------------------------------------- TECNIQUE USED TO REPPRESENT DATA FIELD -------------------------------------
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -55,7 +54,6 @@ The data has been represented as the original.
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -66,7 +64,6 @@ The WhooshTfIdf technique has been used.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -91,7 +88,6 @@ The technique has been settled with the following parameter:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -109,7 +105,6 @@ no embedding source has been specified.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -129,7 +124,6 @@ no embedding source has been specified.
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -147,7 +141,6 @@ no embedding source has been specified.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -174,7 +167,6 @@ No combining technique has been used.
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -199,7 +191,6 @@ No combining technique has been used.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -226,7 +217,6 @@ No combining technique has been used.
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -238,7 +228,6 @@ The PyWSD Synset Document Frequency Technique has been used.
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -249,7 +238,6 @@ The FromNPY Technique has been used.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -274,7 +262,6 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -301,7 +288,6 @@ MFCC technique has been applied to process data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -324,7 +310,6 @@ VGGISH technique has been applied to process data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -353,7 +338,6 @@ Pytorch Image Models technique has been applied to process data with the followi
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -380,7 +364,6 @@ Torch Vision Video Models technique has been applied to process data with the fo
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{else}
 The representation technique used has not been recognised from the framework check statement flow control
 for chunks template used for rendering by jinja.
@@ -389,8 +372,7 @@ for chunks template used for rendering by jinja.
 \BLOCK{endif}
 % --- ends fields representation techniques -----
 
-
-% ------------------------- PREPROCESSING OF DATA FIELD -----------------------------------
+% --------------------------------------- PREPROCESSING OF DATA FIELD ------------------------------------------------
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -414,7 +396,6 @@ Spacy has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -444,7 +425,6 @@ Ekphrasis has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -468,7 +448,6 @@ NLTK has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -484,7 +463,6 @@ TorchUniformTemporalSubSampler has been used to preprocess data with the followi
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -505,7 +483,6 @@ TorchResample has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -517,7 +494,6 @@ ConvertToMono has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -537,7 +513,6 @@ Resize has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -553,7 +528,6 @@ CenterCrop has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -565,7 +539,6 @@ Lambda has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -582,7 +555,6 @@ Normalize has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       'field_representations' in my_dict and
@@ -601,7 +573,6 @@ ClipSampler has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{ if my_dict is defined and
       'field_representations' in my_dict and
       'X' in my_dict['field_representations'] and
@@ -612,10 +583,9 @@ No preprocessing techniques have been used to preprocess data X during the exper
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-% ----------- ends pre processing techniques --------------
+% ----- ends pre processing techniques -----
 
-
-% ----------------------- POSTPROCESSING OF DATA FIELD ------------------------------------
+% ---------------------------------------- POSTPROCESSING OF DATA FIELD ---------------------------------------------
 \BLOCK{if my_dict is defined and
       my_dict['field_representations'] is defined and
       'X' in my_dict['field_representations'] and
@@ -647,7 +617,6 @@ FVGMM has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict is defined and
       my_dict['field_representations'] is defined and
@@ -681,7 +650,6 @@ VLADGMM has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict is defined and
       my_dict['field_representations'] is defined and
       'X' in my_dict['field_representations'] and
@@ -703,16 +671,14 @@ SkLearnPCA has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-
 \BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X']['postprocessing'] is none}
 No postprocessing techniques have been used on the data X in this experiment.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-% ----------- ends post processing techniques --------------
+% ----- ends post processing techniques -----
 
-
-% ------------------- EXOGENOUS TECHNIQUE REPRESENTATION OF DATA -------------------------
+% ------------------------------------- EXOGENOUS TECHNIQUE REPRESENTATION OF DATA -----------------------------------
 \BLOCK{if 'exogenous_representations' in my_dict and
           'DBPediaMappingTechnique' in my_dict['exogenous_representations']}
 This exogenous technique expands each content by using as external source the DBPedia ontology.
@@ -748,7 +714,6 @@ The properties have been returned in their rdfs:label form.
 \hfill\break
 \BLOCK{endif}
 
-
 % In case of the content analyzer is not used
 \BLOCK{else}
 For this experiment the module of the content analyzer has not been used.
@@ -756,7 +721,6 @@ For this experiment the module of the content analyzer has not been used.
 \hfill\break
 % closing the controll block for the content analyzer section
 \BLOCK{endif}
-
 
 % -------------------------------------- START RECSYS MODULE --------------------------------------------------------
 \BLOCK{if 'interactions' in my_dict}
@@ -790,7 +754,6 @@ In this experiment the statistics of the dataset used are reported in the follow
 \hfill\break
 \hfill\break
 
-
 % ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS -------------------------------------------
 \subsection{Partitioning techinque used}\label{subsec:partitioning}
 \BLOCK{if my_dict['partitioning'] is defined and
@@ -822,9 +785,8 @@ The partitioning technique has been executed with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% KFOLD PARTITIONING TECNIQUE ended___
 \BLOCK{endif}
-% KFOLD PARTITIONING TECNIQUE ended
-
 
 \BLOCK{if my_dict['partitioning'] is defined and
           my_dict['partitioning']['HoldOutPartitioning'] is defined}
@@ -844,10 +806,9 @@ The data has been shuffled before being split into batches.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
-%  HOLD-OUT PARTIONING TECNIQUE ended
+%  HOLD-OUT PARTIONING TECNIQUE ended___
 \BLOCK{endif}
-% end partitioning section___________
-
+% end partitioning section___
 
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
@@ -875,7 +836,7 @@ The recommender system is based on a graph representation.
 Algorithm used is unknown.
 \hfill\break
 \hfill\break
-% principal class algorithm end_____
+% principal class algorithm end___
 \BLOCK{endif}
 
 % ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
@@ -901,9 +862,8 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-% AmarDoubleSource end_____
+% AmarDoubleSource end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['recsys'] is defined and
       my_dict['recsys']['ContentBasedRS'] is defined and
@@ -924,9 +884,8 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-% centroid vector end____
+% centroid vector end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['recsys'] is defined and
       my_dict['recsys']['ContentBasedRS'] is defined and
@@ -949,7 +908,6 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 % classifier end___
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict['recsys'] is defined and
       my_dict['recsys']['ContentBasedRS'] is defined and
       my_dict['recsys']['ContentBasedRS']['algorithm'] is defined and
@@ -969,9 +927,8 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-% index query end____
+% index query end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['recsys'] is defined and
       my_dict['recsys']['ContentBasedRS'] is defined and
@@ -991,11 +948,10 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-% linear predictor end____
+% linear predictor end___
 \BLOCK{endif}
 
-
-% ------------------------ GRAPH BASED ALGO ------------------------------------------
+% --------------------------------------- GRAPH BASED ALGO ----------------------------------------------------------
 \BLOCK{if my_dict['recsys'] is defined and
       my_dict['recsys']['GraphBasedRS'] is defined and
       my_dict['recsys']['GraphBasedRS']['algorithm'] is defined and
@@ -1017,20 +973,18 @@ the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
 \hfill\break
-% NX page rank end____
+% NX page rank end___
 \BLOCK{endif}
-
 
 % In case of the RecSys in not been used
 \BLOCK{else}
 The RecSys module has not been used during this experiment.
 \hfill\break
 \hfill\break
-% <------------------ RECSYS SECTION ENDED------------------->
+% <---------------- RECSYS SECTION ENDED ----------------->
 \BLOCK{endif}
 
-
-% --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
+% ------------------------------------ OPENING THE EVALUATION MODULE SECTION ----------------------------------------
 \BLOCK{if my_dict['metrics'] is defined}
 % --- EVA MODULE start ---
 \section{EVALUATION MODULE}\label{sec:eva-module}
@@ -1046,8 +1000,7 @@ The metrics used are the followings:
 \hfill\break
 \hfill\break
 
-
-% ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
+% ------------------------------------- CLASSIFICATION METRICS STARTED -----------------------------------------------
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Precision'] is defined}
 % Precision report start
@@ -1086,7 +1039,6 @@ If not specified, the mean rating score of every user will be used, in this expe
 % precision report ended______
 \BLOCK{endif}
 
-
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Recall'] is defined}
 % Recall report start
@@ -1122,9 +1074,8 @@ If not specified, the mean rating score of every user will be used, in this expe
 \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
 \hfill\break
 \hfill\break
-% recall report end_______
+% recall report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['FMeasure'] is defined}
@@ -1180,9 +1131,8 @@ During the experiment the FMeasure has been calculated with $\beta = $
 \textbf{\VAR{my_dict['metrics']['FMeasure']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
 \hfill\break
 \hfill\break
-% FMeasure report end__________
+% FMeasure report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PrecisionAtK'] is defined}
@@ -1227,9 +1177,8 @@ During the experiment Precision@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% precision@k report end______
+% precision@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RecallAtK'] is defined}
@@ -1274,9 +1223,8 @@ During the experiment Recall@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% recall@k report end______
+% recall@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['FMeasureAtK'] is defined}
@@ -1336,9 +1284,8 @@ During the experiment FMeasure@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% fmeasure@k report end_______
+% fmeasure@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RPrecision'] is defined}
@@ -1383,11 +1330,11 @@ During the experiment R-Precision has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% r-precision report end______
+% r-precision report end___
 \BLOCK{endif}
 % <----- classification metrics end ------->
 
-% ------------------ ERROR METRICS STARTED -------------------------------------------
+% ----------------------------------------- ERROR METRICS STARTED ---------------------------------------------------
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MSE'] is defined}
 % MSE REPORT start
@@ -1446,9 +1393,8 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% mse report end_______
+% mse report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RMSE'] is defined}
@@ -1509,9 +1455,8 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% rmse report end________
+% rmse report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAE'] is defined}
@@ -1572,12 +1517,11 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% mae report end______
+% mae report end___
 \BLOCK{endif}
 % <------ error metrics ended -------->
 
-
-% ------------------------ RANKING METRICS STARTED ----------------------------------------
+% ------------------------------------------- RANKING METRICS STARTED ------------------------------------------------
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['NDCG'] is defined}
 % Normalized Discounted Cumulative Gain REPORT start
@@ -1643,9 +1587,8 @@ Finally, the NDCG of the entire system is calculated instead as such:
 The system average excludes NaN values.
 \hfill\break
 \hfill\break
-% ndcg report end______
+% ndcg report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['NDCGAtK'] is defined}
@@ -1657,9 +1600,8 @@ first $k$ predictions.
 The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
 \hfill\break
 \hfill\break
-% ndcg@k report end______
+% ndcg@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MRR'] is defined}
@@ -1691,9 +1633,8 @@ In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% mrr report end_______
+% mrr report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MRRAtK'] is defined}
@@ -1720,9 +1661,8 @@ In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% mrr@k report end_______
+% mrr@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAP'] is defined}
@@ -1761,9 +1701,8 @@ using a relevant threshold:
 \VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% map report end_______
+% map report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAPAtK'] is defined}
@@ -1800,9 +1739,8 @@ This metric will return the AP@K computed for each user in the dataframe contain
 computed for the whole system in the dataframe containing system results.
 \hfill\break
 \hfill\break
-% map@k report end_______
+% map@k report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Correlation'] is defined}
@@ -1863,12 +1801,11 @@ For this experiment, the settings for the correlation metrics are:
 \end{itemize}
 \hfill\break
 \hfill\break
-% correlation report end_____
+% correlation report end___
 \BLOCK{endif}
 % <------- ranking metrics ended ------->
 
-
-% ------------------------- FAIRNESS METRICS ------------------------------------
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['GiniIndex'] is defined}
 % Gini Index REPORT start
@@ -1896,9 +1833,8 @@ recommendation list of all users. For this experiment the top_n:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
 \hfill\break
 \hfill\break
-% gini index report end_____
+% gini index report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PredictionCoverage'] is defined}
@@ -1924,9 +1860,8 @@ user. The metric is calculated as such:
 The $I$ must be specified through the 'catalog' parameter.
 \hfill\break
 \hfill\break
-% prediction coverage report end________
+% prediction coverage report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['CatalogCoverage'] is defined}
@@ -1973,9 +1908,8 @@ The formula above becomes:
 Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 \hfill\break
 \hfill\break
-% catalog coverage report end________
+% catalog coverage report end___
 \BLOCK{endif}
-
 
 \BLOCK{ if my_dict['metrics'] is defined and
            my_dict['metrics']['DeltaGap'] is defined}
@@ -2027,12 +1961,11 @@ If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated 
 n items of every recommendation list of all users
 \hfill\break
 \hfill\break
-% delta gap report end_______
+% delta gap report end___
 \BLOCK{endif}
 % <----- fairness metrics end ------>
 
-
-% --------------------------------- PLOT METRICS STARTED ----------------------------------------------
+% ------------------------------------------ PLOT METRICS STARTED ----------------------------------------------------
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['LongTailDistr'] is defined}
 % LONG TAIL DISTIBUTION REPORT start
@@ -2061,9 +1994,8 @@ For this experiments the Long Tail Distribution has been used with the following
 \end{itemize}
 \hfill\break
 \hfill\break
-% LTD report end_______
+% LTD report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
@@ -2118,9 +2050,8 @@ with the .csv format):
 \end{itemize}
 \hfill\break
 \hfill\break
-%PopRatioProfileVsRecs report end_______
+%PopRatioProfileVsRecs report end___
 \BLOCK{endif}
-
 
 \BLOCK{if my_dict['metrics'] is defined and
         my_dict['metrics']['PopRecsCorrelation'] is defined}
@@ -2161,7 +2092,7 @@ For this experiments the PopRecsCorrelation has been used with the following set
 \end{itemize}
 \hfill\break
 \hfill\break
-% PopRecsCorrelation report end_________
+% PopRecsCorrelation report end___
 \BLOCK{endif}
 % <------- plot metric end ----------->
 
@@ -2169,12 +2100,10 @@ For this experiments the PopRecsCorrelation has been used with the following set
 No metrics have been used during this experiment.
 \hfill\break
 \hfill\break
+% <---------- end of metrics section ------------>
 \BLOCK{endif}
 
-
-
-% THIS LATEC TEMPLATE REPORT THE RISULTS OF THE SYSTEMS ON THE FOLD USED
-
+% -------------------- THIS LATEX TEMPLATE REPORT THE RISULTS OF THE SYSTEMS ON THE FOLD USED ------------------------
 \BLOCK{if my_dict['sys_results'] is defined}
 \subsection{Results}\label{sec:results}
 In the following table, we present the results of the evaluation \ref{tab:results_table}
@@ -2205,6 +2134,7 @@ In the following table, we present the results of the evaluation \ref{tab:result
 \end{table}
 \hfill\break
 \hfill\break
+% end of fold results___
 \BLOCK{endif}
 
 % In case of eval modulke is not used
@@ -2213,14 +2143,12 @@ The evaluation module has not been used during the experiment conducted.
 \hfill\break
 \hfill\break
 \BLOCK{endif}
-
-% ------------ END OF EVAL MODULE RREPORT -------------------------------
-
+% <------------------ END OF EVAL MODULE RREPORT ---------------------->
 
 \section{CONCLUSION ON THE EXPERIMENT}\label{sec:conclution}
-This part is for conclution to be sum up as needed.
+This part is for conclusion to be sum up as needed.
 \hfill\break
 \hfill\break
-% ------------------- END OF THE REPORT COMPLETED ---------------
+% <-------------------------------------------- END OF THE REPORT COMPLETED ----------------------------------------->
 % closing the document
 \end{document}
