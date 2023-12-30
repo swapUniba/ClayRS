@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 from jinja2 import Undefined
 
-# VARIABILI GLOBALI NELLO SCRIPT
+# GLOBAL VARIABLES IN THE SCRIPT
 
 # template non indentato
 # TEMPLATE_FILE = "report_template_not_indented.html"
@@ -129,8 +129,7 @@ def unify_yaml_files():
 """
 
 
-# La funzione riceve in input un file yaml e ne restituisce il
-# corrispettivo dizionario
+# The function takes as input a YAML file and returns its corresponding dictionary
 def get_data(rendering_file):
     with open(rendering_file, 'r') as stream:
         try:
@@ -178,7 +177,7 @@ def generate_tex_output(path_data_in, output_tex_path):
     else:
         print("no")
 
-    # Verifica se i dati sono già un dizionario
+    # dictionary check
     try:
         my_dict = dict(data)
     except TypeError as e:
@@ -188,30 +187,30 @@ def generate_tex_output(path_data_in, output_tex_path):
     type(my_dict)
     print(my_dict)
 
-    # Carica il template LaTeX
+    # Load template LaTeX
     template = get_latex_template()
     print(template)
 
-    # Rendi il dizionario disponibile al template usando il nome "data"
+    # Make the dictionary available to the template using the name 'data'.
     # my_dict['data'] = data
 
-    # Renderizza il template con i dati
+    # Rendering template with data
     output_text = template.render(my_dict=data)
     print(output_text)
 
     try:
-        # Estrai il percorso della directory dal percorso del file LaTeX
+        # Extract the directory path from the LaTeX file path
         output_directory = os.path.dirname(output_tex_path)
 
-        # Verifica se la directory di output esiste, altrimenti crea la directory
+        # Check if the output directory exists; otherwise, create the directory
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        # Scrivi il contenuto sul file LaTeX
+        # Write the content to the LaTeX file
         with open(output_tex_path, 'w') as ofile:
             ofile.write(output_text)
 
-        # Restituisci il percorso del file scritto
+        # Return the path of the written file
         return output_tex_path
 
     except Exception as e:
@@ -243,27 +242,27 @@ def load_file(*args: str):
 
 def generate_pdf_output(latex_file_path, output_folder=None):
     try:
-        # Estrai il nome del file LaTeX e la sua estensione
+        # Extract the name and extension of the LaTeX file.
         latex_file_name, _ = os.path.splitext(os.path.basename(latex_file_path))
 
-        # Costruisci il percorso del file PDF nella cartella di output o nella stessa cartella del file LaTeX
+        # Build the path of the PDF file in the output folder or in the same folder as the LaTeX file
         pdf_file_path = os.path.join(output_folder,
                                      f"tex_to_pdf_report.pdf") if output_folder else f"{latex_file_name}_to_pdf_report.pdf"
 
-        # Copia il file LaTeX nella cartella di output se è specificata
+        # Copy the LaTeX file to the output folder if specified
         if output_folder:
             output_latex_path = os.path.join(output_folder, f"{latex_file_name}_copied.tex")
             shutil.copy2(latex_file_path, output_latex_path)
         else:
             output_latex_path = latex_file_path
 
-        # Compila il file LaTeX
+        # Compile LaTeX file
         subprocess.run(['pdflatex', '-interaction=nonstopmode', output_latex_path])
 
-        # Sposta il file PDF nella cartella di output con il nome specificato
+        # Move the PDF file to the output folder with the specified name
         os.rename(f"{output_latex_path[:-4]}.pdf", pdf_file_path)
 
-        # Restituisci il percorso del file PDF
+        # Return the path of the PDF file
         return pdf_file_path
 
     except Exception as e:
