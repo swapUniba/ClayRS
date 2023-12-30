@@ -1,8 +1,16 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['X'] }
-% check SkLearnTfIdf used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SkLearnTfIdf' in my_dict['field_representations']['X']}
+% SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
 \begin{itemize}
@@ -18,6 +26,7 @@ The technique has been settled with the following parameter:
 \end{itemize}
 \hfill\break
 \hfill\break
+% SkLearnTfIdf usege end___
 \BLOCK{endif}
 
 ###

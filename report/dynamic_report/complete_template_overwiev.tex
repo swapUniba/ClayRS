@@ -671,7 +671,7 @@ SkLearnPCA has been used to preprocess data with the following settings:
 \hfill\break
 \BLOCK{endif}
 
-\BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X']['postprocessing'] is none}
+\BLOCK{if 'X' in my_dict['field_representations'] and my_dict['field_representations']['X'].get('postprocessing') is none }
 No postprocessing techniques have been used on the data X in this experiment.
 \hfill\break
 \hfill\break

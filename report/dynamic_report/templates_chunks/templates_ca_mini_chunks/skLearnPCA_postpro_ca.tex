@@ -6,7 +6,12 @@
 
 ###
 
-\BLOCK{if in my_dict['field_representations'] and 'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '3' in my_dict['field_representations']['X']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['X']['postprocessing']['3']}
 % SkLearnPCA postprocessing
 SkLearnPCA has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -20,6 +25,7 @@ SkLearnPCA has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% SkLearnPCA postprocessing end___
 \BLOCK{endif}
 
 ###

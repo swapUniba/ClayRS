@@ -6,7 +6,13 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'NLTK' in my_dict['field_representations']['X']['preprocessing']}
 % NLTK preprocessing
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -21,6 +27,7 @@ NLTK has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% NLTK preprocessing end___
 \BLOCK{endif}
 
 ###

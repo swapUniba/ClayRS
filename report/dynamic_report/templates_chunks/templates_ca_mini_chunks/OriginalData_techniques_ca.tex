@@ -1,11 +1,21 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'OriginalData' in my_dict['field_representations']['X']}
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'OriginalData' in my_dict['field_representations']['X']}
 % check if non particular technique of data reppresentation has been used
 The data has been represented as the original.
 \hfill\break
 \hfill\break
+% no technique of representation on the field
 \BLOCK{endif}
 
 ###

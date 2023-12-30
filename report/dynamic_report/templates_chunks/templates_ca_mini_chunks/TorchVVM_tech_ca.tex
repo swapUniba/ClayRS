@@ -6,8 +6,12 @@
 
 ###
 
-\BLOCK{if  'X' in my_dict['field_representations'] and 'TorchVisionVideoModels' in my_dict['field_representations']['X']}
-% check TorchVisionVideoModels used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'TorchVisionVideoModels' in my_dict['field_representations']['X']}
+% TorchVisionVideoModels used as representation
 Torch Vision Video Models technique has been applied to process data with the following settings:
 \begin{itemize}
     \item model name: \VAR{my_dict['field_representations']['X']['TorchVisionVideoModels']['model_name']|default('no setting used')|safe_text}
@@ -26,6 +30,7 @@ Torch Vision Video Models technique has been applied to process data with the fo
 \end{itemize}
 \hfill\break
 \hfill\break
+% TorchVisionVideoModels usege end___
 \BLOCK{endif}
 
 ###

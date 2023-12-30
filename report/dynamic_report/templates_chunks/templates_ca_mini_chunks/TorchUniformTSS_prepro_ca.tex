@@ -6,14 +6,21 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing'] }
-% TorchUniformTemporalSubSampler
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'TorchUniformTemporalSubSampler' in my_dict['field_representations']['X']['preprocessing']}
+% TorchUniformTemporalSubSampler preprocessing
 TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number samples: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
 \end{itemize}
 \hfill\break
 \hfill\break
+% TorchUniformTemporalSubSampler preprocessing end___
 \BLOCK{endif}
 
 ###

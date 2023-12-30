@@ -6,8 +6,12 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'MFCC' in my_dict['field_representations']['X'] }
-% check MFCC used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'MFCC' in my_dict['field_representations']['X']}
+% MFCC used as representation
 MFCC technique has been applied to process data with the following settings:
 \begin{itemize}
     \item contents dirs: \VAR{my_dict['field_representations']['X']['MFCC']['contents_dirs']|safe_text}
@@ -25,6 +29,7 @@ MFCC technique has been applied to process data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% MFCC end___
 \BLOCK{endif}
 
 ###

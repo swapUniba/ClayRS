@@ -1,13 +1,21 @@
-\usepackage{comment}
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
 
+
+\usepackage{comment}
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X'] }
-% check PyWSDSynsetDocumentFrequency used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['X']}
+% PyWSDSynsetDocumentFrequency used as representation
 The PyWSD Synset Document Frequency Technique has been used.
 \hfill\break
 \hfill\break
+% PyWSDSynsetDocumentFrequency usege end___
 \BLOCK{endif}
 
 ###

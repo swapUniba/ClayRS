@@ -6,11 +6,17 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Lambda' in my_dict['field_representations']['X']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'Lambda' in my_dict['field_representations']['X']['preprocessing']}
 % Lambda preprocessing
 Lambda has been used to preprocess data with the following settings:
 \hfill\break
 \hfill\break
+% Lambda preprocessing end___
 \BLOCK{endif}
 
 ###

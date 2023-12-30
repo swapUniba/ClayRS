@@ -1,8 +1,17 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'DocumentEmbeddingTechnique' in my_dict['field_representations']['X'] }
-% check DocumentEmbeddingTechnique used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'DocumentEmbeddingTechnique' in my_dict['field_representations']['X']}
+% DocumentEmbeddingTechnique used as representation
 The Document Embedding Technique has been used and
 \BLOCK{ set emb_src1 = my_dict.get('field_representations', {}).get('X', {}).get('DocumentEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src1 is not none }
@@ -13,6 +22,7 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+% DocumentEmbeddingTechnique end___
 \BLOCK{endif}
 
 ###

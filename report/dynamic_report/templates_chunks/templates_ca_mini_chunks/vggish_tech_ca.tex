@@ -6,8 +6,12 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'VGGISH' in my_dict['field_representations']['X'] }
-% check VGGISH used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'VGGISH' in my_dict['field_representations']['X']}
+% VGGISH used as representation
 VGGISH technique has been applied to process data with the following settings:
 \begin{itemize}
     \item feature layer: \VAR{my_dict['field_representations']['X']['VGGISH']['feature_layer']|default('no setting used')|safe_text}
@@ -23,6 +27,7 @@ VGGISH technique has been applied to process data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% VGGISH usege end___
 \BLOCK{endif}
 
 ###

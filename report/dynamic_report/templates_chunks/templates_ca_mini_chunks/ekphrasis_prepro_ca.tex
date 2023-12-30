@@ -6,8 +6,14 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Ekphrasis' in my_dict['field_representations']['X']['preprocessing'] }
-% Ekphrasis
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'Ekphrasis' in my_dict['field_representations']['X']['preprocessing']}
+% Ekphrasis start
 Ekphrasis has been used to preprocess data with the following settings:
 \begin{itemize}
     \item omit: \VAR{my_dict['field_representations']['X']['preprocessing']['Ekphrasis']['omit']|default('no setting used')|safe_text}
@@ -26,6 +32,7 @@ Ekphrasis has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Ekphrasis end___
 \BLOCK{endif}
 
 ###

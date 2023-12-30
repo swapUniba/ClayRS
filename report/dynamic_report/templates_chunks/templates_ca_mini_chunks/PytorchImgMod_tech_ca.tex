@@ -6,8 +6,12 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'PytorchImageModels' in my_dict['field_representations']['X'] }
-% check PytorchImageModels used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'PytorchImageModels' in my_dict['field_representations']['X']}
+% PytorchImageModels used as representation
 Pytorch Image Models technique has been applied to process data with the following settings:
 \begin{itemize}
     \item model name: \VAR{my_dict['field_representations']['X']['PytorchImageModels']['model_name']|default('no setting used')|safe_text}
@@ -27,6 +31,7 @@ Pytorch Image Models technique has been applied to process data with the followi
 \end{itemize}
 \hfill\break
 \hfill\break
+% PytorchImageModels usage end___
 \BLOCK{endif}
 
 ###

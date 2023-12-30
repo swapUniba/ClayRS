@@ -6,8 +6,13 @@
 
 ###
 
-\BLOCK{ if in my_dict['field_representations'] and 'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1'] }
-% FVGMM posttprocessing
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '1' in my_dict['field_representations']['X']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['X']['postprocessing']['1']}
+% FVGMM postprocessing
 FVGMM has been used to preprocess data with the following settings:
 \begin{itemize}
     \item number of components: \VAR{my_dict['field_representations']['X']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
@@ -31,6 +36,7 @@ FVGMM has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% FVGMM postprocessing end___
 \BLOCK{endif}
 
 ###

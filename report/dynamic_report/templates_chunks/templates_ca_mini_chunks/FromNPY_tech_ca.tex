@@ -3,12 +3,17 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'FromNPY' in my_dict['field_representations']['X'] }
-% check FromNPY used as representation
-The FromNPY Technique has been used.
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'FromNPY' in my_dict['field_representations']['X']}
+% FromNPY used as representation
+The FromNPY Technique has been used on the field X .
 \hfill\break
 \hfill\break
-\BLOCK{endif}ù
+% FromNPY end___
+\BLOCK{endif}
 
 ###
 

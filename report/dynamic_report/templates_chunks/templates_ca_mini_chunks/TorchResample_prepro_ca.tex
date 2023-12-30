@@ -6,8 +6,13 @@
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'TorchResample' in my_dict['field_representations']['X']['preprocessing'] }
-% TorchResample preproceessing
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      'TorchResample' in my_dict['field_representations']['X']['preprocessing']}
+% TorchResample preprocessing
 TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
     \item new freq: \VAR{my_dict['field_representations']['X']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
@@ -18,6 +23,7 @@ TorchResample has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% TorchResample preprocessing end___
 \BLOCK{endif}
 
 ###

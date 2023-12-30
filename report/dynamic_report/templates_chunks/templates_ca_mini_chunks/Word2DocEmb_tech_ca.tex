@@ -1,8 +1,17 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Word2DocEmbedding' in my_dict['field_representations']['X'] }
-% check Word2DocEmbedding used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'Word2DocEmbedding' in my_dict['field_representations']['X']}
+% Word2DocEmbedding used as representation
 The Word2Doc Embedding Technique has been used and
 \BLOCK{ set emb_src3 = my_dict.get('field_representations', {}).get('X', {}).get('Word2DocEmbedding', {}).get('embedding_source', None) }
 \BLOCK{if emb_src3 is not none}
@@ -20,6 +29,7 @@ No combining technique has been used.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+% Word2DocEmbedding usege end___
 \BLOCK{endif}
 
 ###

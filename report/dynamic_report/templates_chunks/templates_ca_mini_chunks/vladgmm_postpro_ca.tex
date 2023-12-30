@@ -6,7 +6,12 @@
 
 ###
 
-\BLOCK{if in my_dict['field_representations'] and 'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['X'] and
+      '2' in my_dict['field_representations']['X']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['X']['postprocessing']['2']}
 % VLADGMM postprocessing
 VLADGMM has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -31,6 +36,7 @@ VLADGMM has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% VLADGMM postprocessing end___
 \BLOCK{endif}
 
 ###

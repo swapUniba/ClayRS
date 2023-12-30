@@ -1,10 +1,16 @@
-\usepackage{comment}
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
 
+\usepackage{comment}
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SkImageHogDescriptor' in my_dict['field_representations']['X'] }
-% check SkImageHogDescriptorused as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SkImageHogDescriptor' in my_dict['field_representations']['X']}
+% SkImageHogDescriptor used as representation
 SKImage Hog Descriptor technique has been applied to process data with the following settings:
 \begin{itemize}
     \item orientations: \VAR{my_dict['field_representations']['X']['SkImageHogDescriptor']['orientations']|default('no setting used')|safe_text}
@@ -21,6 +27,7 @@ SKImage Hog Descriptor technique has been applied to process data with the follo
 \end{itemize}
 \hfill\break
 \hfill\break
+% SkImageHogDescriptor usege end___
 \BLOCK{endif}
 
 ###

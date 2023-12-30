@@ -1,8 +1,16 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
 
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['X'] }
-% check SentenceEmbeddingTechnique used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'SentenceEmbeddingTechnique' in my_dict['field_representations']['X']}
+% SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('X', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src is not none }
@@ -13,6 +21,7 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+% SentenceEmbeddingTechnique usege end___
 \BLOCK{endif}
 
 ###

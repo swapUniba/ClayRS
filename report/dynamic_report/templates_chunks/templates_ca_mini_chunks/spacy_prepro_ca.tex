@@ -3,11 +3,16 @@
 
 \usepackage{comment}
 
-
 ###
 
-\BLOCK{if 'X' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['X']['preprocessing'] }
-% Spacy
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'X' in my_dict['field_representations'] and
+      my_dict['field_representations']['X'] is defined and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      'Spacy' in my_dict['field_representations']['X']['preprocessing']}
+% Spacy preprocessing
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: \VAR{my_dict['field_representations']['X']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
@@ -22,6 +27,7 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Spacy preprocessing end___
 \BLOCK{endif}
 
 ###
