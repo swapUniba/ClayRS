@@ -20,9 +20,9 @@ from formForDoc import HTMLToPDFParser, HTMLToPDF
 from report.formForDoc import HTMLToPDFParser
 
 # template non indentato
-# TEMPLATE_FILE = "report_template3.html"
+# TEMPLATE_FILE = "report_template_not_indented.html"
 # template indentato
-TEMPLATE_FILE = "report_template2.html"
+TEMPLATE_FILE = "report_template_indented.html"
 # TEMPLATE_FILE = "report_template.html"
 # TEMPLATE_FILE = "templates/report_template.html"
 # TEMPLATE_FILE = "report_template.tex"
