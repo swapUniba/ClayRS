@@ -1004,7 +1004,7 @@ The metrics used are the followings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Precision'] is defined}
 % Precision report start
-\subsubsection{Precision}\label{sec:precision}
+\subsubsection{Precision}\label{subsubsec:precision}
 In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1036,13 +1036,13 @@ If not specified, the mean rating score of every user will be used, in this expe
 \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
 \hfill\break
 \hfill\break
-% precision report ended______
+% precision report ended___
 \BLOCK{endif}
 
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Recall'] is defined}
 % Recall report start
-\subsubsection{Recall}\label{sec:recall}
+\subsubsection{Recall}\label{subsubsec:recall}
 The Recall metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1080,7 +1080,7 @@ If not specified, the mean rating score of every user will be used, in this expe
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['FMeasure'] is defined}
 %FMeasure report start
-\subsubsection{FMeasure}\label{sec:f-meas}
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
 The FMeasure metric combines Precision and Recall into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -1137,7 +1137,7 @@ During the experiment the FMeasure has been calculated with $\beta = $
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PrecisionAtK'] is defined}
 % PRECISION @K REPORT start
-\subsubsection{Precision@K}\label{sec:prec-k}
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
 The Precision@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1183,7 +1183,7 @@ During the experiment Precision@K has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RecallAtK'] is defined}
 % RECALL @K REPORT start
-\subsubsection{Recall@K}\label{sec:rec-k}
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
 The Recall@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1229,7 +1229,7 @@ During the experiment Recall@K has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['FMeasureAtK'] is defined}
 % FMEASURE @K REPORT start
-\subsubsection{FMeasure@K }\label{sec:f-meas-k}
+\subsubsection{FMeasure@K }\label{subsubsec:f-meas-k}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -1290,7 +1290,7 @@ During the experiment FMeasure@K has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RPrecision'] is defined}
 % R-PRECISION REPORT start
-\subsubsection{R-Precision }\label{sec:r-prec}
+\subsubsection{R-Precision }\label{subsubsec:r-prec}
 The R-Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1338,7 +1338,7 @@ During the experiment R-Precision has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MSE'] is defined}
 % MSE REPORT start
-\subsubsection{MSE }\label{sec:mse}
+\subsubsection{MSE}\label{subsubsec:mse}
 The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1399,7 +1399,7 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RMSE'] is defined}
 % RMSE REPORT start
-\subsubsection{RMSE}\label{sec:rmse}
+\subsubsection{RMSE}\label{subsubsec:rmse}
 The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1461,7 +1461,7 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAE'] is defined}
 % MAE REPORT start
-\subsubsection{MAE}\label{sec:mae}
+\subsubsection{MAE}\label{subsubsec:mae}
 The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -1525,7 +1525,7 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['NDCG'] is defined}
 % Normalized Discounted Cumulative Gain REPORT start
-\subsubsection{NDCG}\label{sec:ndcg}
+\subsubsection{NDCG}\label{subsubsec:ndcg}
 The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
 by first computing the DCG score using the following formula:
 \hfill\break
@@ -1593,7 +1593,7 @@ The system average excludes NaN values.
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['NDCGAtK'] is defined}
 % NDCG@K REPORT start
-\subsubsection{NDCG@k}\label{sec:ndcg-k}
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
 The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
 by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
 first $k$ predictions.
@@ -1606,7 +1606,7 @@ The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_tex
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MRR'] is defined}
 % MRR REPORT start
-\subsubsection{MRR}\label{sec:mrr}
+\subsubsection{MRR}\label{subsubsec:mrr}
 The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
 and not those of every user.
 MRR is calculated as such:
@@ -1639,7 +1639,7 @@ In this experiment, the relevant threshold used is
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MRRAtK'] is defined}
 % MRR@K REPORT start
-\subsubsection{MRR@K}\label{sec:mrr-k}
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
 The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
 not those of every user. MRR@K is calculated as such:
 \hfill\break
@@ -1667,7 +1667,7 @@ In this experiment, the relevant threshold used is
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAP'] is defined}
 % MAP REPORT start
-\subsubsection{MAP}\label{sec:map}
+\subsubsection{MAP}\label{subsubsec:map}
 The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
 abbreviation of Average Precision for each user and then taking its mean.
 The AP is calculated as such for the \textbf{single user}:
@@ -1707,7 +1707,7 @@ using a relevant threshold:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MAPAtK'] is defined}
 % MAP@K REPORT start
-\subsubsection{MAP@K}\label{sec:map-k}
+\subsubsection{MAP@K}\label{subsubsec:map-k}
 The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
 AP@K abbreviation of Average Precision At K for each user and then taking its mean.
 The AP@K is calculated as such for the \textbf{single user}:
@@ -1745,7 +1745,7 @@ computed for the whole system in the dataframe containing system results.
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['Correlation'] is defined}
 % CORRELATION REPORT start
-\subsubsection{Correlation}\label{sec:corr}
+\subsubsection{Correlation}\label{subsubsec:corr}
 The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
 The currently correlation methods implemented are:
 \begin{itemize}
@@ -1774,7 +1774,7 @@ The correlation metric is calculated as such for the \textbf{single user}:
 \end{itemize}
 \hfill\break
 \hfill\break
-The ideal ranking is calculated based on the rating inside the *ground truth* of the user.
+The ideal ranking is calculated based on the rating inside the ground truth of the user.
 The Correlation metric calculated for the entire system is simply the average of every $Corr$:
 \hfill\break
 \hfill\break
@@ -1809,7 +1809,7 @@ For this experiment, the settings for the correlation metrics are:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['GiniIndex'] is defined}
 % Gini Index REPORT start
-\subsubsection{Gini Index}\label{sec:gini}
+\subsubsection{Gini Index}\label{subsubsec:gini}
 The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
 result it will be returned and not those of every user. The metric is calculated as such:
 \hfill\break
@@ -1839,7 +1839,7 @@ recommendation list of all users. For this experiment the top_n:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PredictionCoverage'] is defined}
 % PREDICTION COVERAGE REPORT start
-\subsubsection{Prediction Coverage}\label{sec:pred_cov}
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wise metric, so only its result it will be returned and not those of every
 user. The metric is calculated as such:
@@ -1866,7 +1866,7 @@ The $I$ must be specified through the 'catalog' parameter.
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['CatalogCoverage'] is defined}
 % CATALOG COVERAGE REPORT start
-\subsubsection{Catalog Coverage}\label{sec:cat_cov}
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
 The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wide metric, so only its result it will be returned and not those of every
 user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
@@ -1914,7 +1914,7 @@ Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 \BLOCK{ if my_dict['metrics'] is defined and
            my_dict['metrics']['DeltaGap'] is defined}
 % DELTA GAP REPORT start
-\subsubsection{Delta GAP}\label{sec:DG}
+\subsubsection{Delta GAP}\label{subsubsec:dg}
 The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
 one or multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
 It's a system wise metric and results of every group will be returned. It is calculated as such:
@@ -1969,7 +1969,7 @@ n items of every recommendation list of all users
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['LongTailDistr'] is defined}
 % LONG TAIL DISTIBUTION REPORT start
-\subsubsection{Long Tail Distribution}\label{sec:LTD}
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
 This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
 specified. The plot can be generated both for the truth set or the predictions set based on the on parameter:
 \begin{itemize}
@@ -2000,7 +2000,7 @@ For this experiments the Long Tail Distribution has been used with the following
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
 % PopRatioProfileVsRecs REPORT start
-\subsubsection{Pop Ratio Profile Vs Recs}\label{sec:popRatio}
+\subsubsection{Pop Ratio Profile Vs Recs}\label{subsubsec:popratio}
 This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
 profile popularity ratio and recommendations popularity ratio is drawn.
 Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
@@ -2056,7 +2056,7 @@ with the .csv format):
 \BLOCK{if my_dict['metrics'] is defined and
         my_dict['metrics']['PopRecsCorrelation'] is defined}
 % PopRecsCorrelation REPORT start
-\subsubsection{Pop Recs Correlation}\label{sec:popRC}
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
 frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
 recommended.
@@ -2105,7 +2105,7 @@ No metrics have been used during this experiment.
 
 % -------------------- THIS LATEX TEMPLATE REPORT THE RISULTS OF THE SYSTEMS ON THE FOLD USED ------------------------
 \BLOCK{if my_dict['sys_results'] is defined}
-\subsection{Results}\label{sec:results}
+\subsection{Results}\label{subsec:results}
 In the following table, we present the results of the evaluation \ref{tab:results_table}
 \begin{table}[!hbp]\label{tab:results_table}
     \centering
@@ -2137,7 +2137,7 @@ In the following table, we present the results of the evaluation \ref{tab:result
 % end of fold results___
 \BLOCK{endif}
 
-% In case of eval modulke is not used
+% In case of eval module is not used
 \BLOCK{else}
 The evaluation module has not been used during the experiment conducted.
 \hfill\break
