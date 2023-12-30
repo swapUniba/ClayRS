@@ -11,16 +11,17 @@
 \usepackage{hyperref}
 \usepackage{comment}
 \usepackage{graphicx}
+\usepackage{caption}
 
-\title{REPORT EXPERIMENT CLAYRS FRAMEWORK}
+\title{Report Experiment ClayRS Framework}
 \author{SWAP research group UniBa}
-%\date{27 December 2023}
+\date{30-12-2023}
 
-% -------------------- DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
+% -------------------- DOCUMENT: REPORT ON THE ExPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
 \begin{document}
 
 \maketitle
-This \LaTeX{} document was generated automatically from yaml files for the purpose of replicability of experiments done with
+This LaTex document was generated automatically from yaml files for the purpose of replicability of experiments done with
 \href{https://github.com/swapUniba/ClayRS}{ClayRS},
 it contains information about the experiment that has been conducted and the results obtained.
 The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
@@ -31,29 +32,33 @@ and a conclusion section to highlights what have been achieved from the experime
 
 
 \BLOCK{if my_dict['source_file'] is defined}
-% ---------OPENING CONTENT ANALYZER SECTION ----------------
-\section{CONTENT ANALYZER MODULE}\label{sec:ca}
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
 The content analyzer module will deal with raw source document or more in general data which could be
-video or audio data and give a rappresentation of these data which will be used by the other two module.
-The text data source could be rappresented with exogenous technique or with a specified rappresentation
-and each field given could be treated with preprocessing techiniques and postprocessing technique. In
-this experiment the following techinques have been used on specific field in order to achieve the
-rappresentation wanted:
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
 \hfill\break
 \hfill\break
-% ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
 
 
 
-% field: plot_0 reppresentation subsection
-\textbf{plot_0} has been represented with the following techniques:
+% field: plot_0 representation subsection
+$ plot_0 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-\BLOCK{if 'plot_0' in my_dict['field_representations'] and 'SkLearnTfIdf' in my_dict['field_representations']['plot_0'] }
-% check SkLearnTfIdf used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot_0' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot_0'] is defined and
+      'SkLearnTfIdf' in my_dict['field_representations']['plot_0']}
+% SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
 \begin{itemize}
@@ -69,11 +74,18 @@ The technique has been settled with the following parameter:
 \end{itemize}
 \hfill\break
 \hfill\break
+% SkLearnTfIdf usege end___
 \BLOCK{endif}
 
 
 
-\BLOCK{if 'plot_0' in my_dict['field_representations'] and 'NLTK' in my_dict['field_representations']['plot_0']['preprocessing'] }
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot_0' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot_0'] is defined and
+      'preprocessing' in my_dict['field_representations']['plot_0'] and
+      my_dict['field_representations']['plot_0']['preprocessing'] is defined and
+      'NLTK' in my_dict['field_representations']['plot_0']['preprocessing']}
 % NLTK preprocessing
 NLTK has been used to preprocess data with the following settings:
 \begin{itemize}
@@ -88,19 +100,24 @@ NLTK has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% NLTK preprocessing end___
 \BLOCK{endif}
 
 
 
-% field: genres_0 reppresentation subsection
-\textbf{genres_0} has been represented with the following techniques:
+% field: genres_0 representation subsection
+$ genres_0 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-\BLOCK{if 'genres_0' in my_dict['field_representations'] and 'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0'] }
-% check WordEmbeddingTechnique used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'genres_0' in my_dict['field_representations'] and
+      my_dict['field_representations']['genres_0'] is defined and
+      'WordEmbeddingTechnique' in my_dict['field_representations']['genres_0']}
+% WordEmbeddingTechnique used as representation
 The Word Embedding Technique has been used and
 \BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('genres_0', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_source is not none }
@@ -111,12 +128,19 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+% WordEmbeddingTechnique usege end___
 \BLOCK{endif}
 
 
 
-\BLOCK{if 'genres_0' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['genres_0']['preprocessing'] }
-% Spacy
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'genres_0' in my_dict['field_representations'] and
+      my_dict['field_representations']['genres_0'] is defined and
+      'preprocessing' in my_dict['field_representations']['genres_0'] and
+      my_dict['field_representations']['genres_0']['preprocessing'] is defined and
+      'Spacy' in my_dict['field_representations']['genres_0']['preprocessing']}
+% Spacy preprocessing
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: \VAR{my_dict['field_representations']['genres_0']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
@@ -131,19 +155,24 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Spacy preprocessing end___
 \BLOCK{endif}
 
 
 
-% field: genres_1 reppresentation subsection
-\textbf{genres_1} has been represented with the following techniques:
+% field: genres_1 representation subsection
+$ genres_1 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-\BLOCK{if 'genres_1' in my_dict['field_representations'] and 'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1'] }
-% check SentenceEmbeddingTechnique used as representation
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'genres_1' in my_dict['field_representations'] and
+      my_dict['field_representations']['genres_1'] is defined and
+      'SentenceEmbeddingTechnique' in my_dict['field_representations']['genres_1']}
+% SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 \BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('genres_1', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
 \BLOCK{ if emb_src is not none }
@@ -154,12 +183,19 @@ no embedding source has been specified.
 \BLOCK{endif}
 \hfill\break
 \hfill\break
+% SentenceEmbeddingTechnique usege end___
 \BLOCK{endif}
 
 
 
-\BLOCK{if 'genres_1' in my_dict['field_representations'] and 'Spacy' in my_dict['field_representations']['genres_1']['preprocessing'] }
-% Spacy
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'genres_1' in my_dict['field_representations'] and
+      my_dict['field_representations']['genres_1'] is defined and
+      'preprocessing' in my_dict['field_representations']['genres_1'] and
+      my_dict['field_representations']['genres_1']['preprocessing'] is defined and
+      'Spacy' in my_dict['field_representations']['genres_1']['preprocessing']}
+% Spacy preprocessing
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: \VAR{my_dict['field_representations']['genres_1']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
@@ -174,6 +210,7 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Spacy preprocessing end___
 \BLOCK{endif}
 
 
@@ -183,8 +220,7 @@ Spacy has been used to preprocess data with the following settings:
 For this experiment the module of the content analyzer has not been used.
 \hfill\break
 \hfill\break
-
-% ----------  closing the controll block for the content analyzer section -----------
+% <----------  closing the controll block for the content analyzer section ----------->
 \BLOCK{endif}
 
 
@@ -224,7 +260,8 @@ In this experiment the statistics of the dataset used are reported in the follow
 
 % ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
 \subsection{Partitioning techinque used}\label{subsec:partitioning}
-\BLOCK{if  my_dict['partitioning']['KFoldPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['KFoldPartitioning'] is defined}
 % KFOLD PARTITIONING TECNIQUE
 K-fold cross-validation is a technique used in machine learning to assess
 the performance of a predictive model. The basic idea is to divide the dataset
@@ -242,6 +279,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 The partitioning technique has been executed with the following settings:
 \begin{itemize}
     \item number of splits: \VAR{my_dict['partitioning']['KFoldPartitioning']['n_splits']}
@@ -255,7 +293,8 @@ The partitioning technique has been executed with the following settings:
 \BLOCK{endif}
 
 
-\BLOCK{if  my_dict['partitioning']['HoldOutPartitioning'] is defined}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['HoldOutPartitioning'] is defined}
 %  HOLD-OUT PARTIONING TECNIQUE
 The partitioning used is the Hold-Out Partitioning.
 This approach splits the dataset in use into a train set and a test set.
@@ -269,6 +308,7 @@ of the original dataset, while the test set is the remaining \VAR{(100 - (my_dic
 \hfill\break
 \BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
 The data has been shuffled before being split into batches.
+\BLOCK{endif}
 \hfill\break
 \hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
@@ -279,19 +319,22 @@ The data has been shuffled before being split into batches.
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
 % ---RECSYS ALGORITHM ---
-The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achieve
 this target the system need to be based on a chosen algorithm that will work with the representation of data that
 we have.
 In this section we will analyse which algorithm has been used for the experiment and what are the settings
 given.
 \hfill\break
 \hfill\break
+
 % Dealing with the principal class where the algorithm used belong to.
-\BLOCK{if my_dict['recsys']['ContentBasedRS'] id defined}
+\BLOCK{if my_dict['recsys'] is defined and
+        my_dict['recsys']['ContentBasedRS'] is defined}
 The recommender system is based on content.
 \hfill\break
 \hfill\break
-\BLOCK{elif my_dict['recsys']['GraphBasedRS'] id defined}
+\BLOCK{elif my_dict['recsys'] is defined and
+        my_dict['recsys']['GraphBasedRS'] is defined}
 The recommender system is based on a graph representation.
 \hfill\break
 \hfill\break
@@ -302,13 +345,15 @@ Algorithm used is unknown.
 \BLOCK{endif}
 
 % ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
 % AMAR DOUBLE SOURCE ALGO
 The algorithm used is AmarDoubleSource
 \begin{itemize}
     \item item fields: 'list of field used' TO BE ADJUSTED
     \item user fields: TO BE ADJUSTED
-    \item batch size: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['batch_size']|default('no batch size') }
+    \item batch size: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['batch_size']|default('no batch size')}
     \item epochs: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['epochs']|default('no batch size')}
     \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['threshold']|default('no batch size')}
     \item embedding combiner: TO ADJUST
@@ -325,7 +370,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
 % CENTROID VECTOR ALGO
 The algorithm used is the centroid vector
 \begin{itemize}
@@ -345,9 +392,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
 % CLASSIFIER ALGO
-The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text)}
+The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text}
 \begin{itemize}
     \item item fields: TO BE ADJUSTED
     \item user fields: TO BE ADJUSTED
@@ -364,7 +413,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
 % INDEX QUERY ALGO
 The algorithm used is the Index Query.
 \begin{itemize}
@@ -384,9 +435,11 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 \BLOCK{endif}
 
 
-\BLOCK{if my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
 % LINEAR PREDICTOR ALGO
-The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text)}
+The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text}
 \begin{itemize}
     \item item fields: TO BE ADJUSTED
     \item user fields: TO BE ADJUSTED
@@ -404,7 +457,9 @@ The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the numb
 
 
 % ------------------------ GRAPH BASED ALGO ------------------------------------------
-\BLOCK{if my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['GraphBasedRS'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
 % NX PAGE RANK ALGO
 The algorithm used is NX Page Rank.
 \begin{itemize}
@@ -417,7 +472,7 @@ The algorithm used is NX Page Rank.
 \end{itemize}
 \hfill\break
 \hfill\break
-The type of graph used in the algorithm is a \VAR{ my_dict['recsys']['GraphBasedRS']['mode']},
+The type of graph used in the algorithm is a: \VAR{ my_dict['recsys']['GraphBasedRS']['graph']},
 the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
 \VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
 \hfill\break
@@ -437,8 +492,8 @@ The RecSys module has not been used during this experiment.
 
 
 \BLOCK{if my_dict['metrics'] is defined or my_dict['sys_results'] is defined}
-% --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
-\section{EVALUATION MODULE}\label{sec:eva-module}
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
 The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
 using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
 recommendation and find out which are the strength points and which the weak ones.
@@ -446,18 +501,17 @@ recommendation and find out which are the strength points and which the weak one
 \BLOCK{if my_dict['metrics'] is defined}
 \subsection{Metrics}\label{subsec:metrics}
 % --- Metrics ---
-During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete
-the performace of the system.
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
 The metrics used are the followings:
 \hfill\break
 \hfill\break
 
-
-% ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
-
-\BLOCK{if my_dict['metrics']['Precision'] is defined}
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Precision'] is defined}
 % Precision report start
-\subsubsection{Precision}\label{sec:precision}
+\subsubsection{Precision}\label{subsubsec:precision}
 In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -489,13 +543,13 @@ If not specified, the mean rating score of every user will be used, in this expe
 \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
 \hfill\break
 \hfill\break
-% precision report ended______
+% precision report ended___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['Recall'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Recall'] is defined}
 % Recall report start
-\subsubsection{Recall}\label{sec:recall}
+\subsubsection{Recall}\label{subsubsec:recall}
 The Recall metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -527,13 +581,13 @@ If not specified, the mean rating score of every user will be used, in this expe
 \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
 \hfill\break
 \hfill\break
-% recall report end_______
+% recall report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['FMeasure'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasure'] is defined}
 %FMeasure report start
-\subsubsection{FMeasure}\label{sec:f-meas}
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
 The FMeasure metric combines Precision and Recall into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -584,13 +638,13 @@ During the experiment the FMeasure has been calculated with $\beta = $
 \textbf{\VAR{my_dict['metrics']['FMeasure']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
 \hfill\break
 \hfill\break
-% FMeasure report end__________
+% FMeasure report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['PrecisionAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PrecisionAtK'] is defined}
 % PRECISION @K REPORT start
-\subsubsection{Precision@K}\label{sec:prec-k}
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
 The Precision@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -630,13 +684,13 @@ During the experiment Precision@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% precision@k report end______
+% precision@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['RecallAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RecallAtK'] is defined}
 % RECALL @K REPORT start
-\subsubsection{Recall@K}\label{sec:rec-k}
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
 The Recall@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -676,13 +730,13 @@ During the experiment Recall@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% recall@k report end______
+% recall@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['FMeasureAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasureAtK'] is defined}
 % FMEASURE @K REPORT start
-\subsubsection{FMeasure@K }\label{sec:f-meas-k}
+\subsubsection{FMeasure@K }\label{subsubsec:f-meas-k}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -737,13 +791,13 @@ During the experiment FMeasure@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% fmeasure@k report end_______
+% fmeasure@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['RPrecision'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RPrecision'] is defined}
 % R-PRECISION REPORT start
-\subsubsection{R-Precision }\label{sec:r-prec}
+\subsubsection{R-Precision }\label{subsubsec:r-prec}
 The R-Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -783,15 +837,15 @@ During the experiment R-Precision has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% r-precision report end______
+% r-precision report end___
 \BLOCK{endif}
 % <----- classification metrics end ------->
 
-% ------------------ ERROR METRICS STARTED -------------------------------------------
-
-\BLOCK{if my_dict['metrics']['MSE'] is defined}
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MSE'] is defined}
 % MSE REPORT start
-\subsubsection{MSE }\label{sec:mse}
+\subsubsection{MSE }\label{subsubsec:mse}
 The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -846,13 +900,13 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% mse report end_______
+% mse report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['RMSE'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RMSE'] is defined}
 % RMSE REPORT start
-\subsubsection{RMSE}\label{sec:rmse}
+\subsubsection{RMSE}\label{subsubsec:rmse}
 The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -908,13 +962,13 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% rmse report end________
+% rmse report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['MAE'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAE'] is defined}
 % MAE REPORT start
-\subsubsection{MAE}\label{sec:mae}
+\subsubsection{MAE}\label{subsubsec:mae}
 The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -970,16 +1024,15 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
     \]
 \hfill\break
 \hfill\break
-% mae report end______
+% mae report end___
 \BLOCK{endif}
 % <------ error metrics ended -------->
 
-
-% ------------------------ RANKING METRICS STARTED ----------------------------------------
-
-\BLOCK{if my_dict['metrics']['NDCG'] is defined}
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCG'] is defined}
 % Normalized Discounted Cumulative Gain REPORT start
-\subsubsection{NDCG}\label{sec:ndcg}
+\subsubsection{NDCG}\label{subsubsec:ndcg}
 The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
 by first computing the DCG score using the following formula:
 \hfill\break
@@ -1041,26 +1094,26 @@ Finally, the NDCG of the entire system is calculated instead as such:
 The system average excludes NaN values.
 \hfill\break
 \hfill\break
-% ndcg report end______
+% ndcg report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['NDCGAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCGAtK'] is defined}
 % NDCG@K REPORT start
-\subsubsection{NDCG@k}\label{sec:ndcg-k}
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
 The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
 by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
 first $k$ predictions.
 The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
 \hfill\break
 \hfill\break
-% ndcg@k report end______
+% ndcg@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['MRR'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRR'] is defined}
 % MRR REPORT start
-\subsubsection{MRR}\label{sec:mrr}
+\subsubsection{MRR}\label{subsubsec:mrr}
 The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
 and not those of every user.
 MRR is calculated as such:
@@ -1087,13 +1140,13 @@ In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% mrr report end_______
+% mrr report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['MRRAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRRAtK'] is defined}
 % MRR@K REPORT start
-\subsubsection{MRR@K}\label{sec:mrr-k}
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
 The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
 not those of every user. MRR@K is calculated as such:
 \hfill\break
@@ -1115,13 +1168,13 @@ In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% mrr@k report end_______
+% mrr@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['MAP'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAP'] is defined}
 % MAP REPORT start
-\subsubsection{MAP}\label{sec:map}
+\subsubsection{MAP}\label{subsubsec:map}
 The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
 abbreviation of Average Precision for each user and then taking its mean.
 The AP is calculated as such for the \textbf{single user}:
@@ -1155,13 +1208,13 @@ using a relevant threshold:
 \VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
-% map report end_______
+% map report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['MAPAtK'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAPAtK'] is defined}
 % MAP@K REPORT start
-\subsubsection{MAP@K}\label{sec:map-k}
+\subsubsection{MAP@K}\label{subsubsec:map-k}
 The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
 AP@K abbreviation of Average Precision At K for each user and then taking its mean.
 The AP@K is calculated as such for the \textbf{single user}:
@@ -1193,13 +1246,13 @@ This metric will return the AP@K computed for each user in the dataframe contain
 computed for the whole system in the dataframe containing system results.
 \hfill\break
 \hfill\break
-% map@k report end_______
+% map@k report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['Correlation'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Correlation'] is defined}
 % CORRELATION REPORT start
-\subsubsection{Correlation}\label{sec:corr}
+\subsubsection{Correlation}\label{subsubsec:corr}
 The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
 The current correlation methods implemented are:
 \begin{itemize}
@@ -1255,15 +1308,15 @@ For this experiment, the settings for the correlation metrics are:
 \end{itemize}
 \hfill\break
 \hfill\break
-% correlation report end_____
+% correlation report end___
 \BLOCK{endif}
 % <------- ranking metrics ended ------->
 
-
-% ------------------------- FAIRNESS METRICS ------------------------------------
-\BLOCK{if my_dict['metrics']['GiniIndex'] is defined}
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['GiniIndex'] is defined}
 % Gini Index REPORT start
-\subsubsection{Gini Index}\label{sec:gini}
+\subsubsection{Gini Index}\label{subsubsec:gini}
 The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
 result it will be returned and not those of every user. The metric is calculated as such:
 \hfill\break
@@ -1287,13 +1340,13 @@ recommendation list of all users. For this experiment the top_n:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
 \hfill\break
 \hfill\break
-% gini index report end_____
+% gini index report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['PredictionCoverage'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PredictionCoverage'] is defined}
 % PREDICTION COVERAGE REPORT start
-\subsubsection{Prediction Coverage}\label{sec:pred_cov}
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wise metric, so only its result it will be returned and not those of every
 user. The metric is calculated as such:
@@ -1314,13 +1367,13 @@ user. The metric is calculated as such:
 The $I$ must be specified through the 'catalog' parameter.
 \hfill\break
 \hfill\break
-% prediction coverage report end________
+% prediction coverage report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['CatalogCoverage'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['CatalogCoverage'] is defined}
 % CATALOG COVERAGE REPORT start
-\subsubsection{Catalog Coverage}\label{sec:cat_cov}
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
 The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
 to all available items. It's a system wide metric, so only its result it will be returned and not those of every
 user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
@@ -1362,13 +1415,13 @@ The formula above becomes:
 Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 \hfill\break
 \hfill\break
-% catalog coverage report end________
+% catalog coverage report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['DeltaGap'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+           my_dict['metrics']['DeltaGap'] is defined}
 % DELTA GAP REPORT start
-\subsubsection{Delta GAP}\label{sec:DG}
+\subsubsection{Delta GAP}\label{subsubsec:dg}
 The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
 one or multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
 It's a system wise metric and results of every group will be returned. It is calculated as such:
@@ -1394,7 +1447,7 @@ Every user will be inserted in a group based on how many popular items the user 
 \end{itemize}
 \hfill\break
 \hfill\break
-In general users are grouped by $Popularity_ratio$ in a descending order. $Popularity_ratio$ for a single user $u$
+In general users are grouped by $Popularity_ratio$ in descending order. $Popularity_ratio$ for a single user $u$
 is defined as:
 \hfill\break
 \hfill\break
@@ -1408,22 +1461,22 @@ popularity. The popularity of an item is defined as the number of times it is ra
 divided by the total number of users in the 'original_ratings'.
 \hfill\break
 \hfill\break
-It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped,
 and it won't be considered in the $\Delta GAP$ computation of its group. In case no user of a group has recs
 available, a warning will be printed and the whole group won't be considered.
-If the 'top_n' parameter is specified, then the $\Delta GAP$ will be calculated considering only the first
+If the 'top_n' parameter is specified, then $\Delta GAP$ will be calculated considering only the first
 n items of every recommendation list of all users
 \hfill\break
 \hfill\break
-% delta gap report end_______
+% delta gap report end___
 \BLOCK{endif}
-% <----- fairness metrics end ------>
+% <------- fairness metrics end ------>
 
-
-% --------------------------------- PLOT METRICS STARTED ----------------------------------------------
-\BLOCK{if my_dict['metrics']['LongTailDistr'] is defined}
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['LongTailDistr'] is defined}
 % LONG TAIL DISTIBUTION REPORT start
-\subsubsection{Long Tail Distribution}\label{sec:LTD}
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
 This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
 specified. The plot can be generated both for the truth set or the predictions set based on the on parameter:
 \begin{itemize}
@@ -1442,19 +1495,19 @@ so that for every split a plot is generated without overwriting any file previou
 \hfill\break
 For this experiment the Long Tail Distribution has been used with the following settings:
 \begin{itemize}
-    \item on: \VAR{my_dict['metrics']['LongTailDistr'][''on'']|safe_text}.
+    \item on: \VAR{my_dict['metrics']['LongTailDistr']['on']|safe_text}.
     \item format: \VAR{my_dict['metrics']['LongTailDistr']['format']|safe_text}.
     \item overwrite: \VAR{my_dict['metrics']['LongTailDistr']['overwrite']|safe_text}.
 \end{itemize}
 \hfill\break
 \hfill\break
-% LTD report end_______
+% LTD report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
 % PopRatioProfileVsRecs REPORT start
-\subsubsection{Pop Ratio Profile Vs Recs}\label{sec:popRatio}
+\subsubsection{Pop Ratio Profile Vs Recs}\label{subsubsec:popratio}
 This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
 profile popularity ratio and recommendations popularity ratio is drawn.
 Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
@@ -1472,7 +1525,7 @@ Every user will be inserted in a group based on how many popular items the user 
 \end{itemize}
 \hfill\break
 \hfill\break
-In general users are grouped by $Popularity_ratio$ in a descending order. $Popularity_ratio$ for a single user $u$
+In general users are grouped by $Popularity_ratio$ in descending order. $Popularity_ratio$ for a single user $u$
 is defined as:
 \hfill\break
 \hfill\break
@@ -1504,13 +1557,13 @@ with the .csv format):
 \end{itemize}
 \hfill\break
 \hfill\break
-%PopRatioProfileVsRecs report end_______
+%PopRatioProfileVsRecs report end___
 \BLOCK{endif}
 
-
-\BLOCK{if my_dict['metrics']['PopRecsCorrelation'] is defined}
+\BLOCK{if my_dict['metrics'] is defined and
+        my_dict['metrics']['PopRecsCorrelation'] is defined}
 % PopRecsCorrelation REPORT start
-\subsubsection{Pop Recs Correlation}\label{sec:popRC}
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
 frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
 recommended.
@@ -1546,24 +1599,24 @@ For this experiment the PopRecsCorrelation has been used with the following sett
 \end{itemize}
 \hfill\break
 \hfill\break
-% PopRecsCorrelation report end_________
+% PopRecsCorrelation report end___
 \BLOCK{endif}
 % <------- plot metric end ----------->
 
-% ---------------------- closing the only metric section -------------------------
+% <---------------------- closing the only metric section ------------------------->
 \BLOCK{endif}
 
 
 
 \BLOCK{if my_dict['sys_results'] is defined}
-% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
-\subsection{Results}\label{sec:results}
-In the following table, we present the results of the evaluation \ref{tab:results_table}
-\begin{table}[!hbp]\label{tab:results_table}
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Metric}& \textbf{Value} \\ \hline
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - fold1}\label{subsec:sys - fold1}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - fold1}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
     \BLOCK{if my_dict['sys_results']['sys - fold1']['Precision - macro'] is defined}
     Precision - macro & \VAR{my_dict['sys_results']['sys - fold1']['Precision - macro']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
@@ -1603,9 +1656,6 @@ In the following table, we present the results of the evaluation \ref{tab:result
     \BLOCK{if my_dict['sys_results']['sys - fold1']['MAE'] is defined}
     MAE & \VAR{my_dict['sys_results']['sys - fold1']['MAE']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
-    \BLOCK{if my_dict['sys_results']['sys - fold1']['MRR'] is defined}
-    MRR & \VAR{my_dict['sys_results']['sys - fold1']['MRR']|truncate|safe_text}\\ \hline
-    \BLOCK{endif}
     \BLOCK{if my_dict['sys_results']['sys - fold1']['MAP'] is defined}
     MAP  & \VAR{my_dict['sys_results']['sys - fold1']['MAP']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
@@ -1615,25 +1665,27 @@ In the following table, we present the results of the evaluation \ref{tab:result
     \BLOCK{if my_dict['sys_results']['sys - fold1']['PredictionCoverage'] is defined}
     PredictionCoverage & \VAR{my_dict['sys_results']['sys - fold1']['PredictionCoverage']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
-  \end{tabular}
-  \caption{Table of the results}
-\end{table}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - fold1}
+\end{center}
 \hfill\break
 \hfill\break
-% end table of performance on the fold_________
+% end table of performance on the fold___
 \BLOCK{endif}
 
 
 
 \BLOCK{if my_dict['sys_results'] is defined}
-% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
-\subsection{Results}\label{sec:results}
-In the following table, we present the results of the evaluation \ref{tab:results_table}
-\begin{table}[!hbp]\label{tab:results_table}
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Metric}& \textbf{Value} \\ \hline
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - mean}\label{subsec:sys - mean}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - mean}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
     \BLOCK{if my_dict['sys_results']['sys - mean']['Precision - macro'] is defined}
     Precision - macro & \VAR{my_dict['sys_results']['sys - mean']['Precision - macro']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
@@ -1673,9 +1725,6 @@ In the following table, we present the results of the evaluation \ref{tab:result
     \BLOCK{if my_dict['sys_results']['sys - mean']['MAE'] is defined}
     MAE & \VAR{my_dict['sys_results']['sys - mean']['MAE']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
-    \BLOCK{if my_dict['sys_results']['sys - mean']['MRR'] is defined}
-    MRR & \VAR{my_dict['sys_results']['sys - mean']['MRR']|truncate|safe_text}\\ \hline
-    \BLOCK{endif}
     \BLOCK{if my_dict['sys_results']['sys - mean']['MAP'] is defined}
     MAP  & \VAR{my_dict['sys_results']['sys - mean']['MAP']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
@@ -1685,14 +1734,15 @@ In the following table, we present the results of the evaluation \ref{tab:result
     \BLOCK{if my_dict['sys_results']['sys - mean']['PredictionCoverage'] is defined}
     PredictionCoverage & \VAR{my_dict['sys_results']['sys - mean']['PredictionCoverage']|truncate|safe_text}\\ \hline
     \BLOCK{endif}
-  \end{tabular}
-  \caption{Table of the results}
-\end{table}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - mean}
+\end{center}
 \hfill\break
 \hfill\break
-% end table of performance on the fold_________
+% end table of performance on the fold___
 \BLOCK{endif}
-
 
 
 
@@ -1702,14 +1752,13 @@ The module of the evaluation to control and compare the performance of the recom
 system has not been used during this experiment.
 \hfill\break
 \hfill\break
-
-% ----------- closing evaluation module section ---------------------------
+% <-------------------- closing evaluation module section --------------------------->
 \BLOCK{endif}
 
 
 
-\section{CONCLUSION ON THE EXPERIMENT}\label{sec:conclution}
-This part is for conclution to be sum up as needed.
+\section{Conclusion on the experiment}\label{sec:conclution}
+This part is for conclusion to be sum up as needed.
 \hfill\break
 \hfill\break
 

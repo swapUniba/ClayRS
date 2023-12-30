@@ -65,7 +65,7 @@ EVA_DICT = {
 
 REPORT_DICT = {
     'intro': './templates_chunks/intro_report_start.tex',
-    'end': './templates_chunks/conclution.tex'
+    'end': './templates_chunks/conclusion.tex'
 }
 # the list will contain all the fields that
 # have been represented by the content analyzer.
@@ -211,12 +211,13 @@ def get_text_from_latex(contenuto_latex):
 
 
 def build_final_latex_file(file_destination):
-    # support function to adding the text to the finale latex file
+    # support functions to adding the text to the finale latex file, after processing and change placeholder
+    # with the object needed.
     def add_single_mini_template(path_map, access_key, path_destiny, content_of_field_container,
                                  text_extract_container):
         content = read_file_latex(path_map.get(access_key))
         text = get_text_from_latex(content)
-
+        # check point
         if text:
             write_on_file_latex(text, path_destiny)
             print(f"Content of {path_map.get(access_key)} added to {path_destiny} successfully")
@@ -227,7 +228,6 @@ def build_final_latex_file(file_destination):
         content_of_field_container[0] = content
         text_extract_container[0] = text
 
-    # support function to adding the text to the finale latex file
     def process_and_write_to_file(path_dict, pros, scope, content_container, text_container, file_path):
         # we are extracting the written part of the latex file which is retrieved from
         # the dictionary which contain for each key the path of the file that needs to be added
@@ -237,7 +237,7 @@ def build_final_latex_file(file_destination):
         content = content.replace('X', scope)
         text = get_text_from_latex(content)
 
-        # add text to file
+        # add text to file after check point
         if text:
             write_on_file_latex(text, file_path)
             print(f"Content of {path_dict.get(pros)} added to {file_path} successfully")
@@ -247,6 +247,7 @@ def build_final_latex_file(file_destination):
         content_container[0] = content
         text_container[0] = text
 
+    # used to load the dictonary related to each yaml file
     ca_dict = read_yaml_file(CA_YML)
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
@@ -256,11 +257,15 @@ def build_final_latex_file(file_destination):
     text_extract = [""]
 
     # first part of the report intro of the experiment report template
-    add_single_mini_template(REPORT_DICT, 'intro', file_destination, content_of_field, text_extract)
+    # add_single_mini_template(REPORT_DICT, 'intro', file_destination, content_of_field, text_extract)
+    process_and_write_to_file(REPORT_DICT, 'intro', get_current_date_string(),
+                              content_of_field, text_extract, file_destination)
 
     # dealing with Content Analyzer
     add_single_mini_template(CA_DICT, 'intro', file_destination, content_of_field, text_extract)
 
+    # add all the field that have been represented using the content analyzer and specify their
+    # preprocessing and postprocessing received.
     if 'source_file' in ca_dict:
 
         # extraction of the field being analyzed
@@ -317,6 +322,7 @@ def build_final_latex_file(file_destination):
     # dealing with eva report template
     add_single_mini_template(EVA_DICT, 'intro', file_destination, content_of_field, text_extract)
 
+    # add as mini template all the possible fold used during the training of the recommender system
     if 'sys_results' in eva_dict:
         result_fold_list = get_keys_at_level(eva_dict, 'sys_results')
 
@@ -329,90 +335,13 @@ def build_final_latex_file(file_destination):
     # closing eva report section
     add_single_mini_template(EVA_DICT, 'end', file_destination, content_of_field, text_extract)
 
-    # dealing with conclution
+    # dealing with conclusion
     add_single_mini_template(REPORT_DICT, 'end', file_destination, content_of_field, text_extract)
 
 
-
-# Funzione di esempio per ottenere una lista di file LaTeX variabili
-def get_variable_files():
-    # Implementa la logica per recuperare dinamicamente i file LaTeX variabili
-    # In questo esempio, restituisce una lista vuota, ma dovrebbe essere adattata alle tue esigenze.
-    return []
-
-
-# Chiamata principale
+# RUN script
 if __name__ == "__main__":
-    today_date_result = get_current_date_string()
+    build_final_latex_file("./dynamic_fin_rep.tex")
+    print()
 
-    # Stampa la data come stringa
-    print("Data corrente come stringa:", today_date_result)
-    # build_final_latex_file("./dynamic_fin_rep.tex")
-    # print()
 
-"""
-    # Esempio di utilizzo
-    my_dict = {
-        "a": {"b": {"x": {}, "y": {}}, "c": {}},
-        "t": {"b": {"z": {}}, "c": {}},
-        "r": {"b": {"f": {"a": {}, "w": {}}}, "h": {}}
-    }
-
-    subkeys_at_path = get_subkeys_at_path(my_dict, "a", "b")
-    print(subkeys_at_path)
-
-    file_list = ['templates_chunks/intro.tex',
-                 'templates_chunks/content_analyzer_section.tex',
-                 'templates_chunks/recsys_section.tex',
-                 'templates_chunks/evaluation_section.tex']
-
-    customizations = {'templates_chunks/intro.tex': 'DIEGO',
-                      'templates_chunks/content_analyzer_section.tex': 'MARCO',
-                      'templates_chunks/recsys_section.tex': 'GIULIO',
-                      'templates_chunks/evaluation_section.tex': 'FAY'
-                      }
-
-    file_destinazione = 'final_report.tex'
-
-    build_final_latex_file(file_list, customizations, file_destinazione)
-    my_dict = read_yaml_file(CA_YML)
-
-    desired_parent_key = "plot_0"
-    keys_at_desired_level = get_keys_at_level(my_dict, desired_parent_key)
-
-    print(keys_at_desired_level)
-
-    # list_of_fields = get_keys_at_level(my_dict, "field_representations")
-    # list_fold_eva = get_keys_at_level(my_dict, "sys_results")
-    # print(list_of_fields )
-    # print(list_fold_eva)
-    
-     # IN CASE SOMETHING WRONG WITH THE SUPPORT FUNCTION
-     content_of_field = read_file_latex(CA_DICT.get('intro'))
-    text_extract = get_text_from_latex(content_of_field)
-    if text_extract:
-        write_on_file_latex(text_extract, file_destination)
-        print(f"Content of {CA_DICT.get('intro')} added to {file_destination} successfully")
-    else:
-        print(f"Impossible to extract text from LaTeX document: {CA_DICT.get('intro')}")
-
-    # IN CASE SOMETHING WRONG WITH THE SUPPORT FUNCTION
-     if process != 'preprocessing' and process != 'postprocessing':
-                # we are extracting the written part of the latex file which is retrieved from
-                # the dictionary which contain for each key the path of the file that needs to be added
-                content_of_file = read_file_latex(CA_DICT.get(process))
-
-                # This passage allows to specify the field in the report
-                content_of_file = content_of_file.replace('X', field)
-
-                # prepare the text for adding
-                text_extract = get_text_from_latex(content_of_file)
-
-                # add text
-                if text_extract:
-                    write_on_file_latex(text_extract, file_destination)
-                    print(f"Content of {CA_DICT.get(process)} added to {file_destination} successfully")
-                else:
-                    print(f"Impossible to extract text from LaTeX document: {CA_DICT.get(process)}")
-
-"""

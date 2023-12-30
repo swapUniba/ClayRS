@@ -11,16 +11,17 @@
 \usepackage{hyperref}
 \usepackage{comment}
 \usepackage{graphicx}
+\usepackage{caption}
 
-\title{REPORT EXPERIMENT CLAYRS FRAMEWORK}
+\title{Report Experiment ClayRS Framework}
 \author{SWAP research group UniBa}
-%\date{27 December 2023}
+\date{30-12-2023}
 
-% -------------------- DOCUMENT: REPORT ON THE EXPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
+% -------------------- DOCUMENT: REPORT ON THE ExPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
 \begin{document}
 
 \maketitle
-This \LaTeX{} document was generated automatically from yaml files for the purpose of replicability of experiments done with
+This LaTex document was generated automatically from yaml files for the purpose of replicability of experiments done with
 \href{https://github.com/swapUniba/ClayRS}{ClayRS},
 it contains information about the experiment that has been conducted and the results obtained.
 The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
@@ -30,28 +31,28 @@ and a conclusion section to highlights what have been achieved from the experime
 
 
 
-% ---------OPENING CONTENT ANALYZER SECTION ----------------
-\section{CONTENT ANALYZER MODULE}\label{sec:ca}
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
 The content analyzer module will deal with raw source document or more in general data which could be
-video or audio data and give a rappresentation of these data which will be used by the other two module.
-The text data source could be rappresented with exogenous technique or with a specified rappresentation
-and each field given could be treated with preprocessing techiniques and postprocessing technique. In
-this experiment the following techinques have been used on specific field in order to achieve the
-rappresentation wanted:
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
 \hfill\break
 \hfill\break
-% ------ TECNIQUE USED TO REPPRESENT DATA FIELD ------------
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
 
 
 
-% field: plot_0 reppresentation subsection
-\textbf{plot_0} has been represented with the following techniques:
+% field: plot_0 representation subsection
+$ plot_0 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-% check SkLearnTfIdf used as representation
+% SkLearnTfIdf used as representation
 The SkLearnTfIdf technique has been used.
 The technique has been settled with the following parameter:
 \begin{itemize}
@@ -67,6 +68,7 @@ The technique has been settled with the following parameter:
 \end{itemize}
 \hfill\break
 \hfill\break
+% SkLearnTfIdf usege end___
 
 
 
@@ -84,26 +86,28 @@ NLTK has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% NLTK preprocessing end___
 
 
 
-% field: genres_0 reppresentation subsection
-\textbf{genres_0} has been represented with the following techniques:
+% field: genres_0 representation subsection
+$ genres_0 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-% check WordEmbeddingTechnique used as representation
+% WordEmbeddingTechnique used as representation
 The Word Embedding Technique has been used and
 the embedding source used is
 Gensim glove-twitter-25
 \hfill\break
 \hfill\break
+% WordEmbeddingTechnique usege end___
 
 
 
-% Spacy
+% Spacy preprocessing
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: en\_core\_web\_sm
@@ -118,26 +122,28 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Spacy preprocessing end___
 
 
 
-% field: genres_1 reppresentation subsection
-\textbf{genres_1} has been represented with the following techniques:
+% field: genres_1 representation subsection
+$ genres_1 $  has been represented with the following techniques:
 \hfill\break
 \hfill\break
 
 
 
-% check SentenceEmbeddingTechnique used as representation
+% SentenceEmbeddingTechnique used as representation
 The Sentence Embedding Technique has been used and
 the embedding source used is
 Sbert
 \hfill\break
 \hfill\break
+% SentenceEmbeddingTechnique usege end___
 
 
 
-% Spacy
+% Spacy preprocessing
 Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
     \item model: en\_core\_web\_sm
@@ -152,6 +158,9 @@ Spacy has been used to preprocess data with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
+% Spacy preprocessing end___
+
+
 
 
 
@@ -203,7 +212,7 @@ The train set size of this experiment is the 80.0\%
 of the original dataset, while the test set is the remaining 20.0\%.
 \hfill\break
 \hfill\break
-    The data has been shuffled before being split into batches.
+The data has been shuffled before being split into batches.
 \hfill\break
 \hfill\break
 %  HOLD-OUT PARTIONING TECNIQUE ended
@@ -213,7 +222,7 @@ of the original dataset, while the test set is the remaining 20.0\%.
 % ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
 \subsection{Algorithm used for the recommender system}\label{subsec:algo}
 % ---RECSYS ALGORITHM ---
-The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achive
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achieve
 this target the system need to be based on a chosen algorithm that will work with the representation of data that
 we have.
 In this section we will analyse which algorithm has been used for the experiment and what are the settings
@@ -250,7 +259,7 @@ The algorithm used is NX Page Rank.
 \end{itemize}
 \hfill\break
 \hfill\break
-The type of graph used in the algorithm is a rank,
+The type of graph used in the algorithm is a: NXFullGraph,
 the mode used is rank and the number of recommendation given is
 None.
 \hfill\break
@@ -262,25 +271,23 @@ None.
 
 
 
-% --------------------- OPENING THE EVALUATION MODULE SECTION -------------------------------------
-\section{EVALUATION MODULE}\label{sec:eva-module}
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
 The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
 using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
 recommendation and find out which are the strength points and which the weak ones.
 
 \subsection{Metrics}\label{subsec:metrics}
 % --- Metrics ---
-During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluete
-the performace of the system.
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
 The metrics used are the followings:
 \hfill\break
 \hfill\break
 
-
-% ------------------ CLASSIFICATION METRICS STARTED ------------------------------------
-
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
 % Precision report start
-\subsubsection{Precision}\label{sec:precision}
+\subsubsection{Precision}\label{subsubsec:precision}
 In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -304,15 +311,12 @@ If not specified, the mean rating score of every user will be used, in this expe
 \textbf{None}.
 \hfill\break
 \hfill\break
-% precision report ended______
-
-
-
+% precision report ended___
 
 
 
 % PRECISION @K REPORT start
-\subsubsection{Precision@K}\label{sec:prec-k}
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
 The Precision@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -352,13 +356,11 @@ During the experiment Precision@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% precision@k report end______
-
-
+% precision@k report end___
 
 
 % FMEASURE @K REPORT start
-\subsubsection{FMeasure@K }\label{sec:f-meas-k}
+\subsubsection{FMeasure@K }\label{subsubsec:f-meas-k}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -413,24 +415,18 @@ During the experiment FMeasure@K has been used with the following settings:
 \end{itemize}
 \hfill\break
 \hfill\break
-% fmeasure@k report end_______
-
+% fmeasure@k report end___
 
 % <----- classification metrics end ------->
 
-% ------------------ ERROR METRICS STARTED -------------------------------------------
-
-
-
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
 
 
 % <------ error metrics ended -------->
 
-
-% ------------------------ RANKING METRICS STARTED ----------------------------------------
-
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
 % Normalized Discounted Cumulative Gain REPORT start
-\subsubsection{NDCG}\label{sec:ndcg}
+\subsubsection{NDCG}\label{subsubsec:ndcg}
 The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
 by first computing the DCG score using the following formula:
 \hfill\break
@@ -492,13 +488,11 @@ Finally, the NDCG of the entire system is calculated instead as such:
 The system average excludes NaN values.
 \hfill\break
 \hfill\break
-% ndcg report end______
-
-
+% ndcg report end___
 
 
 % MRR REPORT start
-\subsubsection{MRR}\label{sec:mrr}
+\subsubsection{MRR}\label{subsubsec:mrr}
 The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
 and not those of every user.
 MRR is calculated as such:
@@ -525,79 +519,69 @@ In this experiment, the relevant threshold used is
 None.
 \hfill\break
 \hfill\break
-% mrr report end_______
-
-
-
-
+% mrr report end___
 
 
 
 
 % <------- ranking metrics ended ------->
 
-
-% ------------------------- FAIRNESS METRICS ------------------------------------
-
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
 
 
 
+% <------- fairness metrics end ------>
 
-
-% <----- fairness metrics end ------>
-
-
-% --------------------------------- PLOT METRICS STARTED ----------------------------------------------
-
-
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
 
 
 % <------- plot metric end ----------->
 
-% ---------------------- closing the only metric section -------------------------
+% <---------------------- closing the only metric section ------------------------->
 
 
 
-% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
-\subsection{Results}\label{sec:results}
-In the following table, we present the results of the evaluation \ref{tab:results_table}
-\begin{table}[!hbp]\label{tab:results_table}
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Metric}& \textbf{Value} \\ \hline
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - fold1}\label{subsec:sys - fold1}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - fold1}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
         Precision - macro & 0.55697\\ \hline
                                         NDCG  & 0.93529\\ \hline
             MRR  & 0.79602\\ \hline
-                        MRR & 0.79602\\ \hline
-                  \end{tabular}
-  \caption{Table of the results}
-\end{table}
+                                 \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - fold1}
+\end{center}
 \hfill\break
 \hfill\break
-% end table of performance on the fold_________
+% end table of performance on the fold___
 
 
 
-% ---------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ---------------
-\subsection{Results}\label{sec:results}
-In the following table, we present the results of the evaluation \ref{tab:results_table}
-\begin{table}[!hbp]\label{tab:results_table}
-    \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    \textbf{Metric}& \textbf{Value} \\ \hline
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - mean}\label{subsec:sys - mean}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - mean}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
         Precision - macro & 0.55697\\ \hline
                                         NDCG  & 0.93529\\ \hline
             MRR  & 0.79602\\ \hline
-                        MRR & 0.79602\\ \hline
-                  \end{tabular}
-  \caption{Table of the results}
-\end{table}
+                                 \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - mean}
+\end{center}
 \hfill\break
 \hfill\break
-% end table of performance on the fold_________
-
+% end table of performance on the fold___
 
 
 
@@ -605,8 +589,8 @@ In the following table, we present the results of the evaluation \ref{tab:result
 
 
 
-\section{CONCLUSION ON THE EXPERIMENT}\label{sec:conclution}
-This part is for conclution to be sum up as needed.
+\section{Conclusion on the experiment}\label{sec:conclution}
+This part is for conclusion to be sum up as needed.
 \hfill\break
 \hfill\break
 
