@@ -29,18 +29,18 @@ CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_classifierRecommender.yml"
 RS_YML = "../data/data_to_test/rs_report_classifierRecommender.yml"
 """
-"""
+
 # test with yml of Index query
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_indexQuery.yml"
 RS_YML = "../data/data_to_test/rs_report_indexQuery.yml"
-"""
 
+"""
 # test with yml of linear predictor
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_linearPredictor.yml"
 RS_YML = "../data/data_to_test/rs_report_linearPredictor.yml"
-
+"""
 # PATH USED TO TEXT THE SCRIPT
 # CA_YML = "../data/ca_report.yml"
 # EVA_YML = "../data/eva_report.yml"

@@ -28,13 +28,20 @@ from jinja2 import Undefined
 # DATA_FILE = "data/ca_report.yml"
 OUTPUT_TEX = "output/report.TEX"
 OUTPUT_PATH = "output/report.pdf"
+"""
 LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
                    "data/data_to_test/rs_report_linearPredictor.yml",
                    "data/data_to_test/eva_report_linearPredictor.yml"]
+"""
+# test with yml of Index query
+LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
+                   "data/data_to_test/rs_report_indexQuery.yml",
+                   "data/data_to_test/eva_report_indexQuery.yml"]
+
 
 # LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
 # TEMPLATE_FILE = "report_templateNew.tex"
-TEMPLATE_FILE = "dynamic_rep_amarSingleSource_NXpageRank.tex"
+TEMPLATE_FILE = "dynamic_fin_rep.tex"
 
 
 # setting environment based on latex needs
@@ -301,9 +308,9 @@ def generate_pdf_output(output_path):
 
 
 def main():
-    input_yaml = merge_yaml_files(LIST_YAML_FILES, "data", "finale_unify_report.yml")
-    latex_file_to_compile = generate_tex_output(input_yaml,
-                                                "output/dynamic_output_latex/dyn_rep_amarSingleSource_NXpageRank.tex")
+    folder = "output/final_report.tex"
+    input_yaml = merge_yaml_files(LIST_YAML_FILES, "data", "final_report_yml.yml")
+    latex_file_to_compile = generate_tex_output(input_yaml, folder)
     # generate_pdf_output(latex_file_to_compile, output_folder=None)
     print("Generating Report PDF File...")
     print(latex_file_to_compile)
