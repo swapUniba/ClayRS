@@ -148,8 +148,7 @@ def recursive_print_dict(d, indent=0):
             print("\t" * indent, f"{k}:{v}")
 
 
-# sembra che questa funzione sia abbastanza inutile essendo che abbiamo già un ambiente jinja
-# definito ad inizio di questo file di script @ Diego
+
 def get_latex_template():
     '''template_loader = jinja2.FileSystemLoader(searchpath="templates")
     template_env = jinja2.Environment(loader=template_loader)

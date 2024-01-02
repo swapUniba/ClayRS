@@ -4,10 +4,8 @@ import pdfkit
 import os
 from flask import render_template
 import json
-#-------------aggiunta di librerie
 # import weasyprint
 # from weasyprint import html
-
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -19,27 +17,27 @@ from bs4 import BeautifulSoup
 from formForDoc import HTMLToPDFParser, HTMLToPDF
 from report.formForDoc import HTMLToPDFParser
 
-# template non indentato
+# this template do not present indentation this allows to have a better rendering
 # TEMPLATE_FILE = "report_template_not_indented.html"
-# template indentato
+# this is the template indented to clearly understand how jinja statement works
 TEMPLATE_FILE = "report_template_indented.html"
 # TEMPLATE_FILE = "report_template.html"
 # TEMPLATE_FILE = "templates/report_template.html"
 # TEMPLATE_FILE = "report_template.tex"
 
-# il report del modulo evaluation
+# report of eva module, recsys module and content analyzer module
 DATA_FILE = "data/eva_report.yml"
-# il report del modulo recsys
 # DATA_FILE = "data/rs_report.yml"
-# il report del modulo content analyzer
 # DATA_FILE = "data/ca_report.yml"
+# path used to direct the creation of the report
 OUTPUT_HTML = "output/report.html"
 OUTPUT_PATH = "output/report.pdf"
+
+# used to deal with yaml file, another similar list can be used with more yaml file
 LIST_YAML_FILES = [ "data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml" ]
 
 
-# aggiunta ------------------------------------------
-
+# We define the environment for jinja in order to state which are the statement
 LATEX_JINJA_ENV = jinja2.Environment(
     block_start_string="{%",
     block_end_string="%}",
@@ -69,6 +67,7 @@ def truncate(text: str) -> str:
     return text
 
 
+# adding the filter created to the environment of jinja
 LATEX_JINJA_ENV.filters["safe_text"] = safe_text
 LATEX_JINJA_ENV.filters["truncate"] = truncate
 
@@ -112,9 +111,8 @@ def merge_yaml_files(input_paths_list, output_folder, output_filename):
 
     return output_path
 
-# prima funzione per la conversione da html a pdf in questo caso siamo
-# riusciti a generare il pdf con il contenuto del html ma non vi è alcuna formattazione
-# documeto anche in questo caso orribile
+# First function for the conversion from HTML to PDF, in this case we managed to generate the PDF
+# with the content of the HTML, but there is no formatting in the document, making it look horrible
 def html_to_pdf(input_html_path, output_pdf_path):
     """
        Convert the text in a file HTML to a text in a file PDF.
@@ -159,9 +157,10 @@ def html_to_pdf(input_html_path, output_pdf_path):
     except Exception as e:
         print(f"Error inspected during conversion: {e}")
 
-# Questa funzione è la seconda per la conversione da html a pdf e utilizza il modulo
-# formForDoc nel quale sono presenti classi per la genstione dei tag html per la
-# conversione del documeto in pdf [RISULTATI ORRIBILI POER LA FORMATTAZIONE]
+
+# This function is the second for converting from HTML to PDF and uses the formForDoc module,
+# in which there are classes for handling HTML tags for document conversion to PDF
+# [HORRIBLE RESULTS FOR FORMATTING].
 def html_to_pdf2(html_path, pdf_path):
     pdf = HTMLToPDF()
     pdf.add_page()
@@ -199,26 +198,24 @@ def create_html_output(path_data_in, output_html_path):
     print(output_text)
 
     try:
-        # Estrai il percorso della directory dal percorso del file HTML
+        # Extract the directory path from the HTML file path
         output_directory = os.path.dirname(output_html_path)
 
-        # Verifica se la directory di output esiste, altrimenti crea la directory
+        # Check if the output directory exists; otherwise, create the directory.
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        # Scrivi il contenuto sul file HTML
+        # write the content on the HTML file
         with open(output_html_path, 'w') as ofile:
             ofile.write(output_text)
 
-        # Restituisci il percorso del file scritto
+        # Return the path of the written file.
         return output_html_path
 
     except Exception as e:
         print(f"Error during writing file HTML: {e}")
         return None
 
-
-# aggiunta ------------------------------------------
 
 def get_data(path_file):
     with open(path_file, 'r') as stream:
@@ -283,6 +280,7 @@ def generate_pdf_output(path_data_in):
                      output_path=OUTPUT_PATH,
                      options=options)
 """
+
 
 def main():
     input_file = merge_yaml_files(LIST_YAML_FILES, "report/personal_change_dir", "final_report_yaml")

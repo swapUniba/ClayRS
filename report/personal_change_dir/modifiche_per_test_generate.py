@@ -1,7 +1,7 @@
 import os
 import yaml
 
-from report.test_generate import get_data  # òa funzione get_data() è stato definita appositamente per la funzione di unificazione
+from report.text_generate_html import get_data  # òa funzione get_data() è stato definita appositamente per la funzione di unificazione
                                            # non dovrebbe essere cambiato nulla su di essa
 
 
