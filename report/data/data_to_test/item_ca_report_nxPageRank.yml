@@ -8,12 +8,12 @@ exogenous_representations:
     prop_as_uri: false
     max_timeout: 5
 field_representations:
-  plot/0:
+  plot0:
     OriginalData:
       dtype: <class 'str'>
     preprocessing: null
     postprocessing: null
-  plot/1:
+  plot1:
     WhooshTfIdf: {}
     preprocessing:
       Spacy:
@@ -27,7 +27,7 @@ field_representations:
         url_tagging: false
         named_entity_recognition: false
     postprocessing: null
-  plot/2:
+  plot2:
     SkLearnTfIdf:
       max_df: 1.0
       min_df: 1
@@ -65,59 +65,59 @@ field_representations:
         pos_tag: false
         lang: english
     postprocessing: null
-  plot/3:
+  plot3:
     WordEmbeddingTechnique:
       embedding_source: Gensim glove-twitter-25
     preprocessing: null
     postprocessing: null
-  plot/4:
+  plot4:
     SentenceEmbeddingTechnique:
       embedding_source: Sbert paraphrase-distilroberta-base-v1
     preprocessing: null
     postprocessing: null
-  plot/5:
+  plot5:
     DocumentEmbeddingTechnique:
       embedding_source: Sbert paraphrase-distilroberta-base-v1
     preprocessing: null
     postprocessing: null
-  plot/6:
+  plot6:
     Word2SentenceEmbedding:
       embedding_source: Gensim glove-twitter-25
       combining_technique: Centroid
     preprocessing: null
     postprocessing: null
-  plot/7:
+  plot7:
     Word2DocEmbedding:
       embedding_source: Gensim glove-twitter-25
       combining_technique: Centroid
     preprocessing: null
     postprocessing: null
-  plot/8:
+  plot8:
     Sentence2DocEmbedding:
       embedding_source: Sbert paraphrase-distilroberta-base-v1
       combining_technique: Centroid
     preprocessing: null
     postprocessing: null
-  plot/9:
+  plot9:
     PyWSDSynsetDocumentFrequency: {}
     preprocessing: null
     postprocessing: null
-  plot/10:
+  plot10:
     OriginalData:
       dtype: <class 'str'>
     preprocessing: null
     postprocessing: null
-  plot/11:
+  plot11:
     OriginalData:
       dtype: <class 'str'>
     preprocessing: null
     postprocessing: null
-  idx/0:
+  idx0:
     FromNPY:
       npy_file_path: report_stuff\report.npy
     preprocessing: null
     postprocessing: null
-  video_path/0:
+  video_path0:
     SkImageHogDescriptor:
       orientations: 9
       pixels_per_cell:
@@ -140,7 +140,7 @@ field_representations:
       TorchUniformTemporalSubSampler:
         num_samples: 8
     postprocessing: null
-  video_path/1:
+  video_path1:
     MFCC:
       contents_dirs: contents_dirs
       time_tuple:
@@ -215,7 +215,7 @@ field_representations:
           tol: 0.0
           iterated_power: auto
           random_state: null
-  video_path/2:
+  video_path2:
     VGGISH:
       feature_layer: embedding_network.5
       flatten: true
@@ -288,7 +288,7 @@ field_representations:
           tol: 0.0
           iterated_power: auto
           random_state: null
-  video_path/3:
+  video_path3:
     PytorchImageModels:
       model_name: densenet161
       feature_layer: head_drop
@@ -381,7 +381,7 @@ field_representations:
           tol: 0.0
           iterated_power: auto
           random_state: null
-  video_path/4:
+  video_path4:
     TorchVisionVideoModels:
       model_name: r2plus1d_18
       feature_layer: avgpool

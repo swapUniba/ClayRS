@@ -4,10 +4,47 @@ import shutil
 import yaml
 from datetime import datetime
 
+# NEEDED TO TEST THE SCRIPT
+"""
+# test with yml of amar single source
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_amarSingleSource.yml"
+RS_YML = "../data/data_to_test/rs_report_amarSingleSource.yml"
+"""
+"""
+# test with yml of amar double source
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_armarDoubleSource.yml"
+RS_YML = "../data/data_to_test/rs_report_amarDoubleSource.yml"
+"""
+"""
+# test with yml of centroid vector
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_centroidVector.yml"
+RS_YML = "../data/data_to_test/rs_report_centroidVector.yml"
+"""
+"""
+# test with yml of classifier recommender
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_classifierRecommender.yml"
+RS_YML = "../data/data_to_test/rs_report_classifierRecommender.yml"
+"""
+"""
+# test with yml of Index query
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_indexQuery.yml"
+RS_YML = "../data/data_to_test/rs_report_indexQuery.yml"
+"""
+
+# test with yml of linear predictor
+CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
+EVA_YML = "../data/data_to_test/eva_report_linearPredictor.yml"
+RS_YML = "../data/data_to_test/rs_report_linearPredictor.yml"
+
 # PATH USED TO TEXT THE SCRIPT
-CA_YML = "../data/ca_report.yml"
-EVA_YML = "../data/eva_report.yml"
-RS_YML = "../data/rs_report.yml"
+# CA_YML = "../data/ca_report.yml"
+# EVA_YML = "../data/eva_report.yml"
+# RS_YML = "../data/rs_report.yml"
 
 # dictionary to find the path for mini template chunks of content analyzer
 # the key are the key found in the yaml file for content analyzer and the
@@ -26,7 +63,7 @@ CA_DICT = {
     'FromNPY': './templates_chunks/templates_ca_mini_chunks/FromNPY_tech_ca.tex',
     'SkImageHogDescriptor': './templates_chunks/templates_ca_mini_chunks/SkImgHogDescr_tech_ca.tex',
     'MFCC': './templates_chunks/templates_ca_mini_chunks/mfcc_tech_ca.tex',
-    'VGGISH:': './templates_chunks/templates_ca_mini_chunks/TorchVVM_tech_ca.tex',
+    'VGGISH': './templates_chunks/templates_ca_mini_chunks/TorchVVM_tech_ca.tex',
     'PytorchImageModels': './templates_chunks/templates_ca_mini_chunks/PytorchImgMod_tech_ca.tex',
     'TorchVisionVideoModels': './templates_chunks/templates_ca_mini_chunks/TorchVVM_tech_ca.tex',
     'Spacy': './templates_chunks/templates_ca_mini_chunks/spacy_prepro_ca.tex',
@@ -51,7 +88,6 @@ CA_DICT = {
     'postprocessing': './templates_chunks/templates_ca_mini_chunks/no_postprocessing_ca.tex',
     'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex'
 }
-
 
 RS_DICT = {
     'recsys': './templates_chunks/templates_rs/recsys_template_complete.tex'
@@ -153,6 +189,21 @@ def get_subkeys_at_path(dictionary: object, *keys_in_order: object) -> object:
     subkeys_at_path = []
 
     def explore_dictionary(current_dict, current_keys):
+        if len(current_keys) == 0 or current_dict is None:
+            return
+
+        if isinstance(current_dict, dict) and current_keys[0] in current_dict:
+            next_dict = current_dict[current_keys[0]]
+
+            if next_dict is not None:
+                if len(current_keys) == 1:
+                    subkeys_at_path.extend(next_dict.keys())
+                else:
+                    explore_dictionary(next_dict, current_keys[1:])
+
+
+"""
+    def explore_dictionary(current_dict, current_keys):
         if len(current_keys) == 0:
             return
 
@@ -164,6 +215,7 @@ def get_subkeys_at_path(dictionary: object, *keys_in_order: object) -> object:
 
     explore_dictionary(dictionary, keys_in_order)
     return subkeys_at_path
+    """
 
 
 def read_yaml_file(file_path):
@@ -271,6 +323,8 @@ def build_final_latex_file(file_destination):
         # extraction of the field being analyzed
         list_of_field = get_keys_at_level(ca_dict, "field_representations")
 
+        print(list_of_field)
+
         # dealing with all field that have been represented with content analyzer
         for field in list_of_field:
             # add the highlight field in the report
@@ -278,6 +332,8 @@ def build_final_latex_file(file_destination):
 
             # list of primary subkey of key field
             processing_list = get_keys_at_level(ca_dict, field)
+
+            print(processing_list)
 
             # dealing with all process applied to a specific field --> dealing with field subkeys
             for process in processing_list:
@@ -343,5 +399,3 @@ def build_final_latex_file(file_destination):
 if __name__ == "__main__":
     build_final_latex_file("./dynamic_fin_rep.tex")
     print()
-
-

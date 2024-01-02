@@ -34,7 +34,7 @@ LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
 
 # LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
 # TEMPLATE_FILE = "report_templateNew.tex"
-TEMPLATE_FILE = "dynamic_fin_rep.tex"
+TEMPLATE_FILE = "dynamic_rep_amarSingleSource_NXpageRank.tex"
 
 
 # setting environment based on latex needs
@@ -302,7 +302,8 @@ def generate_pdf_output(output_path):
 
 def main():
     input_yaml = merge_yaml_files(LIST_YAML_FILES, "data", "finale_unify_report.yml")
-    latex_file_to_compile = generate_tex_output(input_yaml, "output/report_new_latex.tex")
+    latex_file_to_compile = generate_tex_output(input_yaml,
+                                                "output/dynamic_output_latex/dyn_rep_amarSingleSource_NXpageRank.tex")
     # generate_pdf_output(latex_file_to_compile, output_folder=None)
     print("Generating Report PDF File...")
     print(latex_file_to_compile)
