@@ -18,7 +18,7 @@ from jinja2 import Undefined
 # template indentato
 # TEMPLATE_FILE = "report_template_indented.html"
 # TEMPLATE_FILE = "report_template.html"
-# TEMPLATE_FILE = "templates/report_template.html"
+# TEMPLATE_FILE = "templates_latex/report_template.html"
 # TEMPLATE_FILE = "report_template.tex"
 # il report del modulo evaluation
 # DATA_FILE = "data/eva_report.yml"
@@ -42,7 +42,7 @@ LATEX_JINJA_ENV = jinja2.Environment(
     comment_end_string="}",
     trim_blocks=True,
     autoescape=False,
-    loader=jinja2.FileSystemLoader(searchpath="templates"),
+    loader=jinja2.FileSystemLoader(searchpath="templates_latex"),
 )
 
 
@@ -150,7 +150,7 @@ def recursive_print_dict(d, indent=0):
 
 
 def get_latex_template():
-    '''template_loader = jinja2.FileSystemLoader(searchpath="templates")
+    '''template_loader = jinja2.FileSystemLoader(searchpath="templates_latex")
     template_env = jinja2.Environment(loader=template_loader)
     # define new delimiters to avoid TeX conflicts
     template_env.block_start_string = '\BLOCK{'

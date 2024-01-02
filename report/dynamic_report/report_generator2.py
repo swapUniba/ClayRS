@@ -11,7 +11,7 @@ RS_YML = "../data/rs_report.yml"
 
 # dictionary to find the path for mini template chunks of content analyzer
 # the key are the key found in the yaml file for content analyzer and the
-# value are the path to the corresponding templates.
+# value are the path to the corresponding templates_latex.
 CA_DICT = {
     'OriginalData': './templates_chunks/templates_ca_mini_chunks/OriginalData_techniques_ca.tex',
     'WhooshTfIdf': './templates_chunks/templates_ca_mini_chunks/WhooshTfIdf_techinques_ca.tex',

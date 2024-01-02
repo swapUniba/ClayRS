@@ -33,7 +33,7 @@ LATEX_JINJA_ENV = jinja2.Environment(
     comment_end_string="}",
     trim_blocks=True,
     autoescape=False,
-    loader=jinja2.FileSystemLoader(searchpath="templates"),
+    loader=jinja2.FileSystemLoader(searchpath="templates_latex"),
 )
 
 
@@ -98,7 +98,7 @@ def recursive_print_dict(d, indent=0):
 # sembra che questa funzione sia abbastanza inutile essendo che abbiamo già un ambiente jinja
 # definito ad inizio di questo file di script @ Diego
 def get_template():
-    '''template_loader = jinja2.FileSystemLoader(searchpath="templates")
+    '''template_loader = jinja2.FileSystemLoader(searchpath="templates_latex")
     template_env = jinja2.Environment(loader=template_loader)
     # define new delimiters to avoid TeX conflicts
     template_env.block_start_string = '\BLOCK{'

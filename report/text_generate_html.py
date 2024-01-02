@@ -22,7 +22,7 @@ from report.formForDoc import HTMLToPDFParser
 # this is the template indented to clearly understand how jinja statement works
 TEMPLATE_FILE = "report_template_indented.html"
 # TEMPLATE_FILE = "report_template.html"
-# TEMPLATE_FILE = "templates/report_template.html"
+# TEMPLATE_FILE = "templates_latex/report_template.html"
 # TEMPLATE_FILE = "report_template.tex"
 
 # report of eva module, recsys module and content analyzer module
@@ -47,7 +47,7 @@ LATEX_JINJA_ENV = jinja2.Environment(
     comment_end_string="#}",
     trim_blocks=True,
     autoescape=False,
-    loader=jinja2.FileSystemLoader(searchpath="personal_change_dir"),
+    loader=jinja2.FileSystemLoader(searchpath="templates_html"),
 )
 
 
@@ -227,7 +227,7 @@ def get_data(path_file):
 
 def get_template():
     # searchpath necessita la cartella ove si trova il file di interesse
-    # template_loader = jinja2.FileSystemLoader(searchpath="personal_change_dir")
+    # template_loader = jinja2.FileSystemLoader(searchpath="templates_html")
     # template_env = jinja2.Environment(loader=template_loader)
     return LATEX_JINJA_ENV.get_template(TEMPLATE_FILE)
 
@@ -283,7 +283,7 @@ def generate_pdf_output(path_data_in):
 
 
 def main():
-    input_file = merge_yaml_files(LIST_YAML_FILES, "report/personal_change_dir", "final_report_yaml")
+    input_file = merge_yaml_files(LIST_YAML_FILES, "report/templates_html", "final_report_yaml")
     input_html = create_html_output(input_file, OUTPUT_HTML)
     html_to_pdf2(input_html, OUTPUT_PATH )
     print("Generating Report PDF File...")
