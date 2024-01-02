@@ -1,0 +1,143 @@
+n_split: 2
+metrics:
+  Precision:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  Recall:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  FMeasure:
+    beta: 1
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  GiniIndex:
+    top_n: null
+  NDCG: {}
+  RPrecision:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  RMSE: {}
+  MSE: {}
+  MAE: {}
+  MRR:
+    relevant_threshold: null
+  MAP:
+    relevant_threshold: null
+  CatalogCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+    top_n: null
+    k: null
+  PopRecsCorrelation:
+    out_dir: .
+    file_name: pop_recs_correlation
+    mode: both
+    format: png
+    overwrite: false
+  PredictionCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+  LongTailDistr:
+    out_dir: .
+    file_name: long_tail_distr
+    'on': truth
+    format: png
+    overwrite: false
+  Correlation:
+    method: pearson
+    top_n: null
+  PrecisionAtK:
+    k: 5
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  RecallAtK:
+    k: 5
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  FMeasureAtK:
+    k: 5
+    beta: 1
+    relevant_threshold: null
+    sys_average: micro
+    precision: <class 'numpy.float64'>
+  MRRAtK:
+    relevant_threshold: null
+  NDCGAtK:
+    k: 5
+sys_results:
+  sys - fold1:
+    Precision - macro: 0.75
+    Recall - macro: 1.0
+    F1 - macro: 0.8333333333333333
+    Gini: 0.0
+    NDCG: 1.0
+    R-Precision - macro: 1.0
+    RMSE: 2.3748379660187444
+    MSE: 7.0741956597968105
+    MAE: 2.3220587596297264
+    MRR: 1.0
+    MAP: 1.0
+    CatalogCoverage (PredictionCov): 66.67
+    PredictionCoverage: 66.67
+    pearson: 1.0
+    Precision@5 - macro: 0.75
+    Recall@5 - macro: 1.0
+    F1@5 - micro: 0.8571428571428571
+    MRR@5: 1.0
+    NDCG@5: 1.0
+  sys - fold2:
+    Precision - macro: 1.0
+    Recall - macro: 1.0
+    F1 - macro: 1.0
+    Gini: 0.0
+    NDCG: 1.0
+    R-Precision - macro: 1.0
+    RMSE: 2.0064101964235306
+    MSE: 4.277370052902711
+    MAE: 2.0064101964235306
+    MRR: 1.0
+    MAP: 1.0
+    CatalogCoverage (PredictionCov): 33.33
+    PredictionCoverage: 33.33
+    pearson: .nan
+    Precision@5 - macro: 1.0
+    Recall@5 - macro: 1.0
+    F1@5 - micro: 1.0
+    MRR@5: 1.0
+    NDCG@5: 1.0
+  sys - mean:
+    Precision - macro: 0.875
+    Recall - macro: 1.0
+    F1 - macro: 0.9166666666666666
+    Gini: 0.0
+    NDCG: 1.0
+    R-Precision - macro: 1.0
+    RMSE: 2.1906240812211375
+    MSE: 5.675782856349761
+    MAE: 2.1642344780266285
+    MRR: 1.0
+    MAP: 1.0
+    CatalogCoverage (PredictionCov): 50.0
+    PredictionCoverage: 50.0
+    pearson: 1.0
+    Precision@5 - macro: 0.875
+    Recall@5 - macro: 1.0
+    F1@5 - micro: 0.9285714285714286
+    MRR@5: 1.0
+    NDCG@5: 1.0

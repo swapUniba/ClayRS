@@ -1,0 +1,41 @@
+interactions:
+  n_users: 2
+  n_items: 6
+  total_interactions: 6
+  sparsity: 0.5
+  min_score: 1.0
+  max_score: 4.0
+  mean_score: 2.6666666666666665
+partitioning:
+  KFoldPartitioning:
+    n_splits: 2
+    shuffle: true
+    random_state: null
+    skip_user_error: true
+recsys:
+  ContentBasedRS:
+    algorithm:
+      AmarDoubleSource:
+        network: <class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkBasic'>
+        item_fields:
+        - plot:
+          - tfidf_sk
+        user_fields:
+        - {}
+        batch_size: 512
+        epochs: 5
+        threshold: 4
+        additional_opt_parameters:
+          batch_size: 512
+        train_loss: <function binary_cross_entropy at 0x00000234EC9A3760>
+        optimizer_class: <class 'torch.optim.adam.Adam'>
+        device: cuda:0
+        embedding_combiner:
+          Centroid: {}
+        seed: null
+        additional_dl_parameters: {}
+    mode: rank
+    n_recs: '10'
+    methodology:
+      TestRatingsMethodology:
+        only_greater_eq: null

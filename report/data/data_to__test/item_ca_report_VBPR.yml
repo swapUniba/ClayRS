@@ -1,0 +1,476 @@
+source_file: items_extra_small.json
+id_each_content:
+- movielens_id:
+  DBPediaMappingTechnique:
+    mode: only_retrieved_evaluated, entity type=dbo:Film
+    label_field: dbpedia_label
+    prop_as_uri: false
+    max_timeout: 5
+field_representations:
+  plot/0:
+    OriginalData:
+      dtype: <class 'str'>
+    preprocessing: null
+    postprocessing: null
+  plot/1:
+    WhooshTfIdf: {}
+    preprocessing:
+      Spacy:
+        model: en_core_web_sm
+        strip_multiple_whitespace: true
+        remove_punctuation: false
+        stopwords_removal: true
+        new_stopwords: null
+        not_stopwords: null
+        lemmatization: true
+        url_tagging: false
+        named_entity_recognition: false
+    postprocessing: null
+  plot/2:
+    SkLearnTfIdf:
+      max_df: 1.0
+      min_df: 1
+      max_features: null
+      vocabulary: null
+      binary: false
+      dtype: <class 'numpy.float64'>
+      norm: l2
+      use_idf: true
+      smooth_idf: true
+      sublinear_tf: false
+    preprocessing:
+      Ekphrasis:
+        omit: null
+        normalize: null
+        unpack_contractions: false
+        unpack_hashtags: false
+        annotate: null
+        corrector: null
+        tokenizer: <bound method SocialTokenizer.tokenize of <ekphrasis.classes.tokenizer.SocialTokenizer
+          object at 0x00000234F0BDBD00>>
+        segmenter: null
+        all_caps_tag: null
+        spell_correction: true
+        segmentation: false
+        dicts: null
+        spell_correct_elong: true
+      NLTK:
+        strip_multiple_whitespace: true
+        remove_punctuation: false
+        stopwords_removal: true
+        url_tagging: false
+        lemmatization: true
+        stemming: false
+        pos_tag: false
+        lang: english
+    postprocessing: null
+  plot/3:
+    WordEmbeddingTechnique:
+      embedding_source: Gensim glove-twitter-25
+    preprocessing: null
+    postprocessing: null
+  plot/4:
+    SentenceEmbeddingTechnique:
+      embedding_source: Sbert paraphrase-distilroberta-base-v1
+    preprocessing: null
+    postprocessing: null
+  plot/5:
+    DocumentEmbeddingTechnique:
+      embedding_source: Sbert paraphrase-distilroberta-base-v1
+    preprocessing: null
+    postprocessing: null
+  plot/6:
+    Word2SentenceEmbedding:
+      embedding_source: Gensim glove-twitter-25
+      combining_technique: Centroid
+    preprocessing: null
+    postprocessing: null
+  plot/7:
+    Word2DocEmbedding:
+      embedding_source: Gensim glove-twitter-25
+      combining_technique: Centroid
+    preprocessing: null
+    postprocessing: null
+  plot/8:
+    Sentence2DocEmbedding:
+      embedding_source: Sbert paraphrase-distilroberta-base-v1
+      combining_technique: Centroid
+    preprocessing: null
+    postprocessing: null
+  plot/9:
+    PyWSDSynsetDocumentFrequency: {}
+    preprocessing: null
+    postprocessing: null
+  plot/10:
+    OriginalData:
+      dtype: <class 'str'>
+    preprocessing: null
+    postprocessing: null
+  plot/11:
+    OriginalData:
+      dtype: <class 'str'>
+    preprocessing: null
+    postprocessing: null
+  idx/0:
+    FromNPY:
+      npy_file_path: report_stuff\report.npy
+    preprocessing: null
+    postprocessing: null
+  video_path/0:
+    SkImageHogDescriptor:
+      orientations: 9
+      pixels_per_cell:
+      - 8
+      - 8
+      cells_per_block:
+      - 3
+      - 3
+      block_norm: L2-Hys
+      transform_sqrt: false
+      flatten: false
+      contents_dirs: contents_dirs
+      time_tuple:
+      - 0
+      - null
+      max_timeout: 2
+      max_retries: 5
+      max_workers: 0
+    preprocessing:
+      TorchUniformTemporalSubSampler:
+        num_samples: 8
+    postprocessing: null
+  video_path/1:
+    MFCC:
+      contents_dirs: contents_dirs
+      time_tuple:
+      - 0
+      - null
+      flatten: false
+      mean: false
+      max_timeout: 2
+      max_retries: 5
+      max_workers: 0
+      n_mfcc: 40
+      dct_type: 2
+      norm: ortho
+      log_mels: false
+      melkwargs: null
+    preprocessing:
+      TorchResample:
+        new_freq: 16000
+        resampling_method: sinc_interp_hann
+        lowpass_filter_width: 6
+        rolloff: 0.99
+        beta: null
+      ConvertToMono: {}
+    postprocessing:
+      0: {}
+      1:
+        FVGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: true
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      2:
+        VLADGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: false
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      3:
+        SkLearnPCA:
+          n_components: 1
+          copy: true
+          whiten: false
+          svd_solver: auto
+          tol: 0.0
+          iterated_power: auto
+          random_state: null
+  video_path/2:
+    VGGISH:
+      feature_layer: embedding_network.5
+      flatten: true
+      device: cuda:0
+      apply_on_output: null
+      contents_dirs: contents_dirs
+      time_tuple:
+      - 0
+      - null
+      max_timeout: 2
+      max_retries: 5
+      max_workers: 0
+      batch_size: 1
+    preprocessing:
+      TorchResample:
+        new_freq: 16000
+        resampling_method: sinc_interp_hann
+        lowpass_filter_width: 6
+        rolloff: 0.99
+        beta: null
+      ConvertToMono: {}
+    postprocessing:
+      0: {}
+      1:
+        FVGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: true
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      2:
+        VLADGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: false
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      3:
+        SkLearnPCA:
+          n_components: 1
+          copy: true
+          whiten: false
+          svd_solver: auto
+          tol: 0.0
+          iterated_power: auto
+          random_state: null
+  video_path/3:
+    PytorchImageModels:
+      model_name: densenet161
+      feature_layer: head_drop
+      flatten: true
+      device: cuda:0
+      apply_on_output: null
+      contents_dirs: contents_dirs
+      time_tuple:
+      - 0
+      - 10
+      custom_weights_path: null
+      use_default_transforms: false
+      num_classes: null
+      max_timeout: 2
+      max_retries: 5
+      max_workers: 0
+      batch_size: 4
+    preprocessing:
+      TorchUniformTemporalSubSampler:
+        num_samples: 8
+      Resize:
+        size:
+        - 256
+        - 256
+        interpolation: bilinear
+        max_size: null
+        antialias: null
+      CenterCrop:
+        size:
+        - 224
+        - 224
+      Lambda: {}
+      Normalize:
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+    postprocessing:
+      0: {}
+      1:
+        FVGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: true
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      2:
+        VLADGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: false
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      3:
+        SkLearnPCA:
+          n_components: 1
+          copy: true
+          whiten: false
+          svd_solver: auto
+          tol: 0.0
+          iterated_power: auto
+          random_state: null
+  video_path/4:
+    TorchVisionVideoModels:
+      model_name: r2plus1d_18
+      feature_layer: avgpool
+      weights: DEFAULT
+      flatten: true
+      device: cuda:0
+      apply_on_output: null
+      contents_dirs: contents_dirs
+      time_tuple:
+      - 0
+      - 10
+      max_timeout: 2
+      max_retries: 5
+      max_workers: 0
+      batch_size: 4
+      mini_batch_size: 10
+    preprocessing:
+      ClipSampler:
+        num_frames_for_clip: 16
+        num_clips: 5
+        selection_strategy: sequential
+      Resize:
+        size:
+        - 128
+        - 171
+        interpolation: bilinear
+        max_size: null
+        antialias: null
+      CenterCrop:
+        size:
+        - 112
+        - 112
+      Lambda: {}
+      Normalize:
+        mean:
+        - 0.43216
+        - 0.394666
+        - 0.37645
+        std:
+        - 0.22803
+        - 0.22145
+        - 0.216989
+    postprocessing:
+      0: {}
+      1:
+        FVGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: true
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      2:
+        VLADGMM:
+          n_components: 2
+          covariance_type: diag
+          tol: 0.001
+          reg_covar: 1.0e-06
+          max_iter: 100
+          n_init: 1
+          init_params: kmeans
+          weights_init: null
+          means_init: null
+          precisions_init: null
+          random_state: null
+          warm_start: false
+          verbose: 0
+          verbose_interval: 10
+          improved: false
+          alpha: 0.5
+          with_mean: false
+          with_std: false
+      3:
+        SkLearnPCA:
+          n_components: 1
+          copy: true
+          whiten: false
+          svd_solver: auto
+          tol: 0.0
+          iterated_power: auto
+          random_state: null

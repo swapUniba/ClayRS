@@ -1,0 +1,10 @@
+source_file: users_extra_small.csv
+id_each_content:
+- user_id
+exogenous_representations:
+  PropertiesFromDataset:
+    mode: only_retrieved_evaluated
+    field_name_list:
+    - gender
+    - occupation
+field_representations: {}

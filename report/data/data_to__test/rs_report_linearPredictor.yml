@@ -1,0 +1,29 @@
+interactions:
+  n_users: 2
+  n_items: 6
+  total_interactions: 6
+  sparsity: 0.5
+  min_score: 1.0
+  max_score: 4.0
+  mean_score: 2.6666666666666665
+partitioning:
+  KFoldPartitioning:
+    n_splits: 2
+    shuffle: true
+    random_state: null
+    skip_user_error: true
+recsys:
+  ContentBasedRS:
+    algorithm:
+      LinearPredictor:
+        item_field:
+          plot:
+          - tfidf_sk
+        regressor: SkLinearRegression
+        only_greater_eq: null
+        embedding_combiner: Centroid
+    mode: rank
+    n_recs: '10'
+    methodology:
+      TestRatingsMethodology:
+        only_greater_eq: null

@@ -1,0 +1,121 @@
+n_split: 2
+metrics:
+  Precision:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  Recall:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  FMeasure:
+    beta: 1
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  GiniIndex:
+    top_n: null
+  NDCG: {}
+  RPrecision:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  RMSE: {}
+  MSE: {}
+  MAE: {}
+  MRR:
+    relevant_threshold: null
+  MAP:
+    relevant_threshold: null
+  CatalogCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+    top_n: null
+    k: null
+  PopRecsCorrelation:
+    out_dir: .
+    file_name: pop_recs_correlation
+    mode: both
+    format: png
+    overwrite: false
+  PredictionCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+  LongTailDistr:
+    out_dir: .
+    file_name: long_tail_distr
+    'on': truth
+    format: png
+    overwrite: false
+  Correlation:
+    method: pearson
+    top_n: null
+  PrecisionAtK:
+    k: 5
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  RecallAtK:
+    k: 5
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  FMeasureAtK:
+    k: 5
+    beta: 1
+    relevant_threshold: null
+    sys_average: micro
+    precision: <class 'numpy.float64'>
+  MRRAtK:
+    relevant_threshold: null
+  NDCGAtK:
+    k: 5
+sys_results:
+  sys - fold1:
+    Precision - macro: 1.0
+    Recall - macro: 1.0
+    F1 - macro: 1.0
+    Gini: 0.0
+    NDCG: 1.0
+    R-Precision - macro: 1.0
+    RMSE: 1.5
+    MSE: 2.25
+    MAE: 1.5
+    MRR: 1.0
+    MAP: 1.0
+    CatalogCoverage (PredictionCov): 16.67
+    PredictionCoverage: 16.67
+    Precision@5 - macro: 1.0
+    Recall@5 - macro: 1.0
+    F1@5 - micro: 1.0
+    MRR@5: 1.0
+    NDCG@5: 1.0
+  sys - mean:
+    Precision - macro: 1.0
+    Recall - macro: 1.0
+    F1 - macro: 1.0
+    Gini: 0.0
+    NDCG: 1.0
+    R-Precision - macro: 1.0
+    RMSE: 1.5
+    MSE: 2.25
+    MAE: 1.5
+    MRR: 1.0
+    MAP: 1.0
+    CatalogCoverage (PredictionCov): 16.67
+    PredictionCoverage: 16.67
+    Precision@5 - macro: 1.0
+    Recall@5 - macro: 1.0
+    F1@5 - micro: 1.0
+    MRR@5: 1.0
+    NDCG@5: 1.0
