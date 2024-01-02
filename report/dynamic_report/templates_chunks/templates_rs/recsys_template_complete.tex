@@ -54,10 +54,6 @@ repeated K times, with a different fold used as the validation set in each itera
 The KFoldPartitioning has been used with the following setting:
 \hfill\break
 \hfill\break
-The train set size of this experiment is the \VAR{my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100}\%
-of the original dataset, while the test set is the remaining \VAR{(100 - (my_dict['partitioning']['KFoldPartitioning']['train_set_size'] * 100))}\%.
-\hfill\break
-\hfill\break
 \BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
 The data has been shuffled before being split into batches.
 \BLOCK{endif}

@@ -28,11 +28,16 @@ from jinja2 import Undefined
 # DATA_FILE = "data/ca_report.yml"
 OUTPUT_TEX = "output/report.TEX"
 OUTPUT_PATH = "output/report.pdf"
-LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
+LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
+                   "data/data_to_test/rs_report_linearPredictor.yml",
+                   "data/data_to_test/eva_report_linearPredictor.yml"]
+
+# LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
 # TEMPLATE_FILE = "report_templateNew.tex"
 TEMPLATE_FILE = "dynamic_fin_rep.tex"
 
-# setting enviroment based on latex needs
+
+# setting environment based on latex needs
 LATEX_JINJA_ENV = jinja2.Environment(
     block_start_string="\BLOCK{",
     block_end_string="}",
@@ -146,7 +151,6 @@ def recursive_print_dict(d, indent=0):
             recursive_print_dict(v, indent + 1)
         else:
             print("\t" * indent, f"{k}:{v}")
-
 
 
 def get_latex_template():

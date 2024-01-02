@@ -251,7 +251,7 @@ During the experiment Recall@K has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['FMeasureAtK'] is defined}
 % FMEASURE @K REPORT start
-\subsubsection{FMeasure@K }\label{subsubsec:f-meas-k}
+\subsubsection{FMeasure@K}\label{subsubsec:f-meas-k}
 The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
 It is calculated as such for the \textbf{single user}:
 \hfill\break
@@ -312,7 +312,7 @@ During the experiment FMeasure@K has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['RPrecision'] is defined}
 % R-PRECISION REPORT start
-\subsubsection{R-Precision }\label{subsubsec:r-prec}
+\subsubsection{R-Precision}\label{subsubsec:r-prec}
 The R-Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -360,7 +360,7 @@ During the experiment R-Precision has been used with the following settings:
 \BLOCK{if my_dict['metrics'] is defined and
           my_dict['metrics']['MSE'] is defined}
 % MSE REPORT start
-\subsubsection{MSE }\label{subsubsec:mse}
+\subsubsection{MSE}\label{subsubsec:mse}
 The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
@@ -393,7 +393,8 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
 There may be cases in which some items of the test set of the user could not be predicted
-\textit{eg. a CBRS was chosen and items were not present locally}. In those cases, the $MSE_u$ formula becomes:
+\textit{e.g. a CBRS was chosen and items were not present locally}.
+In those cases, the $MSE_u$ formula becomes:
 \hfill\break
 \hfill\break
     \[
@@ -516,7 +517,7 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
 There may be cases in which some items of the test set of the user could not be predicted
-\textit{eg. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
 In those cases, the $MAE_u$ formula becomes:
 \hfill\break
 \hfill\break
@@ -567,8 +568,8 @@ by first computing the DCG score using the following formula:
 \end{itemize}
 \hfill\break
 \hfill\break
-If $f$ is "linear", then the truth score $r$ is returned as is. Otherwise, in the "exponentia" case, the following
-formula is applied to $r$:
+If $f$ is "linear", then the truth score $r$ is returned as is.
+Otherwise, in the "exponentia" case, the following formula is applied to $r$:
 \hfill\break
 \hfill\break
     \[
@@ -647,9 +648,9 @@ MRR is calculated as such:
 \hfill\break
 \hfill\break
 % ATTENTION here we modified with \_ in case change
-The MRR metric needs to discern relevant items from the not relevant ones. To achieve this, one could pass a
-custom \texttt{relevant\_threshold} parameter that will be applied to every user. If the rating of an item
-is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
+The MRR metric needs to discern relevant items from the not relevant ones.
+To achieve this, one could pass a custom \texttt{relevant\_threshold} parameter that will be applied to every user.
+If the rating of an item is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
 If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
 In this experiment, the relevant threshold used is
 \VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
@@ -663,7 +664,8 @@ In this experiment, the relevant threshold used is
 % MRR@K REPORT start
 \subsubsection{MRR@K}\label{subsubsec:mrr-k}
 The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
-not those of every user. MRR@K is calculated as such:
+not those of every user.
+MRR@K is calculated as such:
 \hfill\break
 \hfill\break
     \[
@@ -718,8 +720,8 @@ After computing the AP for each user, we can compute the MAP for the whole syste
 \hfill\break
 \hfill\break
 This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
-computed for the whole system in the dataframe containing system results. In this experiment the MAP has been calculeted
-using a relevant threshold:
+computed for the whole system in the dataframe containing system results.
+In this experiment the MAP has been calculeted using a relevant threshold:
 \VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
@@ -796,7 +798,7 @@ The correlation metric is calculated as such for the \textbf{single user}:
 \end{itemize}
 \hfill\break
 \hfill\break
-The ideal ranking is calculated based on the rating inside the *ground truth* of the user.
+The ideal ranking is calculated based on the rating inside the ground truth of the user.
 The Correlation metric calculated for the entire system is simply the average of every $Corr$:
 \hfill\break
 \hfill\break
@@ -814,8 +816,8 @@ The Correlation metric calculated for the entire system is simply the average of
 \hfill\break
 % ATTETNION here there are already \_
 The system average excludes NaN values.
-It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter. If specified, only the first
-$n$ results of the recommendation list will be used to calculate the correlation.
+It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter.
+If specified, only the first $n$ results of the recommendation list will be used to calculate the correlation.
 For this experiment, the settings for the correlation metrics are:
 \begin{itemize}
     \item method: \VAR{my_dict['metrics']['Correlation']['method']|default('no method for correlation specified')|safe_text}.
@@ -832,8 +834,9 @@ For this experiment, the settings for the correlation metrics are:
           my_dict['metrics']['GiniIndex'] is defined}
 % Gini Index REPORT start
 \subsubsection{Gini Index}\label{subsubsec:gini}
-The Gini Index metric measures inequality in recommendation lists. It's a system wide metric, so only its
-result it will be returned and not those of every user. The metric is calculated as such:
+The Gini Index metric measures inequality in recommendation lists.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
@@ -849,9 +852,11 @@ result it will be returned and not those of every user. The metric is calculated
 \hfill\break
 \hfill\break
 A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
-index would be equal to 0. The more the recsys is "disegual", the more the Gini Index is closer to 1. If the 'top_n'
-parameter is specified, then the Gini index will measure inequality considering only the first n items of every
-recommendation list of all users. For this experiment the top_n:
+index would be equal to 0.
+The more the recsys is "unequal", the more the Gini Index is closer to 1. If the \texttt{'top\_n'} parameter is
+specified, then the Gini index will measure inequality considering only the first $n$ items of every
+recommendation list of all users.
+For this experiment, the \texttt{top\_n}:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
 \hfill\break
 \hfill\break
@@ -863,8 +868,9 @@ recommendation list of all users. For this experiment the top_n:
 % PREDICTION COVERAGE REPORT start
 \subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
 The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
-to all available items. It's a system wise metric, so only its result it will be returned and not those of every
-user. The metric is calculated as such:
+to all available items.
+It's a system wise metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
@@ -890,9 +896,10 @@ The $I$ must be specified through the 'catalog' parameter.
 % CATALOG COVERAGE REPORT start
 \subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
 The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
-to all available items. It's a system wide metric, so only its result it will be returned and not those of every
-user. It differs from the Prediction Coverage since it allows for different parameters to come into play. If no
-parameter is passed then it's a simple Prediction Coverage.
+to all available items.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+It differs from the Prediction Coverage since it allows for different parameters to come into play.
+If no parameter is passed then it's a simple Prediction Coverage.
 The metric is calculated as such:
 \hfill\break
 \hfill\break
@@ -909,9 +916,10 @@ The metric is calculated as such:
 \end{itemize}
 \hfill\break
 \hfill\break
-The $I$ must be specified through the 'catalog' parameter. The recommendation list of every user ($reclist(u_j)$)
-can be reduced to the first n parameter with the top-n parameter, so that catalog coverage is measured considering
-only the highest ranked items. With the 'k' parameter one could specify the number of users that will be used to
+The $I$ must be specified through the 'catalog' parameter.
+The recommendation list of every user ($reclist(u_j)$) can be reduced to the first n parameter with the top-n parameter,
+so that catalog coverage is measured considering only the highest ranked items.
+With the 'k' parameter one could specify the number of users that will be used to
 calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
 The formula above becomes:
 \hfill\break
@@ -939,7 +947,8 @@ Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
 \subsubsection{Delta GAP}\label{subsubsec:dg}
 The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
 one or multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
-It's a system wise metric and results of every group will be returned. It is calculated as such:
+It's a system wise metric and results of every group will be returned.
+It is calculated as such:
 \hfill\break
 \hfill\break
     \[
@@ -947,8 +956,9 @@ It's a system wise metric and results of every group will be returned. It is cal
     \]
 \hfill\break
 \hfill\break
-Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
-and percentage of how many user must contain a group as values. For example:
+Users are split into groups based on the user groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values.
+For example:
 \begin{itemize}
     \item user groups = \{'popular\_users': 0.3, 'medium\_popular\_users': 0.2, 'low\_popular\_users': 0.5\}
 \end{itemize}
@@ -971,15 +981,16 @@ is defined as:
     \]
 \hfill\break
 \hfill\break
-The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
-popularity. The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
-divided by the total number of users in the 'original_ratings'.
+The most popular items are the first \texttt{pop\_percentage} percent of all items ordered in descending order by
+popularity.
+The popularity of an item is defined as the number of times it is rated in the \texttt{original\_ratings} parameter
+divided by the total number of users in the \texttt{original\_ratings}.
 \hfill\break
 \hfill\break
 It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped,
-and it won't be considered in the $\Delta GAP$ computation of its group. In case no user of a group has recs
-available, a warning will be printed and the whole group won't be considered.
-If the 'top_n' parameter is specified, then $\Delta GAP$ will be calculated considering only the first
+and it won't be considered in the $\Delta GAP$ computation of its group.
+In case no user of a group has recs available, a warning will be printed and the whole group won't be considered.
+If the 'top\_n' parameter is specified, then $\Delta GAP$ will be calculated considering only the first
 n items of every recommendation list of all users
 \hfill\break
 \hfill\break
@@ -993,7 +1004,8 @@ n items of every recommendation list of all users
 % LONG TAIL DISTIBUTION REPORT start
 \subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
 This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
-specified. The plot can be generated both for the truth set or the predictions set based on the on parameter:
+specified.
+The plot can be generated both for the truth set or the predictions set based on the on parameter:
 \begin{itemize}
     \item \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
        the most rated ones.
@@ -1002,10 +1014,10 @@ specified. The plot can be generated both for the truth set or the predictions s
 \end{itemize}
 \hfill\break
 \hfill\break
-The plot file will be saved as `out_dir/file_name.format`.
-Since multiple split could be evaluated at once, the overwrite parameter comes into play:
-if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
-so that for every split a plot is generated without overwriting any file previously generated.
+The plot file will be saved as \texttt{out\_dir/file\_name.format}.
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play:
+if set to \texttt{False}, files with the same name will be saved as \texttt{file\_name\_(1).format}, \texttt{file\_name\_(2).format}, etc.
+so that for every split a plot is generated without overwriting any previously generated files.
 \hfill\break
 \hfill\break
 For this experiment the Long Tail Distribution has been used with the following settings:
@@ -1025,10 +1037,11 @@ For this experiment the Long Tail Distribution has been used with the following 
 \subsubsection{Pop Ratio Profile Vs Recs}\label{subsubsec:popratio}
 This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
 profile popularity ratio and recommendations popularity ratio is drawn.
-Users are split into groups based on the user_groups parameter, which contains names of the groups as keys,
-and percentage of how many user must contain a group as values. For example:
+Users are split into groups based on the user groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values.
+For example:
 \begin{itemize}
-       \item user groups = {'popular_users': 0.3, 'medium_popular_users': 0.2, 'low_popular_users': 0.5}
+       \item user groups = \{'popular\_users': 0.3, 'medium\_popular\_users': 0.2, 'low\_popular\_users': 0.5\}
 \end{itemize}
 \hfill\break
 \hfill\break
@@ -1049,10 +1062,10 @@ is defined as:
     \]
 \hfill\break
 \hfill\break
-The most popular items are the first 'pop_percentage', items of all items ordered in a descending order by
+The most popular items are the first 'pop\_percentage', items of all items ordered in descending order by
 popularity.
-The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
-divided by the total number of users in the 'original_ratings'.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
 It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
 and it won't be considered in the $Popularity\_ratio$ computation of its group. In case no user of a group has recs
 available, a warning will be printed and the whole group won't be considered.
@@ -1061,14 +1074,15 @@ available, a warning will be printed and the whole group won't be considered.
 \end{itemize}
 \hfill\break
 \hfill\break
-Since multiple split could be evaluated at once, the `overwrite` parameter comes into play:
-if is set to False, file with the same name will be saved as `file_name (1).format`, `file_name (2).format`, etc.
-so that for every split a plot is generated without overwriting any file previously generated.
-Thanks to the 'store_frame' parameter it's also possible to store a csv containing the calculations done in order
-to build every boxplot. Will be saved in the same directory and with the same file name as the plot itself (but
-with the .csv format):
+Since multiple splits could be evaluated at once, the \texttt{overwrite} parameter comes into play: if set to
+\texttt{False}, files with the same name will be saved as \texttt{file\_name (1).format}, \texttt{file\_name (2).format},
+etc., so that for every split, a plot is generated without overwriting any previously generated files.
+Thanks to the \texttt{store\_frame} parameter, it's also possible to store a CSV containing the calculations done in
+order to build every boxplot.
+It will be saved in the same directory and with the same file name as the plot itself
+(but with the .csv format):
 \begin{itemize}
-    \item The csv will be saved as `out_dir/file_name.csv`
+    \item The CSV will be saved as \texttt{out\_dir/file\_name.csv}
 \end{itemize}
 \hfill\break
 \hfill\break
@@ -1082,27 +1096,27 @@ with the .csv format):
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
 frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
 recommended.
-The popularity of an item is defined as the number of times it is rated in the 'original_ratings' parameter
-divided by the total number of users in the 'original_ratings'.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
 \begin{itemize}
-    \item The plot file will be saved as out_dir/file_name.format'
+    \item The plot file will be saved as out\_dir/file\_name.format'
 \end{itemize}
 \hfill\break
 \hfill\break
-Since multiple split could be evaluated at once, the overwrite parameter comes into play:
-if is set to False, file with the same name will be saved as 'file_name (1).format, 'file_name (2).format', etc.
-so that for every split a plot is generated without overwriting any file previously generated
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play: if set to \texttt{False},
+files with the same name will be saved as \texttt{'file\_name\_(1).format'}, \texttt{'file\_name\_(2).format'}, etc.,
+so that for every split, a plot is generated without overwriting any previously generated files.
 \hfill\break
 \hfill\break
 There exists cases in which some items are not recommended even once, so in the graph could appear
 zero recommendations. One could change this behaviour thanks to the 'mode' parameter:
 \begin{itemize}
-    \item \textbf{mode='both'}: two graphs will be created, the first one containing eventual zero recommendations, the
+    \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
       second one where zero recommendations are excluded. This additional graph will be stored as
-      out_dir/file_name_no_zeros.format \textit{the string '_no_zeros' will be added to the file_name chosen automatically}
-    \item \textbf{mode='w_zeros'}: only a graph containing eventual zero recommendations will be created
-    \item \text{mode='no_zeros'}: only a graph excluding eventual zero recommendations will be created. The graph will be
-      saved as out_dir/file_name_no_zeros.format \textit{the string '_no_zeros' will be added to the file_name chosen automatically}
+      \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+    \item \textbf{mode='w\_zeros'}: Only a graph containing eventual zero recommendations will be created.
+    \item \textbf{mode='no\_zeros'}: Only a graph excluding eventual zero recommendations will be created. The graph will be
+      saved as \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
 \end{itemize}
 \hfill\break
 \hfill\break
