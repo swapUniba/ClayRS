@@ -17,18 +17,18 @@ CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_armarDoubleSource.yml"
 RS_YML = "../data/data_to_test/rs_report_amarDoubleSource.yml"
 """
-"""
+
 # test with yml of centroid vector
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_centroidVector.yml"
 RS_YML = "../data/data_to_test/rs_report_centroidVector.yml"
-"""
 
+"""
 # test with yml of classifier recommender
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_classifierRecommender.yml"
 RS_YML = "../data/data_to_test/rs_report_classifierRecommender.yml"
-
+"""
 """
 # test with yml of Index query
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
