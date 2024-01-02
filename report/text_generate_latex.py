@@ -29,15 +29,22 @@ from jinja2 import Undefined
 OUTPUT_TEX = "output/report.TEX"
 OUTPUT_PATH = "output/report.pdf"
 """
+# test with linear predictor
 LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
                    "data/data_to_test/rs_report_linearPredictor.yml",
                    "data/data_to_test/eva_report_linearPredictor.yml"]
+"""
 """
 # test with yml of Index query
 LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
                    "data/data_to_test/rs_report_indexQuery.yml",
                    "data/data_to_test/eva_report_indexQuery.yml"]
+"""
 
+# test with yml of classifier recommender
+LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
+                   "data/data_to_test/rs_report_classifierRecommender.yml",
+                   "data/data_to_test/eva_report_classifierRecommender.yml"]
 
 # LIST_YAML_FILES = ["data/ca_report.yml", "data/rs_report.yml", "data/eva_report.yml"]
 # TEMPLATE_FILE = "report_templateNew.tex"
