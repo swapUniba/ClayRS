@@ -1,0 +1,1721 @@
+
+
+%! Author = DIEGO
+%! Date = 21/12/2023
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\title{Report Experiment ClayRS Framework}
+\author{SWAP research group UniBa}
+\date{02-01-2024}
+
+% -------------------- DOCUMENT: REPORT ON THE ExPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
+\begin{document}
+
+\maketitle
+This LaTex document was generated automatically from yaml files for the purpose of replicability of experiments done with
+\href{https://github.com/swapUniba/ClayRS}{ClayRS},
+it contains information about the experiment that has been conducted and the results obtained.
+The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
+and a conclusion section to highlights what have been achieved from the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
+The content analyzer module will deal with raw source document or more in general data which could be
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
+\hfill\break
+\hfill\break
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
+
+
+
+% field: plot0 representation subsection
+$ plot0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot0 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot0 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot1 representation subsection
+$ plot1 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% WhooshTfIdf used as representation
+The WhooshTfIdf technique has been used.
+\hfill\break
+\hfill\break
+% WhooshTfIdf usege end___
+
+
+
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot1 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot2 representation subsection
+$ plot2 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% SkLearnTfIdf used as representation
+The SkLearnTfIdf technique has been used.
+The technique has been settled with the following parameter:
+\begin{itemize}
+    \item max df: 1.0
+    \item min df: 1
+    \item max features: None
+    \item vocabulary: None
+    \item binary: False
+    \item norm: l2
+    \item use idf: True
+    \item smooth idf: True
+    \item sublinear tf: False
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnTfIdf usege end___
+
+
+
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot2 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot3 representation subsection
+$ plot3 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% WordEmbeddingTechnique used as representation
+The Word Embedding Technique has been used and
+the embedding source used is
+Gensim glove-twitter-25
+\hfill\break
+\hfill\break
+% WordEmbeddingTechnique usege end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot3 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot3 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot4 representation subsection
+$ plot4 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% SentenceEmbeddingTechnique used as representation
+The Sentence Embedding Technique has been used and
+the embedding source used is
+Sbert paraphrase-distilroberta-base-v1
+\hfill\break
+\hfill\break
+% SentenceEmbeddingTechnique usege end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot4 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot4 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot5 representation subsection
+$ plot5 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% DocumentEmbeddingTechnique used as representation
+The Document Embedding Technique has been used and
+the embedding source used is
+Sbert paraphrase-distilroberta-base-v1
+\hfill\break
+\hfill\break
+% DocumentEmbeddingTechnique end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot5 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot5 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot6 representation subsection
+$ plot6 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% Word2SentenceEmbeddingused as representation
+The Word2Sentence Embedding Technique has been used and
+the embedding source used is
+Gensim glove-twitter-25.
+Combining technique used is
+Centroid.
+\hfill\break
+\hfill\break
+% Word2SentenceEmbeddingused end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot6 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot6 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot7 representation subsection
+$ plot7 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% Word2DocEmbedding used as representation
+The Word2Doc Embedding Technique has been used and
+the embedding source used is
+Gensim glove-twitter-25.
+Combining technique used is
+Centroid.
+\hfill\break
+\hfill\break
+% Word2DocEmbedding usege end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot7 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot7 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot8 representation subsection
+$ plot8 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot8 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot8 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot9 representation subsection
+$ plot9 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% PyWSDSynsetDocumentFrequency used as representation
+The PyWSD Synset Document Frequency Technique has been used.
+\hfill\break
+\hfill\break
+% PyWSDSynsetDocumentFrequency usege end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot9 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot9 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot10 representation subsection
+$ plot10 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot10 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot10 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: plot11 representation subsection
+$ plot11 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot11 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot11 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: idx0 representation subsection
+$ idx0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% FromNPY used as representation
+The FromNPY Technique has been used on the field idx0 .
+\hfill\break
+\hfill\break
+% FromNPY end___
+
+
+
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ idx0 $ during the experiment.
+\hfill\break
+\hfill\break
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ idx0 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: video_path0 representation subsection
+$ video_path0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% SkImageHogDescriptor used as representation
+SKImage Hog Descriptor technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item orientations: 9
+    \item pixels per cell:
+    \item cells per block:
+    \item block norm: L2-Hys
+    \item transform sqrt: False
+    \item flatten: False
+    \item contents dirs: contents\_dirs
+    \item time tuple:
+    \item max timeout: 2
+    \item max retries: 5
+    \item max workers: 0
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkImageHogDescriptor usege end___
+
+
+
+
+
+
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ video_path0 $ in this experiment.
+\hfill\break
+\hfill\break
+
+
+
+% field: video_path1 representation subsection
+$ video_path1 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% MFCC used as representation
+MFCC technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item contents dirs: contents\_dirs
+    \item time tuple:
+    \item flatten: False
+    \item mean: False
+    \item max timeout: 2
+    \item max retries: 5
+    \item max workers: 0
+    \item n mfcc: 40
+    \item dct type: 2
+    \item norm: ortho
+    \item log mels: False
+    \item melkwargs: None
+\end{itemize}
+\hfill\break
+\hfill\break
+% MFCC end___
+
+
+
+
+
+
+
+
+
+% field: video_path2 representation subsection
+$ video_path2 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+
+
+
+
+
+
+
+
+
+% field: video_path3 representation subsection
+$ video_path3 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% PytorchImageModels used as representation
+Pytorch Image Models technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item model name: densenet161
+    \item feature layer: head\_drop
+    \item flatten: True
+    \item device:  cuda:0
+    \item apply on output: None
+    \item contents dirs: contents\_dirs
+    \item time tuple:
+    \item custom weights path: None
+    \item use default transforms: False
+    \item num classes: None
+    \item max timeout: 2
+    \item max retries: 5
+    \item max workers: 0
+    \item batch size:  4
+\end{itemize}
+\hfill\break
+\hfill\break
+% PytorchImageModels usage end___
+
+
+
+
+
+
+
+
+
+% field: video_path4 representation subsection
+$ video_path4 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+% TorchVisionVideoModels used as representation
+Torch Vision Video Models technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item model name: r2plus1d\_18
+    \item feature layer: avgpool
+    \item weights: DEFAULT
+    \item flatten: True
+    \item device:  cuda:0
+    \item apply on output: None
+    \item contents dirs: contents\_dirs
+    \item time tuple:
+    \item max timeout: 2
+    \item max retries: 5
+    \item max workers: 0
+    \item batch size:  4
+    \item mini batch size: 10
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchVisionVideoModels usege end___
+
+
+
+
+
+
+
+
+
+
+
+
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System module: RecSys}\label{sec:recsys}
+The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
+by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
+give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
+In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
+and train the recommender system and the settings beloning to the algorithm chosen.
+\hfill\break
+\hfill\break
+
+\subsection{Statistics on data used}\label{subsec:stats}
+% --- DATA STATS ---
+In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & 2\\ \hline
+    n\_items  & 6\\ \hline
+    total\_interactions  & 6\\ \hline
+    min\_score  & 1.0\\ \hline
+    max\_score  & 4.0\\ \hline
+    mean\_score  & 2.6666666666666665\\ \hline
+    sparsity  & 0.5\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+\hfill\break
+\hfill\break
+
+
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+\subsection{Partitioning techinque used}\label{subsec:partitioning}
+% KFOLD PARTITIONING TECNIQUE
+K-fold cross-validation is a technique used in machine learning to assess
+the performance of a predictive model. The basic idea is to divide the dataset
+into K subsets, or folds. The model is then trained K times, each time using K-1
+folds for training and the remaining fold for validation. This process is
+repeated K times, with a different fold used as the validation set in each iteration
+\hfill\break
+\hfill\break
+The KFoldPartitioning has been used with the following setting:
+\hfill\break
+\hfill\break
+The data has been shuffled before being split into batches.
+The partitioning technique has been executed with the following settings:
+\begin{itemize}
+    \item number of splits: 2
+    \item shuffle: True
+    \item random state: None
+    \item skip user error: True
+\end{itemize}
+\hfill\break
+\hfill\break
+% KFOLD PARTITIONING TECNIQUE ended
+
+
+% end partitioning section___________
+
+
+% ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm used for the recommender system}\label{subsec:algo}
+% ---RECSYS ALGORITHM ---
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achieve
+this target the system need to be based on a chosen algorithm that will work with the representation of data that
+we have.
+In this section we will analyse which algorithm has been used for the experiment and what are the settings
+given.
+\hfill\break
+\hfill\break
+
+% Dealing with the principal class where the algorithm used belong to.
+The recommender system is based on content.
+\hfill\break
+\hfill\break
+
+% ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
+% AMAR DOUBLE SOURCE ALGO
+The algorithm used is AmarDoubleSource
+\begin{itemize}
+    \item item fields: 'list of field used' TO BE ADJUSTED
+    \item user fields: TO BE ADJUSTED
+    \item batch size: 512
+    \item epochs: 5
+    \item threshold: 4
+    \item embedding combiner: TO ADJUST
+    \item seed: None
+    \item additional dl parameters: TO ADJUST
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is rank and the number of recommendation given is
+10.
+\hfill\break
+\hfill\break
+% AmarDoubleSource end_____
+
+
+
+
+
+
+
+
+
+
+% ------------------------ GRAPH BASED ALGO ------------------------------------------
+
+
+% In case of the RecSys in not been used
+
+
+
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
+The metrics used are the followings:
+\hfill\break
+\hfill\break
+
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
+% Precision report start
+\subsubsection{Precision}\label{subsubsec:precision}
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+       $\geq$         \textbf{2.6666666666666665}.
+            \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$         \textbf{no relevant threshold used}.
+        \end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Precision needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{None}.
+\hfill\break
+\hfill\break
+% precision report ended___
+
+% Recall report start
+\subsubsection{Recall}\label{subsubsec:recall}
+The Recall metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall_u = \frac{tp_u}{tp_u + fn_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $>=$         \textbf{2.6666666666666665}.
+            \item $fn_u$ is the number of items which are not in the recommendation list of the user and have a
+      rating $>=$         \textbf{no relevant threshold used}.
+        \end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Recall needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{None}.
+\hfill\break
+\hfill\break
+% recall report end___
+
+%FMeasure report start
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
+The FMeasure metric combines Precision and Recall into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P_u$ is the Precision calculated for the user \textbf{u}.
+    \item $R_u$ is the Recall calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+         F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment the FMeasure has been calculated with $\beta = $
+1 and the relevant threshold is
+\textbf{None}.
+\hfill\break
+\hfill\break
+% FMeasure report end___
+
+% PRECISION @K REPORT start
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+   \[
+       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+   \]
+\hfill\break
+\hfill\break
+    \[
+       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+   \]
+\hfill\break
+\hfill\break
+During the experiment Precision@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5 }
+    \item \textbf{relevant threshold:None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% precision@k report end___
+
+% RECALL @K REPORT start
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
+The Recall@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+    \item $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment Recall@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5 }
+    \item \textbf{relevant threshold: None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% recall@k report end___
+
+% FMEASURE @K REPORT start
+\subsubsection{FMeasure@K}\label{subsubsec:f-meas-k}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
+    \item $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+        F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment FMeasure@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5}
+    \item  \textbf{$\beta$: 1}
+    \item \textbf{relevant threshold: None }
+    \item \textbf{sys average: micro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% fmeasure@k report end___
+
+% R-PRECISION REPORT start
+\subsubsection{R-Precision}\label{subsubsec:r-prec}
+The R-Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $R$ it's the number of relevant items for the user \textbf{u}.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first   $R$ items,
+        that have a rating $\geq$ the relevant threshold in its ground truth.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first $R$ items,
+        that have a rating $<$ \texttt{relevant\_threshold} in their ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment R-Precision has been used with the following settings:
+\begin{itemize}
+    \item \textbf{relevant threshold:None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% r-precision report end___
+% <----- classification metrics end ------->
+
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
+% MSE REPORT start
+\subsubsection{MSE}\label{subsubsec:mse}
+The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user \textbf{u}.
+    \item $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the \textbf{test set}.
+    \item $MSE_u$ is the MSE calculated for user \textbf{u}.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally}.
+In those cases, the $MSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ stay for unknown is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% mse report end___
+
+% RMSE REPORT start
+\subsubsection{RMSE}\label{subsubsec:rmse}
+The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the *test set* of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $RMSE_u$ is the RMSE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{eg. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $RMSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% rmse report end___
+
+% MAE REPORT start
+\subsubsection{MAE}\label{subsubsec:mae}
+The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $MAE_u$ is the MAE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $MAE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% mae report end___
+% <------ error metrics ended -------->
+
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
+% Normalized Discounted Cumulative Gain REPORT start
+\subsubsection{NDCG}\label{subsubsec:ndcg}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$.
+    \item $f$ is a gain function \textit{linear or exponential, in particular}.
+    \item $x$ is the base of the logarithm.
+    \item $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
+\end{itemize}
+\hfill\break
+\hfill\break
+If $f$ is "linear", then the truth score $r$ is returned as is.
+Otherwise, in the "exponentia" case, the following formula is applied to $r$:
+\hfill\break
+\hfill\break
+    \[
+        f(r) = 2^{r} - 1
+    \]
+\hfill\break
+\hfill\break
+The NDCG for a single user is then calculated using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
+\end{itemize}
+\hfill\break
+\hfill\break
+So the basic idea is to compare the actual ranking with the ideal one.
+Finally, the NDCG of the entire system is calculated instead as such:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $NDCG_u$ is the NDCG calculated for user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+The system average excludes NaN values.
+\hfill\break
+\hfill\break
+% ndcg report end___
+
+% NDCG@K REPORT start
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
+by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
+first $k$ predictions.
+The K used for the experiment is .
+\hfill\break
+\hfill\break
+% ndcg@k report end___
+
+% MRR REPORT start
+\subsubsection{MRR}\label{subsubsec:mrr}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTENTION here we modified with \_ in case change
+The MRR metric needs to discern relevant items from the not relevant ones.
+To achieve this, one could pass a custom \texttt{relevant\_threshold} parameter that will be applied to every user.
+If the rating of an item is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
+If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
+In this experiment, the relevant threshold used is
+None.
+\hfill\break
+\hfill\break
+% mrr report end___
+
+% MRR@K REPORT start
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
+The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
+not those of every user.
+MRR@K is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $K$ is the cutoff parameter.
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+In this experiment, the relevant threshold used is
+None.
+\hfill\break
+\hfill\break
+% mrr@k report end___
+
+% MAP REPORT start
+\subsubsection{MAP}\label{subsubsec:map}
+The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
+abbreviation of Average Precision for each user and then taking its mean.
+The AP is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $m_u$ is the number of relevant items for the user $u$.
+    \item $N_u$ is the number of recommended items for the user $u$.
+    \item $P(i)$ is the precision computed at cutoff $i$.
+    \item $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
+\end{itemize}
+\hfill\break
+\hfill\break
+After computing the AP for each user, we can compute the MAP for the whole system:
+\hfill\break
+\hfill\break
+    \[
+        MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+    \]
+\hfill\break
+\hfill\break
+This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
+computed for the whole system in the dataframe containing system results.
+In this experiment the MAP has been calculeted using a relevant threshold:
+None.
+\hfill\break
+\hfill\break
+% map report end___
+
+
+% CORRELATION REPORT start
+\subsubsection{Correlation}\label{subsubsec:corr}
+The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The current correlation methods implemented are:
+\begin{itemize}
+    \item `pearson`
+    \item `kendall`
+    \item `spearman`
+\end{itemize}
+\hfill\break
+\hfill\break
+Every correlation method is implemented by the pandas library, so refer to its
+\href{https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html}{documentation} for more information.
+\hfill\break
+\hfill\break
+The correlation metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Corr_u = Corr(ranking_u, ideal_ranking_u)
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $ranking_u$ is ranking of the user.
+    \item $ideal_ranking_u$ is the ideal ranking for the user.
+\end{itemize}
+\hfill\break
+\hfill\break
+The ideal ranking is calculated based on the rating inside the ground truth of the user.
+The Correlation metric calculated for the entire system is simply the average of every $Corr$:
+\hfill\break
+\hfill\break
+    \[
+        Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Corr_u$ is the correlation of the user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTETNION here there are already \_
+The system average excludes NaN values.
+It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter.
+If specified, only the first $n$ results of the recommendation list will be used to calculate the correlation.
+For this experiment, the settings for the correlation metrics are:
+\begin{itemize}
+    \item method: pearson.
+    \item top_n: None.
+\end{itemize}
+\hfill\break
+\hfill\break
+% correlation report end___
+% <------- ranking metrics ended ------->
+
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
+% Gini Index REPORT start
+\subsubsection{Gini Index}\label{subsubsec:gini}
+The Gini Index metric measures inequality in recommendation lists.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $n$ is the total number of distinct items that are being recommended.
+    \item $x_i$ is the number of times that the item $i$ has been recommended.
+\end{itemize}
+\hfill\break
+\hfill\break
+A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+index would be equal to 0.
+The more the recsys is "unequal", the more the Gini Index is closer to 1. If the \texttt{'top\_n'} parameter is
+specified, then the Gini index will measure inequality considering only the first $n$ items of every
+recommendation list of all users.
+For this experiment, the \texttt{top\_n}:
+None.
+\hfill\break
+\hfill\break
+% gini index report end___
+
+% PREDICTION COVERAGE REPORT start
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
+The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system wise metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $I$ is the set of all available items.
+    \item $I_p$ is the set of recommended items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+\hfill\break
+\hfill\break
+% prediction coverage report end___
+
+% CATALOG COVERAGE REPORT start
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
+The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+It differs from the Prediction Coverage since it allows for different parameters to come into play.
+If no parameter is passed then it's a simple Prediction Coverage.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $N$ is the total number of users.
+    \item $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$.
+    \item $I$ is the set of all available items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+The recommendation list of every user ($reclist(u_j)$) can be reduced to the first n parameter with the top-n parameter,
+so that catalog coverage is measured considering only the highest ranked items.
+With the 'k' parameter one could specify the number of users that will be used to
+calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
+The formula above becomes:
+\hfill\break
+\hfill\break
+    \[
+        Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $k$ is the parameter specified.
+\end{itemize}
+\hfill\break
+\hfill\break
+Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
+\hfill\break
+\hfill\break
+% catalog coverage report end___
+
+% <------- fairness metrics end ------>
+
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
+% LONG TAIL DISTIBUTION REPORT start
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
+This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified.
+The plot can be generated both for the truth set or the predictions set based on the on parameter:
+\begin{itemize}
+    \item \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
+       the most rated ones.
+    \item \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
+        items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The plot file will be saved as \texttt{out\_dir/file\_name.format}.
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play:
+if set to \texttt{False}, files with the same name will be saved as \texttt{file\_name\_(1).format}, \texttt{file\_name\_(2).format}, etc.
+so that for every split a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+For this experiment the Long Tail Distribution has been used with the following settings:
+\begin{itemize}
+    \item on: truth.
+    \item format: png.
+    \item overwrite: False.
+\end{itemize}
+\hfill\break
+\hfill\break
+% LTD report end___
+
+
+% PopRecsCorrelation REPORT start
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
+This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
+recommended.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
+\begin{itemize}
+    \item The plot file will be saved as out\_dir/file\_name.format'
+\end{itemize}
+\hfill\break
+\hfill\break
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play: if set to \texttt{False},
+files with the same name will be saved as \texttt{'file\_name\_(1).format'}, \texttt{'file\_name\_(2).format'}, etc.,
+so that for every split, a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+There exists cases in which some items are not recommended even once, so in the graph could appear
+zero recommendations. One could change this behaviour thanks to the 'mode' parameter:
+\begin{itemize}
+    \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
+      second one where zero recommendations are excluded. This additional graph will be stored as
+      \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+    \item \textbf{mode='w\_zeros'}: Only a graph containing eventual zero recommendations will be created.
+    \item \textbf{mode='no\_zeros'}: Only a graph excluding eventual zero recommendations will be created. The graph will be
+      saved as \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+\end{itemize}
+\hfill\break
+\hfill\break
+For this experiment the PopRecsCorrelation has been used with the following settings:
+\begin{itemize}
+    \item mode: both.
+    \item format: png.
+    \item overwrite: False.
+\end{itemize}
+\hfill\break
+\hfill\break
+% PopRecsCorrelation report end___
+% <------- plot metric end ----------->
+
+% <---------------------- closing the only metric section ------------------------->
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - fold1}\label{subsec:sys - fold1}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - fold1}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        Precision - macro & 0.75\\ \hline
+                Recall - macro & 1.0\\ \hline
+                R-Precision - macro & 1.0\\ \hline
+                F1 - macro &  0.83333\\ \hline
+                NDCG  & 1.0\\ \hline
+            MRR  & 1.0\\ \hline
+            RMSE & 2.37484\\ \hline
+            MSE & 7.0742\\ \hline
+            MAE & 2.32206\\ \hline
+            MAP  & 1.0\\ \hline
+            Gini & 0.0\\ \hline
+            PredictionCoverage & 66.67\\ \hline
+         \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - fold1}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance on the fold___
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - fold2}\label{subsec:sys - fold2}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - fold2}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        Precision - macro & 1.0\\ \hline
+                Recall - macro & 1.0\\ \hline
+                R-Precision - macro & 1.0\\ \hline
+                F1 - macro &  1.0\\ \hline
+                NDCG  & 1.0\\ \hline
+            MRR  & 1.0\\ \hline
+            RMSE & 2.00641\\ \hline
+            MSE & 4.27737\\ \hline
+            MAE & 2.00641\\ \hline
+            MAP  & 1.0\\ \hline
+            Gini & 0.0\\ \hline
+            PredictionCoverage & 33.33\\ \hline
+         \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - fold2}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance on the fold___
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - mean}\label{subsec:sys - mean}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - mean}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        Precision - macro & 0.875\\ \hline
+                Recall - macro & 1.0\\ \hline
+                R-Precision - macro & 1.0\\ \hline
+                F1 - macro &  0.91667\\ \hline
+                NDCG  & 1.0\\ \hline
+            MRR  & 1.0\\ \hline
+            RMSE & 2.19062\\ \hline
+            MSE & 5.67578\\ \hline
+            MAE & 2.16423\\ \hline
+            MAP  & 1.0\\ \hline
+            Gini & 0.0\\ \hline
+            PredictionCoverage & 50.0\\ \hline
+         \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - mean}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance on the fold___
+
+
+
+% In case of eval module is not used
+
+
+
+\section{Conclusion on the experiment}\label{sec:conclution}
+This part is for conclusion to be sum up as needed.
+\hfill\break
+\hfill\break
+
+% ------------------- END OF THE REPORT COMPLETED ---------------
+% closing the document
+\end{document}
