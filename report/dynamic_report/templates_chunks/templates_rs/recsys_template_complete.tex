@@ -13,7 +13,7 @@ The \textbf{RecSys module} allows to instantiate a recommender system and make i
 by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
 give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
 In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
-and train the recommender system and the settings beloning to the algorithm chosen.
+and train the recommender system and the settings belonging to the algorithm chosen.
 \hfill\break
 \hfill\break
 
@@ -44,11 +44,10 @@ In this experiment the statistics of the dataset used are reported in the follow
 \BLOCK{if my_dict['partitioning'] is defined and
         my_dict['partitioning']['KFoldPartitioning'] is defined}
 % KFOLD PARTITIONING TECNIQUE
-K-fold cross-validation is a technique used in machine learning to assess
-the performance of a predictive model. The basic idea is to divide the dataset
-into K subsets, or folds. The model is then trained K times, each time using K-1
-folds for training and the remaining fold for validation. This process is
-repeated K times, with a different fold used as the validation set in each iteration
+K-fold cross-validation is a technique used in machine learning to assess the performance of a predictive model.
+The basic idea is to divide the dataset into K subsets, or folds.
+The model is then trained K times, each time using K-1 folds for training and the remaining fold for validation.
+This process is repeated K times, with a different fold used as the validation set in each iteration.
 \hfill\break
 \hfill\break
 The KFoldPartitioning has been used with the following setting:
@@ -128,8 +127,8 @@ Algorithm used is unknown.
 % AMAR DOUBLE SOURCE ALGO
 The algorithm used is AmarDoubleSource
 \begin{itemize}
-    \item item fields: 'list of field used' TO BE ADJUSTED
-    \item user fields: TO BE ADJUSTED
+    \item item fields:
+    \item user fields:
     \item batch size: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['batch_size']|default('no batch size')}
     \item epochs: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['epochs']|default('no batch size')}
     \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource']['threshold']|default('no batch size')}

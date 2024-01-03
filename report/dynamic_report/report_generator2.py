@@ -11,12 +11,12 @@ CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_amarSingleSource.yml"
 RS_YML = "../data/data_to_test/rs_report_amarSingleSource.yml"
 """
-
+"""
 # test with yml of amar double source
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
 EVA_YML = "../data/data_to_test/eva_report_armarDoubleSource.yml"
 RS_YML = "../data/data_to_test/rs_report_amarDoubleSource.yml"
-
+"""
 """
 # test with yml of centroid vector
 CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
@@ -42,9 +42,9 @@ EVA_YML = "../data/data_to_test/eva_report_linearPredictor.yml"
 RS_YML = "../data/data_to_test/rs_report_linearPredictor.yml"
 """
 # PATH USED TO TEXT THE SCRIPT
-# CA_YML = "../data/ca_report.yml"
-# EVA_YML = "../data/eva_report.yml"
-# RS_YML = "../data/rs_report.yml"
+CA_YML = "../data/ca_report.yml"
+EVA_YML = "../data/eva_report.yml"
+RS_YML = "../data/rs_report.yml"
 
 # dictionary to find the path for mini template chunks of content analyzer
 # the key are the key found in the yaml file for content analyzer and the

@@ -1,0 +1,43 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+% CENTROID VECTOR ALGO
+The algorithm used is the centroid vector
+\begin{itemize}
+    \item item fields: Y
+    \item user fields: W
+    \item similarity:  \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector']['similarity']|default('no similarity')|safe_text}
+    \item threshold: \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector']['threshold']|default('no threshold')}
+    \item embedding combiner: Z
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used is H .
+\hfill\break
+\hfill\break
+% centroid vector end____
+\BLOCK{endif}
+
+###
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

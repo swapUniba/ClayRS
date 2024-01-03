@@ -1,0 +1,45 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['GraphBasedRS'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+% NX PAGE RANK ALGO
+The algorithm used is NX Page Rank.
+\begin{itemize}
+    \item alpha: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|default('no alpha used')}
+    \item personalized: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['personalized']|default('no used')}
+    \item max iter: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['max_iter']|default('no max iter')}
+    \item tol: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['tol']|default('no used')}
+    \item nstart: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['nstart']|default('no used')}
+    \item weight: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['weight']|default('no used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+The type of graph used in the algorithm is a: \VAR{ my_dict['recsys']['GraphBasedRS']['graph']},
+the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used is H .
+hfill\break
+\hfill\break
+% NX page rank end____
+\BLOCK{endif}
+
+###
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

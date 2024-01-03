@@ -2,6 +2,7 @@
 %! Date = 27/12/2023
 
 \usepackage{comment}
+\usepackage{hyperref}
 
 
 ###
@@ -433,7 +434,7 @@ The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{
 \hfill\break
     Where:
 \begin{itemize}
-    \item $T_u$ is the *test set* of the user $u$.
+    \item $T_u$ is the test set of the user $u$.
     \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
     \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
 \end{itemize}
@@ -455,7 +456,7 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
 There may be cases in which some items of the test set of the user could not be predicted
-\textit{eg. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
 In those cases, the $RMSE_u$ formula becomes:
 \hfill\break
 \hfill\break
@@ -485,7 +486,7 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
           my_dict['metrics']['MAE'] is defined}
 % MAE REPORT start
 \subsubsection{MAE}\label{subsubsec:mae}
-The MAE (Mean Absolute Error) metric is calculated as such for the \textbf{single user}:
+The MAE abbreviation of Mean Absolute Error metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
@@ -617,7 +618,7 @@ The system average excludes NaN values.
           my_dict['metrics']['NDCGAtK'] is defined}
 % NDCG@K REPORT start
 \subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
-The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K) metric is calculated for the \textbf{single user}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K metric is calculated for the \textbf{single user}
 by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
 first $k$ predictions.
 The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
@@ -663,8 +664,8 @@ In this experiment, the relevant threshold used is
           my_dict['metrics']['MRRAtK'] is defined}
 % MRR@K REPORT start
 \subsubsection{MRR@K}\label{subsubsec:mrr-k}
-The MRR@K (Mean Reciprocal Rank at K) metric is a system-wide metric, so only its result will be returned and
-not those of every user.
+The MRR@K abbreviation of Mean Reciprocal Rank at K metric is a system-wide metric, so only its result will be returned
+and not those of every user.
 MRR@K is calculated as such:
 \hfill\break
 \hfill\break
@@ -721,7 +722,7 @@ After computing the AP for each user, we can compute the MAP for the whole syste
 \hfill\break
 This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
 computed for the whole system in the dataframe containing system results.
-In this experiment the MAP has been calculeted using a relevant threshold:
+In this experiment the MAP has been calculated using a relevant threshold:
 \VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
 \hfill\break
 \hfill\break
@@ -821,7 +822,7 @@ If specified, only the first $n$ results of the recommendation list will be used
 For this experiment, the settings for the correlation metrics are:
 \begin{itemize}
     \item method: \VAR{my_dict['metrics']['Correlation']['method']|default('no method for correlation specified')|safe_text}.
-    \item top_n: \VAR{my_dict['metrics']['Correlation']['top_n']|default('no cutoff setted')|safe_text}.
+    \item top\_n: \VAR{my_dict['metrics']['Correlation']['top_n']|default('no cutoff setted')|safe_text}.
 \end{itemize}
 \hfill\break
 \hfill\break
@@ -853,9 +854,9 @@ The metric is calculated as such:
 \hfill\break
 A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
 index would be equal to 0.
-The more the recsys is "unequal", the more the Gini Index is closer to 1. If the \texttt{'top\_n'} parameter is
-specified, then the Gini index will measure inequality considering only the first $n$ items of every
-recommendation list of all users.
+The more the recsys is "unequal", the more the Gini Index is closer to 1.
+If the \texttt{'top\_n'} parameter is specified, then the Gini index will measure inequality considering only
+the first $n$ items of every recommendation list of all users.
 For this experiment, the \texttt{top\_n}:
 \VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
 \hfill\break
@@ -1066,9 +1067,9 @@ The most popular items are the first 'pop\_percentage', items of all items order
 popularity.
 The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
 divided by the total number of users in the 'original\_ratings'.
-It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped
-and it won't be considered in the $Popularity\_ratio$ computation of its group. In case no user of a group has recs
-available, a warning will be printed and the whole group won't be considered.
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped,
+and it won't be considered in the $Popularity\_ratio$ computation of its group.
+In case no user of a group has recs available, a warning will be printed and the whole group won't be considered.
 \begin{itemize}
     \item The plot file will be saved as `out\_dir/file\_name.format`
 \end{itemize}
@@ -1109,7 +1110,8 @@ so that for every split, a plot is generated without overwriting any previously 
 \hfill\break
 \hfill\break
 There exists cases in which some items are not recommended even once, so in the graph could appear
-zero recommendations. One could change this behaviour thanks to the 'mode' parameter:
+zero recommendations.
+One could change this behaviour thanks to the 'mode' parameter:
 \begin{itemize}
     \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
       second one where zero recommendations are excluded. This additional graph will be stored as
