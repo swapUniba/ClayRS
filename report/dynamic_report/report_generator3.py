@@ -210,6 +210,29 @@ def get_subkeys_at_path(dictionary: object, *keys_in_order: object) -> object:
                     explore_dictionary(next_dict, current_keys[1:])
 
 
+def get_subkey_for_recsys_format(dictionary: dict, *keys_in_order: str) -> list:
+    subkeys_at_path = []
+
+    def explore_dictionary(current_dict, current_keys):
+        if len(current_keys) == 0 or current_dict is None:
+            return
+
+        current_key = current_keys[0]
+
+        if isinstance(current_dict, dict) and current_key in current_dict:
+            next_dict = current_dict[current_key]
+
+            if len(current_keys) == 1:
+                if isinstance(next_dict, dict):
+                    subkeys_at_path.extend([f" {key}" for key in next_dict.keys()])
+                else:
+                    subkeys_at_path.append(f"{current_key}")
+            else:
+                explore_dictionary(next_dict, current_keys[1:])
+
+    explore_dictionary(dictionary, keys_in_order)
+    return subkeys_at_path
+
 """
     def explore_dictionary(current_dict, current_keys):
         if len(current_keys) == 0:
@@ -450,15 +473,17 @@ def build_final_latex_file(file_destination):
         # retrieve template for specific algorithm used and make opportune change
         print(rs_dict)
         list_algorithm_used = get_keys_at_level(rs_dict, "algorithm")
-            #get_subkeys_at_path(rs_dict, "recsys", "ContentBasedRS", "algorithm"))
+        algo_key = list_algorithm_used[0]
+        list_keys_formatting_strings = get_subkey_for_recsys_format(rs_dict, "recsys", "ContentBasedRS", "algorithm", "AmarDoubleSource")
                                                  # recsys_access_list[recsys_access_list.index('recsys')],
                                                  # recsys_access_list[recsys_access_list.index(cat)],
                                                  # recsys_access_list[recsys_access_list.index('algorithm')])
+        print(list_keys_formatting_strings)
         print(recsys_access_list[recsys_access_list.index('recsys')])
         print(recsys_access_list[recsys_access_list.index(cat)])
         print( recsys_access_list[recsys_access_list.index('algorithm')])
         print(list_algorithm_used)
-        algo_key = list_algorithm_used[0]
+        # algo_key = list_algorithm_used[0]
         index_ac_lst = recsys_access_list.index('A')
         recsys_access_list[index_ac_lst] = algo_key  # recsys_access_list = ['recsys', 'cat', 'algorithm', 'algo_key']
         process_and_write_to_file2(RS_DICT, algo_key,
