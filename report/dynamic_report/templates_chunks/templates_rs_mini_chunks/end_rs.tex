@@ -6,25 +6,16 @@
 
 ###
 
-\BLOCK{if my_dict['recsys'] is defined and
-      my_dict['recsys']['ContentBasedRS'] is defined and
-      my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
-% INDEX QUERY ALGO
-The algorithm used is the Index Query.
-\begin{itemize}
-    \item Y
-\end{itemize}
+% In case of the RecSys in not been used
+\BLOCK{else}
+The RecSys module has not been used during this experiment.
 \hfill\break
 \hfill\break
-The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
-\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
-The methodology used is Z .
-\hfill\break
-\hfill\break
-% index query end____
+% <------------------ RECSYS SECTION ENDED------------------->
 \BLOCK{endif}
 
 ###
+
 
 \begin{comment}
 Author = DIEGO MICCOLI

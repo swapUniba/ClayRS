@@ -1,0 +1,107 @@
+%! Author = DIEGO MICCOLI
+%! Date = 27/12/2023
+
+\usepackage{comment}
+
+
+###
+
+\BLOCK{if 'interactions' in my_dict}
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System module: RecSys}\label{sec:recsys}
+The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
+by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
+give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
+In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
+and train the recommender system and the settings belonging to the algorithm chosen.
+\hfill\break
+\hfill\break
+
+\subsection{Statistics on data used}\label{subsec:stats}
+% --- DATA STATS ---
+In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & \VAR{my_dict['interactions']['n_users']|default('no users')|safe_text}\\ \hline
+    n\_items  & \VAR{my_dict['interactions']['n_items']|default('no items')|safe_text}\\ \hline
+    total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['interactions']['min_score']|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|safe_text}\\ \hline
+    sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+\hfill\break
+\hfill\break
+
+
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+\subsection{Partitioning techinque used}\label{subsec:partitioning}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['KFoldPartitioning'] is defined}
+% KFOLD PARTITIONING TECNIQUE
+K-fold cross-validation is a technique used in machine learning to assess the performance of a predictive model.
+The basic idea is to divide the dataset into K subsets, or folds.
+The model is then trained K times, each time using K-1 folds for training and the remaining fold for validation.
+This process is repeated K times, with a different fold used as the validation set in each iteration.
+\hfill\break
+\hfill\break
+The KFoldPartitioning has been used with the following setting:
+\hfill\break
+\hfill\break
+\BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
+The data has been shuffled before being split into batches.
+\BLOCK{endif}
+The partitioning technique has been executed with the following settings:
+\begin{itemize}
+    \item number of splits: \VAR{my_dict['partitioning']['KFoldPartitioning']['n_splits']}
+    \item shuffle: \VAR{my_dict['partitioning']['KFoldPartitioning']['shuffle']}
+    \item random state: \VAR{my_dict['partitioning']['KFoldPartitioning']['random_state']|default('no random state applied')}
+    \item skip user error: \VAR{my_dict['partitioning']['KFoldPartitioning']['skip_user_error']|default('no setted')}
+\end{itemize}
+\hfill\break
+\hfill\break
+% KFOLD PARTITIONING TECNIQUE ended
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['HoldOutPartitioning'] is defined}
+%  HOLD-OUT PARTIONING TECNIQUE
+The partitioning used is the Hold-Out Partitioning.
+This approach splits the dataset in use into a train set and a test set.
+The training set is what the model is trained on, and the test set is used to see how
+well the model will perform on new, unseen data.
+\hfill\break
+\hfill\break
+The train set size of this experiment is the \VAR{my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100}\%
+of the original dataset, while the test set is the remaining \VAR{(100 - (my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100))}\%.
+\hfill\break
+\hfill\break
+\BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
+The data has been shuffled before being split into batches.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+%  HOLD-OUT PARTIONING TECNIQUE ended
+\BLOCK{endif}
+% end partitioning section___________
+
+###
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}

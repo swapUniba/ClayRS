@@ -7,7 +7,7 @@ def retrieve_parameter_settings(data, keys):
             current_data = current_data[key]
         else:
             # if key not found
-            return f"Chiave '{key}' non trovata nel dizionario."
+            return f"Key '{key}' not found in the dictionary."
 
     # Check if the last value is None, an empty dictionary, or an empty list
     if current_data in [None, {}, []]:
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     }
 
     # Esempio di chiamata della funzione
-    keys_to_access = ["ContentBasedRS", "algorithm", "LinearPredictor", "only_greater_eq"]
+    keys_to_access = ["ContentBasedRS", "algorithm", "LinearPredictor"]
     result = retrieve_parameter_settings(recsys, keys_to_access)
 
     # Stampare il risultato
