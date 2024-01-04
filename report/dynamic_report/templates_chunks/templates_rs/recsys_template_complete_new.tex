@@ -28,9 +28,9 @@ In this experiment the statistics of the dataset used are reported in the follow
     n\_users  & \VAR{my_dict['interactions']['n_users']|default('no users')|safe_text}\\ \hline
     n\_items  & \VAR{my_dict['interactions']['n_items']|default('no items')|safe_text}\\ \hline
     total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
-    min\_score  & \VAR{my_dict['interactions']['min_score']|safe_text}\\ \hline
-    max\_score  & \VAR{my_dict['interactions']['max_score']|safe_text}\\ \hline
-    mean\_score  & \VAR{my_dict['interactions']['mean_score']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['interactions']['min_score']|truncate|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|truncate|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|truncate|safe_text}\\ \hline
     sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
   \end{tabular}
    \caption{Table of the Interactions}\label{tab:dataset_table}
