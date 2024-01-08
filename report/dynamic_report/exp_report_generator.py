@@ -266,7 +266,8 @@ class DynamicReportManager(ReportManager):
         'field_sec': './templates_chunks/templates_ca_mini_chunks/field_ca.tex',
         'preprocessing': './templates_chunks/templates_ca_mini_chunks/no_preprocessing_ca.tex',
         'postprocessing': './templates_chunks/templates_ca_mini_chunks/no_postprocessing_ca.tex',
-        'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex'
+        'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex',
+        'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex'
     }
 
     # dictionary to find path for the recsys module template
@@ -519,18 +520,9 @@ class DynamicReportManager(ReportManager):
                                                           text_extract, self.file_destination)
                     # dealing with postprocessing part
                     else:
-                        postpro_list_super = super().get_subkeys_at_path(self.ca_report_dict,
-                                                                         "field_representations",
-                                                                         field, process)
-                        print(postpro_list_super)
-                        key_postpros_path_list = ["field_representations", str(field), str(process)]
-                        postpro_list = []
-                        if postpro_list_super:
-                            postpro_list = super().merge_subkeys_for_keys(self.ca_report_dict, postpro_list_super,
-                                                                          key_postpros_path_list)
-                            print(postpro_list)
-
-                        print(postpro_list)
+                        postpro_list = super().get_subkeys_at_path(self.ca_report_dict,
+                                                                   "field_representations",
+                                                                   field, process)
                         # check if list empty then postprocessing hasn't been applied
                         if not postpro_list:
                             # add no postprocessing template part
@@ -538,12 +530,10 @@ class DynamicReportManager(ReportManager):
                                                       field, content_of_field,
                                                       text_extract, self.file_destination)
                         else:
-                            # add all file latex corresponding to postprocessing techniques used
-                            for postp in postpro_list:
-                                # print(postp)
-                                process_and_write_to_file(DynamicReportManager.CA_DICT, postp,
-                                                          field, content_of_field,
-                                                          text_extract, self.file_destination)
+                            # add general template post_processing
+                            process_and_write_to_file(DynamicReportManager.CA_DICT, 'pst',
+                                                      field, content_of_field,
+                                                      text_extract, self.file_destination)
 
         # closing the content analyzer section
         add_single_mini_template(DynamicReportManager.CA_DICT, 'end',
@@ -605,3 +595,35 @@ class DynamicReportManager(ReportManager):
         except Exception as e:
             print(f"Error during PDF generation: {e}")
             return None
+
+
+# la parte nuova per la gestione del post processing
+"""
+# dealing with postprocessing part
+else:
+    postpro_list_super = super().get_subkeys_at_path(self.ca_report_dict,
+                                                     "field_representations",
+                                                     field, process)
+    print(postpro_list_super)
+    key_postpros_path_list = ["field_representations", str(field), str(process)]
+    postpro_list = []
+    if postpro_list_super:
+        postpro_list = super().merge_subkeys_for_keys(self.ca_report_dict, postpro_list_super,
+                                                      key_postpros_path_list)
+        print(postpro_list)
+
+    print(postpro_list)
+    # check if list empty then postprocessing hasn't been applied
+    if not postpro_list:
+        # add no postprocessing template part
+        process_and_write_to_file(DynamicReportManager.CA_DICT, 'postprocessing',
+                                  field, content_of_field,
+                                  text_extract, self.file_destination)
+    else:
+        # add all file latex corresponding to postprocessing techniques used
+        for postp in postpro_list:
+            # print(postp)
+            process_and_write_to_file(DynamicReportManager.CA_DICT, postp,
+                                      field, content_of_field,
+                                      text_extract, self.file_destination)
+"""
