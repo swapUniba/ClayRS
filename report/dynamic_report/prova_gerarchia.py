@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     current_path = os.path.abspath(__file__)
     print("Il percorso dello script in esecuzione è:", current_path)
-    MngReport.build_template_file()
+    MngReport.build_template_file_simplex()
     MngReport.load_template_into_enviroment()
     input_yaml = MngReport.merge_yaml_files(LIST_YAML_FILES, "./../data", "final_report_yml.yml")
     MngReport.generate_dynamic_report(input_yaml, OUTPUT_TEX)

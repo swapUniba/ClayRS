@@ -12,6 +12,8 @@
 \usepackage{comment}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{url}
+\usepackage{listings}
 
 \title{Report Experiment ClayRS Framework}
 \author{SWAP research group UniBa}
@@ -46,788 +48,1501 @@ representation wanted:
 
 
 % field: plot0 representation subsection
-$ plot0 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot0 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot0
 
-
-
-% check if non particular technique of data reppresentation has been used
-The data has been represented as the original.
+\begin{itemize}
+                                                            
+            \item
+        \verb| OriginalData | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| dtype: <class 'str'>|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% no technique of representation on the field
+% content_representation_field_ plot0 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot0 $ during the experiment.
+% preprocessing on plot0
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot0 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot0 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot0 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot0 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot0 ___
 
 
 
 % field: plot1 representation subsection
-$ plot1 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot1 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot1
 
-
-
-% WhooshTfIdf used as representation
-The WhooshTfIdf technique has been used.
-\hfill\break
-\hfill\break
-% WhooshTfIdf usege end___
-
-
-
-% Spacy preprocessing
-Spacy has been used to preprocess data with the following settings:
 \begin{itemize}
-    \item model: en\_core\_web\_sm
-    \item strip multiple whitespace: True
-    \item remove punctuation:False
-    \item stopwords removal: True
-    \item new stopwords: None
-    \item not stopwords: None
-    \item lemmatization: True
-    \item url tagging: False
-    \item named entity recognition: False
+                                                            
+            \item
+        \verb| WhooshTfIdf | used as content representation technique with following parameters:
+        \begin{itemize}
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ plot1 ____
+
+
+
+% preprocessing on plot1
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+    \item
+     \verb| Spacy | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| lemmatization: True|
+             \item
+            \verb| model: en_core_web_sm|
+             \item
+            \verb| named_entity_recognition: False|
+             \item
+            \verb| new_stopwords: None|
+             \item
+            \verb| not_stopwords: None|
+             \item
+            \verb| remove_punctuation: False|
+             \item
+            \verb| stopwords_removal: True|
+             \item
+            \verb| strip_multiple_whitespace: True|
+             \item
+            \verb| url_tagging: False|
+           \end{itemize}
 \end{itemize}
+% _preprocessing on plot1 ____
 \hfill\break
 \hfill\break
-% Spacy preprocessing end___
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot1 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot1 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot1 ___
 
 
 
 % field: plot2 representation subsection
-$ plot2 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot2 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot2
 
-
-
-% SkLearnTfIdf used as representation
-The SkLearnTfIdf technique has been used.
-The technique has been settled with the following parameter:
 \begin{itemize}
-    \item max df: 1.0
-    \item min df: 1
-    \item max features: None
-    \item vocabulary: None
-    \item binary: False
-    \item norm: l2
-    \item use idf: True
-    \item smooth idf: True
-    \item sublinear tf: False
-\end{itemize}
+                                                            
+            \item
+        \verb| SkLearnTfIdf | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| binary: False|
+                            \item
+                \verb| dtype: <class 'numpy.float64'>|
+                            \item
+                \verb| max_df: 1.0|
+                            \item
+                \verb| max_features: None|
+                            \item
+                \verb| min_df: 1|
+                            \item
+                \verb| norm: l2|
+                            \item
+                \verb| smooth_idf: True|
+                            \item
+                \verb| sublinear_tf: False|
+                            \item
+                \verb| use_idf: True|
+                            \item
+                \verb| vocabulary: None|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% SkLearnTfIdf usege end___
+% content_representation_field_ plot2 ____
 
 
 
-% Ekphrasis start
-Ekphrasis has been used to preprocess data with the following settings:
+% preprocessing on plot2
+    % dictionary 'preprocessing' not empty
 \begin{itemize}
-    \item omit: None
-    \item normalize: None
-    \item unpack contractions: False
-    \item unpack hashtags: False
-    \item annotate: None
-    \item corrector: None
-    \item tokenizer:
-    \item segmenter: None
-    \item all caps tag: None
-    \item spell correction: True
-    \item segmentation: False
-    \item dicts: None
-    \item spell correct elong: True
+    \item
+     \verb| Ekphrasis | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| all_caps_tag: None|
+             \item
+            \verb| annotate: None|
+             \item
+            \verb| corrector: None|
+             \item
+            \verb| dicts: None|
+             \item
+            \verb| normalize: None|
+             \item
+            \verb| omit: None|
+             \item
+            \verb| segmentation: False|
+             \item
+            \verb| segmenter: None|
+             \item
+            \verb| spell_correct_elong: True|
+             \item
+            \verb| spell_correction: True|
+             \item
+            \verb| tokenizer: <bound method SocialTokenizer.tokenize of <ekphrasis.classes.tokenizer.SocialTokenizer object at 0x00000234F0BDBD00>>|
+             \item
+            \verb| unpack_contractions: False|
+             \item
+            \verb| unpack_hashtags: False|
+           \end{itemize}
+    \item
+     \verb| NLTK | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| lang: english|
+             \item
+            \verb| lemmatization: True|
+             \item
+            \verb| pos_tag: False|
+             \item
+            \verb| remove_punctuation: False|
+             \item
+            \verb| stemming: False|
+             \item
+            \verb| stopwords_removal: True|
+             \item
+            \verb| strip_multiple_whitespace: True|
+             \item
+            \verb| url_tagging: False|
+           \end{itemize}
 \end{itemize}
+% _preprocessing on plot2 ____
 \hfill\break
 \hfill\break
-% Ekphrasis end___
-
-
-
-% NLTK preprocessing
-NLTK has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item strip multiple whitespace: True
-    \item remove punctuation: False
-    \item stopwords removal: True
-    \item url tagging: False
-    \item lemmatization: True
-    \item stemming: False
-    \item pos tag: False
-    \item lang: english
-\end{itemize}
-\hfill\break
-\hfill\break
-% NLTK preprocessing end___
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot2 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot2 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot2 ___
 
 
 
 % field: plot3 representation subsection
-$ plot3 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot3 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot3
 
-
-
-% WordEmbeddingTechnique used as representation
-The Word Embedding Technique has been used and
-the embedding source used is
-Gensim glove-twitter-25
+\begin{itemize}
+                                                            
+            \item
+        \verb| WordEmbeddingTechnique | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| embedding_source: Gensim glove-twitter-25|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% WordEmbeddingTechnique usege end___
+% content_representation_field_ plot3 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot3 $ during the experiment.
+% preprocessing on plot3
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot3 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot3 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot3 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot3 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot3 ___
 
 
 
 % field: plot4 representation subsection
-$ plot4 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot4 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot4
 
-
-
-% SentenceEmbeddingTechnique used as representation
-The Sentence Embedding Technique has been used and
-the embedding source used is
-Sbert paraphrase-distilroberta-base-v1
+\begin{itemize}
+                                                            
+            \item
+        \verb| SentenceEmbeddingTechnique | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| embedding_source: Sbert paraphrase-distilroberta-base-v1|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% SentenceEmbeddingTechnique usege end___
+% content_representation_field_ plot4 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot4 $ during the experiment.
+% preprocessing on plot4
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot4 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot4 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot4 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot4 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot4 ___
 
 
 
 % field: plot5 representation subsection
-$ plot5 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot5 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot5
 
-
-
-% DocumentEmbeddingTechnique used as representation
-The Document Embedding Technique has been used and
-the embedding source used is
-Sbert paraphrase-distilroberta-base-v1
+\begin{itemize}
+                                                            
+            \item
+        \verb| DocumentEmbeddingTechnique | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| embedding_source: Sbert paraphrase-distilroberta-base-v1|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% DocumentEmbeddingTechnique end___
+% content_representation_field_ plot5 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot5 $ during the experiment.
+% preprocessing on plot5
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot5 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot5 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot5 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot5 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot5 ___
 
 
 
 % field: plot6 representation subsection
-$ plot6 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot6 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot6
 
-
-
-% Word2SentenceEmbeddingused as representation
-The Word2Sentence Embedding Technique has been used and
-the embedding source used is
-Gensim glove-twitter-25.
-Combining technique used is
-Centroid.
+\begin{itemize}
+                                                            
+            \item
+        \verb| Word2SentenceEmbedding | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| combining_technique: Centroid|
+                            \item
+                \verb| embedding_source: Gensim glove-twitter-25|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% Word2SentenceEmbeddingused end___
+% content_representation_field_ plot6 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot6 $ during the experiment.
+% preprocessing on plot6
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot6 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot6 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot6 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot6 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot6 ___
 
 
 
 % field: plot7 representation subsection
-$ plot7 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot7 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot7
 
-
-
-% Word2DocEmbedding used as representation
-The Word2Doc Embedding Technique has been used and
-the embedding source used is
-Gensim glove-twitter-25.
-Combining technique used is
-Centroid.
+\begin{itemize}
+                                                            
+            \item
+        \verb| Word2DocEmbedding | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| combining_technique: Centroid|
+                            \item
+                \verb| embedding_source: Gensim glove-twitter-25|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% Word2DocEmbedding usege end___
+% content_representation_field_ plot7 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot7 $ during the experiment.
+% preprocessing on plot7
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot7 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot7 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot7 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot7 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot7 ___
 
 
 
 % field: plot8 representation subsection
-$ plot8 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot8 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot8
+
+\begin{itemize}
+                                                            
+            \item
+        \verb| Sentence2DocEmbedding | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| combining_technique: Centroid|
+                            \item
+                \verb| embedding_source: Sbert paraphrase-distilroberta-base-v1|
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ plot8 ____
 
 
 
-
-
-
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot8 $ during the experiment.
+% preprocessing on plot8
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot8 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot8 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot8 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot8 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot8 ___
 
 
 
 % field: plot9 representation subsection
-$ plot9 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot9 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot9
 
-
-
-% PyWSDSynsetDocumentFrequency used as representation
-The PyWSD Synset Document Frequency Technique has been used.
+\begin{itemize}
+                                                            
+            \item
+        \verb| PyWSDSynsetDocumentFrequency | used as content representation technique with following parameters:
+        \begin{itemize}
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% PyWSDSynsetDocumentFrequency usege end___
+% content_representation_field_ plot9 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot9 $ during the experiment.
+% preprocessing on plot9
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot9 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot9 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot9 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot9 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot9 ___
 
 
 
 % field: plot10 representation subsection
-$ plot10 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot10 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot10
 
-
-
-% check if non particular technique of data reppresentation has been used
-The data has been represented as the original.
+\begin{itemize}
+                                                            
+            \item
+        \verb| OriginalData | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| dtype: <class 'str'>|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% no technique of representation on the field
+% content_representation_field_ plot10 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot10 $ during the experiment.
+% preprocessing on plot10
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot10 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot10 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot10 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot10 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot10 ___
 
 
 
 % field: plot11 representation subsection
-$ plot11 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| plot11 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on plot11
 
-
-
-% check if non particular technique of data reppresentation has been used
-The data has been represented as the original.
+\begin{itemize}
+                                                            
+            \item
+        \verb| OriginalData | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| dtype: <class 'str'>|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% no technique of representation on the field
+% content_representation_field_ plot11 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ plot11 $ during the experiment.
+% preprocessing on plot11
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot11 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on plot11 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ plot11 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot11 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ plot11 ___
 
 
 
 % field: idx0 representation subsection
-$ idx0 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| idx0 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on idx0
 
-
-
-% FromNPY used as representation
-The FromNPY Technique has been used on the field idx0 .
+\begin{itemize}
+                                                            
+            \item
+        \verb| FromNPY | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| npy_file_path: report_stuff\report.npy|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% FromNPY end___
+% content_representation_field_ idx0 ____
 
 
 
-% This block if rendered when no preprocessing technique has been applied
-No preprocessing techniques have been used to preprocess data $ idx0 $ during the experiment.
+% preprocessing on idx0
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| idx0 | has been represented with the following techniques:
+ during the experiment.
+% _preprocessing on idx0 ____
 \hfill\break
 \hfill\break
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ idx0 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| idx0 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ idx0 ___
 
 
 
 % field: video_path0 representation subsection
-$ video_path0 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| video_path0 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on video_path0
 
-
-
-% SkImageHogDescriptor used as representation
-SKImage Hog Descriptor technique has been applied to process data with the following settings:
 \begin{itemize}
-    \item orientations: 9
-    \item pixels per cell:
-    \item cells per block:
-    \item block norm: L2-Hys
-    \item transform sqrt: False
-    \item flatten: False
-    \item contents dirs: contents\_dirs
-    \item time tuple:
-    \item max timeout: 2
-    \item max retries: 5
-    \item max workers: 0
-\end{itemize}
+                                                            
+            \item
+        \verb| SkImageHogDescriptor | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| block_norm: L2-Hys|
+                            \item
+                \verb| cells_per_block: [3, 3]|
+                            \item
+                \verb| contents_dirs: contents_dirs|
+                            \item
+                \verb| flatten: False|
+                            \item
+                \verb| max_retries: 5|
+                            \item
+                \verb| max_timeout: 2|
+                            \item
+                \verb| max_workers: 0|
+                            \item
+                \verb| orientations: 9|
+                            \item
+                \verb| pixels_per_cell: [8, 8]|
+                            \item
+                \verb| time_tuple: [0, None]|
+                            \item
+                \verb| transform_sqrt: False|
+                    \end{itemize}
+    \end{itemize}
 \hfill\break
 \hfill\break
-% SkImageHogDescriptor usege end___
+% content_representation_field_ video_path0 ____
 
 
 
-% TorchUniformTemporalSubSampler preprocessing
-TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
+% preprocessing on video_path0
+    % dictionary 'preprocessing' not empty
 \begin{itemize}
-    \item number samples: 8
+    \item
+     \verb| TorchUniformTemporalSubSampler | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| num_samples: 8|
+           \end{itemize}
 \end{itemize}
+% _preprocessing on video_path0 ____
 \hfill\break
 \hfill\break
-% TorchUniformTemporalSubSampler preprocessing end___
 
 
 
 % This block is rendered if no post processing technique has been applied
-No postprocessing techniques have been used on the data $ video_path0 $ in this experiment.
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path0 | in this experiment.
 \hfill\break
 \hfill\break
+% postprocessing_on_ video_path0 ___
 
 
 
 % field: video_path1 representation subsection
-$ video_path1 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| video_path1 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on video_path1
 
-
-
-% MFCC used as representation
-MFCC technique has been applied to process data with the following settings:
 \begin{itemize}
-    \item contents dirs: contents\_dirs
-    \item time tuple:
-    \item flatten: False
-    \item mean: False
-    \item max timeout: 2
-    \item max retries: 5
-    \item max workers: 0
-    \item n mfcc: 40
-    \item dct type: 2
-    \item norm: ortho
-    \item log mels: False
-    \item melkwargs: None
+                                                            
+            \item
+        \verb| MFCC | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| contents_dirs: contents_dirs|
+                            \item
+                \verb| dct_type: 2|
+                            \item
+                \verb| flatten: False|
+                            \item
+                \verb| log_mels: False|
+                            \item
+                \verb| max_retries: 5|
+                            \item
+                \verb| max_timeout: 2|
+                            \item
+                \verb| max_workers: 0|
+                            \item
+                \verb| mean: False|
+                            \item
+                \verb| melkwargs: None|
+                            \item
+                \verb| n_mfcc: 40|
+                            \item
+                \verb| norm: ortho|
+                            \item
+                \verb| time_tuple: [0, None]|
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ video_path1 ____
+
+
+
+% preprocessing on video_path1
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+    \item
+     \verb| ConvertToMono | used as preprocessing technique with following settings:
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| TorchResample | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| beta: None|
+             \item
+            \verb| lowpass_filter_width: 6|
+             \item
+            \verb| new_freq: 16000|
+             \item
+            \verb| resampling_method: sinc_interp_hann|
+             \item
+            \verb| rolloff: 0.99|
+           \end{itemize}
+\end{itemize}
+% _preprocessing on video_path1 ____
+\hfill\break
+\hfill\break
+
+
+
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path1 | have been applied the following postprocessing techniques:
+\begin{itemize}
+    \item
+     \verb| 0 :|
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| 1 :|
+     \begin{itemize}
+             \item
+            \verb| FVGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: True |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 2 :|
+     \begin{itemize}
+             \item
+            \verb| VLADGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: False |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 3 :|
+     \begin{itemize}
+             \item
+            \verb| SkLearnPCA: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| copy: True |
+                                    \item
+                        \verb| iterated_power: auto |
+                                    \item
+                        \verb| n_components: 1 |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| svd_solver: auto |
+                                    \item
+                        \verb| tol: 0.0 |
+                                    \item
+                        \verb| whiten: False |
+                            \end{itemize}
+       
+           \end{itemize}
 \end{itemize}
 \hfill\break
 \hfill\break
-% MFCC end___
-
-
-
-% TorchResample preprocessing
-TorchResample has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item new freq: 16000
-    \item resampling method: sinc\_interp\_hann
-    \item lowpass filter width: 6
-    \item roll off: 0.99
-    \item beta: None
-\end{itemize}
-\hfill\break
-\hfill\break
-% TorchResample preprocessing end___
-
-
-
-% ConvertToMono preprocessing
-ConvertToMono has been used to preprocess data with the following settings:
-\hfill\break
-\hfill\break
-% ConvertToMono end___
-
-
-
-
-
-
-
-
-
+% postprocessing_on_ video_path1 ___
 
 
 
 % field: video_path2 representation subsection
-$ video_path2 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| video_path2 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on video_path2
 
-
-
-
-
-
-% TorchResample preprocessing
-TorchResample has been used to preprocess data with the following settings:
 \begin{itemize}
-    \item new freq: 16000
-    \item resampling method: sinc\_interp\_hann
-    \item lowpass filter width: 6
-    \item roll off: 0.99
-    \item beta: None
+                                                            
+            \item
+        \verb| VGGISH | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| apply_on_output: None|
+                            \item
+                \verb| batch_size: 1|
+                            \item
+                \verb| contents_dirs: contents_dirs|
+                            \item
+                \verb| device: cuda:0|
+                            \item
+                \verb| feature_layer: embedding_network.5|
+                            \item
+                \verb| flatten: True|
+                            \item
+                \verb| max_retries: 5|
+                            \item
+                \verb| max_timeout: 2|
+                            \item
+                \verb| max_workers: 0|
+                            \item
+                \verb| time_tuple: [0, None]|
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ video_path2 ____
+
+
+
+% preprocessing on video_path2
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+    \item
+     \verb| ConvertToMono | used as preprocessing technique with following settings:
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| TorchResample | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| beta: None|
+             \item
+            \verb| lowpass_filter_width: 6|
+             \item
+            \verb| new_freq: 16000|
+             \item
+            \verb| resampling_method: sinc_interp_hann|
+             \item
+            \verb| rolloff: 0.99|
+           \end{itemize}
+\end{itemize}
+% _preprocessing on video_path2 ____
+\hfill\break
+\hfill\break
+
+
+
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path2 | have been applied the following postprocessing techniques:
+\begin{itemize}
+    \item
+     \verb| 0 :|
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| 1 :|
+     \begin{itemize}
+             \item
+            \verb| FVGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: True |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 2 :|
+     \begin{itemize}
+             \item
+            \verb| VLADGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: False |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 3 :|
+     \begin{itemize}
+             \item
+            \verb| SkLearnPCA: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| copy: True |
+                                    \item
+                        \verb| iterated_power: auto |
+                                    \item
+                        \verb| n_components: 1 |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| svd_solver: auto |
+                                    \item
+                        \verb| tol: 0.0 |
+                                    \item
+                        \verb| whiten: False |
+                            \end{itemize}
+       
+           \end{itemize}
 \end{itemize}
 \hfill\break
 \hfill\break
-% TorchResample preprocessing end___
-
-
-
-% ConvertToMono preprocessing
-ConvertToMono has been used to preprocess data with the following settings:
-\hfill\break
-\hfill\break
-% ConvertToMono end___
-
-
-
-
-
-
-
-
-
+% postprocessing_on_ video_path2 ___
 
 
 
 % field: video_path3 representation subsection
-$ video_path3 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| video_path3 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on video_path3
 
-
-
-% PytorchImageModels used as representation
-Pytorch Image Models technique has been applied to process data with the following settings:
 \begin{itemize}
-    \item model name: densenet161
-    \item feature layer: head\_drop
-    \item flatten: True
-    \item device:  cuda:0
-    \item apply on output: None
-    \item contents dirs: contents\_dirs
-    \item time tuple:
-    \item custom weights path: None
-    \item use default transforms: False
-    \item num classes: None
-    \item max timeout: 2
-    \item max retries: 5
-    \item max workers: 0
-    \item batch size:  4
+                                                            
+            \item
+        \verb| PytorchImageModels | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| apply_on_output: None|
+                            \item
+                \verb| batch_size: 4|
+                            \item
+                \verb| contents_dirs: contents_dirs|
+                            \item
+                \verb| custom_weights_path: None|
+                            \item
+                \verb| device: cuda:0|
+                            \item
+                \verb| feature_layer: head_drop|
+                            \item
+                \verb| flatten: True|
+                            \item
+                \verb| max_retries: 5|
+                            \item
+                \verb| max_timeout: 2|
+                            \item
+                \verb| max_workers: 0|
+                            \item
+                \verb| model_name: densenet161|
+                            \item
+                \verb| num_classes: None|
+                            \item
+                \verb| time_tuple: [0, 10]|
+                            \item
+                \verb| use_default_transforms: False|
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ video_path3 ____
+
+
+
+% preprocessing on video_path3
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+    \item
+     \verb| CenterCrop | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| size: [224, 224]|
+           \end{itemize}
+    \item
+     \verb| Lambda | used as preprocessing technique with following settings:
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| Normalize | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| mean: [0.485, 0.456, 0.406]|
+             \item
+            \verb| std: [0.229, 0.224, 0.225]|
+           \end{itemize}
+    \item
+     \verb| Resize | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| antialias: None|
+             \item
+            \verb| interpolation: bilinear|
+             \item
+            \verb| max_size: None|
+             \item
+            \verb| size: [256, 256]|
+           \end{itemize}
+    \item
+     \verb| TorchUniformTemporalSubSampler | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| num_samples: 8|
+           \end{itemize}
+\end{itemize}
+% _preprocessing on video_path3 ____
+\hfill\break
+\hfill\break
+
+
+
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path3 | have been applied the following postprocessing techniques:
+\begin{itemize}
+    \item
+     \verb| 0 :|
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| 1 :|
+     \begin{itemize}
+             \item
+            \verb| FVGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: True |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 2 :|
+     \begin{itemize}
+             \item
+            \verb| VLADGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: False |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 3 :|
+     \begin{itemize}
+             \item
+            \verb| SkLearnPCA: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| copy: True |
+                                    \item
+                        \verb| iterated_power: auto |
+                                    \item
+                        \verb| n_components: 1 |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| svd_solver: auto |
+                                    \item
+                        \verb| tol: 0.0 |
+                                    \item
+                        \verb| whiten: False |
+                            \end{itemize}
+       
+           \end{itemize}
 \end{itemize}
 \hfill\break
 \hfill\break
-% PytorchImageModels usage end___
-
-
-
-% TorchUniformTemporalSubSampler preprocessing
-TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item number samples: 8
-\end{itemize}
-\hfill\break
-\hfill\break
-% TorchUniformTemporalSubSampler preprocessing end___
-
-
-
-% Resize preprocessing
-Resize has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item size:
-    \item interpolation: bilinear
-    \item max size: None
-    \item antialias: None
-\end{itemize}
-\hfill\break
-\hfill\break
-% Resize preprocessing end___
-
-
-
-% CenterCrop preprocessing
-CenterCrop has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item size:
-\end{itemize}
-\hfill\break
-\hfill\break
-% CenterCrop end___
-
-
-
-% Lambda preprocessing
-Lambda has been used to preprocess data with the following settings:
-\hfill\break
-\hfill\break
-% Lambda preprocessing end___
-
-
-
-% Normalize preprocessing
-Normalize has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
-    \item std:
-\end{itemize}
-\hfill\break
-\hfill\break
-% Normalize preprocessing end___
-
-
-
-
-
-
-
-
-
+% postprocessing_on_ video_path3 ___
 
 
 
 % field: video_path4 representation subsection
-$ video_path4 $  has been represented with the following techniques:
+\textbf{\lstinline[style=verbatim-text]| video_path4 |} has been represented with the following techniques:
 \hfill\break
 \hfill\break
+% content representation on video_path4
 
-
-
-% TorchVisionVideoModels used as representation
-Torch Vision Video Models technique has been applied to process data with the following settings:
 \begin{itemize}
-    \item model name: r2plus1d\_18
-    \item feature layer: avgpool
-    \item weights: DEFAULT
-    \item flatten: True
-    \item device:  cuda:0
-    \item apply on output: None
-    \item contents dirs: contents\_dirs
-    \item time tuple:
-    \item max timeout: 2
-    \item max retries: 5
-    \item max workers: 0
-    \item batch size:  4
-    \item mini batch size: 10
+                                                            
+            \item
+        \verb| TorchVisionVideoModels | used as content representation technique with following parameters:
+        \begin{itemize}
+                            \item
+                \verb| apply_on_output: None|
+                            \item
+                \verb| batch_size: 4|
+                            \item
+                \verb| contents_dirs: contents_dirs|
+                            \item
+                \verb| device: cuda:0|
+                            \item
+                \verb| feature_layer: avgpool|
+                            \item
+                \verb| flatten: True|
+                            \item
+                \verb| max_retries: 5|
+                            \item
+                \verb| max_timeout: 2|
+                            \item
+                \verb| max_workers: 0|
+                            \item
+                \verb| mini_batch_size: 10|
+                            \item
+                \verb| model_name: r2plus1d_18|
+                            \item
+                \verb| time_tuple: [0, 10]|
+                            \item
+                \verb| weights: DEFAULT|
+                    \end{itemize}
+    \end{itemize}
+\hfill\break
+\hfill\break
+% content_representation_field_ video_path4 ____
+
+
+
+% preprocessing on video_path4
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+    \item
+     \verb| CenterCrop | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| size: [112, 112]|
+           \end{itemize}
+    \item
+     \verb| ClipSampler | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| num_clips: 5|
+             \item
+            \verb| num_frames_for_clip: 16|
+             \item
+            \verb| selection_strategy: sequential|
+           \end{itemize}
+    \item
+     \verb| Lambda | used as preprocessing technique with following settings:
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| Normalize | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| mean: [0.43216, 0.394666, 0.37645]|
+             \item
+            \verb| std: [0.22803, 0.22145, 0.216989]|
+           \end{itemize}
+    \item
+     \verb| Resize | used as preprocessing technique with following settings:
+     \begin{itemize}
+             \item
+            \verb| antialias: None|
+             \item
+            \verb| interpolation: bilinear|
+             \item
+            \verb| max_size: None|
+             \item
+            \verb| size: [128, 171]|
+           \end{itemize}
+\end{itemize}
+% _preprocessing on video_path4 ____
+\hfill\break
+\hfill\break
+
+
+
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path4 | have been applied the following postprocessing techniques:
+\begin{itemize}
+    \item
+     \verb| 0 :|
+     \begin{itemize}
+           \end{itemize}
+    \item
+     \verb| 1 :|
+     \begin{itemize}
+             \item
+            \verb| FVGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: True |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 2 :|
+     \begin{itemize}
+             \item
+            \verb| VLADGMM: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| alpha: 0.5 |
+                                    \item
+                        \verb| covariance_type: diag |
+                                    \item
+                        \verb| improved: False |
+                                    \item
+                        \verb| init_params: kmeans |
+                                    \item
+                        \verb| max_iter: 100 |
+                                    \item
+                        \verb| means_init: None |
+                                    \item
+                        \verb| n_components: 2 |
+                                    \item
+                        \verb| n_init: 1 |
+                                    \item
+                        \verb| precisions_init: None |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| reg_covar: 1e-06 |
+                                    \item
+                        \verb| tol: 0.001 |
+                                    \item
+                        \verb| verbose: 0 |
+                                    \item
+                        \verb| verbose_interval: 10 |
+                                    \item
+                        \verb| warm_start: False |
+                                    \item
+                        \verb| weights_init: None |
+                                    \item
+                        \verb| with_mean: False |
+                                    \item
+                        \verb| with_std: False |
+                            \end{itemize}
+       
+           \end{itemize}
+    \item
+     \verb| 3 :|
+     \begin{itemize}
+             \item
+            \verb| SkLearnPCA: |
+
+                   \begin{itemize}
+                                    \item
+                        \verb| copy: True |
+                                    \item
+                        \verb| iterated_power: auto |
+                                    \item
+                        \verb| n_components: 1 |
+                                    \item
+                        \verb| random_state: None |
+                                    \item
+                        \verb| svd_solver: auto |
+                                    \item
+                        \verb| tol: 0.0 |
+                                    \item
+                        \verb| whiten: False |
+                            \end{itemize}
+       
+           \end{itemize}
 \end{itemize}
 \hfill\break
 \hfill\break
-% TorchVisionVideoModels usege end___
-
-
-
-% ClipSampler preprocessing
-ClipSampler has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item number of frames for clip: 16
-    \item number of clips: 5
-    \item selection strategy: sequential
-\end{itemize}
-\hfill\break
-\hfill\break
-% ClipSampler end___
-
-
-
-% Resize preprocessing
-Resize has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item size:
-    \item interpolation: bilinear
-    \item max size: None
-    \item antialias: None
-\end{itemize}
-\hfill\break
-\hfill\break
-% Resize preprocessing end___
-
-
-
-% CenterCrop preprocessing
-CenterCrop has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item size:
-\end{itemize}
-\hfill\break
-\hfill\break
-% CenterCrop end___
-
-
-
-% Lambda preprocessing
-Lambda has been used to preprocess data with the following settings:
-\hfill\break
-\hfill\break
-% Lambda preprocessing end___
-
-
-
-% Normalize preprocessing
-Normalize has been used to preprocess data with the following settings:
-\begin{itemize}
-    \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
-    \item std:
-\end{itemize}
-\hfill\break
-\hfill\break
-% Normalize preprocessing end___
-
-
-
-
-
-
-
-
-
+% postprocessing_on_ video_path4 ___
 
 
 

@@ -1,0 +1,36 @@
+
+%! Author = DIEGO
+%! Date = 08/01/2024
+
+
+###
+
+% preprocessing on X
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'X' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['preprocessing'] is defined and
+      my_dict['field_representations']['X']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['X']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique with following settings:
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v }|
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| X | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on X ____
+\hfill\break
+\hfill\break
+
+###

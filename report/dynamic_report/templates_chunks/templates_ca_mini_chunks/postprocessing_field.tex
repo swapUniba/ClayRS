@@ -3,12 +3,14 @@
 
 ###
 
-% post processing on X
 \BLOCK{if my_dict is defined and
       my_dict['field_representations'] is defined and
       'X' in my_dict['field_representations'] and
-      'postprocessing' in my_dict['field_representations']['X'] }
-On th field $ X $ have been applied the following postprocessing techniques:
+      'postprocessing' in my_dict['field_representations']['X'] and
+      my_dict['field_representations']['X']['postprocessing'] is defined and
+      my_dict['field_representations']['X']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| X | have been applied the following postprocessing techniques:
 \begin{itemize}
 \BLOCK{ for key, value in my_dict['field_representations']['X']['postprocessing'].items() }
     \item
@@ -35,11 +37,13 @@ On th field $ X $ have been applied the following postprocessing techniques:
      \end{itemize}
 \BLOCK{ endfor }
 \end{itemize}
-\hfill\break
-\hfill\break
-% _postprocessing__on X __
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| X | in this experiment.
 \BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ X ___
 
 ###
-
 

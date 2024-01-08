@@ -219,11 +219,14 @@ class ReportManager(ABC):
             return match.group(1)
         else:
             return None
-
+    """
     @abstractmethod
     def build_template_file(self):
         pass
-
+    """
+    @abstractmethod
+    def build_template_file_simplex(self):
+        pass
 
 class DynamicReportManager(ReportManager):
     # dictionary to find the path for mini template chunks of content analyzer
@@ -267,7 +270,10 @@ class DynamicReportManager(ReportManager):
         'preprocessing': './templates_chunks/templates_ca_mini_chunks/no_preprocessing_ca.tex',
         'postprocessing': './templates_chunks/templates_ca_mini_chunks/no_postprocessing_ca.tex',
         'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex',
-        'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex'
+        'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex',
+        'pre': './templates_chunks/templates_ca_mini_chunks/preprocess_field.tex',
+        'post': './templates_chunks/templates_ca_mini_chunks/postprocessing_field.tex',
+        'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex'
     }
 
     # dictionary to find path for the recsys module template
@@ -422,6 +428,7 @@ class DynamicReportManager(ReportManager):
             print(f"Error during writing LaTeX file: {e}")
             return None
 
+    """
     def build_template_file(self):
         # support functions to adding the text to the finale latex file, after processing and change placeholder
         # with the object needed.
@@ -566,7 +573,113 @@ class DynamicReportManager(ReportManager):
         # dealing with conclusion
         add_single_mini_template(DynamicReportManager.REP_DICT, 'end',
                                  self.file_destination, content_of_field, text_extract)
+    """
 
+    def build_template_file_simplex(self):
+        # support functions to adding the text to the finale latex file, after processing and change placeholder
+        # with the object needed.
+        def add_single_mini_template(path_map, access_key, path_destiny, content_of_field_container,
+                                     text_extract_container):
+            content = self.read_file_latex(path_map.get(access_key))
+            text = self.get_text_from_latex(content)
+            # check point
+            if text:
+                self.write_on_file_latex(text)
+                print(f"Content of {path_map.get(access_key)} added to {path_destiny} successfully")
+            else:
+                print(f"Impossible to extract text from LaTeX document: {path_map.get(access_key)}")
+
+            # updating the external parameter
+            content_of_field_container[0] = content
+            text_extract_container[0] = text
+
+        def process_and_write_to_file(path_dict, pros, scope, content_container, text_container, file_path):
+            # we are extracting the written part of the latex file which is retrieved from
+            # the dictionary which contain for each key the path of the file that needs to be added
+            content = self.read_file_latex(path_dict.get(pros))
+
+            # This passage allows to specify the field in the report and prepare text
+            content = content.replace('X', scope)
+            text = self.get_text_from_latex(content)
+
+            # add text to file after check point
+            if text:
+                self.write_on_file_latex(text)
+                print(f"Content of {path_dict.get(pros)} added to {self.file_destination} successfully")
+            else:
+                print(f"Impossible to extract text from LaTeX document: {path_dict.get(pros)}")
+            # update external parameters
+            content_container[0] = content
+            text_container[0] = text
+
+        # used to add mini template at the final template latex
+        content_of_field = [""]
+        text_extract = [""]
+
+        # first part of the report intro of the experiment report template
+        # add_single_mini_template(REPORT_DICT, 'intro', file_destination, content_of_field, text_extract)
+        process_and_write_to_file(DynamicReportManager.REP_DICT, 'intro', super().get_current_date_string(),
+                                  content_of_field, text_extract, self.file_destination)
+
+        # dealing with Content Analyzer
+        add_single_mini_template(DynamicReportManager.CA_DICT, 'intro', self.file_destination,
+                                 content_of_field, text_extract)
+
+        # add all the field that have been represented using the content analyzer and specify their
+        # preprocessing and postprocessing received.
+        if 'source_file' in self.ca_report_dict:
+
+            # extraction of the field being analyzed
+            list_of_field = super().get_keys_at_level(self.ca_report_dict, "field_representations")
+
+            print(list_of_field)
+
+            # dealing with all field that have been represented with content analyzer
+            for field in list_of_field:
+                # add the highlight field in the report
+                process_and_write_to_file(DynamicReportManager.CA_DICT, 'repr',
+                                          field, content_of_field, text_extract,
+                                          self.file_destination)
+
+                process_and_write_to_file(DynamicReportManager.CA_DICT, 'pre',
+                                          field, content_of_field, text_extract,
+                                          self.file_destination)
+
+                process_and_write_to_file(DynamicReportManager.CA_DICT, 'post',
+                                          field, content_of_field, text_extract,
+                                          self.file_destination)
+
+        # closing the content analyzer section
+        add_single_mini_template(DynamicReportManager.CA_DICT, 'end',
+                                 self.file_destination, content_of_field, text_extract)
+
+        # dealing with recsys report template
+        add_single_mini_template(DynamicReportManager.RS_DICT, 'recsys',
+                                 self.file_destination, content_of_field, text_extract)
+
+        # dealing with eva report template
+        add_single_mini_template(DynamicReportManager.EVA_DICT, 'intro',
+                                 self.file_destination, content_of_field, text_extract)
+
+        # add as mini template all the possible fold used during the training of the recommender system
+        if 'sys_results' in self.eva_report_dict:
+            result_fold_list = super().get_keys_at_level(self.eva_report_dict, 'sys_results')
+
+            if not result_fold_list:
+                print("result list is empty, no result on the partition, check eva report yml file.")
+            else:
+                for res in result_fold_list:
+                    process_and_write_to_file(DynamicReportManager.EVA_DICT, 'result',
+                                              res, content_of_field,
+                                              text_extract, self.file_destination)
+
+        # closing eva report section
+        add_single_mini_template(DynamicReportManager.EVA_DICT, 'end',
+                                 self.file_destination, content_of_field, text_extract)
+
+        # dealing with conclusion
+        add_single_mini_template(DynamicReportManager.REP_DICT, 'end',
+                                 self.file_destination, content_of_field, text_extract)
     def generate_pdf_report(self, latex_file_path, output_folder=None):
         try:
             # Extract the name and extension of the LaTeX file.
