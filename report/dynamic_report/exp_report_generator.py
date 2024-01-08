@@ -159,6 +159,18 @@ class ReportManager(ABC):
         explore_dictionary(dictionary, keys_in_order)
         return subkeys_at_path
 
+    def merge_subkeys_for_keys(self, dictionary, keys_list, additional_args):
+        merged_subkeys = []
+
+        for key in keys_list:
+            # Aggiungi la chiave corrente alla fine di additional_args
+            args_with_key = additional_args + [key]
+
+            subkeys = self.get_subkeys_at_path(dictionary, *args_with_key)
+            merged_subkeys.extend(subkeys)
+
+        return merged_subkeys
+
     def read_yaml_file(self, file_path):
         """
             Read a YAML file and return the corresponding dictionary.
@@ -284,6 +296,13 @@ class DynamicReportManager(ReportManager):
         self.ca_report_dict = super().read_yaml_file(self.ca_rep_yml)
         self.rs_report_dict = super().read_yaml_file(self.rs_rep_yml)
         self.eva_report_dict = super().read_yaml_file(self.eva_rep_yml)
+        # Imposta la directory di lavoro corrente
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        print("Current working directory:", self.base_path)
+
+        # Imposta il percorso del template LaTeX
+        self.template_path = os.path.join(self.base_path, "dynamic_fin_rep.tex")
+        print("Template path:", self.template_path)
         # setting environment based on latex needs
         self.latex_jinja_env = jinja2.Environment(
             block_start_string="\BLOCK{",
@@ -294,7 +313,7 @@ class DynamicReportManager(ReportManager):
             comment_end_string="}",
             trim_blocks=True,
             autoescape=False,
-            loader=jinja2.FileSystemLoader(searchpath="templates_latex"),
+            loader=jinja2.FileSystemLoader(searchpath=self.base_path),
         )
         # load filter for jinja environment
         self.load_filters()
@@ -358,7 +377,9 @@ class DynamicReportManager(ReportManager):
 
     # è la nuova funzione che sostituisce get_latex_template() in text_generate_latex.py
     def load_template_into_enviroment(self):
-        return self.latex_jinja_env.get_template(self.file_destination)
+        template_path = "dynamic_fin_rep.tex"
+        template = self.latex_jinja_env.get_template(template_path)
+        return template
 
     def generate_dynamic_report(self, path_data_in, output_tex_path):
         my_dict = {}
@@ -375,11 +396,11 @@ class DynamicReportManager(ReportManager):
         # print(my_dict)
         # Load template LaTeX
         template = self.load_template_into_enviroment()
-        print(template)
+        # print(template)
 
         # Rendering template with data
         output_text = template.render(my_dict=data)
-        print(output_text)
+        # print(output_text)
 
         try:
             # Extract the directory path from the LaTeX file path
@@ -405,11 +426,11 @@ class DynamicReportManager(ReportManager):
         # with the object needed.
         def add_single_mini_template(path_map, access_key, path_destiny, content_of_field_container,
                                      text_extract_container):
-            content = ReportManager.read_file_latex(path_map.get(access_key))
-            text = ReportManager.get_text_from_latex(content)
+            content = self.read_file_latex(path_map.get(access_key))
+            text = self.get_text_from_latex(content)
             # check point
             if text:
-                super().write_on_file_latex(text)
+                self.write_on_file_latex(text)
                 print(f"Content of {path_map.get(access_key)} added to {path_destiny} successfully")
             else:
                 print(f"Impossible to extract text from LaTeX document: {path_map.get(access_key)}")
@@ -421,15 +442,15 @@ class DynamicReportManager(ReportManager):
         def process_and_write_to_file(path_dict, pros, scope, content_container, text_container, file_path):
             # we are extracting the written part of the latex file which is retrieved from
             # the dictionary which contain for each key the path of the file that needs to be added
-            content = ReportManager.read_file_latex(path_dict.get(pros))
+            content = self.read_file_latex(path_dict.get(pros))
 
             # This passage allows to specify the field in the report and prepare text
             content = content.replace('X', scope)
-            text = ReportManager.get_text_from_latex(content)
+            text = self.get_text_from_latex(content)
 
             # add text to file after check point
             if text:
-                ReportManager.write_on_file_latex(text)
+                self.write_on_file_latex(text)
                 print(f"Content of {path_dict.get(pros)} added to {self.file_destination} successfully")
             else:
                 print(f"Impossible to extract text from LaTeX document: {path_dict.get(pros)}")
@@ -443,10 +464,8 @@ class DynamicReportManager(ReportManager):
 
         # first part of the report intro of the experiment report template
         # add_single_mini_template(REPORT_DICT, 'intro', file_destination, content_of_field, text_extract)
-        process_and_write_to_file(DynamicReportManager.REP_DICT, 'intro',
-                                  super().get_current_date_string(),
-                                  content_of_field, text_extract,
-                                  self.file_destination)
+        process_and_write_to_file(DynamicReportManager.REP_DICT, 'intro', super().get_current_date_string(),
+                                  content_of_field, text_extract, self.file_destination)
 
         # dealing with Content Analyzer
         add_single_mini_template(DynamicReportManager.CA_DICT, 'intro', self.file_destination,
@@ -500,10 +519,18 @@ class DynamicReportManager(ReportManager):
                                                           text_extract, self.file_destination)
                     # dealing with postprocessing part
                     else:
-                        postpro_list = super().get_subkeys_at_path(self.ca_report_dict,
-                                                                   "field_representations",
-                                                                   field, process)
+                        postpro_list_super = super().get_subkeys_at_path(self.ca_report_dict,
+                                                                         "field_representations",
+                                                                         field, process)
+                        print(postpro_list_super)
+                        key_postpros_path_list = ["field_representations", str(field), str(process)]
+                        postpro_list = []
+                        if postpro_list_super:
+                            postpro_list = super().merge_subkeys_for_keys(self.ca_report_dict, postpro_list_super,
+                                                                          key_postpros_path_list)
+                            print(postpro_list)
 
+                        print(postpro_list)
                         # check if list empty then postprocessing hasn't been applied
                         if not postpro_list:
                             # add no postprocessing template part
@@ -513,6 +540,7 @@ class DynamicReportManager(ReportManager):
                         else:
                             # add all file latex corresponding to postprocessing techniques used
                             for postp in postpro_list:
+                                # print(postp)
                                 process_and_write_to_file(DynamicReportManager.CA_DICT, postp,
                                                           field, content_of_field,
                                                           text_extract, self.file_destination)

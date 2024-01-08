@@ -1,0 +1,3137 @@
+
+
+%! Author = DIEGO
+%! Date = 21/12/2023
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\title{Report Experiment ClayRS Framework}
+\author{SWAP research group UniBa}
+\date{08-01-2024}
+
+% -------------------- DOCUMENT: REPORT ON THE ExPERIMENT WITH CLAYRS FRAMEWORK STARTED -------------------------------
+\begin{document}
+
+\maketitle
+This LaTex document was generated automatically from yaml files for the purpose of replicability of experiments done with
+\href{https://github.com/swapUniba/ClayRS}{ClayRS},
+it contains information about the experiment that has been conducted and the results obtained.
+The report is divided in 3 principal section dedicated each one for the 3 principal module of the ClayRS framework
+and a conclusion section to highlights what have been achieved from the experiment.
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict['source_file'] is defined}
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
+The content analyzer module will deal with raw source document or more in general data which could be
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
+\hfill\break
+\hfill\break
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
+
+
+
+% field: plot0 representation subsection
+$ plot0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot0' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot0'] is defined and
+      'OriginalData' in my_dict['field_representations']['plot0']}
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot0' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot0'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot0 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot0' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot0'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot0 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot1 representation subsection
+$ plot1 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot1' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot1'] is defined and
+      'WhooshTfIdf' in my_dict['field_representations']['plot1']}
+% WhooshTfIdf used as representation
+The WhooshTfIdf technique has been used.
+\hfill\break
+\hfill\break
+% WhooshTfIdf usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot1' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot1'] is defined and
+      'preprocessing' in my_dict['field_representations']['plot1'] and
+      my_dict['field_representations']['plot1']['preprocessing'] is defined and
+      'Spacy' in my_dict['field_representations']['plot1']['preprocessing']}
+% Spacy preprocessing
+Spacy has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item model: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['model']|default('no setting used')|safe_text}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation:\VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['stopwords_removal']|default('no setting used')|safe_text}
+    \item new stopwords: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['new_stopwords']|default('no setting used')|safe_text}
+    \item not stopwords: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['not_stopwords']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['lemmatization']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['url_tagging']|default('no setting used')|safe_text}
+    \item named entity recognition: \VAR{my_dict['field_representations']['plot1']['preprocessing']['Spacy']['named_entity_recognition']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% Spacy preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot1' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot1'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot1 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot2 representation subsection
+$ plot2 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot2' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot2'] is defined and
+      'SkLearnTfIdf' in my_dict['field_representations']['plot2']}
+% SkLearnTfIdf used as representation
+The SkLearnTfIdf technique has been used.
+The technique has been settled with the following parameter:
+\begin{itemize}
+    \item max df: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['max_df']|safe_text}
+    \item min df: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['min_df']|safe_text}
+    \item max features: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['max_features']|safe_text}
+    \item vocabulary: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['vocabulary']|safe_text}
+    \item binary: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['binary']|safe_text}
+    \item norm: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['norm']|safe_text}
+    \item use idf: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['use_idf']|safe_text}
+    \item smooth idf: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['smooth_idf']|safe_text}
+    \item sublinear tf: \VAR{my_dict['field_representations']['plot2']['SkLearnTfIdf']['sublinear_tf']|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnTfIdf usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot2' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot2'] is defined and
+      'preprocessing' in my_dict['field_representations']['plot2'] and
+      my_dict['field_representations']['plot2']['preprocessing'] is defined and
+      'Ekphrasis' in my_dict['field_representations']['plot2']['preprocessing']}
+% Ekphrasis start
+Ekphrasis has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item omit: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['omit']|default('no setting used')|safe_text}
+    \item normalize: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['normalize']|default('no setting used')|safe_text}
+    \item unpack contractions: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['unpack_contractions']|default('no setting used')|safe_text}
+    \item unpack hashtags: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['unpack_hashtags']|default('no setting used')|safe_text}
+    \item annotate: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['annotate']|default('no setting used')|safe_text}
+    \item corrector: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['corrector']|default('no setting used')|safe_text}
+    \item tokenizer:
+    \item segmenter: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['segmenter']|default('no setting used')|safe_text}
+    \item all caps tag: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['all_caps_tag']|default('no setting used')|safe_text}
+    \item spell correction: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['spell_correction']|default('no setting used')|safe_text}
+    \item segmentation: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['segmentation']|default('no setting used')|safe_text}
+    \item dicts: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['dicts']|default('no setting used')|safe_text}
+    \item spell correct elong: \VAR{my_dict['field_representations']['plot2']['preprocessing']['Ekphrasis']['spell_correct_elong']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% Ekphrasis end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot2' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot2'] is defined and
+      'preprocessing' in my_dict['field_representations']['plot2'] and
+      my_dict['field_representations']['plot2']['preprocessing'] is defined and
+      'NLTK' in my_dict['field_representations']['plot2']['preprocessing']}
+% NLTK preprocessing
+NLTK has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item strip multiple whitespace: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['strip_multiple_whitespace']|default('no setting used')|safe_text}
+    \item remove punctuation: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['remove_punctuation']|default('no setting used')|safe_text}
+    \item stopwords removal: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['stopwords_removal']|default('no setting used')|safe_text}
+    \item url tagging: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['url_tagging']|default('no setting used')|safe_text}
+    \item lemmatization: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['lemmatization']|default('no setting used')|safe_text}
+    \item stemming: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['stemming']|default('no setting used')|safe_text}
+    \item pos tag: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['pos_tag']|default('no setting used')|safe_text}
+    \item lang: \VAR{my_dict['field_representations']['plot2']['preprocessing']['NLTK']['lang']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% NLTK preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot2' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot2'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot2 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot3 representation subsection
+$ plot3 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot3' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot3'] is defined and
+      'WordEmbeddingTechnique' in my_dict['field_representations']['plot3']}
+% WordEmbeddingTechnique used as representation
+The Word Embedding Technique has been used and
+\BLOCK{ set emb_source = my_dict.get('field_representations', {}).get('plot3', {}).get('WordEmbeddingTechnique', {}).get('embedding_source', None) }
+\BLOCK{ if emb_source is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['plot3']['WordEmbeddingTechnique']['embedding_source']|safe_text}
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% WordEmbeddingTechnique usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot3' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot3'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot3 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot3' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot3'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot3 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot4 representation subsection
+$ plot4 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot4' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot4'] is defined and
+      'SentenceEmbeddingTechnique' in my_dict['field_representations']['plot4']}
+% SentenceEmbeddingTechnique used as representation
+The Sentence Embedding Technique has been used and
+\BLOCK{ set emb_src = my_dict.get('field_representations', {}).get('plot4', {}).get('SentenceEmbeddingTechnique', {}).get('embedding_source', None) }
+\BLOCK{ if emb_src is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['plot4']['SentenceEmbeddingTechnique']['embedding_source']|safe_text}
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% SentenceEmbeddingTechnique usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot4' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot4'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot4 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot4' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot4'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot4 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot5 representation subsection
+$ plot5 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot5' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot5'] is defined and
+      'DocumentEmbeddingTechnique' in my_dict['field_representations']['plot5']}
+% DocumentEmbeddingTechnique used as representation
+The Document Embedding Technique has been used and
+\BLOCK{ set emb_src1 = my_dict.get('field_representations', {}).get('plot5', {}).get('DocumentEmbeddingTechnique', {}).get('embedding_source', None) }
+\BLOCK{ if emb_src1 is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['plot5']['DocumentEmbeddingTechnique']['embedding_source']|safe_text}
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% DocumentEmbeddingTechnique end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot5' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot5'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot5 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot5' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot5'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot5 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot6 representation subsection
+$ plot6 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot6' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot6'] is defined and
+      'Word2SentenceEmbedding' in my_dict['field_representations']['plot6']}
+% Word2SentenceEmbeddingused as representation
+The Word2Sentence Embedding Technique has been used and
+\BLOCK{ set emb_src2 = my_dict.get('field_representations', {}).get('plot6', {}).get('Word2SentenceEmbedding', {}).get('embedding_source', None) }
+\BLOCK{ if emb_src2 is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['plot6']['Word2SentenceEmbedding']['embedding_source']|safe_text}.
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\BLOCK{ set ct = my_dict.get('field_representations', {}).get('plot6', {}).get('Word2SentenceEmbedding', {}).get('combining_technique', None) }
+\BLOCK{ if ct is not none }
+Combining technique used is
+\VAR{my_dict['field_representations']['plot6']['Word2SentenceEmbedding']['combining_technique']|safe_text}.
+\BLOCK{else}
+No combining technique has been used.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% Word2SentenceEmbeddingused end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot6' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot6'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot6 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot6' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot6'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot6 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot7 representation subsection
+$ plot7 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot7' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot7'] is defined and
+      'Word2DocEmbedding' in my_dict['field_representations']['plot7']}
+% Word2DocEmbedding used as representation
+The Word2Doc Embedding Technique has been used and
+\BLOCK{ set emb_src3 = my_dict.get('field_representations', {}).get('plot7', {}).get('Word2DocEmbedding', {}).get('embedding_source', None) }
+\BLOCK{if emb_src3 is not none}
+the embedding source used is
+\VAR{my_dict['field_representations']['plot7']['Word2DocEmbedding']['embedding_source']|safe_text}.
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\BLOCK{ set ct1 = my_dict.get('field_representations', {}).get('plot7', {}).get('Word2DocEmbedding', {}).get('combining_technique', None) }
+\BLOCK{if ct1 is not none}
+Combining technique used is
+\VAR{my_dict['field_representations']['plot7']['Word2DocEmbedding']['combining_technique']|safe_text}.
+\BLOCK{else}
+No combining technique has been used.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% Word2DocEmbedding usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot7' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot7'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot7 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot7' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot7'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot7 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot8 representation subsection
+$ plot8 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot8' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot8'] is defined and
+      'Word2SentenceEmbedding' in my_dict['field_representations']['plot8']}
+% Word2SentenceEmbeddingused as representation
+The Word2Sentence Embedding Technique has been used and
+\BLOCK{ set emb_src2 = my_dict.get('field_representations', {}).get('plot8', {}).get('Word2SentenceEmbedding', {}).get('embedding_source', None) }
+\BLOCK{ if emb_src2 is not none }
+the embedding source used is
+\VAR{my_dict['field_representations']['plot8']['Word2SentenceEmbedding']['embedding_source']|safe_text}.
+\BLOCK{else}
+no embedding source has been specified.
+\BLOCK{endif}
+\BLOCK{ set ct = my_dict.get('field_representations', {}).get('plot8', {}).get('Word2SentenceEmbedding', {}).get('combining_technique', None) }
+\BLOCK{ if ct is not none }
+Combining technique used is
+\VAR{my_dict['field_representations']['plot8']['Word2SentenceEmbedding']['combining_technique']|safe_text}.
+\BLOCK{else}
+No combining technique has been used.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% Word2SentenceEmbeddingused end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot8' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot8'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot8 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot8' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot8'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot8 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot9 representation subsection
+$ plot9 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot9' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot9'] is defined and
+      'PyWSDSynsetDocumentFrequency' in my_dict['field_representations']['plot9']}
+% PyWSDSynsetDocumentFrequency used as representation
+The PyWSD Synset Document Frequency Technique has been used.
+\hfill\break
+\hfill\break
+% PyWSDSynsetDocumentFrequency usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot9' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot9'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot9 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot9' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot9'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot9 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot10 representation subsection
+$ plot10 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot10' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot10'] is defined and
+      'OriginalData' in my_dict['field_representations']['plot10']}
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot10' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot10'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot10 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot10' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot10'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot10 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: plot11 representation subsection
+$ plot11 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'plot11' in my_dict['field_representations'] and
+      my_dict['field_representations']['plot11'] is defined and
+      'OriginalData' in my_dict['field_representations']['plot11']}
+% check if non particular technique of data reppresentation has been used
+The data has been represented as the original.
+\hfill\break
+\hfill\break
+% no technique of representation on the field
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot11' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot11'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ plot11 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'plot11' in my_dict['field_representations'] and
+           my_dict['field_representations']['plot11'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ plot11 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: idx0 representation subsection
+$ idx0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'idx0' in my_dict['field_representations'] and
+      my_dict['field_representations']['idx0'] is defined and
+      'FromNPY' in my_dict['field_representations']['idx0']}
+% FromNPY used as representation
+The FromNPY Technique has been used on the field idx0 .
+\hfill\break
+\hfill\break
+% FromNPY end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'idx0' in my_dict['field_representations'] and
+           my_dict['field_representations']['idx0'].get('preprocessing') is none}
+% This block if rendered when no preprocessing technique has been applied
+No preprocessing techniques have been used to preprocess data $ idx0 $ during the experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'idx0' in my_dict['field_representations'] and
+           my_dict['field_representations']['idx0'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ idx0 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: video_path0 representation subsection
+$ video_path0 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path0' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path0'] is defined and
+      'SkImageHogDescriptor' in my_dict['field_representations']['video_path0']}
+% SkImageHogDescriptor used as representation
+SKImage Hog Descriptor technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item orientations: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['orientations']|default('no setting used')|safe_text}
+    \item pixels per cell:
+    \item cells per block:
+    \item block norm: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['block_norm']|default('no setting used')|safe_text}
+    \item transform sqrt: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['transform_sqrt']|default('no setting used')|safe_text}
+    \item flatten: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['flatten']|default('no setting used')|safe_text}
+    \item contents dirs: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['contents_dirs']|default('no setting used')|safe_text}
+    \item time tuple:
+    \item max timeout: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['video_path0']['SkImageHogDescriptor']['max_workers']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkImageHogDescriptor usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path0' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path0'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path0'] and
+      my_dict['field_representations']['video_path0']['preprocessing'] is defined and
+      'TorchUniformTemporalSubSampler' in my_dict['field_representations']['video_path0']['preprocessing']}
+% TorchUniformTemporalSubSampler preprocessing
+TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number samples: \VAR{my_dict['field_representations']['video_path0']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchUniformTemporalSubSampler preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'field_representations' in my_dict and
+          'video_path0' in my_dict['field_representations'] and
+           my_dict['field_representations']['video_path0'].get('postprocessing') is none}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data $ video_path0 $ in this experiment.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+
+
+% field: video_path1 representation subsection
+$ video_path1 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path1' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path1'] is defined and
+      'MFCC' in my_dict['field_representations']['video_path1']}
+% MFCC used as representation
+MFCC technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item contents dirs: \VAR{my_dict['field_representations']['video_path1']['MFCC']['contents_dirs']|safe_text}
+    \item time tuple:
+    \item flatten: \VAR{my_dict['field_representations']['video_path1']['MFCC']['flatten']|default('no setting used')|safe_text}
+    \item mean: \VAR{my_dict['field_representations']['video_path1']['MFCC']['mean']|default('no setting used')|safe_text}
+    \item max timeout: \VAR{my_dict['field_representations']['video_path1']['MFCC']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['video_path1']['MFCC']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['video_path1']['MFCC']['max_workers']|default('no setting used')|safe_text}
+    \item n mfcc: \VAR{my_dict['field_representations']['video_path1']['MFCC']['n_mfcc']|default('no setting used')|safe_text}
+    \item dct type: \VAR{my_dict['field_representations']['video_path1']['MFCC']['dct_type']|default('no setting used')|safe_text}
+    \item norm: \VAR{my_dict['field_representations']['video_path1']['MFCC']['norm']|default('no setting used')|safe_text}
+    \item log mels: \VAR{my_dict['field_representations']['video_path1']['MFCC']['log_mels']|default('no setting used')|safe_text}
+    \item melkwargs: \VAR{my_dict['field_representations']['video_path1']['MFCC']['melkwargs']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% MFCC end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path1' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path1'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path1'] and
+      'TorchResample' in my_dict['field_representations']['video_path1']['preprocessing']}
+% TorchResample preprocessing
+TorchResample has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item new freq: \VAR{my_dict['field_representations']['video_path1']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
+    \item resampling method: \VAR{my_dict['field_representations']['video_path1']['preprocessing']['TorchResample']['resampling_method']|default('no setting used')|safe_text}
+    \item lowpass filter width: \VAR{my_dict['field_representations']['video_path1']['preprocessing']['TorchResample']['lowpass_filter_width']|default('no setting used')|safe_text}
+    \item roll off: \VAR{my_dict['field_representations']['video_path1']['preprocessing']['TorchResample']['rolloff']|default('no setting used')|safe_text}
+    \item beta: \VAR{my_dict['field_representations']['video_path1']['preprocessing']['TorchResample']['beta']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchResample preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path1' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path1'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path1'] and
+      'ConvertToMono' in my_dict['field_representations']['video_path1']['preprocessing']}
+% ConvertToMono preprocessing
+ConvertToMono has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
+% ConvertToMono end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path1'] and
+      '1' in my_dict['field_representations']['video_path1']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['video_path1']['postprocessing']['1']}
+% FVGMM postprocessing
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% FVGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path1'] and
+      '2' in my_dict['field_representations']['video_path1']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['video_path1']['postprocessing']['2']}
+% VLADGMM postprocessing
+VLADGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% VLADGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path1'] and
+      '3' in my_dict['field_representations']['video_path1']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['video_path1']['postprocessing']['3']}
+% SkLearnPCA postprocessing
+SkLearnPCA has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
+    \item copy: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['copy']|default('no setting used')|safe_text}
+    \item whiten: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['whiten']|default('no setting used')|safe_text}
+    \item svd solver: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['svd_solver']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['tol']|default('no setting used')|safe_text}
+    \item iterated power: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path1']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnPCA postprocessing end___
+\BLOCK{endif}
+
+
+
+% field: video_path2 representation subsection
+$ video_path2 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path2' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path2'] is defined and
+      'TorchVisionVideoModels' in my_dict['field_representations']['video_path2']}
+% TorchVisionVideoModels used as representation
+Torch Vision Video Models technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item model name: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['model_name']|default('no setting used')|safe_text}
+    \item feature layer: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['feature_layer']|default('no setting used')|safe_text}
+    \item weights: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['weights']|default('no setting used')|safe_text}
+    \item flatten: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['flatten']|default('no setting used')|safe_text}
+    \item device:  \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['device']|default('no setting used')|safe_text}
+    \item apply on output: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['apply_on_output']|default('no setting used')|safe_text}
+    \item contents dirs: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['contents_dirs']|default('no setting used')|safe_text}
+    \item time tuple:
+    \item max timeout: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['max_workers']|default('no setting used')|safe_text}
+    \item batch size:  \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['batch_size']|default('no setting used')|safe_text}
+    \item mini batch size: \VAR{my_dict['field_representations']['video_path2']['TorchVisionVideoModels']['mini_batch_size']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchVisionVideoModels usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path2' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path2'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path2'] and
+      'TorchResample' in my_dict['field_representations']['video_path2']['preprocessing']}
+% TorchResample preprocessing
+TorchResample has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item new freq: \VAR{my_dict['field_representations']['video_path2']['preprocessing']['TorchResample']['new_freq']|default('no setting used')|safe_text}
+    \item resampling method: \VAR{my_dict['field_representations']['video_path2']['preprocessing']['TorchResample']['resampling_method']|default('no setting used')|safe_text}
+    \item lowpass filter width: \VAR{my_dict['field_representations']['video_path2']['preprocessing']['TorchResample']['lowpass_filter_width']|default('no setting used')|safe_text}
+    \item roll off: \VAR{my_dict['field_representations']['video_path2']['preprocessing']['TorchResample']['rolloff']|default('no setting used')|safe_text}
+    \item beta: \VAR{my_dict['field_representations']['video_path2']['preprocessing']['TorchResample']['beta']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchResample preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path2' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path2'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path2'] and
+      'ConvertToMono' in my_dict['field_representations']['video_path2']['preprocessing']}
+% ConvertToMono preprocessing
+ConvertToMono has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
+% ConvertToMono end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path2'] and
+      '1' in my_dict['field_representations']['video_path2']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['video_path2']['postprocessing']['1']}
+% FVGMM postprocessing
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% FVGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path2'] and
+      '2' in my_dict['field_representations']['video_path2']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['video_path2']['postprocessing']['2']}
+% VLADGMM postprocessing
+VLADGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% VLADGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path2'] and
+      '3' in my_dict['field_representations']['video_path2']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['video_path2']['postprocessing']['3']}
+% SkLearnPCA postprocessing
+SkLearnPCA has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
+    \item copy: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['copy']|default('no setting used')|safe_text}
+    \item whiten: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['whiten']|default('no setting used')|safe_text}
+    \item svd solver: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['svd_solver']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['tol']|default('no setting used')|safe_text}
+    \item iterated power: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path2']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnPCA postprocessing end___
+\BLOCK{endif}
+
+
+
+% field: video_path3 representation subsection
+$ video_path3 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'PytorchImageModels' in my_dict['field_representations']['video_path3']}
+% PytorchImageModels used as representation
+Pytorch Image Models technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item model name: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['model_name']|default('no setting used')|safe_text}
+    \item feature layer: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['feature_layer']|default('no setting used')|safe_text}
+    \item flatten: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['flatten']|default('no setting used')|safe_text}
+    \item device:  \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['device']|default('no setting used')|safe_text}
+    \item apply on output: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['apply_on_output']|default('no setting used')|safe_text}
+    \item contents dirs: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['contents_dirs']|default('no setting used')|safe_text}
+    \item time tuple:
+    \item custom weights path: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['custom_weights_path']|default('no setting used')|safe_text}
+    \item use default transforms: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['use_default_transforms']|default('no setting used')|safe_text}
+    \item num classes: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['num_classes']|default('no setting used')|safe_text}
+    \item max timeout: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['max_workers']|default('no setting used')|safe_text}
+    \item batch size:  \VAR{my_dict['field_representations']['video_path3']['PytorchImageModels']['batch_size']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% PytorchImageModels usage end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      my_dict['field_representations']['video_path3']['preprocessing'] is defined and
+      'TorchUniformTemporalSubSampler' in my_dict['field_representations']['video_path3']['preprocessing']}
+% TorchUniformTemporalSubSampler preprocessing
+TorchUniformTemporalSubSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number samples: \VAR{my_dict['field_representations']['video_path3']['preprocessing']['TorchUniformTemporalSubSampler']['num_samples']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchUniformTemporalSubSampler preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      'Resize' in my_dict['field_representations']['video_path3']['preprocessing']}
+% Resize preprocessing
+Resize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+    \item interpolation: \VAR{my_dict['field_representations']['video_path3']['preprocessing']['Resize']['interpolation']|default('no setting used')|safe_text}
+    \item max size: \VAR{my_dict['field_representations']['video_path3']['preprocessing']['Resize']['max_size']|default('no setting used')|safe_text}
+    \item antialias: \VAR{my_dict['field_representations']['video_path3']['preprocessing']['Resize']['antialias']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% Resize preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      'CenterCrop' in my_dict['field_representations']['video_path3']['preprocessing']}
+% CenterCrop preprocessing
+CenterCrop has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+\end{itemize}
+\hfill\break
+\hfill\break
+% CenterCrop end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      'Lambda' in my_dict['field_representations']['video_path3']['preprocessing']}
+% Lambda preprocessing
+Lambda has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
+% Lambda preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path3' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path3'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      'Normalize' in my_dict['field_representations']['video_path3']['preprocessing']}
+% Normalize preprocessing
+Normalize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
+    \item std:
+\end{itemize}
+\hfill\break
+\hfill\break
+% Normalize preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path3'] and
+      '1' in my_dict['field_representations']['video_path3']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['video_path3']['postprocessing']['1']}
+% FVGMM postprocessing
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% FVGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path3'] and
+      '2' in my_dict['field_representations']['video_path3']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['video_path3']['postprocessing']['2']}
+% VLADGMM postprocessing
+VLADGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% VLADGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path3'] and
+      '3' in my_dict['field_representations']['video_path3']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['video_path3']['postprocessing']['3']}
+% SkLearnPCA postprocessing
+SkLearnPCA has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
+    \item copy: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['copy']|default('no setting used')|safe_text}
+    \item whiten: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['whiten']|default('no setting used')|safe_text}
+    \item svd solver: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['svd_solver']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['tol']|default('no setting used')|safe_text}
+    \item iterated power: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path3']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnPCA postprocessing end___
+\BLOCK{endif}
+
+
+
+% field: video_path4 representation subsection
+$ video_path4 $  has been represented with the following techniques:
+\hfill\break
+\hfill\break
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'TorchVisionVideoModels' in my_dict['field_representations']['video_path4']}
+% TorchVisionVideoModels used as representation
+Torch Vision Video Models technique has been applied to process data with the following settings:
+\begin{itemize}
+    \item model name: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['model_name']|default('no setting used')|safe_text}
+    \item feature layer: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['feature_layer']|default('no setting used')|safe_text}
+    \item weights: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['weights']|default('no setting used')|safe_text}
+    \item flatten: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['flatten']|default('no setting used')|safe_text}
+    \item device:  \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['device']|default('no setting used')|safe_text}
+    \item apply on output: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['apply_on_output']|default('no setting used')|safe_text}
+    \item contents dirs: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['contents_dirs']|default('no setting used')|safe_text}
+    \item time tuple:
+    \item max timeout: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['max_timeout']|default('no setting used')|safe_text}
+    \item max retries: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['max_retries']|default('no setting used')|safe_text}
+    \item max workers: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['max_workers']|default('no setting used')|safe_text}
+    \item batch size:  \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['batch_size']|default('no setting used')|safe_text}
+    \item mini batch size: \VAR{my_dict['field_representations']['video_path4']['TorchVisionVideoModels']['mini_batch_size']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% TorchVisionVideoModels usege end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      'ClipSampler' in my_dict['field_representations']['video_path4']['preprocessing']}
+% ClipSampler preprocessing
+ClipSampler has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of frames for clip: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['ClipSampler']['num_frames_for_clip']|default('no setting used')|safe_text}
+    \item number of clips: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['ClipSampler']['num_clips']|default('no setting used')|safe_text}
+    \item selection strategy: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['ClipSampler']['selection_strategy']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% ClipSampler end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      'Resize' in my_dict['field_representations']['video_path4']['preprocessing']}
+% Resize preprocessing
+Resize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+    \item interpolation: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['Resize']['interpolation']|default('no setting used')|safe_text}
+    \item max size: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['Resize']['max_size']|default('no setting used')|safe_text}
+    \item antialias: \VAR{my_dict['field_representations']['video_path4']['preprocessing']['Resize']['antialias']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% Resize preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      'CenterCrop' in my_dict['field_representations']['video_path4']['preprocessing']}
+% CenterCrop preprocessing
+CenterCrop has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item size:
+\end{itemize}
+\hfill\break
+\hfill\break
+% CenterCrop end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      'Lambda' in my_dict['field_representations']['video_path4']['preprocessing']}
+% Lambda preprocessing
+Lambda has been used to preprocess data with the following settings:
+\hfill\break
+\hfill\break
+% Lambda preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      'field_representations' in my_dict and
+      'video_path4' in my_dict['field_representations'] and
+      my_dict['field_representations']['video_path4'] is defined and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      'Normalize' in my_dict['field_representations']['video_path4']['preprocessing']}
+% Normalize preprocessing
+Normalize has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item mean: % understand how to deal with list as value of a key in jinja --> solved use index to gain access
+    \item std:
+\end{itemize}
+\hfill\break
+\hfill\break
+% Normalize preprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path4'] and
+      '1' in my_dict['field_representations']['video_path4']['postprocessing'] and
+      'FVGMM' in my_dict['field_representations']['video_path4']['postprocessing']['1']}
+% FVGMM postprocessing
+FVGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['1']['FVGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% FVGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path4'] and
+      '2' in my_dict['field_representations']['video_path4']['postprocessing'] and
+      'VLADGMM' in my_dict['field_representations']['video_path4']['postprocessing']['2']}
+% VLADGMM postprocessing
+VLADGMM has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['n_components']|default('no setting used')|safe_text}
+    \item covariance type: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['covariance_type']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['tol']|default('no setting used')|safe_text}
+    \item reg covar: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['reg_covar']|default('no setting used')|safe_text}
+    \item max iter: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['max_iter']|default('no setting used')|safe_text}
+    \item n init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['n_init']|default('no setting used')|safe_text}
+    \item init params: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['init_params']|default('no setting used')|safe_text}
+    \item weights init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['weights_init']|default('no setting used')|safe_text}
+    \item means init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['means_init']|default('no setting used')|safe_text}
+    \item precisions init: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['precisions_init']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['random_state']|default('no setting used')|safe_text}
+    \item warm start: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['warm_start']|default('no setting used')|safe_text}
+    \item verbose: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['verbose']|default('no setting used')|safe_text}
+    \item verbose interval: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['verbose_interval']|default('no setting used')|safe_text}
+    \item improved: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['improved']|default('no setting used')|safe_text}
+    \item alpha: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['alpha']|default('no setting used')|safe_text}
+    \item with mean: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['with_mean']|default('no setting used')|safe_text}
+    \item with std: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['2']['VLADGMM']['with_std']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% VLADGMM postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path4'] and
+      '3' in my_dict['field_representations']['video_path4']['postprocessing'] and
+      'SkLearnPCA' in my_dict['field_representations']['video_path4']['postprocessing']['3']}
+% SkLearnPCA postprocessing
+SkLearnPCA has been used to preprocess data with the following settings:
+\begin{itemize}
+    \item number of components: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['n_components']|default('no setting used')|safe_text}
+    \item copy: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['copy']|default('no setting used')|safe_text}
+    \item whiten: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['whiten']|default('no setting used')|safe_text}
+    \item svd solver: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['svd_solver']|default('no setting used')|safe_text}
+    \item tol: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['tol']|default('no setting used')|safe_text}
+    \item iterated power: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['iterated_power']|default('no setting used')|safe_text}
+    \item random state: \VAR{my_dict['field_representations']['video_path4']['postprocessing']['3']['SkLearnPCA']['random_state']|default('no setting used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+% SkLearnPCA postprocessing end___
+\BLOCK{endif}
+
+
+
+\BLOCK{else}
+% In case of the content analyzer is not used
+For this experiment the module of the content analyzer has not been used.
+\hfill\break
+\hfill\break
+% <----------  closing the controll block for the content analyzer section ----------->
+\BLOCK{endif}
+
+
+
+\BLOCK{if 'interactions' in my_dict}
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System module: RecSys}\label{sec:recsys}
+The \textbf{RecSys module} allows to instantiate a recommender system and make it work on items and users serialized
+by the Content Analyzer module, despite this is also possible using other serialization made with other framework and
+give them as input to the recommender system and obtain score prediction or recommend items for the active user(s).
+In particular this module allows has to get some general statistics on the data used, the scheme used to split the data
+and train the recommender system and the settings belonging to the algorithm chosen.
+\hfill\break
+\hfill\break
+
+\subsection{Statistics on data used}\label{subsec:stats}
+% --- DATA STATS ---
+In this experiment the statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & \VAR{my_dict['interactions']['n_users']|default('no users')|safe_text}\\ \hline
+    n\_items  & \VAR{my_dict['interactions']['n_items']|default('no items')|safe_text}\\ \hline
+    total\_interactions  & \VAR{my_dict['interactions']['total_interactions']|safe_text}\\ \hline
+    min\_score  & \VAR{my_dict['interactions']['min_score']|truncate|safe_text}\\ \hline
+    max\_score  & \VAR{my_dict['interactions']['max_score']|truncate|safe_text}\\ \hline
+    mean\_score  & \VAR{my_dict['interactions']['mean_score']|truncate|safe_text}\\ \hline
+    sparsity  & \VAR{my_dict['interactions']['sparsity']|truncate|safe_text}\\ \hline
+  \end{tabular}
+   \caption{Table of the Interactions}\label{tab:dataset_table}
+\end{table}
+\hfill\break
+\hfill\break
+
+
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+\subsection{Partitioning techinque used}\label{subsec:partitioning}
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['KFoldPartitioning'] is defined}
+% KFOLD PARTITIONING TECNIQUE
+K-fold cross-validation is a technique used in machine learning to assess the performance of a predictive model.
+The basic idea is to divide the dataset into K subsets, or folds.
+The model is then trained K times, each time using K-1 folds for training and the remaining fold for validation.
+This process is repeated K times, with a different fold used as the validation set in each iteration.
+\hfill\break
+\hfill\break
+The KFoldPartitioning has been used with the following setting:
+\hfill\break
+\hfill\break
+\BLOCK{if my_dict.get('partitioning', {}).get('KFoldPartitioning', {}).get('shuffle') == True}
+The data has been shuffled before being split into batches.
+\BLOCK{endif}
+The partitioning technique has been executed with the following settings:
+\begin{itemize}
+    \item number of splits: \VAR{my_dict['partitioning']['KFoldPartitioning']['n_splits']}
+    \item shuffle: \VAR{my_dict['partitioning']['KFoldPartitioning']['shuffle']}
+    \item random state: \VAR{my_dict['partitioning']['KFoldPartitioning']['random_state']|default('no random state applied')}
+    \item skip user error: \VAR{my_dict['partitioning']['KFoldPartitioning']['skip_user_error']|default('no setted')}
+\end{itemize}
+\hfill\break
+\hfill\break
+% KFOLD PARTITIONING TECNIQUE ended
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['partitioning'] is defined and
+        my_dict['partitioning']['HoldOutPartitioning'] is defined}
+%  HOLD-OUT PARTIONING TECNIQUE
+The partitioning used is the Hold-Out Partitioning.
+This approach splits the dataset in use into a train set and a test set.
+The training set is what the model is trained on, and the test set is used to see how
+well the model will perform on new, unseen data.
+\hfill\break
+\hfill\break
+The train set size of this experiment is the \VAR{my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100}\%
+of the original dataset, while the test set is the remaining \VAR{(100 - (my_dict['partitioning']['HoldOutPartitioning']['train_set_size'] * 100))}\%.
+\hfill\break
+\hfill\break
+\BLOCK{ if my_dict.get('partitioning', {}).get('HoldOutPartitioning', {}).get('shuffle') == True }
+The data has been shuffled before being split into batches.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+%  HOLD-OUT PARTIONING TECNIQUE ended
+\BLOCK{endif}
+% end partitioning section___________
+
+
+% ---------------------------------- ALGORITHM FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm used for the recommender system}\label{subsec:algo}
+% ---RECSYS ALGORITHM ---
+The framework of ClayRs allows to instantiate a recommender system in order to make list of recommendation, to achieve
+this target the system need to be based on a chosen algorithm that will work with the representation of data that
+we have.
+In this section we will analyse which algorithm has been used for the experiment and what are the settings
+given.
+\hfill\break
+\hfill\break
+
+% Dealing with the principal class where the algorithm used belong to.
+\BLOCK{if my_dict['recsys'] is defined and
+        my_dict['recsys']['ContentBasedRS'] is defined}
+The recommender system is based on content.
+\hfill\break
+\hfill\break
+\BLOCK{elif my_dict['recsys'] is defined and
+        my_dict['recsys']['GraphBasedRS'] is defined}
+The recommender system is based on a graph representation.
+\hfill\break
+\hfill\break
+\BLOCK{else}
+Algorithm used is unknown.
+\hfill\break
+\hfill\break
+\BLOCK{endif}
+
+% ----------------------------------------- CONTENT BASE ALGO ---------------------------------------------------------
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'] is defined}
+% AMAR DOUBLE SOURCE ALGO
+The algorithm used is AmarDoubleSource with the following settings:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['algorithm']['AmarDoubleSource'].items()}
+    \item \begin{verbatim}
+     \VAR{key}: \VAR{value}
+\end{verbatim}
+\BLOCK{endfor}
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% AmarDoubleSource end_____
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'] is defined}
+% CENTROID VECTOR ALGO
+The algorithm used is the centroid vector with the following settings:
+\begin{itemize}
+    \BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['algorithm']['CentroidVector'].items()}
+    \item \begin{verbatim}
+     \VAR{key}: \VAR{value}
+\end{verbatim}
+\BLOCK{endfor}
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% centroid vector end____
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'] is defined}
+% CLASSIFIER ALGO
+The algorithm used is a classifier \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender']['classifier']|safe_text}
+with the following settings:
+\begin{itemize}
+    \BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['algorithm']['ClassifierRecommender'].items()}
+    \item \begin{verbatim}
+     \VAR{key}: \VAR{value}
+\end{verbatim}
+\BLOCK{endfor}
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% classifier end___
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'] is defined}
+% INDEX QUERY ALGO
+The algorithm used is the Index Query with the following settings:
+\begin{itemize}
+    \BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['algorithm']['IndexQuery'].items()}
+    \item \begin{verbatim}
+     \VAR{key}: \VAR{value}
+\end{verbatim}
+\BLOCK{endfor}
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% index query end____
+\BLOCK{endif}
+
+
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['ContentBasedRS'] is defined and
+      my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'] is defined}
+% LINEAR PREDICTOR ALGO
+The algorithm used is a regressor \VAR{my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor']['regressor']|safe_text}
+with the following settings:
+\begin{itemize}
+   \BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['algorithm']['LinearPredictor'].items()}
+    \item \begin{verbatim}
+     \VAR{key}: \VAR{value}
+\end{verbatim}
+\BLOCK{endfor}
+\end{itemize}
+\hfill\break
+\hfill\break
+The mode used is \VAR{ my_dict['recsys']['ContentBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['ContentBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% linear predictor end____
+\BLOCK{endif}
+
+
+% ------------------------ GRAPH BASED ALGO ------------------------------------------
+\BLOCK{if my_dict['recsys'] is defined and
+      my_dict['recsys']['GraphBasedRS'] is defined and
+      my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank'] is defined}
+% NX PAGE RANK ALGO
+The algorithm used is NX Page Rank with the following settings:
+\begin{itemize}
+    \item alpha: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['alpha']|default('no alpha used')}
+    \item personalized: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['personalized']|default('no used')}
+    \item max iter: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['max_iter']|default('no max iter')}
+    \item tol: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['tol']|default('no used')}
+    \item nstart: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['nstart']|default('no used')}
+    \item weight: \VAR{my_dict['recsys']['GraphBasedRS']['algorithm']['NXPageRank']['weight']|default('no used')|safe_text}
+\end{itemize}
+\hfill\break
+\hfill\break
+The type of graph used in the algorithm is a: \VAR{ my_dict['recsys']['GraphBasedRS']['graph']},
+the mode used is \VAR{ my_dict['recsys']['GraphBasedRS']['mode']} and the number of recommendation given is
+\VAR{ my_dict['recsys']['GraphBasedRS']['n_recs']|default('no number has been setted')}.
+The methodology used:
+\begin{itemize}
+\BLOCK{for key, value in my_dict['recsys']['ContentBasedRS']['methodology'].items()}
+    \item
+     \verb| \VAR{ key }:|
+     \begin{itemize}
+     \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: \VAR{ v } |
+     \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\hfill\break
+% NX page rank end____
+\BLOCK{endif}
+
+
+% In case of the RecSys in not been used
+\BLOCK{else}
+The RecSys module has not been used during this experiment.
+\hfill\break
+\hfill\break
+% <------------------ RECSYS SECTION ENDED------------------->
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict['metrics'] is defined or my_dict['sys_results'] is defined}
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\BLOCK{if my_dict['metrics'] is defined}
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
+The metrics used are the followings:
+\hfill\break
+\hfill\break
+
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Precision'] is defined}
+% Precision report start
+\subsubsection{Precision}\label{subsubsec:precision}
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+       $\geq$ \BLOCK{ if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \BLOCK{endif}
+    \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$ \BLOCK{if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
+        \BLOCK{else}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \BLOCK{endif}
+\end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Precision needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
+\hfill\break
+\hfill\break
+% precision report ended___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Recall'] is defined}
+% Recall report start
+\subsubsection{Recall}\label{subsubsec:recall}
+The Recall metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall_u = \frac{tp_u}{tp_u + fn_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $>=$ \BLOCK{ if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
+        \BLOCK{else}
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \BLOCK{endif}
+    \item $fn_u$ is the number of items which are not in the recommendation list of the user and have a
+      rating $>=$ \BLOCK{if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
+        \BLOCK{else}
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \BLOCK{endif}
+\end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Recall needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
+\hfill\break
+\hfill\break
+% recall report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasure'] is defined}
+%FMeasure report start
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
+The FMeasure metric combines Precision and Recall into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P_u$ is the Precision calculated for the user \textbf{u}.
+    \item $R_u$ is the Recall calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+         F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment the FMeasure has been calculated with $\beta = $
+\VAR{my_dict['metrics']['FMeasure']['beta']|safe_text} and the relevant threshold is
+\textbf{\VAR{my_dict['metrics']['FMeasure']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
+\hfill\break
+\hfill\break
+% FMeasure report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PrecisionAtK'] is defined}
+% PRECISION @K REPORT start
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+   \[
+       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+   \]
+\hfill\break
+\hfill\break
+    \[
+       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+   \]
+\hfill\break
+\hfill\break
+During the experiment Precision@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['PrecisionAtK']['k']|safe_text} }
+    \item \textbf{relevant threshold:\VAR{my_dict['metrics']['PrecisionAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['PrecisionAtK']['sys_average']|safe_text} }
+\end{itemize}
+\hfill\break
+\hfill\break
+% precision@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RecallAtK'] is defined}
+% RECALL @K REPORT start
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
+The Recall@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+    \item $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment Recall@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['RecallAtK']['k']|safe_text} }
+    \item \textbf{relevant threshold: \VAR{my_dict['metrics']['RecallAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['RecallAtK']['sys_average']|safe_text} }
+\end{itemize}
+\hfill\break
+\hfill\break
+% recall@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasureAtK'] is defined}
+% FMEASURE @K REPORT start
+\subsubsection{FMeasure@K}\label{subsubsec:f-meas-k}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
+    \item $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+        F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment FMeasure@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: \VAR{my_dict['metrics']['FMeasureAtK']['k']|safe_text}}
+    \item  \textbf{$\beta$: \VAR{my_dict['metrics']['FMeasureAtK']['beta']|safe_text}}
+    \item \textbf{relevant threshold: \VAR{my_dict['metrics']['FMeasureAtK']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['FMeasureAtK']['sys_average']|safe_text} }
+\end{itemize}
+\hfill\break
+\hfill\break
+% fmeasure@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RPrecision'] is defined}
+% R-PRECISION REPORT start
+\subsubsection{R-Precision}\label{subsubsec:r-prec}
+The R-Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $R$ it's the number of relevant items for the user \textbf{u}.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first   $R$ items,
+        that have a rating $\geq$ the relevant threshold in its ground truth.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first $R$ items,
+        that have a rating $<$ \texttt{relevant\_threshold} in their ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+    \]
+\hfill\break
+\hfill\break
+    \[
+        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+During the experiment R-Precision has been used with the following settings:
+\begin{itemize}
+    \item \textbf{relevant threshold:\VAR{my_dict['metrics']['RPrecision']['relevant_threshold']|default('no relevant threshold used')|safe_text} }
+    \item \textbf{sys average: \VAR{my_dict['metrics']['RPrecision']['sys_average']|safe_text} }
+\end{itemize}
+\hfill\break
+\hfill\break
+% r-precision report end___
+\BLOCK{endif}
+% <----- classification metrics end ------->
+
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MSE'] is defined}
+% MSE REPORT start
+\subsubsection{MSE}\label{subsubsec:mse}
+The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user \textbf{u}.
+    \item $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the \textbf{test set}.
+    \item $MSE_u$ is the MSE calculated for user \textbf{u}.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally}.
+In those cases, the $MSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ stay for unknown is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% mse report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RMSE'] is defined}
+% RMSE REPORT start
+\subsubsection{RMSE}\label{subsubsec:rmse}
+The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $RMSE_u$ is the RMSE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $RMSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% rmse report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAE'] is defined}
+% MAE REPORT start
+\subsubsection{MAE}\label{subsubsec:mae}
+The MAE abbreviation of Mean Absolute Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+        MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $MAE_u$ is the MAE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $MAE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = NaN
+    \]
+\hfill\break
+\hfill\break
+% mae report end___
+\BLOCK{endif}
+% <------ error metrics ended -------->
+
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCG'] is defined}
+% Normalized Discounted Cumulative Gain REPORT start
+\subsubsection{NDCG}\label{subsubsec:ndcg}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$.
+    \item $f$ is a gain function \textit{linear or exponential, in particular}.
+    \item $x$ is the base of the logarithm.
+    \item $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
+\end{itemize}
+\hfill\break
+\hfill\break
+If $f$ is "linear", then the truth score $r$ is returned as is.
+Otherwise, in the "exponentia" case, the following formula is applied to $r$:
+\hfill\break
+\hfill\break
+    \[
+        f(r) = 2^{r} - 1
+    \]
+\hfill\break
+\hfill\break
+The NDCG for a single user is then calculated using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
+\end{itemize}
+\hfill\break
+\hfill\break
+So the basic idea is to compare the actual ranking with the ideal one.
+Finally, the NDCG of the entire system is calculated instead as such:
+\hfill\break
+\hfill\break
+    \[
+        NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $NDCG_u$ is the NDCG calculated for user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+The system average excludes NaN values.
+\hfill\break
+\hfill\break
+% ndcg report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCGAtK'] is defined}
+% NDCG@K REPORT start
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K metric is calculated for the \textbf{single user}
+by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
+first $k$ predictions.
+The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
+\hfill\break
+\hfill\break
+% ndcg@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRR'] is defined}
+% MRR REPORT start
+\subsubsection{MRR}\label{subsubsec:mrr}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTENTION here we modified with \_ in case change
+The MRR metric needs to discern relevant items from the not relevant ones.
+To achieve this, one could pass a custom \texttt{relevant\_threshold} parameter that will be applied to every user.
+If the rating of an item is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
+If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
+In this experiment, the relevant threshold used is
+\VAR{my_dict['metrics']['MRR']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+\hfill\break
+\hfill\break
+% mrr report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRRAtK'] is defined}
+% MRR@K REPORT start
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
+The MRR@K abbreviation of Mean Reciprocal Rank at K metric is a system-wide metric, so only its result will be returned
+and not those of every user.
+MRR@K is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $K$ is the cutoff parameter.
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+In this experiment, the relevant threshold used is
+\VAR{my_dict['metrics']['MRRAtK']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+\hfill\break
+\hfill\break
+% mrr@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAP'] is defined}
+% MAP REPORT start
+\subsubsection{MAP}\label{subsubsec:map}
+The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
+abbreviation of Average Precision for each user and then taking its mean.
+The AP is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $m_u$ is the number of relevant items for the user $u$.
+    \item $N_u$ is the number of recommended items for the user $u$.
+    \item $P(i)$ is the precision computed at cutoff $i$.
+    \item $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
+\end{itemize}
+\hfill\break
+\hfill\break
+After computing the AP for each user, we can compute the MAP for the whole system:
+\hfill\break
+\hfill\break
+    \[
+        MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+    \]
+\hfill\break
+\hfill\break
+This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
+computed for the whole system in the dataframe containing system results.
+In this experiment the MAP has been calculated using a relevant threshold:
+\VAR{my_dict['metrics']['MAP']['relevant_threshold']|default('no threshold has been setted')|safe_text}.
+\hfill\break
+\hfill\break
+% map report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAPAtK'] is defined}
+% MAP@K REPORT start
+\subsubsection{MAP@K}\label{subsubsec:map-k}
+The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
+AP@K abbreviation of Average Precision At K for each user and then taking its mean.
+The AP@K is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $m_u$ is the number of relevant items for the user $u$.
+    \item $K$ is the cutoff value.
+    \item $P(i)$ is the precision computed at cutoff $i$.
+    \item $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
+\end{itemize}
+\hfill\break
+\hfill\break
+After computing the AP@K for each user, we can compute the MAP@K for the whole system:
+\hfill\break
+\hfill\break
+    \[
+        MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+    \]
+\hfill\break
+\hfill\break
+This metric will return the AP@K computed for each user in the dataframe containing users results, and the MAP@K
+computed for the whole system in the dataframe containing system results.
+\hfill\break
+\hfill\break
+% map@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Correlation'] is defined}
+% CORRELATION REPORT start
+\subsubsection{Correlation}\label{subsubsec:corr}
+The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The current correlation methods implemented are:
+\begin{itemize}
+    \item `pearson`
+    \item `kendall`
+    \item `spearman`
+\end{itemize}
+\hfill\break
+\hfill\break
+Every correlation method is implemented by the pandas library, so refer to its
+\href{https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html}{documentation} for more information.
+\hfill\break
+\hfill\break
+The correlation metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Corr_u = Corr(ranking_u, ideal_ranking_u)
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $ranking_u$ is ranking of the user.
+    \item $ideal_ranking_u$ is the ideal ranking for the user.
+\end{itemize}
+\hfill\break
+\hfill\break
+The ideal ranking is calculated based on the rating inside the ground truth of the user.
+The Correlation metric calculated for the entire system is simply the average of every $Corr$:
+\hfill\break
+\hfill\break
+    \[
+        Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Corr_u$ is the correlation of the user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTETNION here there are already \_
+The system average excludes NaN values.
+It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter.
+If specified, only the first $n$ results of the recommendation list will be used to calculate the correlation.
+For this experiment, the settings for the correlation metrics are:
+\begin{itemize}
+    \item method: \VAR{my_dict['metrics']['Correlation']['method']|default('no method for correlation specified')|safe_text}.
+    \item top\_n: \VAR{my_dict['metrics']['Correlation']['top_n']|default('no cutoff setted')|safe_text}.
+\end{itemize}
+\hfill\break
+\hfill\break
+% correlation report end___
+\BLOCK{endif}
+% <------- ranking metrics ended ------->
+
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['GiniIndex'] is defined}
+% Gini Index REPORT start
+\subsubsection{Gini Index}\label{subsubsec:gini}
+The Gini Index metric measures inequality in recommendation lists.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $n$ is the total number of distinct items that are being recommended.
+    \item $x_i$ is the number of times that the item $i$ has been recommended.
+\end{itemize}
+\hfill\break
+\hfill\break
+A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+index would be equal to 0.
+The more the recsys is "unequal", the more the Gini Index is closer to 1.
+If the \texttt{'top\_n'} parameter is specified, then the Gini index will measure inequality considering only
+the first $n$ items of every recommendation list of all users.
+For this experiment, the \texttt{top\_n}:
+\VAR{my_dict['metrics']['GiniIndex']['top_n']|default('no list of top n item has setted')|safe_text}.
+\hfill\break
+\hfill\break
+% gini index report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PredictionCoverage'] is defined}
+% PREDICTION COVERAGE REPORT start
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
+The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system wise metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $I$ is the set of all available items.
+    \item $I_p$ is the set of recommended items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+\hfill\break
+\hfill\break
+% prediction coverage report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['CatalogCoverage'] is defined}
+% CATALOG COVERAGE REPORT start
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
+The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+It differs from the Prediction Coverage since it allows for different parameters to come into play.
+If no parameter is passed then it's a simple Prediction Coverage.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $N$ is the total number of users.
+    \item $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$.
+    \item $I$ is the set of all available items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+The recommendation list of every user ($reclist(u_j)$) can be reduced to the first n parameter with the top-n parameter,
+so that catalog coverage is measured considering only the highest ranked items.
+With the 'k' parameter one could specify the number of users that will be used to
+calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
+The formula above becomes:
+\hfill\break
+\hfill\break
+    \[
+        Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $k$ is the parameter specified.
+\end{itemize}
+\hfill\break
+\hfill\break
+Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
+\hfill\break
+\hfill\break
+% catalog coverage report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+           my_dict['metrics']['DeltaGap'] is defined}
+% DELTA GAP REPORT start
+\subsubsection{Delta GAP}\label{subsubsec:dg}
+The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
+one or multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
+It's a system wise metric and results of every group will be returned.
+It is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+    \]
+\hfill\break
+\hfill\break
+Users are split into groups based on the user groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values.
+For example:
+\begin{itemize}
+    \item user groups = \{'popular\_users': 0.3, 'medium\_popular\_users': 0.2, 'low\_popular\_users': 0.5\}
+\end{itemize}
+\hfill\break
+\hfill\break
+Every user will be inserted in a group based on how many popular items the user has rated
+\textit{in relation to the percentage of users we specified as value in the dictionary}:
+\begin{itemize}
+    \item users with many popular items will be inserted into the first group.
+    \item users with niche items rated will be inserted into one of the last groups.
+\end{itemize}
+\hfill\break
+\hfill\break
+In general users are grouped by $Popularity_ratio$ in descending order. $Popularity_ratio$ for a single user $u$
+is defined as:
+\hfill\break
+\hfill\break
+    \[
+        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+    \]
+\hfill\break
+\hfill\break
+The most popular items are the first \texttt{pop\_percentage} percent of all items ordered in descending order by
+popularity.
+The popularity of an item is defined as the number of times it is rated in the \texttt{original\_ratings} parameter
+divided by the total number of users in the \texttt{original\_ratings}.
+\hfill\break
+\hfill\break
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped,
+and it won't be considered in the $\Delta GAP$ computation of its group.
+In case no user of a group has recs available, a warning will be printed and the whole group won't be considered.
+If the 'top\_n' parameter is specified, then $\Delta GAP$ will be calculated considering only the first
+n items of every recommendation list of all users
+\hfill\break
+\hfill\break
+% delta gap report end___
+\BLOCK{endif}
+% <------- fairness metrics end ------>
+
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['LongTailDistr'] is defined}
+% LONG TAIL DISTIBUTION REPORT start
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
+This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified.
+The plot can be generated both for the truth set or the predictions set based on the on parameter:
+\begin{itemize}
+    \item \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
+       the most rated ones.
+    \item \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
+        items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The plot file will be saved as \texttt{out\_dir/file\_name.format}.
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play:
+if set to \texttt{False}, files with the same name will be saved as \texttt{file\_name\_(1).format}, \texttt{file\_name\_(2).format}, etc.
+so that for every split a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+For this experiment the Long Tail Distribution has been used with the following settings:
+\begin{itemize}
+    \item on: \VAR{my_dict['metrics']['LongTailDistr']['on']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['LongTailDistr']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['LongTailDistr']['overwrite']|safe_text}.
+\end{itemize}
+\hfill\break
+\hfill\break
+% LTD report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+% PopRatioProfileVsRecs REPORT start
+\subsubsection{Pop Ratio Profile Vs Recs}\label{subsubsec:popratio}
+This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
+profile popularity ratio and recommendations popularity ratio is drawn.
+Users are split into groups based on the user groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values.
+For example:
+\begin{itemize}
+       \item user groups = \{'popular\_users': 0.3, 'medium\_popular\_users': 0.2, 'low\_popular\_users': 0.5\}
+\end{itemize}
+\hfill\break
+\hfill\break
+Every user will be inserted in a group based on how many popular items the user has rated
+\textit{in relation to the percentage of users we specified as value in the dictionary}:
+\begin{itemize}
+    \item users with many popular items will be inserted into the first group
+    \item users with niche items rated will be inserted into one of the last groups.
+\end{itemize}
+\hfill\break
+\hfill\break
+In general users are grouped by $Popularity_ratio$ in descending order. $Popularity_ratio$ for a single user $u$
+is defined as:
+\hfill\break
+\hfill\break
+    \[
+        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+    \]
+\hfill\break
+\hfill\break
+The most popular items are the first 'pop\_percentage', items of all items ordered in descending order by
+popularity.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
+It can happen that for a particular user of a group no recommendation are available: in that case it will be skipped,
+and it won't be considered in the $Popularity\_ratio$ computation of its group.
+In case no user of a group has recs available, a warning will be printed and the whole group won't be considered.
+\begin{itemize}
+    \item The plot file will be saved as `out\_dir/file\_name.format`
+\end{itemize}
+\hfill\break
+\hfill\break
+Since multiple splits could be evaluated at once, the \texttt{overwrite} parameter comes into play: if set to
+\texttt{False}, files with the same name will be saved as \texttt{file\_name (1).format}, \texttt{file\_name (2).format},
+etc., so that for every split, a plot is generated without overwriting any previously generated files.
+Thanks to the \texttt{store\_frame} parameter, it's also possible to store a CSV containing the calculations done in
+order to build every boxplot.
+It will be saved in the same directory and with the same file name as the plot itself
+(but with the .csv format):
+\begin{itemize}
+    \item The CSV will be saved as \texttt{out\_dir/file\_name.csv}
+\end{itemize}
+\hfill\break
+\hfill\break
+%PopRatioProfileVsRecs report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+        my_dict['metrics']['PopRecsCorrelation'] is defined}
+% PopRecsCorrelation REPORT start
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
+This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
+recommended.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
+\begin{itemize}
+    \item The plot file will be saved as out\_dir/file\_name.format'
+\end{itemize}
+\hfill\break
+\hfill\break
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play: if set to \texttt{False},
+files with the same name will be saved as \texttt{'file\_name\_(1).format'}, \texttt{'file\_name\_(2).format'}, etc.,
+so that for every split, a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+There exists cases in which some items are not recommended even once, so in the graph could appear
+zero recommendations.
+One could change this behaviour thanks to the 'mode' parameter:
+\begin{itemize}
+    \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
+      second one where zero recommendations are excluded. This additional graph will be stored as
+      \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+    \item \textbf{mode='w\_zeros'}: Only a graph containing eventual zero recommendations will be created.
+    \item \textbf{mode='no\_zeros'}: Only a graph excluding eventual zero recommendations will be created. The graph will be
+      saved as \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+\end{itemize}
+\hfill\break
+\hfill\break
+For this experiment the PopRecsCorrelation has been used with the following settings:
+\begin{itemize}
+    \item mode: \VAR{my_dict['metrics']['PopRecsCorrelation']['mode']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['PopRecsCorrelation']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['PopRecsCorrelation']['overwrite']|safe_text}.
+\end{itemize}
+\hfill\break
+\hfill\break
+% PopRecsCorrelation report end___
+\BLOCK{endif}
+% <------- plot metric end ----------->
+
+% <---------------------- closing the only metric section ------------------------->
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict['sys_results'] is defined}
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - fold1}\label{subsec:sys - fold1}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - fold1}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        \BLOCK{for key, value in my_dict['sys_results']['sys - fold1'].items()}
+        \VAR{key} & \VAR{value} \\ \hline
+        \BLOCK{endfor}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - fold1}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance on the fold___
+\BLOCK{endif}
+
+
+
+\BLOCK{if my_dict['sys_results'] is defined}
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+\subsection{sys - mean}\label{subsec:sys - mean}
+In the following table, we present the results of the evaluation~\ref{tab:results_table_sys - mean}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        \BLOCK{for key, value in my_dict['sys_results']['sys - mean'].items()}
+        \VAR{key} & \VAR{value} \\ \hline
+        \BLOCK{endfor}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_sys - mean}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance on the fold___
+\BLOCK{endif}
+
+
+
+% In case of eval module is not used
+\BLOCK{else}
+The module of the evaluation to control and compare the performance of the recommender
+system has not been used during this experiment.
+\hfill\break
+\hfill\break
+% <-------------------- closing evaluation module section --------------------------->
+\BLOCK{endif}
+
+
+
+\section{Conclusion on the experiment}\label{sec:conclution}
+This part is for conclusion to be sum up as needed.
+\hfill\break
+\hfill\break
+
+% ------------------- END OF THE REPORT COMPLETED ---------------
+% closing the document
+\end{document}
+
