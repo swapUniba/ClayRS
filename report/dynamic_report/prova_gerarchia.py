@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     # test with yml of centroid vector
     LIST_YAML_FILES = ["./../data/data_to_test/item_ca_report_nxPageRank.yml",
-                       "./../data/data_to_test/rs_report_centroidVector.yml",
+                       "./../data/rs_test.yml",
                        "./../data/data_to_test/eva_report_centroidVector.yml"]
 
     TEMPLATE_FILE = "dynamic_fin_rep.tex"

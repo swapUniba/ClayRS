@@ -279,7 +279,8 @@ class DynamicReportManager(ReportManager):
 
     # dictionary to find path for the recsys module template
     RS_DICT = {
-        'recsys': './templates_chunks/templates_rs/recsys_template_complete_new.tex'
+        'recsys': './templates_chunks/templates_rs/recsys_template_complete_new.tex',
+        'general_rec': './templates_chunks/templates_rs/recsys_general.tex'
     }
 
     # dictionary to find path for the evaluation module template
@@ -659,7 +660,7 @@ class DynamicReportManager(ReportManager):
                                  self.file_destination, content_of_field, text_extract)
 
         # dealing with recsys report template
-        add_single_mini_template(DynamicReportManager.RS_DICT, 'recsys',
+        add_single_mini_template(DynamicReportManager.RS_DICT, 'general_rec',
                                  self.file_destination, content_of_field, text_extract)
 
         # dealing with eva report template
