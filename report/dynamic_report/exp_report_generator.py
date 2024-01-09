@@ -651,7 +651,7 @@ class DynamicReportManager(ReportManager):
                                           field, content_of_field, text_extract,
                                           self.file_destination)
 
-        # adding reportinng on exogenous techniques
+        # adding reporting on exogenous techniques
         add_single_mini_template(DynamicReportManager.CA_DICT, 'exo', self.file_destination,
                                  content_of_field, text_extract)
 

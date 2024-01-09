@@ -6,7 +6,7 @@
 ###
 
 \BLOCK{if my_dict['sys_results'] is defined}
-% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD -------------------------------------
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD X -------------------------------------
 \subsection{Results for X}\label{subsec:X}
 In this section we show the results obtained on the fold: \textbf{ X }, the metrics used during the experiment will be
 grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_X}
@@ -16,7 +16,7 @@ grouped into the following table, that represent the results of the evaluation c
         \hline
         \textbf{Metric} & \textbf{Value} \\ \hline
         \BLOCK{for key, value in my_dict['sys_results']['X'].items()}
-        \VAR{key} & \VAR{value} \\ \hline
+        \VAR{key} & \VAR{value|truncate} \\ \hline
         \BLOCK{endfor}
      \end{tabular}
     \captionsetup{type=table}
@@ -25,7 +25,7 @@ grouped into the following table, that represent the results of the evaluation c
 \end{center}
 \hfill\break
 \hfill\break
-% end table of performance on the fold___
+% end table of performance on the fold X ___
 \BLOCK{endif}
 
 ###

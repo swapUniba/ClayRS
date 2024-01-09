@@ -4,17 +4,17 @@
 \usepackage{comment}
 
 ###
-\BLOCK{if my_dict['exogenous_representations'] is defined and
-        my_dict['exogenous_representations'] is not none}
+
+\BLOCK{if 'exogenous_representations' in my_dict}
 % exogenous techniques start
 In this experiment the data used have been represented with exogenous representation, in particular the
 following techniques have been used:
 \begin{itemize}
-\BLOCK{ for key, value in (my_dict['exogenous_representations'] | default({})).items() }
+\BLOCK{ for key, value in my_dict['exogenous_representations'].items() }
     \item
      \verb| \VAR{ key } | used as exogenous technique with following settings:
      \begin{itemize}
-      \BLOCK{ for k, v in (value | default({})).items() }
+      \BLOCK{ for k, v in value.items() }
        \item
             \verb| \VAR{ k }: \VAR{ v }|
       \BLOCK{ endfor }
@@ -41,27 +41,4 @@ This mini template is not working by itself because there are latex command miss
 to compile the file and give as output a pdf file, in addition it has been added jinja
 statement in order to control the rendering of the latex file with the jinja library, for these
 reasons it needs to be used with the other mini chunks in conjunction.
-
-\BLOCK{if 'exogenous_representations' in my_dict}
-% exogenous techniques start
-In this experiment the data used have been represented with exogenous representation, in particular the
-following techniques have been used:
-\begin{itemize}
-\BLOCK{ for key, value in my_dict['exogenous_representations'].items() }
-    \item
-     \verb| \VAR{ key } | used as exogenous technique with following settings:
-     \begin{itemize}
-      \BLOCK{ for k, v in value.items() }
-       \item
-            \verb| \VAR{ k }: \VAR{ v }|
-      \BLOCK{ endfor }
-     \end{itemize}
-\BLOCK{ endfor }
-\end{itemize}
-\BLOCK{else}
-No exogenous techniques have been used in this experiment to represent the data used.
-\BLOCK{endif}
-% exogenous_techniques_end___
-\hfill\break
-\hfill\break
 \end{comment}
