@@ -273,7 +273,8 @@ class DynamicReportManager(ReportManager):
         'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex',
         'pre': './templates_chunks/templates_ca_mini_chunks/preprocess_field.tex',
         'post': './templates_chunks/templates_ca_mini_chunks/postprocessing_field.tex',
-        'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex'
+        'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex',
+        'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex'
     }
 
     # dictionary to find path for the recsys module template
@@ -648,6 +649,10 @@ class DynamicReportManager(ReportManager):
                 process_and_write_to_file(DynamicReportManager.CA_DICT, 'post',
                                           field, content_of_field, text_extract,
                                           self.file_destination)
+
+        # adding reportinng on exogenous techniques
+        add_single_mini_template(DynamicReportManager.CA_DICT, 'exo', self.file_destination,
+                                 content_of_field, text_extract)
 
         # closing the content analyzer section
         add_single_mini_template(DynamicReportManager.CA_DICT, 'end',

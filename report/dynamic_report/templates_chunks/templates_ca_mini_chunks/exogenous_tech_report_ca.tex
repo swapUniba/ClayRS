@@ -5,18 +5,14 @@
 
 ###
 
-% preprocessing on X
-\BLOCK{ if my_dict is defined and
-      my_dict['field_representations'] is defined and
-      'X' in my_dict['field_representations'] and
-      'preprocessing' in my_dict['field_representations']['X'] and
-      my_dict['field_representations']['X']['preprocessing'] is defined and
-      my_dict['field_representations']['X']['preprocessing'] is not none }
-    % dictionary 'preprocessing' not empty
+\BLOCK{if 'exogenous_representations' in my_dict}
+% exogenous techniques start
+In this experiment the data used have been represented with exogenous representation, in particular the
+following techniques have been used:
 \begin{itemize}
-\BLOCK{ for key, value in my_dict['field_representations']['X']['preprocessing'].items() }
+\BLOCK{ for key, value in my_dict['exogenous_representations'].items() }
     \item
-     \verb| \VAR{ key } | used as preprocessing technique with following settings:
+     \verb| \VAR{ key } | used as exogenous technique with following settings:
      \begin{itemize}
       \BLOCK{ for k, v in value.items() }
        \item
@@ -26,10 +22,9 @@
 \BLOCK{ endfor }
 \end{itemize}
 \BLOCK{else}
-No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| X | has been represented with the following techniques:
- during the experiment.
+No exogenous techniques have been used in this experiment to represent the data used.
 \BLOCK{endif}
-% _preprocessing on X ____
+% exogenous_techniques_end___
 \hfill\break
 \hfill\break
 

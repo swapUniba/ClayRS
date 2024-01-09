@@ -105,6 +105,7 @@ REPORT_DICT = {
     'intro': './templates_chunks/intro_report_start.tex',
     'end': './templates_chunks/conclusion.tex'
 }
+
 # the list will contain all the fields that
 # have been represented by the content analyzer.
 list_of_fields = []
