@@ -40,15 +40,15 @@ In ClayRS, the Precision metric is calculated as such for the \textbf{single use
 \begin{itemize}
     \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
        $\geq$ \BLOCK{ if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|truncate}}.
         \BLOCK{else}
-        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')|truncate}}.
         \BLOCK{endif}
     \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
       rating $<$ \BLOCK{if my_dict.get('metrics', {}).get('Precision', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']}}.
+        \textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|truncate}}.
         \BLOCK{else}
-        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')|truncate}}.
         \BLOCK{endif}
 \end{itemize}
 \hfill\break
@@ -56,7 +56,7 @@ In ClayRS, the Precision metric is calculated as such for the \textbf{single use
 In ClayRS, Precision needs those parameters:
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
 If not specified, the mean rating score of every user will be used, in this experiment it has been set to
-\textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|safe_text}}.
+\textbf{\VAR{my_dict['metrics']['Precision']['relevant_threshold']|truncate|safe_text}}.
 \hfill\break
 \hfill\break
 % precision report ended___
@@ -78,15 +78,15 @@ The Recall metric is calculated as such for the \textbf{single user}:
 \begin{itemize}
     \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
       rating $>=$ \BLOCK{ if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|truncate}}.
         \BLOCK{else}
-        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \textbf{\VAR{my_dict['interactions']['mean_score']|default('no relevant threshold used')|truncate}}.
         \BLOCK{endif}
     \item $fn_u$ is the number of items which are not in the recommendation list of the user and have a
       rating $>=$ \BLOCK{if my_dict.get('metrics', {}).get('Recall', {}).get('relevant_threshold') is not none}
-        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']}}.
+        \textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|truncate}}.
         \BLOCK{else}
-        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')}}.
+        \textbf{\VAR{dict['interactions']['mean_score']|default('no relevant threshold used')|truncate}}.
         \BLOCK{endif}
 \end{itemize}
 \hfill\break
@@ -94,7 +94,7 @@ The Recall metric is calculated as such for the \textbf{single user}:
 In ClayRS, Recall needs those parameters:
 the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
 If not specified, the mean rating score of every user will be used, in this experiment it has been set to
-\textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|safe_text}}.
+\textbf{\VAR{my_dict['metrics']['Recall']['relevant_threshold']|default('no relevant threshold used')|truncate|safe_text}}.
 \hfill\break
 \hfill\break
 % recall report end___

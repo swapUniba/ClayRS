@@ -335,10 +335,20 @@ class DynamicReportManager(ReportManager):
         return text
 
     def truncate(self, text: str) -> str:
-        number = float(text)
+        # Verifica se text non è nullo o None
+        if text is None or text == '':
+            return None  # o qualsiasi altro valore di default che desideri restituire
+
+        # Verifica se text è una stringa che può essere convertita in float
+        try:
+            number = float(text)
+        except (ValueError, TypeError):
+            # Se non può essere convertito in float, restituisci il valore originale
+            return str(text)
+
+        # Esegui il codice di troncamento se text è un numero
         number = round(number, 5)
         text = str(number)
-        print(text)
         return text
 
     def load_filters(self):
