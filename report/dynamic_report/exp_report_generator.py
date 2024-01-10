@@ -639,27 +639,27 @@ class DynamicReportManager(ReportManager):
 
         # add all the field that have been represented using the content analyzer and specify their
         # preprocessing and postprocessing received.
-        if 'source_file' in self.ca_report_dict:
+        if self.ca_report_dict is not None:
+            if 'source_file' in self.ca_report_dict:
+                # extraction of the field being analyzed
+                list_of_field = super().get_keys_at_level(self.ca_report_dict, "field_representations")
 
-            # extraction of the field being analyzed
-            list_of_field = super().get_keys_at_level(self.ca_report_dict, "field_representations")
+                print(list_of_field)
 
-            print(list_of_field)
+                # dealing with all field that have been represented with content analyzer
+                for field in list_of_field:
+                    # add the highlight field in the report
+                    process_and_write_to_file(DynamicReportManager.CA_DICT, 'repr',
+                                              field, content_of_field, text_extract,
+                                              self.file_destination)
 
-            # dealing with all field that have been represented with content analyzer
-            for field in list_of_field:
-                # add the highlight field in the report
-                process_and_write_to_file(DynamicReportManager.CA_DICT, 'repr',
-                                          field, content_of_field, text_extract,
-                                          self.file_destination)
+                    process_and_write_to_file(DynamicReportManager.CA_DICT, 'pre',
+                                              field, content_of_field, text_extract,
+                                              self.file_destination)
 
-                process_and_write_to_file(DynamicReportManager.CA_DICT, 'pre',
-                                          field, content_of_field, text_extract,
-                                          self.file_destination)
-
-                process_and_write_to_file(DynamicReportManager.CA_DICT, 'post',
-                                          field, content_of_field, text_extract,
-                                          self.file_destination)
+                    process_and_write_to_file(DynamicReportManager.CA_DICT, 'post',
+                                              field, content_of_field, text_extract,
+                                              self.file_destination)
 
         # adding reporting on exogenous techniques
         add_single_mini_template(DynamicReportManager.CA_DICT, 'exo', self.file_destination,
@@ -678,16 +678,17 @@ class DynamicReportManager(ReportManager):
                                  self.file_destination, content_of_field, text_extract)
 
         # add as mini template all the possible fold used during the training of the recommender system
-        if 'sys_results' in self.eva_report_dict:
-            result_fold_list = super().get_keys_at_level(self.eva_report_dict, 'sys_results')
+        if self.eva_report_dict is not None:
+            if 'sys_results' in self.eva_report_dict:
+                result_fold_list = super().get_keys_at_level(self.eva_report_dict, 'sys_results')
 
-            if not result_fold_list:
-                print("result list is empty, no result on the partition, check eva report yml file.")
-            else:
-                for res in result_fold_list:
-                    process_and_write_to_file(DynamicReportManager.EVA_DICT, 'result',
-                                              res, content_of_field,
-                                              text_extract, self.file_destination)
+                if not result_fold_list:
+                    print("result list is empty, no result on the partition, check eva report yml file.")
+                else:
+                    for res in result_fold_list:
+                        process_and_write_to_file(DynamicReportManager.EVA_DICT, 'result',
+                                                  res, content_of_field,
+                                                  text_extract, self.file_destination)
 
         # closing eva report section
         add_single_mini_template(DynamicReportManager.EVA_DICT, 'end',
