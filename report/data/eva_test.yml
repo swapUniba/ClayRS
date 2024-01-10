@@ -1,0 +1,20 @@
+n_split: 1
+metrics:
+  Precision:
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  PrecisionAtK:
+    k: 2
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>
+  NDCG: {}
+  MRR:
+    relevant_threshold: null
+  FMeasureAtK:
+    k: 1
+    beta: 1
+    relevant_threshold: null
+    sys_average: macro
+    precision: <class 'numpy.float64'>

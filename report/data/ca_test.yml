@@ -1,0 +1,9 @@
+source_file: items_extra_small.json
+id_each_content:
+- movielens_id
+exogenous_representations:
+  DBPediaMappingTechnique:
+    mode: only_retrieved_evaluated, entity type=dbo:Film
+    label_field: dbpedia_label
+    prop_as_uri: false
+    max_timeout: 5

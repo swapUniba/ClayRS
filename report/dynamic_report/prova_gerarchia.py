@@ -29,15 +29,15 @@ if __name__ == "__main__":
                        "./../data/data_to_test/rs_report_amarDoubleSource.yml",
                        "./../data/data_to_test/eva_report_armarDoubleSource.yml"]
     """
-    # LIST_YAML_FILES = ["./../data/ca_report.yml", "./../data/rs_report.yml", "./../data/eva_report.yml"]
+    LIST_YAML_FILES = ["./../data/ca_report.yml", "./../data/rs_report.yml", "./../data/eva_report.yml"]
 
     # LIST_YAML_FILES = ["./../data/ca_test.yml", "./../data/rs_test.yml", "./../data/eva_test.yml"]
-
+    """
     # test with yml of centroid vector
     LIST_YAML_FILES = ["./../data/data_to_test/item_ca_report_nxPageRank.yml",
                        "./../data/data_to_test/rs_report_centroidVector.yml",
                        "./../data/data_to_test/eva_report_centroidVector.yml"]
-
+    """
     TEMPLATE_FILE = "dynamic_fin_rep.tex"
 
     MngReport = exrep.DynamicReportManager("./dynamic_fin_rep.tex",

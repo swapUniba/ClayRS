@@ -1,0 +1,8 @@
+interactions:
+  n_users: 943
+  n_items: 1682
+  total_interactions: 100000
+  sparsity: 0.9369533063577546
+  min_score: 1.0
+  max_score: 5.0
+  mean_score: 3.52986

@@ -287,7 +287,8 @@ class DynamicReportManager(ReportManager):
     EVA_DICT = {
         'intro': './templates_chunks/templates_eva_mini_chunks/intro_eva_all_metrics.tex',
         'end': './templates_chunks/templates_eva_mini_chunks/end_eva.tex',
-        'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex'
+        'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex',
+        'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex'
     }
 
     # dictionary to find path for template used to start and complete the report
@@ -689,7 +690,9 @@ class DynamicReportManager(ReportManager):
                         process_and_write_to_file(DynamicReportManager.EVA_DICT, 'result',
                                                   res, content_of_field,
                                                   text_extract, self.file_destination)
-
+            else:
+                add_single_mini_template(DynamicReportManager.EVA_DICT, 'no_res',
+                                         self.file_destination, content_of_field, text_extract)
         # closing eva report section
         add_single_mini_template(DynamicReportManager.EVA_DICT, 'end',
                                  self.file_destination, content_of_field, text_extract)
