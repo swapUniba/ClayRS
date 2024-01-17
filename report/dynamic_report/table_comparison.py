@@ -1,6 +1,184 @@
 import yaml
 
+import json
 
+def get_embedding(data_dict):
+    # Cerca ricorsivamente la chiave 'embedding_combiner' nel dizionario
+    def find_embedding_combiner(d):
+        for key, value in d.items():
+            if key == 'embedding_combiner':
+                return value
+            elif isinstance(value, dict):
+                result = find_embedding_combiner(value)
+                if result is not None:
+                    return result
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        result = find_embedding_combiner(item)
+                        if result is not None:
+                            return result
+        return None
+
+    # Trova il valore associato a 'embedding_combiner'
+    embedding_data = find_embedding_combiner(data_dict)
+
+    # Stampa di debug per vedere il tipo di embedding_data
+    print(f"Tipo di embedding_data: {type(embedding_data)}")
+
+    # Se non c'è nessun valore associato, restituisci una stringa vuota
+    if embedding_data is None:
+        return ""
+
+    # Se è una stringa, restituisci direttamente quella stringa
+    elif isinstance(embedding_data, str):
+        return embedding_data
+
+    # Se è un numero, trasformalo in stringa e restituisci
+    elif isinstance(embedding_data, (int, float)):
+        return str(embedding_data)
+
+    # Se è una lista, restituisci gli elementi come stringhe concatenate da '+'
+    elif isinstance(embedding_data, list):
+        return " + ".join(map(str, embedding_data))
+
+    # Se è un dizionario, restituisci la concatenazione delle chiavi di primo livello
+    elif isinstance(embedding_data, dict):
+        return " + ".join(embedding_data.keys())
+
+    # In tutti gli altri casi, restituisci una stringa vuota
+    return ""
+
+# questa funzione recupera sotto forma di stringa il contenuto utilizzato per l'esperimento ovvero tutti i field usati
+# e li restituisce come stringa concatenata con il +
+def get_content(data_dict):
+    # Verifica se la chiave 'algorithm' è presente nel dizionario
+    if 'algorithm' in data_dict:
+        # Cerca la chiave specifica sotto 'algorithm' che contiene 'item_field'
+        algorithm_keys = [key for key, value in data_dict['algorithm'].items() if 'item_field' in value]
+
+        # Se troviamo una chiave, recuperiamo i valori associati
+        if algorithm_keys:
+            # Scegliamo la prima chiave (potrebbe esserci solo una)
+            algorithm_key = algorithm_keys[0]
+
+            # Recupera i valori sotto 'item_field'
+            item_field_data = data_dict['algorithm'][algorithm_key].get('item_field', {})
+
+            # Estrai chiavi di primo livello da 'item_field'
+            content_keys = [key for key, value in item_field_data.items() if isinstance(value, (list, dict)) and value]
+
+            # Unisci le chiavi ottenute
+            content = " + ".join(map(str, content_keys))
+
+            return content
+
+    # Restituisci una stringa vuota se la chiave 'algorithm' non è presente
+    return ""
+
+
+# questa funzione recupera sotto forma di stringa quello che sarà utilizzato per riempirre la casella sotto la colonna Repr.
+# della rapresentazione utilizzata
+def get_representation(data_dict):
+    # Verifica se la chiave 'algorithm' è presente nel dizionario
+    if 'algorithm' in data_dict:
+        # Cerca la chiave specifica sotto 'algorithm' che contiene 'item_field'
+        algorithm_keys = [key for key, value in data_dict['algorithm'].items() if 'item_field' in value]
+
+        # Se troviamo una chiave, recuperiamo i valori associati
+        if algorithm_keys:
+            # Scegliamo la prima chiave (potrebbe esserci solo una)
+            algorithm_key = algorithm_keys[0]
+
+            # Recupera i valori sotto 'item_field'
+            item_field_data = data_dict['algorithm'][algorithm_key].get('item_field', {})
+
+            # Estrai i valori da 'item_field' ignorando liste vuote
+            item_field_values = [value for key, value in item_field_data.items() if isinstance(value, list) and value]
+
+            # Unisci i valori ottenuti
+            representation_strings = [" + ".join(map(str, values)) for values in item_field_values]
+
+            # Unisci le stringhe ottenute
+            representation = " + ".join(representation_strings)
+
+            return representation
+
+    # Restituisci una stringa vuota se la chiave 'algorithm' non è presente
+    return ""
+
+
+def sanitize_latex_string(input_str):
+    return input_str.replace("_", "\\_").replace("&", "\\&").replace("#", "\\#")
+
+def generate_latex_table_based_on_representation(data_list):
+    # Check se la lista di dati è vuota
+    if not data_list:
+        return "\\begin{table}\n\\end{table}"
+
+    # Inizializzazione della stringa LaTeX
+    latex_str = "\\begin{table}\n\t\\centering\n"
+
+    # Aggiungi il titolo della tabella se presente
+    latex_str += "\t\\caption{Accuracy and fairness for ML-1M dataset.}\n"
+
+    # Ottieni le chiavi uniche sotto 'algorithm' per determinare le colonne 'Alg.'
+    alg_keys = set(json.dumps(item['algorithm'], sort_keys=True) for item in data_list if 'algorithm' in item)
+
+    # Inizia a scrivere la testata della tabella
+    latex_str += "\t\\begin{tabular}{l"
+
+    # Aggiungi le colonne 'Repr.', 'Content', 'Emb.'
+    if 'algorithm' in data_list[0] and 'item_field' in data_list[0]['algorithm']:
+        repr_content_emb_columns = [len(data_list[0]['algorithm']['item_field'].get('plot', ['not used'])) + 1]
+    else:
+        repr_content_emb_columns = [1]
+
+    # Aggiungi le colonne 'Metrics'
+    metrics = data_list[0].get('algorithm', {}).get('sys - mean', {})
+    metric_columns = metrics.keys() if metrics else []
+    latex_str += "c" * sum(repr_content_emb_columns) + "c" * len(metric_columns)
+
+    # Chiudi la dichiarazione delle colonne
+    latex_str += "}\n\t\t\\toprule\n"
+
+    # Scrivi i nomi delle colonne
+    latex_str += "\t\tAlg. & Repr. & Content & Emb. & " + " & ".join(metric_columns) + " \\\\\n"
+    latex_str += "\t\t\\midrule\n"
+
+    # Itera attraverso i dati nella lista
+    for alg_key in alg_keys:
+        # Trova tutti i dizionari con la stessa chiave sotto 'algorithm'
+        filtered_data = [item for item in data_list if json.dumps(item['algorithm'], sort_keys=True) == alg_key]
+
+        # Itera attraverso i dizionari filtrati
+        for data_dict in filtered_data:
+            # Scrivi la chiave dell'algoritmo sotto 'algorithm'
+            latex_str += f"\t\t{sanitize_latex_string(alg_key)} & "
+
+            # Scrivi le colonne 'Repr.', 'Content', 'Emb.'
+            if 'algorithm' in data_dict and 'item_field' in data_dict['algorithm']:
+                repr_content_emb_values = [data_dict['algorithm']['item_field'].get('plot', ['not used'])]
+            else:
+                repr_content_emb_values = ['not used']
+
+            latex_str += " & ".join(map(sanitize_latex_string, repr_content_emb_values[0])) + f" & {sanitize_latex_string(data_dict['algorithm'].get('embedding_combiner', 'not used'))} & "
+
+            # Scrivi le colonne 'Metrics'
+            metric_values = [round(data_dict['algorithm']['sys - mean'].get(metric, 0.0), 3) for metric in
+                             metric_columns]
+            latex_str += " & ".join(map(str, metric_values)) + " \\\\\n"
+
+        # Aggiungi una riga vuota tra gli algoritmi diversi
+        latex_str += "\t\t\\midrule\n"
+
+    # Chiudi la tabella
+    latex_str += "\t\t\\bottomrule\n\t\\end{tabular}\n\\end{table}"
+
+    return latex_str
+
+# funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE
+"""
 def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_columns_per_part=5):
     # Estrai le chiavi (nomi di colonne) dal primo dizionario
     first_algorithm = algorithms[0]
@@ -70,7 +248,7 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
             latex_code += "\\vspace{10pt}\n"
 
     return latex_code
-
+"""
 
 # prima versione che spezza la tabellla su più pagine [LASCIA TROPPO SPAZIO]
 """
@@ -523,7 +701,130 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
+    data_dict = {
+        'algorithm': {
+            'caccca': {
+                'item_field': {
+                    'ploter': ['tfidf_sk'],
+                    'mark': ['vera', 'gold'],
+                    'apple': ['a', 'kal', '88'],
+                    'gufo': ['rep', 'ferry'],
+                    'razzo': { 'e': 5,
+                               'tre':[],
+                               'pera':"rape"
+                               }
+                },
+                'regressor': 'SkLinearRegression',
+                'only_greater_eq': None,
+                'embedding_combiner': {
+                        'Centroid': {},
+                        'Retro': {}
+                }
+            },
+            'sys - mean': {
+                'Precision - macro': 0.875,
+                'Recall - macro': 1.0,
+                'F1 - macro': 0.9166666666666666,
+                'Gini': 0.0,
+                'NDCG': 1.0,
+                'R-Precision - macro': 1.0,
+                'RMSE': 0.8134293935347402,
+                'MSE': 0.6996958397430165,
+                'MAE': 0.7616526982381033,
+                'MRR': 1.0,
+                'MAP': 1.0,
+                'PredictionCoverage': 50.0,
+                'Precision@5 - macro': 0.875,
+                'Recall@5 - macro': 1.0,
+                'F1@5 - micro': 0.9285714285714286,
+                'MRR@5': 1.0,
+                'NDCG@5': 1.0
+            }
+        }
+    }
 
+    result = get_representation(data_dict)
+    print(sanitize_latex_string(result))
+    print(result)
+    print()
+    result = get_content(data_dict)
+    print(sanitize_latex_string(result))
+    print(result)
+    print()
+    result = get_embedding(data_dict)
+    print(sanitize_latex_string(result))
+    print(result)
+
+    # creazione lista di dizionari pronti per essere forniti a generate_latex_table_based_on_representation(data_list)
+    """
+    eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
+                      "./../data/data_to_test/eva_report_centroidVector.yml",
+                      "./../data/data_to_test/eva_report_classifierRecommender.yml",
+                      "./../data/data_to_test/eva_report_indexQuery.yml",
+                      "./../data/data_to_test/eva_report_linearPredictor.yml"]
+
+    recsys_yaml_paths = ["./../data/data_to_test/rs_report_amarSingleSource.yml",
+                         "./../data/data_to_test/rs_report_centroidVector.yml",
+                         "./../data/data_to_test/rs_report_classifierRecommender.yml",
+                         "./../data/data_to_test/rs_report_indexQuery.yml",
+                         "./../data/data_to_test/rs_report_linearPredictor.yml"]
+
+    dictionary_eva_sys = from_yaml_list_to_dict_list(eva_yaml_paths)
+    dict_sys_mean = []  # lista di dizionari contenenti le metriche calcolate dal recsys associato
+    for e in dictionary_eva_sys:
+        tmp = extract_subdictionary(e, "sys - mean")
+        dict_sys_mean.append(tmp)
+
+    for sys_mean in dict_sys_mean:
+        if 'sys - mean' in sys_mean:
+            sys_mean['sys - mean'].pop('CatalogCoverage (PredictionCov)', None)
+    # dict_sys_mean = [{k.replace("sys - mean", "algorithm"): v for k, v in d.items()} for d in dict_sys_mean]
+
+    dictionary_rec_sys = from_yaml_list_to_dict_list(recsys_yaml_paths)
+    dict_algo = []  # lista di dizionari contenenti le info sul reccomender system usato
+    for t in dictionary_rec_sys:
+        tmp = extract_subdictionary(t, "algorithm")
+        dict_algo.append(tmp)
+
+    if len(dict_algo) != len(dict_sys_mean):
+        raise ValueError("Le liste devono avere la stessa lunghezza.")
+
+    dict_ready = []
+
+    for algo, sys_mean in zip(dict_algo, dict_sys_mean):
+        merged_result = merge_dicts(algo, sys_mean, merge_key='algorithm')
+        dict_ready.append(merged_result)
+
+    # Ora dict_ready contiene i risultati delle fusioni
+    for merged_result in dict_ready:
+        print(merged_result)
+
+    data_x = {'algorithm': {
+        'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']},
+                            'regressor': 'SkLinearRegression',
+                            'only_greater_eq': None,
+                            'embedding_combiner': 'Centroid'},
+        'sys - mean': {'Precision - macro': 0.875,
+                       'Recall - macro': 1.0,
+                       'F1 - macro': 0.9166666666666666,
+                       'Gini': 0.0,
+                       'NDCG': 1.0,
+                       'R-Precision - macro': 1.0,
+                       'RMSE': 0.8134293935347402,
+                       'MSE': 0.6996958397430165,
+                       'MAE': 0.7616526982381033,
+                       'MRR': 1.0,
+                       'MAP': 1.0,
+                       'PredictionCoverage': 50.0,
+                       'Precision@5 - macro': 0.875,
+                       'Recall@5 - macro': 1.0,
+                       'F1@5 - micro': 0.9285714285714286,
+                       'MRR@5': 1.0,
+                       'NDCG@5': 1.0
+                       }
+    }
+    }
+    """
 
     # prova per la funzione erge_dicts(*dicts, merge_key=None)
     """
@@ -735,3 +1036,12 @@ if __name__ == "__main__":
     else:
         print(f"Chiave '{key_to_extract}' non trovata nel dizionario.")
     """
+
+    # esempio di dizionari su cui usare la funzione enerate_latex_table_based_on_representation(data_list)
+    """
+    {'algorithm': {'AmarDoubleSource': {'network': "<class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkBasic'>", 'item_fields': [{'plot': ['tfidf_sk']}], 'user_fields': [{}], 'batch_size': 512, 'epochs': 5, 'threshold': 4, 'additional_opt_parameters': {'batch_size': 512}, 'train_loss': '<function binary_cross_entropy at 0x00000234EC9A3760>', 'optimizer_class': "<class 'torch.optim.adam.Adam'>", 'device': 'cuda:0', 'embedding_combiner': {'Centroid': {}}, 'seed': None, 'additional_dl_parameters': {}}, 'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0, 'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 2.170059972267377, 'MSE': 5.561319090821989, 'MAE': 2.141366135329008, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'pearson': 1.0, 'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+    {'algorithm': {'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 3.0, 'MSE': 9.0, 'MAE': 3.0, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+    {'algorithm': {'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 1.5, 'MSE': 2.25, 'MAE': 1.5, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+    {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 63.65394315890862, 'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+    {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression', 'only_greater_eq': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0, 'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 0.8134293935347402, 'MSE': 0.6996958397430165, 'MAE': 0.7616526982381033, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+"""
