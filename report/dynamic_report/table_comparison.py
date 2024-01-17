@@ -490,9 +490,139 @@ def nest_dictionaries(keys, dictionaries, key_to_replace='sys - mean'):
     return nested_dicts
 
 
+def merge_dicts(*dicts, merge_key=None):
+    """
+    Merge two or more dictionaries, nesting them under a specified key.
+
+    Parameters:
+    - *dicts: Two or more dictionaries to merge.
+    - merge_key (str): The key under which dictionaries should be nested. If None, a new key will be created.
+
+    Returns:
+    - dict: Merged dictionary.
+    """
+    if len(dicts) < 2:
+        raise ValueError("merge_dicts requires at least two dictionaries as input.")
+
+    if merge_key is None:
+        merged_dict = {}
+        for i, d in enumerate(dicts):
+            key = str(i)
+            merged_dict[key] = d
+    else:
+        merged_dict = {merge_key: {}}
+        for d in dicts:
+            for k, v in d.items():
+                if k == merge_key:
+                    merged_dict[merge_key].update(v)
+                else:
+                    merged_dict[merge_key][k] = v
+
+    return merged_dict
+
+
 # Esegui lo script
 if __name__ == "__main__":
 
+
+    # prova per la funzione erge_dicts(*dicts, merge_key=None)
+    """
+    dict1 = {"a": "Centroid", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5667}
+    dict2 = {"b": "Word2Vec", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5612}
+    dict3 = {"c": "LSA", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5536}
+
+    A = {
+        'alg': {
+            'a': {
+                's': 5,
+                'k': 2
+            },
+            'b': {
+                'd': 4
+            },
+            'c': {
+                'z': 1
+            }
+        }
+    }
+
+    B = {'bet':
+        {
+            'a': {
+                's': 52,
+                'k': 21
+            },
+            't': {
+                'p': 41
+            },
+            's': {
+                'o': 11
+            }
+        }
+    }
+
+    C = {'oppet': {
+        'h': {
+            's': 92,
+            'k': 210
+        }
+    }
+    }
+
+    merged_result = merge_dicts(dict1, dict2, dict3)
+    print(merged_result)
+
+    merge_2 = merge_dicts(A, B, C, merge_key="alg")
+    print(merge_2)
+
+    XX = {'0': {'a': 'Centroid', 'Repr.': 'TF-IDF', 'Content': 'T', 'F1': 0.5667},
+          '1': {'b': 'Word2Vec', 'Repr.': 'TF-IDF', 'Content': 'T', 'F1': 0.5612},
+          '2': {'c': 'LSA', 'Repr.': 'TF-IDF', 'Content': 'T', 'F1': 0.5536}}
+
+    k_def = {'alg': {
+                        'a': {'s': 5, 'k': 2},
+                        'b': {'d': 4},
+                        'c': {'z': 1},
+                        'bet': {'a': {'s': 52, 'k': 21}, 't': {'p': 41}, 's': {'o': 11}},
+                        'oppet': {'h': {'s': 92, 'k': 210}}
+    }
+    }
+
+    giusto = { 'alg': {
+                    'a': {'s': 5, 'k': 2},
+                    'b': {'d': 4},
+                    'c': {'z': 1},
+                    'bet': {
+                        'a': {'s': 52, 'k': 21},
+                        't': {'p': 41},
+                        's': {'o': 11}
+                    },
+                    'oppet': {
+                        'h': {'s': 92, 'k': 210}
+                    }
+                }
+             }
+    """
+
+    """
+    eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
+                      "./../data/data_to_test/eva_report_centroidVector.yml",
+                      "./../data/data_to_test/eva_report_classifierRecommender.yml",
+                      "./../data/data_to_test/eva_report_indexQuery.yml",
+                      "./../data/data_to_test/eva_report_linearPredictor.yml"]
+
+    dictionary_res_sys = from_yaml_list_to_dict_list(eva_yaml_paths)
+    dict_alg = []
+    for e in dictionary_res_sys:
+        tmp = extract_subdictionary(e, "sys - mean")
+        dict_alg.append(tmp)
+
+    for d in dict_alg:
+        print(d)
+    """
+
+    # codice per laa generazione della tabella dei confronti
+    """
     eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
                       "./../data/data_to_test/eva_report_centroidVector.yml",
                       "./../data/data_to_test/eva_report_classifierRecommender.yml",
@@ -525,11 +655,12 @@ if __name__ == "__main__":
         print(r)
 
     # with the dictnory processed create the latex table
-    latex_table = generate_latex_table(result, max_columns_per_part=7)
+    latex_table = generate_latex_table(result, max_columns_per_part=4)
     print(latex_table)
-
     """
+
     # prova per get_algorithm_keys ovvero per recuperare una lista di chiavi da dei dizionari
+    """
     recsys_yaml_paths = ["./../data/data_to_test/rs_report_amarSingleSource.yml",
                           "./../data/data_to_test/rs_report_centroidVector.yml",
                           "./../data/data_to_test/rs_report_classifierRecommender.yml",
@@ -544,8 +675,8 @@ if __name__ == "__main__":
         print(k)
     """
 
-    """
     # prova per il recupero di una lista di dizionari a partire da una lista di file yaml
+    """
     eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
                       "./../data/data_to_test/eva_report_centroidVector.yml",
                       "./../data/data_to_test/eva_report_classifierRecommender.yml",
@@ -556,8 +687,8 @@ if __name__ == "__main__":
         print(d)
     """
 
-    """
     # prova per la formatazione e creazione della tabella di comparazione tra algortitmi
+    """
     algorithms_data = [
         {'CentroidVector': {'F1@1 - macro': 0.85, 'MRR': 0.92, 'MAE': 0.12, 'Recall': 0.78, 'Precision': 0.91}},
         {'AmarDoubleSource': {'F1@1 - macro': 0.92, 'MRR': 0.88, 'MAE': 0.14, 'Recall': 0.85, 'Precision': 0.89}},
@@ -568,9 +699,9 @@ if __name__ == "__main__":
     print(latex_table)
     """
 
-    """
     # prova per la funzione che recupera un sottodizionario innestato da un dizionario fatto
     # di dizionari innestati
+    """
     # Esempio di utilizzo
     nested_dict = {'A': {
         'CentroidVector': {
