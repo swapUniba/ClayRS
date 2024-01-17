@@ -140,6 +140,7 @@ class Report:
         for exo_config in exo_list:
             string_exo = repr(exo_config.exogenous_technique)
             name_exo, exo_parameters_dict = self._extract_arguments(string_exo)
+            exo_parameters_dict['external_id'] = exo_config.id
             ca_dict['exogenous_representations'][name_exo] = exo_parameters_dict
 
         # FIELD REPRESENTATIONS
@@ -159,6 +160,8 @@ class Report:
                 string_technique = repr(field_config.content_technique)
 
                 name_technique, parameter_dict_technique = self._extract_arguments(string_technique)
+
+                parameter_dict_technique['external_id'] = field_config.id
 
                 single_representation_dict[name_technique] = parameter_dict_technique
 
