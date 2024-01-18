@@ -2,6 +2,106 @@ import yaml
 
 import json
 
+# FUNZIONE DI CREAZIONE TABELLA CORRETTA TODO usarla in generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW")
+def set_table_complete(columns, name, list_tuple, algo):
+    # Verifica che columns sia uguale alla lunghezza di name
+    if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
+        return ""
+
+    # Costruisci la stringa per la dichiarazione delle colonne
+    column_declaration = 'l' + ('c' * (columns - 1))
+
+    # Costruisci la stringa per l'intestazione della tabella
+    add_to_table = "\\begin{table}\n"
+    add_to_table += f"\\begin{{tabular}}{{{column_declaration}}}\n"
+    add_to_table += "    \\toprule\n"
+    add_to_table += f"    Alg. & Repr. & Content & Emb. & {' & '.join(name)} \\\\\n"
+    add_to_table += "    \\midrule\n"
+
+    # Aggiungi le righe dalla lista di tuple
+    for i, row_tuple in enumerate(list_tuple):
+        add_to_table += "    "  # Aggiungi questa riga
+        add_to_table += f"    \\multirow{{{len(list_tuple)}}}{{*}}{{{algo}}} & " if i == 0 else " & "  # Modifica questa riga
+        for value in row_tuple:
+            add_to_table += f"{value} & "
+        add_to_table = add_to_table[:-2]  # Rimuovi l'ultimo "& "
+        add_to_table += " \\\\\n"
+
+    # Completa la stringa della tabella
+    add_to_table += "    \\bottomrule\n"
+    add_to_table += "\\end{tabular}\n"
+    add_to_table += "\\end{table}"
+
+    return add_to_table
+
+# usate per supporto non più necessaria
+"""
+def set_table(columns, name):
+    # Verifica che columns sia uguale alla lunghezza di name
+    if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
+        return ""
+
+    # Costruisci la stringa per la dichiarazione delle colonne
+    column_declaration = 'l' + ('c' * (columns - 1))
+
+    # Costruisci la stringa per l'intestazione della tabella
+    table_header = "\\begin{table}\n"
+    table_header += f"\\begin{{tabular}}{{{column_declaration}}}\n"
+    table_header += "    \\toprule\n"
+    table_header += f"    Alg. & Repr. & Content & Emb. & {' & '.join(name)} \\\\\n"
+    table_header += "    \\midrule\n"
+
+    # Completa la stringa della tabella
+    table_header += "    \\bottomrule\n"
+    table_header += "\\end{tabular}\n"
+    table_header += "\\end{table}"
+
+    return table_header
+"""
+
+# non funzionante TODO ELIMINARE SE NON SI UTILIZZA
+"""
+def set_header_table(F, A, name):
+    # Costruisci la stringa per la dichiarazione delle colonne
+    column_declaration = 'l' + ('c' * (F - 1))
+
+    # Costruisci la stringa per l'intestazione della tabella
+    table_header = f"\\begin{{tabular}}{{{column_declaration}}}\n"
+    table_header += "    \\toprule\n"
+    table_header += "    Alg. & Repr. & Content & Emb. & \\multicolumn{" + str(A) + "}{c}{Metrics} \\\\\n"
+    table_header += "    \\cmidrule(lr){" + str(5) + "-" + str(4 + A) + "}\n"
+    table_header += "    " + " & ".join([""] * 4 + name) + " \\\\\n"
+    table_header += "    \\midrule\n"
+
+    # Completa la stringa della tabella
+    table_header += "    \\bottomrule\n"
+    table_header += "\\end{tabular}"
+
+    return table_header
+"""
+
+
+def get_metrics(data_dict):
+    def extract_metrics(d, prefix=''):
+        result = []
+        for key, value in d.items():
+            if isinstance(value, dict):
+                result.extend(extract_metrics(value, f'{prefix}{key} - '))
+            else:
+                result.append((f'{prefix}{key}', value))
+        return result
+
+    for key, value in data_dict.items():
+        if key == 'sys - mean':
+            return extract_metrics(value)
+        elif isinstance(value, dict):
+            nested_result = get_metrics(value)
+            if nested_result:
+                return nested_result
+
+    return []
+
+
 def get_embedding(data_dict):
     # Cerca ricorsivamente la chiave 'embedding_combiner' nel dizionario
     def find_embedding_combiner(d):
@@ -48,6 +148,7 @@ def get_embedding(data_dict):
 
     # In tutti gli altri casi, restituisci una stringa vuota
     return ""
+
 
 # questa funzione recupera sotto forma di stringa il contenuto utilizzato per l'esperimento ovvero tutti i field usati
 # e li restituisce come stringa concatenata con il +
@@ -111,71 +212,139 @@ def get_representation(data_dict):
 def sanitize_latex_string(input_str):
     return input_str.replace("_", "\\_").replace("&", "\\&").replace("#", "\\#")
 
-def generate_latex_table_based_on_representation(data_list):
-    # Check se la lista di dati è vuota
-    if not data_list:
-        return "\\begin{table}\n\\end{table}"
+# TODO  da sistemare
+def generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW"):
+    result = ""
 
-    # Inizializzazione della stringa LaTeX
-    latex_str = "\\begin{table}\n\t\\centering\n"
+    # Ottieni il numero di righe per ogni tabella
+    num_raw = len(data_list)
 
-    # Aggiungi il titolo della tabella se presente
-    latex_str += "\t\\caption{Accuracy and fairness for ML-1M dataset.}\n"
+    # Ottieni il numero di colonne da posizionare sotto Metrics
+    num_metrics_columns = num_columns - 4
 
-    # Ottieni le chiavi uniche sotto 'algorithm' per determinare le colonne 'Alg.'
-    alg_keys = set(json.dumps(item['algorithm'], sort_keys=True) for item in data_list if 'algorithm' in item)
+    # ottieni il numero di metriche uguale al numero di elementi presenti nella lista di tuple
+    # restituita da get_metrics
+    num_all_metrics = len(get_metrics(data_list[0]))
 
-    # Inizia a scrivere la testata della tabella
-    latex_str += "\t\\begin{tabular}{l"
+    # stabiliamo il numero di tabelle da utilizzare
+    num_tables = 0
+    # Assicurati che num_metrics_columns sia <= rispetto a num_all_metrics
+    if num_metrics_columns > num_all_metrics:
+        num_tables = 1
 
-    # Aggiungi le colonne 'Repr.', 'Content', 'Emb.'
-    if 'algorithm' in data_list[0] and 'item_field' in data_list[0]['algorithm']:
-        repr_content_emb_columns = [len(data_list[0]['algorithm']['item_field'].get('plot', ['not used'])) + 1]
+        # abbiamo una sola tabella e il numero di metriche sarà proprio nume_metrics_all
+        num_metrics_columns = num_all_metrics
+        # TODO integrare la funzione set_table_complete
     else:
-        repr_content_emb_columns = [1]
+        # Calcola il numero di tabelle necessarie in base al numero di colonne Metrics
+        num_tables = num_all_metrics // num_metrics_columns
 
-    # Aggiungi le colonne 'Metrics'
-    metrics = data_list[0].get('algorithm', {}).get('sys - mean', {})
-    metric_columns = metrics.keys() if metrics else []
-    latex_str += "c" * sum(repr_content_emb_columns) + "c" * len(metric_columns)
+        # Se la divisione ha resto, aggiungi 1 al numero di tabelle
+        if num_all_metrics % num_metrics_columns != 0:
+            num_tables += 1
 
-    # Chiudi la dichiarazione delle colonne
-    latex_str += "}\n\t\t\\toprule\n"
 
-    # Scrivi i nomi delle colonne
-    latex_str += "\t\tAlg. & Repr. & Content & Emb. & " + " & ".join(metric_columns) + " \\\\\n"
-    latex_str += "\t\t\\midrule\n"
+    # Se il numero di colonne Metrics è maggiore di 4, suddividi su più tabelle
+    if num_metrics_columns > 4:
+        # Calcola il numero di colonne Metrics da mostrare in ciascuna tabella
+        metrics_columns_per_table = min(4, num_metrics_columns)
 
-    # Itera attraverso i dati nella lista
-    for alg_key in alg_keys:
-        # Trova tutti i dizionari con la stessa chiave sotto 'algorithm'
-        filtered_data = [item for item in data_list if json.dumps(item['algorithm'], sort_keys=True) == alg_key]
+        # Calcola il resto delle colonne Metrics
+        remaining_metrics_columns = num_metrics_columns - metrics_columns_per_table
 
-        # Itera attraverso i dizionari filtrati
-        for data_dict in filtered_data:
-            # Scrivi la chiave dell'algoritmo sotto 'algorithm'
-            latex_str += f"\t\t{sanitize_latex_string(alg_key)} & "
+        # Per ogni tabella
+        for i, data_dict in enumerate(data_list):
+            # Ottieni il dizionario da utilizzare per la riga corrente
+            current_dict = data_dict
 
-            # Scrivi le colonne 'Repr.', 'Content', 'Emb.'
-            if 'algorithm' in data_dict and 'item_field' in data_dict['algorithm']:
-                repr_content_emb_values = [data_dict['algorithm']['item_field'].get('plot', ['not used'])]
-            else:
-                repr_content_emb_values = ['not used']
+            # Ottieni il numero di colonne da mostrare in questa tabella
+            current_num_columns = min(num_columns, 4 + metrics_columns_per_table)
 
-            latex_str += " & ".join(map(sanitize_latex_string, repr_content_emb_values[0])) + f" & {sanitize_latex_string(data_dict['algorithm'].get('embedding_combiner', 'not used'))} & "
+            # Aggiungi l'intestazione della tabella al risultato
+            result += "\\begin{table}\n"
+            result += "\t\\centering\n"
+            result += f"\t\\caption{{{title} - Table {i + 1}}}\n"
+            result += "\t\\begin{tabular}{l" + "c" * (current_num_columns - 1) + "}\n"
 
-            # Scrivi le colonne 'Metrics'
-            metric_values = [round(data_dict['algorithm']['sys - mean'].get(metric, 0.0), 3) for metric in
-                             metric_columns]
-            latex_str += " & ".join(map(str, metric_values)) + " \\\\\n"
+            # Aggiungi le colonne Alg, Repr, Content, Emb al risultato
+            result += "\t\tAlg. & Repr. & Content & Emb."
 
-        # Aggiungi una riga vuota tra gli algoritmi diversi
-        latex_str += "\t\t\\midrule\n"
+            # Aggiungi le colonne Metrics all'intestazione
+            for j in range(metrics_columns_per_table):
+                metric_name, _ = get_metrics(current_dict)[j]
+                result += f" & {sanitize_latex_string(metric_name)}"
 
-    # Chiudi la tabella
-    latex_str += "\t\t\\bottomrule\n\t\\end{tabular}\n\\end{table}"
+            result += "\\\\\\midrule\n"
 
-    return latex_str
+            # Aggiungi i valori della riga corrente al risultato
+            alg_value = f"\\multirow{{{num_tables}}}{{*}}{{{alg_column_value}}}"
+            repr_value = sanitize_latex_string(get_representation(current_dict))
+            content_value = sanitize_latex_string(get_content(current_dict))
+            emb_value = sanitize_latex_string(get_embedding(current_dict))
+
+            result += f"\t\t{alg_value} & {repr_value} & {content_value} & {emb_value}"
+
+            # Aggiungi i valori delle colonne Metrics al risultato
+            for j in range(metrics_columns_per_table):
+                _, metric_value = get_metrics(current_dict)[j]
+                result += f" & {metric_value:.3f}"
+
+            result += "\\\\\\bottomrule\n"
+            result += "\t\\end{tabular}\n"
+            result += "\\end{table}\n"
+
+            # Se ci sono colonne Metrics rimanenti, aggiorna il dizionario per la prossima tabella
+            if remaining_metrics_columns > 0:
+                current_dict = {k: v for k, v in current_dict.items() if k != 'sys - mean'}
+                current_dict['sys - mean'] = get_metrics(data_dict)[metrics_columns_per_table:]
+
+                # Aggiorna il numero di colonne Metrics rimanenti
+                remaining_metrics_columns -= metrics_columns_per_table
+
+    else:
+        # Se il numero di colonne Metrics è 4 o meno, aggiungi una singola tabella al risultato
+        result += "\\begin{table}\n"
+        result += "\t\\centering\n"
+        result += f"\t\\caption{{{title}}}\n"
+        result += "\t\\begin{tabular}{l" + "c" * (num_columns - 1) + "}\n"
+
+        # Aggiungi le colonne Alg, Repr, Content, Emb all'intestazione
+        result += "\t\tAlg. & Repr. & Content & Emb."
+
+        # Aggiungi le colonne Metrics all'intestazione
+        for j in range(num_metrics_columns):
+            metric_name, _ = get_metrics(data_list[0])[j]
+            result += f" & {sanitize_latex_string(metric_name)}"
+
+        result += "\\\\\\midrule\n"
+
+        # Per ogni riga nei dati
+        for i, data_dict in enumerate(data_list):
+            # Ottieni il dizionario da utilizzare per la riga corrente
+            current_dict = data_dict
+
+            # Aggiungi i valori della riga corrente al risultato
+            alg_value = f"\\multirow{{{num_tables}}}{{*}}{{{alg_column_value}}}"
+            repr_value = sanitize_latex_string(get_representation(current_dict))
+            content_value = sanitize_latex_string(get_content(current_dict))
+            emb_value = sanitize_latex_string(get_embedding(current_dict))
+
+            result += f"\t\t{alg_value} & {repr_value} & {content_value} & {emb_value}"
+
+            # Aggiungi i valori delle colonne Metrics al risultato
+            for j in range(num_metrics_columns):
+                _, metric_value = get_metrics(current_dict)[j]
+                result += f" & {metric_value:.3f}"
+
+            result += "\\\\\n"
+
+        result += "\\bottomrule\n"
+        result += "\t\\end{tabular}\n"
+        result += "\\end{table}\n"
+
+    return result
+
+
 
 # funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE
 """
@@ -701,6 +870,24 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
+    columns = 11
+    name = ["F1", "nDCG", "MRR", "Gini", "RES", "Recall", "Precision"]
+    list_tuple = [(9, "Centroid", "x", "x", "x", "x", "x", "x", "x", "x"),
+                  (1, "Algorithm2", "y", "y", "y", "y", "y", "y", "y", "y"),
+                  (8, "capa", "s", "r", "y", "y", "x", "x", "red", "q"),
+                  ("tre", 3, 5, 89, "ter", "suez", "p", "aqe", "y", "y"),
+                  (1, "Algorithm2", "tre", 3, 5, "suez", "p", "red", "q", "d"),
+                  (8, "capa", "s", "r", "y", "red", "q", "d", "x", "x")
+                   ]
+    algo = "Example"
+
+    result = set_table_complete(columns, name, list_tuple, algo)
+    print(result)
+
+    # test per le funzioni di supporto a generate_latex_table_based_on_representation
+    """
+    # TODO decide if the function will deal with one type of algorithm or more
+
     data_dict = {
         'algorithm': {
             'caccca': {
@@ -754,6 +941,10 @@ if __name__ == "__main__":
     result = get_embedding(data_dict)
     print(sanitize_latex_string(result))
     print(result)
+    print()
+    result = get_metrics(data_dict)
+    print(result)
+    """
 
     # creazione lista di dizionari pronti per essere forniti a generate_latex_table_based_on_representation(data_list)
     """
@@ -822,8 +1013,12 @@ if __name__ == "__main__":
                        'MRR@5': 1.0,
                        'NDCG@5': 1.0
                        }
-    }
-    }
+    }}
+
+    print()
+    print()
+    table = generate_latex_table_based_on_representation(dict_ready, 8, "Confronto su diversi impostazioni")
+    print(table)
     """
 
     # prova per la funzione erge_dicts(*dicts, merge_key=None)
@@ -1044,4 +1239,27 @@ if __name__ == "__main__":
     {'algorithm': {'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 1.5, 'MSE': 2.25, 'MAE': 1.5, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
     {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 63.65394315890862, 'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
     {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression', 'only_greater_eq': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0, 'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 0.8134293935347402, 'MSE': 0.6996958397430165, 'MAE': 0.7616526982381033, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+"""
+
+"""
+_______________________________________________________
+Alg.    Repr.    Content  Emb.
+Metrics
+                                  F1   nDGA   MRR  Gini
+RES   Recall    Precision
+--------------------------------------------------------
+      9    Centroid           x      x     x    x      x
+Example
+x     x
+      1     Algoritm2         y       y    y    y      y
+yy
+--------------------------------------------------------
+
+________________________________________________________________________________
+Alg.    Repr.    Content  Emb.           Metrics
+                                ------------------------------------------------
+                                F1   nDGA   MRR  Gini  RES   Recall    Precision
+________________________________________________________________________________
+Example  9      Centroid   x     x    x      x     x    x      x         x
+         1      Algorithm2 y     y    y      y     y    y      y         y
 """
