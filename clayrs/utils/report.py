@@ -174,6 +174,16 @@ class Report:
 
                     single_representation_dict['preprocessing'][name_preprocessing] = parameter_dict_preprocessing
 
+                single_representation_dict['postprocessing'] = dict() if len(field_config.postprocessing) != 0 else None
+                for j, postprocessing_config in enumerate(field_config.postprocessing):
+
+                    single_representation_dict['postprocessing'][j] = {}
+
+                    for postprocessing_technique in postprocessing_config.postprocessor_technique:
+                        string_preprocessing = repr(postprocessing_technique)
+                        name_preprocessing, parameter_dict_preprocessing = self._extract_arguments(string_preprocessing)
+                        single_representation_dict['postprocessing'][j][name_preprocessing] = parameter_dict_preprocessing
+
                 ca_dict['field_representations']['{}/{}'.format(field_name, str(i))] = single_representation_dict
 
         return ca_dict

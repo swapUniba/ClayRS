@@ -107,7 +107,7 @@ class IndexQuery(PerUserCBAlgorithm):
 
         return representations_valid
 
-    def _load_available_contents(self, index_path: str, items_to_load: set = None):
+    def _load_available_contents(self, index_path: str, items_to_load: set = None, item_field=None):
         return LoadedContentsIndex(index_path)
 
     def process_rated(self, user_idx: int, train_ratings: Ratings, available_loaded_items: LoadedContentsIndex):

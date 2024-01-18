@@ -4,8 +4,10 @@ from abc import ABC, abstractmethod
 import scipy.sparse
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, FeatureAgglomeration
+from sklearn.mixture import GaussianMixture
 from sklearn.random_projection import GaussianRandomProjection
 from sklearn.feature_extraction.text import TfidfTransformer
+from skimage.feature import fisher_vector
 from sklearn.preprocessing import StandardScaler
 from scipy.cluster.vq import vq
 from scipy.sparse import csc_matrix, vstack
@@ -79,7 +81,6 @@ class VisualBagOfWords(EmbeddingInputPostProcessor):
     https://customers.pyimagesearch.com/the-bag-of-visual-words-model/
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
-
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -174,19 +175,10 @@ class CountVisualBagOfWords(VisualBagOfWords):
 
         output of weighting schema = [2, 0]
 
-    NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
-    visual techniques and setting this as postprocessor for the output of that technique as follows:
-
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.CountVisualBagOfWords()])
-    ```
-
     ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
     Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
-
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -234,21 +226,11 @@ class TfIdfVisualBagOfWords(VisualBagOfWords):
 
         output of weighting schema = [[2, 0], [1, 1.69]]
 
-    NOTE: a preliminary step is necessary, that is feature extraction. You should do that using one of the provided
-    visual techniques and setting this as postprocessor for the output of that technique as follows:
-
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.TfIdfVisualBagOfWords()])
-    ```
-
     ADDITIONAL NOTE: the technique requires 2D arrays of features for each image, such as edges in the case of the
     Canny Edge detector. In case any other dimensionality is provided, a ValueError will be raised.
 
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
-
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
-
     Arguments for [SkLearn TfIdf Transformer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfTransformer.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -295,13 +277,7 @@ class ScipyVQ(EmbeddingInputPostProcessor):
     representation, the closest one from the codebook is found using the Vector Quantization implementation from
     scipy and the retrieved vector is replaced to the original one in the final representation.
 
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.ScipyVQ()])
-    ```
-
     Arguments for [SkLearn KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
-
     Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
 
     NOTE: for this technique it is mandatory for the parameter "with_std" to be set to True
@@ -369,6 +345,205 @@ class ScipyVQ(EmbeddingInputPostProcessor):
         return self._repr_string
 
 
+class ScalerPostProcessor(EmbeddingInputPostProcessor):
+    """
+    PostProcessor that is used to scale the inputs using mean and standard deviation
+    This technique uses the same logic applied by other PostProcessors with the
+    'with_mean' and 'with_std' parameters, but if one only wants to apply scaling
+    this technique allows it. The class wraps the StandardScaler SkLearn class, so the arguments are the same.
+
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, with_mean: bool = True, with_std: bool = True):
+        super().__init__()
+
+        self.with_mean = with_mean
+        self.with_std = with_std
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+
+        new_field_repr_list = []
+
+        # stack the representations from all fields
+        descriptors = np.vstack(field_repr_list)
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        for i, field_repr in enumerate(field_repr_list):
+            new_repr = descriptors[i*len(field_repr.value):(i+1)*len(field_repr.value)]
+            new_field_repr_list.append(EmbeddingField(new_repr))
+
+        return new_field_repr_list
+
+    def __str__(self):
+        return "ScalerPostProcessor"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class EncodingPostProcessor(EmbeddingInputPostProcessor):
+    """
+    PostProcessor that is used to encode the inputs, generalizes the behavior of techniques that process multiple
+    embeddings to produce a single one
+    """
+
+    def __init__(self, with_mean: bool = False, with_std: bool = False):
+
+        super().__init__()
+
+        self.with_mean = with_mean
+        self.with_std = with_std
+
+    @abstractmethod
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+        raise NotImplementedError
+
+    def process(self, field_repr_list: List[EmbeddingField]) -> List[EmbeddingField]:
+
+        if len(field_repr_list[0].value.shape) != 2:
+            raise ValueError(f'Unsupported dimensionality for technique {self}, only two dimensional arrays are supported')
+
+        # stack the representations from all fields
+        descriptors = np.vstack(field_repr_list)
+
+        scaler = None
+
+        if self.with_mean or self.with_std:
+            scaler = StandardScaler(with_mean=self.with_mean, with_std=self.with_std)
+            descriptors = scaler.fit_transform(descriptors)
+
+        new_field_repr_list = self.get_new_field_repr_list(descriptors, field_repr_list, scaler)
+
+        return new_field_repr_list
+
+
+class FVGMM(EncodingPostProcessor):
+    """
+    FV (Fisher Vector) encoding technique done by wrapping the SkImage Fisher Vector method.
+    Parameters that can be specified are the ones from SkLearn GMM and SkImage fisher_vector.
+    It is also possible to scale the inputs before post-processing, this is done with the parameters of the
+    StandardScaler
+
+    Arguments for [SkLearn GMM](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html#sklearn.mixture.GaussianMixture)
+    Arguments for [SkImage FV](https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.fisher_vector)
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, n_components=1, covariance_type='diag', tol=0.001, reg_covar=1e-06, max_iter=100, n_init=1,
+                 init_params='kmeans', weights_init=None, means_init=None, precisions_init=None, random_state=None,
+                 warm_start=False, verbose=0, verbose_interval=10, improved: bool = False, alpha: float = 0.5,
+                 with_mean: bool = False, with_std: bool = False):
+
+        super().__init__(with_mean=with_mean, with_std=with_std)
+
+        self.gmm = GaussianMixture(n_components=n_components, covariance_type=covariance_type,
+                                   tol=tol, reg_covar=reg_covar, max_iter=max_iter, n_init=n_init,
+                                   init_params=init_params, weights_init=weights_init, means_init=means_init,
+                                   precisions_init=precisions_init, random_state=random_state,
+                                   warm_start=warm_start, verbose=verbose, verbose_interval=verbose_interval)
+
+        self.improved_fisher = improved
+        self.alpha = alpha
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+
+        results = []
+
+        self.gmm.fit(descriptors, )
+
+        for repr in repr_list:
+
+            repr = repr.value
+
+            if scaler is not None:
+                repr = scaler.transform(repr)
+
+            results.append(EmbeddingField(fisher_vector(repr, self.gmm, improved=self.improved_fisher, alpha=self.alpha)))
+
+        return results
+
+    def __str__(self):
+        return "FVGMM"
+
+    def __repr__(self):
+        return self._repr_string
+
+
+class VLADGMM(EncodingPostProcessor):
+    """
+    VLAD (Vector of Locally Aggregated Descriptors) encoding technique.
+    You can read a detailed explanation of the technique [here](https://www.ics.uci.edu/~majumder/VC/211HW3/vlfeat/doc/api/vlad-fundamentals.html)
+    Parameters that can be specified are the ones from SkLearn GMM.
+    It is also possible to scale the inputs before post-processing, this is done with the parameters of the
+    StandardScaler
+
+    Arguments for [SkLearn GMM](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html#sklearn.mixture.GaussianMixture)
+    Arguments for [SkLearn StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+    """
+
+    def __init__(self, n_components=1, covariance_type='diag', tol=0.001, reg_covar=1e-06, max_iter=100, n_init=1,
+                 init_params='kmeans', weights_init=None, means_init=None, precisions_init=None, random_state=None,
+                 warm_start=False, verbose=0, verbose_interval=10, improved: bool = False, alpha: float = 0.5,
+                 with_mean: bool = False, with_std: bool = False):
+
+        super().__init__(with_mean=with_mean,
+                         with_std=with_std)
+
+        self.gmm = GaussianMixture(n_components=n_components, covariance_type=covariance_type,
+                                   tol=tol, reg_covar=reg_covar, max_iter=max_iter, n_init=n_init,
+                                   init_params=init_params, weights_init=weights_init, means_init=means_init,
+                                   precisions_init=precisions_init, random_state=random_state,
+                                   warm_start=warm_start, verbose=verbose, verbose_interval=verbose_interval)
+
+        self.improved = improved
+        self.alpha = alpha
+        self._repr_string = autorepr(self, inspect.currentframe())
+
+    def get_new_field_repr_list(self, descriptors: np.ndarray, repr_list: List[EmbeddingField], scaler) -> List[EmbeddingField]:
+
+        results = []
+
+        self.gmm.fit(descriptors)
+        means = self.gmm.means_
+
+        for repr in repr_list:
+
+            repr = repr.value
+
+            if scaler is not None:
+                repr = scaler.transform(repr)
+
+            q = self.gmm.predict_proba(repr)
+
+            # alternative fully vectorized, opted out because it easily leads to out of memory error
+            # vlad = ((repr[..., np.newaxis, :] - means) * q[..., np.newaxis]).sum(axis=0).flatten()
+
+            # other possible loop
+            # [a * c for a, c in zip((repr[..., np.newaxis, :] - means), q[0])]
+
+            vlad = np.array([(a - means) * c[..., np.newaxis] for a, c in zip(repr, q)]).sum(axis=0).flatten()
+
+            if self.improved:
+                vlad = np.sign(vlad) * np.power(np.abs(vlad), self.alpha)
+                vlad /= np.linalg.norm(vlad)
+
+            results.append(EmbeddingField(vlad))
+
+        return results
+
+    def __str__(self):
+        return "VladGMM"
+
+    def __repr__(self):
+        return self._repr_string
+
+
 class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
     """
     Abstract class that encapsulates the logic for dimensionality reduction techniques.
@@ -388,30 +563,29 @@ class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
     """
 
     @staticmethod
-    def vstack(field_values_repr_list: Union[List[csc_matrix], List[np.ndarray]]) -> np.ndarray:
+    def vstack(field_values_repr_list) -> np.ndarray:
         """method for vertically stacking"""
-        if isinstance(field_values_repr_list[0], csc_matrix):
-            return vstack(field_values_repr_list).A
+        if isinstance(field_values_repr_list[0].value, csc_matrix):
+            return vstack([x.value for x in field_values_repr_list]).A
         else:
             return np.vstack(field_values_repr_list)
 
     def process(self, field_repr_list: Union[List[EmbeddingField], List[FeaturesBagField]]) -> List[EmbeddingField]:
-        first_inst = field_repr_list[0].value
+        first_inst = field_repr_list[0]
 
         # single array containing the whole embedding (document embedding, for example)
         # or 1 dimensional sparse array
-        if len(first_inst.shape) == 1 or (len(first_inst.shape) == 2 and first_inst.shape[0] == 1):
-            processed_arrays = self.apply_processing(self.vstack([field.value for field in field_repr_list]))
+        if isinstance(first_inst, FeaturesBagField) or len(first_inst.value.shape) == 1:
+            processed_arrays = self.apply_processing(self.vstack(field_repr_list))
             return [EmbeddingField(array) for array in processed_arrays]
 
         # array of word embeddings (330 word embeddings with 100 as dimensionality, for example)
         # this code applies the post-processing to each single word embedding
-        elif len(first_inst.shape) == 2:
-            values = [field.value for field in field_repr_list]
-            processed_arrays = self.apply_processing(self.vstack(values))
+        elif len(first_inst.value.shape) == 2:
+            processed_arrays = self.apply_processing(self.vstack(field_repr_list))
             next_instance_index = 0
             new_field_repr_list = []
-            for embedding in values:
+            for embedding in processed_arrays:
                 num_of_elements = len(embedding)
                 new_embedding_repr = processed_arrays[next_instance_index:num_of_elements+next_instance_index]
                 next_instance_index = num_of_elements+next_instance_index
@@ -431,13 +605,6 @@ class DimensionalityReduction(EmbeddingFeaturesInputPostProcessor):
 class SkLearnPCA(DimensionalityReduction):
     """
     Dimensionality reduction using the PCA implementation from SkLearn
-
-    Usage example:
-
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnPCA()])
-    ```
 
     Arguments for [SkLearn PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html)
     """
@@ -463,13 +630,6 @@ class SkLearnGaussianRandomProjections(DimensionalityReduction):
     """
     Dimensionality reduction using the Gaussian Random Projections implementation from SkLearn
 
-    Usage example:
-
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnGaussianRandomProjections()])
-    ```
-
     Arguments for [SkLearn Gaussian Random Projection](https://scikit-learn.org/stable/modules/generated/sklearn.random_projection.GaussianRandomProjection.html)
     """
 
@@ -491,13 +651,6 @@ class SkLearnGaussianRandomProjections(DimensionalityReduction):
 class SkLearnFeatureAgglomeration(DimensionalityReduction):
     """
     Dimensionality reduction using the Feature Agglomeration implementation from SkLearn
-
-    Usage example:
-
-    ```python
-    import clayrs.content_analyzer as ca
-    ca.FieldConfig(ca.SkImageCannyEdgeDetector(), postprocessing=[ca.SkLearnFeatureAgglomeration()])
-    ```
 
     Arguments for [SkLearn Feature Agglomeration](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.FeatureAgglomeration.html)
     """

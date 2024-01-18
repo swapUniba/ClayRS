@@ -21,6 +21,14 @@ def get_progbar(iterator, total=None) -> tqdm:
             yield pbar
 
 
+@contextlib.contextmanager
+def get_progbar_without_time_estim(iterator, total=None) -> tqdm:
+    bar_format = "{desc} {percentage:.0f}%|{bar}| {n:}/{total_fmt}"
+    with logging_redirect_tqdm(loggers=[logger]):
+        with tqdm(iterator, bar_format=bar_format, total=total) as pbar:
+            yield pbar
+
+
 def handle_exception(loop, context):
     # this is a simple hack to stopping asyncio from logging "task was never retrieved" exception
     # that should not happen in the first place.

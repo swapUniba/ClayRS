@@ -49,16 +49,13 @@ test_ratings = pd.DataFrame.from_records([
 
 # we create manually the mapping since we want a global mapping containing train and test items
 item_map = {}
-all_items = train_ratings[["to_id"]].append(test_ratings[["to_id"]]).append(train_ratings_some_missing[["to_id"]])[
-    "to_id"]
+all_items = pd.concat([pd.concat([train_ratings[["to_id"]], test_ratings[["to_id"]]]), train_ratings_some_missing[["to_id"]]])["to_id"]
 for item_id in all_items:
     if item_id not in item_map:
         item_map[item_id] = len(item_map)
 
 user_map = {}
-all_users = \
-    train_ratings[["from_id"]].append(test_ratings[["from_id"]]).append(train_ratings_some_missing[["from_id"]])[
-        "from_id"]
+all_users = pd.concat([pd.concat([train_ratings[["from_id"]], test_ratings[["from_id"]]]), train_ratings_some_missing[["from_id"]]])["from_id"]
 for user_id in all_users:
     if user_id not in user_map:
         user_map[user_id] = len(user_map)
@@ -136,10 +133,10 @@ class TestContentBasedAlgorithm(TestCase):
         # test load_available_contents for content based algorithm
         movies_dir = os.path.join(dir_test_files, 'complex_contents', 'movies_codified/')
 
-        interface_dict = self.alg._load_available_contents(movies_dir)
+        interface_dict = self.alg._load_available_contents(movies_dir, only_representations=self.alg.item_field)
         self.assertIsInstance(interface_dict, LoadedContentsDict)
 
-        interface_dict = self.alg._load_available_contents(movies_dir, {'tt0112281', 'tt0112302'})
+        interface_dict = self.alg._load_available_contents(movies_dir, {'tt0112281', 'tt0112302'}, self.alg.item_field)
         self.assertTrue(len(interface_dict) == 2)
         loaded_items_id_list = list(interface_dict)
         self.assertIn('tt0112281', loaded_items_id_list)

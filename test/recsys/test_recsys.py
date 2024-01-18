@@ -50,11 +50,10 @@ users_train = train_ratings["from_id"]
 users_test = test_ratings["from_id"]
 users_train_some_missing = train_ratings_some_missing["from_id"]
 
-all_users = users_train.append(users_test).append(users_train_some_missing)
+all_users = pd.concat([users_train.append(users_test), users_train_some_missing])
 for user_id in all_users:
     if user_id not in user_map:
         user_map[user_id] = len(user_map)
-
 
 item_map = {}
 
@@ -62,11 +61,10 @@ items_train = train_ratings["to_id"]
 items_test = test_ratings["to_id"]
 items_train_some_missing = train_ratings_some_missing["to_id"]
 
-all_items = items_train.append(items_test).append(items_train_some_missing)
+all_items = pd.concat([items_train.append(items_test), items_train_some_missing])
 for item_id in all_items:
     if item_id not in item_map:
         item_map[item_id] = len(item_map)
-
 
 train_ratings = Ratings.from_dataframe(train_ratings, user_map=user_map, item_map=item_map)
 train_ratings_some_missing = Ratings.from_dataframe(train_ratings_some_missing, user_map=user_map, item_map=item_map)
@@ -189,7 +187,8 @@ class TestContentBasedRS(TestCase):
 
         # covering the case in which no item is recommended for any user
         result_predict_all = cbrs.predict(test_ratings,
-                                          methodology=AllItemsMethodology(["not_existing", "not_existing2"]), num_cpus=1)
+                                          methodology=AllItemsMethodology(["not_existing", "not_existing2"]),
+                                          num_cpus=1)
         self.assertTrue(len(result_predict_all) == 0)
 
     def test_predict_raise_error(self):
@@ -223,10 +222,10 @@ class TestContentBasedRS(TestCase):
                                                                                    test_ratings))
 
             self.assertEqual(expected_ranked_items, items_ranked)
-        
+
         # save_fit == True, so check that algorithm is fit
         self.assertIsNotNone(cbrs.fit_alg)
-        
+
         # test ranking with the cbrs algorithm on unspecified user list
         # all users of the test set will be used
         result_rank_all = cbrs.rank(test_ratings, num_cpus=1)
@@ -405,7 +404,6 @@ class TestGraphBasedRS(TestCase):
         methodology_effectively_used = TrainingItemsMethodology().setup(train_ratings, self.test_ratings)
         result_different_meth = gbrs.rank(self.test_ratings, methodology=methodology_effectively_used, num_cpus=1)
         for user_idx in self.test_ratings.unique_user_idx_column:
-
             single_uir_rank = result_different_meth.get_user_interactions(user_idx)
             items_ranked = set(single_uir_rank[:, 1])
 
