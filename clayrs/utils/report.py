@@ -160,10 +160,9 @@ class Report:
                 string_technique = repr(field_config.content_technique)
 
                 name_technique, parameter_dict_technique = self._extract_arguments(string_technique)
-
-                parameter_dict_technique['external_id'] = field_config.id
-
+                
                 single_representation_dict[name_technique] = parameter_dict_technique
+                single_representation_dict['external_id'] = field_config.id
 
                 single_representation_dict['preprocessing'] = dict() if len(field_config.preprocessing) != 0 else None
                 for preprocessing in field_config.preprocessing:
