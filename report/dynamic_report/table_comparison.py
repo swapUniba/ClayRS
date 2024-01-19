@@ -2,8 +2,10 @@ import yaml
 
 import json
 
-# FUNZIONE DI CREAZIONE TABELLA CORRETTA TODO usarla in generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW")
-def set_table_complete(columns, name, list_tuple, algo):
+
+# FUNZIONE DI CREAZIONE TABELLA CORRETTA
+# TODO usarla in generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW")
+def set_table_complete(columns, name, list_tuple, algo, title="comparison of results"):
     # Verifica che columns sia uguale alla lunghezza di name
     if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
         return ""
@@ -13,10 +15,14 @@ def set_table_complete(columns, name, list_tuple, algo):
 
     # Costruisci la stringa per l'intestazione della tabella
     add_to_table = "\\begin{table}\n"
-    add_to_table += f"\\begin{{tabular}}{{{column_declaration}}}\n"
+    add_to_table += "\\begin{adjustwidth}{-1 in}{-1 in}\n"  # adjust margin
+    add_to_table += "  \\centering\n"
+    add_to_table += f"   \\caption{{{title}}}\n"
+    add_to_table += f"  \\begin{{tabular}}{{{column_declaration}}}\n"
     add_to_table += "    \\toprule\n"
     add_to_table += f"    Alg. & Repr. & Content & Emb. & {' & '.join(name)} \\\\\n"
     add_to_table += "    \\midrule\n"
+    add_to_table += "    \\midrule\n"  # to make double line
 
     # Aggiungi le righe dalla lista di tuple
     for i, row_tuple in enumerate(list_tuple):
@@ -29,10 +35,12 @@ def set_table_complete(columns, name, list_tuple, algo):
 
     # Completa la stringa della tabella
     add_to_table += "    \\bottomrule\n"
-    add_to_table += "\\end{tabular}\n"
+    add_to_table += "   \\end{tabular}\n"
+    add_to_table += "\\end{adjustwidth}\n"
     add_to_table += "\\end{table}"
 
     return add_to_table
+
 
 # usate per supporto non più necessaria
 """
@@ -58,28 +66,6 @@ def set_table(columns, name):
 
     return table_header
 """
-
-# non funzionante TODO ELIMINARE SE NON SI UTILIZZA
-"""
-def set_header_table(F, A, name):
-    # Costruisci la stringa per la dichiarazione delle colonne
-    column_declaration = 'l' + ('c' * (F - 1))
-
-    # Costruisci la stringa per l'intestazione della tabella
-    table_header = f"\\begin{{tabular}}{{{column_declaration}}}\n"
-    table_header += "    \\toprule\n"
-    table_header += "    Alg. & Repr. & Content & Emb. & \\multicolumn{" + str(A) + "}{c}{Metrics} \\\\\n"
-    table_header += "    \\cmidrule(lr){" + str(5) + "-" + str(4 + A) + "}\n"
-    table_header += "    " + " & ".join([""] * 4 + name) + " \\\\\n"
-    table_header += "    \\midrule\n"
-
-    # Completa la stringa della tabella
-    table_header += "    \\bottomrule\n"
-    table_header += "\\end{tabular}"
-
-    return table_header
-"""
-
 
 def get_metrics(data_dict):
     def extract_metrics(d, prefix=''):
@@ -212,138 +198,132 @@ def get_representation(data_dict):
 def sanitize_latex_string(input_str):
     return input_str.replace("_", "\\_").replace("&", "\\&").replace("#", "\\#")
 
-# TODO  da sistemare
-def generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW"):
-    result = ""
 
+def extract_first_elements(tuple_list):
+    return [tup[0] if len(tup) > 0 else None for tup in tuple_list]
+
+
+def make_tuple_for_table(data_dict, start, end):
+    # Ottieni i valori per la tupla
+    representation = get_representation(data_dict)
+    content = get_content(data_dict)
+    embedding = get_embedding(data_dict)
+    metrics_list = get_metrics(data_dict)
+
+    # Controlla se start ed end sono validi
+    if start < 0:
+        start = 0
+    if end >= len(metrics_list):
+        end = len(metrics_list)
+
+    # Prendi solo il secondo elemento dalle tuple, convertilo in numero e approssimalo a tre cifre decimali
+    metrics_values = [f"{float(tup[1]):.3f}" for tup in metrics_list[start:end]]
+
+    # Costruisci la tupla
+    result_tuple = (
+        sanitize_latex_string(representation),
+        sanitize_latex_string(content),
+        sanitize_latex_string(embedding),
+        *metrics_values
+    )
+
+    return result_tuple
+
+
+# TODO  da sistemare
+def generate_latex_table_based_on_representation(data_list, num_columns, title="results", alg_column_value="WWW"):
+    result = ""
+    number_first_static_colomns = 4
     # Ottieni il numero di righe per ogni tabella
     num_raw = len(data_list)
+    # print(f"il numero di righe num_raw è {num_raw}")
 
     # Ottieni il numero di colonne da posizionare sotto Metrics
-    num_metrics_columns = num_columns - 4
+    num_metrics_columns = num_columns - number_first_static_colomns
+    # print(f"il numero di colonne dedicato alle metriche è {num_metrics_columns}")
 
     # ottieni il numero di metriche uguale al numero di elementi presenti nella lista di tuple
     # restituita da get_metrics
     num_all_metrics = len(get_metrics(data_list[0]))
+    # print(f"il numero di tutte le metriche è {num_all_metrics}")
 
     # stabiliamo il numero di tabelle da utilizzare
     num_tables = 0
     # Assicurati che num_metrics_columns sia <= rispetto a num_all_metrics
-    if num_metrics_columns > num_all_metrics:
+    if num_metrics_columns >= num_all_metrics:
         num_tables = 1
-
+        # print("coooool I\'m here")
         # abbiamo una sola tabella e il numero di metriche sarà proprio nume_metrics_all
         num_metrics_columns = num_all_metrics
-        # TODO integrare la funzione set_table_complete
+        # print(f"num_metrics_columns is {num_metrics_columns}")
+        culomns_metrics_name = extract_first_elements(get_metrics(data_list[0]))
+        # print(culomns_metrics_name)
+        tuple_format = [make_tuple_for_table(data, 0, num_all_metrics) for data in data_list]
+        # print(tuple_format)
+        adjust_colomns = number_first_static_colomns + num_metrics_columns
+        result = set_table_complete(adjust_colomns, culomns_metrics_name, tuple_format, alg_column_value, title)
     else:
         # Calcola il numero di tabelle necessarie in base al numero di colonne Metrics
         num_tables = num_all_metrics // num_metrics_columns
-
+        colomn_for_last_table = num_all_metrics % num_metrics_columns
+        first = 0
+        last = num_metrics_columns
+        metrics_name = extract_first_elements(get_metrics(data_list[0]))
+        # print(f"il nome di tutte le metriche è {metrics_name}")
+        # print("well enough")
         # Se la divisione ha resto, aggiungi 1 al numero di tabelle
-        if num_all_metrics % num_metrics_columns != 0:
+        if colomn_for_last_table != 0:
             num_tables += 1
-
-
-    # Se il numero di colonne Metrics è maggiore di 4, suddividi su più tabelle
-    if num_metrics_columns > 4:
-        # Calcola il numero di colonne Metrics da mostrare in ciascuna tabella
-        metrics_columns_per_table = min(4, num_metrics_columns)
-
-        # Calcola il resto delle colonne Metrics
-        remaining_metrics_columns = num_metrics_columns - metrics_columns_per_table
-
-        # Per ogni tabella
-        for i, data_dict in enumerate(data_list):
-            # Ottieni il dizionario da utilizzare per la riga corrente
-            current_dict = data_dict
-
-            # Ottieni il numero di colonne da mostrare in questa tabella
-            current_num_columns = min(num_columns, 4 + metrics_columns_per_table)
-
-            # Aggiungi l'intestazione della tabella al risultato
-            result += "\\begin{table}\n"
-            result += "\t\\centering\n"
-            result += f"\t\\caption{{{title} - Table {i + 1}}}\n"
-            result += "\t\\begin{tabular}{l" + "c" * (current_num_columns - 1) + "}\n"
-
-            # Aggiungi le colonne Alg, Repr, Content, Emb al risultato
-            result += "\t\tAlg. & Repr. & Content & Emb."
-
-            # Aggiungi le colonne Metrics all'intestazione
-            for j in range(metrics_columns_per_table):
-                metric_name, _ = get_metrics(current_dict)[j]
-                result += f" & {sanitize_latex_string(metric_name)}"
-
-            result += "\\\\\\midrule\n"
-
-            # Aggiungi i valori della riga corrente al risultato
-            alg_value = f"\\multirow{{{num_tables}}}{{*}}{{{alg_column_value}}}"
-            repr_value = sanitize_latex_string(get_representation(current_dict))
-            content_value = sanitize_latex_string(get_content(current_dict))
-            emb_value = sanitize_latex_string(get_embedding(current_dict))
-
-            result += f"\t\t{alg_value} & {repr_value} & {content_value} & {emb_value}"
-
-            # Aggiungi i valori delle colonne Metrics al risultato
-            for j in range(metrics_columns_per_table):
-                _, metric_value = get_metrics(current_dict)[j]
-                result += f" & {metric_value:.3f}"
-
-            result += "\\\\\\bottomrule\n"
-            result += "\t\\end{tabular}\n"
-            result += "\\end{table}\n"
-
-            # Se ci sono colonne Metrics rimanenti, aggiorna il dizionario per la prossima tabella
-            if remaining_metrics_columns > 0:
-                current_dict = {k: v for k, v in current_dict.items() if k != 'sys - mean'}
-                current_dict['sys - mean'] = get_metrics(data_dict)[metrics_columns_per_table:]
-
-                # Aggiorna il numero di colonne Metrics rimanenti
-                remaining_metrics_columns -= metrics_columns_per_table
-
-    else:
-        # Se il numero di colonne Metrics è 4 o meno, aggiungi una singola tabella al risultato
-        result += "\\begin{table}\n"
-        result += "\t\\centering\n"
-        result += f"\t\\caption{{{title}}}\n"
-        result += "\t\\begin{tabular}{l" + "c" * (num_columns - 1) + "}\n"
-
-        # Aggiungi le colonne Alg, Repr, Content, Emb all'intestazione
-        result += "\t\tAlg. & Repr. & Content & Emb."
-
-        # Aggiungi le colonne Metrics all'intestazione
-        for j in range(num_metrics_columns):
-            metric_name, _ = get_metrics(data_list[0])[j]
-            result += f" & {sanitize_latex_string(metric_name)}"
-
-        result += "\\\\\\midrule\n"
-
-        # Per ogni riga nei dati
-        for i, data_dict in enumerate(data_list):
-            # Ottieni il dizionario da utilizzare per la riga corrente
-            current_dict = data_dict
-
-            # Aggiungi i valori della riga corrente al risultato
-            alg_value = f"\\multirow{{{num_tables}}}{{*}}{{{alg_column_value}}}"
-            repr_value = sanitize_latex_string(get_representation(current_dict))
-            content_value = sanitize_latex_string(get_content(current_dict))
-            emb_value = sanitize_latex_string(get_embedding(current_dict))
-
-            result += f"\t\t{alg_value} & {repr_value} & {content_value} & {emb_value}"
-
-            # Aggiungi i valori delle colonne Metrics al risultato
-            for j in range(num_metrics_columns):
-                _, metric_value = get_metrics(current_dict)[j]
-                result += f" & {metric_value:.3f}"
-
-            result += "\\\\\n"
-
-        result += "\\bottomrule\n"
-        result += "\t\\end{tabular}\n"
-        result += "\\end{table}\n"
+            # print(f"il numero di tabelle da è {num_tables}")
+            for i in range(num_tables - 1):
+                # estri i nomi per le colonne della tabella i
+                metrics_name_chuck = metrics_name[first:last]
+                # print(metrics_name_chuck)
+                # print(f"first is {first} and last is {last}")
+                # prepara i dati da inserire per la tabella i
+                tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
+                # print(tuple_format_for_table)
+                # aggiungi i la tabella a result
+                result += set_table_complete(num_columns,
+                                             metrics_name_chuck, tuple_format_for_table, alg_column_value, title)
+                # print(result)
+                result += " \n\n"
+                first = last
+                last = first + num_metrics_columns
+                # print(f"first is {first} and last is {last}")
+            # ora recuperiamo i nomi delle ultime metriche rimaste per l'ultima colonna
+            # print(f"colomn for last table {colomn_for_last_table}") # debug
+            # print(metrics_name[- colomn_for_last_table:]) # debug
+            name_chunk = metrics_name[- colomn_for_last_table:]
+            # print(name_chunk)
+            last = first + colomn_for_last_table
+            # print(f"first is {first} and last is {last}")
+            tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
+            # print(tuple_format_for_table)
+            new_number_of_colmns = number_first_static_colomns + colomn_for_last_table
+            # print(new_number_of_colmns)
+            result += set_table_complete(new_number_of_colmns,
+                                         name_chunk, tuple_format_for_table, alg_column_value, title)
+        else:
+            # print("in the else side")
+            for i in range(num_tables):
+                # print(f"first is {first} and last is {last}")
+                # estri i nomi per le colonne della tabella i
+                metrics_name_chuck = metrics_name[first:last]
+                # print(metrics_name_chuck)
+                # prepara i dati da inserire per la tabella i
+                tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
+                # print(tuple_format_for_table)
+                # aggiungi i la tabella a result
+                result += set_table_complete(num_columns,
+                                             metrics_name_chuck, tuple_format_for_table, alg_column_value, title)
+                result += "\n\n"
+                # print(result)
+                first = last
+                last = first + num_metrics_columns
+                # print(f"first is {first} and last is {last}")
 
     return result
-
 
 
 # funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE
@@ -870,19 +850,100 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
-    columns = 11
-    name = ["F1", "nDCG", "MRR", "Gini", "RES", "Recall", "Precision"]
-    list_tuple = [(9, "Centroid", "x", "x", "x", "x", "x", "x", "x", "x"),
-                  (1, "Algorithm2", "y", "y", "y", "y", "y", "y", "y", "y"),
-                  (8, "capa", "s", "r", "y", "y", "x", "x", "red", "q"),
-                  ("tre", 3, 5, 89, "ter", "suez", "p", "aqe", "y", "y"),
-                  (1, "Algorithm2", "tre", 3, 5, "suez", "p", "red", "q", "d"),
-                  (8, "capa", "s", "r", "y", "red", "q", "d", "x", "x")
-                   ]
-    algo = "Example"
+    """
+    # Esempio di dati
+    columns = 6
+    name = ['Metric1', 'Metric2']
+    list_tuple = [
+        ('Value1', 'Value2', 'Value3', 'Value4', 'Value5', 'Value6'),
+        ('Value7', 'Value8', 'Value9', 'Value10', 'Value11', 'Value12'),
+        # Aggiungi altre tuple se necessario
+    ]
+    algo = 'Algorithm'
+    title = 'Comparison of Results'
 
-    result = set_table_complete(columns, name, list_tuple, algo)
-    print(result)
+    # Chiamata alla funzione
+    result_table = set_table_complete(columns, name, list_tuple, algo, title)
+
+    # Stampa il risultato
+    print(result_table)
+    
+    """
+
+    # Lista di dizionari
+    d = [
+        {'algorithm': {
+            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
+                               'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
+        {'algorithm': {
+            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
+                                      'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
+        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
+                       'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
+        {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
+                                           'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
+                       'sys - mean': {'Precision - macro': 0.875,
+                                      'Recall - macro': 1.0,
+                                      'F1 - macro': 0.9166666666666666
+                                      }}}
+    ]
+
+    # Numero di colonne per tabella
+    columns = 8  # Modifica il numero di colonne secondo le tue esigenze
+
+    # Titolo della tabella
+    table_title = "Risultati delle metriche"
+
+    # Nome dell'algoritmo (da inserire nella colonna "Alg.")
+    algorithm_name = "Killer"
+
+    # Chiamata alla funzione
+    latex_table = generate_latex_table_based_on_representation(d, columns, title=table_title,
+                                                               alg_column_value=algorithm_name)
+
+    # Stampa il risultato
+    print(latex_table)
+
+
+
+    # test per usare list cpomprension con la funzione make_tuple_for_table
+    """
+    # Lista di dizionari
+    list_of_dicts = [
+        {'algorithm': {
+            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
+                               'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
+                           'NDCG': 1.0}}},
+        {'algorithm': {
+            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
+                                      'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
+                           'NDCG': 1.0}}},
+        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
+                       'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
+                                      'NDCG': 1.0}}},
+        {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
+                                           'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
+                       'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0,
+                                      'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0}}}
+    ]
+
+    # Definisci start ed end a piacere
+    start = 0
+    end = 5  # Ad esempio, puoi scegliere tu i valori
+
+    # Usa list comprehension per creare la lista di tuple
+    tuple_format = [
+        make_tuple_for_table(data_dict, start, end)
+        for data_dict in list_of_dicts
+    ]
+    
+    # Stampa la lista di tuple
+    print(tuple_format)
+    """
 
     # test per le funzioni di supporto a generate_latex_table_based_on_representation
     """
