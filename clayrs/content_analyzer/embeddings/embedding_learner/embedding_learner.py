@@ -6,7 +6,7 @@ import numpy as np
 from gensim.models import KeyedVectors
 
 if TYPE_CHECKING:
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import InformationProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
 
 from clayrs.content_analyzer.embeddings.embedding_source import EmbeddingSource

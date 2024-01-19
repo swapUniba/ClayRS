@@ -41,12 +41,12 @@ test2 = pd.DataFrame.from_records([
 
 # we create manually the mapping since we want a global mapping containing train and test items
 item1_map = {}
-for item_id in train1[["to_id"]].append(test1[["to_id"]])["to_id"]:
+for item_id in pd.concat([train1[["to_id"]], test1[["to_id"]]])["to_id"]:
     if item_id not in item1_map:
         item1_map[item_id] = len(item1_map)
 
 item2_map = {}
-for item_id in train2[["to_id"]].append(test2[["to_id"]])["to_id"]:
+for item_id in pd.concat([train2[["to_id"]], test2[["to_id"]]])["to_id"]:
     if item_id not in item2_map:
         item2_map[item_id] = len(item2_map)
 

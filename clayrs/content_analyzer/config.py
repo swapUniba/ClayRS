@@ -7,11 +7,11 @@ from typing import List, Dict, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
         FieldContentProductionTechnique
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import InformationProcessor
     from clayrs.content_analyzer.exogenous_properties_retrieval import ExogenousPropertiesRetrieval
     from clayrs.content_analyzer.memory_interfaces.memory_interfaces import InformationInterface
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
+    from clayrs.content_analyzer.information_processor.postprocessors import PostProcessor
 
 from clayrs.content_analyzer.field_content_production_techniques.field_content_production_technique import \
     OriginalData
@@ -25,8 +25,13 @@ class FieldConfig:
 
     To specify how to preprocess data, simply specify an `InformationProcessor` in the `preprocessing` parameter.
     Multiple `InformationProcessor` can be wrapped in a list: in this case, the field will be preprocessed by performing
-    operations all objects inside the list.
+    all operations inside the list sequentially.
     If preprocessing is not defined, no preprocessing operations will be done on the field data.
+
+    Additionally, it is also possible to specify postprocessors with `PostProcessorConfig` in the `postprocessing` parameter.
+    Multiple `PostProcessorConfig` can be wrapped in a list: in this case, the field will be postprocessed by performing
+    all operations inside the list sequentially.
+    If postprocessing is not defined, no postprocessing operations will be done on the field data.
 
     You can use the `id` parameter to assign a custom id for the representation: by doing so the user can freely refer
     to it by using the custom id given, rather than positional integers (which are given automatically by the
@@ -51,6 +56,29 @@ class FieldConfig:
 
     ```python
     FieldConfig(SkLearnTfIdf(), NLTK())
+    ```
+
+    * This will produce a field representation using the SkLearnTfIdf technique on the field data
+      preprocessed by NLTK by performing stopwords removal and postprocessed by performing PCA,
+      and the name of the produced representation will be None since no id was defined for the post processor
+
+    ```python
+    FieldConfig(SkLearnTfIdf(), NLTK(stopwords_removal=True), PostProcessorConfig(PCA(100)), id='field_example')
+    ```
+
+    * This will produce the same result as above but the id for the field representation defined by this config will
+      be "field_example_pca_100" obtained by concatenating the field config id and the postprocessor id
+
+    ```python
+    FieldConfig(SkLearnTfIdf(), NLTK(stopwords_removal=True), PostProcessorConfig(PCA(100), id="pca_100"), id='field_example')
+    ```
+
+    * This will produce two representations, one with id "field_example_pca_100" and one with id "field_example_pca_200",
+      obtained by postprocessing the same representation (nltk + tfidf)
+
+    ```python
+    post_processor_list = [PostProcessorConfig(PCA(100), id="pca_100"), PostProcessorConfig(PCA(200), id="pca_200")]
+    FieldConfig(SkLearnTfIdf(), NLTK(stopwords_removal=True), id='field_example')
     ```
 
     * This will produce a field representation using the SkLearnTfIdf technique on the field data without applying
@@ -81,7 +109,7 @@ class FieldConfig:
     def __init__(self,
                  content_technique: FieldContentProductionTechnique = OriginalData(),
                  preprocessing: Union[InformationProcessor, List[InformationProcessor]] = None,
-                 postprocessing: Union[VisualPostProcessor, List[VisualPostProcessor]] = None,
+                 postprocessing: Union[PostProcessorConfig, List[PostProcessorConfig]] = None,
                  memory_interface: InformationInterface = None,
                  id: str = None):
 
@@ -152,6 +180,77 @@ class FieldConfig:
     def __repr__(self):
         return f'FieldConfig(content_technique={self.__content_technique}, preprocessing={self.__preprocessing}, ' \
                f'memory_interface={self.__memory_interface}, id={self.__id})'
+
+
+class PostProcessorConfig:
+    """
+    Class that represents the configuration for a single post-processed representation.
+
+    The config allows you to specify a `PostProcessor` technique to use to refine content representations.
+    W.r.t `FieldConfig` instances, a `PostProcessor` config is an argument to them.
+
+    You can use the `id` parameter to assign a custom id for the representation: by doing so the user can freely refer
+    to it by using the custom id given, rather than positional integers (which are given automatically by the
+    framework).
+
+    Note that, ids for the representations generated will be a concatenation of the field config id and postprocessor
+    id, so for example if a `FieldConfig` with `id` parameter 'Plot' is specified and a `PostProcessorConfig` with `id`
+    'PCA' is specified, then the final external id will be 'Plot_PCA'.
+
+    * This will refine a field representation for a content by postprocessing it, said refinement will be named 'test'
+    ```python
+    PostProcessorConfig(SkLearnPCA(400), id='test')
+    ```
+
+    Refer to 'FieldConfig' documentation to see better example related to the usage of 'PostProcessorConfig' on
+    produced representations.
+
+    Args:
+        postprocessor_technique: Technique or list of techniques which will be used to refine the produced content
+            representation
+        id: Custom id that can be used later by the user to easily refer to the representation generated by this config.
+            IDs should be unique! And should only contain '_', '-' and alphanumeric characters
+    """
+
+    def __init__(self, postprocessor_technique: Union[PostProcessor, List[PostProcessor]] = None, id: str = None):
+
+        if id is not None:
+            self._check_custom_id(id)
+
+        self.__postprocessor_technique = postprocessor_technique
+        self.__id = id
+
+        if self.__postprocessor_technique is None:
+            self.__postprocessor_technique = []
+
+        if not isinstance(self.__postprocessor_technique, list):
+            self.__postprocessor_technique = [self.__postprocessor_technique]
+
+    @property
+    def postprocessor_technique(self):
+        """
+        Getter for the postprocessing techniques
+        """
+        return self.__postprocessor_technique
+
+    @property
+    def id(self):
+        """
+        Getter for the PostProcessorConfig id
+        """
+        return self.__id
+
+    def _check_custom_id(self, id: str):
+        if not re.match("^[A-Za-z0-9_-]+$", id):
+            raise ValueError("The custom id {} is not valid!\n"
+                             "A custom id can only have numbers, letters and '_' or '-'!".format(id))
+
+    def __str__(self):
+        return "PostProcessorConfig"
+
+    def __repr__(self):
+        return f'PostProcessorConfig(postprocessor_technique={self.__postprocessor_technique}, ' \
+               f'id={self.__id})'
 
 
 class ExogenousConfig:

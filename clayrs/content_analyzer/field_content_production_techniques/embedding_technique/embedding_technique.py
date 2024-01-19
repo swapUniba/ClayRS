@@ -13,9 +13,8 @@ if TYPE_CHECKING:
     from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import \
         WordEmbeddingLoader, SentenceEmbeddingLoader, DocumentEmbeddingLoader
     from clayrs.content_analyzer.embeddings.embedding_loader.embedding_loader import EmbeddingSource
-    from clayrs.content_analyzer.information_processor.information_processor_abstract import InformationProcessor
+    from clayrs.content_analyzer.information_processor.preprocessors.information_processor_abstract import InformationProcessor
     from clayrs.content_analyzer.raw_information_source import RawInformationSource
-    from clayrs.content_analyzer.information_processor.visualpostprocessor import VisualPostProcessor
 
 from clayrs.content_analyzer.embeddings.embedding_learner.embedding_learner import EmbeddingLearner
 from clayrs.content_analyzer.content_representation.content import EmbeddingField
@@ -85,7 +84,6 @@ class EmbeddingTechnique(SingleContentTechnique):
         return self.__embedding_source
 
     def produce_content(self, field_name: str, preprocessor_list: List[InformationProcessor],
-                        postprocessor_list: List[VisualPostProcessor],
                         source: RawInformationSource) -> List[FieldRepresentation]:
         representation_list: List[FieldRepresentation] = []
 
@@ -113,8 +111,6 @@ class EmbeddingTechnique(SingleContentTechnique):
 
                 processed_data = self.process_data(content_data[field_name], preprocessor_list)
                 representation_list.append(self.produce_single_repr(processed_data))
-
-            representation_list = self.postprocess_representations(representation_list, postprocessor_list)
 
         self.embedding_source.unload_model()
         return representation_list
