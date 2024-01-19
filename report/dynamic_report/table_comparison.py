@@ -4,7 +4,6 @@ import json
 
 
 # FUNZIONE DI CREAZIONE TABELLA CORRETTA
-# TODO usarla in generate_latex_table_based_on_representation(data_list, num_columns, title, alg_column_value="WWW")
 def set_table_complete(columns, name, list_tuple, algo, title="comparison of results"):
     # Verifica che columns sia uguale alla lunghezza di name
     if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
@@ -66,6 +65,7 @@ def set_table(columns, name):
 
     return table_header
 """
+
 
 def get_metrics(data_dict):
     def extract_metrics(d, prefix=''):
@@ -164,7 +164,8 @@ def get_content(data_dict):
     return ""
 
 
-# questa funzione recupera sotto forma di stringa quello che sarà utilizzato per riempirre la casella sotto la colonna Repr.
+# questa funzione recupera sotto forma di stringa quello che sarà utilizzato
+# per riempirre la casella sotto la colonna Repr.
 # della rapresentazione utilizzata
 def get_representation(data_dict):
     # Verifica se la chiave 'algorithm' è presente nel dizionario
@@ -203,6 +204,7 @@ def extract_first_elements(tuple_list):
     return [tup[0] if len(tup) > 0 else None for tup in tuple_list]
 
 
+# Prepara le tuple contenenti i dati per la renderizzazione della tabella OK
 def make_tuple_for_table(data_dict, start, end):
     # Ottieni i valori per la tupla
     representation = get_representation(data_dict)
@@ -230,7 +232,8 @@ def make_tuple_for_table(data_dict, start, end):
     return result_tuple
 
 
-# TODO  da sistemare
+# funzione usata per creare le tabelle con i risultati su un determinato algoritmo che usa differenti rappresentazioni
+# dei dati OK
 def generate_latex_table_based_on_representation(data_list, num_columns, title="results", alg_column_value="WWW"):
     result = ""
     number_first_static_colomns = 4
@@ -326,8 +329,7 @@ def generate_latex_table_based_on_representation(data_list, num_columns, title="
     return result
 
 
-# funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE
-"""
+# funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE OK
 def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_columns_per_part=5):
     # Estrai le chiavi (nomi di colonne) dal primo dizionario
     first_algorithm = algorithms[0]
@@ -363,6 +365,7 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
             latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
 
         latex_code += "\\\\\n"
+        latex_code += "\\addlinespace[5pt]\n"
         latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
 
         # Aggiungi i dati delle righe
@@ -397,7 +400,7 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
             latex_code += "\\vspace{10pt}\n"
 
     return latex_code
-"""
+
 
 # prima versione che spezza la tabellla su più pagine [LASCIA TROPPO SPAZIO]
 """
@@ -850,26 +853,8 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
+    # prova per generate_latex_table_based_on_representation
     """
-    # Esempio di dati
-    columns = 6
-    name = ['Metric1', 'Metric2']
-    list_tuple = [
-        ('Value1', 'Value2', 'Value3', 'Value4', 'Value5', 'Value6'),
-        ('Value7', 'Value8', 'Value9', 'Value10', 'Value11', 'Value12'),
-        # Aggiungi altre tuple se necessario
-    ]
-    algo = 'Algorithm'
-    title = 'Comparison of Results'
-
-    # Chiamata alla funzione
-    result_table = set_table_complete(columns, name, list_tuple, algo, title)
-
-    # Stampa il risultato
-    print(result_table)
-    
-    """
-
     # Lista di dizionari
     d = [
         {'algorithm': {
@@ -905,10 +890,9 @@ if __name__ == "__main__":
 
     # Stampa il risultato
     print(latex_table)
+    """
 
-
-
-    # test per usare list cpomprension con la funzione make_tuple_for_table
+    # test per usare list comprension con la funzione make_tuple_for_table
     """
     # Lista di dizionari
     list_of_dicts = [
@@ -1082,7 +1066,7 @@ if __name__ == "__main__":
     print(table)
     """
 
-    # prova per la funzione erge_dicts(*dicts, merge_key=None)
+    # prova per la funzione merge_dicts(*dicts, merge_key=None)
     """
     dict1 = {"a": "Centroid", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5667}
     dict2 = {"b": "Word2Vec", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5612}
@@ -1178,7 +1162,9 @@ if __name__ == "__main__":
         print(d)
     """
 
-    # codice per laa generazione della tabella dei confronti
+    # codice per la generazione della tabella dei confronti
+    # qui implementiamo tutte le operazione per creare i dizionari di cui
+    # necessitiamo per poi passarli alla funzione generate_latex_table
     """
     eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
                       "./../data/data_to_test/eva_report_centroidVector.yml",
@@ -1244,12 +1230,13 @@ if __name__ == "__main__":
         print(d)
     """
 
+    # Qui testiamo la funzione generate_latex_table
     # prova per la formatazione e creazione della tabella di comparazione tra algortitmi
     """
     algorithms_data = [
-        {'CentroidVector': {'F1@1 - macro': 0.85, 'MRR': 0.92, 'MAE': 0.12, 'Recall': 0.78, 'Precision': 0.91}},
-        {'AmarDoubleSource': {'F1@1 - macro': 0.92, 'MRR': 0.88, 'MAE': 0.14, 'Recall': 0.85, 'Precision': 0.89}},
-        {'LinearPredictor': {'F1@1 - macro': 0.88, 'MRR': 0.91, 'MAE': 0.11, 'Recall': 0.82, 'Precision': 0.90}},
+        {'CentroidVector': {'F1@1 - macro': 0.85, 'MRR': 0.92, 'MAE': 0.12, 'Recall': 0.78, 'Precision': 0.91, 'R-Precision - macro': 1.0, 'RMSE': 3.0, 'MSE': 9.0, 'MAE': 3.0, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
+        {'AmarDoubleSource': {'F1@1 - macro': 0.92, 'MRR': 0.88, 'MAE': 0.14, 'Recall': 0.85, 'Precision': 0.89, 'R-Precision - macro': 1.0, 'RMSE': 63.65, 'MSE': 4051.82, 'MAE': 63.65, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
+        {'LinearPredictor': {'F1@1 - macro': 0.88, 'MRR': 0.91, 'MAE': 0.11, 'Recall': 0.82, 'Precision': 0.90, 'R-Precision - macro': 1.0, 'RMSE': 0.81, 'MSE': 0.69, 'MAE': 0.76, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'Precision@5 - macro': 0.87, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.92, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
     ]
 
     latex_table = generate_latex_table(algorithms_data)
@@ -1300,27 +1287,4 @@ if __name__ == "__main__":
     {'algorithm': {'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 1.5, 'MSE': 2.25, 'MAE': 1.5, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
     {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4}, 'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 63.65394315890862, 'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
     {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression', 'only_greater_eq': None, 'embedding_combiner': 'Centroid'}, 'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0, 'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 0.8134293935347402, 'MSE': 0.6996958397430165, 'MAE': 0.7616526982381033, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
-"""
-
-"""
-_______________________________________________________
-Alg.    Repr.    Content  Emb.
-Metrics
-                                  F1   nDGA   MRR  Gini
-RES   Recall    Precision
---------------------------------------------------------
-      9    Centroid           x      x     x    x      x
-Example
-x     x
-      1     Algoritm2         y       y    y    y      y
-yy
---------------------------------------------------------
-
-________________________________________________________________________________
-Alg.    Repr.    Content  Emb.           Metrics
-                                ------------------------------------------------
-                                F1   nDGA   MRR  Gini  RES   Recall    Precision
-________________________________________________________________________________
-Example  9      Centroid   x     x    x      x     x    x      x         x
-         1      Algorithm2 y     y    y      y     y    y      y         y
 """
