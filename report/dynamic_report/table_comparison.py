@@ -329,6 +329,91 @@ def generate_latex_table_based_on_representation(data_list, num_columns, title="
     return result
 
 
+# Funzione di supporto per generate_latex_table, serve per trovare i massimi da evidenziare nella tabella, la
+# seconda versione è capace di lavorare con la tipologia di dizionari che andremo a usare
+"""
+def find_highest_bests(dictionaries, keys, decimal_places):
+    result = {}
+
+    for key in keys:
+        maximum = float('-inf')
+        second_maximum = float('-inf')
+
+        for d in dictionaries:
+            if key in d:
+                value = d[key]
+
+                if value > maximum:
+                    second_maximum = maximum
+                    maximum = value
+                elif value > second_maximum and value != maximum:
+                    second_maximum = value
+
+        # Rounding the values
+        maximum = round(maximum, decimal_places) if maximum != float('-inf') else None
+        second_maximum = round(second_maximum, decimal_places) if second_maximum != float('-inf') else None
+
+        result[key] = (maximum, second_maximum)
+
+    return result
+"""
+def find_highest_bests(dictionaries, keys, decimal_places):
+    result = {}
+
+    for key in keys:
+        maximum = float('-inf')
+        second_maximum = float('-inf')
+
+        for d in dictionaries:
+            for top_level_key, inner_dict in d.items():
+                if key in inner_dict:
+                    value = inner_dict[key]
+
+                    if value > maximum:
+                        second_maximum = maximum
+                        maximum = value
+                    elif value > second_maximum and value != maximum:
+                        second_maximum = value
+
+        # Rounding the values
+        maximum = round(maximum, decimal_places) if maximum != float('-inf') else None
+        second_maximum = round(second_maximum, decimal_places) if second_maximum != float('-inf') else None
+
+        result[key] = (maximum, second_maximum)
+
+    return result
+
+
+# funzione speculare alla precedente utilizzata per trovare i due minimi come valori da evidenziare nella tabella
+# la funzione offre supporto alla funzione generate_latex_table
+def find_lowest_bests(dictionaries, keys, decimal_places):
+    result = {}
+
+    for key in keys:
+        minimum = float('inf')
+        second_minimum = float('inf')
+
+        for d in dictionaries:
+            for top_level_key, inner_dict in d.items():
+                if key in inner_dict:
+                    value = inner_dict[key]
+
+                    if value < minimum:
+                        second_minimum = minimum
+                        minimum = value
+                    elif value < second_minimum and value != minimum:
+                        second_minimum = value
+
+        # Rounding the values
+        minimum = round(minimum, decimal_places) if minimum != float('inf') else None
+        second_minimum = round(second_minimum, decimal_places) if second_minimum != float('inf') else None
+
+        result[key] = (minimum, second_minimum)
+
+    return result
+
+
+
 # funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE OK
 def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_columns_per_part=5):
     # Estrai le chiavi (nomi di colonne) dal primo dizionario
@@ -853,6 +938,22 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
+    # Example usage to test the function def find_highest_bests(dictionaries, keys, decimal_places):
+    list_of_dictionaries = [
+        {'pri': {'a': 10, 'b': -20, 'c': 30}},
+        {'sec': {'a': 15, 'b': 25, 'c': 35}},
+        {'ter': {'a': 5, 'b': 15, 'c': 25}}
+    ]
+
+    list_of_keys = ['a', 'b', 'c']
+    decimal_places = 2
+
+    result = find_highest_bests(list_of_dictionaries, list_of_keys, decimal_places)
+    print(result)
+
+    result = find_lowest_bests(list_of_dictionaries, list_of_keys, decimal_places)
+    print(result)
+
     # prova per generate_latex_table_based_on_representation
     """
     # Lista di dizionari
@@ -1190,7 +1291,7 @@ if __name__ == "__main__":
 
     # get dictionary from the recsys ymal and extract a list of key with name of algorithm used
     dictyonary_list = from_yaml_list_to_dict_list(recsys_yaml_paths)
-    keys = get_algorithm_keys(dictyonary_list)
+    keys = get_algorithm_keys(dictyonary_list) # lista dei nomi degli algoritmi usati
 
     # show the dictonary extracted after processing them
     result = nest_dictionaries(keys, my_dictio)
