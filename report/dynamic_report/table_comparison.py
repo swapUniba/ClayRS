@@ -386,10 +386,10 @@ def find_highest_bests(dictionaries, keys, decimal_places):
 
 # funzione speculare alla precedente utilizzata per trovare i due minimi come valori da evidenziare nella tabella
 # la funzione offre supporto alla funzione generate_latex_table
-def find_lowest_bests(dictionaries, keys, decimal_places):
+def find_lowest_bests(dictionaries, keys_list, decimal_places):
     result = {}
 
-    for key in keys:
+    for key in keys_list:
         minimum = float('inf')
         second_minimum = float('inf')
 
@@ -413,13 +413,21 @@ def find_lowest_bests(dictionaries, keys, decimal_places):
     return result
 
 
-
 # funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE OK
-def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_columns_per_part=5):
+"""
+def generate_latex_table(algorithms, decimal_place=3, column_width=3.0, max_columns_per_part=5):
     # Estrai le chiavi (nomi di colonne) dal primo dizionario
     first_algorithm = algorithms[0]
     column_names = list(next(iter(first_algorithm.values())).keys())
+    print(column_names)  # debug to check what it is inside
     num_columns = len(column_names)
+
+    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
+    # 2 punteggi più bassi migliori
+    # highest_best_metrics = find_highest_bests(first_algorithm, column_names, decimal_place)
+    # print(highest_best_metrics)
+    # lowest_best_metrics = find_lowest_bests(first_algorithm, column_names, decimal_place)
+    # print(lowest_best_metrics)
 
     # Calcola il numero di parti necessarie
     num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
@@ -464,7 +472,7 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
                 # Converte il valore in un numero (float) prima di arrotondarlo
                 try:
                     column_value = float(column_value)
-                    rounded_value = round(column_value, decimal_places)
+                    rounded_value = round(column_value, decimal_place)
                 except (ValueError, TypeError):
                     # Se la conversione non è possibile, mantieni il valore come stringa
                     rounded_value = column_value
@@ -478,6 +486,203 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
         latex_code += "\\bottomrule\n"
         latex_code += "\\end{tabular}}\n"
         latex_code += "\\caption{Tabella generata automaticamente (Parte " + str(part_index + 1) + ")}\n"
+        latex_code += "\\end{table}\n"
+
+        # Aggiungi alcune righe vuote tra le parti
+        if part_index < num_parts - 1:
+            latex_code += "\\vspace{10pt}\n"
+
+    return latex_code
+"""
+
+"""
+# work in progress
+def generate_latex_table(algorithms, decimal_place=3, column_width=3.0, max_columns_per_part=5):
+    # Estrai le chiavi (nomi di colonne) dal primo dizionario
+    first_algorithm = algorithms[0]
+    column_names = list(next(iter(first_algorithm.values())).keys())
+    print(f" i nomi delle metriche con le quali abbiamo a che fare {column_names}")
+    num_columns = len(column_names)
+
+    # lista di metriche il cui punteggio migliore è queelo minimo
+    metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
+
+    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
+    # 2 punteggi più bassi migliori
+    highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
+    print(f"il dizionario dei migliori risultati per le metriche{highest_best_metrics}")
+
+    # Calcola il numero di parti necessarie
+    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
+
+    # Inizializza il codice LaTeX
+    latex_code = ""
+
+    for part_index in range(num_parts):
+        # Calcola gli indici delle colonne per questa parte
+        start_col_index = part_index * max_columns_per_part
+        end_col_index = (part_index + 1) * max_columns_per_part
+        current_column_names = column_names[start_col_index:end_col_index]
+
+        # Calcola la larghezza totale della tabella
+        total_width = len(current_column_names) * column_width + 1
+        latex_code += "\\begin{table}[ht]\n"
+        latex_code += "\\centering\n"
+        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
+        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
+            column_width) + "cm}}@{}}\n"
+        latex_code += "\\toprule\n"
+        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(
+            len(current_column_names)) + "}{c}{Colonne} \\\\\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i nomi delle colonne
+        for col_index, column_name in enumerate(current_column_names):
+            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
+
+        latex_code += "\\\\\n"
+        latex_code += "\\addlinespace[5pt]\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i dati delle righe
+        for algorithm in algorithms:
+            algorithm_name = list(algorithm.keys())[0]
+            values = list(algorithm.values())[0]
+            latex_code += algorithm_name
+            for column_name in current_column_names:
+                # Verifica se la colonna è presente nel dizionario prima di accedere
+                column_value = values.get(column_name, '')
+                # Converte il valore in un numero (float) prima di arrotondarlo
+                try:
+                    column_value = float(column_value)
+                    rounded_value = round(column_value, decimal_place)
+                except (ValueError, TypeError):
+                    # Se la conversione non è possibile, mantieni il valore come stringa
+                    rounded_value = column_value
+
+                # Estrai i valori migliori per la colonna corrente
+                highest_best_values = highest_best_metrics[column_name]
+
+                # Formatta il valore in base ai risultati migliori
+                if rounded_value == highest_best_values[0]:
+                    latex_code += " & \\textbf{" + str(rounded_value) + "}"
+                elif rounded_value == highest_best_values[1]:
+                    latex_code += " & \\underline{" + str(rounded_value) + "}"
+                else:
+                    latex_code += " & " + str(rounded_value)
+
+            latex_code += " \\\\\n"
+            latex_code += "\\addlinespace[5pt]\n"
+            latex_code += "\\midrule\n"
+
+        # Aggiungi la parte finale del codice LaTeX
+        latex_code += "\\bottomrule\n"
+        latex_code += "\\end{tabular}}\n"
+        latex_code += "\\caption{Tabella generata automaticamente (Parte " + str(part_index + 1) + ")}\n"
+        latex_code += "\\end{table}\n"
+
+        # Aggiungi alcune righe vuote tra le parti
+        if part_index < num_parts - 1:
+            latex_code += "\\vspace{10pt}\n"
+
+    return latex_code
+"""
+
+
+def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
+                         max_columns_per_part=5,  caption_for_table="Comparison between algorithms"):
+    # Controllo per assicurarsi che max_columns_per_part non superi mai 10
+    if max_columns_per_part > 10:
+        max_columns_per_part = 10
+
+    # Estrai le chiavi (nomi di colonne) dal primo dizionario
+    first_algorithm = algorithms[0]
+    column_names = list(next(iter(first_algorithm.values())).keys())
+    num_columns = len(column_names)
+
+    # Lista di metriche il cui punteggio migliore è quello minimo
+    metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
+
+    # Dizionario dinamico per determinare i migliori punteggi
+    best_metrics = {}
+
+    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
+    # 2 punteggi più bassi migliori
+    highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
+    print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
+    lowest_best_metrics = find_lowest_bests(algorithms, column_names, decimal_place)
+    print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
+
+    # Calcola il numero di parti necessarie
+    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
+
+    # Inizializza il codice LaTeX
+    latex_code = ""
+
+    for part_index in range(num_parts):
+        # Calcola gli indici delle colonne per questa parte
+        start_col_index = part_index * max_columns_per_part
+        end_col_index = (part_index + 1) * max_columns_per_part
+        current_column_names = column_names[start_col_index:end_col_index]
+
+        # Calcola la larghezza totale della tabella
+        total_width = len(current_column_names) * column_width + 1
+        latex_code += "\\begin{table}[ht]\n"
+        latex_code += "\\centering\n"
+        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
+        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
+            column_width) + "cm}}@{}}\n"
+        latex_code += "\\toprule\n"
+        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(
+            len(current_column_names)) + "}{c}{Columns} \\\\\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i nomi delle colonne
+        for col_index, column_name in enumerate(current_column_names):
+            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
+
+        latex_code += "\\\\\n"
+        latex_code += "\\addlinespace[5pt]\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i dati delle righe
+        for algorithm in algorithms:
+            algorithm_name = list(algorithm.keys())[0]
+            values = list(algorithm.values())[0]
+            latex_code += algorithm_name
+            for column_name in current_column_names:
+                # Verifica se la colonna è presente nel dizionario prima di accedere
+                column_value = values.get(column_name, '')
+                # Converte il valore in un numero (float) prima di arrotondarlo
+                try:
+                    column_value = float(column_value)
+                    rounded_value = round(column_value, decimal_place)
+                except (ValueError, TypeError):
+                    # Se la conversione non è possibile, mantieni il valore come stringa
+                    rounded_value = column_value
+
+                # Determina quale dizionario utilizzare per ottenere i migliori punteggi
+                best_metrics = highest_best_metrics if column_name not in metrics_minimum_score else lowest_best_metrics
+
+                # Estrai i valori migliori per la colonna corrente
+                best_values = best_metrics[column_name]
+
+                # Formatta il valore in base ai risultati migliori
+                if rounded_value == best_values[0]:
+                    latex_code += " & \\textbf{" + str(rounded_value) + "}"
+                elif rounded_value == best_values[1]:
+                    latex_code += " & \\underline{" + str(rounded_value) + "}"
+                else:
+                    latex_code += " & " + str(rounded_value)
+
+            latex_code += " \\\\\n"
+            latex_code += "\\addlinespace[5pt]\n"
+            latex_code += "\\midrule\n"
+
+        # Aggiungi la parte finale del codice LaTeX
+        latex_code += "\\bottomrule\n"
+        latex_code += "\\end{tabular}}\n"
+        latex_code += "\\caption{" + caption_for_table + " (Part " + str(part_index + 1) + ")}\n"
         latex_code += "\\end{table}\n"
 
         # Aggiungi alcune righe vuote tra le parti
@@ -550,7 +755,7 @@ def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_col
         # Aggiungi la parte finale del codice LaTeX
         latex_code += "\\bottomrule\n"
         latex_code += "\\end{tabular}}\n"
-        latex_code += "\\caption{Tabella generata automaticamente (Parte " + str(part_index + 1) + ")}\n"
+        latex_code += "\\caption{Comparison of the algorithms (Part " + str(part_index + 1) + ")}\n"
         latex_code += "\\end{table}\n"
         latex_code += "\\clearpage"  # Nuova pagina tra le parti
 
@@ -939,6 +1144,7 @@ def merge_dicts(*dicts, merge_key=None):
 # Esegui lo script
 if __name__ == "__main__":
     # Example usage to test the function def find_highest_bests(dictionaries, keys, decimal_places):
+    """
     list_of_dictionaries = [
         {'pri': {'a': 10, 'b': -20, 'c': 30}},
         {'sec': {'a': 15, 'b': 25, 'c': 35}},
@@ -953,6 +1159,7 @@ if __name__ == "__main__":
 
     result = find_lowest_bests(list_of_dictionaries, list_of_keys, decimal_places)
     print(result)
+    """
 
     # prova per generate_latex_table_based_on_representation
     """
@@ -1266,18 +1473,18 @@ if __name__ == "__main__":
     # codice per la generazione della tabella dei confronti
     # qui implementiamo tutte le operazione per creare i dizionari di cui
     # necessitiamo per poi passarli alla funzione generate_latex_table
-    """
-    eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
-                      "./../data/data_to_test/eva_report_centroidVector.yml",
-                      "./../data/data_to_test/eva_report_classifierRecommender.yml",
-                      "./../data/data_to_test/eva_report_indexQuery.yml",
-                      "./../data/data_to_test/eva_report_linearPredictor.yml"]
 
-    recsys_yaml_paths = ["./../data/data_to_test/rs_report_amarSingleSource.yml",
-                         "./../data/data_to_test/rs_report_centroidVector.yml",
-                         "./../data/data_to_test/rs_report_classifierRecommender.yml",
-                         "./../data/data_to_test/rs_report_indexQuery.yml",
-                         "./../data/data_to_test/rs_report_linearPredictor.yml"]
+    eva_yaml_paths = ["./../data/data_for_test_two/eva_report_amarSingleSource.yml",
+                      "./../data/data_for_test_two/eva_report_centroidVector.yml",
+                      "./../data/data_for_test_two/eva_report_classifierRecommender.yml",
+                      "./../data/data_for_test_two/eva_report_indexQuery.yml",
+                      "./../data/data_for_test_two/eva_report_linearPredictor.yml"]
+
+    recsys_yaml_paths = ["./../data/data_for_test_two/rs_report_amarSingleSource.yml",
+                         "./../data/data_for_test_two/rs_report_centroidVector.yml",
+                         "./../data/data_for_test_two/rs_report_classifierRecommender.yml",
+                         "./../data/data_for_test_two/rs_report_indexQuery.yml",
+                         "./../data/data_for_test_two/rs_report_linearPredictor.yml"]
 
     # set list of dictionary from eva yaml report and make key change
     dictionary_res_sys = from_yaml_list_to_dict_list(eva_yaml_paths)
@@ -1299,9 +1506,9 @@ if __name__ == "__main__":
         print(r)
 
     # with the dictnory processed create the latex table
-    latex_table = generate_latex_table(result, max_columns_per_part=4)
+    latex_table = generate_latex_table(result, max_columns_per_part=12)
     print(latex_table)
-    """
+
 
     # prova per get_algorithm_keys ovvero per recuperare una lista di chiavi da dei dizionari
     """
