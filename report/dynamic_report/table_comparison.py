@@ -1,6 +1,448 @@
+from collections import defaultdict
+
 import yaml
 
-import json
+"""
+def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
+    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
+
+    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
+    print(metrics_dicts)
+
+    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
+    higher_dict = best_higher_dict(metrics_dicts)
+    print(higher_dict)
+    dynamic_columns = list(higher_dict.keys())
+
+    # Calcola il numero totale di colonne che saranno usate
+    total_columns = len(fixed_columns) + len(dynamic_columns)
+
+    # verifica che le colonne volute non superino il limite
+    if n_col_desired > 8:
+        n_col_desired = 8
+
+    # Inizializza la stringa della tabella LaTeX
+    table_string = ""
+
+    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
+    # Calcola il risultato e il resto della divisione
+    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
+
+    # Aggiungi una tabella aggiuntiva se c'è un resto
+    if remainder > 0:
+        num_tables += 1
+
+    for i in range(num_tables):
+        start_idx = i * (n_col_desired - len(fixed_columns))
+        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
+        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
+
+        # Costruisci l'header della tabella
+        table_string += "\\begin{table}\n"
+        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
+        table_string += "  \\centering\n"
+        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
+        table_string += "    \\toprule\n"
+        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
+        table_string += "    \\midrule\n"
+        table_string += "    \\midrule\n"
+
+        # Riempi le righe della tabella con i valori dei dizionari
+        for dictionary in list_of_dicts:
+            table_string += "    "
+            table_string += f"\\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
+
+            for col in ['Repr.', 'Content', 'Emb.']:
+                table_string += f" & {globals()['get_' + col.lower()](dictionary)}"
+
+            for dynamic_col in current_dynamic_columns:
+                table_string += f" & {dictionary.get(dynamic_col, '')}"
+
+            table_string += " \\\\\n"
+
+        table_string += "    \\bottomrule\n"
+        table_string += "   \\end{tabular}\n"
+        table_string += "\\end{adjustwidth}\n"
+        table_string += "\\end{table}\n\n"
+
+    return table_string
+"""
+# seconda versione
+"""
+def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
+    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
+
+    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
+    print(metrics_dicts)
+
+    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
+    higher_dict = best_higher_dict(metrics_dicts)
+    print(higher_dict)
+    dynamic_columns = list(higher_dict.keys())
+
+    # Calcola il numero totale di colonne che saranno usate
+    total_columns = len(fixed_columns) + len(dynamic_columns)
+
+    # verifica che le colonne volute non superino il limite
+    if n_col_desired > 8:
+        n_col_desired = 8
+
+    # Inizializza la stringa della tabella LaTeX
+    table_string = ""
+
+    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
+    # Calcola il risultato e il resto della divisione
+    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
+
+    # Aggiungi una tabella aggiuntiva se c'è un resto
+    if remainder > 0:
+        num_tables += 1
+
+    for i in range(num_tables):
+        start_idx = i * (n_col_desired - len(fixed_columns))
+        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
+        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
+
+        # Costruisci l'header della tabella
+        table_string += "\\begin{table}\n"
+        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
+        table_string += "  \\centering\n"
+        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
+        table_string += "    \\toprule\n"
+        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
+        table_string += "    \\midrule\n"
+        table_string += "    \\midrule\n"
+
+        # Riempi le righe della tabella con i valori dei dizionari
+        for dictionary, metrics_dict in zip(list_of_dicts, metrics_dicts):
+            table_string += "    "
+            table_string += f"\\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
+
+            # Riempimento delle colonne fisse
+            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
+                if col == 'Repr.':
+                    table_string += f" & {get_representation(dictionary)}"
+                elif col == 'Content':
+                    table_string += f" & {get_content(dictionary)}"
+                elif col == 'Emb.':
+                    table_string += f" & {get_embedding(dictionary)}"
+
+            # Riempimento delle colonne dinamiche
+            for dynamic_col in current_dynamic_columns:
+                value = metrics_dict.get(dynamic_col, '')
+                table_string += f" & {value if value is not None else ''}"
+
+            table_string += " \\\\\n"
+
+        table_string += "    \\bottomrule\n"
+        table_string += "   \\end{tabular}\n"
+        table_string += "\\end{adjustwidth}\n"
+        table_string += "\\end{table}\n\n"
+
+    return table_string
+"""
+# terza versione
+"""
+def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
+    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
+
+    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
+    print(metrics_dicts)
+
+    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
+    higher_dict = best_higher_dict(metrics_dicts)
+    print(higher_dict)
+    dynamic_columns = list(higher_dict.keys())
+
+    # Calcola il numero totale di colonne che saranno usate
+    total_columns = len(fixed_columns) + len(dynamic_columns)
+
+    # verifica che le colonne volute non superino il limite
+    if n_col_desired > 8:
+        n_col_desired = 8
+
+    # Inizializza la stringa della tabella LaTeX
+    table_string = ""
+
+    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
+    # Calcola il risultato e il resto della divisione
+    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
+
+    # Aggiungi una tabella aggiuntiva se c'è un resto
+    if remainder > 0:
+        num_tables += 1
+
+    for i in range(num_tables):
+        start_idx = i * (n_col_desired - len(fixed_columns))
+        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
+        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
+
+        # Costruisci l'header della tabella
+        table_string += "\\begin{table}\n"
+        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
+        table_string += "  \\centering\n"
+        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
+        table_string += "    \\toprule\n"
+        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
+        table_string += "    \\midrule\n"
+        table_string += "    \\midrule\n"
+
+        # Riempi le righe della tabella con i valori dei dizionari
+        for dictionary, metrics_dict in zip(list_of_dicts, metrics_dicts):
+            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
+            if list_of_dicts.index(dictionary) % len(list_of_dicts) == 0:
+                table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
+
+            # Riempimento delle colonne fisse
+            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
+                if col == 'Repr.':
+                    table_string += f" & {get_representation(dictionary)}"
+                elif col == 'Content':
+                    table_string += f" & {get_content(dictionary)}"
+                elif col == 'Emb.':
+                    table_string += f" & {get_embedding(dictionary)}"
+
+            # Riempimento delle colonne dinamiche
+            for dynamic_col in current_dynamic_columns:
+                value = metrics_dict.get(dynamic_col, '')
+                table_string += f" & {value if value is not None else ''}"
+
+            table_string += " \\\\\n"
+
+        table_string += "    \\bottomrule\n"
+        table_string += "   \\end{tabular}\n"
+        table_string += "\\end{adjustwidth}\n"
+        table_string += "\\end{table}\n\n"
+
+    return table_string
+"""
+# quarta versione al momento funzionante BISOGNA IMPLEMNETARE I MECCANISMI PER EVIDENZIARE I MIGLIORI RISULTATI
+"""
+def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
+    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
+
+    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
+    print(metrics_dicts)
+
+    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
+    higher_dict = best_higher_dict(metrics_dicts)
+    print(higher_dict)
+    dynamic_columns = list(higher_dict.keys())
+
+    # Calcola il numero totale di colonne che saranno usate
+    total_columns = len(fixed_columns) + len(dynamic_columns)
+
+    # verifica che le colonne volute non superino il limite
+    if n_col_desired > 8:
+        n_col_desired = 8
+
+    # Inizializza la stringa della tabella LaTeX
+    table_string = ""
+
+    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
+    # Calcola il risultato e il resto della divisione
+    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
+
+    # Aggiungi una tabella aggiuntiva se c'è un resto
+    if remainder > 0:
+        num_tables += 1
+
+    for i in range(num_tables):
+        start_idx = i * (n_col_desired - len(fixed_columns))
+        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
+        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
+
+        # Costruisci l'header della tabella
+        table_string += "\\begin{table}\n"
+        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
+        table_string += "  \\centering\n"
+        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
+        table_string += "    \\toprule\n"
+        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
+        table_string += "    \\midrule\n"
+        table_string += "    \\midrule\n"
+
+        # Riempi le righe della tabella con i valori dei dizionari
+        for i, (dictionary, metrics_dict) in enumerate(zip(list_of_dicts, metrics_dicts)):
+            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
+            if i % len(list_of_dicts) == 0:
+                table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
+
+            # Riempimento delle colonne fisse
+            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
+                if col == 'Repr.':
+                    table_string += f" & {get_representation(dictionary)}"
+                elif col == 'Content':
+                    table_string += f" & {get_content(dictionary)}"
+                elif col == 'Emb.':
+                    table_string += f" & {get_embedding(dictionary)}"
+
+            # Riempimento delle colonne dinamiche
+            for dynamic_col in current_dynamic_columns:
+                value = metrics_dict.get(dynamic_col, '')
+                table_string += f" & {value if value is not None else ''}"
+
+            table_string += " \\\\\n"
+
+        table_string += "    \\bottomrule\n"
+        table_string += "   \\end{tabular}\n"
+        table_string += "\\end{adjustwidth}\n"
+        table_string += "\\end{table}\n\n"
+
+    return table_string
+"""
+# quinta versione
+def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", round_to=3):
+    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
+
+    # Lista di metriche il cui punteggio migliore è quello minimo
+    metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
+
+    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
+    print(metrics_dicts)
+
+    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
+    # higher_dict risulta essere il dizionario che contiene i massimo e il secondo massimo per ogni colonna della
+    # tabella
+    higher_dict = best_higher_dict(metrics_dicts)
+    print(higher_dict)
+    dynamic_columns = list(higher_dict.keys())
+
+    # andiamo a creare il dizionario che contiene il minimo e il secondo minimo per ogni colonna della tabella
+    lower_dict = best_lower_dict(metrics_dicts)
+    print(lower_dict)
+
+    # Calcola il numero totale di colonne che saranno usate
+    total_columns = len(fixed_columns) + len(dynamic_columns)
+
+    # verifica che le colonne volute non superino il limite
+    if n_col_desired > 8:
+        n_col_desired = 8
+
+    # Inizializza la stringa della tabella LaTeX
+    table_string = ""
+
+    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
+    # Calcola il risultato e il resto della divisione
+    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
+
+    # Aggiungi una tabella aggiuntiva se c'è un resto
+    if remainder > 0:
+        num_tables += 1
+
+    for i in range(num_tables):
+        start_idx = i * (n_col_desired - len(fixed_columns))
+        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
+        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
+
+        # Costruisci l'header della tabella
+        table_string += "\\begin{table}\n"
+        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
+        table_string += "  \\centering\n"
+        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
+        table_string += "    \\toprule\n"
+        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
+        table_string += "    \\midrule\n"
+        table_string += "    \\midrule\n"
+
+        # Riempi le righe della tabella con i valori dei dizionari
+        for i, (dictionary, metrics_dict) in enumerate(zip(list_of_dicts, metrics_dicts)):
+            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
+            if i % len(list_of_dicts) == 0:
+                table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
+
+            # Riempimento delle colonne fisse
+            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
+                if col == 'Repr.':
+                    table_string += f" & {get_representation(dictionary)}"
+                elif col == 'Content':
+                    table_string += f" & {get_content(dictionary)}"
+                elif col == 'Emb.':
+                    table_string += f" & {get_embedding(dictionary)}"
+
+            # Riempimento delle colonne dinamiche
+            for dynamic_col in current_dynamic_columns:
+                value = metrics_dict.get(dynamic_col, '')
+
+                # Verifica se la colonna dinamica è presente nella lista metrics_minimum_score
+                if dynamic_col in metrics_minimum_score:
+                    # Se presente, confronta con il dizionario lower_dict
+                    if value == lower_dict[dynamic_col][0]:  # Primo valore in lower_dict
+                        table_string += f" & \\textbf{{{round(value, round_to) if value is not None else ''}}}"
+                    elif value == lower_dict[dynamic_col][1]:  # Secondo valore in lower_dict
+                        table_string += f" & \\underline{{{round(value, round_to) if value is not None else ''}}}"
+                    else:
+                        table_string += f" & {round(value, round_to) if value is not None else ''}"
+                else:
+                    # Se non presente, confronta con il dizionario higher_dict
+                    if value == higher_dict[dynamic_col][0]:  # Primo valore in higher_dict
+                        table_string += f" & \\textbf{{{round(value, round_to) if value is not None else ''}}}"
+                    elif value == higher_dict[dynamic_col][1]:  # Secondo valore in higher_dict
+                        table_string += f" & \\underline{{{round(value, round_to) if value is not None else ''}}}"
+                    else:
+                        table_string += f" & {round(value, round_to) if value is not None else ''}"
+
+            table_string += " \\\\\n"
+
+        table_string += "    \\bottomrule\n"
+        table_string += "   \\end{tabular}\n"
+        table_string += "\\end{adjustwidth}\n"
+        table_string += "\\end{table}\n\n"
+
+    return table_string
+
+
+def best_lower_dict(list_of_dicts):
+    key_values = defaultdict(list)
+
+    # Estrai tutte le chiavi dai dizionari
+    all_keys = set()
+    for d in list_of_dicts:
+        all_keys.update(d.keys())
+
+    # Trova i minimi e i secondi minimi per ogni chiave
+    for key in all_keys:
+        values = [d.get(key, float('inf')) for d in list_of_dicts]
+        values.sort()
+        min_value = values[0]
+        second_min_value = values[1] if len(values) > 1 else float('inf')
+        key_values[key] = (min_value, second_min_value)
+
+    return dict(key_values)
+
+
+def best_higher_dict(list_of_dicts):
+    key_values = defaultdict(list)
+
+    # Estrai tutte le chiavi dai dizionari
+    all_keys = set()
+    for d in list_of_dicts:
+        all_keys.update(d.keys())
+
+    # Trova i massimi e i secondi massimi per ogni chiave
+    for key in all_keys:
+        values = [d.get(key, float('-inf')) for d in list_of_dicts]
+        values.sort(reverse=True)
+        max_value = values[0]
+        second_max_value = values[1] if len(values) > 1 else float('-inf')
+        key_values[key] = (max_value, second_max_value)
+
+    return dict(key_values)
 
 
 # FUNZIONE DI CREAZIONE TABELLA CORRETTA
@@ -66,7 +508,7 @@ def set_table(columns, name):
     return table_header
 """
 
-
+"""
 def get_metrics(data_dict):
     def extract_metrics(d, prefix=''):
         result = []
@@ -86,6 +528,30 @@ def get_metrics(data_dict):
                 return nested_result
 
     return []
+"""
+
+
+# questa versione ritorna un dizionario anzicché una lista di tuple che racchiudano il nome della metrica e
+# il valore associato dal dizionario estratto.
+def get_metrics(data_dict):
+    def extract_metrics(d, prefix=''):
+        result = {}
+        for key, value in d.items():
+            if isinstance(value, dict):
+                result.update(extract_metrics(value, f'{prefix}{key} - '))
+            else:
+                result[f'{prefix}{key}'] = value
+        return result
+
+    for key, value in data_dict.items():
+        if key == 'sys - mean':
+            return extract_metrics(value)
+        elif isinstance(value, dict):
+            nested_result = get_metrics(value)
+            if nested_result:
+                return nested_result
+
+    return {}
 
 
 def get_embedding(data_dict):
@@ -357,6 +823,8 @@ def find_highest_bests(dictionaries, keys, decimal_places):
 
     return result
 """
+
+
 def find_highest_bests(dictionaries, keys, decimal_places):
     result = {}
 
@@ -590,7 +1058,7 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0, max_colu
 
 
 def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
-                         max_columns_per_part=5,  caption_for_table="Comparison between algorithms"):
+                         max_columns_per_part=5, caption_for_table="Comparison between algorithms"):
     # Controllo per assicurarsi che max_columns_per_part non superi mai 10
     if max_columns_per_part > 10:
         max_columns_per_part = 10
@@ -1143,6 +1611,109 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
+
+    list_of_dicts = [
+        {'algorithm': {
+            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
+                               'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 0.10, 'Recall - macro': 0.30, 'F1 - macro': 0.210, 'Gini': 5.0, 'NDCG': 0.40,
+                           'R-Precision - macro': 0.320, 'RMSE': 3.9, 'MSE': 9.0, 'MAE': 3.45, 'MRR': 0.430, 'MAP': 0.550,
+                           'PredictionCoverage': 32.67, 'Precision@5 - macro': 0.40, 'Recall@5 - macro': 0.340,
+                           'F1@5 - micro': 0.20, 'MRR@5': 0.30, 'NDCG@5': 0.120}}},
+        {'algorithm': {
+            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
+                                      'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 0.980, 'F1 - macro': 0.970, 'Gini': 0.2, 'NDCG': 0.90,
+                           'R-Precision - macro': 0.890, 'RMSE': 0.75, 'MSE': 0.25, 'MAE': 1.5, 'MRR': 0.960, 'MAP': 0.970,
+                           'PredictionCoverage': 11.67, 'Precision@5 - macro': 0.990, 'Recall@5 - macro': 0.890,
+                           'F1@5 - micro': 1.0, 'MRR@5': 0.770, 'NDCG@5': 0.80}}},
+        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
+                       'sys - mean': {'Precision - macro': 0.30, 'Recall - macro': 0.230, 'F1 - macro': 0.420, 'Gini': 11.0,
+                                      'NDCG': 0.4220, 'R-Precision - macro': 0.4650, 'RMSE': 63.65394315890862,
+                                      'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 0.3510, 'MAP': 0.3770,
+                                      'PredictionCoverage': 1.67, 'Precision@5 - macro': 0.330, 'Recall@5 - macro': 0.330,
+                                      'F1@5 - micro': 0.120, 'MRR@5': 0.2310, 'NDCG@5': 0.4230}}},
+        {'algorithm': {
+            'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
+                                'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0,
+                           'F1 - macro': 0.9166666666666666, 'Gini': 0.8, 'NDCG': 0.830,
+                           'R-Precision - macro': 0.850, 'RMSE': 0.8134293935347402, 'MSE': 0.6996958397430165,
+                           'MAE': 0.7616526982381033, 'MRR': 0.830, 'MAP': 0.8110, 'PredictionCoverage': 50.0,
+                           'Precision@5 - macro': 0.875, 'Recall@5 - macro': 0.860,
+                           'F1@5 - micro': 0.9285714285714286, 'MRR@5': 0.8730, 'NDCG@5': 0.8220}}},
+    ]
+    
+    n_col = 7 # Numero totale di colonne desiderate (4 colonne fisse + 3 colonne dinamiche)
+    table_output = generate_table(list_of_dicts, n_col)
+    print(table_output)
+
+
+    # prova della funzione che estrae un dizionario con i migliori 2 valori best_higher_dict(list_of_dicts)
+    """
+    list_of_dicts = [ # in questa lista ci sono dei dizionari che non  possono essere usati direttamente da  
+        # best_higher_dict o da best_lower_dict
+        {'algorithm': {
+            'AmarDoubleSource': {
+            'network': "<class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkBasic'>",
+            'item_fields': [{'plot': ['tfidf_sk']}], 'user_fields': [{}], 'batch_size': 512, 'epochs': 5,
+            'threshold': 4, 'additional_opt_parameters': {'batch_size': 512},
+            'train_loss': '<function binary_cross_entropy at 0x00000234EC9A3760>',
+            'optimizer_class': "<class 'torch.optim.adam.Adam'>", 'device': 'cuda:0',
+            'embedding_combiner': {'Centroid': {}}, 'seed': None, 'additional_dl_parameters': {}},
+             'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0,
+                                      'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0,
+                                      'R-Precision - macro': 1.0, 'RMSE': 2.170059972267377, 'MSE': 5.561319090821989,
+                                      'MAE': 2.141366135329008, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0,
+                                      'pearson': 1.0, 'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0,
+                                      'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}},
+        {'algorithm': {
+            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
+                               'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0,
+                           'R-Precision - macro': 1.0, 'RMSE': 3.0, 'MSE': 9.0, 'MAE': 3.0, 'MRR': 1.0, 'MAP': 1.0,
+                           'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0,
+                           'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}},
+        {'algorithm': {
+            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
+                                      'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0, 'NDCG': 1.0,
+                           'R-Precision - macro': 1.0, 'RMSE': 1.5, 'MSE': 2.25, 'MAE': 1.5, 'MRR': 1.0, 'MAP': 1.0,
+                           'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0,
+                           'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}},
+        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
+                       'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
+                                      'NDCG': 1.0, 'R-Precision - macro': 1.0, 'RMSE': 63.65394315890862,
+                                      'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 1.0, 'MAP': 1.0,
+                                      'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0,
+                                      'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}}},
+        {'algorithm': {
+            'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
+                                           'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
+            'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0,
+                                      'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0,
+                                      'R-Precision - macro': 1.0, 'RMSE': 0.8134293935347402, 'MSE': 0.6996958397430165,
+                                      'MAE': 0.7616526982381033, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0,
+                                      'Precision@5 - macro': 0.875, 'Recall@5 - macro': 1.0,
+                                      'F1@5 - micro': 0.9285714285714286, 'MRR@5': 1.0, 'NDCG@5': 1.0}}}
+    ]  # se in un dizionario fosse presente una metrica e quindi una chiave non presente negli altri nel dizionario
+    # ritornato avremmo tutte le chiavi e anche quella presente in un solo dizionario questa però, avrà per valore
+    # l'unico valore associato al dizionario che la conteneva l'altro sarà il valore di default data dalla funzione
+    # che ritrova i massimi
+    
+    # qui ci facciamo aiutare da get_metrics che recupera i dizionari delle sole metriche corrispondenti ai dizionari
+    # presenti in list_of_dicts
+    processed_dict = [get_metrics(d) for d in list_of_dicts]
+    for p in processed_dict:
+        print(p)
+        
+    # una volta che i dizionari sono nella forma utile per le funzioni passiamo tali dizionari
+    result = best_higher_dict(processed_dict)
+    print(result)
+    result = best_lower_dict(processed_dict)
+    print(result)
+    """
+
     # Example usage to test the function def find_highest_bests(dictionaries, keys, decimal_places):
     """
     list_of_dictionaries = [
@@ -1239,8 +1810,6 @@ if __name__ == "__main__":
 
     # test per le funzioni di supporto a generate_latex_table_based_on_representation
     """
-    # TODO decide if the function will deal with one type of algorithm or more
-
     data_dict = {
         'algorithm': {
             'caccca': {
@@ -1473,7 +2042,7 @@ if __name__ == "__main__":
     # codice per la generazione della tabella dei confronti
     # qui implementiamo tutte le operazione per creare i dizionari di cui
     # necessitiamo per poi passarli alla funzione generate_latex_table
-
+    """
     eva_yaml_paths = ["./../data/data_for_test_two/eva_report_amarSingleSource.yml",
                       "./../data/data_for_test_two/eva_report_centroidVector.yml",
                       "./../data/data_for_test_two/eva_report_classifierRecommender.yml",
@@ -1506,9 +2075,9 @@ if __name__ == "__main__":
         print(r)
 
     # with the dictnory processed create the latex table
-    latex_table = generate_latex_table(result, max_columns_per_part=12)
+    latex_table = generate_latex_table(result, max_columns_per_part=3)
     print(latex_table)
-
+    """
 
     # prova per get_algorithm_keys ovvero per recuperare una lista di chiavi da dei dizionari
     """
