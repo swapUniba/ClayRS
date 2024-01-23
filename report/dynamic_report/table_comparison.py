@@ -303,7 +303,8 @@ def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
 
     return table_string
 """
-# quinta versione
+# quinta versione è la m,igliore manca solo l'utilizzo di sanitize per alcuni valori e poi possiamo cancellare
+# le altre versioni
 def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", round_to=3):
     # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
     fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
