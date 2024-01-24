@@ -2,310 +2,11 @@ from collections import defaultdict
 
 import yaml
 
-"""
-def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
-    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
-    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
-
-    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
-    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
-    print(metrics_dicts)
-
-    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
-    higher_dict = best_higher_dict(metrics_dicts)
-    print(higher_dict)
-    dynamic_columns = list(higher_dict.keys())
-
-    # Calcola il numero totale di colonne che saranno usate
-    total_columns = len(fixed_columns) + len(dynamic_columns)
-
-    # verifica che le colonne volute non superino il limite
-    if n_col_desired > 8:
-        n_col_desired = 8
-
-    # Inizializza la stringa della tabella LaTeX
-    table_string = ""
-
-    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
-    # Calcola il risultato e il resto della divisione
-    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
-
-    # Aggiungi una tabella aggiuntiva se c'è un resto
-    if remainder > 0:
-        num_tables += 1
-
-    for i in range(num_tables):
-        start_idx = i * (n_col_desired - len(fixed_columns))
-        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
-        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
-
-        # Costruisci l'header della tabella
-        table_string += "\\begin{table}\n"
-        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
-        table_string += "  \\centering\n"
-        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
-        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
-        table_string += "    \\toprule\n"
-        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
-        table_string += "    \\midrule\n"
-        table_string += "    \\midrule\n"
-
-        # Riempi le righe della tabella con i valori dei dizionari
-        for dictionary in list_of_dicts:
-            table_string += "    "
-            table_string += f"\\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
-
-            for col in ['Repr.', 'Content', 'Emb.']:
-                table_string += f" & {globals()['get_' + col.lower()](dictionary)}"
-
-            for dynamic_col in current_dynamic_columns:
-                table_string += f" & {dictionary.get(dynamic_col, '')}"
-
-            table_string += " \\\\\n"
-
-        table_string += "    \\bottomrule\n"
-        table_string += "   \\end{tabular}\n"
-        table_string += "\\end{adjustwidth}\n"
-        table_string += "\\end{table}\n\n"
-
-    return table_string
-"""
-# seconda versione
-"""
-def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
-    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
-    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
-
-    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
-    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
-    print(metrics_dicts)
-
-    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
-    higher_dict = best_higher_dict(metrics_dicts)
-    print(higher_dict)
-    dynamic_columns = list(higher_dict.keys())
-
-    # Calcola il numero totale di colonne che saranno usate
-    total_columns = len(fixed_columns) + len(dynamic_columns)
-
-    # verifica che le colonne volute non superino il limite
-    if n_col_desired > 8:
-        n_col_desired = 8
-
-    # Inizializza la stringa della tabella LaTeX
-    table_string = ""
-
-    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
-    # Calcola il risultato e il resto della divisione
-    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
-
-    # Aggiungi una tabella aggiuntiva se c'è un resto
-    if remainder > 0:
-        num_tables += 1
-
-    for i in range(num_tables):
-        start_idx = i * (n_col_desired - len(fixed_columns))
-        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
-        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
-
-        # Costruisci l'header della tabella
-        table_string += "\\begin{table}\n"
-        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
-        table_string += "  \\centering\n"
-        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
-        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
-        table_string += "    \\toprule\n"
-        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
-        table_string += "    \\midrule\n"
-        table_string += "    \\midrule\n"
-
-        # Riempi le righe della tabella con i valori dei dizionari
-        for dictionary, metrics_dict in zip(list_of_dicts, metrics_dicts):
-            table_string += "    "
-            table_string += f"\\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
-
-            # Riempimento delle colonne fisse
-            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
-                if col == 'Repr.':
-                    table_string += f" & {get_representation(dictionary)}"
-                elif col == 'Content':
-                    table_string += f" & {get_content(dictionary)}"
-                elif col == 'Emb.':
-                    table_string += f" & {get_embedding(dictionary)}"
-
-            # Riempimento delle colonne dinamiche
-            for dynamic_col in current_dynamic_columns:
-                value = metrics_dict.get(dynamic_col, '')
-                table_string += f" & {value if value is not None else ''}"
-
-            table_string += " \\\\\n"
-
-        table_string += "    \\bottomrule\n"
-        table_string += "   \\end{tabular}\n"
-        table_string += "\\end{adjustwidth}\n"
-        table_string += "\\end{table}\n\n"
-
-    return table_string
-"""
-# terza versione
-"""
-def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
-    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
-    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
-
-    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
-    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
-    print(metrics_dicts)
-
-    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
-    higher_dict = best_higher_dict(metrics_dicts)
-    print(higher_dict)
-    dynamic_columns = list(higher_dict.keys())
-
-    # Calcola il numero totale di colonne che saranno usate
-    total_columns = len(fixed_columns) + len(dynamic_columns)
-
-    # verifica che le colonne volute non superino il limite
-    if n_col_desired > 8:
-        n_col_desired = 8
-
-    # Inizializza la stringa della tabella LaTeX
-    table_string = ""
-
-    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
-    # Calcola il risultato e il resto della divisione
-    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
-
-    # Aggiungi una tabella aggiuntiva se c'è un resto
-    if remainder > 0:
-        num_tables += 1
-
-    for i in range(num_tables):
-        start_idx = i * (n_col_desired - len(fixed_columns))
-        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
-        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
-
-        # Costruisci l'header della tabella
-        table_string += "\\begin{table}\n"
-        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
-        table_string += "  \\centering\n"
-        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
-        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
-        table_string += "    \\toprule\n"
-        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
-        table_string += "    \\midrule\n"
-        table_string += "    \\midrule\n"
-
-        # Riempi le righe della tabella con i valori dei dizionari
-        for dictionary, metrics_dict in zip(list_of_dicts, metrics_dicts):
-            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
-            if list_of_dicts.index(dictionary) % len(list_of_dicts) == 0:
-                table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
-
-            # Riempimento delle colonne fisse
-            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
-                if col == 'Repr.':
-                    table_string += f" & {get_representation(dictionary)}"
-                elif col == 'Content':
-                    table_string += f" & {get_content(dictionary)}"
-                elif col == 'Emb.':
-                    table_string += f" & {get_embedding(dictionary)}"
-
-            # Riempimento delle colonne dinamiche
-            for dynamic_col in current_dynamic_columns:
-                value = metrics_dict.get(dynamic_col, '')
-                table_string += f" & {value if value is not None else ''}"
-
-            table_string += " \\\\\n"
-
-        table_string += "    \\bottomrule\n"
-        table_string += "   \\end{tabular}\n"
-        table_string += "\\end{adjustwidth}\n"
-        table_string += "\\end{table}\n\n"
-
-    return table_string
-"""
-# quarta versione al momento funzionante BISOGNA IMPLEMNETARE I MECCANISMI PER EVIDENZIARE I MIGLIORI RISULTATI
-"""
-def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer"):
-    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
-    fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
-
-    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
-    metrics_dicts = [get_metrics(d) for d in list_of_dicts]
-    print(metrics_dicts)
-
-    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
-    higher_dict = best_higher_dict(metrics_dicts)
-    print(higher_dict)
-    dynamic_columns = list(higher_dict.keys())
-
-    # Calcola il numero totale di colonne che saranno usate
-    total_columns = len(fixed_columns) + len(dynamic_columns)
-
-    # verifica che le colonne volute non superino il limite
-    if n_col_desired > 8:
-        n_col_desired = 8
-
-    # Inizializza la stringa della tabella LaTeX
-    table_string = ""
-
-    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
-    # Calcola il risultato e il resto della divisione
-    num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
-
-    # Aggiungi una tabella aggiuntiva se c'è un resto
-    if remainder > 0:
-        num_tables += 1
-
-    for i in range(num_tables):
-        start_idx = i * (n_col_desired - len(fixed_columns))
-        end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
-        current_dynamic_columns = dynamic_columns[start_idx:end_idx]
-
-        # Costruisci l'header della tabella
-        table_string += "\\begin{table}\n"
-        table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
-        table_string += "  \\centering\n"
-        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
-        table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
-        table_string += "    \\toprule\n"
-        table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
-        table_string += "    \\midrule\n"
-        table_string += "    \\midrule\n"
-
-        # Riempi le righe della tabella con i valori dei dizionari
-        for i, (dictionary, metrics_dict) in enumerate(zip(list_of_dicts, metrics_dicts)):
-            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
-            if i % len(list_of_dicts) == 0:
-                table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
-
-            # Riempimento delle colonne fisse
-            for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
-                if col == 'Repr.':
-                    table_string += f" & {get_representation(dictionary)}"
-                elif col == 'Content':
-                    table_string += f" & {get_content(dictionary)}"
-                elif col == 'Emb.':
-                    table_string += f" & {get_embedding(dictionary)}"
-
-            # Riempimento delle colonne dinamiche
-            for dynamic_col in current_dynamic_columns:
-                value = metrics_dict.get(dynamic_col, '')
-                table_string += f" & {value if value is not None else ''}"
-
-            table_string += " \\\\\n"
-
-        table_string += "    \\bottomrule\n"
-        table_string += "   \\end{tabular}\n"
-        table_string += "\\end{adjustwidth}\n"
-        table_string += "\\end{table}\n\n"
-
-    return table_string
-"""
-# quinta versione è la m,igliore manca solo l'utilizzo di sanitize per alcuni valori e poi possiamo cancellare
-# le altre versioni
-def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", round_to=3):
+# ------------------------------ generate_table_for_comparsion() + support functions ------------------------------
+# Funzione per generare la tabella che mette a confronto le diverse istanziazioni dello stesso algoritmo per il
+# recsys utilizzato
+def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
+                                  alg_type="killer", round_to=3, set_title="Results of metrics"):
     # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
     fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
 
@@ -354,7 +55,7 @@ def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", r
         table_string += "\\begin{table}\n"
         table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
         table_string += "  \\centering\n"
-        table_string += f"   \\caption{{Risultati delle metriche - Tabella {i + 1}}}\n"
+        table_string += f"   \\caption{{{set_title} - Tabella {i + 1}}}\n"
         table_string += f"  \\begin{{tabular}}{{{'l' + 'c' * (len(fixed_columns) + len(current_dynamic_columns))}}}\n"
         table_string += "    \\toprule\n"
         table_string += "    " + " & ".join(fixed_columns + current_dynamic_columns) + " \\\\\n"
@@ -370,11 +71,11 @@ def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", r
             # Riempimento delle colonne fisse
             for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
                 if col == 'Repr.':
-                    table_string += f" & {get_representation(dictionary)}"
+                    table_string += f" & {sanitize_latex_string(get_representation(dictionary))}"
                 elif col == 'Content':
-                    table_string += f" & {get_content(dictionary)}"
+                    table_string += f" & {sanitize_latex_string(get_content(dictionary))}"
                 elif col == 'Emb.':
-                    table_string += f" & {get_embedding(dictionary)}"
+                    table_string += f" & {sanitize_latex_string(get_embedding(dictionary))}"
 
             # Riempimento delle colonne dinamiche
             for dynamic_col in current_dynamic_columns:
@@ -408,6 +109,9 @@ def generate_table(list_of_dicts, n_col_desired, width=3.0, alg_type="killer", r
     return table_string
 
 
+# Funzione che crea il dizionario contenente le metriche come chiavi e per ogni metrica una coppia di valori
+# che sono il minimo e il secondo minimo, !!! LA FUNZIONE È UTILIZZATA DA generate_table_for_comparison() !!!
+# per evidenziare nella tabella questi valori come grassetto e sottolineato
 def best_lower_dict(list_of_dicts):
     key_values = defaultdict(list)
 
@@ -427,6 +131,9 @@ def best_lower_dict(list_of_dicts):
     return dict(key_values)
 
 
+# Funzione che crea il dizionario contenente le metriche come chiavi e per ogni metrica una coppia di valori
+# # che sono il massimo e il secondo massimo, !!! LA FUNZIONE È UTILIZZATA DA generate_table_for_comparison() !!!
+# per evidenziare nella tabella questi valori come grassetto e sottolineato
 def best_higher_dict(list_of_dicts):
     key_values = defaultdict(list)
 
@@ -446,69 +153,8 @@ def best_higher_dict(list_of_dicts):
     return dict(key_values)
 
 
-# FUNZIONE DI CREAZIONE TABELLA CORRETTA
-def set_table_complete(columns, name, list_tuple, algo, title="comparison of results"):
-    # Verifica che columns sia uguale alla lunghezza di name
-    if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
-        return ""
-
-    # Costruisci la stringa per la dichiarazione delle colonne
-    column_declaration = 'l' + ('c' * (columns - 1))
-
-    # Costruisci la stringa per l'intestazione della tabella
-    add_to_table = "\\begin{table}\n"
-    add_to_table += "\\begin{adjustwidth}{-1 in}{-1 in}\n"  # adjust margin
-    add_to_table += "  \\centering\n"
-    add_to_table += f"   \\caption{{{title}}}\n"
-    add_to_table += f"  \\begin{{tabular}}{{{column_declaration}}}\n"
-    add_to_table += "    \\toprule\n"
-    add_to_table += f"    Alg. & Repr. & Content & Emb. & {' & '.join(name)} \\\\\n"
-    add_to_table += "    \\midrule\n"
-    add_to_table += "    \\midrule\n"  # to make double line
-
-    # Aggiungi le righe dalla lista di tuple
-    for i, row_tuple in enumerate(list_tuple):
-        add_to_table += "    "  # Aggiungi questa riga
-        add_to_table += f"    \\multirow{{{len(list_tuple)}}}{{*}}{{{algo}}} & " if i == 0 else " & "  # Modifica questa riga
-        for value in row_tuple:
-            add_to_table += f"{value} & "
-        add_to_table = add_to_table[:-2]  # Rimuovi l'ultimo "& "
-        add_to_table += " \\\\\n"
-
-    # Completa la stringa della tabella
-    add_to_table += "    \\bottomrule\n"
-    add_to_table += "   \\end{tabular}\n"
-    add_to_table += "\\end{adjustwidth}\n"
-    add_to_table += "\\end{table}"
-
-    return add_to_table
-
-
-# usate per supporto non più necessaria
-"""
-def set_table(columns, name):
-    # Verifica che columns sia uguale alla lunghezza di name
-    if columns != len(name) + 4:  # 4 colonne fisse iniziali (Alg., Repr., Content, Emb.)
-        return ""
-
-    # Costruisci la stringa per la dichiarazione delle colonne
-    column_declaration = 'l' + ('c' * (columns - 1))
-
-    # Costruisci la stringa per l'intestazione della tabella
-    table_header = "\\begin{table}\n"
-    table_header += f"\\begin{{tabular}}{{{column_declaration}}}\n"
-    table_header += "    \\toprule\n"
-    table_header += f"    Alg. & Repr. & Content & Emb. & {' & '.join(name)} \\\\\n"
-    table_header += "    \\midrule\n"
-
-    # Completa la stringa della tabella
-    table_header += "    \\bottomrule\n"
-    table_header += "\\end{tabular}\n"
-    table_header += "\\end{table}"
-
-    return table_header
-"""
-
+# versione della funzione get metrics che ritorna una lista di tuple (1, 2) dove 1 è il nome della metrica e 2 il
+# valore associato
 """
 def get_metrics(data_dict):
     def extract_metrics(d, prefix=''):
@@ -532,8 +178,8 @@ def get_metrics(data_dict):
 """
 
 
-# questa versione ritorna un dizionario anzicché una lista di tuple che racchiudano il nome della metrica e
-# il valore associato dal dizionario estratto.
+# Questa versione ritorna un dizionario anziché una lista di tuple che racchiudano il nome della metrica e
+# il valore associato dal dizionario estratto. La funzione è utilizzata da generate_table_for_comparison()
 def get_metrics(data_dict):
     def extract_metrics(d, prefix=''):
         result = {}
@@ -555,6 +201,8 @@ def get_metrics(data_dict):
     return {}
 
 
+# Questa funzione accede a un dizionario e recupera andando a formattare la stringa creata accedendo ai valori
+# contenuti nella chiave 'embedding_combiner'. La funzione è utilizzata da generate_table_for_comparison()
 def get_embedding(data_dict):
     # Cerca ricorsivamente la chiave 'embedding_combiner' nel dizionario
     def find_embedding_combiner(d):
@@ -603,8 +251,8 @@ def get_embedding(data_dict):
     return ""
 
 
-# questa funzione recupera sotto forma di stringa il contenuto utilizzato per l'esperimento ovvero tutti i field usati
-# e li restituisce come stringa concatenata con il +
+# Questa funzione recupera sotto forma di stringa il contenuto utilizzato per l'esperimento ovvero tutti i field usati
+# e li restituisce come stringa concatenata con il +. La funzione è utilizzata da generate_table_for_comparison()
 def get_content(data_dict):
     # Verifica se la chiave 'algorithm' è presente nel dizionario
     if 'algorithm' in data_dict:
@@ -631,9 +279,10 @@ def get_content(data_dict):
     return ""
 
 
-# questa funzione recupera sotto forma di stringa quello che sarà utilizzato
-# per riempirre la casella sotto la colonna Repr.
-# della rapresentazione utilizzata
+# Questa funzione recupera sotto forma di stringa quello che sarà utilizzato
+# per riempire la casella sotto la colonna Repr.
+# Della rappresentazione utilizzata per processare i dati con il content analyzer e che è stata in seguito
+# utilizzata per addestrare il recsys istanziato
 def get_representation(data_dict):
     # Verifica se la chiave 'algorithm' è presente nel dizionario
     if 'algorithm' in data_dict:
@@ -663,13 +312,14 @@ def get_representation(data_dict):
     return ""
 
 
+# Funzione di supporto per ripulire le stringhe e adattarle al formato latex
 def sanitize_latex_string(input_str):
     return input_str.replace("_", "\\_").replace("&", "\\&").replace("#", "\\#")
 
-
+# funzioni usate come supporto nel momento in cui get_metrics restituisce una lista di tuple e non un dizionario
+"""
 def extract_first_elements(tuple_list):
     return [tup[0] if len(tup) > 0 else None for tup in tuple_list]
-
 
 # Prepara le tuple contenenti i dati per la renderizzazione della tabella OK
 def make_tuple_for_table(data_dict, start, end):
@@ -697,104 +347,7 @@ def make_tuple_for_table(data_dict, start, end):
     )
 
     return result_tuple
-
-
-# funzione usata per creare le tabelle con i risultati su un determinato algoritmo che usa differenti rappresentazioni
-# dei dati OK
-def generate_latex_table_based_on_representation(data_list, num_columns, title="results", alg_column_value="WWW"):
-    result = ""
-    number_first_static_colomns = 4
-    # Ottieni il numero di righe per ogni tabella
-    num_raw = len(data_list)
-    # print(f"il numero di righe num_raw è {num_raw}")
-
-    # Ottieni il numero di colonne da posizionare sotto Metrics
-    num_metrics_columns = num_columns - number_first_static_colomns
-    # print(f"il numero di colonne dedicato alle metriche è {num_metrics_columns}")
-
-    # ottieni il numero di metriche uguale al numero di elementi presenti nella lista di tuple
-    # restituita da get_metrics
-    num_all_metrics = len(get_metrics(data_list[0]))
-    # print(f"il numero di tutte le metriche è {num_all_metrics}")
-
-    # stabiliamo il numero di tabelle da utilizzare
-    num_tables = 0
-    # Assicurati che num_metrics_columns sia <= rispetto a num_all_metrics
-    if num_metrics_columns >= num_all_metrics:
-        num_tables = 1
-        # print("coooool I\'m here")
-        # abbiamo una sola tabella e il numero di metriche sarà proprio nume_metrics_all
-        num_metrics_columns = num_all_metrics
-        # print(f"num_metrics_columns is {num_metrics_columns}")
-        culomns_metrics_name = extract_first_elements(get_metrics(data_list[0]))
-        # print(culomns_metrics_name)
-        tuple_format = [make_tuple_for_table(data, 0, num_all_metrics) for data in data_list]
-        # print(tuple_format)
-        adjust_colomns = number_first_static_colomns + num_metrics_columns
-        result = set_table_complete(adjust_colomns, culomns_metrics_name, tuple_format, alg_column_value, title)
-    else:
-        # Calcola il numero di tabelle necessarie in base al numero di colonne Metrics
-        num_tables = num_all_metrics // num_metrics_columns
-        colomn_for_last_table = num_all_metrics % num_metrics_columns
-        first = 0
-        last = num_metrics_columns
-        metrics_name = extract_first_elements(get_metrics(data_list[0]))
-        # print(f"il nome di tutte le metriche è {metrics_name}")
-        # print("well enough")
-        # Se la divisione ha resto, aggiungi 1 al numero di tabelle
-        if colomn_for_last_table != 0:
-            num_tables += 1
-            # print(f"il numero di tabelle da è {num_tables}")
-            for i in range(num_tables - 1):
-                # estri i nomi per le colonne della tabella i
-                metrics_name_chuck = metrics_name[first:last]
-                # print(metrics_name_chuck)
-                # print(f"first is {first} and last is {last}")
-                # prepara i dati da inserire per la tabella i
-                tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
-                # print(tuple_format_for_table)
-                # aggiungi i la tabella a result
-                result += set_table_complete(num_columns,
-                                             metrics_name_chuck, tuple_format_for_table, alg_column_value, title)
-                # print(result)
-                result += " \n\n"
-                first = last
-                last = first + num_metrics_columns
-                # print(f"first is {first} and last is {last}")
-            # ora recuperiamo i nomi delle ultime metriche rimaste per l'ultima colonna
-            # print(f"colomn for last table {colomn_for_last_table}") # debug
-            # print(metrics_name[- colomn_for_last_table:]) # debug
-            name_chunk = metrics_name[- colomn_for_last_table:]
-            # print(name_chunk)
-            last = first + colomn_for_last_table
-            # print(f"first is {first} and last is {last}")
-            tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
-            # print(tuple_format_for_table)
-            new_number_of_colmns = number_first_static_colomns + colomn_for_last_table
-            # print(new_number_of_colmns)
-            result += set_table_complete(new_number_of_colmns,
-                                         name_chunk, tuple_format_for_table, alg_column_value, title)
-        else:
-            # print("in the else side")
-            for i in range(num_tables):
-                # print(f"first is {first} and last is {last}")
-                # estri i nomi per le colonne della tabella i
-                metrics_name_chuck = metrics_name[first:last]
-                # print(metrics_name_chuck)
-                # prepara i dati da inserire per la tabella i
-                tuple_format_for_table = [make_tuple_for_table(data, first, last) for data in data_list]
-                # print(tuple_format_for_table)
-                # aggiungi i la tabella a result
-                result += set_table_complete(num_columns,
-                                             metrics_name_chuck, tuple_format_for_table, alg_column_value, title)
-                result += "\n\n"
-                # print(result)
-                first = last
-                last = first + num_metrics_columns
-                # print(f"first is {first} and last is {last}")
-
-    return result
-
+"""
 
 # Funzione di supporto per generate_latex_table, serve per trovare i massimi da evidenziare nella tabella, la
 # seconda versione è capace di lavorare con la tipologia di dizionari che andremo a usare
@@ -825,7 +378,14 @@ def find_highest_bests(dictionaries, keys, decimal_places):
     return result
 """
 
+# ----------------------- End use of support function for generate_table_for_comparison ------------------------------
 
+
+# ----------------------- generate_latex_table() + support functions used -------------------------------------------
+# La funzione è utilizzata per recuperare un dizionario che contenga per chiavi le metriche e per valori una coppia
+# (x, y) ove x è il valore più alto per quella metrica trovato nella lista dei dizionari ricevuta in ingresso e y è il
+# secondo valore più alto trovato per quella metrica. È utilizzata dalla funzione generate_latex_table() per
+# evidenziare in grassetto e sottolineato tali risultati
 def find_highest_bests(dictionaries, keys, decimal_places):
     result = {}
 
@@ -853,8 +413,10 @@ def find_highest_bests(dictionaries, keys, decimal_places):
     return result
 
 
-# funzione speculare alla precedente utilizzata per trovare i due minimi come valori da evidenziare nella tabella
-# la funzione offre supporto alla funzione generate_latex_table
+# La funzione è utilizzata per recuperare un dizionario che contenga per chiavi le metriche e per valori una coppia
+# (x, y) ove x è il valore più basso per quella metrica trovato nella lista dei dizionari ricevuta in ingresso e y è il
+# secondo valore più basso trovato per quella metrica. È utilizzata dalla funzione generate_latex_table() per
+# evidenziare in grassetto e sottolineato tali risultati
 def find_lowest_bests(dictionaries, keys_list, decimal_places):
     result = {}
 
@@ -882,182 +444,8 @@ def find_lowest_bests(dictionaries, keys_list, decimal_places):
     return result
 
 
-# funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE OK
-"""
-def generate_latex_table(algorithms, decimal_place=3, column_width=3.0, max_columns_per_part=5):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    print(column_names)  # debug to check what it is inside
-    num_columns = len(column_names)
-
-    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
-    # 2 punteggi più bassi migliori
-    # highest_best_metrics = find_highest_bests(first_algorithm, column_names, decimal_place)
-    # print(highest_best_metrics)
-    # lowest_best_metrics = find_lowest_bests(first_algorithm, column_names, decimal_place)
-    # print(lowest_best_metrics)
-
-    # Calcola il numero di parti necessarie
-    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
-
-    # Inizializza il codice LaTeX
-    latex_code = ""
-
-    for part_index in range(num_parts):
-        # Calcola gli indici delle colonne per questa parte
-        start_col_index = part_index * max_columns_per_part
-        end_col_index = (part_index + 1) * max_columns_per_part
-        current_column_names = column_names[start_col_index:end_col_index]
-
-        # Calcola la larghezza totale della tabella
-        total_width = len(current_column_names) * column_width + 1
-        latex_code += "\\begin{table}[ht]\n"
-        latex_code += "\\centering\n"
-        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
-        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
-            column_width) + "cm}}@{}}\n"
-        latex_code += "\\toprule\n"
-        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(
-            len(current_column_names)) + "}{c}{Colonne} \\\\\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i nomi delle colonne
-        for col_index, column_name in enumerate(current_column_names):
-            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
-
-        latex_code += "\\\\\n"
-        latex_code += "\\addlinespace[5pt]\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i dati delle righe
-        for algorithm in algorithms:
-            algorithm_name = list(algorithm.keys())[0]
-            values = list(algorithm.values())[0]
-            latex_code += algorithm_name
-            for column_name in current_column_names:
-                # Verifica se la colonna è presente nel dizionario prima di accedere
-                column_value = values.get(column_name, '')
-                # Converte il valore in un numero (float) prima di arrotondarlo
-                try:
-                    column_value = float(column_value)
-                    rounded_value = round(column_value, decimal_place)
-                except (ValueError, TypeError):
-                    # Se la conversione non è possibile, mantieni il valore come stringa
-                    rounded_value = column_value
-
-                latex_code += " & " + str(rounded_value)
-            latex_code += " \\\\\n"
-            latex_code += "\\addlinespace[5pt]\n"
-            latex_code += "\\midrule\n"
-
-        # Aggiungi la parte finale del codice LaTeX
-        latex_code += "\\bottomrule\n"
-        latex_code += "\\end{tabular}}\n"
-        latex_code += "\\caption{Tabella generata automaticamente (Parte " + str(part_index + 1) + ")}\n"
-        latex_code += "\\end{table}\n"
-
-        # Aggiungi alcune righe vuote tra le parti
-        if part_index < num_parts - 1:
-            latex_code += "\\vspace{10pt}\n"
-
-    return latex_code
-"""
-
-"""
-# work in progress
-def generate_latex_table(algorithms, decimal_place=3, column_width=3.0, max_columns_per_part=5):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    print(f" i nomi delle metriche con le quali abbiamo a che fare {column_names}")
-    num_columns = len(column_names)
-
-    # lista di metriche il cui punteggio migliore è queelo minimo
-    metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
-
-    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
-    # 2 punteggi più bassi migliori
-    highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
-    print(f"il dizionario dei migliori risultati per le metriche{highest_best_metrics}")
-
-    # Calcola il numero di parti necessarie
-    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
-
-    # Inizializza il codice LaTeX
-    latex_code = ""
-
-    for part_index in range(num_parts):
-        # Calcola gli indici delle colonne per questa parte
-        start_col_index = part_index * max_columns_per_part
-        end_col_index = (part_index + 1) * max_columns_per_part
-        current_column_names = column_names[start_col_index:end_col_index]
-
-        # Calcola la larghezza totale della tabella
-        total_width = len(current_column_names) * column_width + 1
-        latex_code += "\\begin{table}[ht]\n"
-        latex_code += "\\centering\n"
-        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
-        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
-            column_width) + "cm}}@{}}\n"
-        latex_code += "\\toprule\n"
-        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(
-            len(current_column_names)) + "}{c}{Colonne} \\\\\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i nomi delle colonne
-        for col_index, column_name in enumerate(current_column_names):
-            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
-
-        latex_code += "\\\\\n"
-        latex_code += "\\addlinespace[5pt]\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i dati delle righe
-        for algorithm in algorithms:
-            algorithm_name = list(algorithm.keys())[0]
-            values = list(algorithm.values())[0]
-            latex_code += algorithm_name
-            for column_name in current_column_names:
-                # Verifica se la colonna è presente nel dizionario prima di accedere
-                column_value = values.get(column_name, '')
-                # Converte il valore in un numero (float) prima di arrotondarlo
-                try:
-                    column_value = float(column_value)
-                    rounded_value = round(column_value, decimal_place)
-                except (ValueError, TypeError):
-                    # Se la conversione non è possibile, mantieni il valore come stringa
-                    rounded_value = column_value
-
-                # Estrai i valori migliori per la colonna corrente
-                highest_best_values = highest_best_metrics[column_name]
-
-                # Formatta il valore in base ai risultati migliori
-                if rounded_value == highest_best_values[0]:
-                    latex_code += " & \\textbf{" + str(rounded_value) + "}"
-                elif rounded_value == highest_best_values[1]:
-                    latex_code += " & \\underline{" + str(rounded_value) + "}"
-                else:
-                    latex_code += " & " + str(rounded_value)
-
-            latex_code += " \\\\\n"
-            latex_code += "\\addlinespace[5pt]\n"
-            latex_code += "\\midrule\n"
-
-        # Aggiungi la parte finale del codice LaTeX
-        latex_code += "\\bottomrule\n"
-        latex_code += "\\end{tabular}}\n"
-        latex_code += "\\caption{Tabella generata automaticamente (Parte " + str(part_index + 1) + ")}\n"
-        latex_code += "\\end{table}\n"
-
-        # Aggiungi alcune righe vuote tra le parti
-        if part_index < num_parts - 1:
-            latex_code += "\\vspace{10pt}\n"
-
-    return latex_code
-"""
-
-
+# funzione per il confronto tra algoritmi PRONTA E FUNZIONANTE OK usa le funzioni di supporto find_highest_bests()
+# e find_lowest_best()
 def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
                          max_columns_per_part=5, caption_for_table="Comparison between algorithms"):
     # Controllo per assicurarsi che max_columns_per_part non superi mai 10
@@ -1159,236 +547,7 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
             latex_code += "\\vspace{10pt}\n"
 
     return latex_code
-
-
-# prima versione che spezza la tabellla su più pagine [LASCIA TROPPO SPAZIO]
-"""
-def generate_latex_table(algorithms, decimal_places=3, column_width=3.0, max_columns_per_part=5):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    num_columns = len(column_names)
-
-    # Calcola il numero di parti necessarie
-    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
-
-    # Costruisci l'intestazione della tabella LaTeX
-    latex_code = "\\begin{table}[ht]\n"
-    latex_code += "\\centering\n"
-
-    # Aggiungi la dimensione del testo
-    latex_code += "\\small\n"
-
-    for part_index in range(num_parts):
-        # Calcola gli indici delle colonne per questa parte
-        start_col_index = part_index * max_columns_per_part
-        end_col_index = (part_index + 1) * max_columns_per_part
-        current_column_names = column_names[start_col_index:end_col_index]
-
-        # Calcola la larghezza totale della tabella
-        total_width = len(current_column_names) * column_width + 1
-        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
-        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(column_width) + "cm}}@{}}\n"
-        latex_code += "\\toprule\n"
-        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(len(current_column_names)) + "}{c}{Colonne} \\\\\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i nomi delle colonne
-        for col_index, column_name in enumerate(current_column_names):
-            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
-
-        latex_code += "\\\\\n"
-        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
-
-        # Aggiungi i dati delle righe
-        for algorithm in algorithms:
-            algorithm_name = list(algorithm.keys())[0]
-            values = list(algorithm.values())[0]
-            latex_code += algorithm_name
-            for column_name in current_column_names:
-                # Verifica se la colonna è presente nel dizionario prima di accedere
-                column_value = values.get(column_name, '')
-                # Converte il valore in un numero (float) prima di arrotondarlo
-                try:
-                    column_value = float(column_value)
-                    rounded_value = round(column_value, decimal_places)
-                except (ValueError, TypeError):
-                    # Se la conversione non è possibile, mantieni il valore come stringa
-                    rounded_value = column_value
-
-                latex_code += " & " + str(rounded_value)
-            latex_code += " \\\\\n"
-            latex_code += "\\addlinespace[5pt]\n"
-            latex_code += "\\midrule\n"
-
-        # Aggiungi la parte finale del codice LaTeX
-        latex_code += "\\bottomrule\n"
-        latex_code += "\\end{tabular}}\n"
-        latex_code += "\\caption{Comparison of the algorithms (Part " + str(part_index + 1) + ")}\n"
-        latex_code += "\\end{table}\n"
-        latex_code += "\\clearpage"  # Nuova pagina tra le parti
-
-    return latex_code
-"""
-
-# VERSIONE FUNZIONANTE PER LE COPLONNE MA CARATTERI TROPPO PICCOLI E TABELLA TROPPO PICCOLA
-"""
-def generate_latex_table(algorithms, decimal_places=3, column_width=3.0):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    num_columns = len(column_names)
-
-    # Costruisci l'intestazione della tabella LaTeX
-    latex_code = "\\begin{table}[ht]\n"
-    latex_code += "\\centering\n"
-
-    # Aggiungi la dimensione del testo
-    latex_code += "\\small\n"
-
-    # Calcola la larghezza totale della tabella
-    total_width = num_columns * column_width + 1
-    latex_code += "\\resizebox{\\textwidth}{!}{%\n"
-    latex_code += "\\begin{tabular}{@{}c" + " *{" + str(num_columns) + "}{" + "p{" + str(column_width) + "cm}}@{}}\n"
-    latex_code += "\\toprule\n"
-    latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(num_columns) + "}{c}{Colonne} \\\\\n"
-    latex_code += "\\cmidrule{2-" + str(num_columns + 1) + "}\n"
-
-    # Aggiungi i nomi delle colonne
-    for col_index, column_name in enumerate(column_names):
-        latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
-
-    latex_code += "\\\\\n"
-    latex_code += "\\cmidrule{2-" + str(num_columns + 1) + "}\n"
-
-    # Aggiungi i dati delle righe
-    for algorithm in algorithms:
-        algorithm_name = list(algorithm.keys())[0]
-        values = list(algorithm.values())[0]
-        latex_code += algorithm_name
-        for column_name in column_names:
-            # Verifica se la colonna è presente nel dizionario prima di accedere
-            column_value = values.get(column_name, '')
-            # Converte il valore in un numero (float) prima di arrotondarlo
-            try:
-                column_value = float(column_value)
-                rounded_value = round(column_value, decimal_places)
-            except (ValueError, TypeError):
-                # Se la conversione non è possibile, mantieni il valore come stringa
-                rounded_value = column_value
-
-            latex_code += " & " + str(rounded_value)
-        latex_code += " \\\\\n"
-        latex_code += "\\addlinespace[5pt]\n"
-        latex_code += "\\midrule\n"
-
-    # Aggiungi la parte finale del codice LaTeX
-    latex_code += "\\bottomrule\n"
-    latex_code += "\\end{tabular}}\n"
-    latex_code += "\\caption{Tabella generata automaticamente}\n"
-    latex_code += "\\end{table}\n"
-
-    return latex_code
-"""
-
-# implementazione diversa della funzione generate_latex_table()
-"""
-Questa è già buona ma serve risolvere il problema della sovrapposizione 
-# dei nomi di colonna
-def generate_latex_table(algorithms, decimal_places=3):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    num_columns = len(column_names)
-
-    # Costruisci l'intestazione della tabella LaTeX
-    latex_code = "\\begin{table}[ht]\n"
-    latex_code += "\\centering\n"
-
-    # Aggiungi la dimensione del testo
-    latex_code += "\\small\n"
-
-    # Calcola la larghezza totale della tabella
-    total_width = num_columns * 1.5 + 1
-    latex_code += "\\resizebox{\\textwidth}{!}{%\n"
-    latex_code += "\\begin{tabular}{@{}c" + " *{" + str(num_columns) + "}{>{\\centering\\arraybackslash}p{1.5cm}}@{}}\n"
-    latex_code += "\\toprule\n"
-    latex_code += "& \\multicolumn{" + str(num_columns) + "}{c}{Colonne} \\\\\n"
-    latex_code += "\\cmidrule{2-" + str(num_columns + 1) + "}\n"
-
-    # Aggiungi i nomi delle colonne
-    latex_code += "Algorithms & " + " & ".join(column_names) + " \\\\\n"
-    latex_code += "\\midrule\n"
-
-    # Aggiungi i dati delle righe
-    for algorithm in algorithms:
-        algorithm_name = list(algorithm.keys())[0]
-        values = list(algorithm.values())[0]
-        latex_code += algorithm_name
-        for column_name in column_names:
-            # Verifica se la colonna è presente nel dizionario prima di accedere
-            column_value = values.get(column_name, '')
-            # Converte il valore in un numero (float) prima di arrotondarlo
-            try:
-                column_value = float(column_value)
-                rounded_value = round(column_value, decimal_places)
-            except (ValueError, TypeError):
-                # Se la conversione non è possibile, mantieni il valore come stringa
-                rounded_value = column_value
-
-            latex_code += " & " + str(rounded_value)
-        latex_code += " \\\\\n"
-        latex_code += "\\addlinespace[5pt]\n"
-        latex_code += "\\midrule\n"
-
-    # Aggiungi la parte finale del codice LaTeX
-    latex_code += "\\bottomrule\n"
-    latex_code += "\\end{tabular}}\n"
-    latex_code += "\\caption{Tabella generata automaticamente}\n"
-    latex_code += "\\end{table}\n"
-
-    return latex_code
-"""
-
-# algorithms è una lista di dizionari
-"""
-def generate_latex_table(algorithms):
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
-    first_algorithm = algorithms[0]
-    column_names = list(next(iter(first_algorithm.values())).keys())
-    num_columns = len(column_names)
-
-    # Costruisci l'intestazione della tabella LaTeX
-    latex_code = "\\begin{table}[ht]\n"
-    latex_code += "\\centering\n"
-    latex_code += "\\begin{tabular}{@{}c" + " *{" + str(num_columns) + "}{>{\\centering\\arraybackslash}p{1.5cm}}@{}}\n"
-    latex_code += "\\toprule\n"
-    latex_code += "& \\multicolumn{" + str(num_columns) + "}{c}{Colonne} \\\\\n"
-    latex_code += "\\cmidrule{2-" + str(num_columns + 1) + "}\n"
-
-    # Aggiungi i nomi delle colonne
-    latex_code += "Algorithms & " + " & ".join(column_names) + " \\\\\n"
-    latex_code += "\\midrule\n"
-
-    # Aggiungi i dati delle righe
-    for algorithm in algorithms:
-        algorithm_name = list(algorithm.keys())[0]
-        values = list(algorithm.values())[0]
-        latex_code += algorithm_name
-        for column_name in column_names:
-            latex_code += " & " + str(values[column_name])
-        latex_code += " \\\\\n"
-        latex_code += "\\addlinespace[5pt]\n"
-        latex_code += "\\midrule\n"
-
-    # Aggiungi la parte finale del codice LaTeX
-    latex_code += "\\bottomrule\n"
-    latex_code += "\\end{tabular}\n"
-    latex_code += "\\caption{Tabella generata automaticamente}\n"
-    latex_code += "\\end{table}\n"
-
-    return latex_code
-"""
+# ------------------------------- end generate_latex_table + support functions --------------------------------
 
 
 def remove_key_from_nested_dicts(dictionary_list, key_to_remove):
@@ -1612,27 +771,37 @@ def merge_dicts(*dicts, merge_key=None):
 
 # Esegui lo script
 if __name__ == "__main__":
-
+    # COMPLETE TEST SECTION TO GENERATE A LATEX TABLE with function generate_table_for_comparison()
+    # prova per la nuova funzione generate_table_for_comparison(), e delle funzioni di supporto
+    #  best_higher_dict(), best_lower_dict(), get_metrics(), get_representation(), get_content(),
+    # get_embedding(), sanitize_text()
+    """
     list_of_dicts = [
         {'algorithm': {
             'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
                                'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 0.10, 'Recall - macro': 0.30, 'F1 - macro': 0.210, 'Gini': 5.0, 'NDCG': 0.40,
-                           'R-Precision - macro': 0.320, 'RMSE': 3.9, 'MSE': 9.0, 'MAE': 3.45, 'MRR': 0.430, 'MAP': 0.550,
+            'sys - mean': {'Precision - macro': 0.10, 'Recall - macro': 0.30, 'F1 - macro': 0.210, 'Gini': 5.0,
+                           'NDCG': 0.40,
+                           'R-Precision - macro': 0.320, 'RMSE': 3.9, 'MSE': 9.0, 'MAE': 3.45, 'MRR': 0.430,
+                           'MAP': 0.550,
                            'PredictionCoverage': 32.67, 'Precision@5 - macro': 0.40, 'Recall@5 - macro': 0.340,
                            'F1@5 - micro': 0.20, 'MRR@5': 0.30, 'NDCG@5': 0.120}}},
         {'algorithm': {
             'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
                                       'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 0.980, 'F1 - macro': 0.970, 'Gini': 0.2, 'NDCG': 0.90,
-                           'R-Precision - macro': 0.890, 'RMSE': 0.75, 'MSE': 0.25, 'MAE': 1.5, 'MRR': 0.960, 'MAP': 0.970,
+            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 0.980, 'F1 - macro': 0.970, 'Gini': 0.2,
+                           'NDCG': 0.90,
+                           'R-Precision - macro': 0.890, 'RMSE': 0.75, 'MSE': 0.25, 'MAE': 1.5, 'MRR': 0.960,
+                           'MAP': 0.970,
                            'PredictionCoverage': 11.67, 'Precision@5 - macro': 0.990, 'Recall@5 - macro': 0.890,
                            'F1@5 - micro': 1.0, 'MRR@5': 0.770, 'NDCG@5': 0.80}}},
         {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
-                       'sys - mean': {'Precision - macro': 0.30, 'Recall - macro': 0.230, 'F1 - macro': 0.420, 'Gini': 11.0,
+                       'sys - mean': {'Precision - macro': 0.30, 'Recall - macro': 0.230, 'F1 - macro': 0.420,
+                                      'Gini': 11.0,
                                       'NDCG': 0.4220, 'R-Precision - macro': 0.4650, 'RMSE': 63.65394315890862,
                                       'MSE': 4051.8244796775693, 'MAE': 63.65394315890862, 'MRR': 0.3510, 'MAP': 0.3770,
-                                      'PredictionCoverage': 1.67, 'Precision@5 - macro': 0.330, 'Recall@5 - macro': 0.330,
+                                      'PredictionCoverage': 1.67, 'Precision@5 - macro': 0.330,
+                                      'Recall@5 - macro': 0.330,
                                       'F1@5 - micro': 0.120, 'MRR@5': 0.2310, 'NDCG@5': 0.4230}}},
         {'algorithm': {
             'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
@@ -1644,13 +813,14 @@ if __name__ == "__main__":
                            'Precision@5 - macro': 0.875, 'Recall@5 - macro': 0.860,
                            'F1@5 - micro': 0.9285714285714286, 'MRR@5': 0.8730, 'NDCG@5': 0.8220}}},
     ]
-    
-    n_col = 7 # Numero totale di colonne desiderate (4 colonne fisse + 3 colonne dinamiche)
-    table_output = generate_table(list_of_dicts, n_col)
-    print(table_output)
 
+    n_col = 7  # Numero totale di colonne desiderate (4 colonne fisse + 3 colonne dinamiche)
+    table_output = generate_table_for_comparison(list_of_dicts, n_col, set_title="Different setting evaluation")
+    print(table_output)
+    """
 
     # prova della funzione che estrae un dizionario con i migliori 2 valori best_higher_dict(list_of_dicts)
+    # è un test sulla funzione di supporto usata da generate_table_for_comparison()
     """
     list_of_dicts = [ # in questa lista ci sono dei dizionari che non  possono essere usati direttamente da  
         # best_higher_dict o da best_lower_dict
@@ -1733,217 +903,6 @@ if __name__ == "__main__":
     print(result)
     """
 
-    # prova per generate_latex_table_based_on_representation
-    """
-    # Lista di dizionari
-    d = [
-        {'algorithm': {
-            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
-                               'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
-        {'algorithm': {
-            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
-                                      'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
-        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
-                       'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0}}},
-        {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
-                                           'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
-                       'sys - mean': {'Precision - macro': 0.875,
-                                      'Recall - macro': 1.0,
-                                      'F1 - macro': 0.9166666666666666
-                                      }}}
-    ]
-
-    # Numero di colonne per tabella
-    columns = 8  # Modifica il numero di colonne secondo le tue esigenze
-
-    # Titolo della tabella
-    table_title = "Risultati delle metriche"
-
-    # Nome dell'algoritmo (da inserire nella colonna "Alg.")
-    algorithm_name = "Killer"
-
-    # Chiamata alla funzione
-    latex_table = generate_latex_table_based_on_representation(d, columns, title=table_title,
-                                                               alg_column_value=algorithm_name)
-
-    # Stampa il risultato
-    print(latex_table)
-    """
-
-    # test per usare list comprension con la funzione make_tuple_for_table
-    """
-    # Lista di dizionari
-    list_of_dicts = [
-        {'algorithm': {
-            'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
-                               'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
-                           'NDCG': 1.0}}},
-        {'algorithm': {
-            'ClassifierRecommender': {'item_field': {'plot': ['tfidf_sk']}, 'classifier': 'SkKNN', 'threshold': None,
-                                      'embedding_combiner': 'Centroid'},
-            'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
-                           'NDCG': 1.0}}},
-        {'algorithm': {'IndexQuery': {'item_field': {'plot': ['search_i']}, 'classic_similarity': True, 'threshold': 4},
-                       'sys - mean': {'Precision - macro': 1.0, 'Recall - macro': 1.0, 'F1 - macro': 1.0, 'Gini': 0.0,
-                                      'NDCG': 1.0}}},
-        {'algorithm': {'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']}, 'regressor': 'SkLinearRegression',
-                                           'only_greater_eq': None, 'embedding_combiner': 'Centroid'},
-                       'sys - mean': {'Precision - macro': 0.875, 'Recall - macro': 1.0,
-                                      'F1 - macro': 0.9166666666666666, 'Gini': 0.0, 'NDCG': 1.0}}}
-    ]
-
-    # Definisci start ed end a piacere
-    start = 0
-    end = 5  # Ad esempio, puoi scegliere tu i valori
-
-    # Usa list comprehension per creare la lista di tuple
-    tuple_format = [
-        make_tuple_for_table(data_dict, start, end)
-        for data_dict in list_of_dicts
-    ]
-    
-    # Stampa la lista di tuple
-    print(tuple_format)
-    """
-
-    # test per le funzioni di supporto a generate_latex_table_based_on_representation
-    """
-    data_dict = {
-        'algorithm': {
-            'caccca': {
-                'item_field': {
-                    'ploter': ['tfidf_sk'],
-                    'mark': ['vera', 'gold'],
-                    'apple': ['a', 'kal', '88'],
-                    'gufo': ['rep', 'ferry'],
-                    'razzo': { 'e': 5,
-                               'tre':[],
-                               'pera':"rape"
-                               }
-                },
-                'regressor': 'SkLinearRegression',
-                'only_greater_eq': None,
-                'embedding_combiner': {
-                        'Centroid': {},
-                        'Retro': {}
-                }
-            },
-            'sys - mean': {
-                'Precision - macro': 0.875,
-                'Recall - macro': 1.0,
-                'F1 - macro': 0.9166666666666666,
-                'Gini': 0.0,
-                'NDCG': 1.0,
-                'R-Precision - macro': 1.0,
-                'RMSE': 0.8134293935347402,
-                'MSE': 0.6996958397430165,
-                'MAE': 0.7616526982381033,
-                'MRR': 1.0,
-                'MAP': 1.0,
-                'PredictionCoverage': 50.0,
-                'Precision@5 - macro': 0.875,
-                'Recall@5 - macro': 1.0,
-                'F1@5 - micro': 0.9285714285714286,
-                'MRR@5': 1.0,
-                'NDCG@5': 1.0
-            }
-        }
-    }
-
-    result = get_representation(data_dict)
-    print(sanitize_latex_string(result))
-    print(result)
-    print()
-    result = get_content(data_dict)
-    print(sanitize_latex_string(result))
-    print(result)
-    print()
-    result = get_embedding(data_dict)
-    print(sanitize_latex_string(result))
-    print(result)
-    print()
-    result = get_metrics(data_dict)
-    print(result)
-    """
-
-    # creazione lista di dizionari pronti per essere forniti a generate_latex_table_based_on_representation(data_list)
-    """
-    eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
-                      "./../data/data_to_test/eva_report_centroidVector.yml",
-                      "./../data/data_to_test/eva_report_classifierRecommender.yml",
-                      "./../data/data_to_test/eva_report_indexQuery.yml",
-                      "./../data/data_to_test/eva_report_linearPredictor.yml"]
-
-    recsys_yaml_paths = ["./../data/data_to_test/rs_report_amarSingleSource.yml",
-                         "./../data/data_to_test/rs_report_centroidVector.yml",
-                         "./../data/data_to_test/rs_report_classifierRecommender.yml",
-                         "./../data/data_to_test/rs_report_indexQuery.yml",
-                         "./../data/data_to_test/rs_report_linearPredictor.yml"]
-
-    dictionary_eva_sys = from_yaml_list_to_dict_list(eva_yaml_paths)
-    dict_sys_mean = []  # lista di dizionari contenenti le metriche calcolate dal recsys associato
-    for e in dictionary_eva_sys:
-        tmp = extract_subdictionary(e, "sys - mean")
-        dict_sys_mean.append(tmp)
-
-    for sys_mean in dict_sys_mean:
-        if 'sys - mean' in sys_mean:
-            sys_mean['sys - mean'].pop('CatalogCoverage (PredictionCov)', None)
-    # dict_sys_mean = [{k.replace("sys - mean", "algorithm"): v for k, v in d.items()} for d in dict_sys_mean]
-
-    dictionary_rec_sys = from_yaml_list_to_dict_list(recsys_yaml_paths)
-    dict_algo = []  # lista di dizionari contenenti le info sul reccomender system usato
-    for t in dictionary_rec_sys:
-        tmp = extract_subdictionary(t, "algorithm")
-        dict_algo.append(tmp)
-
-    if len(dict_algo) != len(dict_sys_mean):
-        raise ValueError("Le liste devono avere la stessa lunghezza.")
-
-    dict_ready = []
-
-    for algo, sys_mean in zip(dict_algo, dict_sys_mean):
-        merged_result = merge_dicts(algo, sys_mean, merge_key='algorithm')
-        dict_ready.append(merged_result)
-
-    # Ora dict_ready contiene i risultati delle fusioni
-    for merged_result in dict_ready:
-        print(merged_result)
-
-    data_x = {'algorithm': {
-        'LinearPredictor': {'item_field': {'plot': ['tfidf_sk']},
-                            'regressor': 'SkLinearRegression',
-                            'only_greater_eq': None,
-                            'embedding_combiner': 'Centroid'},
-        'sys - mean': {'Precision - macro': 0.875,
-                       'Recall - macro': 1.0,
-                       'F1 - macro': 0.9166666666666666,
-                       'Gini': 0.0,
-                       'NDCG': 1.0,
-                       'R-Precision - macro': 1.0,
-                       'RMSE': 0.8134293935347402,
-                       'MSE': 0.6996958397430165,
-                       'MAE': 0.7616526982381033,
-                       'MRR': 1.0,
-                       'MAP': 1.0,
-                       'PredictionCoverage': 50.0,
-                       'Precision@5 - macro': 0.875,
-                       'Recall@5 - macro': 1.0,
-                       'F1@5 - micro': 0.9285714285714286,
-                       'MRR@5': 1.0,
-                       'NDCG@5': 1.0
-                       }
-    }}
-
-    print()
-    print()
-    table = generate_latex_table_based_on_representation(dict_ready, 8, "Confronto su diversi impostazioni")
-    print(table)
-    """
-
     # prova per la funzione merge_dicts(*dicts, merge_key=None)
     """
     dict1 = {"a": "Centroid", "Repr.": "TF-IDF", "Content": "T", "F1": 0.5667}
@@ -2023,27 +982,11 @@ if __name__ == "__main__":
              }
     """
 
-    """
-    eva_yaml_paths = ["./../data/data_to_test/eva_report_amarSingleSource.yml",
-                      "./../data/data_to_test/eva_report_centroidVector.yml",
-                      "./../data/data_to_test/eva_report_classifierRecommender.yml",
-                      "./../data/data_to_test/eva_report_indexQuery.yml",
-                      "./../data/data_to_test/eva_report_linearPredictor.yml"]
-
-    dictionary_res_sys = from_yaml_list_to_dict_list(eva_yaml_paths)
-    dict_alg = []
-    for e in dictionary_res_sys:
-        tmp = extract_subdictionary(e, "sys - mean")
-        dict_alg.append(tmp)
-
-    for d in dict_alg:
-        print(d)
-    """
-
-    # codice per la generazione della tabella dei confronti
-    # qui implementiamo tutte le operazione per creare i dizionari di cui
-    # necessitiamo per poi passarli alla funzione generate_latex_table
-    """
+    # COMPLETE TEST SECTION FOR TABLE GENERATION with function generate_latex_table()
+    # codice per la generazione della tabella dei confronti, qui implementiamo tutte le operazione
+    # per creare i dizionari di cui necessitiamo per poi passarli alla funzione generate_latex_table,
+    # questo codice rappresenta un sezione di test per le funzioni generate_latex_table(), find_highest_best(),
+    # find_lowest_best() e delle funzioni definite per preparare i dizionari da passare alle funzioni testate.
     eva_yaml_paths = ["./../data/data_for_test_two/eva_report_amarSingleSource.yml",
                       "./../data/data_for_test_two/eva_report_centroidVector.yml",
                       "./../data/data_for_test_two/eva_report_classifierRecommender.yml",
@@ -2071,14 +1014,13 @@ if __name__ == "__main__":
     keys = get_algorithm_keys(dictyonary_list) # lista dei nomi degli algoritmi usati
 
     # show the dictonary extracted after processing them
-    result = nest_dictionaries(keys, my_dictio)
-    for r in result:
+    result_dictionary = nest_dictionaries(keys, my_dictio)
+    for r in result_dictionary:
         print(r)
 
     # with the dictnory processed create the latex table
-    latex_table = generate_latex_table(result, max_columns_per_part=3)
+    latex_table = generate_latex_table(result_dictionary, max_columns_per_part=3)
     print(latex_table)
-    """
 
     # prova per get_algorithm_keys ovvero per recuperare una lista di chiavi da dei dizionari
     """
@@ -2106,19 +1048,6 @@ if __name__ == "__main__":
     result = from_yaml_list_to_dict_list(eva_yaml_paths)
     for d in result:
         print(d)
-    """
-
-    # Qui testiamo la funzione generate_latex_table
-    # prova per la formatazione e creazione della tabella di comparazione tra algortitmi
-    """
-    algorithms_data = [
-        {'CentroidVector': {'F1@1 - macro': 0.85, 'MRR': 0.92, 'MAE': 0.12, 'Recall': 0.78, 'Precision': 0.91, 'R-Precision - macro': 1.0, 'RMSE': 3.0, 'MSE': 9.0, 'MAE': 3.0, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
-        {'AmarDoubleSource': {'F1@1 - macro': 0.92, 'MRR': 0.88, 'MAE': 0.14, 'Recall': 0.85, 'Precision': 0.89, 'R-Precision - macro': 1.0, 'RMSE': 63.65, 'MSE': 4051.82, 'MAE': 63.65, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 16.67, 'Precision@5 - macro': 1.0, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 1.0, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
-        {'LinearPredictor': {'F1@1 - macro': 0.88, 'MRR': 0.91, 'MAE': 0.11, 'Recall': 0.82, 'Precision': 0.90, 'R-Precision - macro': 1.0, 'RMSE': 0.81, 'MSE': 0.69, 'MAE': 0.76, 'MRR': 1.0, 'MAP': 1.0, 'PredictionCoverage': 50.0, 'Precision@5 - macro': 0.87, 'Recall@5 - macro': 1.0, 'F1@5 - micro': 0.92, 'MRR@5': 1.0, 'NDCG@5': 1.0}},
-    ]
-
-    latex_table = generate_latex_table(algorithms_data)
-    print(latex_table)
     """
 
     # prova per la funzione che recupera un sottodizionario innestato da un dizionario fatto
