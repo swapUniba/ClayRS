@@ -4,8 +4,27 @@
 import pandas as pd
 import openpyxl
 
+# Questa funzione permette di sostituire gli indici del dataframe restituito da una delle
+# funzioni di test statistico in modo da cambiare gli indici con i nomi di un dizionario
+# che abbia per chiavi i nomi scelti dalla funzione dei test statistici e che sono nomi del
+# tipo systm_n con n incrementale intero da 1 in poi a seconda di quanti systemi vengono messi
+# a confronto questo permetterà in seguito l'accesso al dataframe modificato con questi indici
+def change_system_name(df, sys_name):
+    # Funzione per sostituire gli indici con i valori del dizionario
+    def replace_system_names(index_str):
+        # Estrai i token dalla stringa dell'indice
+        tokens = index_str.strip("()").replace("'", "").split(', ')
+        # Sostituisci i token con i valori associati nel dizionario
+        new_tokens = [sys_name.get(token, token) for token in tokens]
+        return '(' + ', '.join(new_tokens) + ')'
 
-# funziona in modo fantastico BISOGNA TESSTARLA
+    # Applica la funzione replace_system_names agli indici del livello dell'indice
+    df.index = df.index.map(replace_system_names)
+
+    return df
+
+
+# funziona in modo fantastico BISOGNA TESTARLA
 def from_dataframe_to_latex_table(df, col, title=""):
     # Verifica se il DataFrame è vuoto
     if df.empty:
