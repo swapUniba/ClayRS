@@ -5,6 +5,16 @@ import pandas as pd
 import openpyxl
 
 
+# funzione per la creazione di un indice di accesso al dataframe
+def set_access_index(sys1, sys2, metric, type_val='pvalue'):
+    # Costruisci la tupla per l'indice della riga
+    row_index = ('({}, {})'.format(sys1, sys2),)
+    # Costruisci la tupla per l'indice della colonna
+    column_index = (metric, type_val)
+    # Ritorna la tupla completa
+    return (row_index, column_index)
+
+
 # Questa funzione permette di sostituire gli indici del dataframe restituito da una delle
 # funzioni di test statistico in modo da cambiare gli indici con i nomi di un dizionario
 # che abbia per chiavi i nomi scelti dalla funzione dei test statistici e che sono nomi del
