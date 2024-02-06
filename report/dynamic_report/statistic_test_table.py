@@ -4,6 +4,7 @@
 import pandas as pd
 import openpyxl
 
+
 # Questa funzione permette di sostituire gli indici del dataframe restituito da una delle
 # funzioni di test statistico in modo da cambiare gli indici con i nomi di un dizionario
 # che abbia per chiavi i nomi scelti dalla funzione dei test statistici e che sono nomi del
@@ -99,3 +100,14 @@ if __name__ == "__main__":
 
     # Stampa il codice LaTeX risultante
     print(latex_table_code)
+
+    # dizionario usato per la sostituzione degli indici di riga del dataframe
+    rec_name = {
+        'system_1': 'CentroidVector',
+        'system_2': 'IndexQuery',
+        'system_3': 'Amar_single_source'
+    }
+
+    # stampa il dataframe modificato con la sostituzione degli indici
+    df = change_system_name(df, rec_name)
+    print(df)

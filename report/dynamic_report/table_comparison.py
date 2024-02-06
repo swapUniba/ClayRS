@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import yaml
 
+
 # ------------------------------ generate_table_for_comparsion() + support functions ------------------------------
 # Funzione per generare la tabella che mette a confronto le diverse istanziazioni dello stesso algoritmo per il
 # recsys utilizzato
@@ -316,6 +317,7 @@ def get_representation(data_dict):
 def sanitize_latex_string(input_str):
     return input_str.replace("_", "\\_").replace("&", "\\&").replace("#", "\\#")
 
+
 # funzioni usate come supporto nel momento in cui get_metrics restituisce una lista di tuple e non un dizionario
 """
 def extract_first_elements(tuple_list):
@@ -377,6 +379,7 @@ def find_highest_bests(dictionaries, keys, decimal_places):
 
     return result
 """
+
 
 # ----------------------- End use of support function for generate_table_for_comparison ------------------------------
 
@@ -547,6 +550,8 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
             latex_code += "\\vspace{10pt}\n"
 
     return latex_code
+
+
 # ------------------------------- end generate_latex_table + support functions --------------------------------
 
 
@@ -775,7 +780,7 @@ if __name__ == "__main__":
     # prova per la nuova funzione generate_table_for_comparison(), e delle funzioni di supporto
     #  best_higher_dict(), best_lower_dict(), get_metrics(), get_representation(), get_content(),
     # get_embedding(), sanitize_text()
-    """
+
     list_of_dicts = [
         {'algorithm': {
             'CentroidVector': {'item_field': {'plot': ['tfidf_sk']}, 'similarity': 'CosineSimilarity', 'threshold': 4,
@@ -815,9 +820,9 @@ if __name__ == "__main__":
     ]
 
     n_col = 7  # Numero totale di colonne desiderate (4 colonne fisse + 3 colonne dinamiche)
-    table_output = generate_table_for_comparison(list_of_dicts, n_col, set_title="Different setting evaluation")
+    table_output = generate_table_for_comparison(list_of_dicts, n_col, alg_type="CentroidVector", set_title="Different setting evaluation")
     print(table_output)
-    """
+
 
     # prova della funzione che estrae un dizionario con i migliori 2 valori best_higher_dict(list_of_dicts)
     # è un test sulla funzione di supporto usata da generate_table_for_comparison()
@@ -987,6 +992,7 @@ if __name__ == "__main__":
     # per creare i dizionari di cui necessitiamo per poi passarli alla funzione generate_latex_table,
     # questo codice rappresenta un sezione di test per le funzioni generate_latex_table(), find_highest_best(),
     # find_lowest_best() e delle funzioni definite per preparare i dizionari da passare alle funzioni testate.
+    """
     eva_yaml_paths = ["./../data/data_for_test_two/eva_report_amarSingleSource.yml",
                       "./../data/data_for_test_two/eva_report_centroidVector.yml",
                       "./../data/data_for_test_two/eva_report_classifierRecommender.yml",
@@ -1011,7 +1017,7 @@ if __name__ == "__main__":
 
     # get dictionary from the recsys ymal and extract a list of key with name of algorithm used
     dictyonary_list = from_yaml_list_to_dict_list(recsys_yaml_paths)
-    keys = get_algorithm_keys(dictyonary_list) # lista dei nomi degli algoritmi usati
+    keys = get_algorithm_keys(dictyonary_list)  # lista dei nomi degli algoritmi usati
 
     # show the dictonary extracted after processing them
     result_dictionary = nest_dictionaries(keys, my_dictio)
@@ -1021,6 +1027,7 @@ if __name__ == "__main__":
     # with the dictnory processed create the latex table
     latex_table = generate_latex_table(result_dictionary, max_columns_per_part=3)
     print(latex_table)
+    """
 
     # prova per get_algorithm_keys ovvero per recuperare una lista di chiavi da dei dizionari
     """
