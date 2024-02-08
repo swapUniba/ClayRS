@@ -5,6 +5,58 @@ import pandas as pd
 import openpyxl
 
 
+# funzione di supporto per la formattazione della tabella che mostra la rilevanza statistica
+# tra due sistemi messi a confronto
+def format_scientific_notation(value):
+    # Formatta l'esponente scientifico in modo più leggibile
+    formatted_value = "{:.2e}".format(value)
+    parts = formatted_value.split("e")
+    return f"{parts[0]} \\times 10^{{{int(parts[1])}}}"
+
+
+# Questa funzione preleva le informazioni inerenti ai sistemi messi a confronto e le stampa invertendo la disposizione
+# righe colonne e ottenendo una tabella con 2 colonne metrics e il nome dei sistemi messi a confronto
+def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, round_to=4):
+    # Verifica se l'indice passato è presente in df.index
+    if row_index not in df.index:
+        # Se l'indice non è presente, crea un nuovo indice scambiando le sottostringhe
+        parts = row_index.strip("()").split(",")
+        new_index = f"('{parts[1].strip()}', '{parts[0].strip()}')"
+
+        # Verifica nuovamente se il nuovo indice è presente in df.index
+        if new_index not in df.index:
+            return ""
+        else:
+            row_index = new_index
+
+    # Aggiungi \ prima di ogni _
+    formatted_row_index = row_index.replace("_", "\\_")
+
+    # Estrai le informazioni dalla riga corrispondente all'indice dato
+    row_data = df.loc[row_index]
+
+    # Costruisci la tabella LaTeX con header e titolo
+    latex_table = "\\begin{table}[h]\n"
+    latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
+    latex_table += "\\center\n"
+    latex_table += "\\begin{tabular}{ll}\n"
+    latex_table += "\\textbf{Metrics} & \\textbf{" + formatted_row_index + "} \\\\\n"
+    for col_name, value in row_data.items():
+        # Estrai i nomi completi delle colonne dai multi-indici
+        full_col_name = " - ".join(col_name)
+
+        # Formatta il valore
+        if scientific_notation:
+            formatted_value = format_scientific_notation(value)
+        else:
+            formatted_value = str(round(value, round_to))
+        latex_table += f"  {full_col_name} & {formatted_value} \\\\\n"
+    latex_table += "\\end{tabular}\n"
+    latex_table += "\\end{table}"
+
+    return latex_table
+
+
 # Questa funzione è di supporto, infatti è capace di modificare un dataframe prodotto da una delle due funzioni
 # che calcolano i test statistici e modifica il dataframe creandone uno nuovo, nel quale le colonne multi-indice
 # vengono eliminate in base a removal_idx optando per la rimozione delle colonne 'statistics' oppure di quelle 'pvalue'
@@ -167,3 +219,20 @@ if __name__ == "__main__":
     latex_table_pvalue = from_dataframe_to_latex_table(p_value_only_df, col=2, title="p-value results")
     print(latex_table_pvalue)
 
+    # Questa parte andrà a testare il funzionamento delle funzioni
+    # stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, round_to=4) e la sua funzione ausiliare
+    #  format_scientific_notation(value) musata per la formattazione dei dati apportati nella tabella latex
+    idx_1 = set_access_index('CentroidVector', 'IndexQuery', 'Precision - macro', type_val='pvalue')
+    print(f"\n\nl'indice di accesso alla riga che forniremo alla funzione: {idx_1[0][0]}")
+    latex_stats_rel_tab_for_idx_1 = stats_relevance_tab(df, idx_1[0][0], tab_title="CentroidVector and IndexQuery",
+                                                        scientific_notation=True, round_to=4)
+    print(f"\n\nEcco la tabella della rilevanza statistica estratta per l'indice {idx_1[0][0]}: \n"
+          f"{latex_stats_rel_tab_for_idx_1}")
+
+    idx_2 = set_access_index('IndexQuery', 'ClassifierRecommender', 'Precision - macro', type_val='pvalue')
+    print(f"\n\nl'indice di accesso alla riga che forniremo alla funzione: {idx_1[0][0]}")
+    latex_stats_rel_tab_for_idx_2 = stats_relevance_tab(p_value_only_df, idx_1[0][0],
+                                                        tab_title="IndexQuery and ClassifierRecommender",
+                                                        scientific_notation=True, round_to=4)
+    print(f"\n\nEcco la tabella della rilevanza statistica estratta per l'indice {idx_1[0][0]}: \n"
+          f"{latex_stats_rel_tab_for_idx_2}")
