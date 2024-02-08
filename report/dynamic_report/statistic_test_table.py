@@ -5,6 +5,22 @@ import pandas as pd
 import openpyxl
 
 
+# Questa funzione è di supporto, infatti è capace di modificare un dataframe prodotto da una delle due funzioni
+# che calcolano i test statistici e modifica il dataframe creandone uno nuovo, nel quale le colonne multi-indice
+# vengono eliminate in base a removal_idx optando per la rimozione delle colonne 'statistics' oppure di quelle 'pvalue'
+def remove_stats_from_df(dataf, removal_idx):
+    # Copia il DataFrame originale
+    new_dataf = dataf.copy()
+
+    # Filtra i livelli di colonna che soddisfano il criterio
+    filtered_columns = [col for col in dataf.columns if col[1] != removal_idx]
+
+    # Seleziona solo le colonne che non soddisfano il criterio
+    new_dataf = new_dataf.loc[:, filtered_columns]
+
+    return new_dataf
+
+
 # funzione per la creazione di un indice di accesso al dataframe
 def set_access_index(sys1, sys2, metric, type_val='pvalue'):
     # Costruisci la tupla per l'indice della riga
@@ -77,6 +93,7 @@ def from_dataframe_to_latex_table(df, col, title=""):
 
 # Esegui lo script
 if __name__ == "__main__":
+    """
     # Specifica il percorso del tuo file Excel
     file_excel = 'Ttest_.xlsx'
 
@@ -121,3 +138,32 @@ if __name__ == "__main__":
     # stampa il dataframe modificato con la sostituzione degli indici
     df = change_system_name(df, rec_name)
     print(df)
+    """
+
+    # Test on the function remove_stats_from_df(dataf, removal_idx)
+    # Specifica il percorso del tuo file Excel
+    file_excel = 'ttest_expand.xlsx'
+    # Carica il DataFrame da Excel, specificando la riga di intestazione e le colonne da unire
+    df = pd.read_excel(file_excel, header=[0, 1], index_col=0)
+
+    # dizionario usato per la sostituzione degli indici di riga del dataframe
+    rec_name = {
+        'system_1': 'Amar_single_source',
+        'system_2': 'CentroidVector',
+        'system_3': 'ClassifierRecommender',
+        'system_4': 'IndexQuery',
+        'system_5': 'LinearPredictor'
+    }
+
+    # stampa il dataframe modificato con la sostituzione degli indici
+    df = change_system_name(df, rec_name)
+    # print(df)
+
+    # apportiamo le modifiche sul dataframe per rimuovere le colonne che contengono le statistiche
+    p_value_only_df = remove_stats_from_df(df, 'statistic')
+    # print(p_value_only_df)
+
+    # Adesso chiamiamo la funzione di stampa per la tabella latex
+    latex_table_pvalue = from_dataframe_to_latex_table(p_value_only_df, col=2, title="p-value results")
+    print(latex_table_pvalue)
+
