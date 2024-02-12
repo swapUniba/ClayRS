@@ -4,7 +4,7 @@
 import pandas as pd
 import openpyxl
 
-from report.dynamic_report.support_reporting_lib import add_to_latex_file
+from report.dynamic_report.support_reporting_lib import add_to_latex_file, replace_in_latex_file
 
 
 # funzione di supporto per la formattazione della tabella che mostra la rilevanza statistica
@@ -242,3 +242,4 @@ if __name__ == "__main__":
     # test per aggiunta di testo al documento latex in particolare qui stiamo aggiungengo
     # la tabella latex generata al file desiderato
     add_to_latex_file("./documento_latex.tex", latex_stats_rel_tab_for_idx_2)
+    replace_in_latex_file("./documento_latex.tex", r"\PPX", latex_stats_rel_tab_for_idx_2)
