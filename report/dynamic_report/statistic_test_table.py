@@ -4,6 +4,8 @@
 import pandas as pd
 import openpyxl
 
+from report.dynamic_report.support_reporting_lib import add_to_latex_file
+
 
 # funzione di supporto per la formattazione della tabella che mostra la rilevanza statistica
 # tra due sistemi messi a confronto
@@ -236,3 +238,7 @@ if __name__ == "__main__":
                                                         scientific_notation=True, round_to=4)
     print(f"\n\nEcco la tabella della rilevanza statistica estratta per l'indice {idx_1[0][0]}: \n"
           f"{latex_stats_rel_tab_for_idx_2}")
+
+    # test per aggiunta di testo al documento latex in particolare qui stiamo aggiungengo
+    # la tabella latex generata al file desiderato
+    add_to_latex_file("./documento_latex.tex", latex_stats_rel_tab_for_idx_2)
