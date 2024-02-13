@@ -145,6 +145,42 @@ def from_dataframe_to_latex_table(df, col, title=""):
     return latex_str
 
 
+# Questa funzione è stat aggiunta per sostituire l'iniziale che ha un problema nel tagliare le tabelle nel caso
+# non entrino in un unica pagina, va testata ance in altri scenari prima di sostituirla definitivamente
+def from_dataframe_to_latex_table_second(df, col, title=""):
+    # Verifica se il DataFrame è vuoto
+    if df.empty:
+        return ""
+
+    # Assicurati che il numero di colonne sia minore o uguale a 3
+    col = min(col, 3)
+
+    # Estrai le colonne del primo livello del header
+    header_cols = df.columns.get_level_values(0).unique().tolist()
+
+    # Inizializza la stringa LaTeX vuota
+    latex_str = ""
+
+    # Itera sulle colonne richieste
+    for i in range(0, len(header_cols), col):
+        # Seleziona un sottoinsieme di colonne
+        selected_cols = header_cols[i:i + col]
+
+        # Filtra il DataFrame per le colonne selezionate
+        df_selected = df[selected_cols]
+
+        # Aggiungi un sottotitolo alle tabelle (basato sulle colonne selezionate)
+        subtitle = ', '.join(selected_cols)
+        table_title = f"{title} - {subtitle}"
+
+        # Aggiungi un'istruzione LaTeX per una nuova tabella indipendente con il titolo
+        latex_str += f"\\begin{{table}}[h]\n\\centering\n\\caption{{{table_title}}}\n"
+        latex_str += df_selected.to_latex()
+        latex_str += "\\end{table}\n\n"
+
+    return latex_str
+
+
 # Esegui lo script
 if __name__ == "__main__":
     """
@@ -211,14 +247,14 @@ if __name__ == "__main__":
 
     # stampa il dataframe modificato con la sostituzione degli indici
     df = change_system_name(df, rec_name)
-    # print(df)
+    print(df)
 
     # apportiamo le modifiche sul dataframe per rimuovere le colonne che contengono le statistiche
     p_value_only_df = remove_stats_from_df(df, 'statistic')
     # print(p_value_only_df)
 
     # Adesso chiamiamo la funzione di stampa per la tabella latex
-    latex_table_pvalue = from_dataframe_to_latex_table(p_value_only_df, col=2, title="p-value results")
+    latex_table_pvalue = from_dataframe_to_latex_table_second(p_value_only_df, col=2, title="p-value results")
     print(latex_table_pvalue)
 
     # Questa parte andrà a testare il funzionamento delle funzioni
@@ -241,5 +277,5 @@ if __name__ == "__main__":
 
     # test per aggiunta di testo al documento latex in particolare qui stiamo aggiungengo
     # la tabella latex generata al file desiderato
-    add_to_latex_file("./documento_latex.tex", latex_stats_rel_tab_for_idx_2)
-    replace_in_latex_file("./documento_latex.tex", r"\PPX", latex_stats_rel_tab_for_idx_2)
+    # add_to_latex_file("./documento_latex.tex", latex_stats_rel_tab_for_idx_2)
+    # replace_in_latex_file("./documento_latex.tex", r"\PPX", latex_stats_rel_tab_for_idx_2)
