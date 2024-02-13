@@ -2,6 +2,43 @@
 
 import os
 
+# TODO creare nuove funzionni modifiers in caso di necessita nella formatazione
+
+
+def format_latex(input_string):
+    special_chars = {
+        '\\': r'\textbackslash ',
+        '{': r'\{',
+        '}': r'\}',
+        '$': r'\$',
+        '&': r'\&',
+        '#': r'\#',
+        '_': r'\_',
+        '^': r'\^{}',
+        '~': r'\textasciitilde ',
+        '%': r'\%',
+    }
+
+    formatted_string = ''
+    for char in input_string:
+        if char in special_chars:
+            formatted_string += special_chars[char]
+        else:
+            formatted_string += char
+    return formatted_string
+
+
+def modifier_string(input_string, modifier_func=None):
+    if modifier_func:
+        return modifier_func(input_string)
+    else:
+        return input_string
+
+
+# Funzione make_latex_string che chiama la funzione modifier_string
+def make_latex_string(input_string, modifier_func=None):
+    return modifier_string(input_string, modifier_func)
+
 
 def replace_in_latex_file(latex_file_path, placeholder, substitution):
     try:
@@ -70,3 +107,9 @@ if __name__ == "__main__":
     placeholder = r"\PPX"
     substitution = r"\section{Nuova sezione}\nArriverò fino alla fine e vincerò!!"
     replace_in_latex_file(percorso_completo_file, placeholder, substitution)
+
+    # test sulla funzione che permette di formattare una stringa e prepararla per
+    # poi utilizzarla con le precedenti viste
+    stringa_da_modificare = "Arriveranno_giorni migliori_per_noi"
+    add_to_latex_file(percorso_completo_file,
+                      make_latex_string(stringa_da_modificare, format_latex))
