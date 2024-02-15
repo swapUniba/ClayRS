@@ -1,0 +1,1617 @@
+
+
+\BLOCK{if my_dict['source_file'] is defined}
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
+The content analyzer module will deal with raw source document or more in general data which could be
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
+\hfill\break
+\hfill\break
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
+
+
+
+% field: idx0 representation subsection
+\textbf{\lstinline[style=verbatim-text]| idx0 |} has been represented with the following techniques:
+% content representation on idx0
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'idx0' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['idx0'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ idx0 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on idx0
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'idx0' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['idx0'] and
+      my_dict['field_representations']['idx0']['preprocessing'] is defined and
+      my_dict['field_representations']['idx0']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['idx0']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| idx0 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on idx0 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'idx0' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['idx0'] and
+      my_dict['field_representations']['idx0']['postprocessing'] is defined and
+      my_dict['field_representations']['idx0']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| idx0 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['idx0']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| idx0 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ idx0 ___
+
+
+
+% field: plot0 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot0 |} has been represented with the following techniques:
+% content representation on plot0
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot0' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot0'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot0 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot0
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot0' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot0'] and
+      my_dict['field_representations']['plot0']['preprocessing'] is defined and
+      my_dict['field_representations']['plot0']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot0']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot0 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot0 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot0' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot0'] and
+      my_dict['field_representations']['plot0']['postprocessing'] is defined and
+      my_dict['field_representations']['plot0']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot0 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot0']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot0 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot0 ___
+
+
+
+% field: plot1 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot1 |} has been represented with the following techniques:
+% content representation on plot1
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot1' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot1'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot1 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot1
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot1' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot1'] and
+      my_dict['field_representations']['plot1']['preprocessing'] is defined and
+      my_dict['field_representations']['plot1']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot1']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot1 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot1 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot1' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot1'] and
+      my_dict['field_representations']['plot1']['postprocessing'] is defined and
+      my_dict['field_representations']['plot1']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot1 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot1']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot1 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot1 ___
+
+
+
+% field: plot10 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot10 |} has been represented with the following techniques:
+% content representation on plot10
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot10' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot10'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot10 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot10
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot10' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot10'] and
+      my_dict['field_representations']['plot10']['preprocessing'] is defined and
+      my_dict['field_representations']['plot10']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot10']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot10 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot10 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot10' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot10'] and
+      my_dict['field_representations']['plot10']['postprocessing'] is defined and
+      my_dict['field_representations']['plot10']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot10 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot10']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot10 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot10 ___
+
+
+
+% field: plot11 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot11 |} has been represented with the following techniques:
+% content representation on plot11
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot11' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot11'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot11 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot11
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot11' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot11'] and
+      my_dict['field_representations']['plot11']['preprocessing'] is defined and
+      my_dict['field_representations']['plot11']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot11']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot11 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot11 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot11' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot11'] and
+      my_dict['field_representations']['plot11']['postprocessing'] is defined and
+      my_dict['field_representations']['plot11']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot11 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot11']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot11 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot11 ___
+
+
+
+% field: plot2 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot2 |} has been represented with the following techniques:
+% content representation on plot2
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot2' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot2'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot2 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot2
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot2' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot2'] and
+      my_dict['field_representations']['plot2']['preprocessing'] is defined and
+      my_dict['field_representations']['plot2']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot2']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot2 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot2 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot2' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot2'] and
+      my_dict['field_representations']['plot2']['postprocessing'] is defined and
+      my_dict['field_representations']['plot2']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot2 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot2']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot2 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot2 ___
+
+
+
+% field: plot3 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot3 |} has been represented with the following techniques:
+% content representation on plot3
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot3' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot3'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot3 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot3
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot3' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot3'] and
+      my_dict['field_representations']['plot3']['preprocessing'] is defined and
+      my_dict['field_representations']['plot3']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot3']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot3 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot3 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot3' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot3'] and
+      my_dict['field_representations']['plot3']['postprocessing'] is defined and
+      my_dict['field_representations']['plot3']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot3 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot3']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot3 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot3 ___
+
+
+
+% field: plot4 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot4 |} has been represented with the following techniques:
+% content representation on plot4
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot4' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot4'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot4 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot4
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot4' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot4'] and
+      my_dict['field_representations']['plot4']['preprocessing'] is defined and
+      my_dict['field_representations']['plot4']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot4']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot4 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot4 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot4' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot4'] and
+      my_dict['field_representations']['plot4']['postprocessing'] is defined and
+      my_dict['field_representations']['plot4']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot4 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot4']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot4 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot4 ___
+
+
+
+% field: plot5 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot5 |} has been represented with the following techniques:
+% content representation on plot5
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot5' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot5'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot5 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot5
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot5' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot5'] and
+      my_dict['field_representations']['plot5']['preprocessing'] is defined and
+      my_dict['field_representations']['plot5']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot5']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot5 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot5 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot5' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot5'] and
+      my_dict['field_representations']['plot5']['postprocessing'] is defined and
+      my_dict['field_representations']['plot5']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot5 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot5']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot5 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot5 ___
+
+
+
+% field: plot6 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot6 |} has been represented with the following techniques:
+% content representation on plot6
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot6' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot6'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot6 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot6
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot6' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot6'] and
+      my_dict['field_representations']['plot6']['preprocessing'] is defined and
+      my_dict['field_representations']['plot6']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot6']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot6 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot6 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot6' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot6'] and
+      my_dict['field_representations']['plot6']['postprocessing'] is defined and
+      my_dict['field_representations']['plot6']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot6 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot6']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot6 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot6 ___
+
+
+
+% field: plot7 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot7 |} has been represented with the following techniques:
+% content representation on plot7
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot7' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot7'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot7 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot7
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot7' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot7'] and
+      my_dict['field_representations']['plot7']['preprocessing'] is defined and
+      my_dict['field_representations']['plot7']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot7']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot7 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot7 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot7' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot7'] and
+      my_dict['field_representations']['plot7']['postprocessing'] is defined and
+      my_dict['field_representations']['plot7']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot7 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot7']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot7 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot7 ___
+
+
+
+% field: plot8 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot8 |} has been represented with the following techniques:
+% content representation on plot8
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot8' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot8'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot8 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot8
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot8' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot8'] and
+      my_dict['field_representations']['plot8']['preprocessing'] is defined and
+      my_dict['field_representations']['plot8']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot8']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot8 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot8 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot8' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot8'] and
+      my_dict['field_representations']['plot8']['postprocessing'] is defined and
+      my_dict['field_representations']['plot8']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot8 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot8']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot8 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot8 ___
+
+
+
+% field: plot9 representation subsection
+\textbf{\lstinline[style=verbatim-text]| plot9 |} has been represented with the following techniques:
+% content representation on plot9
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot9' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['plot9'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ plot9 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on plot9
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot9' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['plot9'] and
+      my_dict['field_representations']['plot9']['preprocessing'] is defined and
+      my_dict['field_representations']['plot9']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot9']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| plot9 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on plot9 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'plot9' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['plot9'] and
+      my_dict['field_representations']['plot9']['postprocessing'] is defined and
+      my_dict['field_representations']['plot9']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| plot9 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['plot9']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| plot9 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ plot9 ___
+
+
+
+% field: video_path0 representation subsection
+\textbf{\lstinline[style=verbatim-text]| video_path0 |} has been represented with the following techniques:
+% content representation on video_path0
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path0' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['video_path0'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ video_path0 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on video_path0
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path0' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['video_path0'] and
+      my_dict['field_representations']['video_path0']['preprocessing'] is defined and
+      my_dict['field_representations']['video_path0']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path0']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| video_path0 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on video_path0 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path0' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path0'] and
+      my_dict['field_representations']['video_path0']['postprocessing'] is defined and
+      my_dict['field_representations']['video_path0']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path0 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path0']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path0 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ video_path0 ___
+
+
+
+% field: video_path1 representation subsection
+\textbf{\lstinline[style=verbatim-text]| video_path1 |} has been represented with the following techniques:
+% content representation on video_path1
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['video_path1'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ video_path1 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on video_path1
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['video_path1'] and
+      my_dict['field_representations']['video_path1']['preprocessing'] is defined and
+      my_dict['field_representations']['video_path1']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path1']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| video_path1 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on video_path1 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path1' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path1'] and
+      my_dict['field_representations']['video_path1']['postprocessing'] is defined and
+      my_dict['field_representations']['video_path1']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path1 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path1']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path1 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ video_path1 ___
+
+
+
+% field: video_path2 representation subsection
+\textbf{\lstinline[style=verbatim-text]| video_path2 |} has been represented with the following techniques:
+% content representation on video_path2
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['video_path2'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ video_path2 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on video_path2
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['video_path2'] and
+      my_dict['field_representations']['video_path2']['preprocessing'] is defined and
+      my_dict['field_representations']['video_path2']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path2']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| video_path2 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on video_path2 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path2' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path2'] and
+      my_dict['field_representations']['video_path2']['postprocessing'] is defined and
+      my_dict['field_representations']['video_path2']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path2 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path2']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path2 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ video_path2 ___
+
+
+
+% field: video_path3 representation subsection
+\textbf{\lstinline[style=verbatim-text]| video_path3 |} has been represented with the following techniques:
+% content representation on video_path3
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['video_path3'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ video_path3 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on video_path3
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['video_path3'] and
+      my_dict['field_representations']['video_path3']['preprocessing'] is defined and
+      my_dict['field_representations']['video_path3']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path3']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| video_path3 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on video_path3 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path3' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path3'] and
+      my_dict['field_representations']['video_path3']['postprocessing'] is defined and
+      my_dict['field_representations']['video_path3']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path3 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path3']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path3 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ video_path3 ___
+
+
+
+% field: video_path4 representation subsection
+\textbf{\lstinline[style=verbatim-text]| video_path4 |} has been represented with the following techniques:
+% content representation on video_path4
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations']}
+
+\BLOCK{ set valid_keys = [] }
+\begin{itemize}
+    \BLOCK{ for key, value in my_dict['field_representations']['video_path4'].items() }
+        \BLOCK{ if key != 'preprocessing' and key != 'postprocessing' }
+            \BLOCK{ set _ = valid_keys.append(key) }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+
+    \BLOCK{ for valid_key in valid_keys }
+        \item
+        \verb| \VAR{ valid_key } | used as content representation technique.
+    \BLOCK{ endfor }
+\end{itemize}
+
+% content_representation_field_ video_path4 ____
+\BLOCK{endif}
+
+
+
+% preprocessing on video_path4
+\BLOCK{ if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations'] and
+      'preprocessing' in my_dict['field_representations']['video_path4'] and
+      my_dict['field_representations']['video_path4']['preprocessing'] is defined and
+      my_dict['field_representations']['video_path4']['preprocessing'] is not none }
+    % dictionary 'preprocessing' not empty
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path4']['preprocessing'].items() }
+    \item
+     \verb| \VAR{ key } | used as preprocessing technique.
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No preprocessing techniques have been used to preprocess data \lstinline[style=verbatim-text]| video_path4 | has been represented with the following techniques:
+ during the experiment.
+\BLOCK{endif}
+% _preprocessing on video_path4 ____
+
+
+
+
+\BLOCK{if my_dict is defined and
+      my_dict['field_representations'] is defined and
+      'video_path4' in my_dict['field_representations'] and
+      'postprocessing' in my_dict['field_representations']['video_path4'] and
+      my_dict['field_representations']['video_path4']['postprocessing'] is defined and
+      my_dict['field_representations']['video_path4']['postprocessing'] is not none}
+    % dictionary 'preprocessing' not empty
+On th field \verb| video_path4 | have been applied the following postprocessing techniques:
+\begin{itemize}
+\BLOCK{ for key, value in my_dict['field_representations']['video_path4']['postprocessing'].items() }
+    \item
+     \verb| \VAR{ key } :|
+     \begin{itemize}
+      \BLOCK{ for k, v in value.items() }
+       \item
+            \verb| \VAR{ k }: |
+
+       \BLOCK{ if v is mapping }
+       \BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       \BLOCK{ endif }
+
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+% This block is rendered if no post processing technique has been applied
+No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| video_path4 | in this experiment.
+\BLOCK{endif}
+\hfill\break
+\hfill\break
+% postprocessing_on_ video_path4 ___
+
+
+\BLOCK{if my_dict['exogenous_representations'] is defined and
+        my_dict['exogenous_representations'] is not none}
+% exogenous techniques start
+In this experiment the data used have been represented with exogenous representation, in particular the
+following techniques have been used:
+\begin{itemize}
+\BLOCK{ for key, value in (my_dict['exogenous_representations'] | default({})).items() }
+    \item
+     \verb| \VAR{ key } | used as exogenous technique with following settings:
+     \begin{itemize}
+      \BLOCK{ for k, v in (value | default({})).items() }
+        \BLOCK{ if k not in ["mode", "prop_as_uri", "max_timeout"] }
+             \item
+             \verb| \VAR{ k }: \VAR{ v }|
+        \BLOCK{ endif }
+      \BLOCK{ endfor }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No exogenous techniques have been used in this experiment to represent the data used.
+\BLOCK{endif}
+% exogenous_techniques_end___
+
+
+
+
+\BLOCK{else}
+% In case of the content analyzer is not used
+For this experiment the module of the content analyzer has not been used.
+\hfill\break
+\hfill\break
+% <----------  closing the controll block for the content analyzer section ----------->
+\BLOCK{endif}
+

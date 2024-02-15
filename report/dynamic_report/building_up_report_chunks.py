@@ -53,9 +53,9 @@ CA_DICT = {
     'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex',
     'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex',
     'pre': './templates_chunks/templates_ca_mini_chunks/preprocess_field.tex',
-    'pre_min': './templates_chunks/templates_ca_mini_chunks/content_representation_field_minimised.tex',
+    'pre_min': './templates_chunks/templates_ca_mini_chunks/preprocess_field_minimised.tex',
     'post': './templates_chunks/templates_ca_mini_chunks/postprocessing_field.tex',
-    'post_min': './templates_chunks/templates_ca_mini_chunks/preprocess_field_minimised.tex',
+    'post_min': './templates_chunks/templates_ca_mini_chunks/postprocessing_field_minimised.tex',
     'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex',
     'repr_min': './templates_chunks/templates_ca_mini_chunks/content_representation_field_minimised.tex',
     'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex',
@@ -294,7 +294,48 @@ def build_relative_path(folder, file_name):
 
 
 def ca_processing_report_minimal(render_dict, working_path, file_path):
-    print()
+    # relative path complete
+    file_destination = build_relative_path(working_path, file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    # dealing with Content Analyzer
+    add_single_mini_template(CA_DICT, 'intro', file_destination,
+                             content_of_field, text_extract)
+
+    # add all the field that have been represented using the content analyzer and specify their
+    # preprocessing and postprocessing received.
+    if render_dict is not None:
+        if 'source_file' in render_dict:
+            # extraction of the field being analyzed
+            list_of_field = get_keys_at_level(render_dict, "field_representations")
+
+            print(list_of_field)
+
+            # dealing with all field that have been represented with content analyzer
+            for field in list_of_field:
+                # add the highlight field in the report
+                process_and_write_to_file(CA_DICT, 'repr_min',
+                                          field, content_of_field, text_extract,
+                                          file_destination)
+
+                process_and_write_to_file(CA_DICT, 'pre_min',
+                                          field, content_of_field, text_extract,
+                                          file_destination)
+
+                process_and_write_to_file(CA_DICT, 'post_min',
+                                          field, content_of_field, text_extract,
+                                          file_destination)
+
+    # adding reporting on exogenous techniques
+    add_single_mini_template(CA_DICT, 'exo_min', file_destination,
+                             content_of_field, text_extract)
+
+    # closing the content analyzer section
+    add_single_mini_template(CA_DICT, 'end',
+                             file_destination, content_of_field, text_extract)
 
 
 def ca_processing_report_verb(render_dict, working_path, file_path):
@@ -352,7 +393,7 @@ def make_content_analyzer_sec(render_dict, mode="minimise", working_path="workin
     file_path = os.path.join(working_path, file_name)
     print(file_path)
 
-    # ca_processing_report_minimal(render_dict, working_path, file_path)
+    ca_processing_report_minimal(render_dict, working_path, file_name)
     if mode != "minimise":
         # scelta della funzione in base alla verbosità del report che si vuole ottenere
         # a riguardo delle elaborazioni fatte dal content analyzer sui dati
@@ -444,7 +485,7 @@ if __name__ == "__main__":
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
 
-    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, mode="verbose")
+    route_path, file_to_render = make_content_analyzer_sec(dict_for_render)
     print(route_path)
     print(file_to_render)
     part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)

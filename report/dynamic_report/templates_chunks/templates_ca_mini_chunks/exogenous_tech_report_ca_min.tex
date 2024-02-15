@@ -16,10 +16,11 @@ following techniques have been used:
      \verb| \VAR{ key } | used as exogenous technique with following settings:
      \begin{itemize}
       \BLOCK{ for k, v in (value | default({})).items() }
-      \BLOCK{ if k not in ["mode", "prop_as_uri", "max_timeout"] }
-        \item
-        \verb| \VAR{ k }: \VAR{ v }|
-    \BLOCK{ endif }
+        \BLOCK{ if k not in ["mode", "prop_as_uri", "max_timeout"] }
+             \item
+             \verb| \VAR{ k }: \VAR{ v }|
+        \BLOCK{ endif }
+      \BLOCK{ endfor }
      \end{itemize}
 \BLOCK{ endfor }
 \end{itemize}
@@ -27,8 +28,7 @@ following techniques have been used:
 No exogenous techniques have been used in this experiment to represent the data used.
 \BLOCK{endif}
 % exogenous_techniques_end___
-\hfill\break
-\hfill\break
+
 
 ###
 
