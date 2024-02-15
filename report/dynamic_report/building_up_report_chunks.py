@@ -53,9 +53,13 @@ CA_DICT = {
     'exogenous_representations': './templates_chunks/templates_ca_mini_chunks/no_exogenous_tech.tex',
     'pst': './templates_chunks/templates_ca_mini_chunks/postprocessing_general.tex',
     'pre': './templates_chunks/templates_ca_mini_chunks/preprocess_field.tex',
+    'pre_min': './templates_chunks/templates_ca_mini_chunks/content_representation_field_minimised.tex',
     'post': './templates_chunks/templates_ca_mini_chunks/postprocessing_field.tex',
+    'post_min': './templates_chunks/templates_ca_mini_chunks/preprocess_field_minimised.tex',
     'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex',
-    'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex'
+    'repr_min': './templates_chunks/templates_ca_mini_chunks/content_representation_field_minimised.tex',
+    'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex',
+    'exo_min': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca_min.tex'
 }
 
 # dictionary to find path for the recsys module template

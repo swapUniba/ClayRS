@@ -1,0 +1,41 @@
+%! Author = DIEGO
+%! Date = 15/02/2024
+
+
+\usepackage{comment}
+
+###
+\BLOCK{if my_dict['exogenous_representations'] is defined and
+        my_dict['exogenous_representations'] is not none}
+% exogenous techniques start
+In this experiment the data used have been represented with exogenous representation, in particular the
+following techniques have been used:
+\begin{itemize}
+\BLOCK{ for key, value in (my_dict['exogenous_representations'] | default({})).items() }
+    \item
+     \verb| \VAR{ key } | used as exogenous technique with following settings:
+     \begin{itemize}
+      \BLOCK{ for k, v in (value | default({})).items() }
+      \BLOCK{ if k not in ["mode", "prop_as_uri", "max_timeout"] }
+        \item
+        \verb| \VAR{ k }: \VAR{ v }|
+    \BLOCK{ endif }
+     \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{else}
+No exogenous techniques have been used in this experiment to represent the data used.
+\BLOCK{endif}
+% exogenous_techniques_end___
+\hfill\break
+\hfill\break
+
+###
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+ent}
