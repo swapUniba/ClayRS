@@ -14,32 +14,17 @@
       my_dict['field_representations']['X']['postprocessing'] is not none}
     % dictionary 'preprocessing' not empty
 On th field \verb| X | have been applied the following postprocessing techniques:
-\begin{itemize}
 \BLOCK{ for key, value in my_dict['field_representations']['X']['postprocessing'].items() }
-    \item
-     \verb| \VAR{ key } :|
-     \begin{itemize}
       \BLOCK{ for k, v in value.items() }
-       \item
-            \verb| \VAR{ k }: |
-
-       \BLOCK{ if v is mapping }
-       \BLOCK{ else }
-            \begin{itemize}
-                \item no post processing techniques applied on \VAR{ k }
-            \end{itemize}
-       \BLOCK{ endif }
-
+            \verb| \VAR{ k } | ,
       \BLOCK{ endfor }
-     \end{itemize}
 \BLOCK{ endfor }
-\end{itemize}
 \BLOCK{else}
 % This block is rendered if no post processing technique has been applied
 No postprocessing techniques have been used on the data \lstinline[style=verbatim-text]| X | in this experiment.
 \BLOCK{endif}
 \hfill\break
-\hfill\break
+
 % postprocessing_on_ X ___
 
 ###
@@ -54,5 +39,10 @@ This mini template is not working by itself because there are latex command miss
 to compile the file and give as output a pdf file, in addition it has been added jinja
 statement in order to control the rendering of the latex file with the jinja library, for these
 reasons it needs to be used with the other mini chunks in conjunction.
+    BLOCK{ if v is mapping }
+       BLOCK{ else }
+            \begin{itemize}
+                \item no post processing techniques applied on \VAR{ k }
+            \end{itemize}
+       BLOCK{ endif }
 \end{comment}
-nt}
