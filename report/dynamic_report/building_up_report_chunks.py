@@ -59,7 +59,9 @@ CA_DICT = {
     'repr': './templates_chunks/templates_ca_mini_chunks/content_representation_field.tex',
     'repr_min': './templates_chunks/templates_ca_mini_chunks/content_representation_field_minimised.tex',
     'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex',
-    'exo_min': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca_min.tex'
+    'exo_min': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca_min.tex',
+    'dataset': './templates_chunks/templates_ca_mini_chunks/Daset_name_source.tex',
+    'stats': './templates_chunks/templates_ca_mini_chunks/Dataset_Stat.tex'
 }
 
 # dictionary to find path for the recsys module template
@@ -383,6 +385,30 @@ def ca_processing_report_verb(render_dict, working_path, file_path):
                              file_destination, content_of_field, text_extract)
 
 
+def data_statistic_report(render_dict, working_path, file_path):
+    # relative path complete
+    file_destination = build_relative_path(working_path, file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    data_name = 'tre'  # TODO capire come passare il nome del dataset
+    # dealing with subsection of dataset and its statistics
+    process_and_write_to_file(CA_DICT, 'dataset', data_name,
+                              content_of_field, text_extract,
+                              file_destination)
+
+    # add stats table
+    add_single_mini_template(CA_DICT, 'stats',
+                             file_destination, content_of_field,
+                             text_extract)
+
+
+def splitting_technique_report(render_dict, working_path, file_path):
+    print()
+
+
 def make_content_analyzer_sec(render_dict, mode="minimise", working_path="working_dir"):
     if mode not in ["minimise", "verbose"]:
         raise ValueError("Il parametro 'mode' può essere solo 'minimise' o 'verbose'.")
@@ -398,12 +424,13 @@ def make_content_analyzer_sec(render_dict, mode="minimise", working_path="workin
         # scelta della funzione in base alla verbosità del report che si vuole ottenere
         # a riguardo delle elaborazioni fatte dal content analyzer sui dati
         ca_processing_report_verb(render_dict, working_path, file_name)
+        # print()
 
     # procediamo con l'inserimento della tabella statistica sui dati
-    # data_statistc_report(render_dict, working_path, file_path)
+    data_statistic_report(render_dict, working_path, file_name)
 
     # aggiungiamo la sezione di spit del dataset
-    # splitting_technique_report(render_dict, working_path, file_path)
+    # splitting_technique_report(render_dict, working_path, file_name)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
