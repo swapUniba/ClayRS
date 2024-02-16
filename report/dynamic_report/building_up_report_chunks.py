@@ -385,7 +385,7 @@ def ca_processing_report_verb(render_dict, working_path, file_path):
                              file_destination, content_of_field, text_extract)
 
 
-def data_statistic_report(render_dict, working_path, file_path):
+def data_statistic_report(render_dict, name_of_dataset, working_path, file_path):
     # relative path complete
     file_destination = build_relative_path(working_path, file_path)
 
@@ -393,9 +393,8 @@ def data_statistic_report(render_dict, working_path, file_path):
     content_of_field = [""]
     text_extract = [""]
 
-    data_name = 'tre'  # TODO capire come passare il nome del dataset
     # dealing with subsection of dataset and its statistics
-    process_and_write_to_file(CA_DICT, 'dataset', data_name,
+    process_and_write_to_file(CA_DICT, 'dataset', name_of_dataset,
                               content_of_field, text_extract,
                               file_destination)
 
@@ -409,7 +408,7 @@ def splitting_technique_report(render_dict, working_path, file_path):
     print()
 
 
-def make_content_analyzer_sec(render_dict, mode="minimise", working_path="working_dir"):
+def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
     if mode not in ["minimise", "verbose"]:
         raise ValueError("Il parametro 'mode' può essere solo 'minimise' o 'verbose'.")
 
@@ -427,7 +426,7 @@ def make_content_analyzer_sec(render_dict, mode="minimise", working_path="workin
         # print()
 
     # procediamo con l'inserimento della tabella statistica sui dati
-    data_statistic_report(render_dict, working_path, file_name)
+    data_statistic_report(render_dict, name_of_dataset,working_path, file_name)
 
     # aggiungiamo la sezione di spit del dataset
     # splitting_technique_report(render_dict, working_path, file_name)
@@ -512,7 +511,7 @@ if __name__ == "__main__":
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
 
-    route_path, file_to_render = make_content_analyzer_sec(dict_for_render)
+    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
     print(route_path)
     print(file_to_render)
     part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)

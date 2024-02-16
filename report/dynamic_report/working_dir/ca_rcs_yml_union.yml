@@ -474,6 +474,9 @@ field_representations:
         - 171
 id_each_content:
 - movielens_id
+- actor_id
+- director_id
+- company_producer_id
 interactions:
   max_score: 4.0
   mean_score: 2.6666666666666665
