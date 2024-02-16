@@ -70,12 +70,16 @@ RS_DICT = {
     'general_rec': './templates_chunks/templates_rs/recsys_general.tex',
     'split': './templates_chunks/templates_rs/split_technique_on_data.tex',
     'starting_sec': './templates_chunks/templates_rs/starting_sec_recsys.tex',
-    'algo': './templates_chunks/templates_rs/algorithm_used_recsys.tex'
+    'starting_sec_flat': './templates_chunks/templates_rs/starting_sec_recsys_flat.tex',
+    'algo': './templates_chunks/templates_rs/algorithm_used_recsys.tex',
+    'algo_flat': './templates_chunks/templates_rs/algorithm_used_recsys_flat.tex'
 }
 
 # dictionary to find path for the evaluation module template
 EVA_DICT = {
     'intro': './templates_chunks/templates_eva_mini_chunks/intro_eva_all_metrics.tex',
+    'intro_min': './templates_chunks/templates_eva_mini_chunks/intro_eva_all_metrics_minimised.tex',
+    'intro_flat': './templates_chunks/templates_eva_mini_chunks/intro_eva_all_metrics_flat.tex',
     'end': './templates_chunks/templates_eva_mini_chunks/end_eva.tex',
     'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex',
     'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex'
@@ -447,19 +451,22 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     return working_path, file_name
 
 
-def make_recsys_sec(dict_render, insert_intro=True, working_path="working_dir"):
+def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="working_dir"):
     def create_file_name(base_name, descriptor):
         return f"{base_name}_{descriptor}.tex"
 
+    if mode not in ["flat", "verbose"]:
+        raise ValueError("Il parametro 'mode' può essere solo 'flat' o 'verbose'.")
+
     # estrazione del nome dell'algoritmo che usiamo
     algo_name = get_keys_at_level(dict_render, 'algorithm')
-    print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+    # print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
     file_name = create_file_name("recsys_report", algo_name[0])
     file_path = os.path.join(working_path, file_name)
-    print(file_path)
+    # print(file_path)
 
     # used to add mini template at the final template latex
     content_of_field = [""]
@@ -467,13 +474,63 @@ def make_recsys_sec(dict_render, insert_intro=True, working_path="working_dir"):
 
     if insert_intro:
         # adding intro of recsys section
-        add_single_mini_template(RS_DICT, 'starting_sec',
+        add_single_mini_template(RS_DICT, 'starting_sec_flat',
                                  file_path, content_of_field,
                                  text_extract)
 
-    process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
+    process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
                               content_of_field, text_extract,
                               file_path)
+
+    if mode != "flat":
+        if insert_intro:
+            # adding intro of recsys section
+            add_single_mini_template(RS_DICT, 'starting_sec',
+                                     file_path, content_of_field,
+                                     text_extract)
+
+        process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
+                                  content_of_field, text_extract,
+                                  file_path)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
+def make_eval_metric_sec(dict_render, mode="minimised", working_path="working_dir"):
+    if mode not in ["flat","minimised", "verbose"]:
+        raise ValueError("Il parametro 'mode' può essere solo 'flat' o 'verbose'.")
+
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "eval_metric_report_latex.tex"
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    if mode == "flat":
+        # solo elenco delle metriche usate
+        add_single_mini_template(EVA_DICT, 'intro_flat',
+                                 file_path, content_of_field,
+                                 text_extract)
+
+    if mode == "minimised":
+        # report metric minimizzato
+        add_single_mini_template(EVA_DICT, 'intro_min',
+                                 file_path, content_of_field,
+                                 text_extract)
+
+    if mode == "verbose":
+        add_single_mini_template(EVA_DICT, 'intro',
+                                 file_path, content_of_field,
+                                 text_extract)
+
+    add_single_mini_template(EVA_DICT, 'end',
+                             file_path, content_of_field,
+                             text_extract)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
@@ -501,11 +558,35 @@ def render_latex_template(template_name, search_path, my_dict):
         return text
 
     def truncate(text: str) -> str:
+        # Verifica se text non è nullo o None
+        if text is None or text == '':
+            return None  # o qualsiasi altro valore di default che desideri restituire
+
+        # Verifica se text è una stringa che può essere convertita in float
+        try:
+            number = float(text)
+        except (ValueError, TypeError):
+            # Se non può essere convertito in float, restituisci il valore originale
+            return str(text)
+
+        # Esegui il codice di troncamento se text è un numero
+        number = round(number, 5)
+        text = str(number)
+        return text
+    """
+    def safe_text(text: str) -> str:
+        special_chars = ['&', '%', '$', '_', '{', '}', '#']
+        for char in special_chars:
+            text = str(text)
+            text = text.replace(char, "\\" + char)
+        return text
+
+    def truncate(text: str) -> str:
         number = float(text)
         number = round(number, 5)
         text = str(number)
         return text
-
+    """
     # adding filter to the environment
     latex_jinja_env.filters["safe_text"] = safe_text
     latex_jinja_env.filters["truncate"] = truncate
@@ -552,6 +633,8 @@ if __name__ == "__main__":
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
 
+    # vado a creare un nuovo yml che userò per la renderizzazione della
+    #sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
                                            "working_dir",
                                            "ca_rcs_yml_union.yml")
@@ -559,11 +642,12 @@ if __name__ == "__main__":
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
 
-   # route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
-   # print(route_path)
-   # print(file_to_render)
-   # part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
-   # print(part_of_report)
+    # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
+    # route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
+    # print(route_path)
+    # print(file_to_render)
+    # part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
+    # print(part_of_report)
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
@@ -576,10 +660,12 @@ if __name__ == "__main__":
     render_list.append(rs_4_dict)
     render_list.append(rs_5_dict)
 
+    # GESTIONE DEL REPORT SEZIONE RECSYS E ALGORITMI USATI
+    """
     first_iteration = True  # Flag per tracciare se è la prima iterazione
 
     for render in render_list:
-        print(render)
+        # print(render)
         if first_iteration:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=True, working_path="working_dir")
             first_iteration = False  # Imposta il flag a False dopo la prima iterazione
@@ -588,6 +674,23 @@ if __name__ == "__main__":
 
         part_of_report = render_latex_template(file_to_render, route_path,  render)
         print(part_of_report)
+    """
+
+    # GESTIONE DEL REPORT SEZIONE METRICE DEL EVAL
+    # vado a creare un nuovo yml che userò per la renderizzazione della
+    # sezione del content analyzer
+    path_rendering_dict = merge_yaml_files([EVA_YML, RS_YML],
+                                           "working_dir",
+                                           "eva_rcs_yml_union.yml")
+
+    dict_for_render_metric = read_yaml_file(path_rendering_dict)
+
+    route_path, file_to_render = make_eval_metric_sec( dict_for_render_metric,
+                                                       mode="flat", working_path="working_dir")
+    # print(route_path)
+    # print(file_to_render)
+    part_of_report = render_latex_template(file_to_render, route_path,  dict_for_render_metric)
+    print(part_of_report)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template

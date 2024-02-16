@@ -1,0 +1,455 @@
+%! Author = DIEGO
+%! Date = 16/02/2024
+
+
+\usepackage{comment}
+\usepackage{hyperref}
+
+
+###
+
+\BLOCK{if my_dict['metrics'] is defined or my_dict['sys_results'] is defined}
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\BLOCK{if my_dict['metrics'] is defined}
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
+The metrics used are the followings:
+\hfill\break
+\hfill\break
+
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Precision'] is defined}
+% Precision report start
+\subsubsection{Precision}\label{subsubsec:precision}
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
+    \]
+
+% precision report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Recall'] is defined}
+% Recall report start
+\subsubsection{Recall}\label{subsubsec:recall}
+The Recall metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall_u = \frac{tp_u}{tp_u + fn_u}
+    \]
+
+% recall report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasure'] is defined}
+%FMeasure report start
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
+The FMeasure metric combines Precision and Recall into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+    \]
+
+% FMeasure report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PrecisionAtK'] is defined}
+% PRECISION @K REPORT start
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+    \]
+
+% precision@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RecallAtK'] is defined}
+% RECALL @K REPORT start
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
+The Recall@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+    \]
+
+% recall@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasureAtK'] is defined}
+% FMEASURE @K REPORT start
+\subsubsection{FMeasure@K}\label{subsubsec:f-meas-k}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+    \]
+
+% fmeasure@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RPrecision'] is defined}
+% R-PRECISION REPORT start
+\subsubsection{R-Precision}\label{subsubsec:r-prec}
+The R-Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+    \]
+
+% r-precision report end___
+\BLOCK{endif}
+% <----- classification metrics end ------->
+
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MSE'] is defined}
+% MSE REPORT start
+\subsubsection{MSE}\label{subsubsec:mse}
+The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+    \]
+
+% mse report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RMSE'] is defined}
+% RMSE REPORT start
+\subsubsection{RMSE}\label{subsubsec:rmse}
+The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+    \]
+\hfill\break
+
+% rmse report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAE'] is defined}
+% MAE REPORT start
+\subsubsection{MAE}\label{subsubsec:mae}
+The MAE abbreviation of Mean Absolute Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+    \]
+\hfill\break
+
+% mae report end___
+\BLOCK{endif}
+% <------ error metrics ended -------->
+
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCG'] is defined}
+% Normalized Discounted Cumulative Gain REPORT start
+\subsubsection{NDCG}\label{subsubsec:ndcg}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+\hfill\break
+\hfill\break
+    \[
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+    \]
+\hfill\break
+% ndcg report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCGAtK'] is defined}
+% NDCG@K REPORT start
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K metric is calculated for the \textbf{single user}
+by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
+first $k$ predictions.
+The K used for the experiment is \VAR{my_dict['metrics']['MRRAtK']['k']|safe_text}.
+\hfill\break
+
+% ndcg@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRR'] is defined}
+% MRR REPORT start
+\subsubsection{MRR}\label{subsubsec:mrr}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+    \]
+\hfill\break
+
+% mrr report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRRAtK'] is defined}
+% MRR@K REPORT start
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
+The MRR@K abbreviation of Mean Reciprocal Rank at K metric is a system-wide metric, so only its result will be returned
+and not those of every user.
+MRR@K is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+    \]
+\hfill\break
+
+% mrr@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAP'] is defined}
+% MAP REPORT start
+\subsubsection{MAP}\label{subsubsec:map}
+The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
+abbreviation of Average Precision for each user and then taking its mean.
+The AP is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+    \]
+\hfill\break
+
+% map report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAPAtK'] is defined}
+% MAP@K REPORT start
+\subsubsection{MAP@K}\label{subsubsec:map-k}
+The MAP@K metric abbreviation of Mean average Precision At K is a ranking metric computed by first calculating the
+AP@K abbreviation of Average Precision At K for each user and then taking its mean.
+The AP@K is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+    \]
+\hfill\break
+
+% map@k report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Correlation'] is defined}
+% CORRELATION REPORT start
+\subsubsection{Correlation}\label{subsubsec:corr}
+The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The current correlation methods implemented are:
+\begin{itemize}
+    \item `pearson`
+    \item `kendall`
+    \item `spearman`
+\end{itemize}
+\hfill\break
+\hfill\break
+Every correlation method is implemented by the pandas library, so refer to its
+\href{https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html}{documentation} for more information.
+\hfill\break
+\hfill\break
+The correlation metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        Corr_u = Corr(ranking_u, ideal_ranking_u)
+    \]
+\hfill\break
+
+% correlation report end___
+\BLOCK{endif}
+% <------- ranking metrics ended ------->
+
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['GiniIndex'] is defined}
+% Gini Index REPORT start
+\subsubsection{Gini Index}\label{subsubsec:gini}
+The Gini Index metric measures inequality in recommendation lists.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+    \]
+\hfill\break
+
+% gini index report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PredictionCoverage'] is defined}
+% PREDICTION COVERAGE REPORT start
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
+The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system wise metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+    \]
+\hfill\break
+
+% prediction coverage report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['CatalogCoverage'] is defined}
+% CATALOG COVERAGE REPORT start
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
+The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+It differs from the Prediction Coverage since it allows for different parameters to come into play.
+If no parameter is passed then it's a simple Prediction Coverage.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+    \]
+\hfill\break
+
+% catalog coverage report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+           my_dict['metrics']['DeltaGap'] is defined}
+% DELTA GAP REPORT start
+\subsubsection{Delta GAP}\label{subsubsec:dg}
+The Delta GAP abbreviation of Group Average popularity metric lets you compare the average popularity "requested" by
+one or multiple groups of users and the average popularity "obtained" with the recommendation given by the recsys.
+It's a system wise metric and results of every group will be returned.
+It is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+    \]
+\hfill\break
+
+% delta gap report end___
+\BLOCK{endif}
+% <------- fairness metrics end ------>
+
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['LongTailDistr'] is defined}
+% LONG TAIL DISTIBUTION REPORT start
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
+This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified.
+The plot can be generated both for the truth set or the predictions set based on the on parameter:
+\begin{itemize}
+    \item \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
+       the most rated ones.
+    \item \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
+        items.
+\end{itemize}
+
+\hfill\break
+For this experiment the Long Tail Distribution has been used with the following settings:
+\begin{itemize}
+    \item on: \VAR{my_dict['metrics']['LongTailDistr']['on']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['LongTailDistr']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['LongTailDistr']['overwrite']|safe_text}.
+\end{itemize}
+\hfill\break
+
+% LTD report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+% PopRatioProfileVsRecs REPORT start
+\subsubsection{Pop Ratio Profile Vs Recs}\label{subsubsec:popratio}
+This metric generates a plot where users are split into groups and, for every group, a boxplot comparing
+profile popularity ratio and recommendations popularity ratio is drawn.
+Users are split into groups based on the user groups parameter, which contains names of the groups as keys,
+and percentage of how many user must contain a group as values.
+For example:
+\begin{itemize}
+       \item user groups = \{'popular\_users': 0.3, 'medium\_popular\_users': 0.2, 'low\_popular\_users': 0.5\}
+\end{itemize}
+\hfill\break
+
+%PopRatioProfileVsRecs report end___
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+        my_dict['metrics']['PopRecsCorrelation'] is defined}
+% PopRecsCorrelation REPORT start
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
+This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
+recommended. \\
+For this experiment the PopRecsCorrelation has been used with the following settings:
+\begin{itemize}
+    \item mode: \VAR{my_dict['metrics']['PopRecsCorrelation']['mode']|safe_text}.
+    \item format: \VAR{my_dict['metrics']['PopRecsCorrelation']['format']|safe_text}.
+    \item overwrite: \VAR{my_dict['metrics']['PopRecsCorrelation']['overwrite']|safe_text}.
+\end{itemize}
+\hfill\break
+
+% PopRecsCorrelation report end___
+\BLOCK{endif}
+% <------- plot metric end ----------->
+
+% <---------------------- closing the only metric section ------------------------->
+\BLOCK{endif}
+
+###
+
+
+\begin{comment}
+Author = DIEGO MICCOLI
+Alias = Kozen88
+Organization = SWAP Research Group UniBa
+Date = 27-12-2023
+
+This mini template is not working by itself because there are latex command missing needed
+to compile the file and give as output a pdf file, in addition it has been added jinja
+statement in order to control the rendering of the latex file with the jinja library, for these
+reasons it needs to be used with the other mini chunks in conjunction.
+\end{comment}
