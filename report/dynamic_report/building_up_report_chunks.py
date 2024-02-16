@@ -67,7 +67,8 @@ CA_DICT = {
 # dictionary to find path for the recsys module template
 RS_DICT = {
     'recsys': './templates_chunks/templates_rs/recsys_template_complete_new.tex',
-    'general_rec': './templates_chunks/templates_rs/recsys_general.tex'
+    'general_rec': './templates_chunks/templates_rs/recsys_general.tex',
+    'split': './templates_chunks/templates_rs/split_technique_on_data.tex'
 }
 
 # dictionary to find path for the evaluation module template
@@ -405,7 +406,16 @@ def data_statistic_report(render_dict, name_of_dataset, working_path, file_path)
 
 
 def splitting_technique_report(render_dict, working_path, file_path):
-    print()
+    # relative path complete
+    file_destination = build_relative_path(working_path, file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    add_single_mini_template(RS_DICT, 'split',
+                             file_destination, content_of_field,
+                             text_extract)
 
 
 def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
@@ -429,7 +439,7 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     data_statistic_report(render_dict, name_of_dataset,working_path, file_name)
 
     # aggiungiamo la sezione di spit del dataset
-    # splitting_technique_report(render_dict, working_path, file_name)
+    splitting_technique_report(render_dict, working_path, file_name)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
