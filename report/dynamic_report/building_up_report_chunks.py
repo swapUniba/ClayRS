@@ -438,7 +438,7 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
         # print()
 
     # procediamo con l'inserimento della tabella statistica sui dati
-    data_statistic_report(render_dict, name_of_dataset,working_path, file_name)
+    data_statistic_report(render_dict, name_of_dataset, working_path, file_name)
 
     # aggiungiamo la sezione di spit del dataset
     splitting_technique_report(render_dict, working_path, file_name)
@@ -447,10 +447,17 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     return working_path, file_name
 
 
-def make_recsys_sec(dict_render_list, working_path="working_dir"):
+def make_recsys_sec(dict_render, insert_intro=True, working_path="working_dir"):
+    def create_file_name(base_name, descriptor):
+        return f"{base_name}_{descriptor}.tex"
+
+    # estrazione del nome dell'algoritmo che usiamo
+    algo_name = get_keys_at_level(dict_render, 'algorithm')
+    print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
-    file_name = "recsys_report_latex.tex"
+    file_name = create_file_name("recsys_report", algo_name[0])
     file_path = os.path.join(working_path, file_name)
     print(file_path)
 
@@ -458,18 +465,15 @@ def make_recsys_sec(dict_render_list, working_path="working_dir"):
     content_of_field = [""]
     text_extract = [""]
 
-    # adding intro of recsys section
-    add_single_mini_template(RS_DICT, 'starting_sec',
-                             file_path, content_of_field,
-                             text_extract)
+    if insert_intro:
+        # adding intro of recsys section
+        add_single_mini_template(RS_DICT, 'starting_sec',
+                                 file_path, content_of_field,
+                                 text_extract)
 
-    for render in dict_render_list:
-        algo_name = get_keys_at_level(render, 'algorithm')
-        print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
-
-        process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
-                                  content_of_field, text_extract,
-                                  file_path)
+    process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
+                              content_of_field, text_extract,
+                              file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
@@ -549,17 +553,17 @@ if __name__ == "__main__":
     eva_dict = read_yaml_file(EVA_YML)
 
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
-                                       "working_dir",
-                                       "ca_rcs_yml_union.yml")
+                                           "working_dir",
+                                           "ca_rcs_yml_union.yml")
 
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
 
-    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
-    print(route_path)
-    print(file_to_render)
-    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
-    print(part_of_report)
+   # route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
+   # print(route_path)
+   # print(file_to_render)
+   # part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
+   # print(part_of_report)
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
@@ -572,10 +576,18 @@ if __name__ == "__main__":
     render_list.append(rs_4_dict)
     render_list.append(rs_5_dict)
 
-    route_path, file_to_render = make_recsys_sec(render_list, working_path="working_dir")
+    first_iteration = True  # Flag per tracciare se è la prima iterazione
 
-    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
-    print(part_of_report)
+    for render in render_list:
+        print(render)
+        if first_iteration:
+            route_path, file_to_render = make_recsys_sec(render, insert_intro=True, working_path="working_dir")
+            first_iteration = False  # Imposta il flag a False dopo la prima iterazione
+        else:
+            route_path, file_to_render = make_recsys_sec(render, insert_intro=False, working_path="working_dir")
+
+        part_of_report = render_latex_template(file_to_render, route_path,  render)
+        print(part_of_report)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
