@@ -68,7 +68,9 @@ CA_DICT = {
 RS_DICT = {
     'recsys': './templates_chunks/templates_rs/recsys_template_complete_new.tex',
     'general_rec': './templates_chunks/templates_rs/recsys_general.tex',
-    'split': './templates_chunks/templates_rs/split_technique_on_data.tex'
+    'split': './templates_chunks/templates_rs/split_technique_on_data.tex',
+    'starting_sec': './templates_chunks/templates_rs/starting_sec_recsys.tex',
+    'algo': './templates_chunks/templates_rs/algorithm_used_recsys.tex'
 }
 
 # dictionary to find path for the evaluation module template
@@ -445,6 +447,34 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     return working_path, file_name
 
 
+def make_recsys_sec(dict_render_list, working_path="working_dir"):
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "recsys_report_latex.tex"
+    file_path = os.path.join(working_path, file_name)
+    print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    # adding intro of recsys section
+    add_single_mini_template(RS_DICT, 'starting_sec',
+                             file_path, content_of_field,
+                             text_extract)
+
+    for render in dict_render_list:
+        algo_name = get_keys_at_level(render, 'algorithm')
+        print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+
+        process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
+                                  content_of_field, text_extract,
+                                  file_path)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
 def render_latex_template(template_name, search_path, my_dict):
     # setting environment based on latex needs
     latex_jinja_env = jinja2.Environment(
@@ -508,6 +538,10 @@ if __name__ == "__main__":
     CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
     EVA_YML = "../data/data_to_test/eva_report_centroidVector.yml"
     RS_YML = "../data/data_to_test/rs_report_centroidVector.yml"
+    RS_YML2 = "../data/data_to_test/rs_report_linearPredictor.yml"
+    RS_YML3 = "../data/data_to_test/rs_report_indexQuery.yml"
+    RS_YML4 = "../data/data_to_test/rs_report_classifierRecommender.yml"
+    RS_YML5 = "../data/data_to_test/rs_report_amarDoubleSource.yml"
 
     # used to load the dictonary related to each yaml file
     ca_dict = read_yaml_file(CA_YML)
@@ -524,6 +558,22 @@ if __name__ == "__main__":
     route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
     print(route_path)
     print(file_to_render)
+    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
+    print(part_of_report)
+
+    # preparing list of dict with the information on the recsys used
+    render_list = [rs_dict]
+    rs_2_dict = read_yaml_file(RS_YML2)
+    rs_3_dict = read_yaml_file(RS_YML3)
+    rs_4_dict = read_yaml_file(RS_YML4)
+    rs_5_dict = read_yaml_file(RS_YML5)
+    render_list.append(rs_2_dict)
+    render_list.append(rs_3_dict)
+    render_list.append(rs_4_dict)
+    render_list.append(rs_5_dict)
+
+    route_path, file_to_render = make_recsys_sec(render_list, working_path="working_dir")
+
     part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
     print(part_of_report)
 
