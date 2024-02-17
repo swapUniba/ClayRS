@@ -1,0 +1,25 @@
+
+
+\BLOCK{if my_dict['sys_results'] is defined}
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD LinearPredictor -------------------------------------
+\subsection{Results for LinearPredictor}\label{subsec:LinearPredictor}
+In this section we show the mean results with \textbf{ LinearPredictor }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_LinearPredictor}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        \BLOCK{for key, value in my_dict['sys_results']['sys - mean'].items()}
+        \VAR{key} & \VAR{value|truncate} \\ \hline
+        \BLOCK{endfor}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_LinearPredictor}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with LinearPredictor ___
+\BLOCK{endif}
+

@@ -82,6 +82,7 @@ EVA_DICT = {
     'intro_flat': './templates_chunks/templates_eva_mini_chunks/intro_eva_all_metrics_flat.tex',
     'end': './templates_chunks/templates_eva_mini_chunks/end_eva.tex',
     'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex',
+    'sys - mean': './templates_chunks/templates_eva_mini_chunks/sys_mean_result.tex',
     'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex'
 }
 
@@ -498,7 +499,7 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
 
 
 def make_eval_metric_sec(dict_render, mode="minimised", working_path="working_dir"):
-    if mode not in ["flat","minimised", "verbose"]:
+    if mode not in ["flat", "minimised", "verbose"]:
         raise ValueError("Il parametro 'mode' può essere solo 'flat' o 'verbose'.")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
@@ -531,6 +532,32 @@ def make_eval_metric_sec(dict_render, mode="minimised", working_path="working_di
     add_single_mini_template(EVA_DICT, 'end',
                              file_path, content_of_field,
                              text_extract)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
+def make_eval_result_sec(dict_render, working_path="working_dir"):
+    def create_file_name(base_name, descriptor):
+        return f"{base_name}_{descriptor}.tex"
+
+    # estrazione del nome dell'algoritmo che usiamo
+    algo_name = get_keys_at_level(dict_render, 'algorithm')
+    # print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = create_file_name("mean_res", algo_name[0])
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    process_and_write_to_file(EVA_DICT, 'sys - mean', algo_name[0],
+                              content_of_field, text_extract,
+                              file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
@@ -573,6 +600,7 @@ def render_latex_template(template_name, search_path, my_dict):
         number = round(number, 5)
         text = str(number)
         return text
+
     """
     def safe_text(text: str) -> str:
         special_chars = ['&', '%', '$', '_', '{', '}', '#']
@@ -622,6 +650,10 @@ if __name__ == "__main__":
     # test with yml of centroid vector
     CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
     EVA_YML = "../data/data_to_test/eva_report_centroidVector.yml"
+    EVA_YML2 = "../data/data_to_test/eva_report_linearPredictor.yml"
+    EVA_YML3 = "../data/data_to_test/eva_report_indexQuery.yml"
+    EVA_YML4 = "../data/data_to_test/eva_report_classifierRecommender.yml"
+    EVA_YML5 = "../data/data_to_test/eva_report_armarDoubleSource.yml"
     RS_YML = "../data/data_to_test/rs_report_centroidVector.yml"
     RS_YML2 = "../data/data_to_test/rs_report_linearPredictor.yml"
     RS_YML3 = "../data/data_to_test/rs_report_indexQuery.yml"
@@ -634,7 +666,7 @@ if __name__ == "__main__":
     eva_dict = read_yaml_file(EVA_YML)
 
     # vado a creare un nuovo yml che userò per la renderizzazione della
-    #sezione del content analyzer
+    # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
                                            "working_dir",
                                            "ca_rcs_yml_union.yml")
@@ -677,6 +709,7 @@ if __name__ == "__main__":
     """
 
     # GESTIONE DEL REPORT SEZIONE METRICE DEL EVAL
+    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([EVA_YML, RS_YML],
@@ -685,12 +718,46 @@ if __name__ == "__main__":
 
     dict_for_render_metric = read_yaml_file(path_rendering_dict)
 
-    route_path, file_to_render = make_eval_metric_sec( dict_for_render_metric,
-                                                       mode="flat", working_path="working_dir")
+    route_path, file_to_render = make_eval_metric_sec(dict_for_render_metric,
+                                                      mode="flat", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
-    part_of_report = render_latex_template(file_to_render, route_path,  dict_for_render_metric)
+    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
     print(part_of_report)
+    """
+
+    # GESTIONE DEL REPORT SEZIONE RISULTATI OTTENUTI PER OGNI ALGORITMO
+    centroidV_eva_res_render = read_yaml_file(merge_yaml_files([EVA_YML, RS_YML],
+                                                               "working_dir",
+                                                               "eva_rcs_CentroidVector.yml"))
+
+    linearP_eva_rec_render = read_yaml_file(merge_yaml_files([EVA_YML2, RS_YML2],
+                                                             "working_dir",
+                                                             "eva_rcs_LinearPredictor.yml"))
+
+    indexQ_eva_rec_render = read_yaml_file(merge_yaml_files([EVA_YML3, RS_YML3],
+                                                            "working_dir",
+                                                            "eva_rcs_QueryIndex.yml"))
+
+    clsR_eva_rec_render = read_yaml_file(merge_yaml_files([EVA_YML4, RS_YML4],
+                                                          "working_dir",
+                                                          "eva_rcs_ClassifierRecommender.yml"))
+
+    amarDS_eva_rec_render = read_yaml_file(merge_yaml_files([EVA_YML5, RS_YML5],
+                                                            "working_dir",
+                                                            "eva_rcs_amarDB.yml"))
+
+    list_render_dict_for_sys_mean = []
+    list_render_dict_for_sys_mean.append(centroidV_eva_res_render)
+    list_render_dict_for_sys_mean.append(linearP_eva_rec_render)
+    list_render_dict_for_sys_mean.append(indexQ_eva_rec_render)
+    list_render_dict_for_sys_mean.append(clsR_eva_rec_render)
+    list_render_dict_for_sys_mean.append(amarDS_eva_rec_render)
+
+    for sys_render_dict in list_render_dict_for_sys_mean:
+        route_path, file_to_render = make_eval_result_sec(sys_render_dict, working_path="working_dir")
+        part_of_report = render_latex_template(file_to_render, route_path,sys_render_dict)
+        print(part_of_report)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template

@@ -1,0 +1,25 @@
+
+
+\BLOCK{if my_dict['sys_results'] is defined}
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ClassifierRecommender -------------------------------------
+\subsection{Results for ClassifierRecommender}\label{subsec:ClassifierRecommender}
+In this section we show the mean results with \textbf{ ClassifierRecommender }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_ClassifierRecommender}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+        \BLOCK{for key, value in my_dict['sys_results']['sys - mean'].items()}
+        \VAR{key} & \VAR{value|truncate} \\ \hline
+        \BLOCK{endfor}
+     \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_ClassifierRecommender}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with ClassifierRecommender ___
+\BLOCK{endif}
+

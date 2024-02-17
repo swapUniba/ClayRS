@@ -1,0 +1,187 @@
+interactions:
+  max_score: 4.0
+  mean_score: 2.6666666666666665
+  min_score: 1.0
+  n_items: 6
+  n_users: 2
+  sparsity: 0.5
+  total_interactions: 6
+metrics:
+  CatalogCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+    k: null
+    top_n: null
+  Correlation:
+    method: pearson
+    top_n: null
+  FMeasure:
+    beta: 1
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+  FMeasureAtK:
+    beta: 1
+    k: 5
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: micro
+  GiniIndex:
+    top_n: null
+  LongTailDistr:
+    file_name: long_tail_distr
+    format: png
+    'on': truth
+    out_dir: .
+    overwrite: false
+  MAE: {}
+  MAP:
+    relevant_threshold: null
+  MRR:
+    relevant_threshold: null
+  MRRAtK:
+    relevant_threshold: null
+  MSE: {}
+  NDCG: {}
+  NDCGAtK:
+    k: 5
+  PopRecsCorrelation:
+    file_name: pop_recs_correlation
+    format: png
+    mode: both
+    out_dir: .
+    overwrite: false
+  Precision:
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+  PrecisionAtK:
+    k: 5
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+  PredictionCoverage:
+    catalog:
+    - '11'
+    - '189'
+    - '33'
+    - '288'
+    - '61'
+    - '208'
+  RMSE: {}
+  RPrecision:
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+  Recall:
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+  RecallAtK:
+    k: 5
+    precision: <class 'numpy.float64'>
+    relevant_threshold: null
+    sys_average: macro
+n_split: 2
+partitioning:
+  KFoldPartitioning:
+    n_splits: 2
+    random_state: null
+    shuffle: true
+    skip_user_error: true
+recsys:
+  ContentBasedRS:
+    algorithm:
+      AmarDoubleSource:
+        additional_dl_parameters: {}
+        additional_opt_parameters:
+          batch_size: 512
+        batch_size: 512
+        device: cuda:0
+        embedding_combiner:
+          Centroid: {}
+        epochs: 5
+        item_fields:
+        - plot:
+          - tfidf_sk
+        - plot:
+          - tfidf_sk
+        network: <class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkMerge'>
+        optimizer_class: <class 'torch.optim.adam.Adam'>
+        seed: null
+        threshold: 4
+        train_loss: <function binary_cross_entropy at 0x00000234EC9A3760>
+        user_fields:
+        - {}
+        - {}
+    methodology:
+      TestRatingsMethodology:
+        only_greater_eq: null
+    mode: rank
+    n_recs: '10'
+sys_results:
+  sys - fold1:
+    CatalogCoverage (PredictionCov): 66.67
+    F1 - macro: 0.8333333333333333
+    F1@5 - micro: 0.8571428571428571
+    Gini: 0.0
+    MAE: 2.3220587596297264
+    MAP: 1.0
+    MRR: 1.0
+    MRR@5: 1.0
+    MSE: 7.0741956597968105
+    NDCG: 1.0
+    NDCG@5: 1.0
+    Precision - macro: 0.75
+    Precision@5 - macro: 0.75
+    PredictionCoverage: 66.67
+    R-Precision - macro: 1.0
+    RMSE: 2.3748379660187444
+    Recall - macro: 1.0
+    Recall@5 - macro: 1.0
+    pearson: 1.0
+  sys - fold2:
+    CatalogCoverage (PredictionCov): 33.33
+    F1 - macro: 1.0
+    F1@5 - micro: 1.0
+    Gini: 0.0
+    MAE: 2.0064101964235306
+    MAP: 1.0
+    MRR: 1.0
+    MRR@5: 1.0
+    MSE: 4.277370052902711
+    NDCG: 1.0
+    NDCG@5: 1.0
+    Precision - macro: 1.0
+    Precision@5 - macro: 1.0
+    PredictionCoverage: 33.33
+    R-Precision - macro: 1.0
+    RMSE: 2.0064101964235306
+    Recall - macro: 1.0
+    Recall@5 - macro: 1.0
+    pearson: .nan
+  sys - mean:
+    CatalogCoverage (PredictionCov): 50.0
+    F1 - macro: 0.9166666666666666
+    F1@5 - micro: 0.9285714285714286
+    Gini: 0.0
+    MAE: 2.1642344780266285
+    MAP: 1.0
+    MRR: 1.0
+    MRR@5: 1.0
+    MSE: 5.675782856349761
+    NDCG: 1.0
+    NDCG@5: 1.0
+    Precision - macro: 0.875
+    Precision@5 - macro: 0.875
+    PredictionCoverage: 50.0
+    R-Precision - macro: 1.0
+    RMSE: 2.1906240812211375
+    Recall - macro: 1.0
+    Recall@5 - macro: 1.0
+    pearson: 1.0
