@@ -95,7 +95,6 @@ sys_results:
     MAP: 1.0
     CatalogCoverage (PredictionCov): 66.67
     PredictionCoverage: 66.67
-    pearson: 1.0
     Precision@5 - macro: 0.75
     Recall@5 - macro: 1.0
     F1@5 - micro: 0.8571428571428571
@@ -115,7 +114,6 @@ sys_results:
     MAP: 1.0
     CatalogCoverage (PredictionCov): 33.33
     PredictionCoverage: 33.33
-    pearson: .nan
     Precision@5 - macro: 1.0
     Recall@5 - macro: 1.0
     F1@5 - micro: 1.0
@@ -135,7 +133,6 @@ sys_results:
     MAP: 1.0
     CatalogCoverage (PredictionCov): 50.0
     PredictionCoverage: 50.0
-    pearson: 1.0
     Precision@5 - macro: 0.875
     Recall@5 - macro: 1.0
     F1@5 - micro: 0.9285714285714286

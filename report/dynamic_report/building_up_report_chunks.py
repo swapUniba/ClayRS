@@ -9,6 +9,7 @@ import yaml
 import jinja2
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
+import table_comparison as tbl_comp
 
 # dictionary to find the path for mini template chunks of content analyzer
 # the key are the key found in the yaml file for content analyzer and the
@@ -563,6 +564,72 @@ def make_eval_result_sec(dict_render, working_path="working_dir"):
     return working_path, file_name
 
 
+def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_paths, data_frame_ref):
+    # set list of dictionary from eva yaml report and make key change
+    dictionary_res_sys = tbl_comp.from_yaml_list_to_dict_list(eva_yaml_paths)
+    # print(dictionary_res_sys)
+    dict_sys_mean = []
+    for e in dictionary_res_sys:
+        tmp = tbl_comp.extract_subdictionary(e, "sys - mean")
+        dict_sys_mean.append(tmp)
+
+    # clean key unused from dictionary list
+    my_dictio = tbl_comp.remove_key_from_nested_dicts(dict_sys_mean, "CatalogCoverage (PredictionCov)")
+    """
+    for i in dict_sys_mean:
+        print(i)
+    print("\n")
+    """
+
+    # get dictionary from the recsys ymal and extract a list of key with name of algorithm used
+    dictionarylist = tbl_comp.from_yaml_list_to_dict_list(recsys_yaml_paths)
+    """
+    for r in dictionarylist:
+        print(i)
+    """
+
+    keys = tbl_comp.get_algorithm_keys(dictionarylist)  # lista dei nomi degli algoritmi usati
+    print(f"\nLa LISTA CONTENENTE I NOMI DEGLI ALGORITMI ESTRATTI DAI YML FILE\n {keys} \n\n")
+
+    # show the dictonary extracted after processing them
+    result_dictionary = tbl_comp.nest_dictionaries(keys, my_dictio)
+    print("I DIZIONARI USATI PER CREARE LA LISTA DA DARE IN INPUT PER LA CREAZIONE DELLA TABELLA:")
+    for r in result_dictionary:
+        print(r)
+
+    # andiamo a caricare il dataframe che sarà usato per il confronto dei p-value
+    # partiamo con la creazione del dizionario di mapping per i nomi dei sistemi
+    system_map = tbl_comp.list_to_dict_system_map(keys)
+    print(f"\n\nIL DIZIONARIO USATO PER IL MAPPING DEI SISTEMI \n SYSTEM MAP: {system_map} \n\n")
+
+    # effettuiamo le modifiche degli indici di accesso per riga al dataframe caricato p_value_ref_df
+    p_value_ref_df = tbl_comp.stt.change_system_name(data_frame_ref, system_map)
+    print(f"\n\nDATAFRAME CON INDICI DI RIGA MODIFICATI\n {p_value_ref_df}")
+
+    # generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
+    #                                  decimal_place=3, column_width=3.0,
+    #                                  max_columns_per_part=5, caption_for_table="Comparison between algorithms")
+    # ora in base alla funzione che stiamo testando di cui abbiamo riportato sopra la signature andiammo a visualizzare
+    # e comprenderre chi sono i parametri che gli andremo a passare prima di effettuare la chiamata
+    print("ELENCO E VISULIZZAZIONE DEI PARAMETRI CHE PASSEREMO A generate_latex_table_pvalued:")
+    print(f"\n1. algorithms ovvero la lista di dizionari creata a partire da i file yml sarà:\n"
+          f"result_dictionary ovvero:\n {result_dictionary} \n")
+    print(f"\n2. stats_rel sarà il dataframe caricato e modificato opportunamente:\n"
+          f"p_value_ref_df:\n {p_value_ref_df} \n")
+    reference_alg = 'CentroidVector'
+    print(f"\n3. comparison sarà uno tra i 5 algoritmi presenti ed utilizzati in particolare:\n"
+          f"reference_alg è {reference_alg} \n")
+    pv_ref = 1.0
+    print(f"\n4. treshold_pvalue=0.5 di default in questo caso settato con:\n"
+          f"pv_ref = {pv_ref} \n")
+    print(f"\n5. i restanti paremetri saranno usati di default o cambiati all'interno della chiamata.\n\n")
+
+    # with the dictnory processed create the latex table
+    latex_table = tbl_comp.generate_latex_table_pvalued(result_dictionary, p_value_ref_df, reference_alg,
+                                                        pv_ref, max_columns_per_part=3)
+    return latex_table
+
+
 def render_latex_template(template_name, search_path, my_dict):
     # setting environment based on latex needs
     latex_jinja_env = jinja2.Environment(
@@ -665,6 +732,8 @@ if __name__ == "__main__":
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
 
+    # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
+    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
@@ -673,13 +742,14 @@ if __name__ == "__main__":
 
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
-
-    # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
-    # route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
+    
+    # chiamata alle funzioni che andranno ad aggiungere il report sul content analyzer
+    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
     # print(route_path)
     # print(file_to_render)
-    # part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
+    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
     # print(part_of_report)
+    """
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
@@ -727,6 +797,7 @@ if __name__ == "__main__":
     """
 
     # GESTIONE DEL REPORT SEZIONE RISULTATI OTTENUTI PER OGNI ALGORITMO
+    """
     centroidV_eva_res_render = read_yaml_file(merge_yaml_files([EVA_YML, RS_YML],
                                                                "working_dir",
                                                                "eva_rcs_CentroidVector.yml"))
@@ -756,8 +827,32 @@ if __name__ == "__main__":
 
     for sys_render_dict in list_render_dict_for_sys_mean:
         route_path, file_to_render = make_eval_result_sec(sys_render_dict, working_path="working_dir")
-        part_of_report = render_latex_template(file_to_render, route_path,sys_render_dict)
+        part_of_report = render_latex_template(file_to_render, route_path, sys_render_dict)
         print(part_of_report)
+    """
+
+    # GESTIONE DELLA TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
+    eva_yaml_paths_list = ["../data/data_for_test_two/eva_report_centroidVector.yml",
+                           "../data/data_for_test_two/eva_report_linearPredictor.yml",
+                           "../data/data_for_test_two/eva_report_indexQuery.yml",
+                           "../data/data_for_test_two/eva_report_classifierRecommender.yml",
+                           "../data/data_to_test/eva_report_armarDoubleSource.yml"]
+
+    recsys_yaml_paths_list = ["../data/data_for_test_two/rs_report_centroidVector.yml",
+                              "../data/data_for_test_two/rs_report_linearPredictor.yml",
+                              "../data/data_for_test_two/rs_report_indexQuery.yml",
+                              "../data/data_for_test_two/rs_report_classifierRecommender.yml",
+                              "../data/data_to_test/rs_report_amarDoubleSource.yml"]
+
+    # procediamo con il recupero del dataframe ottenuto dai test statistici
+    file_ref_df = 'ttest_expand.xlsx'
+    ref_df = tbl_comp.pd.read_excel(file_ref_df, header=[0, 1], index_col=0)
+    # controlliamo che il dataframe caricato non presenti problemi
+    # print(f"IL DATAFRAME CARICATO CHE UTILIZZEREMO PER LE REFERENZE DOPO LE OPPORTUNE MODIFICHE\n {ref_df}")
+
+    # chiamiamo la funzione che gestirà l'aggiunta della tabella di confronto
+    comparison_table = load_and_add_comparison_table_with_relevance(eva_yaml_paths_list, recsys_yaml_paths_list, ref_df)
+    print(comparison_table)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
