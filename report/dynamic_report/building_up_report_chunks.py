@@ -85,7 +85,8 @@ EVA_DICT = {
     'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex',
     'sys - mean': './templates_chunks/templates_eva_mini_chunks/sys_mean_result.tex',
     'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex',
-    'comparison_intro': './templates_chunks/templates_eva_mini_chunks/comparison_algo_section.tex'
+    'comparison_intro': './templates_chunks/templates_eva_mini_chunks/comparison_algo_section.tex',
+    'stats_rel_intro': './templates_chunks/templates_eva_mini_chunks/stats_relevance_subsection.tex'
 }
 
 # dictionary to find path for template used to start and complete the report
@@ -675,6 +676,28 @@ def load_and_add_statistic_relevance_table(recsys_yaml_paths, data_frame_ref, re
     return stats_reverence_table
 
 
+def make_statistical_relevance_subsection(render_dict, table_to_add, only_table=False, working_path="working_dir"):
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "statistical_relevance.tex"
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    if not only_table:
+        # introduction of the stats relevance subsection
+        add_single_mini_template(EVA_DICT, 'stats_rel_intro', file_path,
+                                 content_of_field, text_extract)
+
+    write_on_file_latex(table_to_add, file_path)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
 def load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths, data_frame_ref,
                                                            reference_mode, idx,
                                                            tab_title, sci_not, approximation):
@@ -938,7 +961,13 @@ if __name__ == "__main__":
                                                                             "complete", idx_access,
                                                                            tab_title="CentroidVector and IndexQuery",
                                                                            sci_not=True, approximation=4)
-    print(pair_stas_rel)
+    # print(pair_stas_rel)
+
+    route_path, file_to_render = make_statistical_relevance_subsection({}, stats_rev ,
+                                                                       only_table=False, working_path="working_dir")
+
+    stats_report_sec = render_latex_template(file_to_render, route_path, {})
+
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template

@@ -606,7 +606,7 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
 
         # Calcola la larghezza totale della tabella
         total_width = len(current_column_names) * column_width + 1
-        latex_code += "\\begin{table}[ht]\n"
+        latex_code += "\\begin{table}[H]\n"  # changed [ht] to [H]
         latex_code += "\\centering\n"
         latex_code += "\\resizebox{\\textwidth}{!}{%\n"
         latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
