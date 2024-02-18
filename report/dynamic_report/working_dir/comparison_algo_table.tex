@@ -1,0 +1,179 @@
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Precision - macro}} & \multirow{2}{*}{\makecell{Recall - macro}} & \multirow{2}{*}{\makecell{F1 - macro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 0.58 & 0.69 & 0.71 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.375* & 0.421 & 0.517* \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \textbf{0.99}* & \underline{0.985} & \textbf{0.979}* \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.723* & 0.792 & 0.799 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \underline{0.875}* & \textbf{1.0} & \underline{0.917} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 1)}
+\end{table}
+\vspace{10pt}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Gini}} & \multirow{2}{*}{\makecell{NDCG}} & \multirow{2}{*}{\makecell{R-Precision - macro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 8.0 & \underline{0.95} & 0.853 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 35.0* & 0.521 & 0.423 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.9}* & 0.91 & \underline{0.965} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 11.0* & 0.823 & 0.811 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{0.0}* & \textbf{1.0} & \textbf{1.0} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 2)}
+\end{table}
+\vspace{10pt}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{RMSE}} & \multirow{2}{*}{\makecell{MSE}} & \multirow{2}{*}{\makecell{MAE}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & \underline{3.0} & \underline{9.0} & \underline{3.0} \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 120.813 & 1540.7* & 2760.762* \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & 43.654 & 51.824* & 3.654* \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 13.5 & 26.25* & 12.5* \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{2.191} & \textbf{5.676}* & \textbf{2.164}* \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 3)}
+\end{table}
+\vspace{10pt}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{MRR}} & \multirow{2}{*}{\makecell{MAP}} & \multirow{2}{*}{\makecell{PredictionCoverage}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 0.699 & \underline{0.981} & 16.67 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.543 & 0.477 & \underline{150.0} \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \textbf{1.0} & 0.9 & 36.67 \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & \underline{0.75} & 0.69 & \textbf{169.67} \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{1.0} & \textbf{1.0} & 50.0 \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 4)}
+\end{table}
+\vspace{10pt}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Precision@5 - macro}} & \multirow{2}{*}{\makecell{Recall@5 - macro}} & \multirow{2}{*}{\makecell{F1@5 - micro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & \textbf{1.0} & \textbf{1.0} & 0.877 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.475* & 0.399* & 0.529 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.93}* & \underline{0.92}* & \textbf{0.998} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.771* & 0.721* & 0.789 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & 0.875* & \textbf{1.0}* & \underline{0.929} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 5)}
+\end{table}
+\vspace{10pt}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{2}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{2}{c}{Columns} \\
+\cmidrule{2-3}
+& \multirow{2}{*}{\makecell{MRR@5}} & \multirow{2}{*}{\makecell{NDCG@5}} \\
+\addlinespace[5pt]
+\cmidrule{2-3}
+CentroidVector & 0.877 & 0.811 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.444 & 0.454 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.925} & \underline{0.965} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.688 & 0.698 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{1.0} & \textbf{1.0} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 6)}
+\end{table}

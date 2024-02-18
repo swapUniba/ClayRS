@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
     # Questa parte andrà a testare il funzionamento delle funzioni
     # stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, round_to=4) e la sua funzione ausiliare
-    #  format_scientific_notation(value) musata per la formattazione dei dati apportati nella tabella latex
+    #  format_scientific_notation(value) usata per la formattazione dei dati apportati nella tabella latex
     idx_1 = set_access_index('CentroidVector', 'IndexQuery', 'Precision - macro', type_val='pvalue')
     print(f"\n\nl'indice di accesso alla riga che forniremo alla funzione: {idx_1[0][0]}")
     latex_stats_rel_tab_for_idx_1 = stats_relevance_tab(df, idx_1[0][0], tab_title="CentroidVector and IndexQuery",
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     print(f"\n\nEcco la tabella della rilevanza statistica estratta per l'indice {idx_1[0][0]}: \n"
           f"{latex_stats_rel_tab_for_idx_2}")
 
-    # test per aggiunta di testo al documento latex in particolare qui stiamo aggiungengo
+    # test per aggiunta di testo al documento latex in particolare qui stiamo aggiungendo
     # la tabella latex generata al file desiderato
     # add_to_latex_file("./documento_latex.tex", latex_stats_rel_tab_for_idx_2)
     # replace_in_latex_file("./documento_latex.tex", r"\PPX", latex_stats_rel_tab_for_idx_2)

@@ -947,7 +947,6 @@ def merge_dicts(*dicts, merge_key=None):
 # Esegui lo script
 if __name__ == "__main__":
     # COMPLETE TEST per generate_latex_table_pvalued
-    """
     # qui andremo prima a definire e organizzare i parametri che serviranno alla funzione
     # in particolare quelli che caricano il data frame contenente i test statistici con i
     # p-value di riferimento che saranno usati per mettere in evidenzia i valori nella tabella
@@ -1021,7 +1020,7 @@ if __name__ == "__main__":
     latex_table = generate_latex_table_pvalued(result_dictionary, p_value_ref_df, reference_alg,
                                                pv_ref, max_columns_per_part=3)
     print(latex_table)
-    """
+
 
     """
     # COMPLETE TEST SECTION TO GENERATE A LATEX TABLE with function generate_table_for_comparison()

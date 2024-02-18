@@ -84,7 +84,8 @@ EVA_DICT = {
     'end': './templates_chunks/templates_eva_mini_chunks/end_eva.tex',
     'result': './templates_chunks/templates_eva_mini_chunks/sys_result_on_fold_eva_new.tex',
     'sys - mean': './templates_chunks/templates_eva_mini_chunks/sys_mean_result.tex',
-    'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex'
+    'no_res': './templates_chunks/templates_eva_mini_chunks/no_results_on_fold.tex',
+    'comparison_intro': './templates_chunks/templates_eva_mini_chunks/comparison_algo_section.tex'
 }
 
 # dictionary to find path for template used to start and complete the report
@@ -630,6 +631,89 @@ def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_pat
     return latex_table
 
 
+def prepare_data_frame_for_stats_relevance(recsys_yaml_paths, data_frame_ref, reference_mode):
+    if reference_mode not in ["complete", "statistic", "pvalue"]:
+        raise ValueError("Parameter Error: reference_mode can be only complete or statistic or pvalue")
+
+    # get dictionary from the recsys yml and extract a list of key with name of algorithm used
+    dictionarylist = tbl_comp.from_yaml_list_to_dict_list(recsys_yaml_paths)
+    """
+    for r in dictionarylist:
+        print(i)
+    """
+    keys = tbl_comp.get_algorithm_keys(dictionarylist)  # lista dei nomi degli algoritmi usati
+    # print(f"\nLa LISTA CONTENENTE I NOMI DEGLI ALGORITMI ESTRATTI DAI YML FILE\n {keys} \n\n")
+
+    # andiamo a caricare il dataframe che sarà usato per il confronto dei p-value
+    # partiamo con la creazione del dizionario di mapping per i nomi dei sistemi
+    system_map = tbl_comp.list_to_dict_system_map(keys)
+    # print(f"\n\nIL DIZIONARIO USATO PER IL MAPPING DEI SISTEMI \n SYSTEM MAP: {system_map} \n\n")
+
+    # effettuiamo le modifiche degli indici di accesso per riga al dataframe caricato p_value_ref_df
+    stats_relevant_df = tbl_comp.stt.change_system_name(data_frame_ref, system_map)
+    # print(f"\n\nDATAFRAME CON INDICI DI RIGA MODIFICATI\n {p_value_ref_df}")
+
+    if reference_mode == "pvalue":
+        # apportiamo le modifiche sul dataframe per rimuovere le colonne che contengono le statistiche
+        stats_relevant_df = tbl_comp.stt.remove_stats_from_df(stats_relevant_df, 'statistic')
+    elif reference_mode == "statistic":
+        stats_relevant_df = tbl_comp.stt.remove_stats_from_df(stats_relevant_df, 'pvalue')
+    else:
+        pass
+
+    return stats_relevant_df
+
+
+def load_and_add_statistic_relevance_table(recsys_yaml_paths, data_frame_ref, reference_mode, n_col, tab_title):
+    p_value_ref_df = prepare_data_frame_for_stats_relevance(recsys_yaml_paths, data_frame_ref, reference_mode)
+
+    # Adesso chiamiamo la funzione di stampa per la tabella latex
+    stats_reverence_table = tbl_comp.stt.from_dataframe_to_latex_table_second(p_value_ref_df,
+                                                                              n_col,
+                                                                              tab_title)
+
+    return stats_reverence_table
+
+
+def load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths, data_frame_ref,
+                                                           reference_mode, idx,
+                                                           tab_title, sci_not, approximation):
+    p_value_ref_df = prepare_data_frame_for_stats_relevance(recsys_yaml_paths, data_frame_ref, reference_mode)
+
+    pair_comparison_strats_relevance_tab = tbl_comp.stt.stats_relevance_tab(p_value_ref_df, idx[0][0],
+                                                                            tab_title,
+                                                                            sci_not, approximation)
+
+    return pair_comparison_strats_relevance_tab
+
+
+def make_comparison_algo_sec(dict_render, eva_yaml_paths, recsys_yaml_paths,
+                             data_frame_ref, only_table=False, working_path="working_dir"):
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "comparison_algo_table.tex"
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    if not only_table:
+        # introduction of the comparison section
+        add_single_mini_template(EVA_DICT, 'comparison_intro', file_path,
+                                 content_of_field, text_extract)
+
+    # dealing with tab
+    table_comparison_latex = load_and_add_comparison_table_with_relevance(eva_yaml_paths,
+                                                                          recsys_yaml_paths,
+                                                                          data_frame_ref)
+    write_on_file_latex(table_comparison_latex, file_path)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
 def render_latex_template(template_name, search_path, my_dict):
     # setting environment based on latex needs
     latex_jinja_env = jinja2.Environment(
@@ -668,20 +752,6 @@ def render_latex_template(template_name, search_path, my_dict):
         text = str(number)
         return text
 
-    """
-    def safe_text(text: str) -> str:
-        special_chars = ['&', '%', '$', '_', '{', '}', '#']
-        for char in special_chars:
-            text = str(text)
-            text = text.replace(char, "\\" + char)
-        return text
-
-    def truncate(text: str) -> str:
-        number = float(text)
-        number = round(number, 5)
-        text = str(number)
-        return text
-    """
     # adding filter to the environment
     latex_jinja_env.filters["safe_text"] = safe_text
     latex_jinja_env.filters["truncate"] = truncate
@@ -850,9 +920,25 @@ if __name__ == "__main__":
     # controlliamo che il dataframe caricato non presenti problemi
     # print(f"IL DATAFRAME CARICATO CHE UTILIZZEREMO PER LE REFERENZE DOPO LE OPPORTUNE MODIFICHE\n {ref_df}")
 
-    # chiamiamo la funzione che gestirà l'aggiunta della tabella di confronto
-    comparison_table = load_and_add_comparison_table_with_relevance(eva_yaml_paths_list, recsys_yaml_paths_list, ref_df)
-    print(comparison_table)
+    route_path, file_to_render = make_comparison_algo_sec({}, eva_yaml_paths_list, recsys_yaml_paths_list,
+                                                          ref_df, only_table=True, working_path="working_dir")
+    comparison_sec = render_latex_template(file_to_render, route_path, {})
+    # print(comparison_sec)
+
+    stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
+                                                       2, "relevance table")
+    # print(stats_rev)
+
+    # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
+    # e l'indice ci servirà per recuperare il confronto tra i due sistemi che vogliamo mettere in evidenza
+    # stampando la tabella della rilevanza statica
+    idx_access = tbl_comp.stt.set_access_index('CentroidVector', 'IndexQuery',
+                                               'Precision - macro', type_val='pvalue')
+    pair_stas_rel = load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths_list, ref_df,
+                                                                            "complete", idx_access,
+                                                                           tab_title="CentroidVector and IndexQuery",
+                                                                           sci_not=True, approximation=4)
+    print(pair_stas_rel)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
