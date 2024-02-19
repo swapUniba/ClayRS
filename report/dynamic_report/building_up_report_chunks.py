@@ -10,6 +10,7 @@ import jinja2
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 import table_comparison as tbl_comp
+import support_reporting_lib as srl
 
 # dictionary to find the path for mini template chunks of content analyzer
 # the key are the key found in the yaml file for content analyzer and the
@@ -1033,18 +1034,20 @@ if __name__ == "__main__":
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
 
+    # path completo al report finale dell'esperimento condotto in questo script
+    path_completed_exp_report = "working_dir/experiment_report.tex"
+
     # GESTIONE DEL REPORT INTRODUZIONE
-    """
     route_path, file_to_render = make_introduction("Diego Miccoli",
                                                    title="ClayRS in practice: Experimental scenarios",
                                                    author="SWAP research group UniBa",
                                                    working_path="working_dir")
     intro_report = render_latex_template(file_to_render, route_path, {})
-    print(intro_report)
-    """
+    # print(intro_report)
+    # adding intro report to final report
+    srl.add_to_latex_file(path_completed_exp_report, intro_report)
 
     # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
-    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
@@ -1059,9 +1062,9 @@ if __name__ == "__main__":
                                                            mode="flat")
     # print(route_path)
     # print(file_to_render)
-    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
-    print(part_of_report)
-    """
+    ca_report = render_latex_template(file_to_render, route_path, dict_for_render)
+    # print(ca_report)
+    srl.add_to_latex_file(path_completed_exp_report, ca_report)
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
@@ -1075,7 +1078,6 @@ if __name__ == "__main__":
     render_list.append(rs_5_dict)
 
     # GESTIONE DEL REPORT SEZIONE RECSYS E ALGORITMI USATI
-    """
     first_iteration = True  # Flag per tracciare se è la prima iterazione
 
     for render in render_list:
@@ -1086,12 +1088,11 @@ if __name__ == "__main__":
         else:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=False, working_path="working_dir")
 
-        part_of_report = render_latex_template(file_to_render, route_path,  render)
-        print(part_of_report)
-    """
+        recsys_report = render_latex_template(file_to_render, route_path,  render)
+        # print(recsys_report)
+        srl.add_to_latex_file(path_completed_exp_report, recsys_report)
 
     # GESTIONE DEL REPORT SEZIONE METRICE DEL EVAL
-    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([EVA_YML, RS_YML],
@@ -1104,12 +1105,11 @@ if __name__ == "__main__":
                                                       mode="flat", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
-    part_of_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
-    print(part_of_report)
-    """
+    metrics_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
+    # print(metrics_report)
+    srl.add_to_latex_file(path_completed_exp_report, metrics_report)
 
     # GESTIONE DEL REPORT SEZIONE RISULTATI OTTENUTI PER OGNI ALGORITMO
-    """
     centroidV_eva_res_render = read_yaml_file(merge_yaml_files([EVA_YML, RS_YML],
                                                                "working_dir",
                                                                "eva_rcs_CentroidVector.yml"))
@@ -1139,12 +1139,11 @@ if __name__ == "__main__":
 
     for sys_render_dict in list_render_dict_for_sys_mean:
         route_path, file_to_render = make_eval_result_sec(sys_render_dict, working_path="working_dir")
-        part_of_report = render_latex_template(file_to_render, route_path, sys_render_dict)
-        print(part_of_report)
-    """
+        algo_result_report = render_latex_template(file_to_render, route_path, sys_render_dict)
+        # print(algo_result_report)
+        srl.add_to_latex_file(path_completed_exp_report, algo_result_report)
 
     # GESTIONE DEL REPOORT TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
-    """
     eva_yaml_paths_list = ["../data/data_for_test_two/eva_report_centroidVector.yml",
                            "../data/data_for_test_two/eva_report_linearPredictor.yml",
                            "../data/data_for_test_two/eva_report_indexQuery.yml",
@@ -1164,15 +1163,16 @@ if __name__ == "__main__":
     # print(f"IL DATAFRAME CARICATO CHE UTILIZZEREMO PER LE REFERENZE DOPO LE OPPORTUNE MODIFICHE\n {ref_df}")
 
     route_path, file_to_render = make_comparison_algo_sec({}, eva_yaml_paths_list, recsys_yaml_paths_list,
-                                                          ref_df, 1.0,only_table=True,
+                                                          ref_df, 1.0,only_table=False,
                                                           working_path="working_dir")
     comparison_sec = render_latex_template(file_to_render, route_path, {})
-    # print(comparison_sec)
+    print(f"Questa è comparison_sec {comparison_sec}")
+    srl.add_to_latex_file(path_completed_exp_report, comparison_sec)
 
     stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
                                                        2, "relevance table")
-    # print(stats_rev)
-    """
+    print(stats_rev)
+    srl.add_to_latex_file(path_completed_exp_report, stats_rev)
 
     # GESTIONE DEL REPORT SOTTOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
     """
@@ -1199,7 +1199,8 @@ if __name__ == "__main__":
     route_path, file_to_render = make_closure(conclusion=True, conclusion_text=my_conclusion, working_path="working_dir")
 
     end_report = render_latex_template(file_to_render, route_path, {})
-    print(end_report)
+    # print(end_report)
+    srl.add_to_latex_file(path_completed_exp_report, end_report)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
