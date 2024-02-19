@@ -566,7 +566,7 @@ def make_eval_result_sec(dict_render, working_path="working_dir"):
     return working_path, file_name
 
 
-def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_paths, data_frame_ref):
+def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_paths, data_frame_ref, pv_ref):
     # set list of dictionary from eva yaml report and make key change
     dictionary_res_sys = tbl_comp.from_yaml_list_to_dict_list(eva_yaml_paths)
     # print(dictionary_res_sys)
@@ -621,7 +621,7 @@ def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_pat
     reference_alg = 'CentroidVector'
     print(f"\n3. comparison sarà uno tra i 5 algoritmi presenti ed utilizzati in particolare:\n"
           f"reference_alg è {reference_alg} \n")
-    pv_ref = 1.0
+
     print(f"\n4. treshold_pvalue=0.5 di default in questo caso settato con:\n"
           f"pv_ref = {pv_ref} \n")
     print(f"\n5. i restanti paremetri saranno usati di default o cambiati all'interno della chiamata.\n\n")
@@ -711,7 +711,7 @@ def load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths, da
 
 
 def make_comparison_algo_sec(dict_render, eva_yaml_paths, recsys_yaml_paths,
-                             data_frame_ref, only_table=False, working_path="working_dir"):
+                             data_frame_ref, pv_treshold, only_table=False, working_path="working_dir"):
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
     file_name = "comparison_algo_table.tex"
@@ -730,7 +730,7 @@ def make_comparison_algo_sec(dict_render, eva_yaml_paths, recsys_yaml_paths,
     # dealing with tab
     table_comparison_latex = load_and_add_comparison_table_with_relevance(eva_yaml_paths,
                                                                           recsys_yaml_paths,
-                                                                          data_frame_ref)
+                                                                          data_frame_ref, pv_treshold)
     write_on_file_latex(table_comparison_latex, file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -944,7 +944,8 @@ if __name__ == "__main__":
     # print(f"IL DATAFRAME CARICATO CHE UTILIZZEREMO PER LE REFERENZE DOPO LE OPPORTUNE MODIFICHE\n {ref_df}")
 
     route_path, file_to_render = make_comparison_algo_sec({}, eva_yaml_paths_list, recsys_yaml_paths_list,
-                                                          ref_df, only_table=True, working_path="working_dir")
+                                                          ref_df, 1.0,only_table=True,
+                                                          working_path="working_dir")
     comparison_sec = render_latex_template(file_to_render, route_path, {})
     # print(comparison_sec)
 
@@ -952,6 +953,7 @@ if __name__ == "__main__":
                                                        2, "relevance table")
     # print(stats_rev)
 
+    # GESTIONE DELLA SOTtOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
     # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
     # e l'indice ci servirà per recuperare il confronto tra i due sistemi che vogliamo mettere in evidenza
     # stampando la tabella della rilevanza statica
@@ -967,7 +969,6 @@ if __name__ == "__main__":
                                                                        only_table=False, working_path="working_dir")
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
-
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
