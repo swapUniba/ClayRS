@@ -62,7 +62,11 @@ CA_DICT = {
     'exo': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca.tex',
     'exo_min': './templates_chunks/templates_ca_mini_chunks/exogenous_tech_report_ca_min.tex',
     'dataset': './templates_chunks/templates_ca_mini_chunks/Daset_name_source.tex',
-    'stats': './templates_chunks/templates_ca_mini_chunks/Dataset_Stat.tex'
+    'stats': './templates_chunks/templates_ca_mini_chunks/Dataset_Stat.tex',
+    'field_flat': './templates_chunks/templates_ca_mini_chunks/field_ca_report_flat.tex',
+    'field_rep_flat': './templates_chunks/templates_ca_mini_chunks/field_represantation_ca_report_flat.tex',
+    'field_prep_flat': './templates_chunks/templates_ca_mini_chunks/field_preprocess_ca_report_falt.tex',
+    'field_post_flat': './templates_chunks/templates_ca_mini_chunks/field_postprocessing_ca_report_flat.tex'
 }
 
 # dictionary to find path for the recsys module template
@@ -222,6 +226,29 @@ def get_keys_at_level(dictionary, parent_key):
     return keys_at_level
 
 
+def retrieve_subkeys_at_3(dictionary, key1, key2, key3):
+    subkeys = set()
+
+    if key1 in dictionary and isinstance(dictionary[key1], dict):
+        if key2 in dictionary[key1] and isinstance(dictionary[key1][key2], dict):
+            if key3 in dictionary[key1][key2] and isinstance(dictionary[key1][key2][key3], dict):
+                subkeys.update(dictionary[key1][key2][key3].keys())
+
+    return list(subkeys)
+
+
+def retrieve_subkeys_at_4(dictionary, key1, key2, key3, key4):
+    subkeys = set()
+
+    if key1 in dictionary and isinstance(dictionary[key1], dict):
+        if key2 in dictionary[key1] and isinstance(dictionary[key1][key2], dict):
+            if key3 in dictionary[key1][key2] and isinstance(dictionary[key1][key2][key3], dict):
+                if key4 in dictionary[key1][key2][key3] and isinstance(dictionary[key1][key2][key3][key4], dict):
+                    subkeys.update(dictionary[key1][key2][key3][key4].keys())
+
+    return list(subkeys)
+
+
 def get_subkeys_at_path(dictionary: object, *keys_in_order: object) -> object:
     """
     Retrieve all subkeys under the specified path in a nested dictionary.
@@ -351,6 +378,129 @@ def ca_processing_report_minimal(render_dict, working_path, file_path):
                              file_destination, content_of_field, text_extract)
 
 
+def ca_processing_report_flat(render_dict, working_path, file_path):
+    # relative path complete
+    file_destination = build_relative_path(working_path, file_path)
+
+    def stringify(strings):
+        # Verifica se la lista è vuota
+        if not strings:
+            return ""
+
+        # Verifica se tutti gli elementi della lista sono stringhe o possono essere convertiti in stringhe
+        for index, item in enumerate(strings):
+            if not isinstance(item, str):
+                try:
+                    # Tenta di convertire l'elemento in stringa
+                    strings[index] = str(item)
+                except:
+                    # Se la conversione fallisce, restituisci una stringa vuota
+                    return ""
+
+        # Unisci gli elementi della lista (ora convertiti in stringhe, se necessario) in una stringa
+        return ', '.join(strings)
+
+    def delete_copy(reduntant_list):
+        # Utilizziamo un insieme per tenere traccia degli elementi unici
+        unique_set = set()
+        # Utilizziamo una lista per mantenere l'ordine originale
+        result = []
+
+        for elemento in reduntant_list:
+            # Aggiungiamo l'elemento all'insieme solo se non è già presente
+            if elemento not in unique_set:
+                unique_set.add(elemento)
+                # Aggiungiamo l'elemento alla lista risultato
+                result.append(elemento)
+
+        return result
+
+    def process_list_of_strings(list_of_strings):
+        processed_strings = []
+        for string in list_of_strings:
+            processed_string = tbl_comp.sanitize_latex_string(string)
+            processed_strings.append(processed_string)
+        return processed_strings
+
+    field_list = []
+    represantation_tech_list = []
+    preprocessing_list = []
+    postprocessing_list = []
+
+    if render_dict is not None:
+        if 'source_file' in render_dict:
+            # extraction of the field being analyzed
+            field_list = get_keys_at_level(render_dict, "field_representations")
+
+            print(field_list)
+
+            # dealing with all field that have been represented with content analyzer
+            for field in field_list:
+                elaborating_list = get_keys_at_level(render_dict, field)
+                print(f" Questa è elaborating list per ogni campo {elaborating_list}")
+                for process in elaborating_list:
+                    if process != "preprocessing" and process != "postprocessing":
+                        represantation_tech_list.append(process)
+                        print(f"added to representation_tech_list la rapresentazione {process}")
+                    elif process == "preprocessing":
+                        prep_list = retrieve_subkeys_at_3(render_dict, "field_representations", key2=field,
+                                                          key3=process)
+                        print(f"Questa è la lista delle chiavi sotto preprocessing: {prep_list}")
+                        if prep_list:
+                            for p in prep_list:
+                                preprocessing_list.append(p)
+                    else:
+                        post_list = retrieve_subkeys_at_3(render_dict, "field_representations", key2=field,
+                                                          key3=process)
+                        print(f"Questa è la lista delle chiavi sotto postprocessing: {post_list}")
+                        if post_list:
+                            for p in post_list:
+                                if isinstance(p, int):
+                                    post_processeing_technique = retrieve_subkeys_at_4(render_dict,
+                                                                                       "field_representations",
+                                                                                       key2=field,
+                                                                                       key3=process,
+                                                                                       key4=p)
+                                    for t in post_processeing_technique:
+                                         postprocessing_list.append(t)
+                                else:
+                                    if isinstance(p, str):
+                                        postprocessing_list.append(p)
+
+    str_fields = stringify(process_list_of_strings(delete_copy(field_list)))
+    str_rapresentation = stringify(process_list_of_strings(delete_copy(represantation_tech_list)))
+    str_prep = stringify(process_list_of_strings(delete_copy(preprocessing_list)))
+    str_post = stringify(process_list_of_strings(delete_copy(postprocessing_list)))
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    # dealing with Content Analyzer
+    add_single_mini_template(CA_DICT, 'intro', file_destination,
+                             content_of_field, text_extract)
+
+    process_and_write_to_file(CA_DICT, 'field_flat',
+                              str_fields, content_of_field, text_extract,
+                              file_destination)
+
+    process_and_write_to_file(CA_DICT, 'field_rep_flat',
+                              str_rapresentation, content_of_field, text_extract,
+                              file_destination)
+
+    process_and_write_to_file(CA_DICT, 'field_prep_flat',
+                              str_prep, content_of_field, text_extract,
+                              file_destination)
+
+    process_and_write_to_file(CA_DICT, 'field_post_flat',
+                              str_post, content_of_field, text_extract,
+                              file_destination)
+
+    # closing the content analyzer section
+    add_single_mini_template(CA_DICT, 'end',
+                             file_destination, content_of_field, text_extract)
+
+
 def ca_processing_report_verb(render_dict, working_path, file_path):
     # relative path complete
     file_destination = build_relative_path(working_path, file_path)
@@ -429,8 +579,8 @@ def splitting_technique_report(render_dict, working_path, file_path):
 
 
 def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
-    if mode not in ["minimise", "verbose"]:
-        raise ValueError("Il parametro 'mode' può essere solo 'minimise' o 'verbose'.")
+    if mode not in ["flat", "minimise", "verbose"]:
+        raise ValueError("Parameter Error: 'mode' can be only 'falt', 'minimise' or 'verbose'.")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
@@ -438,8 +588,11 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     file_path = os.path.join(working_path, file_name)
     print(file_path)
 
-    ca_processing_report_minimal(render_dict, working_path, file_name)
-    if mode != "minimise":
+    if mode == "flat":
+        ca_processing_report_flat(render_dict, working_path, file_name)
+    elif mode == "minimise":
+        ca_processing_report_minimal(render_dict, working_path, file_name)
+    else:
         # scelta della funzione in base alla verbosità del report che si vuole ottenere
         # a riguardo delle elaborazioni fatte dal content analyzer sui dati
         ca_processing_report_verb(render_dict, working_path, file_name)
@@ -826,7 +979,6 @@ if __name__ == "__main__":
     eva_dict = read_yaml_file(EVA_YML)
 
     # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
-    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
@@ -837,12 +989,13 @@ if __name__ == "__main__":
     print(dict_for_render)
     
     # chiamata alle funzioni che andranno ad aggiungere il report sul content analyzer
-    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie")
+    route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie",
+                                                           mode="flat")
     # print(route_path)
     # print(file_to_render)
     part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
-    # print(part_of_report)
-    """
+    print(part_of_report)
+
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
@@ -925,6 +1078,7 @@ if __name__ == "__main__":
     """
 
     # GESTIONE DELLA TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
+    """
     eva_yaml_paths_list = ["../data/data_for_test_two/eva_report_centroidVector.yml",
                            "../data/data_for_test_two/eva_report_linearPredictor.yml",
                            "../data/data_for_test_two/eva_report_indexQuery.yml",
@@ -952,8 +1106,10 @@ if __name__ == "__main__":
     stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
                                                        2, "relevance table")
     # print(stats_rev)
+    """
 
     # GESTIONE DELLA SOTtOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
+    """
     # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
     # e l'indice ci servirà per recuperare il confronto tra i due sistemi che vogliamo mettere in evidenza
     # stampando la tabella della rilevanza statica
@@ -969,6 +1125,7 @@ if __name__ == "__main__":
                                                                        only_table=False, working_path="working_dir")
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
+    """
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
