@@ -67,7 +67,8 @@ REP_DICT = {
     'intro': './templates_chunks/intro_report_start.tex',
     'intro_sec': './templates_chunks/intro_new_report.tex',
     'end': './templates_chunks/conclusion.tex',
-    'end_no_conclusion': './templates_chunks/end_report.tex'
+    'end_no_conclusion': './templates_chunks/end_report.tex',
+    'own_conclusion': './templates_chunks/own_conclusion.tex'
 }
 
 
@@ -603,6 +604,35 @@ def make_introduction(executer, title="ClayRS in practice: Experimental scenario
     return working_path, file_name
 
 
+def make_closure(conclusion=True, conclusion_text="", working_path="working_dir"):
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "closure_of_the_report.tex"
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    if conclusion:
+        if conclusion_text == "":
+            add_single_mini_template(REP_DICT, 'end',
+                                     file_path, content_of_field,
+                                     text_extract)
+        else:
+            # specific conclusion
+            process_and_write_to_file(REP_DICT, 'own_conclusion', conclusion_text,
+                                      content_of_field, text_extract, file_path)
+    else:
+        add_single_mini_template(REP_DICT, 'end_no_conclusion',
+                                 file_path, content_of_field,
+                                 text_extract)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
+
+
 def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
     if mode not in ["flat", "minimise", "verbose"]:
         raise ValueError("Parameter Error: 'mode' can be only 'falt', 'minimise' or 'verbose'.")
@@ -1003,7 +1033,7 @@ if __name__ == "__main__":
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
 
-    # GESTIONE DELL'INTRODUZIONE DEL REPORT
+    # GESTIONE DEL REPORT INTRODUZIONE
     """
     route_path, file_to_render = make_introduction("Diego Miccoli",
                                                    title="ClayRS in practice: Experimental scenarios",
@@ -1113,7 +1143,7 @@ if __name__ == "__main__":
         print(part_of_report)
     """
 
-    # GESTIONE DELLA TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
+    # GESTIONE DEL REPOORT TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
     """
     eva_yaml_paths_list = ["../data/data_for_test_two/eva_report_centroidVector.yml",
                            "../data/data_for_test_two/eva_report_linearPredictor.yml",
@@ -1144,7 +1174,7 @@ if __name__ == "__main__":
     # print(stats_rev)
     """
 
-    # GESTIONE DELLA SOTtOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
+    # GESTIONE DEL REPORT SOTTOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
     """
     # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
     # e l'indice ci servirà per recuperare il confronto tra i due sistemi che vogliamo mettere in evidenza
@@ -1162,6 +1192,14 @@ if __name__ == "__main__":
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
     """
+
+    # GESTIONE DEL REPORT CHIUSURA E CONCLUSIONI
+    my_conclusion = ("L'esprerimento è stato condotto in 3 mesi di ricerche "
+                     "e la scoperta più affascinate è il nuovo algoritmo")
+    route_path, file_to_render = make_closure(conclusion=True, conclusion_text=my_conclusion, working_path="working_dir")
+
+    end_report = render_latex_template(file_to_render, route_path, {})
+    print(end_report)
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
