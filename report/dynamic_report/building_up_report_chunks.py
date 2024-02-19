@@ -15,37 +15,6 @@ import table_comparison as tbl_comp
 # the key are the key found in the yaml file for content analyzer and the
 # value are the path to the corresponding templates_latex.
 CA_DICT = {
-    'OriginalData': './templates_chunks/templates_ca_mini_chunks/OriginalData_techniques_ca.tex',
-    'WhooshTfIdf': './templates_chunks/templates_ca_mini_chunks/WhooshTfIdf_techinques_ca.tex',
-    'SkLearnTfIdf': './templates_chunks/templates_ca_mini_chunks/SkLearnTfIdf_tech_ca.tex',
-    'WordEmbeddingTechnique': './templates_chunks/templates_ca_mini_chunks/WordEmbedding_tech_ca.tex',
-    'SentenceEmbeddingTechnique': './templates_chunks/templates_ca_mini_chunks/SentenceEmb_tech_ca.tex',
-    'DocumentEmbeddingTechnique': './templates_chunks/templates_ca_mini_chunks/DocumentEmb_tech_ca.tex',
-    'Word2SentenceEmbedding': './templates_chunks/templates_ca_mini_chunks/Word2SentenceEmb_tech_ca.tex',
-    'Word2DocEmbedding': './templates_chunks/templates_ca_mini_chunks/Word2DocEmb_tech_ca.tex',
-    'Sentence2DocEmbedding': './templates_chunks/templates_ca_mini_chunks/Word2SentenceEmb_tech_ca.tex',
-    'PyWSDSynsetDocumentFrequency': './templates_chunks/templates_ca_mini_chunks/PyWSD_tech_ca.tex',
-    'FromNPY': './templates_chunks/templates_ca_mini_chunks/FromNPY_tech_ca.tex',
-    'SkImageHogDescriptor': './templates_chunks/templates_ca_mini_chunks/SkImgHogDescr_tech_ca.tex',
-    'MFCC': './templates_chunks/templates_ca_mini_chunks/mfcc_tech_ca.tex',
-    'VGGISH': './templates_chunks/templates_ca_mini_chunks/TorchVVM_tech_ca.tex',
-    'PytorchImageModels': './templates_chunks/templates_ca_mini_chunks/PytorchImgMod_tech_ca.tex',
-    'TorchVisionVideoModels': './templates_chunks/templates_ca_mini_chunks/TorchVVM_tech_ca.tex',
-    'Spacy': './templates_chunks/templates_ca_mini_chunks/spacy_prepro_ca.tex',
-    'Ekphrasis': './templates_chunks/templates_ca_mini_chunks/ekphrasis_prepro_ca.tex',
-    'NLTK': './templates_chunks/templates_ca_mini_chunks/nltk_prepro_ca.tex',
-    'TorchUniformTemporalSubSampler': './templates_chunks/templates_ca_mini_chunks/TorchUniformTSS_prepro_ca.tex',
-    'Resize': './templates_chunks/templates_ca_mini_chunks/Resize_prepro_ca.tex',
-    'CenterCrop': './templates_chunks/templates_ca_mini_chunks/centerCrop_prepro_ca.tex',
-    'Lambda': './templates_chunks/templates_ca_mini_chunks/Lambda_prepro_ca.tex',
-    'Normalize': './templates_chunks/templates_ca_mini_chunks/normilize_prepro_ca.tex',
-    'ClipSampler': './templates_chunks/templates_ca_mini_chunks/clipSampler_prepro_ca.tex',
-    'FVGMM': './templates_chunks/templates_ca_mini_chunks/fvgmm_postpro_ca.tex',
-    'VLADGMM': './templates_chunks/templates_ca_mini_chunks/vladgmm_postpro_ca.tex',
-    'SkLearnPCA': './templates_chunks/templates_ca_mini_chunks/skLearnPCA_postpro_ca.tex',
-    'DBPediaMappingTechnique': './templates_chunks/templates_ca_mini_chunks/DBpediaMT_ex_tech_ca.tex',
-    'ConvertToMono': './templates_chunks/templates_ca_mini_chunks/Convert2Mono_prepro_ca.tex',
-    'TorchResample': './templates_chunks/templates_ca_mini_chunks/TorchResample_prepro_ca.tex',
     'intro': './templates_chunks/templates_ca_mini_chunks/intro_ca.tex',
     'end': './templates_chunks/templates_ca_mini_chunks/end_of_ca.tex',
     'field_sec': './templates_chunks/templates_ca_mini_chunks/field_ca.tex',
@@ -96,7 +65,9 @@ EVA_DICT = {
 # dictionary to find path for template used to start and complete the report
 REP_DICT = {
     'intro': './templates_chunks/intro_report_start.tex',
-    'end': './templates_chunks/conclusion.tex'
+    'intro_sec': './templates_chunks/intro_new_report.tex',
+    'end': './templates_chunks/conclusion.tex',
+    'end_no_conclusion': './templates_chunks/end_report.tex'
 }
 
 
@@ -320,6 +291,36 @@ def process_and_write_to_file(path_dict, pros, scope, content_container, text_co
         print(f"Content of {path_dict.get(pros)} added to {file_path} successfully")
     else:
         print(f"Impossible to extract text from LaTeX document: {path_dict.get(pros)}")
+    # update external parameters
+    content_container[0] = content
+    text_container[0] = text
+
+
+def multi_process_and_write_to_file(path_dict, pros, placeholders, scopes,
+                                    content_container, text_container, file_path):
+    # Let's ensure that placeholders and scopes have the same number of elements
+    if len(placeholders) != len(scopes):
+        print("Error: placeholders and scopes must have the same number of elements")
+        return
+
+    # we are extracting the written part of the latex file which is retrieved from
+    # the dictionary which contain for each key the path of the file that needs to be added
+    content = read_file_latex(path_dict.get(pros))
+
+    # Replace each placeholder with the corresponding scope
+    for placeholder, scope in zip(placeholders, scopes):
+        content = content.replace(placeholder, scope)
+
+    # This passage allows to specify the field in the report and prepare text
+    text = get_text_from_latex(content)
+
+    # add text to file after check point
+    if text:
+        write_on_file_latex(text, file_path)
+        print(f"Content of {path_dict.get(pros)} added to {file_path} successfully")
+    else:
+        print(f"Impossible to extract text from LaTeX document: {path_dict.get(pros)}")
+
     # update external parameters
     content_container[0] = content
     text_container[0] = text
@@ -576,6 +577,30 @@ def splitting_technique_report(render_dict, working_path, file_path):
     add_single_mini_template(RS_DICT, 'split',
                              file_destination, content_of_field,
                              text_extract)
+
+
+def make_introduction(executer, title="ClayRS in practice: Experimental scenarios",
+                      author="SWAP research group UniBa", working_path="working_dir"):
+
+    # Crea il nome del file che farà da template per la renderizzazione di questa
+    # parte di report che stiamo andando a produrre
+    file_name = "introduction_report.tex"
+    file_path = os.path.join(working_path, file_name)
+    # print(file_path)
+
+    # used to add mini template at the final template latex
+    content_of_field = [""]
+    text_extract = [""]
+
+    place_holder_list = ['X', '!!', '??', 'Z']
+    substitution_list = [get_current_date_string(), title, author, executer]
+
+    multi_process_and_write_to_file(REP_DICT, 'intro_sec',
+                                    place_holder_list, substitution_list,
+                                    content_of_field, text_extract, file_path)
+
+    # Ritorna il percorso di lavoro e il nome del file creato
+    return working_path, file_name
 
 
 def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
@@ -978,7 +1003,18 @@ if __name__ == "__main__":
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
 
+    # GESTIONE DELL'INTRODUZIONE DEL REPORT
+    """
+    route_path, file_to_render = make_introduction("Diego Miccoli",
+                                                   title="ClayRS in practice: Experimental scenarios",
+                                                   author="SWAP research group UniBa",
+                                                   working_path="working_dir")
+    intro_report = render_latex_template(file_to_render, route_path, {})
+    print(intro_report)
+    """
+
     # GESTIONE DEL REPORT SEZIONE CONTENT ANALYZER
+    """
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([CA_YML, RS_YML],
@@ -995,7 +1031,7 @@ if __name__ == "__main__":
     # print(file_to_render)
     part_of_report = render_latex_template(file_to_render, route_path, dict_for_render)
     print(part_of_report)
-
+    """
 
     # preparing list of dict with the information on the recsys used
     render_list = [rs_dict]
