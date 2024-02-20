@@ -1148,7 +1148,7 @@ if __name__ == "__main__":
     dict_for_render_metric = read_yaml_file(path_rendering_dict)
 
     route_path, file_to_render = make_eval_metric_sec(dict_for_render_metric,
-                                                      mode="verbose", working_path="working_dir")
+                                                      mode="flat", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
     metrics_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
@@ -1228,7 +1228,7 @@ if __name__ == "__main__":
                                                                            sci_not=True, approximation=4)
     # print(pair_stas_rel)
     # stats_rev contiene la tabella completa con le statistiche fatte sulle coppie di sistemi
-    stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
+    stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "pvalue",
                                                        2, "relevance table")
     # print(stats_rev)
 
@@ -1237,6 +1237,12 @@ if __name__ == "__main__":
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
     srl.add_to_latex_file(path_completed_exp_report, stats_report_sec)
+    # aggiungiamo soto la tabella generale delle statistiche la tabella che mette in esalto la coppia di sistemi
+    # che volgiamo prendere in considerazione
+    route_path, file_to_render = make_statistical_relevance_subsection({}, pair_stas_rel,
+                                                                       only_table=True, working_path="working_dir")
+    single_pair_stats_table = render_latex_template(file_to_render, route_path, {})
+    srl.add_to_latex_file(path_completed_exp_report, pair_stas_rel)
 
     # GESTIONE DEL REPORT CHIUSURA E CONCLUSIONI
     my_conclusion = ("L'esprerimento è stato condotto in 3 mesi di ricerche "
