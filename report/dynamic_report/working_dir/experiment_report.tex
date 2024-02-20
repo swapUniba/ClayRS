@@ -1,0 +1,770 @@
+
+% Created by Diego Miccoli
+
+% Preamble
+\documentclass[11pt]{article}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{geometry}
+\usepackage{changepage}
+\usepackage{longtable}
+\usepackage{soul}
+
+\usepackage{background}
+
+\backgroundsetup{
+    scale=1,
+    angle=0,
+    opacity=1,
+    color=black,
+    position=current page.north east,
+    vshift=-0.3cm, % Regola questa dimensione per posizionare il testo verticalmente
+    hshift=-3.5cm, % Regola questa dimensione per posizionare il testo orizzontalmente
+    contents={%
+        Aldo Moro University of studies of Bari
+    }
+}
+
+\geometry{top=1cm, bottom=1cm}
+
+\title{\textbf{ ClayRS in practice: Experimental scenarios }\\ [1cm] Department of Computer Science}
+\author{ SWAP research group UniBa \thanks{Experiment conduct by Diego Miccoli}}
+\date{20-02-2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+Recommender Systems (RS) are designed to assist users in various decision-making tasks by acquiring
+information about their needs, interests, and preferences in order to personalize the user experience
+based on such data.
+These systems are based on paradigms that allow managing user information and processing
+it to provide decision support.
+In particular, two successful paradigms are Collaborative Filtering and Content-based Filtering.
+In this document, we will present the results obtained using a recommendation system called \textbf{ClayRS},
+a framework developed by the SWAP research group at the Department of Computer Science of the University of Bari.\\
+\hfill\break
+
+\textit{\ul{The following report has been automatically generated from YAML configuration files.}}
+
+\hfill\break
+
+\hfill\break
+\hfill\break
+
+
+
+% ----------------------------------------- OPENING CONTENT ANALYZER SECTION -----------------------------------------
+\section{Content Analyzer Module}\label{sec:ca}
+The content analyzer module will deal with raw source document or more in general data which could be
+video or audio data and give a representation of these data which will be used by the other two module.
+The text data source could be represented with exogenous technique or with a specified representation
+and each field given could be treated with preprocessing techniques and postprocessing technique.
+In this experiment the following techniques have been used on specific field in order to achieve the
+representation wanted:
+\hfill\break
+\hfill\break
+% --- TECNIQUE USED TO REPPRESENT DATA FIELD ---
+
+
+\begin{itemize}
+    \item \textbf{fields used}:  idx0, plot0, plot1, plot10, plot11, plot2, plot3, plot4, plot5, plot6, plot7, plot8, plot9, video\_path0, video\_path1, video\_path2, video\_path3, video\_path4
+
+    \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
+
+    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Resize, Lambda, CenterCrop, Normalize, ClipSampler
+
+    \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
+\end{itemize}
+
+
+
+
+
+\hfill\break
+% subsection of Dataset identification
+\subsection{Dataset used and its statistics}
+The dataset used for the experiment is  \lstinline[style=verbatim-text]| 1000K data video movie |,
+its source file is \lstinline[style=verbatim-text]| items_extra_small.json | ,and the content used during the experiment:
+     \verb| movielens_id, |
+     \verb| actor_id, |
+     \verb| director_id, |
+     \verb| company_producer_id, |
+.
+
+
+% --- DATA STATS ---
+The statistics of the dataset used are reported in the following table:~\ref{tab:dataset_table}:
+\begin{table}[ht]
+    \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter}& \textbf{Value} \\ \hline
+    n\_users  & 2\\ \hline
+    n\_items  & 6\\ \hline
+    total\_interactions  & 6\\ \hline
+    min\_score  & 1.0\\ \hline
+    max\_score  & 4.0\\ \hline
+    mean\_score  & 2.66667\\ \hline
+    sparsity  & 0.5\\ \hline
+  \end{tabular}
+   \caption{Stats on the dataset}\label{tab:dataset_table}
+\end{table}
+
+\hfill\break
+
+
+
+% ------------------------------ START SUBSECTION OF PARTITIONING OF RECSYS --------------------------------------------
+% subsection of the splitting technique used, referred to partition protocol
+\subsection{Data splitting technique}\label{subsec:partitioning}
+% KFOLD PARTITIONING TECNIQUE
+K-fold cross-validation is a technique used in machine learning to assess the performance of a predictive model.
+The basic idea is to divide the dataset into K subsets, or folds.
+The model is then trained K times, each time using K-1 folds for training and the remaining fold for validation.
+This process is repeated K times, with a different fold used as the validation set in each iteration.
+\hfill\break
+The KFoldPartitioning has been used with the following setting:
+\hfill\break
+The data has been shuffled before being split into batches.
+The partitioning technique has been executed with the following settings:
+\begin{itemize}
+    \item number of splits: 2
+    \item shuffle: True
+    \item random state: None
+    \item skip user error: True
+\end{itemize}
+\hfill\break
+% KFOLD PARTITIONING TECNIQUE ended
+
+% end partitioning section___________
+\hfill\break
+\hfill\break
+
+
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System}\label{sec:recsys}
+The RecSys module allows to instantiate a recommender system in order to work on items and users serialized
+the Content Analyzer module, and its aim is to be trained on the data used in order to produce recommendation.
+In this experiment the following are the algorithm used: \\
+
+
+    \lstinline[style=verbatim-text]| - CentroidVector |  \\
+\hfill\break
+\hfill\break
+
+
+    \lstinline[style=verbatim-text]| - LinearPredictor |  \\
+\hfill\break
+\hfill\break
+
+
+    \lstinline[style=verbatim-text]| - IndexQuery |  \\
+\hfill\break
+\hfill\break
+
+
+    \lstinline[style=verbatim-text]| - ClassifierRecommender |  \\
+\hfill\break
+\hfill\break
+
+
+    \lstinline[style=verbatim-text]| - AmarDoubleSource |  \\
+\hfill\break
+\hfill\break
+
+
+
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
+The metrics used are the followings:
+\hfill\break
+
+\begin{itemize}
+    \item Precision
+
+    \item Recall
+
+    \item FMeasure
+
+    \item Precision at K
+
+    \item Recall at K
+
+    \item FMeasure at K
+
+    \item R-Precision
+
+    \item MSE
+
+    \item RMSE
+
+    \item MAE
+
+    \item NDCG
+
+    \item NDCG at K
+
+    \item MRR
+
+    \item MRR at K
+
+    \item MAP
+
+
+    \item Correlation
+
+    \item Gini Index
+
+    \item Prediction Coverage
+
+    \item Catalog Coverage
+
+
+    \item Long Tail Distribution
+
+
+    \item  PopRecsCorrelation
+\end{itemize}
+
+
+
+% In case of eval module is not used
+
+\hfill\break
+\hfill\break
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD CentroidVector -------------------------------------
+\subsection{Results for CentroidVector}\label{subsec:CentroidVector}
+In this section we show the mean results with \textbf{ CentroidVector }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_CentroidVector}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+                CatalogCoverage (PredictionCov) & 16.67 \\ \hline
+                F1 - macro & 1.0 \\ \hline
+                F1@5 - micro & 1.0 \\ \hline
+                Gini & 0.0 \\ \hline
+                MAE & 3.0 \\ \hline
+                MAP & 1.0 \\ \hline
+                MRR & 1.0 \\ \hline
+                MRR@5 & 1.0 \\ \hline
+                MSE & 9.0 \\ \hline
+                NDCG & 1.0 \\ \hline
+                NDCG@5 & 1.0 \\ \hline
+                Precision - macro & 1.0 \\ \hline
+                Precision@5 - macro & 1.0 \\ \hline
+                PredictionCoverage & 16.67 \\ \hline
+                R-Precision - macro & 1.0 \\ \hline
+                RMSE & 3.0 \\ \hline
+                Recall - macro & 1.0 \\ \hline
+                Recall@5 - macro & 1.0 \\ \hline
+             \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_CentroidVector}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with CentroidVector ___
+
+\hfill\break
+\hfill\break
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD LinearPredictor -------------------------------------
+\subsection{Results for LinearPredictor}\label{subsec:LinearPredictor}
+In this section we show the mean results with \textbf{ LinearPredictor }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_LinearPredictor}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+                CatalogCoverage (PredictionCov) & 50.0 \\ \hline
+                F1 - macro & 0.91667 \\ \hline
+                F1@5 - micro & 0.92857 \\ \hline
+                Gini & 0.0 \\ \hline
+                MAE & 0.76165 \\ \hline
+                MAP & 1.0 \\ \hline
+                MRR & 1.0 \\ \hline
+                MRR@5 & 1.0 \\ \hline
+                MSE & 0.6997 \\ \hline
+                NDCG & 1.0 \\ \hline
+                NDCG@5 & 1.0 \\ \hline
+                Precision - macro & 0.875 \\ \hline
+                Precision@5 - macro & 0.875 \\ \hline
+                PredictionCoverage & 50.0 \\ \hline
+                R-Precision - macro & 1.0 \\ \hline
+                RMSE & 0.81343 \\ \hline
+                Recall - macro & 1.0 \\ \hline
+                Recall@5 - macro & 1.0 \\ \hline
+             \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_LinearPredictor}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with LinearPredictor ___
+
+\hfill\break
+\hfill\break
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD IndexQuery -------------------------------------
+\subsection{Results for IndexQuery}\label{subsec:IndexQuery}
+In this section we show the mean results with \textbf{ IndexQuery }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_IndexQuery}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+                CatalogCoverage (PredictionCov) & 16.67 \\ \hline
+                F1 - macro & 1.0 \\ \hline
+                F1@5 - micro & 1.0 \\ \hline
+                Gini & 0.0 \\ \hline
+                MAE & 63.65394 \\ \hline
+                MAP & 1.0 \\ \hline
+                MRR & 1.0 \\ \hline
+                MRR@5 & 1.0 \\ \hline
+                MSE & 4051.82448 \\ \hline
+                NDCG & 1.0 \\ \hline
+                NDCG@5 & 1.0 \\ \hline
+                Precision - macro & 1.0 \\ \hline
+                Precision@5 - macro & 1.0 \\ \hline
+                PredictionCoverage & 16.67 \\ \hline
+                R-Precision - macro & 1.0 \\ \hline
+                RMSE & 63.65394 \\ \hline
+                Recall - macro & 1.0 \\ \hline
+                Recall@5 - macro & 1.0 \\ \hline
+             \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_IndexQuery}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with IndexQuery ___
+
+\hfill\break
+\hfill\break
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD ClassifierRecommender -------------------------------------
+\subsection{Results for ClassifierRecommender}\label{subsec:ClassifierRecommender}
+In this section we show the mean results with \textbf{ ClassifierRecommender }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_ClassifierRecommender}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+                CatalogCoverage (PredictionCov) & 16.67 \\ \hline
+                F1 - macro & 1.0 \\ \hline
+                F1@5 - micro & 1.0 \\ \hline
+                Gini & 0.0 \\ \hline
+                MAE & 1.5 \\ \hline
+                MAP & 1.0 \\ \hline
+                MRR & 1.0 \\ \hline
+                MRR@5 & 1.0 \\ \hline
+                MSE & 2.25 \\ \hline
+                NDCG & 1.0 \\ \hline
+                NDCG@5 & 1.0 \\ \hline
+                Precision - macro & 1.0 \\ \hline
+                Precision@5 - macro & 1.0 \\ \hline
+                PredictionCoverage & 16.67 \\ \hline
+                R-Precision - macro & 1.0 \\ \hline
+                RMSE & 1.5 \\ \hline
+                Recall - macro & 1.0 \\ \hline
+                Recall@5 - macro & 1.0 \\ \hline
+             \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_ClassifierRecommender}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with ClassifierRecommender ___
+
+\hfill\break
+\hfill\break
+
+
+
+% ------------------------------- RESULT OF PERFORMACE OF THE SYSTEM ON THE FOLD AmarDoubleSource -------------------------------------
+\subsection{Results for AmarDoubleSource}\label{subsec:AmarDoubleSource}
+In this section we show the mean results with \textbf{ AmarDoubleSource }, the metrics used during the experiment will be
+grouped into the following table, that represent the results of the evaluation conducted~\ref{tab:results_table_AmarDoubleSource}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\ \hline
+                CatalogCoverage (PredictionCov) & 50.0 \\ \hline
+                F1 - macro & 0.91667 \\ \hline
+                F1@5 - micro & 0.92857 \\ \hline
+                Gini & 0.0 \\ \hline
+                MAE & 2.16423 \\ \hline
+                MAP & 1.0 \\ \hline
+                MRR & 1.0 \\ \hline
+                MRR@5 & 1.0 \\ \hline
+                MSE & 5.67578 \\ \hline
+                NDCG & 1.0 \\ \hline
+                NDCG@5 & 1.0 \\ \hline
+                Precision - macro & 0.875 \\ \hline
+                Precision@5 - macro & 0.875 \\ \hline
+                PredictionCoverage & 50.0 \\ \hline
+                R-Precision - macro & 1.0 \\ \hline
+                RMSE & 2.19062 \\ \hline
+                Recall - macro & 1.0 \\ \hline
+                Recall@5 - macro & 1.0 \\ \hline
+             \end{tabular}
+    \captionsetup{type=table}
+    \caption{Table of the results}
+    \label{tab:results_table_AmarDoubleSource}
+\end{center}
+\hfill\break
+\hfill\break
+% end table of performance with AmarDoubleSource ___
+
+\hfill\break
+\hfill\break
+
+
+\section{Algorithms comparison}\label{sec:comparison}
+In the following table it's showed a comparison between the algorithms used in these experiments
+and their performance are highlighted base on the best result obtained.
+In bold the best result for each of the evaluating metrics used, despite underline will be the second-best result
+obtained on each metrics and an asterisk netx to the result of the metric means that the result obtained is statistic
+relevant based on statistical tests conducted:
+
+\hfill\break
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Precision - macro}} & \multirow{2}{*}{\makecell{Recall - macro}} & \multirow{2}{*}{\makecell{F1 - macro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 0.58 & 0.69 & 0.71 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.375* & 0.421 & 0.517* \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \textbf{0.99}* & \underline{0.985} & \textbf{0.979}* \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.723* & 0.792 & 0.799 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \underline{0.875}* & \textbf{1.0} & \underline{0.917} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 1)}
+\end{table}
+\vspace{10pt}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Gini}} & \multirow{2}{*}{\makecell{NDCG}} & \multirow{2}{*}{\makecell{R-Precision - macro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 8.0 & \underline{0.95} & 0.853 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 35.0* & 0.521 & 0.423 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.9}* & 0.91 & \underline{0.965} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 11.0* & 0.823 & 0.811 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{0.0}* & \textbf{1.0} & \textbf{1.0} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 2)}
+\end{table}
+\vspace{10pt}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{RMSE}} & \multirow{2}{*}{\makecell{MSE}} & \multirow{2}{*}{\makecell{MAE}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & \underline{3.0} & \underline{9.0} & \underline{3.0} \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 120.813 & 1540.7* & 2760.762* \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & 43.654 & 51.824* & 3.654* \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 13.5 & 26.25* & 12.5* \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{2.191} & \textbf{5.676}* & \textbf{2.164}* \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 3)}
+\end{table}
+\vspace{10pt}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{MRR}} & \multirow{2}{*}{\makecell{MAP}} & \multirow{2}{*}{\makecell{PredictionCoverage}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & 0.699 & \underline{0.981} & 16.67 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.543 & 0.477 & \underline{150.0} \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \textbf{1.0} & 0.9 & 36.67 \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & \underline{0.75} & 0.69 & \textbf{169.67} \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{1.0} & \textbf{1.0} & 50.0 \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 4)}
+\end{table}
+\vspace{10pt}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
+\cmidrule{2-4}
+& \multirow{2}{*}{\makecell{Precision@5 - macro}} & \multirow{2}{*}{\makecell{Recall@5 - macro}} & \multirow{2}{*}{\makecell{F1@5 - micro}} \\
+\addlinespace[5pt]
+\cmidrule{2-4}
+CentroidVector & \textbf{1.0} & \textbf{1.0} & 0.877 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.475* & 0.399* & 0.529 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.93}* & \underline{0.92}* & \textbf{0.998} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.771* & 0.721* & 0.789 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & 0.875* & \textbf{1.0}* & \underline{0.929} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 5)}
+\end{table}
+\vspace{10pt}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c *{2}{p{3.0cm}}@{}}
+\toprule
+\multirow{2}{*}{Algorithms} & \multicolumn{2}{c}{Columns} \\
+\cmidrule{2-3}
+& \multirow{2}{*}{\makecell{MRR@5}} & \multirow{2}{*}{\makecell{NDCG@5}} \\
+\addlinespace[5pt]
+\cmidrule{2-3}
+CentroidVector & 0.877 & 0.811 \\
+\addlinespace[5pt]
+\midrule
+LinearPredictor & 0.444 & 0.454 \\
+\addlinespace[5pt]
+\midrule
+IndexQuery & \underline{0.925} & \underline{0.965} \\
+\addlinespace[5pt]
+\midrule
+ClassifierRecommender & 0.688 & 0.698 \\
+\addlinespace[5pt]
+\midrule
+AmarDoubleSource & \textbf{1.0} & \textbf{1.0} \\
+\addlinespace[5pt]
+\midrule
+\bottomrule
+\end{tabular}}
+\caption{Comparison between algorithms (Part 6)}
+\end{table}
+\hfill\break
+\hfill\break
+
+
+
+\subsection{Statistic relevance}\label{subsec:stas_rel}
+During the experiment some statistic test are been performed and the following table show the result
+of the level of p-value used for each metric, this result have been used to mark with an asterisk
+the result obtained in the previous table that are statistical relevant.
+
+\hfill\break
+\begin{table}[h]
+\centering
+\caption{relevance table - Precision - macro, Recall@5 - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Precision - macro} & \multicolumn{2}{l}{Recall@5 - macro} \\
+{} &         statistic &         pvalue &        statistic &    pvalue \\
+sys\_pair                                  &                   &                &                  &           \\
+\midrule
+(CentroidVector, LinearPredictor)         &        -35.804186 &  9.505701e-281 &        -3.055409 &  0.002248 \\
+(CentroidVector, IndexQuery)              &        -35.515481 &  2.835562e-276 &        -3.046352 &  0.002316 \\
+(LinearPredictor, IndexQuery)             &          0.391382 &   6.955147e-01 &         0.007365 &  0.994123 \\
+(CentroidVector, ClassifierRecommender)   &        -33.012310 &   1.230000e-03 &         8.231000 &  0.023000 \\
+(CentroidVector, AmarDoubleSource)        &         45.898800 &   5.000000e-01 &         9.787355 &  0.876350 \\
+(LinearPredictor, ClassifierRecommender)  &         67.123000 &   1.570000e+00 &        12.827465 &  1.450000 \\
+(LinearPredictor, AmarDoubleSource)       &         32.123400 &   1.500000e+00 &        -8.897564 &  1.200000 \\
+(IndexQuery, ClassifierRecommender)       &        -12.345600 &   2.470000e-02 &        -6.978343 &  0.063215 \\
+(IndexQuery, AmarDoubleSource)            &         25.984700 &   8.800000e-01 &        -5.917826 &  0.445425 \\
+(ClassifierRecommender, AmarDoubleSource) &         45.124500 &   3.200000e-03 &         0.089760 &  0.120970 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - Precision@5 - macro, F1 - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Precision@5 - macro} & \multicolumn{2}{l}{F1 - macro} \\
+{} &           statistic &         pvalue &  statistic &        pvalue \\
+sys\_pair                                  &                     &                &            &               \\
+\midrule
+(CentroidVector, LinearPredictor)         &          -21.304897 &  1.022519e-100 & -14.942434 &  1.744839e-50 \\
+(CentroidVector, IndexQuery)              &          -20.850420 &   1.510916e-96 & -14.920691 &  2.417581e-50 \\
+(LinearPredictor, IndexQuery)             &            0.479623 &   6.314952e-01 &  -0.008531 &  9.931930e-01 \\
+(CentroidVector, ClassifierRecommender)   &          -23.875645 &   9.083649e-01 & -12.876540 &  1.872534e+00 \\
+(CentroidVector, AmarDoubleSource)        &           11.293875 &   2.276869e-01 &  11.987236 &  2.876354e+00 \\
+(LinearPredictor, ClassifierRecommender)  &           73.923764 &   2.800000e+00 &  33.897744 &  5.893746e+00 \\
+(LinearPredictor, AmarDoubleSource)       &           12.897436 &   4.530000e+00 &  75.832765 &  3.129735e+00 \\
+(IndexQuery, ClassifierRecommender)       &          -22.786234 &   8.374560e-02 &  11.876235 &  6.753465e-01 \\
+(IndexQuery, AmarDoubleSource)            &          -33.897465 &   8.745600e-01 &  -7.752364 &  9.734000e-03 \\
+(ClassifierRecommender, AmarDoubleSource) &          -41.823675 &   3.487561e-03 &  -8.762354 &  8.972355e-03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - MSE, MAE}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{MSE} & \multicolumn{2}{l}{MAE} \\
+{} &  statistic &        pvalue &  statistic &        pvalue \\
+sys\_pair                                  &            &               &            &               \\
+\midrule
+(CentroidVector, LinearPredictor)         & -81.304897 &  1.902252e-99 &  -4.942434 &  1.174484e-49 \\
+(CentroidVector, IndexQuery)              & -29.850420 &  1.451092e-95 & -24.920691 &  2.417581e-50 \\
+(LinearPredictor, IndexQuery)             &   2.479623 &  7.631495e+00 &  -3.008531 &  6.993193e+00 \\
+(CentroidVector, ClassifierRecommender)   &   3.978265 &  2.346754e-04 &  -5.874650 &  7.893245e-03 \\
+(CentroidVector, AmarDoubleSource)        &  12.837450 &  7.653400e-03 &  -8.983465 &  8.725340e-03 \\
+(LinearPredictor, ClassifierRecommender)  &  31.873564 &  7.635400e-03 &   2.897456 &  9.872356e-04 \\
+(LinearPredictor, AmarDoubleSource)       &  15.763500 &  8.653400e-03 &   9.823646 &  2.348220e-03 \\
+(IndexQuery, ClassifierRecommender)       &   8.678354 &  1.023646e+00 &  12.873540 &  2.863500e-04 \\
+(IndexQuery, AmarDoubleSource)            & -22.876345 &  9.864500e-01 &   7.876325 &  9.735676e-03 \\
+(ClassifierRecommender, AmarDoubleSource) & -12.876253 &  7.655000e-01 &  -1.827635 &  1.238896e-01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - Gini,  R-Precision - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Gini} & \multicolumn{2}{l}{R-Precision - macro} \\
+{} &  statistic &         pvalue &            statistic &     pvalue \\
+sys\_pair                                  &            &                &                      &            \\
+\midrule
+(CentroidVector, LinearPredictor)         &  -3.804186 &  5.505701e-281 &            -5.055409 &  12.002248 \\
+(CentroidVector, IndexQuery)              & -15.515481 &  3.835562e-276 &            -3.046352 &   7.002316 \\
+(LinearPredictor, IndexQuery)             &   3.391382 &   1.695515e+00 &            20.007365 &   3.994123 \\
+(CentroidVector, ClassifierRecommender)   &  22.897354 &   2.364000e-04 &            21.873450 &   3.978640 \\
+(CentroidVector, AmarDoubleSource)        &   2.763500 &   7.623410e-03 &            -9.786345 &   1.872534 \\
+(LinearPredictor, ClassifierRecommender)  &   8.877452 &   9.888000e-01 &            12.978235 &   0.665710 \\
+(LinearPredictor, AmarDoubleSource)       &  10.875400 &   1.232300e+00 &            14.873540 &   0.222188 \\
+(IndexQuery, ClassifierRecommender)       &   5.986450 &   1.564200e+00 &           -31.835478 &   0.861540 \\
+(IndexQuery, AmarDoubleSource)            &   8.897534 &   3.261000e-02 &            -7.872354 &   0.815810 \\
+(ClassifierRecommender, AmarDoubleSource) &  12.976400 &   1.152672e-02 &           -12.873450 &   0.122311 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\hfill\break
+\hfill\break
+
+
+
+\section{Conclusion on the experiment}\label{sec:conclution}
+This part is for conclusion to be sum up as needed.
+\hfill\break
+\hfill\break
+
+% ------------------- END OF THE REPORT COMPLETED ---------------
+% closing the document
+\end{document}
+
+\hfill\break
+\hfill\break
+

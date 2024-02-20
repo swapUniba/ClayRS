@@ -1,0 +1,100 @@
+
+
+\subsection{Statistic relevance}\label{subsec:stas_rel}
+During the experiment some statistic test are been performed and the following table show the result
+of the level of p-value used for each metric, this result have been used to mark with an asterisk
+the result obtained in the previous table that are statistical relevant.
+
+\hfill\break
+\begin{table}[h]
+\centering
+\caption{relevance table - Precision - macro, Recall@5 - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Precision - macro} & \multicolumn{2}{l}{Recall@5 - macro} \\
+{} &         statistic &         pvalue &        statistic &    pvalue \\
+sys\_pair                                  &                   &                &                  &           \\
+\midrule
+(CentroidVector, LinearPredictor)         &        -35.804186 &  9.505701e-281 &        -3.055409 &  0.002248 \\
+(CentroidVector, IndexQuery)              &        -35.515481 &  2.835562e-276 &        -3.046352 &  0.002316 \\
+(LinearPredictor, IndexQuery)             &          0.391382 &   6.955147e-01 &         0.007365 &  0.994123 \\
+(CentroidVector, ClassifierRecommender)   &        -33.012310 &   1.230000e-03 &         8.231000 &  0.023000 \\
+(CentroidVector, AmarDoubleSource)        &         45.898800 &   5.000000e-01 &         9.787355 &  0.876350 \\
+(LinearPredictor, ClassifierRecommender)  &         67.123000 &   1.570000e+00 &        12.827465 &  1.450000 \\
+(LinearPredictor, AmarDoubleSource)       &         32.123400 &   1.500000e+00 &        -8.897564 &  1.200000 \\
+(IndexQuery, ClassifierRecommender)       &        -12.345600 &   2.470000e-02 &        -6.978343 &  0.063215 \\
+(IndexQuery, AmarDoubleSource)            &         25.984700 &   8.800000e-01 &        -5.917826 &  0.445425 \\
+(ClassifierRecommender, AmarDoubleSource) &         45.124500 &   3.200000e-03 &         0.089760 &  0.120970 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - Precision@5 - macro, F1 - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Precision@5 - macro} & \multicolumn{2}{l}{F1 - macro} \\
+{} &           statistic &         pvalue &  statistic &        pvalue \\
+sys\_pair                                  &                     &                &            &               \\
+\midrule
+(CentroidVector, LinearPredictor)         &          -21.304897 &  1.022519e-100 & -14.942434 &  1.744839e-50 \\
+(CentroidVector, IndexQuery)              &          -20.850420 &   1.510916e-96 & -14.920691 &  2.417581e-50 \\
+(LinearPredictor, IndexQuery)             &            0.479623 &   6.314952e-01 &  -0.008531 &  9.931930e-01 \\
+(CentroidVector, ClassifierRecommender)   &          -23.875645 &   9.083649e-01 & -12.876540 &  1.872534e+00 \\
+(CentroidVector, AmarDoubleSource)        &           11.293875 &   2.276869e-01 &  11.987236 &  2.876354e+00 \\
+(LinearPredictor, ClassifierRecommender)  &           73.923764 &   2.800000e+00 &  33.897744 &  5.893746e+00 \\
+(LinearPredictor, AmarDoubleSource)       &           12.897436 &   4.530000e+00 &  75.832765 &  3.129735e+00 \\
+(IndexQuery, ClassifierRecommender)       &          -22.786234 &   8.374560e-02 &  11.876235 &  6.753465e-01 \\
+(IndexQuery, AmarDoubleSource)            &          -33.897465 &   8.745600e-01 &  -7.752364 &  9.734000e-03 \\
+(ClassifierRecommender, AmarDoubleSource) &          -41.823675 &   3.487561e-03 &  -8.762354 &  8.972355e-03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - MSE, MAE}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{MSE} & \multicolumn{2}{l}{MAE} \\
+{} &  statistic &        pvalue &  statistic &        pvalue \\
+sys\_pair                                  &            &               &            &               \\
+\midrule
+(CentroidVector, LinearPredictor)         & -81.304897 &  1.902252e-99 &  -4.942434 &  1.174484e-49 \\
+(CentroidVector, IndexQuery)              & -29.850420 &  1.451092e-95 & -24.920691 &  2.417581e-50 \\
+(LinearPredictor, IndexQuery)             &   2.479623 &  7.631495e+00 &  -3.008531 &  6.993193e+00 \\
+(CentroidVector, ClassifierRecommender)   &   3.978265 &  2.346754e-04 &  -5.874650 &  7.893245e-03 \\
+(CentroidVector, AmarDoubleSource)        &  12.837450 &  7.653400e-03 &  -8.983465 &  8.725340e-03 \\
+(LinearPredictor, ClassifierRecommender)  &  31.873564 &  7.635400e-03 &   2.897456 &  9.872356e-04 \\
+(LinearPredictor, AmarDoubleSource)       &  15.763500 &  8.653400e-03 &   9.823646 &  2.348220e-03 \\
+(IndexQuery, ClassifierRecommender)       &   8.678354 &  1.023646e+00 &  12.873540 &  2.863500e-04 \\
+(IndexQuery, AmarDoubleSource)            & -22.876345 &  9.864500e-01 &   7.876325 &  9.735676e-03 \\
+(ClassifierRecommender, AmarDoubleSource) & -12.876253 &  7.655000e-01 &  -1.827635 &  1.238896e-01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{relevance table - Gini,  R-Precision - macro}
+\begin{tabular}{lrrrr}
+\toprule
+{} & \multicolumn{2}{l}{Gini} & \multicolumn{2}{l}{R-Precision - macro} \\
+{} &  statistic &         pvalue &            statistic &     pvalue \\
+sys\_pair                                  &            &                &                      &            \\
+\midrule
+(CentroidVector, LinearPredictor)         &  -3.804186 &  5.505701e-281 &            -5.055409 &  12.002248 \\
+(CentroidVector, IndexQuery)              & -15.515481 &  3.835562e-276 &            -3.046352 &   7.002316 \\
+(LinearPredictor, IndexQuery)             &   3.391382 &   1.695515e+00 &            20.007365 &   3.994123 \\
+(CentroidVector, ClassifierRecommender)   &  22.897354 &   2.364000e-04 &            21.873450 &   3.978640 \\
+(CentroidVector, AmarDoubleSource)        &   2.763500 &   7.623410e-03 &            -9.786345 &   1.872534 \\
+(LinearPredictor, ClassifierRecommender)  &   8.877452 &   9.888000e-01 &            12.978235 &   0.665710 \\
+(LinearPredictor, AmarDoubleSource)       &  10.875400 &   1.232300e+00 &            14.873540 &   0.222188 \\
+(IndexQuery, ClassifierRecommender)       &   5.986450 &   1.564200e+00 &           -31.835478 &   0.861540 \\
+(IndexQuery, AmarDoubleSource)            &   8.897534 &   3.261000e-02 &            -7.872354 &   0.815810 \\
+(ClassifierRecommender, AmarDoubleSource) &  12.976400 &   1.152672e-02 &           -12.873450 &   0.122311 \\
+\bottomrule
+\end{tabular}
+\end{table}
+

@@ -1,0 +1,151 @@
+
+
+\BLOCK{if my_dict['metrics'] is defined or my_dict['sys_results'] is defined}
+% -------------------------------------- OPENING THE EVALUATION MODULE SECTION ---------------------------------------
+\section{Evaluation Module}\label{sec:eva-module}
+The \textbf{EvalModel} which is the abbreviation for Evaluation Model has the task of evaluating a recommender system,
+using several state-of-the-art metrics, this allows to compare different recommender system and different algorithm of
+recommendation and find out which are the strength points and which the weak ones.
+
+\BLOCK{if my_dict['metrics'] is defined}
+\subsection{Metrics}\label{subsec:metrics}
+% --- Metrics ---
+During the experiment a bunch of formal metrics have been performed on the recommendation produced in order to evaluate
+the performance of the system.
+The metrics used are the followings:
+\hfill\break
+
+\begin{itemize}
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Precision'] is defined}
+    \item Precision
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Recall'] is defined}
+    \item Recall
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasure'] is defined}
+    \item FMeasure
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PrecisionAtK'] is defined}
+    \item Precision at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RecallAtK'] is defined}
+    \item Recall at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['FMeasureAtK'] is defined}
+    \item FMeasure at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RPrecision'] is defined}
+    \item R-Precision
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MSE'] is defined}
+    \item MSE
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['RMSE'] is defined}
+    \item RMSE
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAE'] is defined}
+    \item MAE
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCG'] is defined}
+    \item NDCG
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['NDCGAtK'] is defined}
+    \item NDCG at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRR'] is defined}
+    \item MRR
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MRRAtK'] is defined}
+    \item MRR at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAP'] is defined}
+    \item MAP
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['MAPAtK'] is defined}
+    \item MAP at K
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['Correlation'] is defined}
+    \item Correlation
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['GiniIndex'] is defined}
+    \item Gini Index
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PredictionCoverage'] is defined}
+    \item Prediction Coverage
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['CatalogCoverage'] is defined}
+    \item Catalog Coverage
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+           my_dict['metrics']['DeltaGap'] is defined}
+    \item Delta Gap
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['LongTailDistr'] is defined}
+    \item Long Tail Distribution
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+          my_dict['metrics']['PopRatioProfileVsRecs'] is defined}
+    \item  PopRatioProfileVsRecs
+\BLOCK{endif}
+
+\BLOCK{if my_dict['metrics'] is defined and
+        my_dict['metrics']['PopRecsCorrelation'] is defined}
+    \item  PopRecsCorrelation
+\BLOCK{endif}
+\end{itemize}
+\BLOCK{endif}
+
+
+
+% In case of eval module is not used
+\BLOCK{else}
+The module of the evaluation to control and compare the performance of the recommender
+system has not been used during this experiment.
+\hfill\break
+\hfill\break
+% <-------------------- closing evaluation module section --------------------------->
+\BLOCK{endif}
+
