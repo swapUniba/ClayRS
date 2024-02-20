@@ -19,7 +19,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Resize, Lambda, CenterCrop, Normalize, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Normalize, CenterCrop, Lambda, Resize, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -44,7 +44,7 @@ its source file is \lstinline[style=verbatim-text]| \VAR{ my_dict['source_file']
 and the content used during the experiment:
 \BLOCK{ if my_dict is defined and my_dict['id_each_content'] is defined and my_dict['id_each_content'] }
 \BLOCK{ for value in my_dict['id_each_content'] }
-     \verb| \VAR{ value }, |
+     \VAR{ value|safe_text },
 \BLOCK{ endfor }.
 \BLOCK{endif}
 

@@ -85,7 +85,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Resize, Lambda, CenterCrop, Normalize, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Normalize, CenterCrop, Lambda, Resize, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -99,10 +99,10 @@ representation wanted:
 \subsection{Dataset used and its statistics}
 The dataset used for the experiment is  \lstinline[style=verbatim-text]| 1000K data video movie |,
 its source file is \lstinline[style=verbatim-text]| items_extra_small.json | ,and the content used during the experiment:
-     \verb| movielens_id, |
-     \verb| actor_id, |
-     \verb| director_id, |
-     \verb| company_producer_id, |
+     movielens\_id,
+     actor\_id,
+     director\_id,
+     company\_producer\_id,
 .
 
 
@@ -659,7 +659,7 @@ of the level of p-value used for each metric, this result have been used to mark
 the result obtained in the previous table that are statistical relevant.
 
 \hfill\break
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{relevance table - Precision - macro, Recall@5 - macro}
 \begin{tabular}{lrrrr}
@@ -682,7 +682,7 @@ sys\_pair                                  &                   &                
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{relevance table - Precision@5 - macro, F1 - macro}
 \begin{tabular}{lrrrr}
@@ -705,7 +705,7 @@ sys\_pair                                  &                     &              
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{relevance table - MSE, MAE}
 \begin{tabular}{lrrrr}
@@ -728,7 +728,7 @@ sys\_pair                                  &            &               &       
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{relevance table - Gini,  R-Precision - macro}
 \begin{tabular}{lrrrr}
