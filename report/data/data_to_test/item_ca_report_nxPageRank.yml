@@ -1,9 +1,6 @@
 source_file: items_extra_small.json
 id_each_content:
 - movielens_id
-- actor_id
-- director_id
-- company_producer_id
 exogenous_representations:
   DBPediaMappingTechnique:
     mode: only_retrieved_evaluated, entity type=dbo:Film

@@ -85,7 +85,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Normalize, CenterCrop, Lambda, Resize, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, CenterCrop, Resize, Lambda, Normalize, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -100,9 +100,6 @@ representation wanted:
 The dataset used for the experiment is  \lstinline[style=verbatim-text]| 1000K data video movie |,
 its source file is \lstinline[style=verbatim-text]| items_extra_small.json | ,and the content used during the experiment:
      movielens\_id,
-     actor\_id,
-     director\_id,
-     company\_producer\_id,
 .
 
 
@@ -163,26 +160,249 @@ In this experiment the following are the algorithm used: \\
 
 
     \lstinline[style=verbatim-text]| - CentroidVector |  \\
+
+% ----------------------------------------- START RECSYS MODULE ------------------------------------------------------
+\section{Recommender System}\label{sec:recsys}
+The RecSys module allows to instantiate a recommender system in order to work on items and users serialized
+the Content Analyzer module, and its aim is to be trained on the data used in order to produce recommendation.
+In this experiment the following are the algorithm used.
+
+
+
+% ---------------------------------- ALGORITHM CentroidVector FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm CentroidVector used in the experiment}\label{subsec:algo_CentroidVector}
+% ---RECSYS ALGORITHM CentroidVector ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| CentroidVector | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  similarity: CosineSimilarity
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 \hfill\break
 \hfill\break
 
 
-    \lstinline[style=verbatim-text]| - LinearPredictor |  \\
+
+% ---------------------------------- ALGORITHM LinearPredictor FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm LinearPredictor used in the experiment}\label{subsec:algo_LinearPredictor}
+% ---RECSYS ALGORITHM LinearPredictor ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| LinearPredictor | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  regressor: SkLinearRegression
+\end{verbatim}
+\item \begin{verbatim}
+  only_greater_eq: None
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 \hfill\break
 \hfill\break
 
 
-    \lstinline[style=verbatim-text]| - IndexQuery |  \\
+
+% ---------------------------------- ALGORITHM IndexQuery FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm IndexQuery used in the experiment}\label{subsec:algo_IndexQuery}
+% ---RECSYS ALGORITHM IndexQuery ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| IndexQuery | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['search_i']}
+\end{verbatim}
+\item \begin{verbatim}
+  classic_similarity: True
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 \hfill\break
 \hfill\break
 
 
-    \lstinline[style=verbatim-text]| - ClassifierRecommender |  \\
+
+% ---------------------------------- ALGORITHM ClassifierRecommender FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm ClassifierRecommender used in the experiment}\label{subsec:algo_ClassifierRecommender}
+% ---RECSYS ALGORITHM ClassifierRecommender ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| ClassifierRecommender | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  classifier: SkKNN
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: None
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 \hfill\break
 \hfill\break
 
 
-    \lstinline[style=verbatim-text]| - AmarDoubleSource |  \\
+
+% ---------------------------------- ALGORITHM AmarDoubleSource FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm AmarDoubleSource used in the experiment}\label{subsec:algo_AmarDoubleSource}
+% ---RECSYS ALGORITHM AmarDoubleSource ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| AmarDoubleSource | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  network: <class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkMerge'>
+\end{verbatim}
+\item \begin{verbatim}
+  item_fields: [{'plot': ['tfidf_sk']}, {'plot': ['tfidf_sk']}]
+\end{verbatim}
+\item \begin{verbatim}
+  user_fields: [{}, {}]
+\end{verbatim}
+\item \begin{verbatim}
+  batch_size: 512
+\end{verbatim}
+\item \begin{verbatim}
+  epochs: 5
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\item \begin{verbatim}
+  additional_opt_parameters: {'batch_size': 512}
+\end{verbatim}
+\item \begin{verbatim}
+  train_loss: <function binary_cross_entropy at 0x00000234EC9A3760>
+\end{verbatim}
+\item \begin{verbatim}
+  optimizer_class: <class 'torch.optim.adam.Adam'>
+\end{verbatim}
+\item \begin{verbatim}
+  device: cuda:0
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: {'Centroid': {}}
+\end{verbatim}
+\item \begin{verbatim}
+  seed: None
+\end{verbatim}
+\item \begin{verbatim}
+  additional_dl_parameters: {}
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 \hfill\break
 \hfill\break
 

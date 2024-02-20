@@ -730,9 +730,9 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
                                  file_path, content_of_field,
                                  text_extract)
 
-    process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
-                              content_of_field, text_extract,
-                              file_path)
+        process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
+                                  content_of_field, text_extract,
+                                  file_path)
 
     if mode != "flat":
         if insert_intro:
@@ -1127,11 +1127,11 @@ if __name__ == "__main__":
         # print(render)
         if first_iteration:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=True,
-                                                         mode="flat", working_path="working_dir")
+                                                         mode="verbose", working_path="working_dir")
             first_iteration = False  # Imposta il flag a False dopo la prima iterazione
         else:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=False,
-                                                         mode="flat", working_path="working_dir")
+                                                         mode="verbose", working_path="working_dir")
 
         recsys_report = render_latex_template(file_to_render, route_path,  render)
         # print(recsys_report)
