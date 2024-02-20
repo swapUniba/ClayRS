@@ -1126,16 +1126,18 @@ if __name__ == "__main__":
     for render in render_list:
         # print(render)
         if first_iteration:
-            route_path, file_to_render = make_recsys_sec(render, insert_intro=True, working_path="working_dir")
+            route_path, file_to_render = make_recsys_sec(render, insert_intro=True,
+                                                         mode="flat", working_path="working_dir")
             first_iteration = False  # Imposta il flag a False dopo la prima iterazione
         else:
-            route_path, file_to_render = make_recsys_sec(render, insert_intro=False, working_path="working_dir")
+            route_path, file_to_render = make_recsys_sec(render, insert_intro=False,
+                                                         mode="flat", working_path="working_dir")
 
         recsys_report = render_latex_template(file_to_render, route_path,  render)
         # print(recsys_report)
         srl.add_to_latex_file(path_completed_exp_report, recsys_report)
 
-    # GESTIONE DEL REPORT SEZIONE METRICE DEL EVAL
+    # GESTIONE DEL REPORT SEZIONE METRICHE DEL EVAL
     # vado a creare un nuovo yml che userò per la renderizzazione della
     # sezione del content analyzer
     path_rendering_dict = merge_yaml_files([EVA_YML, RS_YML],
@@ -1209,13 +1211,8 @@ if __name__ == "__main__":
                                                           ref_df, 1.0,only_table=False,
                                                           working_path="working_dir")
     comparison_sec = render_latex_template(file_to_render, route_path, {})
-    print(f"Questa è comparison_sec {comparison_sec}")
+    # print(f"Questa è comparison_sec {comparison_sec}")
     srl.add_to_latex_file(path_completed_exp_report, comparison_sec)
-
-    stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
-                                                       2, "relevance table")
-    print(stats_rev)
-    srl.add_to_latex_file(path_completed_exp_report, stats_rev)
 
     # GESTIONE DEL REPORT SOTTOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
     # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
@@ -1228,17 +1225,21 @@ if __name__ == "__main__":
                                                                            tab_title="CentroidVector and IndexQuery",
                                                                            sci_not=True, approximation=4)
     # print(pair_stas_rel)
+    # stats_rev contiene la tabella completa con le statistiche fatte sulle coppie di sistemi
+    stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "complete",
+                                                       2, "relevance table")
+    # print(stats_rev)
 
     route_path, file_to_render = make_statistical_relevance_subsection({}, stats_rev ,
                                                                        only_table=False, working_path="working_dir")
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
-    
+    srl.add_to_latex_file(path_completed_exp_report, stats_report_sec)
 
     # GESTIONE DEL REPORT CHIUSURA E CONCLUSIONI
     my_conclusion = ("L'esprerimento è stato condotto in 3 mesi di ricerche "
                      "e la scoperta più affascinate è il nuovo algoritmo")
-    route_path, file_to_render = make_closure(conclusion=True, conclusion_text=my_conclusion, working_path="working_dir")
+    route_path, file_to_render = make_closure(conclusion=True, conclusion_text="", working_path="working_dir")
 
     end_report = render_latex_template(file_to_render, route_path, {})
     # print(end_report)

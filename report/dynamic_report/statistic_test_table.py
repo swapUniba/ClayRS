@@ -38,7 +38,7 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
     row_data = df.loc[row_index]
 
     # Costruisci la tabella LaTeX con header e titolo
-    latex_table = "\\begin{table}[h]\n"
+    latex_table = "\\begin{table}[H]\n"
     latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
     latex_table += "\\center\n"
     latex_table += "\\begin{tabular}{ll}\n"
@@ -118,7 +118,7 @@ def from_dataframe_to_latex_table(df, col, title=""):
     header_cols = df.columns.get_level_values(0).unique().tolist()
 
     # Inizializza la stringa LaTeX con il titolo
-    latex_str = f"\\begin{{table}}[h]\n\\centering\n\\caption{{{title}}}\n"
+    latex_str = f"\\begin{{table}}[H]\n\\centering\n\\caption{{{title}}}\n"
 
     # Itera sulle colonne richieste
     for i in range(0, len(header_cols), col):
@@ -174,7 +174,7 @@ def from_dataframe_to_latex_table_second(df, col, title=""):
         table_title = f"{title} - {subtitle}"
 
         # Aggiungi un'istruzione LaTeX per una nuova tabella indipendente con il titolo
-        latex_str += f"\\begin{{table}}[h]\n\\centering\n\\caption{{{table_title}}}\n"
+        latex_str += f"\\begin{{table}}[H]\n\\centering\n\\caption{{{table_title}}}\n"
         latex_str += df_selected.to_latex()
         latex_str += "\\end{table}\n\n"
 
