@@ -673,9 +673,9 @@ def make_closure(conclusion=True, conclusion_text="", working_path="working_dir"
     return working_path, file_name
 
 
-def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimise", working_path="working_dir"):
-    if mode not in ["flat", "minimise", "verbose"]:
-        raise ValueError("Parameter Error: 'mode' can be only 'falt', 'minimise' or 'verbose'.")
+def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="minimised", working_path="working_dir"):
+    if mode not in ["flat", "minimised", "verbose"]:
+        raise ValueError("Parameter Error: 'mode' can be only 'falt', 'minimised' or 'verbose'.")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
@@ -685,7 +685,7 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
 
     if mode == "flat":
         ca_processing_report_flat(render_dict, working_path, file_name)
-    elif mode == "minimise":
+    elif mode == "minimised":
         ca_processing_report_minimal(render_dict, working_path, file_name)
     else:
         # scelta della funzione in base alla verbosità del report che si vuole ottenere
@@ -712,13 +712,13 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
 
     # estrazione del nome dell'algoritmo che usiamo
     algo_name = get_keys_at_level(dict_render, 'algorithm')
-    # print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+    print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
     file_name = create_file_name("recsys_report", algo_name[0])
     file_path = os.path.join(working_path, file_name)
-    # print(file_path)
+    print(file_path)
 
     # used to add mini template at the final template latex
     content_of_field = [""]
@@ -730,6 +730,7 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
                                  file_path, content_of_field,
                                  text_extract)
 
+    if mode == "flat":
         process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
                                   content_of_field, text_extract,
                                   file_path)
@@ -1127,11 +1128,11 @@ if __name__ == "__main__":
         # print(render)
         if first_iteration:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=True,
-                                                         mode="verbose", working_path="working_dir")
+                                                         mode="flat", working_path="working_dir")
             first_iteration = False  # Imposta il flag a False dopo la prima iterazione
         else:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=False,
-                                                         mode="verbose", working_path="working_dir")
+                                                         mode="flat", working_path="working_dir")
 
         recsys_report = render_latex_template(file_to_render, route_path,  render)
         # print(recsys_report)
@@ -1147,7 +1148,7 @@ if __name__ == "__main__":
     dict_for_render_metric = read_yaml_file(path_rendering_dict)
 
     route_path, file_to_render = make_eval_metric_sec(dict_for_render_metric,
-                                                      mode="flat", working_path="working_dir")
+                                                      mode="verbose", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
     metrics_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
@@ -1155,6 +1156,7 @@ if __name__ == "__main__":
     srl.add_to_latex_file(path_completed_exp_report, metrics_report)
 
     # GESTIONE DEL REPORT SEZIONE RISULTATI OTTENUTI PER OGNI ALGORITMO
+
     centroidV_eva_res_render = read_yaml_file(merge_yaml_files([EVA_YML, RS_YML],
                                                                "working_dir",
                                                                "eva_rcs_CentroidVector.yml"))

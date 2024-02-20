@@ -80,14 +80,14 @@ def add_to_latex_file(latex_file_path, text_in):
         if file_found:
             with open(latex_file, 'a') as file:
                 file.write(text_in + '\n')
-                file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
+                # file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
                 file.write('\n')  # Aggiunge una riga vuota
             print(f"Testo aggiunto con successo al file {latex_file}.")
         else:
             # Se il file non esiste, lo crea nella cartella specificata
             with open(latex_file_path, 'w') as file:
                 file.write(text_in + '\n')
-                file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
+                # file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
                 file.write('\n')  # Aggiunge una riga vuota
             print(f"File {latex_file_path} creato e testo aggiunto.")
     except Exception as e:
