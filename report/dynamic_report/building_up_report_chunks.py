@@ -73,6 +73,45 @@ REP_DICT = {
 }
 
 
+def clean_working_dir(path, auto=False):
+    # Controlla se la cartella indicata esiste
+    if not os.path.exists(path):
+        print(f"Error: Directory doesn't exist at this path: {path}")
+        return
+
+    # Ottiene la lista dei file nella cartella
+    files_in_dir = os.listdir(path)
+
+    # Se la cartella è vuota, stampa un messaggio
+    if not files_in_dir:
+        print("Directory is empty.")
+        return
+
+    # Se auto è False, richiedi conferma prima di eliminare i file
+    if not auto:
+        for file in files_in_dir:
+            file_path = os.path.join(path, file)
+            response = input(f"Do you want to eliminate this file: '{file_path}'? (Yes/No): ").strip().lower()
+            if response == 'Yes' or response == 'y' or response == 'yes':
+                try:
+                    os.remove(file_path)
+                    print(f"File '{file}' eliminated.")
+                except Exception as e:
+                    print(f"Impossible to eliminate file '{file}': {e}")
+            else:
+                print(f"file '{file}' has not been eliminated.")
+
+    # Se auto è True, elimina i file senza richiesta di conferma
+    else:
+        for file in files_in_dir:
+            file_path = os.path.join(path, file)
+            try:
+                os.remove(file_path)
+                print(f"File '{file}' eliminated.")
+            except Exception as e:
+                print(f"Impossible to eliminate file '{file}': {e}")
+
+
 def merge_yaml_files(input_paths_list, output_folder, output_filename):
     """
     Merge multiple YAML files into a single YAML file.
@@ -1015,6 +1054,7 @@ def render_latex_template(template_path, context):
 
 # Esempio di utilizzo
 if __name__ == "__main__":
+    # TEST SULLA PIPELINE DI PRODUZIONE DEL REPORT
     # Caso di utilizzo e test della pipeline per la renderizzazione
     # test with yml of centroid vector
     CA_YML = "../data/data_to_test/item_ca_report_nxPageRank.yml"
@@ -1033,6 +1073,9 @@ if __name__ == "__main__":
     ca_dict = read_yaml_file(CA_YML)
     rs_dict = read_yaml_file(RS_YML)
     eva_dict = read_yaml_file(EVA_YML)
+
+    # PULIZIA DELLA CARTELLA WORKING_DIR [ affinché sia vuota ]
+    clean_working_dir("./working_dir", auto=True)
 
     # path completo al report finale dell'esperimento condotto in questo script
     path_completed_exp_report = "working_dir/experiment_report.tex"
@@ -1175,7 +1218,6 @@ if __name__ == "__main__":
     srl.add_to_latex_file(path_completed_exp_report, stats_rev)
 
     # GESTIONE DEL REPORT SOTTOSEZIONE PER LA RILEVANZA STATISTICA DEI RISULTATI
-    """
     # qui andiamo a creare un indice di accesso al dataframe che contiene i confronti dei test statistici
     # e l'indice ci servirà per recuperare il confronto tra i due sistemi che vogliamo mettere in evidenza
     # stampando la tabella della rilevanza statica
@@ -1191,7 +1233,7 @@ if __name__ == "__main__":
                                                                        only_table=False, working_path="working_dir")
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
-    """
+    
 
     # GESTIONE DEL REPORT CHIUSURA E CONCLUSIONI
     my_conclusion = ("L'esprerimento è stato condotto in 3 mesi di ricerche "
@@ -1201,14 +1243,18 @@ if __name__ == "__main__":
     end_report = render_latex_template(file_to_render, route_path, {})
     # print(end_report)
     srl.add_to_latex_file(path_completed_exp_report, end_report)
+    # END PIPELINE FOR REPORT
+
+
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
+    """
     # l'idea è che questa funzione sarà usata per renderizzare pezzi costruiti appositamente da aggiungere al template
     # per farlo necessiterà di un file contenente il template ovvero template_name e di un path verso
     # tale file search_path inoltre cercheromo di riutilizzare i template_chunks già presenti in modo da unirli
     # effettuare alcuni cambiamenti e in seguito dare in pasto alla funzione di renderizzazione il file template
     # creato per mezzo dell'unione di più mini template
-    """
+    
     current_path = os.getcwd()
     print("Percorso corrente:", current_path)
     src_path = "templates_chunks/templates_ca/"
