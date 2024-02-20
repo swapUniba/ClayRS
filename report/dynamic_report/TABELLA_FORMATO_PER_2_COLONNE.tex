@@ -47,11 +47,11 @@
 \begin{table}[H]
     \centering
     \resizebox{\columnwidth}{!}{%
-        \begin{tabular}{lrr}
+        \begin{tabular}{@{}l r r@{}}
             \toprule
-            \resizebox{0.3\textwidth}{!}{\textbf{}} & \resizebox{0.3\textwidth}{!}{\textbf{Precision - macro}} & \resizebox{0.3\textwidth}{!}{\textbf{Recall@5 - macro}} \\
-            \resizebox{0.3\textwidth}{!}{\textbf{}} & \resizebox{0.3\textwidth}{!}{\textbf{pvalue}} & \resizebox{0.3\textwidth}{!}{\textbf{pvalue}} \\
-            sys\_pair & & \\
+            \textbf{sys\_pair} & \makecell{\textbf{Precision - macro}} & \makecell{\textbf{Recall@5 - macro}} \\
+            \cmidrule(lr){2-3}
+            & \makecell{pvalue} & \makecell{pvalue} \\
             \midrule
             (CentroidVector, LinearPredictor)         &     9.505701e-281 &         0.002248 \\
             (CentroidVector, IndexQuery)              &     2.835562e-276 &         0.002316 \\
