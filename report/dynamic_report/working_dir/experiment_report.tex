@@ -84,7 +84,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, CenterCrop, Lambda, Normalize, Resize, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, Normalize, Resize, Lambda, CenterCrop, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -739,7 +739,7 @@ sys\_pair                                  &                &                   
 \begin{table}[H]
 \caption{\textbf{CentroidVector and IndexQuery}}
 \center
-\begin{tabular}{ll}
+\begin{tabular}{lr}
 \textbf{Metrics} & \textbf{(CentroidVector, IndexQuery)} \\
   Precision - macro - statistic & -3.55 \times 10^{1} \\
   Precision - macro - pvalue & 2.84 \times 10^{-276} \\

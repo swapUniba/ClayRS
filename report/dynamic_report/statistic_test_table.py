@@ -41,7 +41,7 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
     latex_table = "\\begin{table}[H]\n"
     latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
     latex_table += "\\center\n"
-    latex_table += "\\begin{tabular}{ll}\n"
+    latex_table += "\\begin{tabular}{lr}\n"
     latex_table += "\\textbf{Metrics} & \\textbf{" + formatted_row_index + "} \\\\\n"
     for col_name, value in row_data.items():
         # Estrai i nomi completi delle colonne dai multi-indici
