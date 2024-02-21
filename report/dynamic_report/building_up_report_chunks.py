@@ -504,7 +504,7 @@ def ca_processing_report_flat(render_dict, working_path, file_path):
                                                                                        key3=process,
                                                                                        key4=p)
                                     for t in post_processeing_technique:
-                                         postprocessing_list.append(t)
+                                        postprocessing_list.append(t)
                                 else:
                                     if isinstance(p, str):
                                         postprocessing_list.append(p)
@@ -622,7 +622,6 @@ def splitting_technique_report(render_dict, working_path, file_path):
 
 def make_introduction(executer, title="ClayRS in practice: Experimental scenarios",
                       author="SWAP research group UniBa", working_path="working_dir"):
-
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
     file_name = "introduction_report.tex"
@@ -724,13 +723,13 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
     content_of_field = [""]
     text_extract = [""]
 
-    if insert_intro:
-        # adding intro of recsys section
-        add_single_mini_template(RS_DICT, 'starting_sec_flat',
-                                 file_path, content_of_field,
-                                 text_extract)
-
     if mode == "flat":
+        if insert_intro:
+            # adding intro of recsys section
+            add_single_mini_template(RS_DICT, 'starting_sec_flat',
+                                     file_path, content_of_field,
+                                     text_extract)
+
         process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
                                   content_of_field, text_extract,
                                   file_path)
@@ -1100,7 +1099,7 @@ if __name__ == "__main__":
 
     dict_for_render = read_yaml_file(path_rendering_dict)
     print(dict_for_render)
-    
+
     # chiamata alle funzioni che andranno ad aggiungere il report sul content analyzer
     route_path, file_to_render = make_content_analyzer_sec(dict_for_render, name_of_dataset="1000K data video movie",
                                                            mode="flat")
@@ -1128,13 +1127,13 @@ if __name__ == "__main__":
         # print(render)
         if first_iteration:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=True,
-                                                         mode="flat", working_path="working_dir")
+                                                         mode="verbose", working_path="working_dir")
             first_iteration = False  # Imposta il flag a False dopo la prima iterazione
         else:
             route_path, file_to_render = make_recsys_sec(render, insert_intro=False,
-                                                         mode="flat", working_path="working_dir")
+                                                         mode="verbose", working_path="working_dir")
 
-        recsys_report = render_latex_template(file_to_render, route_path,  render)
+        recsys_report = render_latex_template(file_to_render, route_path, render)
         # print(recsys_report)
         srl.add_to_latex_file(path_completed_exp_report, recsys_report)
 
@@ -1148,7 +1147,7 @@ if __name__ == "__main__":
     dict_for_render_metric = read_yaml_file(path_rendering_dict)
 
     route_path, file_to_render = make_eval_metric_sec(dict_for_render_metric,
-                                                      mode="verbose", working_path="working_dir")
+                                                      mode="minimised", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
     metrics_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
@@ -1210,7 +1209,7 @@ if __name__ == "__main__":
     # print(f"IL DATAFRAME CARICATO CHE UTILIZZEREMO PER LE REFERENZE DOPO LE OPPORTUNE MODIFICHE\n {ref_df}")
 
     route_path, file_to_render = make_comparison_algo_sec({}, eva_yaml_paths_list, recsys_yaml_paths_list,
-                                                          ref_df, 1.0,only_table=False,
+                                                          ref_df, 1.0, only_table=False,
                                                           working_path="working_dir")
     comparison_sec = render_latex_template(file_to_render, route_path, {})
     # print(f"Questa è comparison_sec {comparison_sec}")
@@ -1223,16 +1222,16 @@ if __name__ == "__main__":
     idx_access = tbl_comp.stt.set_access_index('CentroidVector', 'IndexQuery',
                                                'Precision - macro', type_val='pvalue')
     pair_stas_rel = load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths_list, ref_df,
-                                                                            "complete", idx_access,
+                                                                           "complete", idx_access,
                                                                            tab_title="CentroidVector and IndexQuery",
-                                                                           sci_not=True, approximation=4)
+                                                                           sci_not=False, approximation=5)
     # print(pair_stas_rel)
     # stats_rev contiene la tabella completa con le statistiche fatte sulle coppie di sistemi
     stats_rev = load_and_add_statistic_relevance_table(recsys_yaml_paths_list, ref_df, "pvalue",
-                                                       2, "relevance table")
+                                                       3, "relevance table")
     # print(stats_rev)
 
-    route_path, file_to_render = make_statistical_relevance_subsection({}, stats_rev ,
+    route_path, file_to_render = make_statistical_relevance_subsection({}, stats_rev,
                                                                        only_table=False, working_path="working_dir")
 
     stats_report_sec = render_latex_template(file_to_render, route_path, {})
@@ -1253,8 +1252,6 @@ if __name__ == "__main__":
     # print(end_report)
     srl.add_to_latex_file(path_completed_exp_report, end_report)
     # END PIPELINE FOR REPORT
-
-
 
     # Caso di utilizzo della funzione di renderizzazione render_latex_template(template_name, search_path, my_dict)
     """

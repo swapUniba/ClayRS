@@ -1,2 +1,82 @@
 
-    \lstinline[style=verbatim-text]| - LinearPredictor |  \\
+
+% ---------------------------------- ALGORITHM LinearPredictor FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm LinearPredictor used in the experiment}\label{subsec:algo_LinearPredictor}
+% ---RECSYS ALGORITHM LinearPredictor ---
+
+\BLOCK{if my_dict['recsys'] is defined and my_dict['recsys']['ContentBasedRS'] is defined}
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+\BLOCK{ set recsys = my_dict['recsys']['ContentBasedRS'] }
+\BLOCK{ if 'algorithm' in recsys }
+% The keys are: \VAR{ recsys.keys() | list } debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| \VAR{ recsys['algorithm'].keys() | list | first } | and the following are its settings:
+\begin{itemize}
+\BLOCK{ for key, value in recsys['algorithm'][recsys['algorithm'].keys() | first].items() }
+\item \begin{verbatim}
+  \VAR{ key }: \VAR{ value }
+\end{verbatim}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\BLOCK{ endif }
+The mode used is \VAR{ recsys['mode'] } and the number of recommendations given
+is \VAR{ recsys['n_recs']|default('no number has been set') }.
+\BLOCK{ if 'methodology' in recsys }
+The methodology used:
+\begin{itemize}
+\BLOCK{ for key, value in recsys['methodology'].items() }
+    \item \verb| \VAR{ key }:|
+    \begin{itemize}
+        \BLOCK{ for k, v in value.items() }
+            \item \verb| \VAR{ k }: \VAR{ v } |
+        \BLOCK{ endfor }
+    \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+\BLOCK{elif my_dict['recsys'] is defined and my_dict['recsys']['GraphBasedRS'] is defined}
+% ----------------------------------------- GRAPH BASED ALGO LinearPredictor ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+\BLOCK{ set recsys = my_dict['recsys']['GraphBasedRS'] }
+\BLOCK{ if 'algorithm' in recsys }
+% The keys are: \VAR{ recsys.keys() | list } debug istruction to check the keys
+The recommender system is based on a graph representation, the algorithm used
+is \verb| \VAR{ recsys['algorithm'].keys() | list | first } | and the following are its settings:
+\begin{itemize}
+\BLOCK{ for key, value in recsys['algorithm'][recsys['algorithm'].keys() | first].items() }
+\item \begin{verbatim}
+  \VAR{ key }: \VAR{ value }
+\end{verbatim}
+\BLOCK{ endfor }
+\end{itemize}
+\hfill\break
+\BLOCK{ endif }
+The type of graph used for the algorithm is a \VAR{ recsys['graph'] } ,
+the  mode used is \VAR{ recsys['mode'] } and the number of recommendations given
+is \VAR{ recsys['n_recs']|default('no number has been set') }.
+\BLOCK{ if 'methodology' in recsys }
+The methodology used:
+\begin{itemize}
+\BLOCK{ for key, value in recsys['methodology'].items() }
+    \item \verb| \VAR{ key }:|
+    \begin{itemize}
+        \BLOCK{ for k, v in value.items() }
+            \item \verb| \VAR{ k }: \VAR{ v|safe_text } |
+        \BLOCK{ endfor }
+    \end{itemize}
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+% GRAPH BASED ALGO end___
+\hfill\break
+\BLOCK{else}
+No algorithm has been instantiated during the experiment with the framework.
+\hfill\break
+\BLOCK{ endif }
+

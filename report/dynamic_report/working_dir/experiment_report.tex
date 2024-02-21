@@ -84,7 +84,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Normalize, Lambda, Resize, CenterCrop, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, CenterCrop, Lambda, Normalize, Resize, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -153,22 +153,236 @@ The partitioning technique has been executed with the following settings:
 \section{Recommender System}\label{sec:recsys}
 The RecSys module allows to instantiate a recommender system in order to work on items and users serialized
 the Content Analyzer module, and its aim is to be trained on the data used in order to produce recommendation.
-In this experiment the following are the algorithm used: \\
+In this experiment the following are the algorithm used.
 
 
-    \lstinline[style=verbatim-text]| - CentroidVector |  \\
+
+% ---------------------------------- ALGORITHM CentroidVector FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm CentroidVector used in the experiment}\label{subsec:algo_CentroidVector}
+% ---RECSYS ALGORITHM CentroidVector ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| CentroidVector | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  similarity: CosineSimilarity
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
 
 
-    \lstinline[style=verbatim-text]| - LinearPredictor |  \\
 
 
-    \lstinline[style=verbatim-text]| - IndexQuery |  \\
 
 
-    \lstinline[style=verbatim-text]| - ClassifierRecommender |  \\
+% ---------------------------------- ALGORITHM LinearPredictor FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm LinearPredictor used in the experiment}\label{subsec:algo_LinearPredictor}
+% ---RECSYS ALGORITHM LinearPredictor ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| LinearPredictor | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  regressor: SkLinearRegression
+\end{verbatim}
+\item \begin{verbatim}
+  only_greater_eq: None
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
 
 
-    \lstinline[style=verbatim-text]| - AmarDoubleSource |  \\
+
+
+
+
+% ---------------------------------- ALGORITHM IndexQuery FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm IndexQuery used in the experiment}\label{subsec:algo_IndexQuery}
+% ---RECSYS ALGORITHM IndexQuery ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| IndexQuery | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['search_i']}
+\end{verbatim}
+\item \begin{verbatim}
+  classic_similarity: True
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
+
+
+
+% ---------------------------------- ALGORITHM ClassifierRecommender FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm ClassifierRecommender used in the experiment}\label{subsec:algo_ClassifierRecommender}
+% ---RECSYS ALGORITHM ClassifierRecommender ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| ClassifierRecommender | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  item_field: {'plot': ['tfidf_sk']}
+\end{verbatim}
+\item \begin{verbatim}
+  classifier: SkKNN
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: None
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: Centroid
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
+
+
+
+% ---------------------------------- ALGORITHM AmarDoubleSource FOR RECOMMENDER SYSTEM -------------------------------------------------
+\subsection{Algorithm AmarDoubleSource used in the experiment}\label{subsec:algo_AmarDoubleSource}
+% ---RECSYS ALGORITHM AmarDoubleSource ---
+
+% ----------------------------------------- CONTENT BASED ALGO ---------------------------------------------------------
+%specify the algorithm used and with which parameters
+% The keys are: ['algorithm', 'mode', 'n_recs', 'methodology'] debug istruction to check the keys
+The recommender system is based on content, the algorithm used
+is \verb| AmarDoubleSource | and the following are its settings:
+\begin{itemize}
+\item \begin{verbatim}
+  network: <class 'clayrs.recsys.network_based_algorithm.amar.amar_network.AmarNetworkMerge'>
+\end{verbatim}
+\item \begin{verbatim}
+  item_fields: [{'plot': ['tfidf_sk']}, {'plot': ['tfidf_sk']}]
+\end{verbatim}
+\item \begin{verbatim}
+  user_fields: [{}, {}]
+\end{verbatim}
+\item \begin{verbatim}
+  batch_size: 512
+\end{verbatim}
+\item \begin{verbatim}
+  epochs: 5
+\end{verbatim}
+\item \begin{verbatim}
+  threshold: 4
+\end{verbatim}
+\item \begin{verbatim}
+  additional_opt_parameters: {'batch_size': 512}
+\end{verbatim}
+\item \begin{verbatim}
+  train_loss: <function binary_cross_entropy at 0x00000234EC9A3760>
+\end{verbatim}
+\item \begin{verbatim}
+  optimizer_class: <class 'torch.optim.adam.Adam'>
+\end{verbatim}
+\item \begin{verbatim}
+  device: cuda:0
+\end{verbatim}
+\item \begin{verbatim}
+  embedding_combiner: {'Centroid': {}}
+\end{verbatim}
+\item \begin{verbatim}
+  seed: None
+\end{verbatim}
+\item \begin{verbatim}
+  additional_dl_parameters: {}
+\end{verbatim}
+\end{itemize}
+\hfill\break
+The mode used is rank and the number of recommendations given
+is 10.
+The methodology used:
+\begin{itemize}
+    \item \verb| TestRatingsMethodology:|
+    \begin{itemize}
+                    \item \verb| only_greater_eq: None |
+            \end{itemize}
+\end{itemize}
+% CONTENT BASED ALGO end___
+\hfill\break
+
+
+
 
 
 
@@ -193,28 +407,10 @@ In ClayRS, the Precision metric is calculated as such for the \textbf{single use
 \hfill\break
 \hfill\break
     \[
-        \begin{gathered}
          Precision_u = \frac{tp_u}{tp_u + fp_u}
-        \end{gathered}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
-       $\geq$         \textbf{2.66667}.
-            \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $<$         \textbf{no relevant threshold used}.
-        \end{itemize}
-\hfill\break
-\hfill\break
-In ClayRS, Precision needs those parameters:
-the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
-If not specified, the mean rating score of every user will be used, in this experiment it has been set to
-\textbf{None}.
-\hfill\break
-\hfill\break
-% precision report ended___
+
+% precision report end___
 
 % Recall report start
 \subsubsection{Recall}\label{subsubsec:recall}
@@ -222,27 +418,9 @@ The Recall metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           Recall_u = \frac{tp_u}{tp_u + fn_u}
-       \end{gathered}
+        Recall_u = \frac{tp_u}{tp_u + fn_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
-      rating $>=$         \textbf{2.66667}.
-            \item $fn_u$ is the number of items which are not in the recommendation list of the user and have a
-      rating $>=$         \textbf{no relevant threshold used}.
-        \end{itemize}
-\hfill\break
-\hfill\break
-In ClayRS, Recall needs those parameters:
-the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
-If not specified, the mean rating score of every user will be used, in this experiment it has been set to
-\textbf{None}.
-\hfill\break
-\hfill\break
+
 % recall report end___
 
 %FMeasure report start
@@ -252,59 +430,9 @@ It is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
-       \end{gathered}
+        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $P_u$ is the Precision calculated for the user \textbf{u}.
-    \item $R_u$ is the Recall calculated for the user \textbf{u}.
-    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
-    \begin{itemize}
-        \item $\beta = 1$: Equally weight Precision and Recall.
-        \item $\beta > 1$: Weight Recall more.
-        \item $\beta < 1$: Weight Precision more.
-    \end{itemize}
-\end{itemize}
-\hfill\break
-\hfill\break
-A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
-precision:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
-       \end:{gathered}
-    \]
-\hfill\break
-\hfill\break
-The FMeasure metric is calculated as such for the entire system, depending on if \textbf{macro} average or
-\textbf{micro} average has been chosen:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-During the experiment the FMeasure has been calculated with $\beta = $
-1 and the relevant threshold is
-\textbf{None}.
-\hfill\break
-\hfill\break
+
 % FMeasure report end___
 
 % PRECISION @K REPORT start
@@ -313,47 +441,9 @@ The Precision@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-      \begin{gathered}
-          Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
-      \end{gathered}
+        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
-      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
-    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
-      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
-\end{itemize}
-\hfill\break
-\hfill\break
-And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
-has been chosen:
-\hfill\break
-\hfill\break
-   \[
-      \begin{gathered}
-          Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
-      \end{gathered}
-   \]
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-During the experiment Precision@K has been used with the following settings:
-\begin{itemize}
-    \item \textbf{K: 5 }
-    \item \textbf{relevant threshold:None }
-    \item \textbf{sys average: macro }
-\end{itemize}
-\hfill\break
-\hfill\break
+
 % precision@k report end___
 
 % RECALL @K REPORT start
@@ -362,47 +452,9 @@ The Recall@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
-       \end{gathered}
+        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
-      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
-    \item $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
-      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
-\end{itemize}
-\hfill\break
-\hfill\break
-And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
-has been chosen:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          ecall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-During the experiment Recall@K has been used with the following settings:
-\begin{itemize}
-    \item \textbf{K: 5 }
-    \item \textbf{relevant threshold: None }
-    \item \textbf{sys average: macro }
-\end{itemize}
-\hfill\break
-\hfill\break
+
 % recall@k report end___
 
 % FMEASURE @K REPORT start
@@ -412,63 +464,9 @@ It is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
-       \end{gathered}
+        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
-    \item $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
-    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
-    \begin{itemize}
-        \item $\beta = 1$: Equally weight Precision and Recall.
-        \item $\beta > 1$: Weight Recall more.
-        \item $\beta < 1$: Weight Precision more.
-    \end{itemize}
-\end{itemize}
-\hfill\break
-\hfill\break
-A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
-precision:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
-\textbf{micro} average has been chosen:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-During the experiment FMeasure@K has been used with the following settings:
-\begin{itemize}
-    \item \textbf{K: 5}
-    \item  \textbf{$\beta$: 1}
-    \item \textbf{relevant threshold: None }
-    \item \textbf{sys average: micro }
-\end{itemize}
-\hfill\break
-\hfill\break
+
 % fmeasure@k report end___
 
 % R-PRECISION REPORT start
@@ -477,47 +475,9 @@ The R-Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
-       \end{gathered}
+        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $R$ it's the number of relevant items for the user \textbf{u}.
-    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first   $R$ items,
-        that have a rating $\geq$ the relevant threshold in its ground truth.
-    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first $R$ items,
-        that have a rating $<$ \texttt{relevant\_threshold} in their ground truth.
-\end{itemize}
-\hfill\break
-\hfill\break
-And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
-has been chosen:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-During the experiment R-Precision has been used with the following settings:
-\begin{itemize}
-    \item \textbf{relevant threshold:None }
-    \item \textbf{sys average: macro }
-\end{itemize}
-\hfill\break
-\hfill\break
+
 % r-precision report end___
 % <----- classification metrics end ------->
 
@@ -528,65 +488,9 @@ The MSE abbreviation Mean Squared Error metric is calculated as such for the \te
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
-       \end{gathered}
+        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T_u$ is the test set of the user \textbf{u}.
-    \item $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}.
-    \item $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}.
-\end{itemize}
-\hfill\break
-\hfill\break
-It is calculated as such for the entire system:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T$ is the \textbf{test set}.
-    \item $MSE_u$ is the MSE calculated for user \textbf{u}.
-\end{itemize}
-\hfill\break
-\hfill\break
-There may be cases in which some items of the test set of the user could not be predicted
-\textit{e.g. a CBRS was chosen and items were not present locally}.
-In those cases, the $MSE_u$ formula becomes:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $unk$ stay for unknown is the number of items of the user test set that could not be predicted.
-\end{itemize}
-\hfill\break
-\hfill\break
-If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
-\hfill\break
-\hfill\break
-    \[
-        \begin{gathered}
-            MSE_u = NaN
-        \end{gathered}
-    \]
-\hfill\break
-\hfill\break
+
 % mse report end___
 
 % RMSE REPORT start
@@ -595,65 +499,10 @@ The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
-       \end{gathered}
+        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T_u$ is the test set of the user $u$.
-    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
-    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
-\end{itemize}
-\hfill\break
-\hfill\break
-It is calculated as such for the entire system:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T$ is the test set.
-    \item $RMSE_u$ is the RMSE calculated for user $u$.
-\end{itemize}
-\hfill\break
-\hfill\break
-There may be cases in which some items of the test set of the user could not be predicted
-\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
-In those cases, the $RMSE_u$ formula becomes:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
-\end{itemize}
-\hfill\break
-\hfill\break
-If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          RMSE_u = NaN
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
+
 % rmse report end___
 
 % MAE REPORT start
@@ -662,65 +511,10 @@ The MAE abbreviation of Mean Absolute Error metric is calculated as such for the
 \hfill\break
 \hfill\break
     \[
-      \begin{gathered}
-          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
-      \end{gathered}
+        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T_u$ is the test set of the user $u$.
-    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
-    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
-\end{itemize}
-\hfill\break
-\hfill\break
-It is calculated as such for the entire system:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $T$ is the test set.
-    \item $MAE_u$ is the MAE calculated for user $u$.
-\end{itemize}
-\hfill\break
-\hfill\break
-There may be cases in which some items of the test set of the user could not be predicted
-\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
-In those cases, the $MAE_u$ formula becomes:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
-\end{itemize}
-\hfill\break
-\hfill\break
-If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
-\hfill\break
-\hfill\break
-    \[
-        \begin{gathered}
-            MAE_u = NaN
-        \end{gathered}
-    \]
-\hfill\break
-\hfill\break
+
 % mae report end___
 % <------ error metrics ended -------->
 
@@ -732,69 +526,8 @@ by first computing the DCG score using the following formula:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
-       \end{gathered}
+        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
     \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
-        ranking for the user $u$.
-    \item $f$ is a gain function \textit{linear or exponential, in particular}.
-    \item $x$ is the base of the logarithm.
-    \item $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
-\end{itemize}
-\hfill\break
-\hfill\break
-If $f$ is "linear", then the truth score $r$ is returned as is.
-Otherwise, in the "exponentia" case, the following formula is applied to $r$:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           f(r) = 2^{r} - 1
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-The NDCG for a single user is then calculated using the following formula:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
-\end{itemize}
-\hfill\break
-\hfill\break
-So the basic idea is to compare the actual ranking with the ideal one.
-Finally, the NDCG of the entire system is calculated instead as such:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $NDCG_u$ is the NDCG calculated for user $u$.
-    \item $U$ is the set of all users.
-\end{itemize}
-\hfill\break
-\hfill\break
-The system average excludes NaN values.
-\hfill\break
 \hfill\break
 % ndcg report end___
 
@@ -805,7 +538,7 @@ by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but 
 first $k$ predictions.
 The K used for the experiment is .
 \hfill\break
-\hfill\break
+
 % ndcg@k report end___
 
 % MRR REPORT start
@@ -816,28 +549,10 @@ MRR is calculated as such:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
-       \end{gathered}
+        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $Q$ is the set of recommendation lists.
-    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
-\end{itemize}
-\hfill\break
-\hfill\break
-% ATTENTION here we modified with \_ in case change
-The MRR metric needs to discern relevant items from the not relevant ones.
-To achieve this, one could pass a custom \texttt{relevant\_threshold} parameter that will be applied to every user.
-If the rating of an item is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
-If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
-In this experiment, the relevant threshold used is
-None.
-\hfill\break
-\hfill\break
+
 % mrr report end___
 
 % MRR@K REPORT start
@@ -848,24 +563,10 @@ MRR@K is calculated as such:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
-       \end{gathered}
+        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $K$ is the cutoff parameter.
-    \item $Q$ is the set of recommendation lists.
-    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
-\end{itemize}
-\hfill\break
-\hfill\break
-In this experiment, the relevant threshold used is
-None.
-\hfill\break
-\hfill\break
+
 % mrr@k report end___
 
 % MAP REPORT start
@@ -876,37 +577,10 @@ The AP is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
-       \end{gathered}
+        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $m_u$ is the number of relevant items for the user $u$.
-    \item $N_u$ is the number of recommended items for the user $u$.
-    \item $P(i)$ is the precision computed at cutoff $i$.
-    \item $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
-\end{itemize}
-\hfill\break
-\hfill\break
-After computing the AP for each user, we can compute the MAP for the whole system:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-           MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
-computed for the whole system in the dataframe containing system results.
-In this experiment the MAP has been calculated using a relevant threshold:
-None.
-\hfill\break
-\hfill\break
+
 % map report end___
 
 
@@ -929,48 +603,10 @@ The correlation metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-      \begin{gathered}
-          Corr_u = Corr(ranking_u, ideal_ranking_u)
-      \end{gathered}
+        Corr_u = Corr(ranking_u, ideal_ranking_u)
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $ranking_u$ is ranking of the user.
-    \item $ideal_ranking_u$ is the ideal ranking for the user.
-\end{itemize}
-\hfill\break
-\hfill\break
-The ideal ranking is calculated based on the rating inside the ground truth of the user.
-The Correlation metric calculated for the entire system is simply the average of every $Corr$:
-\hfill\break
-\hfill\break
-    \[
-      \begin{gathered}
-          Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
-      \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $Corr_u$ is the correlation of the user $u$.
-    \item $U$ is the set of all users.
-\end{itemize}
-\hfill\break
-\hfill\break
-% ATTETNION here there are already \_
-The system average excludes NaN values.
-It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter.
-If specified, only the first $n$ results of the recommendation list will be used to calculate the correlation.
-For this experiment, the settings for the correlation metrics are:
-\begin{itemize}
-    \item method: pearson.
-    \item top\_n: None.
-\end{itemize}
-\hfill\break
-\hfill\break
+
 % correlation report end___
 % <------- ranking metrics ended ------->
 
@@ -983,28 +619,10 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
-       \end{gathered}
+        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $n$ is the total number of distinct items that are being recommended.
-    \item $x_i$ is the number of times that the item $i$ has been recommended.
-\end{itemize}
-\hfill\break
-\hfill\break
-A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
-index would be equal to 0.
-The more the recsys is "unequal", the more the Gini Index is closer to 1.
-If the \texttt{'top\_n'} parameter is specified, then the Gini index will measure inequality considering only
-the first $n$ items of every recommendation list of all users.
-For this experiment, the \texttt{top\_n}:
-None.
-\hfill\break
-\hfill\break
+
 % gini index report end___
 
 % PREDICTION COVERAGE REPORT start
@@ -1016,22 +634,10 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-       \begin{gathered}
-           Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
-       \end{gathered}
+         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $I$ is the set of all available items.
-    \item $I_p$ is the set of recommended items.
-\end{itemize}
-\hfill\break
-\hfill\break
-The $I$ must be specified through the 'catalog' parameter.
-\hfill\break
-\hfill\break
+
 % prediction coverage report end___
 
 % CATALOG COVERAGE REPORT start
@@ -1045,44 +651,10 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-        \begin{gathered}
-            Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
-        \end{gathered}
+         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
     \]
 \hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $N$ is the total number of users.
-    \item $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$.
-    \item $I$ is the set of all available items.
-\end{itemize}
-\hfill\break
-\hfill\break
-The $I$ must be specified through the 'catalog' parameter.
-The recommendation list of every user ($reclist(u_j)$) can be reduced to the first n parameter with the top-n parameter,
-so that catalog coverage is measured considering only the highest ranked items.
-With the 'k' parameter one could specify the number of users that will be used to
-calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
-The formula above becomes:
-\hfill\break
-\hfill\break
-    \[
-       \begin{gathered}
-         Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
-       \end{gathered}
-    \]
-\hfill\break
-\hfill\break
-    Where:
-\begin{itemize}
-    \item $k$ is the parameter specified.
-\end{itemize}
-\hfill\break
-\hfill\break
-Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
-\hfill\break
-\hfill\break
+
 % catalog coverage report end___
 
 % <------- fairness metrics end ------>
@@ -1099,13 +671,7 @@ The plot can be generated both for the truth set or the predictions set based on
     \item \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
         items.
 \end{itemize}
-\hfill\break
-\hfill\break
-The plot file will be saved as \texttt{out\_dir/file\_name.format}.
-Since multiple splits could be evaluated at once, the overwrite parameter comes into play:
-if set to \texttt{False}, files with the same name will be saved as \texttt{file\_name\_(1).format}, \texttt{file\_name\_(2).format}, etc.
-so that for every split a plot is generated without overwriting any previously generated files.
-\hfill\break
+
 \hfill\break
 For this experiment the Long Tail Distribution has been used with the following settings:
 \begin{itemize}
@@ -1114,7 +680,7 @@ For this experiment the Long Tail Distribution has been used with the following 
     \item overwrite: False.
 \end{itemize}
 \hfill\break
-\hfill\break
+
 % LTD report end___
 
 
@@ -1122,32 +688,7 @@ For this experiment the Long Tail Distribution has been used with the following 
 \subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
 This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
 frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
-recommended.
-The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
-divided by the total number of users in the 'original\_ratings'.
-\begin{itemize}
-    \item The plot file will be saved as out\_dir/file\_name.format'
-\end{itemize}
-\hfill\break
-\hfill\break
-Since multiple splits could be evaluated at once, the overwrite parameter comes into play: if set to \texttt{False},
-files with the same name will be saved as \texttt{'file\_name\_(1).format'}, \texttt{'file\_name\_(2).format'}, etc.,
-so that for every split, a plot is generated without overwriting any previously generated files.
-\hfill\break
-\hfill\break
-There exists cases in which some items are not recommended even once, so in the graph could appear
-zero recommendations.
-One could change this behaviour thanks to the 'mode' parameter:
-\begin{itemize}
-    \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
-      second one where zero recommendations are excluded. This additional graph will be stored as
-      \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
-    \item \textbf{mode='w\_zeros'}: Only a graph containing eventual zero recommendations will be created.
-    \item \textbf{mode='no\_zeros'}: Only a graph excluding eventual zero recommendations will be created. The graph will be
-      saved as \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
-\end{itemize}
-\hfill\break
-\hfill\break
+recommended. \\
 For this experiment the PopRecsCorrelation has been used with the following settings:
 \begin{itemize}
     \item mode: both.
@@ -1155,7 +696,7 @@ For this experiment the PopRecsCorrelation has been used with the following sett
     \item overwrite: False.
 \end{itemize}
 \hfill\break
-\hfill\break
+
 % PopRecsCorrelation report end___
 % <------- plot metric end ----------->
 
@@ -1567,76 +1108,51 @@ the result obtained in the previous table that are statistical relevant.
 \begin{table}[H]
 \centering
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-{} & Precision - macro & Recall@5 - macro \\
-{} &            pvalue &           pvalue \\
-sys\_pair                                  &                   &                  \\
+{} & Precision - macro & Recall@5 - macro & Precision@5 - macro \\
+{} &            pvalue &           pvalue &              pvalue \\
+sys\_pair                                  &                   &                  &                     \\
 \midrule
-(CentroidVector, LinearPredictor)         &     9.505701e-281 &         0.002248 \\
-(CentroidVector, IndexQuery)              &     2.835562e-276 &         0.002316 \\
-(LinearPredictor, IndexQuery)             &      6.955147e-01 &         0.994123 \\
-(CentroidVector, ClassifierRecommender)   &      1.230000e-03 &         0.023000 \\
-(CentroidVector, AmarDoubleSource)        &      5.000000e-01 &         0.876350 \\
-(LinearPredictor, ClassifierRecommender)  &      1.570000e+00 &         1.450000 \\
-(LinearPredictor, AmarDoubleSource)       &      1.500000e+00 &         1.200000 \\
-(IndexQuery, ClassifierRecommender)       &      2.470000e-02 &         0.063215 \\
-(IndexQuery, AmarDoubleSource)            &      8.800000e-01 &         0.445425 \\
-(ClassifierRecommender, AmarDoubleSource) &      3.200000e-03 &         0.120970 \\
+(CentroidVector, LinearPredictor)         &     9.505701e-281 &         0.002248 &       1.022519e-100 \\
+(CentroidVector, IndexQuery)              &     2.835562e-276 &         0.002316 &        1.510916e-96 \\
+(LinearPredictor, IndexQuery)             &      6.955147e-01 &         0.994123 &        6.314952e-01 \\
+(CentroidVector, ClassifierRecommender)   &      1.230000e-03 &         0.023000 &        9.083649e-01 \\
+(CentroidVector, AmarDoubleSource)        &      5.000000e-01 &         0.876350 &        2.276869e-01 \\
+(LinearPredictor, ClassifierRecommender)  &      1.570000e+00 &         1.450000 &        2.800000e+00 \\
+(LinearPredictor, AmarDoubleSource)       &      1.500000e+00 &         1.200000 &        4.530000e+00 \\
+(IndexQuery, ClassifierRecommender)       &      2.470000e-02 &         0.063215 &        8.374560e-02 \\
+(IndexQuery, AmarDoubleSource)            &      8.800000e-01 &         0.445425 &        8.745600e-01 \\
+(ClassifierRecommender, AmarDoubleSource) &      3.200000e-03 &         0.120970 &        3.487561e-03 \\
 \bottomrule
 \end{tabular}
 }
-\caption{relevance table - Precision - macro, Recall@5 - macro}
+\caption{relevance table - Precision - macro, Recall@5 - macro, Precision@5 - macro}
 \end{table}
 
 \begin{table}[H]
 \centering
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-{} & Precision@5 - macro &    F1 - macro \\
-{} &              pvalue &        pvalue \\
-sys\_pair                                  &                     &               \\
+{} &    F1 - macro &           MSE &           MAE \\
+{} &        pvalue &        pvalue &        pvalue \\
+sys\_pair                                  &               &               &               \\
 \midrule
-(CentroidVector, LinearPredictor)         &       1.022519e-100 &  1.744839e-50 \\
-(CentroidVector, IndexQuery)              &        1.510916e-96 &  2.417581e-50 \\
-(LinearPredictor, IndexQuery)             &        6.314952e-01 &  9.931930e-01 \\
-(CentroidVector, ClassifierRecommender)   &        9.083649e-01 &  1.872534e+00 \\
-(CentroidVector, AmarDoubleSource)        &        2.276869e-01 &  2.876354e+00 \\
-(LinearPredictor, ClassifierRecommender)  &        2.800000e+00 &  5.893746e+00 \\
-(LinearPredictor, AmarDoubleSource)       &        4.530000e+00 &  3.129735e+00 \\
-(IndexQuery, ClassifierRecommender)       &        8.374560e-02 &  6.753465e-01 \\
-(IndexQuery, AmarDoubleSource)            &        8.745600e-01 &  9.734000e-03 \\
-(ClassifierRecommender, AmarDoubleSource) &        3.487561e-03 &  8.972355e-03 \\
+(CentroidVector, LinearPredictor)         &  1.744839e-50 &  1.902252e-99 &  1.174484e-49 \\
+(CentroidVector, IndexQuery)              &  2.417581e-50 &  1.451092e-95 &  2.417581e-50 \\
+(LinearPredictor, IndexQuery)             &  9.931930e-01 &  7.631495e+00 &  6.993193e+00 \\
+(CentroidVector, ClassifierRecommender)   &  1.872534e+00 &  2.346754e-04 &  7.893245e-03 \\
+(CentroidVector, AmarDoubleSource)        &  2.876354e+00 &  7.653400e-03 &  8.725340e-03 \\
+(LinearPredictor, ClassifierRecommender)  &  5.893746e+00 &  7.635400e-03 &  9.872356e-04 \\
+(LinearPredictor, AmarDoubleSource)       &  3.129735e+00 &  8.653400e-03 &  2.348220e-03 \\
+(IndexQuery, ClassifierRecommender)       &  6.753465e-01 &  1.023646e+00 &  2.863500e-04 \\
+(IndexQuery, AmarDoubleSource)            &  9.734000e-03 &  9.864500e-01 &  9.735676e-03 \\
+(ClassifierRecommender, AmarDoubleSource) &  8.972355e-03 &  7.655000e-01 &  1.238896e-01 \\
 \bottomrule
 \end{tabular}
 }
-\caption{relevance table - Precision@5 - macro, F1 - macro}
-\end{table}
-
-\begin{table}[H]
-\centering
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrr}
-\toprule
-{} &           MSE &           MAE \\
-{} &        pvalue &        pvalue \\
-sys\_pair                                  &               &               \\
-\midrule
-(CentroidVector, LinearPredictor)         &  1.902252e-99 &  1.174484e-49 \\
-(CentroidVector, IndexQuery)              &  1.451092e-95 &  2.417581e-50 \\
-(LinearPredictor, IndexQuery)             &  7.631495e+00 &  6.993193e+00 \\
-(CentroidVector, ClassifierRecommender)   &  2.346754e-04 &  7.893245e-03 \\
-(CentroidVector, AmarDoubleSource)        &  7.653400e-03 &  8.725340e-03 \\
-(LinearPredictor, ClassifierRecommender)  &  7.635400e-03 &  9.872356e-04 \\
-(LinearPredictor, AmarDoubleSource)       &  8.653400e-03 &  2.348220e-03 \\
-(IndexQuery, ClassifierRecommender)       &  1.023646e+00 &  2.863500e-04 \\
-(IndexQuery, AmarDoubleSource)            &  9.864500e-01 &  9.735676e-03 \\
-(ClassifierRecommender, AmarDoubleSource) &  7.655000e-01 &  1.238896e-01 \\
-\bottomrule
-\end{tabular}
-}
-\caption{relevance table - MSE, MAE}
+\caption{relevance table - F1 - macro, MSE, MAE}
 \end{table}
 
 \begin{table}[H]
@@ -1672,22 +1188,22 @@ sys\_pair                                  &                &                   
 \toprule
 \textbf{Metrics} & \textbf{(CentroidVector, IndexQuery)} \\
 \midrule
-  Precision - macro - statistic & -3.55 \times 10^{1} \\
-  Precision - macro - pvalue & 2.84 \times 10^{-276} \\
-  Recall@5 - macro - statistic & -3.05 \times 10^{0} \\
-  Recall@5 - macro - pvalue & 2.32 \times 10^{-3} \\
-  Precision@5 - macro - statistic & -2.09 \times 10^{1} \\
-  Precision@5 - macro - pvalue & 1.51 \times 10^{-96} \\
-  F1 - macro - statistic & -1.49 \times 10^{1} \\
-  F1 - macro - pvalue & 2.42 \times 10^{-50} \\
-  MSE - statistic & -2.99 \times 10^{1} \\
-  MSE - pvalue & 1.45 \times 10^{-95} \\
-  MAE - statistic & -2.49 \times 10^{1} \\
-  MAE - pvalue & 2.42 \times 10^{-50} \\
-  Gini - statistic & -1.55 \times 10^{1} \\
-  Gini - pvalue & 3.84 \times 10^{-276} \\
-   R-Precision - macro - statistic & -3.05 \times 10^{0} \\
-   R-Precision - macro - pvalue & 7.00 \times 10^{0} \\
+  Precision - macro - statistic & -35.51548 \\
+  Precision - macro - pvalue & 0.0 \\
+  Recall@5 - macro - statistic & -3.04635 \\
+  Recall@5 - macro - pvalue & 0.00232 \\
+  Precision@5 - macro - statistic & -20.85042 \\
+  Precision@5 - macro - pvalue & 0.0 \\
+  F1 - macro - statistic & -14.92069 \\
+  F1 - macro - pvalue & 0.0 \\
+  MSE - statistic & -29.85042 \\
+  MSE - pvalue & 0.0 \\
+  MAE - statistic & -24.92069 \\
+  MAE - pvalue & 0.0 \\
+  Gini - statistic & -15.51548 \\
+  Gini - pvalue & 0.0 \\
+   R-Precision - macro - statistic & -3.04635 \\
+   R-Precision - macro - pvalue & 7.00232 \\
 \bottomrule
 \end{tabular}%
 }
