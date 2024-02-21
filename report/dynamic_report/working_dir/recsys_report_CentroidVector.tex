@@ -21,9 +21,11 @@ The recommender system is based on content, the algorithm used
 is \verb| \VAR{ recsys['algorithm'].keys() | list | first } | and the following are its settings:
 \begin{itemize}
 \BLOCK{ for key, value in recsys['algorithm'][recsys['algorithm'].keys() | first].items() }
+ \BLOCK{ if key != 'network' and key != 'train_loss'}
 \item \begin{verbatim}
   \VAR{ key }: \VAR{ value }
 \end{verbatim}
+\BLOCK{endif}
 \BLOCK{ endfor }
 \end{itemize}
 \hfill\break

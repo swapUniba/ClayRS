@@ -751,7 +751,7 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
 
 def make_eval_metric_sec(dict_render, mode="minimised", working_path="working_dir"):
     if mode not in ["flat", "minimised", "verbose"]:
-        raise ValueError("Il parametro 'mode' può essere solo 'flat' o 'verbose'.")
+        raise ValueError("Parameter Error: 'mode' can be only 'flat' or 'verbose'.")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
