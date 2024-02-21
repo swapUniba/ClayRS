@@ -3,6 +3,7 @@
 
 \usepackage{comment}
 \usepackage{hyperref}
+\usepackage{amsmath}
 
 
 ###
@@ -32,7 +33,9 @@ In ClayRS, the Precision metric is calculated as such for the \textbf{single use
 \hfill\break
 \hfill\break
     \[
+        \begin{gathered}
          Precision_u = \frac{tp_u}{tp_u + fp_u}
+        \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -70,7 +73,9 @@ The Recall metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        Recall_u = \frac{tp_u}{tp_u + fn_u}
+       \begin{gathered}
+           Recall_u = \frac{tp_u}{tp_u + fn_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -109,7 +114,9 @@ It is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \begin{gathered}
+           FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -131,7 +138,9 @@ precision:
 \hfill\break
 \hfill\break
     \[
-         F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+       \begin{gathered}
+           F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+       \end:{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -140,12 +149,16 @@ The FMeasure metric is calculated as such for the entire system, depending on if
 \hfill\break
 \hfill\break
     \[
-        FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \begin{gathered}
+           FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
     \[
-        FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+      \begin{gathered}
+          FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -165,7 +178,9 @@ The Precision@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+      \begin{gathered}
+          Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -183,13 +198,17 @@ has been chosen:
 \hfill\break
 \hfill\break
    \[
-       Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+      \begin{gathered}
+          Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+      \end{gathered}
    \]
 \hfill\break
 \hfill\break
     \[
-       Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
-   \]
+      \begin{gathered}
+          Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+      \end{gathered}
+    \]
 \hfill\break
 \hfill\break
 During the experiment Precision@K has been used with the following settings:
@@ -211,7 +230,9 @@ The Recall@K metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+       \begin{gathered}
+           Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -229,12 +250,16 @@ has been chosen:
 \hfill\break
 \hfill\break
     \[
-        Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+       \begin{gathered}
+           Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
     \[
-        Recall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+      \begin{gathered}
+          ecall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -258,7 +283,9 @@ It is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+       \begin{gathered}
+           FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -280,7 +307,9 @@ precision:
 \hfill\break
 \hfill\break
     \[
-        F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+      \begin{gathered}
+          F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -289,12 +318,16 @@ The FMeasure@K metric is calculated as such for the entire system, depending on 
 \hfill\break
 \hfill\break
     \[
-        FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+      \begin{gathered}
+          FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
     \[
-        FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+       \begin{gathered}
+           FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -318,7 +351,9 @@ The R-Precision metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+       \begin{gathered}
+           R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -337,12 +372,16 @@ has been chosen:
 \hfill\break
 \hfill\break
     \[
-        Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+       \begin{gathered}
+           Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
     \[
-        Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+       \begin{gathered}
+           Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -366,7 +405,9 @@ The MSE abbreviation Mean Squared Error metric is calculated as such for the \te
 \hfill\break
 \hfill\break
     \[
-        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+       \begin{gathered}
+           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -382,7 +423,9 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
     \[
-        MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+       \begin{gathered}
+           MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -399,7 +442,9 @@ In those cases, the $MSE_u$ formula becomes:
 \hfill\break
 \hfill\break
     \[
-        MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+       \begin{gathered}
+           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -413,7 +458,9 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \hfill\break
 \hfill\break
     \[
-        MSE_u = NaN
+        \begin{gathered}
+            MSE_u = NaN
+        \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -428,7 +475,9 @@ The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{
 \hfill\break
 \hfill\break
     \[
-        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+       \begin{gathered}
+           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -444,7 +493,9 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
     \[
-        RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+      \begin{gathered}
+          RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -461,7 +512,9 @@ In those cases, the $RMSE_u$ formula becomes:
 \hfill\break
 \hfill\break
     \[
-        RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+       \begin{gathered}
+           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -475,7 +528,9 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \hfill\break
 \hfill\break
     \[
-        RMSE_u = NaN
+      \begin{gathered}
+          RMSE_u = NaN
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -490,7 +545,9 @@ The MAE abbreviation of Mean Absolute Error metric is calculated as such for the
 \hfill\break
 \hfill\break
     \[
-        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+      \begin{gathered}
+          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -506,7 +563,9 @@ It is calculated as such for the entire system:
 \hfill\break
 \hfill\break
     \[
-        MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+       \begin{gathered}
+           MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -523,7 +582,9 @@ In those cases, the $MAE_u$ formula becomes:
 \hfill\break
 \hfill\break
     \[
-        MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+      \begin{gathered}
+          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -537,7 +598,9 @@ If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
 \hfill\break
 \hfill\break
     \[
-        MAE_u = NaN
+        \begin{gathered}
+            MAE_u = NaN
+        \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -555,7 +618,9 @@ by first computing the DCG score using the following formula:
 \hfill\break
 \hfill\break
     \[
-        DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+       \begin{gathered}
+           DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -574,7 +639,9 @@ Otherwise, in the "exponentia" case, the following formula is applied to $r$:
 \hfill\break
 \hfill\break
     \[
-        f(r) = 2^{r} - 1
+       \begin{gathered}
+           f(r) = 2^{r} - 1
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -582,7 +649,9 @@ The NDCG for a single user is then calculated using the following formula:
 \hfill\break
 \hfill\break
     \[
-        NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+       \begin{gathered}
+           NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -597,7 +666,9 @@ Finally, the NDCG of the entire system is calculated instead as such:
 \hfill\break
 \hfill\break
     \[
-        NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+       \begin{gathered}
+           NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -637,7 +708,9 @@ MRR is calculated as such:
 \hfill\break
 \hfill\break
     \[
-        MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+       \begin{gathered}
+           MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -670,7 +743,9 @@ MRR@K is calculated as such:
 \hfill\break
 \hfill\break
     \[
-        MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+       \begin{gathered}
+           MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -699,7 +774,9 @@ The AP is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+       \begin{gathered}
+           AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -716,7 +793,9 @@ After computing the AP for each user, we can compute the MAP for the whole syste
 \hfill\break
 \hfill\break
     \[
-        MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+       \begin{gathered}
+           MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -739,7 +818,9 @@ The AP@K is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+       \begin{gathered}
+           AP@K_u = \frac{1}{m_u}\sum_{i=1}^{K}P(i)\cdot rel(i)
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -756,7 +837,9 @@ After computing the AP@K for each user, we can compute the MAP@K for the whole s
 \hfill\break
 \hfill\break
     \[
-        MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+       \begin{gathered}
+           MAP@K_{sys} = \frac{1}{|U|}\sum_{u}AP@K_u
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -788,7 +871,9 @@ The correlation metric is calculated as such for the \textbf{single user}:
 \hfill\break
 \hfill\break
     \[
-        Corr_u = Corr(ranking_u, ideal_ranking_u)
+      \begin{gathered}
+          Corr_u = Corr(ranking_u, ideal_ranking_u)
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -804,7 +889,9 @@ The Correlation metric calculated for the entire system is simply the average of
 \hfill\break
 \hfill\break
     \[
-        Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+      \begin{gathered}
+          Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -841,7 +928,9 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-        Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+       \begin{gathered}
+           Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -875,7 +964,9 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-         Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+       \begin{gathered}
+           Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -905,7 +996,9 @@ The metric is calculated as such:
 \hfill\break
 \hfill\break
     \[
-         Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+        \begin{gathered}
+            Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+        \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -926,7 +1019,9 @@ The formula above becomes:
 \hfill\break
 \hfill\break
     \[
-        Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
+       \begin{gathered}
+         Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -953,7 +1048,9 @@ It is calculated as such:
 \hfill\break
 \hfill\break
     \[
-        \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+       \begin{gathered}
+           \Delta GAP = \frac{recs_GAP - profile_GAP}{profile_GAP}
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -978,7 +1075,9 @@ is defined as:
 \hfill\break
 \hfill\break
     \[
-        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+      \begin{gathered}
+          Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+      \end{gathered}
     \]
 \hfill\break
 \hfill\break
@@ -1059,7 +1158,9 @@ is defined as:
 \hfill\break
 \hfill\break
     \[
-        Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+       \begin{gathered}
+           Popularity_ratio_u = n_most_popular_items_rated_u / n_items_rated_u
+       \end{gathered}
     \]
 \hfill\break
 \hfill\break

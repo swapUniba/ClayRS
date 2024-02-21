@@ -1148,7 +1148,7 @@ if __name__ == "__main__":
     dict_for_render_metric = read_yaml_file(path_rendering_dict)
 
     route_path, file_to_render = make_eval_metric_sec(dict_for_render_metric,
-                                                      mode="flat", working_path="working_dir")
+                                                      mode="verbose", working_path="working_dir")
     # print(route_path)
     # print(file_to_render)
     metrics_report = render_latex_template(file_to_render, route_path, dict_for_render_metric)
@@ -1190,7 +1190,7 @@ if __name__ == "__main__":
         # print(algo_result_report)
         srl.add_to_latex_file(path_completed_exp_report, algo_result_report)
 
-    # GESTIONE DEL REPOORT TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
+    # GESTIONE DEL REPORT TABELLA CONFRONTO TRA ALGORITMI CON RILEVANZA STATISTICA
     eva_yaml_paths_list = ["../data/data_for_test_two/eva_report_centroidVector.yml",
                            "../data/data_for_test_two/eva_report_linearPredictor.yml",
                            "../data/data_for_test_two/eva_report_indexQuery.yml",

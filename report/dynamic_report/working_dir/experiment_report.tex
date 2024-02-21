@@ -84,7 +84,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, Normalize, Resize, CenterCrop, Lambda, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, Ekphrasis, NLTK, TorchUniformTemporalSubSampler, TorchResample, ConvertToMono, Normalize, Lambda, Resize, CenterCrop, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -184,53 +184,982 @@ During the experiment a bunch of formal metrics have been performed on the recom
 the performance of the system.
 The metrics used are the followings:
 \hfill\break
+\hfill\break
 
+% ---------------------------------------- CLASSIFICATION METRICS STARTED --------------------------------------------
+% Precision report start
+\subsubsection{Precision}\label{subsubsec:precision}
+In ClayRS, the Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+        \begin{gathered}
+         Precision_u = \frac{tp_u}{tp_u + fp_u}
+        \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
 \begin{itemize}
-    \item Precision
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+       $\geq$         \textbf{2.66667}.
+            \item $fp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $<$         \textbf{no relevant threshold used}.
+        \end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Precision needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{None}.
+\hfill\break
+\hfill\break
+% precision report ended___
 
-    \item Recall
+% Recall report start
+\subsubsection{Recall}\label{subsubsec:recall}
+The Recall metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Recall_u = \frac{tp_u}{tp_u + fn_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp_u$ is the number of items which are in the recommendation list of the user and have a
+      rating $>=$         \textbf{2.66667}.
+            \item $fn_u$ is the number of items which are not in the recommendation list of the user and have a
+      rating $>=$         \textbf{no relevant threshold used}.
+        \end{itemize}
+\hfill\break
+\hfill\break
+In ClayRS, Recall needs those parameters:
+the \textbf{relevant\_threshold}, is a parameter needed to discern relevant items and non-relevant items for every user.
+If not specified, the mean rating score of every user will be used, in this experiment it has been set to
+\textbf{None}.
+\hfill\break
+\hfill\break
+% recall report end___
 
-    \item FMeasure
-
-    \item Precision at K
-
-    \item Recall at K
-
-    \item FMeasure at K
-
-    \item R-Precision
-
-    \item MSE
-
-    \item RMSE
-
-    \item MAE
-
-    \item NDCG
-
-    \item NDCG at K
-
-    \item MRR
-
-    \item MRR at K
-
-    \item MAP
-
-
-    \item Correlation
-
-    \item Gini Index
-
-    \item Prediction Coverage
-
-    \item Catalog Coverage
-
-
-    \item Long Tail Distribution
-
-
-    \item  PopRecsCorrelation
+%FMeasure report start
+\subsubsection{FMeasure}\label{subsubsec:f-meas}
+The FMeasure metric combines Precision and Recall into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           FMeasure_u = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P_u$ is the Precision calculated for the user \textbf{u}.
+    \item $R_u$ is the Recall calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
 \end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure is the F1 Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           F1_u = \frac{2 \cdot P_u \cdot R_u}{P_u + R_u}
+       \end:{gathered}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           FMeasure_{sys} - micro = (1 + \beta^2) \cdot \frac{P_u \cdot R_u}{(\beta^2 \cdot P_u) + R_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          FMeasure_{sys} - macro = \frac{\sum_{u \in U} FMeasure_u}{|U|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+During the experiment the FMeasure has been calculated with $\beta = $
+1 and the relevant threshold is
+\textbf{None}.
+\hfill\break
+\hfill\break
+% FMeasure report end___
+
+% PRECISION @K REPORT start
+\subsubsection{Precision@K}\label{subsubsec:prec-k}
+The Precision@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          Precision@K_u = \frac{tp@K_u}{tp@K_u + fp@K_u}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items and have a rating $>=$ relevant threshold in its ground truth.
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      cutoff to the first K items** and have a rating $<$ relevant threshold in its ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+   \[
+      \begin{gathered}
+          Precision@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fp@K_u}
+      \end{gathered}
+   \]
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          Precision@K_{sys} - macro = \frac{\sum_{u \in U} Precision@K_u}{|U|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+During the experiment Precision@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5 }
+    \item \textbf{relevant threshold:None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% precision@k report end___
+
+% RECALL @K REPORT start
+\subsubsection{Recall@K}\label{subsubsec:rec-k}
+The Recall@K metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Recall@K_u = \frac{tp@K_u}{tp@K_u + fn@K_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $tp@K_u$ is the number of items which are in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+    \item $tp@K_u$ is the number of items which are NOT in the recommendation list of the user
+      \textbf{cutoff to the first K items} and have a rating $>=$ relevant threshold in its ground truth
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Recall@K_{sys} - micro = \frac{\sum_{u \in U} tp@K_u}{\sum_{u \in U} tp@K_u + \sum_{u \in U} fn@K_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          ecall@K_{sys} - macro = \frac{\sum_{u \in U} Recall@K_u}{|U|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+During the experiment Recall@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5 }
+    \item \textbf{relevant threshold: None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% recall@k report end___
+
+% FMEASURE @K REPORT start
+\subsubsection{FMeasure@K}\label{subsubsec:f-meas-k}
+The FMeasure@K metric combines Precision@K and Recall@K into a single metric.
+It is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           FMeasure@K_u = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $P@K_u$ is the Precision at K calculated for the user \textbf{u}.
+    \item $R@K_u$ is the Recall at K calculated for the user \textbf{u}.
+    \item $\beta$ is a real factor which could weight differently Recall or Precision based on its value:
+    \begin{itemize}
+        \item $\beta = 1$: Equally weight Precision and Recall.
+        \item $\beta > 1$: Weight Recall more.
+        \item $\beta < 1$: Weight Precision more.
+    \end{itemize}
+\end{itemize}
+\hfill\break
+\hfill\break
+A famous FMeasure@K is the F1@K Metric, where $\beta = 1$, which basically is the harmonic mean of recall and
+precision:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          F1@K_u = \frac{2 \cdot P@K_u \cdot R@K_u}{P@K_u + R@K_u}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+The FMeasure@K metric is calculated as such for the entire system, depending on if \textbf{macro} average or
+\textbf{micro} average has been chosen:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          FMeasure@K_{sys} - micro = (1 + \beta^2) \cdot \frac{P@K_u \cdot R@K_u}{(\beta^2 \cdot P@K_u) + R@K_u}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           FMeasure@K_{sys} - macro = \frac{\sum_{u \in U} FMeasure@K_u}{|U|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+During the experiment FMeasure@K has been used with the following settings:
+\begin{itemize}
+    \item \textbf{K: 5}
+    \item  \textbf{$\beta$: 1}
+    \item \textbf{relevant threshold: None }
+    \item \textbf{sys average: micro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% fmeasure@k report end___
+
+% R-PRECISION REPORT start
+\subsubsection{R-Precision}\label{subsubsec:r-prec}
+The R-Precision metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           R-Precision_u = \frac{tp@R_u}{tp@R_u + fp@R_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $R$ it's the number of relevant items for the user \textbf{u}.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first   $R$ items,
+        that have a rating $\geq$ the relevant threshold in its ground truth.
+    \item $tp@R_u$ is the number of items in the recommendation list of the user, up to the first $R$ items,
+        that have a rating $<$ \texttt{relevant\_threshold} in their ground truth.
+\end{itemize}
+\hfill\break
+\hfill\break
+And it is calculated as such for the entire system, depending on if \textbf{macro} average or \textbf{micro} average
+has been chosen:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Precision@R_{sys} - micro = \frac{\sum_{u \in U} tp@R_u}{\sum_{u \in U} tp@R_u + \sum_{u \in U} fp@R_u}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Precision@R_{sys} - macro = \frac{\sum_{u \in U} R-Precision_u}{|U|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+During the experiment R-Precision has been used with the following settings:
+\begin{itemize}
+    \item \textbf{relevant threshold:None }
+    \item \textbf{sys average: macro }
+\end{itemize}
+\hfill\break
+\hfill\break
+% r-precision report end___
+% <----- classification metrics end ------->
+
+% -------------------------------------------- ERROR METRICS STARTED ------------------------------------------------
+% MSE REPORT start
+\subsubsection{MSE}\label{subsubsec:mse}
+The MSE abbreviation Mean Squared Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user \textbf{u}.
+    \item $r_{u, i}$ is the actual score give by user \textbf{u} to item \textbf{i}.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user \textbf{u} to item \textbf{i}.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MSE_{sys} = \sum_{u \in T} \frac{MSE_u}{|T|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the \textbf{test set}.
+    \item $MSE_u$ is the MSE calculated for user \textbf{u}.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally}.
+In those cases, the $MSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MSE_u = \sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ stay for unknown is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        \begin{gathered}
+            MSE_u = NaN
+        \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+% mse report end___
+
+% RMSE REPORT start
+\subsubsection{RMSE}\label{subsubsec:rmse}
+The RMSE (Root Mean Squared Error) metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u|}}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          RMSE_{sys} = \sum_{u \in T} \frac{RMSE_u}{|T|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $RMSE_u$ is the RMSE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $RMSE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           RMSE_u = \sqrt{\sum_{i \in T_u} \frac{(r_{u,i} - \hat{r}_{u,i})^2}{|T_u| - unk}}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          RMSE_u = NaN
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+% rmse report end___
+
+% MAE REPORT start
+\subsubsection{MAE}\label{subsubsec:mae}
+The MAE abbreviation of Mean Absolute Error metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T_u$ is the test set of the user $u$.
+    \item $r_{u, i}$ is the actual score give by user $u$ to item $i$.
+    \item $\hat{r}_{u, i}$ is the predicted score give by user $u$ to item $i$.
+\end{itemize}
+\hfill\break
+\hfill\break
+It is calculated as such for the entire system:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MAE_{sys} = \sum_{u \in T} \frac{MAE_u}{|T|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $T$ is the test set.
+    \item $MAE_u$ is the MAE calculated for user $u$.
+\end{itemize}
+\hfill\break
+\hfill\break
+There may be cases in which some items of the test set of the user could not be predicted
+\textit{e.g. a CBRS was chosen and items were not present locally, a methodology different from TestRatings was chosen}.
+In those cases, the $MAE_u$ formula becomes:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          MAE_u = \sum_{i \in T_u} \frac{|r_{u,i} - \hat{r}_{u,i}|}{|T_u| - unk}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $unk$ (unknown) is the number of items of the user test set that could not be predicted.
+\end{itemize}
+\hfill\break
+\hfill\break
+If no items of the user test set have been predicted $|T_u| - unk = 0$, then:
+\hfill\break
+\hfill\break
+    \[
+        \begin{gathered}
+            MAE_u = NaN
+        \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+% mae report end___
+% <------ error metrics ended -------->
+
+% ------------------------------------------- RANKING METRICS STARTED -----------------------------------------------
+% Normalized Discounted Cumulative Gain REPORT start
+\subsubsection{NDCG}\label{subsubsec:ndcg}
+The NDCG abbreviation of Normalized Discounted Cumulative Gain metric is calculated for the \textbf{single user}
+by first computing the DCG score using the following formula:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           DCG_{u}(scores_{u}) = \sum_{r\in scores_{u}}{\frac{f(r)}{log_x(2 + i)}}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $scores_{u}$ are the ground truth scores for predicted items, ordered according to the order of said items in the
+        ranking for the user $u$.
+    \item $f$ is a gain function \textit{linear or exponential, in particular}.
+    \item $x$ is the base of the logarithm.
+    \item $i$ is the index of the truth score $r$ in the list of scores $scores_{u}$.
+\end{itemize}
+\hfill\break
+\hfill\break
+If $f$ is "linear", then the truth score $r$ is returned as is.
+Otherwise, in the "exponentia" case, the following formula is applied to $r$:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           f(r) = 2^{r} - 1
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+The NDCG for a single user is then calculated using the following formula:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           NDCG_u(scores_{u}) = \frac{DCG_{u}(scores_{u})}{IDCG_{u}(scores_{u})}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $IDCG_{u}$ is the DCG of the ideal ranking for the truth scores.
+\end{itemize}
+\hfill\break
+\hfill\break
+So the basic idea is to compare the actual ranking with the ideal one.
+Finally, the NDCG of the entire system is calculated instead as such:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           NDCG_{sys} = \frac{\sum_{u} NDCG_u}{|U|}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $NDCG_u$ is the NDCG calculated for user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+The system average excludes NaN values.
+\hfill\break
+\hfill\break
+% ndcg report end___
+
+% NDCG@K REPORT start
+\subsubsection{NDCG@k}\label{subsubsec:ndcg-k}
+The NDCG@K abbreviation of Normalized Discounted Cumulative Gain at K metric is calculated for the \textbf{single user}
+by using the [framework implementation of the NDCG][clayrs.evaluation.NDCG] but considering $scores_{u}$ cut at the
+first $k$ predictions.
+The K used for the experiment is .
+\hfill\break
+\hfill\break
+% ndcg@k report end___
+
+% MRR REPORT start
+\subsubsection{MRR}\label{subsubsec:mrr}
+The MRR abbreviation of Mean Reciprocal Rank metric is a system-wide metric, so only its result it will be returned
+and not those of every user.
+MRR is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MRR_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{|Q|}\frac{1}{rank(i)}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTENTION here we modified with \_ in case change
+The MRR metric needs to discern relevant items from the not relevant ones.
+To achieve this, one could pass a custom \texttt{relevant\_threshold} parameter that will be applied to every user.
+If the rating of an item is $\geq$ \texttt{relevant\_threshold}, then it is considered relevant; otherwise, it is not.
+If no \texttt{relevant\_threshold} parameter is passed, then for every user, its mean rating score will be used.
+In this experiment, the relevant threshold used is
+None.
+\hfill\break
+\hfill\break
+% mrr report end___
+
+% MRR@K REPORT start
+\subsubsection{MRR@K}\label{subsubsec:mrr-k}
+The MRR@K abbreviation of Mean Reciprocal Rank at K metric is a system-wide metric, so only its result will be returned
+and not those of every user.
+MRR@K is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MRR@K_{sys} = \frac{1}{|Q|}\cdot\sum_{i=1}^{K}\frac{1}{rank(i)}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $K$ is the cutoff parameter.
+    \item $Q$ is the set of recommendation lists.
+    \item $rank(i)$ is the position of the first relevant item in the i-th recommendation list.
+\end{itemize}
+\hfill\break
+\hfill\break
+In this experiment, the relevant threshold used is
+None.
+\hfill\break
+\hfill\break
+% mrr@k report end___
+
+% MAP REPORT start
+\subsubsection{MAP}\label{subsubsec:map}
+The MAP metric abbreviation of Mean average Precision is a ranking metric computed by first calculating the AP
+abbreviation of Average Precision for each user and then taking its mean.
+The AP is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           AP_u = \frac{1}{m_u}\sum_{i=1}^{N_u}P(i)\cdot rel(i)
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $m_u$ is the number of relevant items for the user $u$.
+    \item $N_u$ is the number of recommended items for the user $u$.
+    \item $P(i)$ is the precision computed at cutoff $i$.
+    \item $rel(i)$ is an indicator variable that says whether the i-th item is relevant ($rel(i)=1$) or not ($rel(i)=0$).
+\end{itemize}
+\hfill\break
+\hfill\break
+After computing the AP for each user, we can compute the MAP for the whole system:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           MAP_{sys} = \frac{1}{|U|}\sum_{u}AP_u
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+This metric will return the AP computed for each user in the dataframe containing users results, and the MAP
+computed for the whole system in the dataframe containing system results.
+In this experiment the MAP has been calculated using a relevant threshold:
+None.
+\hfill\break
+\hfill\break
+% map report end___
+
+
+% CORRELATION REPORT start
+\subsubsection{Correlation}\label{subsubsec:corr}
+The Correlation metric calculates the correlation between the ranking of a user and its ideal ranking.
+The current correlation methods implemented are:
+\begin{itemize}
+    \item `pearson`
+    \item `kendall`
+    \item `spearman`
+\end{itemize}
+\hfill\break
+\hfill\break
+Every correlation method is implemented by the pandas library, so refer to its
+\href{https://pandas.pydata.org/docs/reference/api/pandas.Series.corr.html}{documentation} for more information.
+\hfill\break
+\hfill\break
+The correlation metric is calculated as such for the \textbf{single user}:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          Corr_u = Corr(ranking_u, ideal_ranking_u)
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $ranking_u$ is ranking of the user.
+    \item $ideal_ranking_u$ is the ideal ranking for the user.
+\end{itemize}
+\hfill\break
+\hfill\break
+The ideal ranking is calculated based on the rating inside the ground truth of the user.
+The Correlation metric calculated for the entire system is simply the average of every $Corr$:
+\hfill\break
+\hfill\break
+    \[
+      \begin{gathered}
+          Corr_{sys} = \frac{\sum_{u} Corr_u}{|U|}
+      \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $Corr_u$ is the correlation of the user $u$.
+    \item $U$ is the set of all users.
+\end{itemize}
+\hfill\break
+\hfill\break
+% ATTETNION here there are already \_
+The system average excludes NaN values.
+It's also possible to specify a cutoff parameter using the \texttt{top\_n} parameter.
+If specified, only the first $n$ results of the recommendation list will be used to calculate the correlation.
+For this experiment, the settings for the correlation metrics are:
+\begin{itemize}
+    \item method: pearson.
+    \item top\_n: None.
+\end{itemize}
+\hfill\break
+\hfill\break
+% correlation report end___
+% <------- ranking metrics ended ------->
+
+% -------------------------------------------- FAIRNESS METRICS ------------------------------------------------------
+% Gini Index REPORT start
+\subsubsection{Gini Index}\label{subsubsec:gini}
+The Gini Index metric measures inequality in recommendation lists.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Gini_{sys} = \frac{\sum_i(2i - n - 1)x_i}{n\cdot\sum_i x_i}
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $n$ is the total number of distinct items that are being recommended.
+    \item $x_i$ is the number of times that the item $i$ has been recommended.
+\end{itemize}
+\hfill\break
+\hfill\break
+A perfectly equal recommender system should recommend every item the same number of times, in which case the Gini
+index would be equal to 0.
+The more the recsys is "unequal", the more the Gini Index is closer to 1.
+If the \texttt{'top\_n'} parameter is specified, then the Gini index will measure inequality considering only
+the first $n$ items of every recommendation list of all users.
+For this experiment, the \texttt{top\_n}:
+None.
+\hfill\break
+\hfill\break
+% gini index report end___
+
+% PREDICTION COVERAGE REPORT start
+\subsubsection{Prediction Coverage}\label{subsubsec:pred_cov}
+The Prediction Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system wise metric, so only its result it will be returned and not those of every user.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+           Prediction Coverage_{sys} = (\frac{|I_p|}{|I|})\cdot100
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $I$ is the set of all available items.
+    \item $I_p$ is the set of recommended items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+\hfill\break
+\hfill\break
+% prediction coverage report end___
+
+% CATALOG COVERAGE REPORT start
+\subsubsection{Catalog Coverage}\label{subsubsec:cat_cov}
+The Catalog Coverage metric measures in percentage how many distinct items are being recommended in relation
+to all available items.
+It's a system-wide metric, so only its result it will be returned and not those of every user.
+It differs from the Prediction Coverage since it allows for different parameters to come into play.
+If no parameter is passed then it's a simple Prediction Coverage.
+The metric is calculated as such:
+\hfill\break
+\hfill\break
+    \[
+        \begin{gathered}
+            Catalog Coverage_{sys} = (\frac{|\bigcup_{j=1...N}reclist(u_j)|}{|I|})\cdot100
+        \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $N$ is the total number of users.
+    \item $reclist(u_j)$ is the set of items contained in the recommendation list of user $j$.
+    \item $I$ is the set of all available items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The $I$ must be specified through the 'catalog' parameter.
+The recommendation list of every user ($reclist(u_j)$) can be reduced to the first n parameter with the top-n parameter,
+so that catalog coverage is measured considering only the highest ranked items.
+With the 'k' parameter one could specify the number of users that will be used to
+calculate catalog coverage: k users will be randomly sampled and their recommendation lists will be used.
+The formula above becomes:
+\hfill\break
+\hfill\break
+    \[
+       \begin{gathered}
+         Catalog Coverage_{\text{sys}} = \left(\frac{|\bigcup_{j=1\ldots k} \text{reclist}(u_j)|}{|I|}\right) \cdot 100
+       \end{gathered}
+    \]
+\hfill\break
+\hfill\break
+    Where:
+\begin{itemize}
+    \item $k$ is the parameter specified.
+\end{itemize}
+\hfill\break
+\hfill\break
+Obviously 'k' $<$ N, else simply recommendation lists of all users will be used.
+\hfill\break
+\hfill\break
+% catalog coverage report end___
+
+% <------- fairness metrics end ------>
+
+% ------------------------------------------------ PLOT METRICS STARTED ----------------------------------------------
+% LONG TAIL DISTIBUTION REPORT start
+\subsubsection{Long Tail Distribution}\label{subsubsec:ltd}
+This metric generates the Long Tail Distribution plot and saves it in the output directory with the file name
+specified.
+The plot can be generated both for the truth set or the predictions set based on the on parameter:
+\begin{itemize}
+    \item \textbf{on = 'truth'}: in this case the long tail distribution is useful to see which are the most popular items
+       the most rated ones.
+    \item \textbf{on = 'pred'}: in this case the long tail distribution is useful to see which are the most recommended
+        items.
+\end{itemize}
+\hfill\break
+\hfill\break
+The plot file will be saved as \texttt{out\_dir/file\_name.format}.
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play:
+if set to \texttt{False}, files with the same name will be saved as \texttt{file\_name\_(1).format}, \texttt{file\_name\_(2).format}, etc.
+so that for every split a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+For this experiment the Long Tail Distribution has been used with the following settings:
+\begin{itemize}
+    \item on: truth.
+    \item format: png.
+    \item overwrite: False.
+\end{itemize}
+\hfill\break
+\hfill\break
+% LTD report end___
+
+
+% PopRecsCorrelation REPORT start
+\subsubsection{Pop Recs Correlation}\label{subsubsec:poprc}
+This metric generates a plot which has as the X-axis the popularity of each item and as Y-axis the recommendation
+frequency, so that it can be easily seen the correlation between popular niche items and how many times are being
+recommended.
+The popularity of an item is defined as the number of times it is rated in the 'original\_ratings' parameter
+divided by the total number of users in the 'original\_ratings'.
+\begin{itemize}
+    \item The plot file will be saved as out\_dir/file\_name.format'
+\end{itemize}
+\hfill\break
+\hfill\break
+Since multiple splits could be evaluated at once, the overwrite parameter comes into play: if set to \texttt{False},
+files with the same name will be saved as \texttt{'file\_name\_(1).format'}, \texttt{'file\_name\_(2).format'}, etc.,
+so that for every split, a plot is generated without overwriting any previously generated files.
+\hfill\break
+\hfill\break
+There exists cases in which some items are not recommended even once, so in the graph could appear
+zero recommendations.
+One could change this behaviour thanks to the 'mode' parameter:
+\begin{itemize}
+    \item \textbf{mode='both'}: Two graphs will be created, the first one containing eventual zero recommendations, the
+      second one where zero recommendations are excluded. This additional graph will be stored as
+      \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+    \item \textbf{mode='w\_zeros'}: Only a graph containing eventual zero recommendations will be created.
+    \item \textbf{mode='no\_zeros'}: Only a graph excluding eventual zero recommendations will be created. The graph will be
+      saved as \texttt{out\_dir/file\_name\_no\_zeros.format} \textit{the string '\_no\_zeros' will be added to the file\_name chosen automatically}.
+\end{itemize}
+\hfill\break
+\hfill\break
+For this experiment the PopRecsCorrelation has been used with the following settings:
+\begin{itemize}
+    \item mode: both.
+    \item format: png.
+    \item overwrite: False.
+\end{itemize}
+\hfill\break
+\hfill\break
+% PopRecsCorrelation report end___
+% <------- plot metric end ----------->
+
+% <---------------------- closing the only metric section ------------------------->
 
 
 
