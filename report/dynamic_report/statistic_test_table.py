@@ -222,10 +222,12 @@ def from_dataframe_to_latex_table(df, col, title=""):
         table_latex = df_selected.to_latex()
 
         # Aggiungi un'istruzione LaTeX per una nuova tabella indipendente con il titolo
-        latex_str += f"\\begin{{table}}[H]\n\\centering\n\\caption{{{table_title}}}\n"
+        latex_str += f"\\begin{{table}}[H]\n\\centering\n"
         latex_str += "\\resizebox{\\columnwidth}{!}{%\n"
         latex_str += table_latex
-        latex_str += "}\n\\end{table}\n\n"
+        latex_str += "}\n\\caption{" + table_title + "}\n"
+        # latex_str += "}\n\\caption{{table_title}}\n"
+        latex_str += "\\end{table}\n\n"
 
     return latex_str
 
