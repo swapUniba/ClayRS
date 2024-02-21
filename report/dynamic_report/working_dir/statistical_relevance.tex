@@ -107,10 +107,12 @@ sys\_pair                                  &                &                   
 \end{table}
 
 \begin{table}[H]
-\caption{\textbf{CentroidVector and IndexQuery}}
-\center
+\centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lr}
+\toprule
 \textbf{Metrics} & \textbf{(CentroidVector, IndexQuery)} \\
+\midrule
   Precision - macro - statistic & -3.55 \times 10^{1} \\
   Precision - macro - pvalue & 2.84 \times 10^{-276} \\
   Recall@5 - macro - statistic & -3.05 \times 10^{0} \\
@@ -127,5 +129,8 @@ sys\_pair                                  &                &                   
   Gini - pvalue & 3.84 \times 10^{-276} \\
    R-Precision - macro - statistic & -3.05 \times 10^{0} \\
    R-Precision - macro - pvalue & 7.00 \times 10^{0} \\
-\end{tabular}
+\bottomrule
+\end{tabular}%
+}
+\caption{CentroidVector and IndexQuery}
 \end{table}

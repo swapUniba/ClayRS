@@ -39,10 +39,13 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
 
     # Costruisci la tabella LaTeX con header e titolo
     latex_table = "\\begin{table}[H]\n"
-    latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
-    latex_table += "\\center\n"
+    # latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
+    latex_table += "\\centering\n"
+    latex_table += "\\resizebox{\\columnwidth}{!}{%\n"
     latex_table += "\\begin{tabular}{lr}\n"
+    latex_table += "\\toprule\n"
     latex_table += "\\textbf{Metrics} & \\textbf{" + formatted_row_index + "} \\\\\n"
+    latex_table += "\\midrule\n"
     for col_name, value in row_data.items():
         # Estrai i nomi completi delle colonne dai multi-indici
         full_col_name = " - ".join(col_name)
@@ -53,7 +56,10 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
         else:
             formatted_value = str(round(value, round_to))
         latex_table += f"  {full_col_name} & {formatted_value} \\\\\n"
-    latex_table += "\\end{tabular}\n"
+    latex_table += "\\bottomrule\n"
+    latex_table += "\\end{tabular}%\n"
+    latex_table += "}\n"
+    latex_table += f"\\caption{{{tab_title}}}\n"
     latex_table += "\\end{table}"
 
     return latex_table
@@ -314,7 +320,7 @@ if __name__ == "__main__":
     print(f"\n\nl'indice di accesso alla riga che forniremo alla funzione: {idx_1[0][0]}")
     latex_stats_rel_tab_for_idx_2 = stats_relevance_tab(p_value_only_df, idx_1[0][0],
                                                         tab_title="IndexQuery and ClassifierRecommender",
-                                                        scientific_notation=True, round_to=4)
+                                                        scientific_notation=False, round_to=4)
     print(f"\n\nEcco la tabella della rilevanza statistica estratta per l'indice {idx_1[0][0]}: \n"
           f"{latex_stats_rel_tab_for_idx_2}")
 
