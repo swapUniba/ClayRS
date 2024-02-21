@@ -105,7 +105,8 @@ def change_system_name(df, sys_name):
     return df
 
 
-# funziona in modo fantastico BISOGNA TESTARLA
+# funziona in modo fantastico BISOGNA TESTARLA prima implementazione
+"""
 def from_dataframe_to_latex_table(df, col, title=""):
     # Verifica se il DataFrame è vuoto
     if df.empty:
@@ -143,12 +144,13 @@ def from_dataframe_to_latex_table(df, col, title=""):
     latex_str += "\\end{table}"
 
     return latex_str
+"""
 
-
+# seconda implementazione
 # Questa funzione è stat aggiunta per sostituire l'iniziale che ha un problema nel tagliare le tabelle nel caso
 # non entrino in un unica pagina, va testata ance in altri scenari prima di sostituirla definitivamente
 """
-def from_dataframe_to_latex_table_second(df, col, title=""):
+def from_dataframe_to_latex_table(df, col, title=""):
     # Verifica se il DataFrame è vuoto
     if df.empty:
         return ""
@@ -183,8 +185,8 @@ def from_dataframe_to_latex_table_second(df, col, title=""):
 """
 
 
-#  nuova versione da testare
-def from_dataframe_to_latex_table_second(df, col, title=""):
+#  nuova versione da testare terza implementazione
+def from_dataframe_to_latex_table(df, col, title=""):
     # Verifica se il DataFrame è vuoto
     if df.empty:
         return ""
@@ -295,7 +297,7 @@ if __name__ == "__main__":
     # print(p_value_only_df)
 
     # Adesso chiamiamo la funzione di stampa per la tabella latex
-    latex_table_pvalue = from_dataframe_to_latex_table_second(p_value_only_df, col=2, title="p-value results")
+    latex_table_pvalue = from_dataframe_to_latex_table(p_value_only_df, col=2, title="p-value results")
     print(latex_table_pvalue)
 
     # Questa parte andrà a testare il funzionamento delle funzioni
