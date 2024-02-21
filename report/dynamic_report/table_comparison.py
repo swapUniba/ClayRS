@@ -562,6 +562,7 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
 
 ####################################################################################################################
 # QUESTA FUNZIONE E' PER IL REPORT CHE UTILIZZA L'INTERA PAGINA DEL PDF
+"""
 def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
                                  decimal_place=3, column_width=3.0,
                                  max_columns_per_part=5, caption_for_table="Comparison between algorithms"):
@@ -709,10 +710,10 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
             latex_code += "\\vspace{10pt}\n"
 
     return latex_code
+"""
 
-
-# QUESTA FUNZIONE E' PER IL REPORT CHE UTILIZZA PAGINA DEL PDF SUDDIVISA IN 2 O + PAGINE LOGICHE
-def generate_latex_table_pvalued_split_page(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
+# seconda versione della funzione
+def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
                                             decimal_place=3, column_width=3.0,
                                             max_columns_per_part=5,
                                             caption_for_table="Comparison between algorithms"):
@@ -1169,15 +1170,9 @@ if __name__ == "__main__":
           f"pv_ref = {pv_ref} \n")
     print(f"\n5. i restanti paremetri saranno usati di default o cambiati all'interno della chiamata.\n\n")
 
-    # with the dictnory processed create the latex table
-    #QUI TEST SULLA VERSIONE CHE LAVORA SULLA PAGINA DI PDF DIVISA IN PIU' PAGINE LOGICHE
-    latex_table = generate_latex_table_pvalued_split_page(result_dictionary, p_value_ref_df, reference_alg,
-                                                          pv_ref, max_columns_per_part=3)
-    """
-    # QUI TEST SULLA VERSIONE CHE LAVORA SULL'INTERA PAG DEL PDF
+    # QUI TEST SULLA TABELLA
     latex_table = generate_latex_table_pvalued(result_dictionary, p_value_ref_df, reference_alg,
                                                pv_ref, max_columns_per_part=3)
-    """
     print(latex_table)
 
 

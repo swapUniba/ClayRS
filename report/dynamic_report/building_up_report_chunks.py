@@ -918,9 +918,9 @@ def load_and_add_statistic_relevance_table(recsys_yaml_paths, data_frame_ref, re
     p_value_ref_df = prepare_data_frame_for_stats_relevance(recsys_yaml_paths, data_frame_ref, reference_mode)
 
     # Adesso chiamiamo la funzione di stampa per la tabella latex
-    stats_reverence_table = tbl_comp.stt.from_dataframe_to_latex_table_second(p_value_ref_df,
-                                                                              n_col,
-                                                                              tab_title)
+    stats_reverence_table = tbl_comp.stt.from_dataframe_to_latex_table(p_value_ref_df,
+                                                                       n_col,
+                                                                       tab_title)
 
     return stats_reverence_table
 

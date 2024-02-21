@@ -3,6 +3,7 @@
 
 % Preamble
 \documentclass[11pt]{article}
+% [twocolumn]
 
 \usepackage{graphicx} % Required for inserting images
 \usepackage{amsmath}
@@ -41,7 +42,7 @@
 
 \title{\textbf{ ClayRS in practice: Experimental scenarios }\\ [1cm] Department of Computer Science}
 \author{ SWAP research group UniBa \thanks{Experiment conduct by Diego Miccoli}}
-\date{20-02-2024}
+\date{21-02-2024}
 
 \begin{document}
 
@@ -83,7 +84,7 @@ representation wanted:
 
     \item \textbf{fields representation}:  FromNPY, OriginalData, WhooshTfIdf, SkLearnTfIdf, WordEmbeddingTechnique, SentenceEmbeddingTechnique, DocumentEmbeddingTechnique, Word2SentenceEmbedding, Word2DocEmbedding, Sentence2DocEmbedding, PyWSDSynsetDocumentFrequency, SkImageHogDescriptor, MFCC, VGGISH, PytorchImageModels, TorchVisionVideoModels
 
-    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, Lambda, Normalize, CenterCrop, Resize, ClipSampler
+    \item \textbf{fields preprocessing}:  Spacy, NLTK, Ekphrasis, TorchUniformTemporalSubSampler, ConvertToMono, TorchResample, CenterCrop, Lambda, Normalize, Resize, ClipSampler
 
     \item \textbf{fields postprocessing}:  FVGMM, VLADGMM, SkLearnPCA
 \end{itemize}
@@ -442,14 +443,15 @@ relevant based on statistical tests conducted:
 \hfill\break
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
 \cmidrule{2-4}
 & \multirow{2}{*}{\makecell{Precision - macro}} & \multirow{2}{*}{\makecell{Recall - macro}} & \multirow{2}{*}{\makecell{F1 - macro}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-4}
+ & & & \\
 CentroidVector & 0.58 & 0.69 & 0.71 \\
 \addlinespace[5pt]
 \midrule
@@ -472,14 +474,15 @@ AmarDoubleSource & \underline{0.875}* & \textbf{1.0} & \underline{0.917} \\
 \vspace{10pt}
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
 \cmidrule{2-4}
 & \multirow{2}{*}{\makecell{Gini}} & \multirow{2}{*}{\makecell{NDCG}} & \multirow{2}{*}{\makecell{R-Precision - macro}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-4}
+ & & & \\
 CentroidVector & 8.0 & \underline{0.95} & 0.853 \\
 \addlinespace[5pt]
 \midrule
@@ -502,14 +505,15 @@ AmarDoubleSource & \textbf{0.0}* & \textbf{1.0} & \textbf{1.0} \\
 \vspace{10pt}
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
 \cmidrule{2-4}
 & \multirow{2}{*}{\makecell{RMSE}} & \multirow{2}{*}{\makecell{MSE}} & \multirow{2}{*}{\makecell{MAE}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-4}
+ & & & \\
 CentroidVector & \underline{3.0} & \underline{9.0} & \underline{3.0} \\
 \addlinespace[5pt]
 \midrule
@@ -532,14 +536,15 @@ AmarDoubleSource & \textbf{2.191} & \textbf{5.676}* & \textbf{2.164}* \\
 \vspace{10pt}
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
 \cmidrule{2-4}
 & \multirow{2}{*}{\makecell{MRR}} & \multirow{2}{*}{\makecell{MAP}} & \multirow{2}{*}{\makecell{PredictionCoverage}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-4}
+ & & & \\
 CentroidVector & 0.699 & \underline{0.981} & 16.67 \\
 \addlinespace[5pt]
 \midrule
@@ -562,14 +567,15 @@ AmarDoubleSource & \textbf{1.0} & \textbf{1.0} & 50.0 \\
 \vspace{10pt}
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{3}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{3}{c}{Columns} \\
 \cmidrule{2-4}
 & \multirow{2}{*}{\makecell{Precision@5 - macro}} & \multirow{2}{*}{\makecell{Recall@5 - macro}} & \multirow{2}{*}{\makecell{F1@5 - micro}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-4}
+ & & & \\
 CentroidVector & \textbf{1.0} & \textbf{1.0} & 0.877 \\
 \addlinespace[5pt]
 \midrule
@@ -592,14 +598,15 @@ AmarDoubleSource & 0.875* & \textbf{1.0}* & \underline{0.929} \\
 \vspace{10pt}
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}c *{2}{p{3.0cm}}@{}}
 \toprule
 \multirow{2}{*}{Algorithms} & \multicolumn{2}{c}{Columns} \\
 \cmidrule{2-3}
 & \multirow{2}{*}{\makecell{MRR@5}} & \multirow{2}{*}{\makecell{NDCG@5}} \\
-\addlinespace[5pt]
+\addlinespace[12pt]
 \cmidrule{2-3}
+ & & & \\
 CentroidVector & 0.877 & 0.811 \\
 \addlinespace[5pt]
 \midrule
@@ -631,6 +638,7 @@ the result obtained in the previous table that are statistical relevant.
 \begin{table}[H]
 \centering
 \caption{relevance table - Precision - macro, Recall@5 - macro}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrr}
 \toprule
 {} & Precision - macro & Recall@5 - macro \\
@@ -649,11 +657,13 @@ sys\_pair                                  &                   &                
 (ClassifierRecommender, AmarDoubleSource) &      3.200000e-03 &         0.120970 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 \begin{table}[H]
 \centering
 \caption{relevance table - Precision@5 - macro, F1 - macro}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrr}
 \toprule
 {} & Precision@5 - macro &    F1 - macro \\
@@ -672,11 +682,13 @@ sys\_pair                                  &                     &              
 (ClassifierRecommender, AmarDoubleSource) &        3.487561e-03 &  8.972355e-03 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 \begin{table}[H]
 \centering
 \caption{relevance table - MSE, MAE}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrr}
 \toprule
 {} &           MSE &           MAE \\
@@ -695,11 +707,13 @@ sys\_pair                                  &               &               \\
 (ClassifierRecommender, AmarDoubleSource) &  7.655000e-01 &  1.238896e-01 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 \begin{table}[H]
 \centering
 \caption{relevance table - Gini,  R-Precision - macro}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrr}
 \toprule
 {} &           Gini &  R-Precision - macro \\
@@ -718,6 +732,7 @@ sys\_pair                                  &                &                   
 (ClassifierRecommender, AmarDoubleSource) &   1.152672e-02 &             0.122311 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 
