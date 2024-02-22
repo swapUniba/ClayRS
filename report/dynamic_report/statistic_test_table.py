@@ -36,25 +36,25 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
         Author:
         - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
     """
-    # Verifica se l'indice passato è presente in df.index
+    # Check of the index in df.index
     if row_index not in df.index:
-        # Se l'indice non è presente, crea un nuovo indice scambiando le sottostringhe
+        # if index not exist create new index inveting the names in the tuple given
         parts = row_index.strip("()").split(",")
         new_index = f"('{parts[1].strip()}', '{parts[0].strip()}')"
 
-        # Verifica nuovamente se il nuovo indice è presente in df.index
+        # second check on the new index
         if new_index not in df.index:
             return ""
         else:
             row_index = new_index
 
-    # Aggiungi \ prima di ogni _
+    # safe formatting for latex
     formatted_row_index = row_index.replace("_", "\\_")
 
-    # Estrai le informazioni dalla riga corrispondente all'indice dato
+    # Extract of data from the row indicated
     row_data = df.loc[row_index]
 
-    # Costruisci la tabella LaTeX con header e titolo
+    # build LaTeX table with header and title
     latex_table = "\\begin{table}[H]\n"
     # latex_table += f"\\caption{{\\textbf{{{tab_title}}}}}\n"
     latex_table += "\\centering\n"
@@ -64,10 +64,10 @@ def stats_relevance_tab(df, row_index, tab_title="", scientific_notation=True, r
     latex_table += "\\textbf{Metrics} & \\textbf{" + formatted_row_index + "} \\\\\n"
     latex_table += "\\midrule\n"
     for col_name, value in row_data.items():
-        # Estrai i nomi completi delle colonne dai multi-indici
+        # Extract full names of columns by multi-index
         full_col_name = " - ".join(col_name)
 
-        # Formatta il valore
+        # Formatting the values
         if scientific_notation:
             formatted_value = format_scientific_notation(value)
         else:
@@ -99,13 +99,9 @@ def remove_stats_from_df(dataf, removal_idx):
          Author:
          - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
      """
-    # Copia il DataFrame originale
     new_dataf = dataf.copy()
-
-    # Filtra i livelli di colonna che soddisfano il criterio
+    # Filtering of the columns and extraction of the dataframe wanted from the original
     filtered_columns = [col for col in dataf.columns if col[1] != removal_idx]
-
-    # Seleziona solo le colonne che non soddisfano il criterio
     new_dataf = new_dataf.loc[:, filtered_columns]
 
     return new_dataf
@@ -128,11 +124,11 @@ def set_access_index(sys1, sys2, metric, type_val='pvalue'):
          Author:
          - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
      """
-    # Costruisci la tupla per l'indice della riga
+    # build the tuple for row index
     row_index = ('({}, {})'.format(sys1, sys2),)
-    # Costruisci la tupla per l'indice della colonna
+    # build the tuple for column index
     column_index = (metric, type_val)
-    # Ritorna la tupla completa
+
     return (row_index, column_index)
 
 
@@ -156,13 +152,13 @@ def change_system_name(df, sys_name):
          - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
      """
     def replace_system_names(index_str):
-        # Estrai i token dalla stringa dell'indice
+        # Extract token at index
         tokens = index_str.strip("()").replace("'", "").split(', ')
-        # Sostituisci i token con i valori associati nel dizionario
+        # Substitute token with value associated to the dictionary
         new_tokens = [sys_name.get(token, token) for token in tokens]
         return '(' + ', '.join(new_tokens) + ')'
 
-    # Applica la funzione replace_system_names agli indici del livello dell'indice
+    # change of the values
     df.index = df.index.map(replace_system_names)
 
     return df
