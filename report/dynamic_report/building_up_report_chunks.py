@@ -74,6 +74,16 @@ REP_DICT = {
 
 
 def clean_working_dir(path, auto=False):
+    """
+    Clean a directory from its file asking for elimination.
+
+    Parameters:
+    - path (str): string containing the path to directory.
+    - auto (bool): modality to eliminate file False ask permission, True do not ask for permission.
+
+    Author:
+    - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     # Controlla se la cartella indicata esiste
     if not os.path.exists(path):
         print(f"Error: Directory doesn't exist at this path: {path}")
@@ -384,8 +394,11 @@ def ca_processing_report_minimal(render_dict, working_path, file_path):
     text_extract = [""]
 
     # dealing with Content Analyzer
-    add_single_mini_template(CA_DICT, 'intro', file_destination,
-                             content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'intro',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
     # add all the field that have been represented using the content analyzer and specify their
     # preprocessing and postprocessing received.
@@ -394,30 +407,45 @@ def ca_processing_report_minimal(render_dict, working_path, file_path):
             # extraction of the field being analyzed
             list_of_field = get_keys_at_level(render_dict, "field_representations")
 
-            print(list_of_field)
+            # print(list_of_field)
 
             # dealing with all field that have been represented with content analyzer
             for field in list_of_field:
                 # add the highlight field in the report
-                process_and_write_to_file(CA_DICT, 'repr_min',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'repr_min',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
-                process_and_write_to_file(CA_DICT, 'pre_min',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'pre_min',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
-                process_and_write_to_file(CA_DICT, 'post_min',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'post_min',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
     # adding reporting on exogenous techniques
-    add_single_mini_template(CA_DICT, 'exo_min', file_destination,
-                             content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'exo_min',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
     # closing the content analyzer section
-    add_single_mini_template(CA_DICT, 'end',
-                             file_destination, content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'end',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
 
 def ca_processing_report_flat(render_dict, working_path, file_path):
@@ -474,27 +502,31 @@ def ca_processing_report_flat(render_dict, working_path, file_path):
             # extraction of the field being analyzed
             field_list = get_keys_at_level(render_dict, "field_representations")
 
-            print(field_list)
+            #print(field_list)
 
             # dealing with all field that have been represented with content analyzer
             for field in field_list:
                 elaborating_list = get_keys_at_level(render_dict, field)
-                print(f" Questa è elaborating list per ogni campo {elaborating_list}")
+                # print(f" Questa è elaborating list per ogni campo {elaborating_list}")
                 for process in elaborating_list:
                     if process != "preprocessing" and process != "postprocessing":
                         represantation_tech_list.append(process)
-                        print(f"added to representation_tech_list la rapresentazione {process}")
+                        # print(f"added to representation_tech_list la rapresentazione {process}")
                     elif process == "preprocessing":
-                        prep_list = retrieve_subkeys_at_3(render_dict, "field_representations", key2=field,
+                        prep_list = retrieve_subkeys_at_3(render_dict,
+                                                          "field_representations",
+                                                          key2=field,
                                                           key3=process)
-                        print(f"Questa è la lista delle chiavi sotto preprocessing: {prep_list}")
+                        # print(f"Questa è la lista delle chiavi sotto preprocessing: {prep_list}")
                         if prep_list:
                             for p in prep_list:
                                 preprocessing_list.append(p)
                     else:
-                        post_list = retrieve_subkeys_at_3(render_dict, "field_representations", key2=field,
+                        post_list = retrieve_subkeys_at_3(render_dict,
+                                                          "field_representations",
+                                                          key2=field,
                                                           key3=process)
-                        print(f"Questa è la lista delle chiavi sotto postprocessing: {post_list}")
+                        # print(f"Questa è la lista delle chiavi sotto postprocessing: {post_list}")
                         if post_list:
                             for p in post_list:
                                 if isinstance(p, int):
@@ -519,28 +551,46 @@ def ca_processing_report_flat(render_dict, working_path, file_path):
     text_extract = [""]
 
     # dealing with Content Analyzer
-    add_single_mini_template(CA_DICT, 'intro', file_destination,
-                             content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'intro',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
-    process_and_write_to_file(CA_DICT, 'field_flat',
-                              str_fields, content_of_field, text_extract,
+    process_and_write_to_file(CA_DICT,
+                              'field_flat',
+                              str_fields,
+                              content_of_field,
+                              text_extract,
                               file_destination)
 
-    process_and_write_to_file(CA_DICT, 'field_rep_flat',
-                              str_rapresentation, content_of_field, text_extract,
+    process_and_write_to_file(CA_DICT,
+                              'field_rep_flat',
+                              str_rapresentation,
+                              content_of_field,
+                              text_extract,
                               file_destination)
 
-    process_and_write_to_file(CA_DICT, 'field_prep_flat',
-                              str_prep, content_of_field, text_extract,
+    process_and_write_to_file(CA_DICT,
+                              'field_prep_flat',
+                              str_prep,
+                              content_of_field,
+                              text_extract,
                               file_destination)
 
-    process_and_write_to_file(CA_DICT, 'field_post_flat',
-                              str_post, content_of_field, text_extract,
+    process_and_write_to_file(CA_DICT,
+                              'field_post_flat',
+                              str_post,
+                              content_of_field,
+                              text_extract,
                               file_destination)
 
     # closing the content analyzer section
-    add_single_mini_template(CA_DICT, 'end',
-                             file_destination, content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'end',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
 
 def ca_processing_report_verb(render_dict, working_path, file_path):
@@ -552,8 +602,11 @@ def ca_processing_report_verb(render_dict, working_path, file_path):
     text_extract = [""]
 
     # dealing with Content Analyzer
-    add_single_mini_template(CA_DICT, 'intro', file_destination,
-                             content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'intro',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
     # add all the field that have been represented using the content analyzer and specify their
     # preprocessing and postprocessing received.
@@ -567,25 +620,40 @@ def ca_processing_report_verb(render_dict, working_path, file_path):
             # dealing with all field that have been represented with content analyzer
             for field in list_of_field:
                 # add the highlight field in the report
-                process_and_write_to_file(CA_DICT, 'repr',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'repr',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
-                process_and_write_to_file(CA_DICT, 'pre',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'pre',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
-                process_and_write_to_file(CA_DICT, 'post',
-                                          field, content_of_field, text_extract,
+                process_and_write_to_file(CA_DICT,
+                                          'post',
+                                          field,
+                                          content_of_field,
+                                          text_extract,
                                           file_destination)
 
     # adding reporting on exogenous techniques
-    add_single_mini_template(CA_DICT, 'exo', file_destination,
-                             content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'exo',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
     # closing the content analyzer section
-    add_single_mini_template(CA_DICT, 'end',
-                             file_destination, content_of_field, text_extract)
+    add_single_mini_template(CA_DICT,
+                             'end',
+                             file_destination,
+                             content_of_field,
+                             text_extract)
 
 
 def data_statistic_report(render_dict, name_of_dataset, working_path, file_path):
@@ -597,13 +665,18 @@ def data_statistic_report(render_dict, name_of_dataset, working_path, file_path)
     text_extract = [""]
 
     # dealing with subsection of dataset and its statistics
-    process_and_write_to_file(CA_DICT, 'dataset', name_of_dataset,
-                              content_of_field, text_extract,
+    process_and_write_to_file(CA_DICT,
+                              'dataset',
+                              name_of_dataset,
+                              content_of_field,
+                              text_extract,
                               file_destination)
 
     # add stats table
-    add_single_mini_template(CA_DICT, 'stats',
-                             file_destination, content_of_field,
+    add_single_mini_template(CA_DICT,
+                             'stats',
+                             file_destination,
+                             content_of_field,
                              text_extract)
 
 
@@ -615,8 +688,10 @@ def splitting_technique_report(render_dict, working_path, file_path):
     content_of_field = [""]
     text_extract = [""]
 
-    add_single_mini_template(RS_DICT, 'split',
-                             file_destination, content_of_field,
+    add_single_mini_template(RS_DICT,
+                             'split',
+                             file_destination,
+                             content_of_field,
                              text_extract)
 
 
@@ -635,9 +710,13 @@ def make_introduction(executer, title="ClayRS in practice: Experimental scenario
     place_holder_list = ['X', '!!', '??', 'Z']
     substitution_list = [get_current_date_string(), title, author, executer]
 
-    multi_process_and_write_to_file(REP_DICT, 'intro_sec',
-                                    place_holder_list, substitution_list,
-                                    content_of_field, text_extract, file_path)
+    multi_process_and_write_to_file(REP_DICT,
+                                    'intro_sec',
+                                    place_holder_list,
+                                    substitution_list,
+                                    content_of_field,
+                                    text_extract,
+                                    file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
     return working_path, file_name
@@ -656,16 +735,24 @@ def make_closure(conclusion=True, conclusion_text="", working_path="working_dir"
 
     if conclusion:
         if conclusion_text == "":
-            add_single_mini_template(REP_DICT, 'end',
-                                     file_path, content_of_field,
+            add_single_mini_template(REP_DICT,
+                                     'end',
+                                     file_path,
+                                     content_of_field,
                                      text_extract)
         else:
             # specific conclusion
-            process_and_write_to_file(REP_DICT, 'own_conclusion', conclusion_text,
-                                      content_of_field, text_extract, file_path)
+            process_and_write_to_file(REP_DICT,
+                                      'own_conclusion',
+                                      conclusion_text,
+                                      content_of_field,
+                                      text_extract,
+                                      file_path)
     else:
-        add_single_mini_template(REP_DICT, 'end_no_conclusion',
-                                 file_path, content_of_field,
+        add_single_mini_template(REP_DICT,
+                                 'end_no_conclusion',
+                                 file_path,
+                                 content_of_field,
                                  text_extract)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -680,7 +767,7 @@ def make_content_analyzer_sec(render_dict, name_of_dataset="no name", mode="mini
     # parte di report che stiamo andando a produrre
     file_name = "ca_report_latex.tex"
     file_path = os.path.join(working_path, file_name)
-    print(file_path)
+    # print(file_path)
 
     if mode == "flat":
         ca_processing_report_flat(render_dict, working_path, file_name)
@@ -711,7 +798,7 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
 
     # estrazione del nome dell'algoritmo che usiamo
     algo_name = get_keys_at_level(dict_render, 'algorithm')
-    print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
+    # print(f"questo è il nome dell'algoritmo utilizzato: {algo_name}")
 
     # Crea il nome del file che farà da template per la renderizzazione di questa
     # parte di report che stiamo andando a produrre
@@ -726,23 +813,33 @@ def make_recsys_sec(dict_render, insert_intro=True, mode="flat", working_path="w
     if mode == "flat":
         if insert_intro:
             # adding intro of recsys section
-            add_single_mini_template(RS_DICT, 'starting_sec_flat',
-                                     file_path, content_of_field,
+            add_single_mini_template(RS_DICT,
+                                     'starting_sec_flat',
+                                     file_path,
+                                     content_of_field,
                                      text_extract)
 
-        process_and_write_to_file(RS_DICT, 'algo_flat', algo_name[0],
-                                  content_of_field, text_extract,
+        process_and_write_to_file(RS_DICT,
+                                  'algo_flat',
+                                  algo_name[0],
+                                  content_of_field,
+                                  text_extract,
                                   file_path)
 
     if mode != "flat":
         if insert_intro:
             # adding intro of recsys section
-            add_single_mini_template(RS_DICT, 'starting_sec',
-                                     file_path, content_of_field,
+            add_single_mini_template(RS_DICT,
+                                     'starting_sec',
+                                     file_path,
+                                     content_of_field,
                                      text_extract)
 
-        process_and_write_to_file(RS_DICT, 'algo', algo_name[0],
-                                  content_of_field, text_extract,
+        process_and_write_to_file(RS_DICT,
+                                  'algo',
+                                  algo_name[0],
+                                  content_of_field,
+                                  text_extract,
                                   file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -765,23 +862,31 @@ def make_eval_metric_sec(dict_render, mode="minimised", working_path="working_di
 
     if mode == "flat":
         # solo elenco delle metriche usate
-        add_single_mini_template(EVA_DICT, 'intro_flat',
-                                 file_path, content_of_field,
+        add_single_mini_template(EVA_DICT,
+                                 'intro_flat',
+                                 file_path,
+                                 content_of_field,
                                  text_extract)
 
     if mode == "minimised":
         # report metric minimizzato
-        add_single_mini_template(EVA_DICT, 'intro_min',
-                                 file_path, content_of_field,
+        add_single_mini_template(EVA_DICT,
+                                 'intro_min',
+                                 file_path,
+                                 content_of_field,
                                  text_extract)
 
     if mode == "verbose":
-        add_single_mini_template(EVA_DICT, 'intro',
-                                 file_path, content_of_field,
+        add_single_mini_template(EVA_DICT,
+                                 'intro',
+                                 file_path,
+                                 content_of_field,
                                  text_extract)
 
-    add_single_mini_template(EVA_DICT, 'end',
-                             file_path, content_of_field,
+    add_single_mini_template(EVA_DICT,
+                             'end',
+                             file_path,
+                             content_of_field,
                              text_extract)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -806,8 +911,11 @@ def make_eval_result_sec(dict_render, working_path="working_dir"):
     content_of_field = [""]
     text_extract = [""]
 
-    process_and_write_to_file(EVA_DICT, 'sys - mean', algo_name[0],
-                              content_of_field, text_extract,
+    process_and_write_to_file(EVA_DICT,
+                              'sys - mean',
+                              algo_name[0],
+                              content_of_field,
+                              text_extract,
                               file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -839,26 +947,24 @@ def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_pat
     """
 
     keys = tbl_comp.get_algorithm_keys(dictionarylist)  # lista dei nomi degli algoritmi usati
-    print(f"\nLa LISTA CONTENENTE I NOMI DEGLI ALGORITMI ESTRATTI DAI YML FILE\n {keys} \n\n")
+    # print(f"\nLa LISTA CONTENENTE I NOMI DEGLI ALGORITMI ESTRATTI DAI YML FILE\n {keys} \n\n")
 
     # show the dictonary extracted after processing them
     result_dictionary = tbl_comp.nest_dictionaries(keys, my_dictio)
+    """
     print("I DIZIONARI USATI PER CREARE LA LISTA DA DARE IN INPUT PER LA CREAZIONE DELLA TABELLA:")
     for r in result_dictionary:
         print(r)
-
+    """
     # andiamo a caricare il dataframe che sarà usato per il confronto dei p-value
     # partiamo con la creazione del dizionario di mapping per i nomi dei sistemi
     system_map = tbl_comp.list_to_dict_system_map(keys)
-    print(f"\n\nIL DIZIONARIO USATO PER IL MAPPING DEI SISTEMI \n SYSTEM MAP: {system_map} \n\n")
+    # print(f"\n\nIL DIZIONARIO USATO PER IL MAPPING DEI SISTEMI \n SYSTEM MAP: {system_map} \n\n")
 
     # effettuiamo le modifiche degli indici di accesso per riga al dataframe caricato p_value_ref_df
     p_value_ref_df = tbl_comp.stt.change_system_name(data_frame_ref, system_map)
-    print(f"\n\nDATAFRAME CON INDICI DI RIGA MODIFICATI\n {p_value_ref_df}")
-
-    # generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
-    #                                  decimal_place=3, column_width=3.0,
-    #                                  max_columns_per_part=5, caption_for_table="Comparison between algorithms")
+    # print(f"\n\nDATAFRAME CON INDICI DI RIGA MODIFICATI\n {p_value_ref_df}")
+    """
     # ora in base alla funzione che stiamo testando di cui abbiamo riportato sopra la signature andiammo a visualizzare
     # e comprenderre chi sono i parametri che gli andremo a passare prima di effettuare la chiamata
     print("ELENCO E VISULIZZAZIONE DEI PARAMETRI CHE PASSEREMO A generate_latex_table_pvalued:")
@@ -866,16 +972,20 @@ def load_and_add_comparison_table_with_relevance(eva_yaml_paths, recsys_yaml_pat
           f"result_dictionary ovvero:\n {result_dictionary} \n")
     print(f"\n2. stats_rel sarà il dataframe caricato e modificato opportunamente:\n"
           f"p_value_ref_df:\n {p_value_ref_df} \n")
+    """
     reference_alg = 'CentroidVector'
+    """
     print(f"\n3. comparison sarà uno tra i 5 algoritmi presenti ed utilizzati in particolare:\n"
           f"reference_alg è {reference_alg} \n")
 
     print(f"\n4. treshold_pvalue=0.5 di default in questo caso settato con:\n"
           f"pv_ref = {pv_ref} \n")
     print(f"\n5. i restanti paremetri saranno usati di default o cambiati all'interno della chiamata.\n\n")
-
-    # with the dictnory processed create the latex table
-    latex_table = tbl_comp.generate_latex_table_pvalued(result_dictionary, p_value_ref_df, reference_alg,
+    """
+    # with the dictionary processed create the latex table
+    latex_table = tbl_comp.generate_latex_table_pvalued(result_dictionary,
+                                                        p_value_ref_df,
+                                                        reference_alg,
                                                         pv_ref, max_columns_per_part=3)
     return latex_table
 
@@ -937,8 +1047,11 @@ def make_statistical_relevance_subsection(render_dict, table_to_add, only_table=
 
     if not only_table:
         # introduction of the stats relevance subsection
-        add_single_mini_template(EVA_DICT, 'stats_rel_intro', file_path,
-                                 content_of_field, text_extract)
+        add_single_mini_template(EVA_DICT,
+                                 'stats_rel_intro',
+                                 file_path,
+                                 content_of_field,
+                                 text_extract)
 
     write_on_file_latex(table_to_add, file_path)
 
@@ -949,11 +1062,15 @@ def make_statistical_relevance_subsection(render_dict, table_to_add, only_table=
 def load_and_add_statistic_relevance_tab_single_comparison(recsys_yaml_paths, data_frame_ref,
                                                            reference_mode, idx,
                                                            tab_title, sci_not, approximation):
-    p_value_ref_df = prepare_data_frame_for_stats_relevance(recsys_yaml_paths, data_frame_ref, reference_mode)
+    p_value_ref_df = prepare_data_frame_for_stats_relevance(recsys_yaml_paths,
+                                                            data_frame_ref,
+                                                            reference_mode)
 
-    pair_comparison_strats_relevance_tab = tbl_comp.stt.stats_relevance_tab(p_value_ref_df, idx[0][0],
+    pair_comparison_strats_relevance_tab = tbl_comp.stt.stats_relevance_tab(p_value_ref_df,
+                                                                            idx[0][0],
                                                                             tab_title,
-                                                                            sci_not, approximation)
+                                                                            sci_not,
+                                                                            approximation)
 
     return pair_comparison_strats_relevance_tab
 
@@ -972,13 +1089,17 @@ def make_comparison_algo_sec(dict_render, eva_yaml_paths, recsys_yaml_paths,
 
     if not only_table:
         # introduction of the comparison section
-        add_single_mini_template(EVA_DICT, 'comparison_intro', file_path,
-                                 content_of_field, text_extract)
+        add_single_mini_template(EVA_DICT,
+                                 'comparison_intro',
+                                 file_path,
+                                 content_of_field,
+                                 text_extract)
 
     # dealing with tab
     table_comparison_latex = load_and_add_comparison_table_with_relevance(eva_yaml_paths,
                                                                           recsys_yaml_paths,
-                                                                          data_frame_ref, pv_treshold)
+                                                                          data_frame_ref,
+                                                                          pv_treshold)
     write_on_file_latex(table_comparison_latex, file_path)
 
     # Ritorna il percorso di lavoro e il nome del file creato
@@ -1036,21 +1157,6 @@ def render_latex_template(template_name, search_path, my_dict):
     print(f"inside my_dict {my_dict}")
     return latex_output
 
-
-"""
-# func1 la funzione sottostante ha un caso d'uso
-def render_latex_template(template_path, context):
-    # Carica l'ambiente Jinja con il caricatore di file system
-    env = Environment(loader=FileSystemLoader('.'))
-
-    # Carica il template LaTeX
-    template = env.get_template(template_path)
-
-    # Renderizza il template utilizzando il contesto fornito
-    latex_output = template.render(context)
-
-    return latex_output
-"""
 
 # Esempio di utilizzo
 if __name__ == "__main__":
@@ -1282,24 +1388,3 @@ if __name__ == "__main__":
     print(rendered_latex)
     """
 
-    # caso di uso della prima funzione base di renderizzazione func1
-    """
-    # Definisci il percorso del template LaTeX
-    template_path = 'template.tex'
-
-    # Definisci il dizionario con i dati da passare al template
-    context = {
-        'title': 'Il mio documento LaTeX',
-        'author': 'Io stesso',
-        'content': 'Questo è il contenuto del documento. Potrebbe contenere più righe.'
-    }
-
-    # Renderizza il template
-    rendered_latex = render_latex_template(template_path, context)
-
-    # Salva il risultato in un file LaTeX
-    with open('output.tex', 'w') as f:
-        f.write(rendered_latex)
-
-    print("Template LaTeX renderizzato con successo!")
-    """
