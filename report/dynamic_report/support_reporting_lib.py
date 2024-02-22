@@ -6,6 +6,18 @@ import os
 
 
 def format_latex(input_string):
+    """
+         It will replace the special simbol indicated in order to not give problem to the latex compiler.
+
+         Parameters:
+         - input_string (str): text to be processed and changed if needed.
+
+        Returns:
+        - formatted_string (str):text with the substitution indicated by the dictionary.
+
+         Author:
+         - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+     """
     special_chars = {
         '\\': r'\textbackslash ',
         '{': r'\{',
@@ -41,6 +53,17 @@ def make_latex_string(input_string, modifier_func=None):
 
 
 def replace_in_latex_file(latex_file_path, placeholder, substitution):
+    """
+        It will replace a placeholder inside a file with a text given.
+
+        Parameters:
+        - latex_file_path (str): path to find the file needed.
+        - placeholder (str): placeholder to be substituted.
+        - substitution (str): text to be inserted.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     try:
         # Apre il file LaTeX in modalità di lettura
         with open(latex_file_path, 'r') as file:
@@ -49,7 +72,7 @@ def replace_in_latex_file(latex_file_path, placeholder, substitution):
 
             # Cerca il placeholder nel contenuto del file
             if placeholder not in file_content:
-                print(f"Placeholder '{placeholder}' non trovato nel file.")
+                print(f"Placeholder '{placeholder}' not finded in the file.")
                 return
 
             # Sostituisce il placeholder con la stringa di sostituzione
@@ -59,14 +82,24 @@ def replace_in_latex_file(latex_file_path, placeholder, substitution):
         with open(latex_file_path, 'w') as file:
             file.write(updated_content)
 
-        print(f"Sostituzione effettuata con successo nel file {latex_file_path}.")
+        print(f"Substitution succeded in the file {latex_file_path}.")
     except FileNotFoundError:
-        print(f"File non trovato: {latex_file_path}.")
+        print(f"File not finded: {latex_file_path}.")
     except Exception as e:
-        print(f"Si è verificato un errore: {str(e)}")
+        print(f"Error occured: {str(e)}")
 
 
 def add_to_latex_file(latex_file_path, text_in):
+    """
+        It will add text to the file given in input.
+
+        Parameters:
+        - latex_file_path (str): path to find the file needed.
+        - text_in (str): text to be added to the file.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     try:
         # Ricerca del file LaTeX nel percorso specificato e nelle sottocartelle
         file_found = False
@@ -82,16 +115,16 @@ def add_to_latex_file(latex_file_path, text_in):
                 file.write(text_in + '\n')
                 # file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
                 file.write('\n')  # Aggiunge una riga vuota
-            print(f"Testo aggiunto con successo al file {latex_file}.")
+            print(f"Text added with success to the file {latex_file}.")
         else:
             # Se il file non esiste, lo crea nella cartella specificata
             with open(latex_file_path, 'w') as file:
                 file.write(text_in + '\n')
                 # file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
                 file.write('\n')  # Aggiunge una riga vuota
-            print(f"File {latex_file_path} creato e testo aggiunto.")
+            print(f"File {latex_file_path} created and text added to it.")
     except Exception as e:
-        print(f"Si è verificato un errore: {str(e)}")
+        print(f"Error occurred: {str(e)}")
 
 
 # Esegui lo script
