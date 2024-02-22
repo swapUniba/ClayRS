@@ -177,3 +177,154 @@
 \end{minipage}
 }
 \end{table}
+
+
+"""
+def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
+                                 decimal_place=3, column_width=3.0,
+                                 max_columns_per_part=5, caption_for_table="Comparison between algorithms"):
+    # Controllo per assicurarsi che max_columns_per_part non superi mai 10
+    if max_columns_per_part > 10:
+        max_columns_per_part = 10
+
+    # Estrai le chiavi (nomi di colonne) dal primo dizionario
+    first_algorithm = algorithms[0]
+    column_names = list(next(iter(first_algorithm.values())).keys())
+    num_columns = len(column_names)
+
+    # Lista di metriche il cui punteggio migliore è quello minimo
+    metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
+
+    # Dizionario dinamico per determinare i migliori punteggi
+    best_metrics = {}
+
+    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
+    # 2 punteggi più bassi migliori
+    highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
+    print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
+    lowest_best_metrics = find_lowest_bests(algorithms, column_names, decimal_place)
+    print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
+
+    # Calcola il numero di parti necessarie
+    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
+
+    # Inizializza il codice LaTeX
+    latex_code = ""
+
+    # controllo degli indici del dataframe stats_ref
+    print(f"gli indici sono:\n {stats_rel.index}\n")
+
+    # controllo dei multi-indici di colonna del df stats_ref
+    print(f"I multi indici di colonna sono_\n {stats_rel.columns}")
+
+    for part_index in range(num_parts):
+        # Calcola gli indici delle colonne per questa parte
+        start_col_index = part_index * max_columns_per_part
+        end_col_index = (part_index + 1) * max_columns_per_part
+        current_column_names = column_names[start_col_index:end_col_index]
+
+        # Calcola la larghezza totale della tabella
+        total_width = len(current_column_names) * column_width + 1
+        latex_code += "\\begin{table}[H]\n"  # changed [ht] to [H]
+        latex_code += "\\centering\n"
+        latex_code += "\\resizebox{\\textwidth}{!}{%\n"
+        latex_code += "\\begin{tabular}{@{}c" + " *{" + str(len(current_column_names)) + "}{" + "p{" + str(
+            column_width) + "cm}}@{}}\n"
+        latex_code += "\\toprule\n"
+        latex_code += "\\multirow{2}{*}{Algorithms} & \\multicolumn{" + str(
+            len(current_column_names)) + "}{c}{Columns} \\\\\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i nomi delle colonne
+        for col_index, column_name in enumerate(current_column_names):
+            latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
+
+        latex_code += "\\\\\n"
+        latex_code += "\\addlinespace[5pt]\n"
+        latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
+
+        # Aggiungi i dati delle righe
+        for algorithm in algorithms:
+            algorithm_name = list(algorithm.keys())[0]
+            print(f"algorithm name is {algorithm_name}")
+            values = list(algorithm.values())[0]
+            # print(f"values is  {values}")
+            latex_code += algorithm_name
+            for column_name in current_column_names:
+                print(f"column value is {column_name}")
+                # Verifica se la colonna è presente nel dizionario prima di accedere
+                column_value = values.get(column_name, '')
+                # Converte il valore in un numero (float) prima di arrotondarlo
+                try:
+                    column_value = float(column_value)
+                    rounded_value = round(column_value, decimal_place)
+                except (ValueError, TypeError):
+                    # Se la conversione non è possibile, mantieni il valore come stringa
+                    rounded_value = column_value
+
+                # Determina quale dizionario utilizzare per ottenere i migliori punteggi
+                best_metrics = highest_best_metrics if column_name not in metrics_minimum_score else lowest_best_metrics
+
+                # Estrai i valori migliori per la colonna corrente
+                best_values = best_metrics[column_name]
+
+                # Formatta il valore in base ai risultati migliori
+                if rounded_value == best_values[0]:
+                    latex_code += " & \\textbf{" + str(rounded_value) + "}"
+                elif rounded_value == best_values[1]:
+                    latex_code += " & \\underline{" + str(rounded_value) + "}"
+                else:
+                    latex_code += " & " + str(rounded_value)
+
+                # ATTENZIONE che qui viene usato l'import del modulo statistic_test_table as stt
+                # Aggiungi asterisco se il p-value è inferiore al threshold
+                access_index = stt.set_access_index(comparison, algorithm_name, column_name)
+                # STAMPE DI CONTROLLO PER L'INDICE GENERATO
+                print(f"access_index is {access_index} \n "
+                      f"il primo elemento dell'indice è {access_index[0][0]} \n "
+                      f"mentre il secondo è {access_index[1]}")
+
+                # stampe per il controllo degli indici matchati
+                if access_index[0][0] in stats_rel.index:
+                    print(f"INDICE DI RIGA TROVATO OOOOK")
+
+                if access_index[1] in stats_rel.columns:
+                    print(f"MULTI INDICE DI COLONNA TROVATO OOOK")
+
+                # Verifica se il multi-indice è presente tra le colonne del DataFrame stats_rel
+                if access_index[1] in stats_rel.columns and access_index[0][0] in stats_rel.index:
+                    val_retrieved = stats_rel.loc[access_index]
+                    if not val_retrieved.empty:
+                        float_pvalue = val_retrieved.iloc[0]
+                        if float_pvalue < treshold_pvalue:
+                            latex_code += "*"
+                else:
+                    # Secondo tentativo di accesso con i primi due parametri scambiati
+                    access_index = stt.set_access_index(algorithm_name, comparison, column_name)
+                    # Verifica se il multi-indice è presente tra le colonne del DataFrame stats_rel
+                    if access_index[1] in stats_rel.columns and access_index[0][0] in stats_rel.index:
+                        val_retrieved = stats_rel.loc[access_index]
+                        if not val_retrieved.empty:
+                            float_pvalue = val_retrieved.iloc[0]
+                            if float_pvalue < treshold_pvalue:
+                                latex_code += "*"
+                    else:
+                        # Gestisci il caso in cui entrambi gli indici non esistono
+                        pass  # o fai qualcos'altro, a seconda del tuo caso d'uso
+
+            latex_code += " \\\\\n"
+            latex_code += "\\addlinespace[5pt]\n"
+            latex_code += "\\midrule\n"
+
+        # Aggiungi la parte finale del codice LaTeX
+        latex_code += "\\bottomrule\n"
+        latex_code += "\\end{tabular}}\n"
+        latex_code += "\\caption{" + caption_for_table + " (Part " + str(part_index + 1) + ")}\n"
+        latex_code += "\\end{table}\n"
+
+        # Aggiungi alcune righe vuote tra le parti
+        if part_index < num_parts - 1:
+            latex_code += "\\vspace{10pt}\n"
+
+    return latex_code
+"""
