@@ -11,42 +11,58 @@ import yaml
 # recsys utilizzato
 def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
                                   alg_type="killer", round_to=3, set_title="Results of metrics"):
-    # Estrai le colonne fisse (Alg., Repr., Content, Emb.)
+    """
+        The function  use a list of dictionary to extract their information and createa table that will compare
+        the performance of the same algorithm trained on different field representations. In the table the best
+        result for each metric showed will be highlighted in bold the best and underlined the second_best.
+
+        Parameters:
+        - list_of_dicts (list): The dictionary contained will be used to create the table.
+        - n_col_desired (int): number of columns to show for each table created.
+        - width=3.0 (int) : number used for the formatting the table in particular to deal with its resizing.
+        - alg_type="killer" (str) : the name of the algorithm used .
+        - round_to=3 (int) : indicate the number of approximation to be applied on the values.
+        - set_title="Results of metrics" (str): string that will be the title for the table.
+
+        Returns:
+        - latex_table (str): The table with the value in string form.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
+    # Extract fixed columns name (Alg., Repr., Content, Emb.)
     fixed_columns = ['Alg.', 'Repr.', 'Content', 'Emb.']
 
     # Lista di metriche il cui punteggio migliore è quello minimo
     metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
 
-    # estrai i dizionari che contengono i nomi delle metriche e i valori associati da list_of_dicts
+    # extraction of the dictionary containing the metrics and their values
     metrics_dicts = [get_metrics(d) for d in list_of_dicts]
-    print(metrics_dicts)
+    # print(metrics_dicts)
 
-    # Estrai le colonne dinamiche dal dizionario restituito da best_higher_dict
-    # higher_dict risulta essere il dizionario che contiene i massimo e il secondo massimo per ogni colonna della
-    # tabella
+    # get columns from best_higher_dict
+    # higher_dict is the dictionary containing for each metrics the best value and the second-best value
     higher_dict = best_higher_dict(metrics_dicts)
-    print(higher_dict)
+    # print(higher_dict)
     dynamic_columns = list(higher_dict.keys())
 
-    # andiamo a creare il dizionario che contiene il minimo e il secondo minimo per ogni colonna della tabella
+    # dictionary contaiting the best and second-best value form the metrics evaluated as lower is better
     lower_dict = best_lower_dict(metrics_dicts)
-    print(lower_dict)
+    # print(lower_dict)
 
-    # Calcola il numero totale di colonne che saranno usate
+    # Get total number of columns for the table
     total_columns = len(fixed_columns) + len(dynamic_columns)
 
-    # verifica che le colonne volute non superino il limite
+    # check on max number of columns per table
     if n_col_desired > 8:
         n_col_desired = 8
 
-    # Inizializza la stringa della tabella LaTeX
     table_string = ""
 
-    # Calcola il numero di tabelle da generare in base al numero di colonne dinamiche
-    # Calcola il risultato e il resto della divisione
+    # Calculating the number of table that needs to be generated
     num_tables, remainder = divmod(len(dynamic_columns), n_col_desired - len(fixed_columns))
 
-    # Aggiungi una tabella aggiuntiva se c'è un resto
+    # add 1 table if previous division has got rest
     if remainder > 0:
         num_tables += 1
 
@@ -55,7 +71,7 @@ def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
         end_idx = (i + 1) * (n_col_desired - len(fixed_columns))
         current_dynamic_columns = dynamic_columns[start_idx:end_idx]
 
-        # Costruisci l'header della tabella
+        # header of the table
         table_string += "\\begin{table}\n"
         table_string += "\\begin{adjustwidth}{-1 in}{-1 in}\n"
         table_string += "  \\centering\n"
@@ -66,13 +82,13 @@ def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
         table_string += "    \\midrule\n"
         table_string += "    \\midrule\n"
 
-        # Riempi le righe della tabella con i valori dei dizionari
+        # fill row with values
         for i, (dictionary, metrics_dict) in enumerate(zip(list_of_dicts, metrics_dicts)):
-            # Costruisci la parte dell'header multirow solo per la prima riga di ogni gruppo
+            # make the header of the multirow only for fist row of each table
             if i % len(list_of_dicts) == 0:
                 table_string += f"    \\multirow{{{len(list_of_dicts)}}}{{*}}{{{alg_type}}}"
 
-            # Riempimento delle colonne fisse
+            # filling of the columns fixed
             for col in fixed_columns[1:]:  # Parti da 'Repr.' per evitare di ripetere 'Alg.'
                 if col == 'Repr.':
                     table_string += f" & {sanitize_latex_string(get_representation(dictionary))}"
@@ -81,13 +97,13 @@ def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
                 elif col == 'Emb.':
                     table_string += f" & {sanitize_latex_string(get_embedding(dictionary))}"
 
-            # Riempimento delle colonne dinamiche
+            # filling of the dynamic columns
             for dynamic_col in current_dynamic_columns:
                 value = metrics_dict.get(dynamic_col, '')
 
-                # Verifica se la colonna dinamica è presente nella lista metrics_minimum_score
+                # decide wich score logic to apply
                 if dynamic_col in metrics_minimum_score:
-                    # Se presente, confronta con il dizionario lower_dict
+                    # apply lower is better using dict lower_dict
                     if value == lower_dict[dynamic_col][0]:  # Primo valore in lower_dict
                         table_string += f" & \\textbf{{{round(value, round_to) if value is not None else ''}}}"
                     elif value == lower_dict[dynamic_col][1]:  # Secondo valore in lower_dict
@@ -95,7 +111,7 @@ def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
                     else:
                         table_string += f" & {round(value, round_to) if value is not None else ''}"
                 else:
-                    # Se non presente, confronta con il dizionario higher_dict
+                    # apply higher is better with dict higher_dict
                     if value == higher_dict[dynamic_col][0]:  # Primo valore in higher_dict
                         table_string += f" & \\textbf{{{round(value, round_to) if value is not None else ''}}}"
                     elif value == higher_dict[dynamic_col][1]:  # Secondo valore in higher_dict
@@ -117,14 +133,28 @@ def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
 # che sono il minimo e il secondo minimo, !!! LA FUNZIONE È UTILIZZATA DA generate_table_for_comparison() !!!
 # per evidenziare nella tabella questi valori come grassetto e sottolineato
 def best_lower_dict(list_of_dicts):
+    """
+        The function  use a list of dictionary to create a new dictionary that has for key the name of all
+        the metrics retrived from all the dictionaries in input and for value the lowest result find for each metric
+        and the second-lowest results.
+
+        Parameters:
+        - list_of_dicts (list): The dictionary contained will be used to create a new dictionary.
+
+        Returns:
+        - dict(key_values) (dict): dictionary created.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     key_values = defaultdict(list)
 
-    # Estrai tutte le chiavi dai dizionari
+    # get all key present in the dictionaries
     all_keys = set()
     for d in list_of_dicts:
         all_keys.update(d.keys())
 
-    # Trova i minimi e i secondi minimi per ogni chiave
+    # find minimum for each metrics
     for key in all_keys:
         values = [d.get(key, float('inf')) for d in list_of_dicts]
         values.sort()
@@ -139,14 +169,28 @@ def best_lower_dict(list_of_dicts):
 # # che sono il massimo e il secondo massimo, !!! LA FUNZIONE È UTILIZZATA DA generate_table_for_comparison() !!!
 # per evidenziare nella tabella questi valori come grassetto e sottolineato
 def best_higher_dict(list_of_dicts):
+    """
+        The function  use a list of dictionary to create a new dictionary that has for key the name of all
+        the metrics retrieved from all the dictionaries in input and for value the highest result find for each metric
+        and the second-highest results.
+
+        Parameters:
+        - list_of_dicts (list): The dictionary contained will be used to create a new dictionary.
+
+        Returns:
+        - dict(key_values) (dict): dictionary created.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     key_values = defaultdict(list)
 
-    # Estrai tutte le chiavi dai dizionari
+    # get all key present in the dictionaries
     all_keys = set()
     for d in list_of_dicts:
         all_keys.update(d.keys())
 
-    # Trova i massimi e i secondi massimi per ogni chiave
+    # find maximum values
     for key in all_keys:
         values = [d.get(key, float('-inf')) for d in list_of_dicts]
         values.sort(reverse=True)
@@ -157,34 +201,23 @@ def best_higher_dict(list_of_dicts):
     return dict(key_values)
 
 
-# versione della funzione get metrics che ritorna una lista di tuple (1, 2) dove 1 è il nome della metrica e 2 il
-# valore associato
-"""
-def get_metrics(data_dict):
-    def extract_metrics(d, prefix=''):
-        result = []
-        for key, value in d.items():
-            if isinstance(value, dict):
-                result.extend(extract_metrics(value, f'{prefix}{key} - '))
-            else:
-                result.append((f'{prefix}{key}', value))
-        return result
-
-    for key, value in data_dict.items():
-        if key == 'sys - mean':
-            return extract_metrics(value)
-        elif isinstance(value, dict):
-            nested_result = get_metrics(value)
-            if nested_result:
-                return nested_result
-
-    return []
-"""
-
-
 # Questa versione ritorna un dizionario anziché una lista di tuple che racchiudano il nome della metrica e
 # il valore associato dal dizionario estratto. La funzione è utilizzata da generate_table_for_comparison()
 def get_metrics(data_dict):
+    """
+        The function  use a list of dictionary to create a new dictionary that has for key the name of all
+        the metrics retrieved from all the dictionaries in input and for value the highest result find for each metric
+        and the second-highest results.
+
+        Parameters:
+        - list_of_dicts (list): The dictionary contained will be used to create a new dictionary.
+
+        Returns:
+        - result (dict): dict containing the names of metrics for keys and their values as valuewe.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
     def extract_metrics(d, prefix=''):
         result = {}
         for key, value in d.items():
