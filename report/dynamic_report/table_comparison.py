@@ -205,15 +205,13 @@ def best_higher_dict(list_of_dicts):
 # il valore associato dal dizionario estratto. La funzione è utilizzata da generate_table_for_comparison()
 def get_metrics(data_dict):
     """
-        The function  use a list of dictionary to create a new dictionary that has for key the name of all
-        the metrics retrieved from all the dictionaries in input and for value the highest result find for each metric
-        and the second-highest results.
+        The function  use a dictonary to extract a subdictionary containing the information on the metrics.
 
         Parameters:
         - list_of_dicts (list): The dictionary contained will be used to create a new dictionary.
 
         Returns:
-        - result (dict): dict containing the names of metrics for keys and their values as valuewe.
+        - result (dict): dict containing the names of metrics for keys and their values as values.
 
         Author:
         - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
@@ -241,7 +239,20 @@ def get_metrics(data_dict):
 # Questa funzione accede a un dizionario e recupera andando a formattare la stringa creata accedendo ai valori
 # contenuti nella chiave 'embedding_combiner'. La funzione è utilizzata da generate_table_for_comparison()
 def get_embedding(data_dict):
-    # Cerca ricorsivamente la chiave 'embedding_combiner' nel dizionario
+    """
+        The function  extract a specific value from the dictionary, in particular it extract the value associated
+        to the embedding key.
+
+        Parameters:
+        - data_dict (dict): The dictionary used to extract the values needed.
+
+        Returns:
+        - result (str): sting that represent the values retrieved formatted.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
+    # search for 'embedding_combiner' key
     def find_embedding_combiner(d):
         for key, value in d.items():
             if key == 'embedding_combiner':
@@ -258,61 +269,63 @@ def get_embedding(data_dict):
                             return result
         return None
 
-    # Trova il valore associato a 'embedding_combiner'
+    # retrieve data needed from key 'embedding_combiner'
     embedding_data = find_embedding_combiner(data_dict)
 
     # Stampa di debug per vedere il tipo di embedding_data
-    print(f"Tipo di embedding_data: {type(embedding_data)}")
+    # print(f"Tipo di embedding_data: {type(embedding_data)}")
 
-    # Se non c'è nessun valore associato, restituisci una stringa vuota
+    # formatting the value based on what value is found associated to the key
     if embedding_data is None:
         return ""
 
-    # Se è una stringa, restituisci direttamente quella stringa
     elif isinstance(embedding_data, str):
         return embedding_data
 
-    # Se è un numero, trasformalo in stringa e restituisci
     elif isinstance(embedding_data, (int, float)):
         return str(embedding_data)
 
-    # Se è una lista, restituisci gli elementi come stringhe concatenate da '+'
     elif isinstance(embedding_data, list):
         return " + ".join(map(str, embedding_data))
 
-    # Se è un dizionario, restituisci la concatenazione delle chiavi di primo livello
     elif isinstance(embedding_data, dict):
         return " + ".join(embedding_data.keys())
 
-    # In tutti gli altri casi, restituisci una stringa vuota
+    # if value found different from formatting case return an empty string
     return ""
 
 
 # Questa funzione recupera sotto forma di stringa il contenuto utilizzato per l'esperimento ovvero tutti i field usati
 # e li restituisce come stringa concatenata con il +. La funzione è utilizzata da generate_table_for_comparison()
 def get_content(data_dict):
-    # Verifica se la chiave 'algorithm' è presente nel dizionario
+    """
+        The function  extract a specific value from the dictionary, in particular it extracts the value associated
+        to the item_field key unifing the sub key presented.
+
+        Parameters:
+        - data_dict (dict): The dictionary used to extract the values needed.
+
+        Returns:
+        - content (str): sting that represent the values retrieved formatted.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
+    # check on keys
     if 'algorithm' in data_dict:
-        # Cerca la chiave specifica sotto 'algorithm' che contiene 'item_field'
         algorithm_keys = [key for key, value in data_dict['algorithm'].items() if 'item_field' in value]
 
-        # Se troviamo una chiave, recuperiamo i valori associati
+        # retrieve data needed
         if algorithm_keys:
-            # Scegliamo la prima chiave (potrebbe esserci solo una)
+            # get to the key wanted and extract all its primary sub keys
             algorithm_key = algorithm_keys[0]
-
-            # Recupera i valori sotto 'item_field'
             item_field_data = data_dict['algorithm'][algorithm_key].get('item_field', {})
-
-            # Estrai chiavi di primo livello da 'item_field'
             content_keys = [key for key, value in item_field_data.items() if isinstance(value, (list, dict)) and value]
-
-            # Unisci le chiavi ottenute
             content = " + ".join(map(str, content_keys))
 
             return content
 
-    # Restituisci una stringa vuota se la chiave 'algorithm' non è presente
+    # if key not in data_dict
     return ""
 
 
@@ -321,31 +334,35 @@ def get_content(data_dict):
 # Della rappresentazione utilizzata per processare i dati con il content analyzer e che è stata in seguito
 # utilizzata per addestrare il recsys istanziato
 def get_representation(data_dict):
-    # Verifica se la chiave 'algorithm' è presente nel dizionario
+    """
+        The function  extract a specific value from the dictionary, in particular it extracts the data
+        that describe the representation used for the field.
+
+        Parameters:
+        - data_dict (dict): The dictionary used to extract the values needed.
+
+        Returns:
+        - representation (str): sting that represent the values retrieved formatted and processed.
+
+        Author:
+        - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
+    # check keys
     if 'algorithm' in data_dict:
-        # Cerca la chiave specifica sotto 'algorithm' che contiene 'item_field'
+        # retrieve key under algorithm
         algorithm_keys = [key for key, value in data_dict['algorithm'].items() if 'item_field' in value]
 
-        # Se troviamo una chiave, recuperiamo i valori associati
+        # retrieve values
         if algorithm_keys:
-            # Scegliamo la prima chiave (potrebbe esserci solo una)
             algorithm_key = algorithm_keys[0]
-
-            # Recupera i valori sotto 'item_field'
             item_field_data = data_dict['algorithm'][algorithm_key].get('item_field', {})
-
-            # Estrai i valori da 'item_field' ignorando liste vuote
             item_field_values = [value for key, value in item_field_data.items() if isinstance(value, list) and value]
-
-            # Unisci i valori ottenuti
             representation_strings = [" + ".join(map(str, values)) for values in item_field_values]
-
-            # Unisci le stringhe ottenute
             representation = " + ".join(representation_strings)
 
             return representation
 
-    # Restituisci una stringa vuota se la chiave 'algorithm' non è presente
+    # return an empty string if key is not found
     return ""
 
 
@@ -426,8 +443,25 @@ def find_highest_bests(dictionaries, keys, decimal_places):
 # secondo valore più alto trovato per quella metrica. È utilizzata dalla funzione generate_latex_table() per
 # evidenziare in grassetto e sottolineato tali risultati
 def find_highest_bests(dictionaries, keys, decimal_places):
+    """
+       The function  use a list of dictionary and a list of wich keys will be used from these dictionaries
+       to create a new dictionary that has for key the name of all the metrics presented in keys retrieved
+       and for value the highest result find for each metric and the second-highest results.
+
+       Parameters:
+       - dictionaries (list): The dictionary contained will be used to create a new dictionary.
+       - keys (list): list of string containing the name of the metrics.
+       - decimal_places (int): the approximation for the values found.
+
+       Returns:
+       - result (dict): dictionary created with best value for each metric.
+
+       Author:
+       - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+   """
     result = {}
 
+    # search and retrieve the best two maximum values
     for key in keys:
         maximum = float('-inf')
         second_maximum = float('-inf')
@@ -457,8 +491,24 @@ def find_highest_bests(dictionaries, keys, decimal_places):
 # secondo valore più basso trovato per quella metrica. È utilizzata dalla funzione generate_latex_table() per
 # evidenziare in grassetto e sottolineato tali risultati
 def find_lowest_bests(dictionaries, keys_list, decimal_places):
-    result = {}
+    """
+       The function  use a list of dictionary and a list of wich keys will be used from these dictionaries
+       to create a new dictionary that has for key the name of all the metrics presented in keys retrieved
+       and for value the lowest result find for each metric and the second-lowest results.
 
+       Parameters:
+       - dictionaries (list): The dictionary contained will be used to create a new dictionary.
+       - keys (list): list od string containing the manes of the metrics.
+       - decimal_places (int): approximation for the values found.
+
+       Returns:
+       - result (dict): dictionary created with best value for each metric.
+
+       Author:
+       - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+   """
+    result = {}
+    # search and find the best two minimum
     for key in keys_list:
         minimum = float('inf')
         second_minimum = float('inf')
@@ -487,41 +537,57 @@ def find_lowest_bests(dictionaries, keys_list, decimal_places):
 # e find_lowest_best()
 def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
                          max_columns_per_part=5, caption_for_table="Comparison between algorithms"):
-    # Controllo per assicurarsi che max_columns_per_part non superi mai 10
+    """
+       The function  use a list of dictionaries and a bunch of other parameter to make a table able to compare
+       the result of different algorithm of recommendation displaying the results of the metrics used to evaluate them.
+
+       Parameters:
+       - algorithms (list): The list of dictionaries used to fill and make the table of comparison.
+       - decimal_place=3 (int): approximation of the values represented in the table.
+       - column_width=3.0 (int): formatting value used for resizing of the table.
+       - max_columns_per_part=5 (int): number of columns to be shown per table.
+       - caption_for_table="Comparison between algorithms" (str): title of the table.
+
+       Returns:
+       - latex_code (str): table formatted in latex syntax.
+
+       Author:
+       - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+   """
+    # check on max number of columns to show per table
     if max_columns_per_part > 10:
         max_columns_per_part = 10
 
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
+    # get the names for the columns
     first_algorithm = algorithms[0]
     column_names = list(next(iter(first_algorithm.values())).keys())
     num_columns = len(column_names)
 
-    # Lista di metriche il cui punteggio migliore è quello minimo
+    # list of metrics for lower score best logic  NEED TO BE SET AS PARAMETER
     metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
 
-    # Dizionario dinamico per determinare i migliori punteggi
+    # Dictionary used to apply the logic for selection of best result
     best_metrics = {}
 
-    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
-    # 2 punteggi più bassi migliori
+    # creating the two dictionries to apply the logic of best higher score and best lower score
     highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
-    print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
+    # print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
     lowest_best_metrics = find_lowest_bests(algorithms, column_names, decimal_place)
-    print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
+    # print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
 
-    # Calcola il numero di parti necessarie
-    num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
+    # calculating the number of table needed
+    num_parts = -(-num_columns // max_columns_per_part)
 
-    # Inizializza il codice LaTeX
     latex_code = ""
 
+    # creating the tables
     for part_index in range(num_parts):
-        # Calcola gli indici delle colonne per questa parte
+        # get index for the part of the table needed
         start_col_index = part_index * max_columns_per_part
         end_col_index = (part_index + 1) * max_columns_per_part
         current_column_names = column_names[start_col_index:end_col_index]
 
-        # Calcola la larghezza totale della tabella
+        # evaluate the size of the table
         total_width = len(current_column_names) * column_width + 1
         latex_code += "\\begin{table}[ht]\n"
         latex_code += "\\centering\n"
@@ -533,7 +599,7 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
             len(current_column_names)) + "}{c}{Columns} \\\\\n"
         latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
 
-        # Aggiungi i nomi delle colonne
+        # add columns names
         for col_index, column_name in enumerate(current_column_names):
             latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
 
@@ -541,7 +607,7 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
         latex_code += "\\addlinespace[5pt]\n"
         latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
 
-        # Aggiungi i dati delle righe
+        # fill with data
         for algorithm in algorithms:
             algorithm_name = list(algorithm.keys())[0]
             # print(f"algorithm name is {algorithm_name}")
@@ -550,23 +616,22 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
             latex_code += algorithm_name
             for column_name in current_column_names:
                 # print(f"The name of the column is {column_name}")
-                # Verifica se la colonna è presente nel dizionario prima di accedere
                 column_value = values.get(column_name, '')
-                # Converte il valore in un numero (float) prima di arrotondarlo
+                # conversion to (float) before rounding it
                 try:
                     column_value = float(column_value)
                     rounded_value = round(column_value, decimal_place)
                 except (ValueError, TypeError):
-                    # Se la conversione non è possibile, mantieni il valore come stringa
+                    # if conversion impossible keep the starting value
                     rounded_value = column_value
 
-                # Determina quale dizionario utilizzare per ottenere i migliori punteggi
+                # select which dictionary to use
                 best_metrics = highest_best_metrics if column_name not in metrics_minimum_score else lowest_best_metrics
 
-                # Estrai i valori migliori per la colonna corrente
+                # get the best values for the column=metric
                 best_values = best_metrics[column_name]
 
-                # Formatta il valore in base ai risultati migliori
+                # Formatting based on comparison with the best values
                 if rounded_value == best_values[0]:
                     latex_code += " & \\textbf{" + str(rounded_value) + "}"
                 elif rounded_value == best_values[1]:
@@ -578,13 +643,13 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
             latex_code += "\\addlinespace[5pt]\n"
             latex_code += "\\midrule\n"
 
-        # Aggiungi la parte finale del codice LaTeX
+        # closing the table
         latex_code += "\\bottomrule\n"
         latex_code += "\\end{tabular}}\n"
         latex_code += "\\caption{" + caption_for_table + " (Part " + str(part_index + 1) + ")}\n"
         latex_code += "\\end{table}\n"
 
-        # Aggiungi alcune righe vuote tra le parti
+        # leave space between the table parts
         if part_index < num_parts - 1:
             latex_code += "\\vspace{10pt}\n"
 
@@ -594,52 +659,73 @@ def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
 # ------------------------------- end generate_latex_table + support functions --------------------------------
 
 ####################################################################################################################
-# TABELLA NUOVA PER LA GENERAZIONE DEI CONFRONTI TRA ALGORITMI
+# TABELLA PER LA GENERAZIONE DEI CONFRONTI TRA ALGORITMI INTEGRA LE INFO STATISTICHE
 def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
                                  decimal_place=3, column_width=3.0,
                                  max_columns_per_part=5,
                                  caption_for_table="Comparison between algorithms"):
-    # Controllo per assicurarsi che max_columns_per_part non superi mai 10
+    """
+          The function  use a list of dictionaries, a data frame pandas and a bunch of other parameter
+           to make a table able to compare the result of different algorithm of recommendation displaying
+           the results of the metrics used to evaluate them. The best results will be shown in bold the best and
+           underlined the second-best, could be possible that some values will have an asterisk which notify that
+           the result obtained is statistically significant.
+
+          Parameters:
+          - algorithms (list): The list of dictionaries used to fill and make the table of comparison.
+          - stats_rel (pandas data frame): data frame containing the relevance for statistic test.
+          - comparison="" (str): .
+          - treshold_pvalue=0.5 (float): reference value for the p-values.
+          - decimal_place=3 (int): approximation of the values represented in the table.
+          - column_width=3.0 (int): formatting value used for resizing of the table.
+          - max_columns_per_part=5 (int): number of columns to be shown per table.
+          - caption_for_table="Comparison between algorithms" (str): title of the table.
+
+          Returns:
+          - latex_code (str): table formatted in latex syntax.
+
+          Author:
+          - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
+    """
+    # check on number of columns to show
     if max_columns_per_part > 10:
         max_columns_per_part = 10
 
-    # Estrai le chiavi (nomi di colonne) dal primo dizionario
+    # get names of the columns
     first_algorithm = algorithms[0]
     column_names = list(next(iter(first_algorithm.values())).keys())
     num_columns = len(column_names)
 
-    # Lista di metriche il cui punteggio migliore è quello minimo
+    # list of metrics where to apply the lower score is best NEED TO BE USED AS PARAMETER
     metrics_minimum_score = ['RMSE', 'MSE', 'MAE', 'Gini']
 
-    # Dizionario dinamico per determinare i migliori punteggi
+    # dictionary used for applying the logic of highlighting score
     best_metrics = {}
 
-    # genera i due dizionari che terranno traccia dei due punteggi più alti migliori e dei
-    # 2 punteggi più bassi migliori
+    # create the 2 dictonaries containing the best results for both logics high and low
     highest_best_metrics = find_highest_bests(algorithms, column_names, decimal_place)
-    print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
+    # print(f"il dizionario con i migliori risultati per metrica crescenti {highest_best_metrics}")
     lowest_best_metrics = find_lowest_bests(algorithms, column_names, decimal_place)
-    print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
+    # print(f"il dizionario con le migliori metriche più basse è {lowest_best_metrics}")
 
-    # Calcola il numero di parti necessarie
+    # calculating the number of part which will be used to create the table
     num_parts = -(-num_columns // max_columns_per_part)  # Divisione arrotondata per eccesso
 
-    # Inizializza il codice LaTeX
     latex_code = ""
-
+    # DEBUG CODE
     # controllo degli indici del dataframe stats_ref
-    print(f"gli indici sono:\n {stats_rel.index}\n")
+    # print(f"gli indici sono:\n {stats_rel.index}\n")
 
     # controllo dei multi-indici di colonna del df stats_ref
-    print(f"I multi indici di colonna sono_\n {stats_rel.columns}")
+    # print(f"I multi indici di colonna sono_\n {stats_rel.columns}")
 
     for part_index in range(num_parts):
-        # Calcola gli indici delle colonne per questa parte
+        # get index for the part
         start_col_index = part_index * max_columns_per_part
         end_col_index = (part_index + 1) * max_columns_per_part
         current_column_names = column_names[start_col_index:end_col_index]
 
-        # Calcola la larghezza totale della tabella
+        # evaluating the size of all columns and create header of the table part
         total_width = len(current_column_names) * column_width + 1
         latex_code += "\\begin{table}[H]\n"  # changed [ht] to [H]
         latex_code += "\\centering\n"
@@ -651,7 +737,7 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
             len(current_column_names)) + "}{c}{Columns} \\\\\n"
         latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
 
-        # Aggiungi i nomi delle colonne
+        # Add columns names
         for col_index, column_name in enumerate(current_column_names):
             latex_code += "& \\multirow{2}{*}{\\makecell{" + column_name.replace("_", "\\_") + "}} "
 
@@ -660,32 +746,31 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
         latex_code += "\\cmidrule{2-" + str(len(current_column_names) + 1) + "}\n"
         latex_code += " & & & \\\\\n"
 
-        # Aggiungi i dati delle righe
+        # fill with data the table
         for algorithm in algorithms:
             algorithm_name = list(algorithm.keys())[0]
-            print(f"algorithm name is {algorithm_name}")
+            # print(f"algorithm name is {algorithm_name}")
             values = list(algorithm.values())[0]
             # print(f"values is  {values}")
             latex_code += algorithm_name
             for column_name in current_column_names:
-                print(f"column value is {column_name}")
-                # Verifica se la colonna è presente nel dizionario prima di accedere
+                # print(f"column value is {column_name}")
                 column_value = values.get(column_name, '')
-                # Converte il valore in un numero (float) prima di arrotondarlo
+                # Conversion to (float) before rounding it
                 try:
                     column_value = float(column_value)
                     rounded_value = round(column_value, decimal_place)
                 except (ValueError, TypeError):
-                    # Se la conversione non è possibile, mantieni il valore come stringa
+                    # if conversion is impossible keep it as string
                     rounded_value = column_value
 
-                # Determina quale dizionario utilizzare per ottenere i migliori punteggi
+                # Choose which dictionary to use for applying the logic to mark the best scores
                 best_metrics = highest_best_metrics if column_name not in metrics_minimum_score else lowest_best_metrics
 
-                # Estrai i valori migliori per la colonna corrente
+                # get best values for the column=metric
                 best_values = best_metrics[column_name]
 
-                # Formatta il valore in base ai risultati migliori
+                # Formatting based on best score
                 if rounded_value == best_values[0]:
                     latex_code += " & \\textbf{" + str(rounded_value) + "}"
                 elif rounded_value == best_values[1]:
@@ -693,10 +778,11 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
                 else:
                     latex_code += " & " + str(rounded_value)
 
-                # ATTENZIONE che qui viene usato l'import del modulo statistic_test_table as stt
-                # Aggiungi asterisco se il p-value è inferiore al threshold
+                # usage of module statistic_test_table used as stt in order to create an index
+                # to gain accesss to dataframe
                 access_index = stt.set_access_index(comparison, algorithm_name, column_name)
-                # STAMPE DI CONTROLLO PER L'INDICE GENERATO
+                # DEBUG CODE
+                """
                 print(f"access_index is {access_index} \n "
                       f"il primo elemento dell'indice è {access_index[0][0]} \n "
                       f"mentre il secondo è {access_index[1]}")
@@ -707,8 +793,10 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
 
                 if access_index[1] in stats_rel.columns:
                     print(f"MULTI INDICE DI COLONNA TROVATO OOOK")
+                """
 
-                # Verifica se il multi-indice è presente tra le colonne del DataFrame stats_rel
+                # This part opf the code will mark the statistic significant results with an asterisk
+                # use the access_index to get access to stats_rel data frame and compare the p-value for marking
                 if access_index[1] in stats_rel.columns and access_index[0][0] in stats_rel.index:
                     val_retrieved = stats_rel.loc[access_index]
                     if not val_retrieved.empty:
@@ -716,9 +804,9 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
                         if float_pvalue < treshold_pvalue:
                             latex_code += "*"
                 else:
-                    # Secondo tentativo di accesso con i primi due parametri scambiati
+                    # if access_index is not present invert the name of the algorithm to create a new index and retry
+                    # to gain access for checking the p-value
                     access_index = stt.set_access_index(algorithm_name, comparison, column_name)
-                    # Verifica se il multi-indice è presente tra le colonne del DataFrame stats_rel
                     if access_index[1] in stats_rel.columns and access_index[0][0] in stats_rel.index:
                         val_retrieved = stats_rel.loc[access_index]
                         if not val_retrieved.empty:
@@ -726,20 +814,19 @@ def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_
                             if float_pvalue < treshold_pvalue:
                                 latex_code += "*"
                     else:
-                        # Gestisci il caso in cui entrambi gli indici non esistono
-                        pass  # o fai qualcos'altro, a seconda del tuo caso d'uso
+                        pass  # keep on
 
             latex_code += " \\\\\n"
             latex_code += "\\addlinespace[5pt]\n"
             latex_code += "\\midrule\n"
 
-        # Aggiungi la parte finale del codice LaTeX
+        # closing the table part
         latex_code += "\\bottomrule\n"
         latex_code += "\\end{tabular}}\n"
         latex_code += "\\caption{" + caption_for_table + " (Part " + str(part_index + 1) + ")}\n"
         latex_code += "\\end{table}\n"
 
-        # Aggiungi alcune righe vuote tra le parti
+        # add space between the parts of the table
         if part_index < num_parts - 1:
             latex_code += "\\vspace{10pt}\n"
 
