@@ -283,7 +283,7 @@ def generate_pdf_output(path_data_in):
 
 
 def main():
-    input_file = merge_yaml_files(LIST_YAML_FILES, "report/templates_html", "final_report_yaml")
+    input_file = merge_yaml_files(LIST_YAML_FILES, "./templates_html", "final_report_yaml")
     input_html = create_html_output(input_file, OUTPUT_HTML)
     html_to_pdf2(input_html, OUTPUT_PATH )
     print("Generating Report PDF File...")
