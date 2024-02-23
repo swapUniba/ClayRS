@@ -1,5 +1,5 @@
 # This script has been created to deal with the creation of a latex table from
-# the result retrived from the statistics test conducted on the recsys
+# the result retrieved from the statistics test conducted on the recsys
 
 import pandas as pd
 import openpyxl
@@ -164,87 +164,7 @@ def change_system_name(df, sys_name):
     return df
 
 
-# funziona in modo fantastico BISOGNA TESTARLA prima implementazione
-"""
-def from_dataframe_to_latex_table(df, col, title=""):
-    # Verifica se il DataFrame è vuoto
-    if df.empty:
-        return ""
-
-    # Assicurati che il numero di colonne sia minore o uguale a 3
-    col = min(col, 3)
-
-    # Estrai le colonne del primo livello del header
-    header_cols = df.columns.get_level_values(0).unique().tolist()
-
-    # Inizializza la stringa LaTeX con il titolo
-    latex_str = f"\\begin{{table}}[H]\n\\centering\n\\caption{{{title}}}\n"
-
-    # Itera sulle colonne richieste
-    for i in range(0, len(header_cols), col):
-        # Seleziona un sottoinsieme di colonne
-        selected_cols = header_cols[i:i + col]
-
-        # Filtra il DataFrame per le colonne selezionate
-        df_selected = df[selected_cols]
-
-        # Aggiungi un sottotitolo alle tabelle (basato sulle colonne selezionate)
-        subtitle = ', '.join(selected_cols)
-        table_title = f"{title} - {subtitle}"
-
-        # Concatena il codice LaTeX per la tabella con sottotitolo
-        latex_str += f"\\subsubsection*{{{table_title}}}\n"
-        latex_str += df_selected.to_latex()
-
-        # Aggiungi una nuova riga LaTeX per separare le tabelle
-        latex_str += "\n\\vspace{0.5cm}\n"
-
-    # Concludi la stringa LaTeX
-    latex_str += "\\end{table}"
-
-    return latex_str
-"""
-
-# seconda implementazione
-# Questa funzione è stat aggiunta per sostituire l'iniziale che ha un problema nel tagliare le tabelle nel caso
-# non entrino in un unica pagina, va testata ance in altri scenari prima di sostituirla definitivamente
-"""
-def from_dataframe_to_latex_table(df, col, title=""):
-    # Verifica se il DataFrame è vuoto
-    if df.empty:
-        return ""
-
-    # Assicurati che il numero di colonne sia minore o uguale a 3
-    col = min(col, 3)
-
-    # Estrai le colonne del primo livello del header
-    header_cols = df.columns.get_level_values(0).unique().tolist()
-
-    # Inizializza la stringa LaTeX vuota
-    latex_str = ""
-
-    # Itera sulle colonne richieste
-    for i in range(0, len(header_cols), col):
-        # Seleziona un sottoinsieme di colonne
-        selected_cols = header_cols[i:i + col]
-
-        # Filtra il DataFrame per le colonne selezionate
-        df_selected = df[selected_cols]
-
-        # Aggiungi un sottotitolo alle tabelle (basato sulle colonne selezionate)
-        subtitle = ', '.join(selected_cols)
-        table_title = f"{title} - {subtitle}"
-
-        # Aggiungi un'istruzione LaTeX per una nuova tabella indipendente con il titolo
-        latex_str += f"\\begin{{table}}[H]\n\\centering\n\\caption{{{table_title}}}\n"
-        latex_str += df_selected.to_latex()
-        latex_str += "\\end{table}\n\n"
-
-    return latex_str
-"""
-
-
-#  nuova versione da testare terza implementazione
+#  nuova versione
 def from_dataframe_to_latex_table(df, col, title=""):
     """
        Using the data frame received in input this function will organise the data a series of latex tables,
@@ -288,7 +208,7 @@ def from_dataframe_to_latex_table(df, col, title=""):
         subtitle = ', '.join(selected_cols)
         table_title = f"{title} - {subtitle}"
 
-        # crreate the table with the values
+        # create the table with the values
         table_latex = df_selected.to_latex()
 
         # Structuring of the table
