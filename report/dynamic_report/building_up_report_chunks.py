@@ -3,6 +3,7 @@
 # will make some adjustment of basic template for each section rendering this section with jinja2 lib and once
 # rendered the output will be used as a string with function of the support_reporting_lib in order to add this
 # string well-formed on the file.latex that will be the report of the experiment conducted
+
 import os
 import re
 import yaml
@@ -84,20 +85,19 @@ def clean_working_dir(path, auto=False):
     Author:
     - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
     """
-    # Controlla se la cartella indicata esiste
+    # check existence
     if not os.path.exists(path):
         print(f"Error: Directory doesn't exist at this path: {path}")
         return
 
-    # Ottiene la lista dei file nella cartella
+    # get files inside the directory
     files_in_dir = os.listdir(path)
 
-    # Se la cartella è vuota, stampa un messaggio
     if not files_in_dir:
         print("Directory is empty.")
         return
 
-    # Se auto è False, richiedi conferma prima di eliminare i file
+    # elimination supervised
     if not auto:
         for file in files_in_dir:
             file_path = os.path.join(path, file)
@@ -111,7 +111,7 @@ def clean_working_dir(path, auto=False):
             else:
                 print(f"file '{file}' has not been eliminated.")
 
-    # Se auto è True, elimina i file senza richiesta di conferma
+    # automatic elimination
     else:
         for file in files_in_dir:
             file_path = os.path.join(path, file)

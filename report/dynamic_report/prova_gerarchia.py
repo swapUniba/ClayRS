@@ -1,7 +1,7 @@
 import exp_report_generator as exrep
 import os
 
-# RUN script
+# This script represent an example in practise of the hierarchy inside the exp_report_generator.py file
 if __name__ == "__main__":
     OUTPUT_TEX = "./../output/report.tex"
     OUTPUT_PATH = "output/report.pdf"

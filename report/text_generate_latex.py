@@ -1,3 +1,6 @@
+# This script allow to render a fixed template latex into a report latex file that document the experiment made with
+# clayRS, be aware that the template for this script need to be provided.
+
 import jinja2
 import yaml
 import os
@@ -62,7 +65,6 @@ LIST_YAML_FILES = ["data/data_to_test/item_ca_report_nxPageRank.yml",
 # TEMPLATE_FILE = "report_templateNew.tex"
 TEMPLATE_FILE = "dynamic_fin_rep.tex"
 
-
 # setting environment based on latex needs
 LATEX_JINJA_ENV = jinja2.Environment(
     block_start_string="\BLOCK{",
@@ -86,10 +88,20 @@ def safe_text(text: str) -> str:
 
 
 def truncate(text: str) -> str:
-    number = float(text)
+    # Verifica se text non è nullo o None
+    if text is None or text == '':
+        return None  # o qualsiasi altro valore di default che desideri restituire
+
+    # Verifica se text è una stringa che può essere convertita in float
+    try:
+        number = float(text)
+    except (ValueError, TypeError):
+        # Se non può essere convertito in float, restituisci il valore originale
+        return str(text)
+
+    # Esegui il codice di troncamento se text è un numero
     number = round(number, 5)
     text = str(number)
-    print(text)
     return text
 
 
@@ -299,6 +311,8 @@ def generate_pdf_output(latex_file_path, output_folder=None):
         return None
 
 
+# This function could be used to render the latex file into a pdf file, but for those who want to use this function
+# it needed a latex compiler installation on the macchine used
 """
 def generate_pdf_output(output_path):
     # generate_tex_output()
@@ -334,6 +348,13 @@ def main():
     print("Generating Report PDF File...")
     print(latex_file_to_compile)
 
+
+# Starting the generation of the report form a file.
+# BE AWARE in order to work this script it needs a template to be used for rendering of the latex file report, actually
+# inside the directory templates_latex there is a file named dynamic_fin_rep.tex and it is the template used by this
+# script to obtain the report. If the file is substituted with another that respect the function of the script
+# we can obtain a new report. Indeed, this script allow to render a prefixed template for the report an get
+# the right substitution based on the yaml file given.
 
 if __name__ == "__main__":
     main()
