@@ -1,7 +1,17 @@
+# This script contains the functions used to create the table needed to compare the algorithm used to istanciate
+# the recommender system. In side the script there are three main function:
+# 1 def generate_table_for_comparison(list_of_dicts, n_col_desired, width=3.0,
+#                                   alg_type="killer", round_to=3, set_title="Results of metrics")
+# 2 def generate_latex_table(algorithms, decimal_place=3, column_width=3.0,
+#                          max_columns_per_part=5, caption_for_table="Comparison between algorithms")
+# 3 def generate_latex_table_pvalued(algorithms, stats_rel, comparison="", treshold_pvalue=0.5,
+#                                  decimal_place=3, column_width=3.0,
+#                                  max_columns_per_part=5,
+#                                  caption_for_table="Comparison between algorithms")
+# the rest of the function are supporting function.
+
 from collections import defaultdict
-
 import pandas as pd
-
 import statistic_test_table as stt
 import yaml
 
