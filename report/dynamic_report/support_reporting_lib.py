@@ -1,4 +1,6 @@
-# This script contains some function that support all the process of generating an automatized latex report
+# This script contains some functions that support the process of generating an automatized latex report, in particular
+# the functions in this script provide ways to treat in a compile latex safe manner the text that need to be added to
+# the report wanted
 
 import os
 
@@ -65,20 +67,18 @@ def replace_in_latex_file(latex_file_path, placeholder, substitution):
         - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
     """
     try:
-        # Apre il file LaTeX in modalità di lettura
         with open(latex_file_path, 'r') as file:
-            # Legge il contenuto del file
             file_content = file.read()
 
-            # Cerca il placeholder nel contenuto del file
+            # search for the placehorder
             if placeholder not in file_content:
                 print(f"Placeholder '{placeholder}' not finded in the file.")
                 return
 
-            # Sostituisce il placeholder con la stringa di sostituzione
+            # substitution placeholder with text
             updated_content = file_content.replace(placeholder, substitution)
 
-        # Scrive il contenuto aggiornato nel file
+        # write on the file
         with open(latex_file_path, 'w') as file:
             file.write(updated_content)
 
@@ -101,7 +101,7 @@ def add_to_latex_file(latex_file_path, text_in):
         - Diego Miccoli (Kozen88) <d.miccoli13@studenti.uniba>
     """
     try:
-        # Ricerca del file LaTeX nel percorso specificato e nelle sottocartelle
+        # Search of the file
         file_found = False
         for root, dirs, files in os.walk(os.path.dirname(latex_file_path)):
             if os.path.basename(latex_file_path) in files:
@@ -109,7 +109,7 @@ def add_to_latex_file(latex_file_path, text_in):
                 file_found = True
                 break
 
-        # Se il file esiste, aggiunge il testo
+        # if the file exists the text is added
         if file_found:
             with open(latex_file, 'a') as file:
                 file.write(text_in + '\n')
@@ -117,11 +117,11 @@ def add_to_latex_file(latex_file_path, text_in):
                 file.write('\n')  # Aggiunge una riga vuota
             print(f"Text added with success to the file {latex_file}.")
         else:
-            # Se il file non esiste, lo crea nella cartella specificata
+            # if file not exist it will be created
             with open(latex_file_path, 'w') as file:
                 file.write(text_in + '\n')
                 # file.write(r'\hfill\break' + '\n' + r'\hfill\break' + '\n')
-                file.write('\n')  # Aggiunge una riga vuota
+                file.write('\n')
             print(f"File {latex_file_path} created and text added to it.")
     except Exception as e:
         print(f"Error occurred: {str(e)}")
@@ -129,7 +129,7 @@ def add_to_latex_file(latex_file_path, text_in):
 
 # Esegui lo script
 if __name__ == "__main__":
-    # Esempio d'uso:
+    # Test e caso d'uso per le funzioni dello script:
     testo = r"PLACEHOLDER"
     cartella_iniziale = "./"
     nome_file_latex = "documento_latex.tex"
